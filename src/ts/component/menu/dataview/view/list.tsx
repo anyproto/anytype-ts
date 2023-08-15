@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 
 const HEIGHT = 28;
@@ -88,7 +88,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+							<div className="inner">{translate('menuDataviewViewListNoViewsFound')}</div>
 						</div>
 					) : (
 						<InfiniteLoader
@@ -97,11 +97,11 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<VList
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -149,7 +149,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add a view</div>
+							<div className="name">{translate('menuDataviewViewListAddView')}</div>
 						</div>
 					</div>
 				) : ''}
@@ -190,7 +190,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -201,9 +201,11 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = Util.objectCopy(dbStore.getViews(rootId, blockId));
+		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
+			...it, name: it.name || UtilObject.defaultName('Page'),
+		}));
 
-		items.unshift({ id: 'label', name: 'Views', isSection: true });
+		items.unshift({ id: 'label', name: translate('menuDataviewViewListViews'), isSection: true });
 		return items;
 	};
 
@@ -219,12 +221,12 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget } = data;
 		const view = getView();
 		const sources = getSources();
-		const relations = Util.objectCopy(view.relations);
+		const relations = UtilCommon.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const object = getTarget();
 
-		for (let relation of relations) {
+		for (const relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
 				continue;
 			};
@@ -325,6 +327,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const oldIndex = result.oldIndex - 1;
 		const newIndex = result.newIndex - 1;
 		const view = views[oldIndex];
+		if (!view) {
+			return;
+		};
+
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, blockId, ids);

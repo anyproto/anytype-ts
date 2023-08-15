@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockType { margin: 14px 0px 16px 0px !important; }
+	.block.blockType { padding: 0px 0px 18px 0px !important; }
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
 		.focusable.isFocused { background: none; }
@@ -9,7 +9,7 @@
 		.wrap { display: flex; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
 
 		.item { 
-			position: relative; padding: 3px 8px; cursor: pointer; border-radius: 2px; border-radius: 6px; border: 1px solid $colorBorderDark; 
+			position: relative; padding: 3px 8px; border-radius: 2px; border-radius: 6px; border: 1px solid $colorBorderDark; 
 			display: inline-block; display: flex; align-items: center; gap: 0px 4px; color: $colorDarkGrey; @include text-overflow-nw;
 		}
 		.item.hover, .item.active { background: $colorHoverMedium; }

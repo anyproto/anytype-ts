@@ -1,31 +1,19 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview } from 'Lib';
+import { I, Preview, translate } from 'Lib';
 
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
-		const { onHelp, onAdd } = this.props;
-		const cmd = keyboard.cmdSymbol();
+		const { onHelp } = this.props;
 
 		return (
 			<React.Fragment>
 				<div 
-					id="button-add" 
-					className="iconWrap" 
-					onClick={onAdd}
-					onMouseEnter={e => this.onTooltipShow(e, 'Add new object', `${cmd} + N`)}
-					onMouseLeave={e => Preview.tooltipHide(false)}
-				>
-					<Icon />
-					<div className="bg" />
-				</div>
-
-				<div 
 					id="button-help" 
 					className="iconWrap" 
 					onClick={onHelp}
-					onMouseEnter={e => this.onTooltipShow(e, 'Help')}
+					onMouseEnter={e => this.onTooltipShow(e, translate('commonHelp'))}
 					onMouseLeave={e => Preview.tooltipHide(false)}
 				>
 					<Icon />

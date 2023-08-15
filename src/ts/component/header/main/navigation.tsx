@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, ObjectUtil, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent, object> {
 
@@ -12,15 +12,20 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { onForward, onBack, tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
+					<Icon
+						className="toggle big"
+						tooltip={translate('sidebarToggle')}
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center">
@@ -29,7 +34,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 							<div 
 								key={i}
 								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => { onTab(item.id); }}
+								onClick={() => onTab(item.id)}
 								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
 								onMouseOut={onTooltipHide}
 							>
@@ -45,7 +50,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
+		UtilObject.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 
 });

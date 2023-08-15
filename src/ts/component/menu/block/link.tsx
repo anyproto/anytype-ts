@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, Util, keyboard, DataUtil, ObjectUtil, MenuUtil, analytics, focus } from 'Lib';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -32,6 +32,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	n = -1;
 	top = 0;
 	offset = 0;
+	timeout = 0;
 	refList: any = null;
 	refFilter: any = null;
 
@@ -53,6 +54,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const cn = [];
 
@@ -120,11 +125,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 					isRowLoaded={({ index }) => !!this.items[index]}
 					threshold={LIMIT_HEIGHT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<List
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -146,8 +151,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={ref => { this.refFilter = ref; }} 
-					placeholder="Paste link or search objects" 
+					ref={ref => this.refFilter = ref} 
+					placeholder={translate('menuBlockLinkFilterPlaceholder')}
 					value={filter}
 					onChange={this.onFilterChange}
 					onClear={this.onFilterClear}
@@ -196,12 +201,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -209,7 +215,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 
 	onFilterChange (e: any) {
-		menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+		}, 500);
 	};
 
 	onFilterClear () {
@@ -231,49 +240,36 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
 		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
-			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
+			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' }
 		];
-
-		let items = [].concat(this.items);
-
-		items = items.filter((it: any) => {
-			let ret = false;
-			if (it.name && it.name.match(reg)) {
-				ret = true;
-			} else 
-			if (it.description && it.description.match(reg)) {
-				ret = true;
-			};
-			return ret;
-		}).map((it: any) => { 
-			it.isBig = true; 
-			return it;
-		});
+		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		if (items.length) {
 			items.push({ isDiv: true });
 		};
 
-		if (Util.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
-			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
+		if (UtilCommon.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
+			buttons.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link' });
 		};
 
-		let sections: any[] = [];
+		const sections: any[] = [];
+
 		if (items.length) {
-			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: items });
 		};
+
 		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
-		return MenuUtil.sectionsMap(sections);
+
+		return UtilMenu.sectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections && section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
@@ -293,12 +289,13 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds, filter } = data;
+		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeId.date);
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		if (skipIds && skipIds.length) {
@@ -309,13 +306,18 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(null);
 			};
@@ -324,7 +326,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -359,7 +361,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		if (item.itemId == 'add') {
 			const type = dbStore.getType(commonStore.type);
 
-			ObjectUtil.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -394,24 +396,20 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return h;
 	};
 
-	getListHeight (items: any) {
-		return items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0);
-	}
+	getListHeight () {
+		return this.getItems(true).reduce((res: number, item: any) => res + this.getRowHeight(item), 0);
+	};
 
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 16;
+		const offset = 12;
 
 		let height = HEIGHT_FILTER;
 		if (filter) {
-			height += this.getListHeight(items) + offset;
+			height += this.getListHeight() + offset;
 			obj.removeClass('initial');
 		} else {
 			obj.addClass('initial');

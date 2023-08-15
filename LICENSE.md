@@ -1,21 +1,54 @@
-MIT License
+Any Source Available License 1.0
 
-Copyright (c) 2023 Anytype, Inc.
+This license contains the terms and conditions under which Any Association 
+makes available its Software. Your use of the Software is subject to these 
+terms and conditions. 
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Any Association grants you (“Licensee”) a license to use, modify, and 
+redistribute the Software, but only 
+(a) for Non-Commercial Use, or (b) for Commercial Use in Allowed Networks.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+If Licensee makes available a copy of the Software to any third party, 
+the Software must be subject to the terms of this license only, and Licensee 
+must provide a copy of this license to that third party. 
+If Licensee makes changes or additions to the Software, Licensee may license 
+those changes or additions under terms of your choice, but Licensee cannot 
+change the license for the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
-OR OTHER DEALINGS IN THE SOFTWARE.
+These terms do not allow Licensee to sublicense or transfer any of Licensee’s 
+rights to anyone else. These terms do not imply any other licenses not 
+expressly granted in this license.
+
+If Licensee violates any of these terms, or uses the Software in a way not 
+authorized under this license, the license granted to Licensee ends 
+immediately. 
+If Licensee makes, or authorizes any other person to make, any written claim 
+that the Software, or any other Any Association Product, infringes or 
+contributes to infringement of any patent, all rights granted to Licensee 
+under this license end immediately. 
+
+As far as the law allows, the Software is provided AS IS, 
+without any warranty or condition, and Any Association will not be liable 
+to Licensee for any damages arising out of these terms or the use or nature 
+of the Software, under any kind of legal claim.
+
+Terms in this license are used as follows:
+
+A “Any Association Product” is any product or service offered by 
+Any Association or its affiliates. 
+
+“Non-Commercial Use” means personal, academic, scientific, or research and 
+development use, or evaluating the Software, but does not include uses where 
+the Software facilitates any transaction of economic value other than on 
+Allowed Networks. 
+
+Any use that is not a Non-Commercial Use is a “Commercial Use.”
+
+“Allowed Networks” (https://networks.any.coop) are the networks, 
+identified by their unique ids, names, or list of nodes, that are expressly 
+authorized by Any Association, to which the Software may send requests. 
+Any Association may add networks to this list, and, upon reasonable notice, 
+remove networks from it.
+
+To “use” means any use, modification, distribution or other exploitation of 
+the Software or any part of it.

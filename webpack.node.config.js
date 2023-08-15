@@ -1,17 +1,17 @@
 module.exports = (env) => {
 	return {
-		target: "node",
-		mode: "production",
+		target: 'node',
+		mode: 'production',
 		optimization: {
 			minimize: false,
 			removeAvailableModules: false,
-    		removeEmptyChunks: false,
-    		splitChunks: false,
+			removeEmptyChunks: false,
+			splitChunks: false,
 		},
 		
 		entry: './electron.js',
 		output: {
-			filename: "bundle-back.js"
+			filename: 'bundle-back.js'
 		},
 
 		module: {

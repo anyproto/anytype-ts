@@ -4,8 +4,8 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics, Preview } from 'Lib';
-import { commonStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilObject, UtilSmile, UtilFile, translate, Relation, analytics } from 'Lib';
+import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
 
 interface Props {
@@ -129,13 +129,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
-        .call(d3.drag().
+		.call(d3.drag().
 			subject(() => this.subject).
 			on('start', (e: any, d: any) => this.onDragStart(e)).
 			on('drag', (e: any, d: any) => this.onDragMove(e)).
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
-        .call(this.zoom)
+		.call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
@@ -165,11 +165,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || ObjectUtil.defaultName('Page');
+			d.name = d.name || UtilObject.defaultName('Page');
 		};
 
-		d.name = SmileUtil.strip(d.name);
-		d.shortName = Util.shorten(d.name, 24);
+		d.name = UtilSmile.strip(d.name);
+		d.shortName = UtilCommon.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
 
@@ -223,6 +223,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragMove (e: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
+		
+		if (!node || !node.length) {
+			return;
+		};
+
 		const { left, top } = node.offset();
 
 		this.send('onDragMove', { 
@@ -241,7 +246,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	onZoom ({ transform }) {
 		this.send('onZoom', { transform });
-  	};
+	};
 
 	onPreviewShow (data: any) {
 		if (this.isPreviewDisabled || !this.subject) {
@@ -267,6 +272,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			el = $('<div id="graphPreview" />');
 			body.append(el);
 			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
+
+			analytics.event('SelectGraphNode', { objectType: this.subject.type, layout: this.subject.layout });
 		} else {
 			position();
 		};
@@ -278,7 +285,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	onMessage (e) {
 		const { id, data } = e.data;
-		const { root } = blockStore;
 		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
 		const node = $(this.node);
 		const { left, top } = node.offset();
@@ -326,7 +332,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onContextMenu': {
-				if (!data.node || (data.node == root)) {
+				if (!data.node) {
 					break;
 				};
 
@@ -345,8 +351,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onTransform': {
 				d3.select(this.canvas)
-        		.call(this.zoom)
-				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k))
+				.call(this.zoom)
+				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k));
 				break;
 			};
 
@@ -356,58 +362,60 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	imageSrc (d: any) {
 		let src = '';
 
-		if (d.id == blockStore.root) {
-			return 'img/icon/home-big.svg';
-		};
-
 		switch (d.layout) {
-			case I.ObjectLayout.Relation:
+			case I.ObjectLayout.Relation: {
 				src = `img/icon/relation/big/${Relation.typeName(d.relationFormat)}.svg`;
 				break;
+			};
 
-			case I.ObjectLayout.Task:
+			case I.ObjectLayout.Task: {
 				src = `img/icon/graph/task.svg`;
 				break;
+			};
 
-			case I.ObjectLayout.File:
-				src = `img/icon/file/${FileUtil.icon(d)}.svg`;
+			case I.ObjectLayout.File: {
+				src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				break;
+			};
 
-			case I.ObjectLayout.Image:
+			case I.ObjectLayout.Image: {
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, 160);
+					src = commonStore.imageUrl(d.id, 100);
 				} else {
-					src = `img/icon/file/${FileUtil.icon(d)}.svg`;
+					src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				};
 				break;
+			};
 				
-			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Human: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 160);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconOption) {
 					src = this.gradientIcon(d.iconOption);
 				};
-
 				break;
+			};
 
-			case I.ObjectLayout.Note:
+			case I.ObjectLayout.Note: {
 				break;
+			};
 
-			case I.ObjectLayout.Bookmark:
+			case I.ObjectLayout.Bookmark: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 24);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				};
 				break;
+			};
 				
-			default:
+			default: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 160);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
-					const data = SmileUtil.data(d.iconEmoji);
+					const data = UtilSmile.data(d.iconEmoji);
 					if (data) {
-						src = SmileUtil.srcFromColons(data.colons, data.skin);
+						src = UtilSmile.srcFromColons(data.colons, data.skin);
 					};
 					src = src.replace(/^.\//, '');
 				} else
@@ -415,6 +423,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					src = this.gradientIcon(d.iconOption, true);
 				};
 				break;
+			};
 		};
 
 		return src;
@@ -434,14 +443,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const r = w / 2;
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
-
-		let steps = Colors.gradientIcons.common.steps;
-		if (option.steps) {
-			steps = option.steps;
-		};
-
-		const step0 = Util.getPercentage(fillR, Number(steps.from.replace('%', '')));
-		const step1 = Util.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const steps = option.steps || Colors.gradientIcons.common.steps;
+		const step0 = UtilCommon.getPercentage(fillR, steps.from * 100);
+		const step1 = UtilCommon.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;

@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, Util, Action, ObjectUtil } from 'Lib';
-import { blockStore } from 'Store';
+import { I, C, UtilCommon, Action, UtilObject, translate } from 'Lib';
+import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
 interface State {
@@ -49,17 +49,19 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="setWrapper"
 			>
-				<Header component="mainObject" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					{block ? <Block 
-						{...this.props} 
-						key={block.id} 
-						rootId={rootId} 
-						iconSize={20} 
-						block={block} 
-						className="noPlus" 
-					/> : 'Block not found'}
+					{block ? (
+						<Block 
+							{...this.props} 
+							key={block.id} 
+							rootId={rootId} 
+							iconSize={20} 
+							block={block} 
+							className="noPlus" 
+						/>
+					) : translate('pageMainBlockEmpty')}
 				</div>
 			</div>
 		);
@@ -96,8 +98,14 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
+				return;
+			};
+
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isDeleted) {
+				this.setState({ isDeleted: true });
 				return;
 			};
 
@@ -145,12 +153,12 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 		
 		raf(() => {
 			const node = $(this.node);
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : Util.sizeHeader();
+			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup && !container.hasClass('full') ? 0 : hh });
+			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 

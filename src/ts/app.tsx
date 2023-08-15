@@ -8,12 +8,13 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
-	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Animation
+	I, C, UtilCommon, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
+	focus, Preview, Mark, Animation, Onboarding, Survey
 } from 'Lib';
+import * as Docs from 'Docs';
 
 configure({ enforceActions: 'never' });
 
@@ -26,48 +27,31 @@ import 'scss/common.scss';
 import 'scss/debug.scss';
 import 'scss/font.scss';
 
-import 'scss/component/button.scss';
 import 'scss/component/cover.scss';
 import 'scss/component/deleted.scss';
-import 'scss/component/drag.scss';
 import 'scss/component/dragbox.scss';
 import 'scss/component/dragLayer.scss';
+import 'scss/component/dotIndicator.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/emptySearch.scss';
 import 'scss/component/error.scss';
-import 'scss/component/filter.scss';
 import 'scss/component/footer.scss';
 import 'scss/component/frame.scss';
 import 'scss/component/header.scss';
 import 'scss/component/headSimple.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/iconObject.scss';
-import 'scss/component/input.scss';
-import 'scss/component/inputWithFile.scss';
-import 'scss/component/list/previewObject.scss';
-import 'scss/component/list/widget.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
-import 'scss/component/pin.scss';
 import 'scss/component/progress.scss';
-import 'scss/component/select.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/sidebar.scss';
-import 'scss/component/switch.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/tag.scss';
-import 'scss/component/textarea.scss';
 import 'scss/component/title.scss';
 import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
-
-import 'scss/component/widget/common.scss';
-import 'scss/component/widget/space.scss';
-import 'scss/component/widget/list.scss';
-import 'scss/component/widget/tree.scss';
-
-import 'scss/component/list/object.scss';
-import 'scss/component/list/previewObject.scss';
+import 'scss/component/navigation.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
@@ -77,6 +61,7 @@ import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
 
 import 'scss/component/hightlight.scss';
+import 'scss/component/progressBar.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/edit.scss';
@@ -94,6 +79,7 @@ import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 import 'scss/page/main/block.scss';
 import 'scss/page/main/empty.scss';
+import 'scss/page/main/usecase.scss';
 
 import 'scss/block/bookmark.scss';
 import 'scss/block/common.scss';
@@ -120,6 +106,27 @@ import 'scss/block/tableOfContents.scss';
 import 'scss/block/text.scss';
 import 'scss/block/type.scss';
 
+import 'scss/form/button.scss';
+import 'scss/form/drag.scss';
+import 'scss/form/filter.scss';
+import 'scss/form/input.scss';
+import 'scss/form/inputWithFile.scss';
+import 'scss/form/phrase.scss';
+import 'scss/form/pin.scss';
+import 'scss/form/select.scss';
+import 'scss/form/switch.scss';
+import 'scss/form/textarea.scss';
+
+import 'scss/list/object.scss';
+import 'scss/list/widget.scss';
+import 'scss/list/previewObject.scss';
+import 'scss/list/objectManager.scss';
+
+import 'scss/widget/common.scss';
+import 'scss/widget/space.scss';
+import 'scss/widget/list.scss';
+import 'scss/widget/tree.scss';
+
 import 'scss/popup/common.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/export.scss';
@@ -132,9 +139,9 @@ import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/migration.scss';
+import 'scss/popup/pin.scss';
 
 import 'scss/menu/common.scss';
-import 'scss/menu/account.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/common.scss';
 import 'scss/menu/help.scss';
@@ -145,6 +152,8 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/thread.scss';
 import 'scss/menu/type.scss';
 import 'scss/menu/widget.scss';
+
+import 'scss/menu/account/path.scss';
 
 import 'scss/menu/search/object.scss';
 import 'scss/menu/search/text.scss';
@@ -190,7 +199,7 @@ interface RouteElement { path: string; };
 interface State {
 	loading: boolean;
 };
-	
+
 declare global {
 	interface Window {
 		Electron: any;
@@ -220,22 +229,28 @@ window.$ = $;
 window.Lib = {
 	I,
 	C,
-	Util,
+	UtilCommon,
+	UtilData,
+	UtilFile,
+	UtilObject,
+	UtilMenu,
 	analytics,
 	dispatcher,
 	keyboard,
 	Renderer,
-	DataUtil,
 	Preview,
 	Storage,
 	Animation,
+	Onboarding,
+	Survey,
+	Docs,
 };
 
 /*
 spy(event => {
-		if (event.type == 'action') {
-				console.log('[Mobx].event', event.name, event.arguments);
-		};
+	if (event.type == 'action') {
+		console.log('[Mobx].event', event.name, event.arguments);
+	};
 });
 enableLogging({
 	predicate: () => true,
@@ -264,13 +279,12 @@ Sentry.init({
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
-
-	render() {
+	render () {
 		return (
 			<SelectionProvider>
 				<DragProvider>
-					<ListPopup key='listPopup' {...this.props} />
-					<ListMenu key='listMenu' {...this.props} />
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>
@@ -280,7 +294,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 };
 
 class App extends React.Component<object, State> {
-	
+
 	state = {
 		loading: true
 	};
@@ -299,10 +313,9 @@ class App extends React.Component<object, State> {
 		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
 		this.onUpdateProgress = this.onUpdateProgress.bind(this);
 		this.onUpdateError = this.onUpdateError.bind(this);
-		this.onCommand = this.onCommand.bind(this);
 		this.onSpellcheck = this.onSpellcheck.bind(this);
 	};
-	
+
 	render () {
 		const { loading } = this.state;
 		
@@ -322,9 +335,11 @@ class App extends React.Component<object, State> {
 						<PreviewIndex />
 						<Progress />
 						<Toast />
+						<Navigation />
 
-						<div id="tooltip" />
+						<div id="tooltipContainer" />
 						<div id="drag" />
+						<div id="globalFade" />
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
@@ -343,14 +358,13 @@ class App extends React.Component<object, State> {
 
 	componentDidUpdate () {
 	};
-	
+
 	init () {
-		Util.init(history);
+		UtilCommon.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
-		analytics.init();
-		
+
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
@@ -362,32 +376,32 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', Util.time());
+			Storage.set('lastSurveyTime', UtilCommon.time());
 		};
 
 		Storage.delete('lastSurveyCanceled');
-		commonStore.coverSetDefault();
 	};
 
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
+		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
+		Renderer.on('update-downloaded', () => commonStore.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
-		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
-		Renderer.on('shutdownStart', () => { 
-			this.setState({ loading: true }); 
+		Renderer.on('shutdownStart', () => {
+			this.setState({ loading: true });
 
 			Storage.delete('menuSearchText');
 		});
@@ -423,20 +437,21 @@ class App extends React.Component<object, State> {
 		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);
 
+		analytics.init();
 		this.initStorage();
 
 		if (redirect) {
 			Storage.delete('redirect');
 		};
 
-		raf(() => { anim.removeClass('from'); })
+		raf(() => { anim.removeClass('from'); });
 
 		const cb = () => {
-			window.setTimeout(() => { 
+			window.setTimeout(() => {
 				anim.addClass('to');
 
-				window.setTimeout(() => { 
-					loader.css({ opacity: 0 }); 
+				window.setTimeout(() => {
+					loader.css({ opacity: 0 });
 					window.setTimeout(() => { loader.remove(); }, 500);
 				}, 750);
 			}, 2000);
@@ -446,11 +461,11 @@ class App extends React.Component<object, State> {
 			if (isChild) {
 				authStore.phraseSet(phrase);
 
-				DataUtil.createSession(() => {
+				UtilData.createSession(() => {
 					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
-					DataUtil.onAuth(account, cb);
+					UtilData.onAuth(account, {}, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -492,7 +507,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			Util.route('/auth/setup/init', true);
+			UtilCommon.route('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
 		};
@@ -510,25 +525,18 @@ class App extends React.Component<object, State> {
 		if (close) {
 			popupStore.closeAll();
 		};
-		
+
 		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
-		if (auto) {
-			return;
+		if (!auto) {
+			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
 		};
-
-		commonStore.progressSet({ 
-			status: 'Checking for update...', 
-			current: 0, 
-			total: 1, 
-			isUnlocked: true 
-		});
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		commonStore.progressClear(); 
+		commonStore.progressClear();
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
@@ -537,16 +545,16 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Update available',
-				text: 'Do you want to update on a new version?',
-				textConfirm: 'Restart and update',
-				textCancel: 'Later',
+				title: translate('popupConfirmUpdatePromptTitle'),
+				text: translate('popupConfirmUpdatePromptText'),
+				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
@@ -560,22 +568,22 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Update available',
-				text: 'Do you want to update on a new version?',
-				textConfirm: 'Update',
-				textCancel: 'Later',
+				title: translate('popupConfirmUpdatePromptTitle'),
+				text: translate('popupConfirmUpdatePromptText'),
+				textConfirm: translate('popupConfirmUpdatePromptOk'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		commonStore.progressClear(); 
+		commonStore.progressClear();
 
 		if (auto) {
 			return;
@@ -583,9 +591,9 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'You are up-to-date',
-				text: Util.sprintf('You are on the latest version: %s', window.Electron.version.app),
-				textConfirm: 'Great!',
+				title: translate('popupConfirmUpdateDoneTitle'),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
+				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				canCancel: false,
 			},
 		});
@@ -602,99 +610,22 @@ class App extends React.Component<object, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
-				textConfirm: 'Retry',
-				textCancel: 'Later',
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				textConfirm: translate('commonRetry'),
+				textCancel: translate('commonLater'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
 
-	onCommand (e: any, key: string) {
-		const rootId = keyboard.getRootId();
-		const logPath = window.Electron.logPath;
-		const tmpPath = window.Electron.tmpPath;
-
-		switch (key) {
-			case 'undo':
-				if (!keyboard.isFocused) {
-					keyboard.onUndo(rootId, 'MenuSystem');
-				};
-				break;
-
-			case 'redo':
-				if (!keyboard.isFocused) {
-					keyboard.onRedo(rootId, 'MenuSystem');
-				};
-				break;
-
-			case 'create':
-				keyboard.pageCreate();
-				break;
-
-			case 'saveAsHTML':
-				keyboard.onSaveAsHTML();
-				break;
-
-			case 'saveAsHTMLSuccess':
-				keyboard.printRemove();
-				break;
-
-			case 'save':
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
-				break;
-
-			case 'exportTemplates':
-				Action.openDir(paths => {
-					C.TemplateExportAll(paths[0], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						Renderer.send('pathOpen', paths[0]);
-					});
-				});
-				break;
-
-			case 'exportLocalstore':
-				Action.openDir(paths => {
-					C.DebugExportLocalstore(paths[0], [], (message: any) => {
-						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[0]);
-						};
-					});
-				});
-				break;
-
-			case 'debugSpace':
-				C.DebugSpaceSummary((message: any) => {
-					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
-
-						Renderer.send('pathOpen', tmpPath);
-					};
-				});
-				break;
-
-			case 'debugTree':
-				C.DebugTree(rootId, logPath, (message: any) => {
-					if (!message.error.code) {
-						Renderer.send('pathOpen', logPath);
-					};
-				});
-				break;
-
-		};
-	};
-
 	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
+			status: UtilCommon.sprintf('Downloading update... %s/%s', UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
@@ -715,11 +646,11 @@ class App extends React.Component<object, State> {
 		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 		const value = String(obj.get(0).innerText || '');
 
-		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
+		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		menuStore.open('select', {
 			recalcRect: () => { 
-				const rect = Util.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 			},
 			onOpen: () => { menuStore.close('blockContext'); },
@@ -727,13 +658,13 @@ class App extends React.Component<object, State> {
 			data: {
 				options,
 				onSelect: (e: any, item: any) => {
-					raf(() => { 
-						focus.apply(); 
+					raf(() => {
+						focus.apply();
 
 						switch (item.id) {
 							default: {
 								blockStore.updateContent(rootId, focused, { text: value });
-								DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
 								break;
 							};
 

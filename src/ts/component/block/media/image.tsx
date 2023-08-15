@@ -34,7 +34,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		const { state, hash } = block.content;
 		
 		let element = null;
-		let css: any = {};
+		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
@@ -49,7 +49,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 						<InputWithFile 
 							block={block} 
 							icon="image" 
-							textFile="Upload a picture" 
+							textFile={translate('blockImageUpload')} 
 							accept={Constant.extension.image} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
@@ -67,7 +67,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 				element = (
 					<div id="wrap" className="wrap" style={css}>
 						<img 
-							className="media" 
+							className="mediaImage" 
 							src={commonStore.imageUrl(hash, Constant.size.image)} 
 							onDragStart={(e: any) => { e.preventDefault(); }} 
 							onClick={this.onClick} 

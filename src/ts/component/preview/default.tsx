@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ObjectName, ObjectDescription, IconObject, Loader } from 'Component';
 import { dbStore } from 'Store';
-import { translate, Util, ObjectUtil } from 'Lib';
+import { translate, UtilCommon, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -40,7 +40,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		if (object) {
 			const type = dbStore.getType(object.type);
 			if (type) {
-				typeObj = !type.isDeleted ? Util.shorten(type.name, 32) : <span className="textColor-red">{translate('commonDeletedType')}</span>;
+				typeObj = !type.isDeleted ? UtilCommon.shorten(type.name, 32) : <span className="textColor-red">{translate('commonDeletedType')}</span>;
 			};
 		};
 
@@ -66,21 +66,14 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 	};
 
 	componentDidUpdate (): void {
-		const { position } = this.props;
-
 		this.init();
-
-		if (position) {
-			position();
-		};
 	};
 
 	init () {
-		const { object } = this.props;
+		const { position } = this.props;
+		const object = this.props.object || this.state.object;
 
-		if (!object) {
-			this.load();
-		};
+		object ? position && position() : this.load();
 	};
 
 	componentWillUnmount(): void {
@@ -99,7 +92,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		ObjectUtil.getById(rootId, (object) => {
+		UtilObject.getById(rootId, (object) => {
 			if (!this._isMounted) {
 				return;
 			};

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, DataUtil, translate, Util } from 'Lib';
+import { I, UtilData, translate, UtilCommon } from 'Lib';
 
 const MENU_ID = 'threadStatus';
 
@@ -38,9 +38,9 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
-						<div className="side left">Last sync</div>
+						<div className="side left">{translate('menuThreadListLastSync')}</div>
 						<div className="side right">
-							{Util.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
+							{UtilCommon.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
 						</div>
 					</div>
 				</div>
@@ -55,13 +55,13 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				<div 
 					id="item-cafe" 
 					className="item" 
-					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
+					onMouseOver={() => this.onMouseEnter('cafe', true)}
 				>
 					<Icon className="cafe" />
 					<div className="info">
-						<div className="name">Backup node</div>
-						<div className={[ 'description', DataUtil.threadColor(status) ].join(' ')}>
-							{translate('syncStatus' + status)}
+						<div className="name">{translate('menuThreadListBackupNode')}</div>
+						<div className={[ 'description', UtilData.threadColor(status) ].join(' ')}>
+							{translate(`threadStatus${status}`)}
 						</div>
 					</div>
 				</div>
@@ -74,7 +74,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 
 	componentDidMount () {
 		const { getId } = this.props;
-		const obj = $('#' + getId());
+		const obj = $(`#${getId()}`);
 		
 		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
@@ -118,7 +118,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const node = $(this.node);
-		const item = node.find('#item-' + id);
+		const item = node.find(`#item-${id}`);
 
 		if (!item.length) {
 			return;
@@ -136,7 +136,6 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				menuStore.open(MENU_ID, {
 					menuKey: id,
 					element: `#${getId()} #item-${id}`,
-					horizontal: I.MenuDirection.Right,
 					offsetX: getSize().width,
 					fixedY: top,
 					classNameWrap: cnw.join(' '),

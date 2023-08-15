@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, MenuUtil } from 'Lib';
+import { I, keyboard, UtilMenu } from 'Lib';
 import { blockStore } from 'Store';
 
 class MenuBlockHAlign extends React.Component<I.Menu> {
@@ -17,16 +17,17 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = Number(data.value || I.BlockHAlign.Left);
 		const items = this.getItems();
+
 		return (
 			<div>
 				{items.map((action: any, i: number) => (
 					<MenuItemVertical 
 						key={i} 
 						{...action} 
-						onClick={(e: any) => { this.onClick(e, action); }} 
-						onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						onClick={e => this.onClick(e, action)} 
+						onMouseEnter={e => this.onOver(e, action)} 
 						checkbox={action.id == value}
 					/>
 				))}
@@ -41,7 +42,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -55,14 +56,14 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 		const blockIds = data.blockIds || [];
 		
 		let hasQuote = false;
-		for (let id of blockIds) {
-			let block = blockStore.getLeaf(rootId, id);
+		for (const id of blockIds) {
+			const block = blockStore.getLeaf(rootId, id);
 			if (block && block.isTextQuote()) {
 				hasQuote = true;
 			};
 		};
 
-		return MenuUtil.getAlign(hasQuote);
+		return UtilMenu.getAlign(hasQuote);
 	};
 	
 	onOver (e: any, item: any) {

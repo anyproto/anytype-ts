@@ -1,26 +1,24 @@
-import { I } from 'Lib';
+import { I, translate } from 'Lib';
 
 export default {
-    mainGraph: {
-        category: 'Onboarding',
+    mainGraph: () => ({
+        category: translate('onboardingMainGraph'),
         items: [
             {
                 description: `
-					<p>
-						<b>Welcome to your Anytype Space.</b> Space is essentially a graph, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.
-					</p>
-					<p>To access your Dashboard, click the icon in the center of your screen.</p>
+					<p>${translate('onboardingMainGraph11')}</p>
+					<p>${translate('onboardingMainGraph12')}</p>
 				`,
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
-                    { text: 'Next', action: 'dashboard' }
-                ]
+                    { text: translate('commonNext'), action: 'dashboard' },
+                ],
             }
         ],
 
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -30,58 +28,206 @@ export default {
 			passThrough: true,
             offsetY: -4,
         },
-    },
+    }),
 
-    dashboard: {
-        category: 'Onboarding',
+    mainSet: () => ({
+        category: translate('onboardingMainSet'),
+        items: [
+            {
+                description: `
+					<p>${translate('onboardingMainSet11')}</p>
+				`,
+                video: './img/help/onboarding/set-1-to-collection.mp4',
+            },
+            {
+                description: `
+					<p>${translate('onboardingMainSet21')}</p>
+				`,
+                video: './img/help/onboarding/set-2-new-object.mp4',
+            },
+            {
+                description: `
+					<p>${translate('onboardingMainSet31')}</p>
+					<p>${translate('onboardingMainSet32')}</p>
+				`,
+                buttonText: translate('onboardingMainSet3Button'),
+            }
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    }),
+
+    storeType: () => ({
+        category: translate('onboardingStoreType'),
+        items: [
+            {
+                description: `
+					<p>${translate('onboardingStoreType11')}</p>
+				`,
+                video: './img/help/onboarding/library-1-add-type.mp4',
+            },
+            {
+                description: `
+					<p>${translate('onboardingStoreType21')}</p>
+					<p>${translate('onboardingStoreType22')}</p>
+				`,
+                video: './img/help/onboarding/library-2-new-type.mp4',
+                buttonText: translate('commonOk'),
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    }),
+
+    storeRelation: () => ({
+        category: translate('onboardingStoreRelation'),
+        items: [
+            {
+                description: `
+					<p>${translate('onboardingStoreRelation11')}</p>
+				`,
+                video: './img/help/onboarding/library-3-relation.mp4',
+                buttonText: translate('onboardingStoreRelation1Button'),
+            },
+            {
+                description: `
+					<p>${translate('onboardingStoreRelation21')}</p>
+				`,
+				buttonText: translate('onboardingStoreRelation2Button'),
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    }),
+
+    objectCreationStart: () => ({
+        category: translate('onboardingObjectCreationStart'),
+        items: [
+            {
+                description: `
+					<p>${translate('onboardingObjectCreationStart11')}</p>
+				`,
+                video: './img/help/onboarding/object-1-default-object-type.mp4',
+            },
+            {
+                description: `
+					<p>${translate('onboardingObjectCreationStart21')}</p>
+				`,
+                video: './img/help/onboarding/object-2-type-menu.mp4',
+                buttonText: translate('onboardingObjectCreationStart2Button'),
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    }),
+
+    objectCreationFinish: () => ({
+        category: translate('onboardingObjectCreationFinish'),
+        items: [
+            {
+                description: `
+					<p>${translate('onboardingObjectCreationFinish11')}</p>
+				`,
+                video: './img/help/onboarding/object-layout.mp4',
+                buttonText: translate('onboardingObjectCreationFinish1Button'),
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    }),
+
+    dashboard: () => ({
+        category: translate('onboardingDashboard'),
         showConfetti: true,
         items: [
             {
                 description: `
-					<p>
-						<b>Welcome to your Dashboard.</b> This is your personalized page, which you can customize to your liking.<br />
-						We've included some materials to help you get started, but feel free to make adjustments as needed.
-					</p>
-					<p>Let's take a few minutes to explore the features together.</p>
+					<p>${translate('onboardingDashboard11')}</p>
+					<p>${translate('onboardingDashboard12')}</p>
 				`,
-                video: './img/help/onboarding/dashboard.mp4',
+                video: './img/help/onboarding/homepage.mp4',
             },
             {
                 description: `
-					<p>On the Dashboard page, you'll find <b>Sets, which act as filters for your objects</b> with various viewing options.</p>
-					<p>Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.</p>
-					<p>To access different Set views, simply select them.</p>
+					<p>${translate('onboardingDashboard21')}</p>
+					<p>${translate('onboardingDashboard22')}</p>
+					<p>${translate('onboardingDashboard23')}</p>
                 `,
                 video: './img/help/onboarding/sets.mp4',
             },
             {
                 description: `
-					<p><b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with relations and links.</p>
-					<p>To add an object to a set, click the <span class="highlight">New</span> button and view its relation as properties in columns.</p>
+					<p>${translate('onboardingDashboard31')}</p>
+					<p>${translate('onboardingDashboard32')}</p>
                 `,
                 video: './img/help/onboarding/objects.mp4',
             },
             {
                 description: `
-					<p><b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.</p>
-					<p>Change the widget appearance and see what looks best. Make your Favorites as a Tree Widget.</p>
+					<p>${translate('onboardingDashboard41')}</p>
+					<p>${translate('onboardingDashboard42')}</p>
                 `,
                 video: './img/help/onboarding/sidebar.mp4',
             },
             {
                 description: `
-					<p><b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.</p>
-					<p>If you have any questions, don't hesitate to press the <span class="highlight">?</span> button.</p>
-					<p>To continue working on your project where you left off, you can import your data and make it your own.</p>
+					<p>${translate('onboardingDashboard51')}</p>
+					<p>${translate('onboardingDashboard52')}</p>
+					<p>${translate('onboardingDashboard53')}</p>
                 `,
                 buttons: [
-                    { text: 'Import', action: 'import' }
+                    { text: translate('commonImport'), action: 'import' }
                 ]
             }
         ],
 
 		param: {
-			element: '#footer #button-help',
+			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
 			className: 'wizard',
 			vertical: I.MenuDirection.Top,
@@ -91,94 +237,116 @@ export default {
 			passThrough: true,
 			offsetY: -4,
 		},
-    },
+    }),
 
-    editor: {
-        category: 'Editor',
+    editor: () => ({
+        category: translate('onboardingEditor'),
         items: [
 			{
-                name: 'Connect your Objects',
-                description: `Use the <span class="highlight">@</span> key to reference other Objects as you're writing.`,
+                name: translate('onboardingEditor1Title'),
+				description: translate('onboardingEditor1Description'),
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
                 }
             },
             {
-                name: 'Did you know?',
-                description: `You can drag &amp; drop files from your computer into the editor window to create new blocks. Give it a try!`,
+				name: translate('onboardingEditor2Title'),
+				description: translate('onboardingEditor2Description'),
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
-                }
-            },
-            {
-                name: 'See your Graph grow',
-                description: 'Click above to see how your new Objects are linked',
-                param: {
-                    element: '#header .side.left .icon.graph',
-                    offsetY: 10,
-                    classNameWrap: 'fixed fromHeader',
                 }
             },
 			{
-                name: `Like what you're working on?`,
-                description: 'Save this format for future use by selecting Save as Template from the three-dots menu',
+				description: translate('onboardingEditor3Description'),
                 param: {
-                    element: '#header #button-header-more',
+                    element: '#header #button-header-relation',
                     offsetY: 10,
                     classNameWrap: 'fixed fromHeader',
 					horizontal: I.MenuDirection.Right,
                 }
             },
+            {
+				name: translate('onboardingEditor4Title'),
+				description: translate('onboardingEditor4Description'),
+                param: {
+                    element: '#navigationPanel #button-navigation-graph',
+                    offsetY: -10,
+                    classNameWrap: 'fixed fromHeader',
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
+                }
+            },
         ]
-    },
+    }),
 
-    typeDeleted: {
+    typeDeleted: () => ({
 		items: [
 			{
-				name: 'This Type has been deleted',
-				description: 'If you want to keep using this Object, change this Object Type.',
+				name: translate('onboardingTypeDeleted1Title'),
+				description: translate('onboardingTypeDeleted1Description'),
 				param: {
 					element: '#block-featuredRelations',
 					offsetY: 10,
 				}
 			},
 		],
-	},
+	}),
 
-	sourceDeleted: {
+	sourceDeleted: () => ({
 		items: [
 			{
-				name: 'Please check your Installed Types & Relations',
-				description: 'Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.',
+				name: translate('onboardingSourceDeleted1Title'),
+				description: translate('onboardingSourceDeleted1Description'),
 				param: {
 					element: '#block-featuredRelations',
 					offsetY: 10,
 				}
 			},
 		],
-	},
+	}),
 
-	inlineSet: {
+	inlineSet: () => ({
 		items: [
 			{
-				name: 'This is inline set',
-				description: 'Set query and name are synced with the source set you selected. You can change source by clicking on the set name.',
+				name: translate('onboardingInlineSet1Title'),
+				description: translate('onboardingInlineSet1Description'),
 				param: {
-					element: '#head-title-wrapper #value',
-					offsetY: 10,
+					element: '.dataviewHead #value',
+					offsetY: 32,
 				}
 			},
 			{
-				name: 'Views',
-				description: 'Views are not synced, but copied. You can tweak them to the needs of your current context. No worries, source set will not be affected.',
+				name: translate('onboardingInlineSet2Title'),
+				description: translate('onboardingInlineSet2Description'),
 				param: {
-					element: '.dataviewControls #sideLeft',
+					element: '#dataviewControls #sideLeft',
 					offsetY: 10,
 				}
 			},
 		],
-	},
+	}),
 
-}
+	inlineCollection: () => ({
+		items: [
+			{
+				name: translate('onboardingInlineCollection1Title'),
+				description: translate('onboardingInlineCollection1Description'),
+				param: {
+					element: '.dataviewHead #value',
+					offsetY: 36,
+				}
+			},
+			{
+				name: translate('onboardingInlineCollection2Title'),
+				description: translate('onboardingInlineCollection2Description'),
+				param: {
+					element: '#dataviewControls #sideLeft',
+					offsetY: 10,
+				}
+			},
+		],
+	}),
+
+};

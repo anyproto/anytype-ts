@@ -1,6 +1,4 @@
 import * as React from 'react';
-import $ from 'jquery';
-import raf from 'raf';
 
 interface Props {
 	className?: string;
@@ -9,8 +7,6 @@ interface Props {
 
 class Dimmer extends React.Component<Props> {
 	
-	_isMounted = false;
-	node: any = null;
 
 	render () {
 		const { className, onClick } = this.props;
@@ -20,32 +16,7 @@ class Dimmer extends React.Component<Props> {
 			cn.push(className);
 		};
 		
-		return (
-			<div 
-				ref={node => this.node = node}
-				id="dimmer" className={cn.join(' ')} 
-				onClick={onClick} 
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.animate();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	animate () {
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-			
-			$(this.node).addClass('show'); 
-		});
+		return <div id="dimmer" className={cn.join(' ')} onClick={onClick} />;
 	};
 	
 };

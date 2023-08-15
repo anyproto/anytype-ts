@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
-import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
+import { I, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 const OFFSET_Y = 8;
@@ -15,7 +15,7 @@ interface State {
 
 const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 
-	ref: any = null;
+	ref = null;
 	state = {
 		object: null,
 	};
@@ -45,7 +45,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewCopy')}</div>
 						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div>
-						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div> : ''}
+						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
 					</div>
 				);
 
@@ -57,7 +57,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
 						</div>
 					);
 				};
@@ -70,7 +70,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
 						</div>
 					);
 				};
@@ -90,7 +90,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				<div className="content">
 					{head}
 
-					<div className="cp" onClick={this.onClick}>
+					<div onClick={this.onClick}>
 						{content}
 					</div>
 				</div>
@@ -99,6 +99,10 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	onClick (e: React.MouseEvent) {
+		if (e.button) {
+			return;
+		};
+
 		const { preview } = commonStore;
 		const { type, target } = preview;
 		const { object } = this.state;
@@ -111,7 +115,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
-				ObjectUtil.openEvent(e, object);
+				UtilObject.openEvent(e, object);
 				break;
 			};
 		};
@@ -121,7 +125,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { preview } = commonStore;
 		const { target } = preview;
 		
-		Util.clipboardCopy({ text: target });
+		UtilCommon.clipboardCopy({ text: target });
 		Preview.previewHide(true);
 	};
 	
@@ -133,7 +137,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
 		const win = $(window);
-		const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
+		const rect = UtilCommon.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		menuStore.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
@@ -188,8 +192,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
@@ -258,6 +261,11 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		css.left = Math.min(ww - ow - BORDER, css.left);
 
 		obj.show().css(css);
+
+		if (!preview.noAnimation) {
+			obj.addClass('anim');
+		};
+
 		poly.css(pcss);
 		
 		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);

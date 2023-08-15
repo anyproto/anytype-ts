@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, Util, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -33,8 +33,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
-		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
-		const empty = canAdd ? 'Type to create a new option' : 'Type to search options';
+
+		let placeholder;
+		let empty;
+
+		if (canAdd) {
+			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
+			empty = translate('menuDataviewOptionListTypeToCreate');
+		}
+		else {
+			placeholder = translate('menuDataviewOptionListFilterOptions');
+			empty = translate('menuDataviewOptionListTypeToSearch');
+		};
 
 		if (!this.cache) {
 			return null;
@@ -46,7 +56,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
@@ -86,7 +96,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -101,11 +111,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -173,27 +183,24 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	rebind () {
-		const { getId } = this.props;
-
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		$(`#${this.props.getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
 	unbind () {
-		const { getId } = this.props;
-
 		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('ck');
+		$(`#${this.props.getId()}`).off('click');
 	};
 
 	onKeyDown (e: any) {
-		let item = this.getItems()[this.n];
+		const items = this.getItems();
+		
 		let ret = false;
 
-		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			this.onEdit(e, item);
+		keyboard.shortcut('arrowright', e, () => {
+			this.onEdit(e, items[this.n]);
 			ret = true;
 		});
 
@@ -236,7 +243,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		let value = Relation.getArrayValue(data.value);
 		value.push(id);
-		value = Util.arrayUnique(value);
+		value = UtilCommon.arrayUnique(value);
 
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
@@ -255,8 +262,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const colors = MenuUtil.getBgColors();
-		const option = { name: filter, color: colors[Util.rand(1, colors.length - 1)].value };
+		const colors = UtilMenu.getBgColors();
+		const option = { name: filter, color: colors[UtilCommon.rand(1, colors.length - 1)].value };
 
 		if (!option.name) {
 			return;
@@ -292,7 +299,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		if (!item) {
+		if (!item || (item.id == 'add')) {
 			return;
 		};
 
@@ -324,7 +331,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const value = Relation.getArrayValue(data.value);
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
-		let ret = [];
+		const ret = [];
 		let check = [];
 
 		if (filterMapper) {
@@ -332,13 +339,17 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (data.filter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
-				ret.unshift({ id: 'add', name: isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"` });
+				let addItemNameKey = 'menuDataviewOptionListCreateOption';
+				if (isStatus) {
+					addItemNameKey = 'menuDataviewOptionListSetStatus';
+				};
+				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
 			};
 		};
 

@@ -51,7 +51,7 @@ class UpdateManager {
 		autoUpdater.on('update-not-available', (info) => {
 			this.isUpdating = false;
 
-			Util.log('info', 'Update not available: ' +  JSON.stringify(info, null, 3));
+			Util.log('info', 'Update not available: ' + JSON.stringify(info, null, 3));
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 		
@@ -65,7 +65,7 @@ class UpdateManager {
 		autoUpdater.on('download-progress', (progress) => {
 			this.isUpdating = true;
 
-			let msg = [
+			const msg = [
 				`Download speed: ${progress.bytesPerSecond}`,
 				'-',
 				`Downloaded: ${progress.percent}%`,
@@ -81,11 +81,11 @@ class UpdateManager {
 
 			this.isUpdating = false;
 
-			Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
+			Util.log('info', 'Update downloaded: ' + JSON.stringify(info, null, 3));
 			Util.send(this.win, 'update-downloaded');
 
 			if (!this.autoUpdate) {
-				Api.exit(this.win, true);
+				Api.exit(this.win, '', true);
 			} else {
 				Util.send(this.win, 'update-confirm');
 			};

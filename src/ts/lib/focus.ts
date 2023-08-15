@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
-
 
 interface State {
 	focused: string;
@@ -34,12 +33,12 @@ class Focus {
 			},
 		};
 
-		this.backup = Util.objectCopy(this.state);
+		this.backup = UtilCommon.objectCopy(this.state);
 		return this;
 	};
 
 	restore () {
-		this.state = Util.objectCopy(this.backup);
+		this.state = UtilCommon.objectCopy(this.backup);
 	};
 
 	clear (withRange: boolean) {
@@ -97,23 +96,24 @@ class Focus {
 			return;
 		};
 
-		const node = $('.focusable.c' + id);
+		const node = $(`.focusable.c${id}`);
 		if (!node.length) {
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
-		const h = container.height();
+		const container = UtilCommon.getScrollContainer(isPopup);
+		const ch = container.height();
 		const no = node.offset().top;
-		const o = Constant.size.lastBlock + Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
+		const o = Constant.size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 
-		if ((y >= st) && (y <= st + h - o)) {
+		if ((y >= st) && (y <= st + ch - o)) {
 			return;
 		};
 
-		container.scrollTop(Math.max(y, h - o) - h + o);
+		container.scrollTop(Math.max(y, ch - o) - ch + o);
 	};
 
 };

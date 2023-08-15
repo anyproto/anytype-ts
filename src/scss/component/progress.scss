@@ -22,7 +22,7 @@
 		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: $colorBlack; transition: width 0.2s linear; }
 	}
 	
-	.icon.close { width: 20px; height: 20px; position: absolute; top: 14px; right: 14px; cursor: pointer; background-image: url('~img/icon/progress/close0.svg'); }
+	.icon.close { width: 20px; height: 20px; position: absolute; top: 14px; right: 14px; background-image: url('~img/icon/progress/close0.svg'); }
 	.icon.close:hover { background-image: url('~img/icon/progress/close1.svg'); }
 }
 

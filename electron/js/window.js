@@ -27,8 +27,7 @@ class WindowManager {
 		const { languages, zoom } = ConfigManager.config;
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor(),
-			icon: path.join(Util.imagePath(), 'icon.png'),
+			backgroundColor: Util.getBgColor('dark'),
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {},
@@ -94,12 +93,10 @@ class WindowManager {
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
 			param.trafficLightPosition = { x: 20, y: 18 };
-		};
-
+		} else
 		if (is.windows) {
-			param.icon = path.join(Util.imagePath(), 'icon64x64.png');
-		};
-
+			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
+		} else
 		if (is.linux) {
 			param.icon = image;
 		};
@@ -114,7 +111,7 @@ class WindowManager {
 			});
 		} else {
 			const primaryDisplay = screen.getPrimaryDisplay();
-	  		const { width, height } = primaryDisplay.workAreaSize;
+			const { width, height } = primaryDisplay.workAreaSize;
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
 		};
@@ -133,6 +130,10 @@ class WindowManager {
 		} else {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
+
+		win.on('enter-full-screen', () => MenuManager.initMenu());
+		win.on('leave-full-screen', () => MenuManager.initMenu());
+
 		return win;
 	};
 
@@ -141,18 +142,21 @@ class WindowManager {
 			width: 400, 
 			height: 400, 
 			useContentSize: true,
+			backgroundColor: Util.getBgColor(Util.getTheme()),
 		});
 
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
+		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
 		win.setMenu(null);
 
 		win.webContents.on('will-navigate', (e, url) => {
 			e.preventDefault();
+			// eslint-disable-next-line no-undef
 			shell.openExternal(url);
 		});
 
 		win.webContents.on('new-window', (e, url) => {
 			e.preventDefault();
+			// eslint-disable-next-line no-undef
 			shell.openExternal(url);
 		});
 
@@ -190,7 +194,7 @@ class WindowManager {
 				}).then((result) => {
 					const fp = result.filePath;
 					if (!fp) {
-						Util.send(win, 'command', 'saveAsHTMLSuccess');
+						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};
@@ -208,7 +212,7 @@ class WindowManager {
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
-		let currentWindow = BrowserWindow.getFocusedWindow();
+		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
 			const [xPos, yPos] = currentWindow.getPosition();

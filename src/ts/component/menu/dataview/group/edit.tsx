@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Dataview, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, Dataview, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
@@ -74,7 +74,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -82,12 +82,12 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	};
 
 	getSections () {
-		const colors = MenuUtil.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ 
 				children: [ 
-					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Show column' : 'Hide column') } 
+					{ id: 'hide', icon: 'hide', name: translate(this.isHidden ? 'menuDataviewGroupEditShowColumn' : 'menuDataviewGroupEditHideColumn') }
 				]
 			},
 			{ children: colors },
@@ -98,7 +98,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		

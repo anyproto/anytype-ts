@@ -18,29 +18,21 @@
 
 	"limit": {
 		"menuRecords": 100,
-		"widgets": 20,
-		"widgetRecords": {
-			"tree": 20,
-			"list": 10,
-			"compact": 20
-		}
+		"widgets": 20
 	},
 
 	"default": {
-		"lang": "en",
+		"interfaceLang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
 		"pinTime": 600
 	},
 	
-	"langs": [
-		{ "id": "en", "name": "English" }
-	],
-	
 	"delay": {
 		"menu": 160,
 		"popup": 310,
-		"toast": 2500
+		"toast": 2500,
+		"route": 250
 	},
 	
 	"extension": {
@@ -69,18 +61,19 @@
 		"featuredType":	 [ "searchObject", "typeSuggest" ],
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
-		"widget":		 [ "searchObject", "select" ]
+		"widget":		 [ "searchObject", "select" ],
+		"dataviewTemplate": [ "previewObject" ]
 	},
 
 	"popupPinIds": [ "search" ],
 
 	"defaultRelationKeys": [ 
 		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
-		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId"
 	],
 
 	"sidebarRelationKeys": [
-		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
 	],
 
@@ -91,8 +84,10 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "defaultTemplateId" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+
+	"pageCoverRelationKey": "pageCover",
 
 	"subId": {
 		"index": "index",
@@ -106,7 +101,8 @@
 		"archive": "archive",
 		"sidebar": "sidebar",
 		"graph": "graph",
-		"space": "space"
+		"space": "space",
+		"files": "files"
 	},
 
 	"typeId": {
@@ -137,6 +133,10 @@
 
 	"storeSpaceId": "_anytype_marketplace",
 
+	"templateId": {
+		"blank": "blank"
+	},
+
 	"blockId": {
 		"title": "title",
 		"description": "description",
@@ -148,7 +148,8 @@
 
 	"widgetId": {
 		"favorite": "favorite",
-		"recent": "recent",
+		"recentEdit": "recent",
+		"recentOpen": "recentOpen",
 		"set": "set",
 		"collection": "collection"
 	},
@@ -164,7 +165,7 @@
 
 		"sidebar": {
 			"height": { "min": 400 },
-			"width": { "min": 240, "max": 500, "default": 336 }
+			"width": { "min": 240, "max": 500, "default": 336, "close": 180 }
 		},
 
 		"table": {
@@ -175,12 +176,15 @@
 
 		"dataview": {
 			"gallery": {
-				"card": 224,
-				"margin": 16
+				"width": 224,
+				"height": 72,
+				"margin": 16,
+				"padding": 16
 			},
 
 			"board": {
-				"card": 240
+				"card": 262,
+				"margin": 8
 			},
 
 			"cell": {
@@ -315,6 +319,24 @@
 		"xml":			 "XML",
 		"yaml":			 "YAML"
 	},
+
+	"enabledInterfaceLang": [
+		"da-DK",
+		"de-DE",
+		"en-US",
+		"es-ES",
+		"fr-FR",
+		"hi-IN",
+		"id-ID",
+		"it-IT",
+		"nl-NL",
+		"no-NO",
+		"ro-RO",
+		"ru-RU",
+		"uk-UA",
+		"zh-CN",
+		"zh-TW"
+	],
 
 	"spellingLang": {
 		"af": "Afrikaans", 

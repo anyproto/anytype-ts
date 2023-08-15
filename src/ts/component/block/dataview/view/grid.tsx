@@ -4,24 +4,20 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
-import { I, C, Util, translate, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {
-	getWrapperWidth?(): number;
-};
-
 const PADDING = 46;
 
-const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
+const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	ox = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.ViewComponent) {
 		super (props);
 
 		this.cellPosition = this.cellPosition.bind(this);
@@ -74,37 +70,35 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					rowCount={total}
 					threshold={10}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 							{({ height, isScrolling, registerChild, scrollTop }) => (
 								<AutoSizer disableHeight={true}>
-									{({ width }) => {
-										return (
-											<div ref={registerChild}>
-												<List
-													autoHeight={true}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													isScrolling={isScrolling}
-													rowCount={length}
-													rowHeight={this.getRowHeight()}
-													onRowsRendered={onRowsRendered}
-													rowRenderer={({ key, index, style }) => (
-														<BodyRow 
-															key={'grid-row-' + view.id + index} 
-															{...this.props} 
-															readonly={!isAllowedObject}
-															recordId={records[index]}
-															style={{ ...style, top: style.top + 2 }}
-															cellPosition={this.cellPosition}
-															getColumnWidths={this.getColumnWidths}
-														/>
-													)}
-													scrollTop={scrollTop}
-												/>
-											</div>
-										);
-									}}
+									{({ width }) => (
+										<div ref={registerChild}>
+											<List
+												autoHeight={true}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
+												isScrolling={isScrolling}
+												rowCount={length}
+												rowHeight={this.getRowHeight()}
+												onRowsRendered={onRowsRendered}
+												rowRenderer={({ key, index, style }) => (
+													<BodyRow 
+														key={'grid-row-' + view.id + index} 
+														{...this.props} 
+														readonly={!isAllowedObject}
+														recordId={records[index]}
+														style={{ ...style, top: style.top + 2 }}
+														cellPosition={this.cellPosition}
+														getColumnWidths={this.getColumnWidths}
+													/>
+												)}
+												scrollTop={scrollTop}
+											/>
+										</div>
+									)}
 								</AutoSizer>
 							)}
 						</WindowScroller>
@@ -159,13 +153,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-
 		this.rebind();
 		this.resize();
 		this.onScroll();
 
-		win.trigger('resize.editor');
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -189,8 +181,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const win = $(window);
 		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
-		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+		for (const menu of menus) {
+			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 
 		this.resizeColumns('', 0);
@@ -204,7 +196,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
@@ -217,9 +209,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = (cw - ww) / 2;
+					const offset = 8;
 
-					scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-					wrap.css({ width: vw + margin, paddingRight: margin - 8 });
+					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
+					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
 					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
@@ -257,7 +250,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
-		node.find('.row > .selectable').css({ gridTemplateColumns: str });
+		node.find('.row .selectable').css({ gridTemplateColumns: str });
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {
@@ -292,7 +285,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const x = cell.position().left;
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
-		const container = $(Util.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const container = $(UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page'));
 		const ww = container.width();
 
 		content.css({ left: 0, right: 'auto' });
@@ -400,10 +393,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		let { rootId, block, loadData, getView, getLimit } = this.props;
-		let subId = dbStore.getSubId(rootId, block.id);
+		const { rootId, block, loadData, getView, getLimit } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
-		let view = getView();
+		const view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();

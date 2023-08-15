@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
+import Constant from 'json/constant.json';
 import Colors from 'json/colors.json';
 
 interface Props {
@@ -23,11 +24,11 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
-	getObject?(): any;
 	forceLetter?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -35,15 +36,6 @@ interface Props {
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
-
-const IDS40 = [ 
-	I.ObjectLayout.Page, 
-	I.ObjectLayout.Set, 
-	I.ObjectLayout.Collection,
-	I.ObjectLayout.File, 
-	I.ObjectLayout.Image, 
-	I.ObjectLayout.Type,
-];
 
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
@@ -55,19 +47,22 @@ const LAYOUT_EMOJI = [
 
 const IconSize = {
 	16: 16,
-	18: 18,
+	18: 16,
 	20: 18,
 	22: 18,
 	24: 20,
 	26: 22,
 	28: 22,
 	32: 28,
+	36: 24,
 	40: 24,
+	44: 24,
 	48: 24,
 	56: 32,
 	64: 32,
-	80: 64,
-	96: 64,
+	80: 56,
+	96: 56,
+	108: 64,
 	112: 64,
 	128: 64,
 };
@@ -79,13 +74,16 @@ const FontSize = {
 	22: 14,
 	24: 14,
 	26: 16,
-	32: 18,	
+	32: 18,
+	36: 24,
 	40: 24,
+	44: 24,
 	48: 28,
 	56: 34,
 	64: 44,
 	80: 48,
 	96: 66,
+	108: 66,
 	112: 66,
 	128: 72,
 };
@@ -129,7 +127,6 @@ Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg').
 Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg').default;
 Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg').default;
 
-const Home = require('img/icon/home.svg').default;
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg').default;
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
@@ -186,9 +183,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
-		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
+		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
-		
+
 		if (className) {
 			cn.push(className);
 		};
@@ -198,31 +195,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		let icon = null;
 		let icn = [];
-		let onLetter = () => {
+		const onLetter = () => {
 			cn.push('withLetter');
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
-		};
-
-		let onOption = () => {
-			const option: any = Colors.gradientIcons.options[iconOption - 1];
-			const { colors } = option;
-
-			let steps = Colors.gradientIcons.common.steps;
-			if (option.steps) {
-				steps = option.steps;
-			};
-
-			const style = {
-				'--color-from': colors.from,
-				'--color-to': colors.to,
-				'--step-from': steps.from,
-				'--step-to': steps.to
-			} as React.CSSProperties;
-
-			cn.push(`withImage withOption`);
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <div className="optionGradient" style={style} />;
 		};
 
 		switch (layout) {
@@ -236,7 +212,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
 				if (iconOption) {
-					onOption();
+					cn.push('withOption withImage');
+
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userGradientSvg(0.35)} className={icn.join(' ')} />;
 				} else
 				if (forceLetter) {
 					onLetter();
@@ -251,7 +230,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else 
 				if (iconOption) {
-					onOption();
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userGradientSvg(0.5)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
@@ -261,10 +241,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Task: {
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
+				icon = <img id="checkbox" src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 			};
 
+			case I.ObjectLayout.Dashboard:
 			case I.ObjectLayout.Note: {
 				break;
 			};
@@ -309,7 +290,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -324,15 +305,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				break;
 			};
 
-			case I.ObjectLayout.Dashboard: {
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={Home} className={icn.join(' ')} />;
-				break;
-			};
 		};
 
 		if (isDeleted) {
@@ -412,7 +388,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetX,
 			offsetY,
 			data: {
-				noUpload: noUpload,
+				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {
@@ -443,9 +419,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
 			s = 16;
-		};
-		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
-			s = 40;
 		};
 		if ((size == 48) && (layout == I.ObjectLayout.Relation)) {
 			s = 28;
@@ -505,7 +478,38 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
+		const svg = `
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+				${circle}
+				${text}
+			</svg>
+		`;
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+	};
+
+	userGradientSvg (radius: number): string {
+		const object = this.getObject();
+		const iconSize = this.iconSize();
+		const option = Colors.gradientIcons.options[object.iconOption - 1] as any;
+		const steps = option.steps || Colors.gradientIcons.common.steps;
+
+		const gradient = `
+			<defs>
+				<radialGradient id="gradient">
+					<stop offset="${steps.from}" stop-color="${option.colors.from}" />
+					<stop offset="${steps.to}" stop-color="${option.colors.to}" />
+				</radialGradient>
+			</defs>
+		`;
+
+		const circle = `<circle cx="50%" cy="50%" r="${radius * 100}%" fill="url(#gradient)" />`;
+		const svg = `
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+				${gradient}
+				${circle}
+			</svg>
+		`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
@@ -525,9 +529,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || ObjectUtil.defaultName('Page'));
-		name = SmileUtil.strip(name);
-		name = name.trim().substr(0, 1).toUpperCase();
+		let name = String(object.name || UtilObject.defaultName('Page'));
+		name = UtilSmile.strip(name);
+		name = name.trim().substring(0, 1).toUpperCase();
 
 		return name;
 	};

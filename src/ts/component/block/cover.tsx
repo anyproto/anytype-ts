@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, focus, translate, keyboard, Action } from 'Lib';
+import { Icon, Drag, Cover, Loader, Label } from 'Component';
+import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import ControlButtons  from 'Component/page/head/controlButtons';
+import ControlButtons from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -38,7 +38,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onCoverSelect = this.onCoverSelect.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
@@ -64,7 +63,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
-		const isImage = DataUtil.coverIsImage(coverType);
+		const isImage = UtilData.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
@@ -80,9 +79,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		if (coverType == I.CoverType.Source) {
 			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
-				<div className="author">
-					Photo by <a href={image.mediaArtistURL + Url.unsplash.utm}>{image.mediaArtistName}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
-				</div>
+				<Label className="author" text={UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)} />
 			);
 		};
 
@@ -104,7 +101,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					
 					<div className="dragWrap">
 						<Drag 
-							ref={ref => { this.refDrag = ref; }} 
+							ref={ref => this.refDrag = ref} 
 							onStart={this.onScaleStart} 
 							onMove={this.onScaleMove} 
 							onEnd={this.onScaleEnd} 
@@ -128,7 +125,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					onCoverClose={this.onCoverClose}
 					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
-					onRelation={this.onRelation}
 					onEdit={this.onEdit}
 					onUploadStart={this.onUploadStart}
 					onUpload={this.onUpload}
@@ -163,14 +159,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 
-		Util.renderLinks($(this.node));
-		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
+		UtilCommon.renderLinks($(this.node));
+		$(window).off('resize.cover').on('resize.cover', () => this.resize());
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 	
 	componentWillUnmount () {
@@ -195,6 +191,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -204,12 +201,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			data: {
 				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
-					ObjectUtil.setIcon(rootId, icon, '', () => {
+					UtilObject.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					ObjectUtil.setIcon(rootId, '', hash, () => {
+					UtilObject.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -223,7 +220,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		Action.openFile(Constant.extension.cover, paths => {
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
-					ObjectUtil.setIcon(rootId, '', message.hash);
+					UtilObject.setIcon(rootId, '', message.hash);
 				};
 			});
 		});
@@ -237,6 +234,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -251,47 +249,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		});
 	};
 
-	onRelation () {
-		const { isPopup, rootId, readonly } = this.props;
-		const node = $(this.node);
-		const elements = node.find('#elements');
-		const container = Util.getScrollContainer(isPopup);
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		const param: any = {
-			recalcRect: () => {
-				const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
-				if (isPopup) {
-					const offset = container.offset();
-					rect.x += offset.left;
-					rect.y += offset.top;
-				};
-				return rect;
-			},
-			noFlipX: true,
-			noFlipY: true,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
-			data: {
-				rootId,
-				isPopup,
-				readonly,
-			},
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
-	};
-	
 	onCoverOpen () {
 		if (!this._isMounted) {
 			return;
@@ -316,7 +273,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		this.loaded = false;
-		ObjectUtil.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
@@ -352,7 +309,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		ObjectUtil.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});
@@ -365,7 +322,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
-		ObjectUtil.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
 		});
 	};
@@ -386,7 +343,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
-		const isImage = DataUtil.coverIsImage(coverType);
+		const isImage = UtilData.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
@@ -563,18 +520,18 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			};
 			
 			this.loaded = false;
-			ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
+			UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 	
 	setTransform (x: number, y: number) {
-		let mx = this.rect.cw - this.rect.width;
-		let my = this.rect.ch - this.rect.height;
+		const mx = this.rect.cw - this.rect.width;
+		const my = this.rect.ch - this.rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 
-		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
+		const css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
 		
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';

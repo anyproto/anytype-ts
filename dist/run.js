@@ -1,4 +1,5 @@
-var s = document.createElement('script');
+const s = document.createElement('script');
+
 s.src = './main.js?' + Math.random();
 s.type = 'text/javascript';
 

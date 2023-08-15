@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -38,7 +38,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
+						const icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + (action.value || 'default'));
@@ -75,8 +75,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				ref={node => this.node = node}
 			>
 				<Filter 
-					ref={ref => { this.refFilter = ref; }} 
-					placeholderFocus="Filter actions..." 
+					ref={ref => this.refFilter = ref} 
+					placeholderFocus={translate('menuBlockActionsFilterActions')}
 					value={filter}
 					onFocus={this.onFilterFocus} 
 					onChange={this.onFilterChange} 
@@ -134,8 +134,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -145,7 +145,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	onKeyDown (e: any) {
 		const { onKeyDown, param } = this.props;
 		const { data } = param;
-		const { rootId, blockIds, blockRemove } = data;
+		const { rootId, blockIds, blockRemove, onCopy } = data;
 		const { filter } = this.state;
 		const { focused } = focus.state;
 		const cmd = keyboard.cmdKey();
@@ -153,18 +153,22 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let ret = false;
 
 		if (!filter && blockRemove) {
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			keyboard.shortcut('backspace, delete', e, () => {
 				blockRemove();
 				ret = true;
 			});
 		};
 
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+			onCopy(e, pressed.match('x') ? true : false);
+		});
+
 		if (focused || (!focused && keyboard.isFocused)) {
-			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+d`, e, () => {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});
-				this.refFilter.blur();
+				this.refFilter?.blur();
 				ret = true;
 			});
 		};
@@ -191,16 +195,16 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: MenuUtil.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', children: MenuUtil.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: MenuUtil.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: MenuUtil.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: MenuUtil.getTurnFile() };
-			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
-			const align = { id: 'align', icon: '', name: 'Align', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
-			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions(rootId, blockId) };
+			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
+			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: [] };
+			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: [] };
+			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
+			const dataview = { id: 'dataview', icon: '', name: translate('menuBlockActionsSectionsDataview'), children: UtilMenu.getDataviewActions(rootId, blockId) };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -218,7 +222,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasBookmark = true;
 			let hasDataview = true;
 
-			for (let id of blockIds) {
+			for (const id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
 				if (!block) {
 					continue;
@@ -258,18 +262,18 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasAlign) {
 				sections.push({ 
 					...align, 
-					children: MenuUtil.getAlign(hasQuote),
+					children: UtilMenu.getAlign(hasQuote),
 				});
 			};
 
 			if (hasAction) {
 				sections.push({ 
 					...action, 
-					children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark }),
+					children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasBookmark }),
 				});
 			};
 
-			sections = MenuUtil.sectionsFilter(sections, filter);
+			sections = UtilMenu.sectionsFilter(sections, filter);
 		} else {
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -284,7 +288,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasColor = true;
 			let hasBg = true;
 
-			for (let id of blockIds) {
+			for (const id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
 				if (!block) {
 					continue;
@@ -314,25 +318,25 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			const section1: any = { 
-				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
+				children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
 
 			const section2: any = { 
 				children: [
-					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+					// { id: 'comment', icon: 'comment', name: translate('commonComment') },
 				]
 			};
 
 			if (hasDataview) {
-				section2.children = section2.children.concat(MenuUtil.getDataviewActions(rootId, blockId));
+				section2.children = section2.children.concat(UtilMenu.getDataviewActions(rootId, blockId));
 			};
 
 			if (hasLink) {
-				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: 'Preview', arrow: true });
+				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: translate('commonPreview'), arrow: true });
 			};
 
 			if (hasFile) {
-				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isFile: true },);
 			};
 
 			if (hasTitle) {
@@ -340,29 +344,29 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnText) {
-				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: translate('commonAlign'), arrow: true });
 			};
 
 			if (hasColor) {
-				section2.children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
+				section2.children.push({ id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {
-				section2.children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+				section2.children.push({ id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') });
 			};
 
 			sections = [ section1, section2 ];
 		};
 
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 
 	checkFlagByObject (id: string): boolean {
@@ -373,7 +377,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let flag = false;
 		if (id) {
 			const object = detailStore.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
-			if (!object.isArchived && !object.isDeleted) {
+			if (!object.isDeleted) {
 				flag = true;
 			};
 		};
@@ -384,7 +388,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -411,8 +415,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const { content, align } = block;
-		const { color, bgColor } = content;
+		const { content, hAlign, bgColor } = block;
+		const { color } = content;
 
 		setActive(item, false);
 
@@ -428,7 +432,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let ids: string[] = [];
 		let filters = [];
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
@@ -458,7 +462,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 								this.setFocus(blockIds[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
-									blockIds.forEach(id => blockStore.toggle(rootId, id, true))
+									blockIds.forEach(id => blockStore.toggle(rootId, id, true));
 								};
 							});
 						};
@@ -486,7 +490,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -499,7 +503,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			case 'move': {
 				menuId = 'searchObject';
 
-				let skipIds = [ rootId ];
+				const skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
 					const block = blockStore.getLeaf(rootId, id);
 					if (block && block.isLink() && block.content.targetBlockId) {
@@ -512,8 +516,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					canAdd: true,
 					onSelect: () => { close(); }
@@ -538,7 +542,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = DataUtil.selectionGet(blockId, false, false, this.props);
+				ids = UtilData.selectionGet(blockId, false, false, this.props);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -562,7 +566,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.vertical = I.MenuDirection.Center;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: align,
+					value: hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
@@ -589,21 +593,22 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
+				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
 
-				let addParam: any = {};
+				const addParam: any = {
+					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
+				};
 				if (isCollection) {
-					addParam.name = 'Create new collection';
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => { onCreate(); });
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => onCreate());
 					};
 
 					filters = filters.concat([
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
 					]);
 				} else {
-					addParam.name = 'Create new set';
 					addParam.onClick = () => {
-						C.ObjectCreateSet([], {}, '', () => { onCreate(); });
+						C.ObjectCreateSet([], {}, '', () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -653,7 +658,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = DataUtil.selectionGet(blockId, false, false, data);
+		const ids = UtilData.selectionGet(blockId, false, false, data);
 
 		switch (item.itemId) {
 			case 'download': {
@@ -662,27 +667,27 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openBookmarkAsObject': {
-				ObjectUtil.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+				UtilObject.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 
 				analytics.event('OpenAsObject', { type: block.type });
 				break;
 			};
 
 			case 'openFileAsObject': {
-				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
 			};
 
 			case 'openDataviewFullscreen': {
-				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
+				UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				analytics.event('InlineSetOpenFullscreen');
 				break;
 			};
 
 			case 'openDataviewObject': {
-				ObjectUtil.openPopup(detailStore.get(rootId, block.content.targetObjectId));
+				UtilObject.openPopup(detailStore.get(rootId, block.content.targetObjectId));
 				break;
 			};
 					

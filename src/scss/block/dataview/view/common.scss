@@ -7,7 +7,7 @@
 		.viewContent.viewList {
 			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
-				.btn { display: inline-block; cursor: pointer; transition: $transitionAllCommon; }
+				.btn { display: inline-block; transition: $transitionAllCommon; }
 				.btn:hover { color: $colorBlack; }
 				.btn:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
@@ -22,20 +22,21 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent { margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: $colorBlack; }
 				.cellContent {
-					.more { margin-top: 0px; vertical-align: top; }
+					.more { margin-top: 1px; vertical-align: top; height: 18px; }
 				}
 
 				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; }
+					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
 					.name {
 						line-height: 20px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
-						vertical-align: top; white-space: normal; overflow: hidden; @include clamp3;
+						vertical-align: top; white-space: normal; overflow: hidden; @include clamp2;
 					}
 				}
 

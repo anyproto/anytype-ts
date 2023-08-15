@@ -5,6 +5,10 @@
 		@include text-paragraph; word-break: break-word; display: flex; flex-direction: row; flex: auto; 
 		position: relative; margin: 0px 0px 2px 0px; align-items: stretch;
 	}
+	.block.isHidden {
+		.wrapMenu, .wrapContent { display: none; }
+	}
+
 	.block {
 		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
@@ -41,7 +45,7 @@
 		.focusable { border-radius: inherit; }
 		
 		.emptyToggle { 
-			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2; cursor: pointer;
+			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2;
 			@include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }
@@ -49,9 +53,37 @@
 
 	.block.index0 { padding-top: 0px !important; }
 
-	.block > .wrapContent > .selectable { position: relative; }
-	.block:not(.blockLayout.layoutDiv) > .wrapContent > .children > .block.first { padding-top: 0px; }
-	.block > .wrapContent > .children > .block.last { margin: 0px; }
+	.block {
+		> .wrapContent {
+			> .selectable { position: relative; }
+		}
+	}
+
+	.block:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
+		> .wrapContent {
+			> .children {
+				> .block.first { padding-top: 0px; }
+				> .block.first {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.last { padding-bottom: 0px; }
+				> .block.last {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.first.last {
+					.colResize {
+						.inner { top: 0px; height: 100%; }
+					}
+				}
+			}
+		}
+	}
 
 	.block.isReadonly {
 		.colResize { display: none; }
@@ -75,6 +107,7 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
+	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }

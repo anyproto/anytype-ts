@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, ObjectUtil } from 'Lib';
+import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -16,45 +16,58 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	render () {
 		const { config } = commonStore;
 		const type = dbStore.getType(commonStore.type);
-		const languages = this.getLanguages();
+		const interfaceLanguages = this.getInterfaceLanguages();
+		const spellingLanguages = this.getSpellinngLanguages();
 
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
-				<div className="rows">
-					<div className="row">
-						<div className="side left">
-							<Label text="Default object type" />
-						</div>
-						<div className="side right">
-							<div id="defaultType" className="select" onClick={this.onType}>
-								<div className="item">
-									<div className="name">{type?.name || 'Select'}</div>
-								</div>
-								<Icon className="arrow light" />
+				<div className="actionItems">
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalDefaultObjectType')} />
+
+						<div id="defaultType" className="select" onClick={this.onType}>
+							<div className="item">
+								<div className="name">{type?.name || translate('popupSettingsPersonalDefaultObjectTypeSelect')}</div>
 							</div>
+							<Icon className="arrow black" />
 						</div>
 					</div>
 
-					<div className="row">
-						<div className="side left">
-							<Label text="Spellcheck languages" />
-						</div>
-						<div className="side right">
-							<Select 
-								id="spellcheck" 
-								value={config.languages} 
-								options={languages} 
-								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
-								arrowClassName="light"
-								isMultiple={true}
-								noFilter={false}
-								menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
-							/>
-						</div>
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalSpellcheckLanguage')} />
+
+						<Select
+							id="spellcheck"
+							value={config.languages}
+							options={spellingLanguages}
+							onChange={v => Renderer.send('setLanguage', v)}
+							arrowClassName="black"
+							isMultiple={true}
+							noFilter={false}
+							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
+
+						<Select
+							id="interfaceLang"
+							value={config.interfaceLang || Constant.default.interfaceLang}
+							options={interfaceLanguages}
+							onChange={v => Renderer.send('changeInterfaceLang', v)}
+							arrowClassName="black"
+							menuParam={{ 
+								horizontal: I.MenuDirection.Right, 
+								width: 300,
+								className: 'fixed',
+							}}
+						/>
 					</div>
 				</div>
+
 			</React.Fragment>
 		);
 	};
@@ -68,7 +81,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onTypeChange(item.id);
@@ -83,14 +96,25 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
-	getLanguages () {
-		let languages: any[] = [];
+	getInterfaceLanguages () {
+		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
 
-		languages = languages.concat(commonStore.languages || []);
-		languages = languages.map(id => ({ id, name: Constant.spellingLang[id] }));
-		languages.unshift({ id: '', name: 'Disabled' });
+		for (const id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] });
+		};
 
-		return languages;
+		return ret;
+	};
+
+	getSpellinngLanguages () {
+		let ret: any[] = [];
+
+		ret = ret.concat(commonStore.languages || []);
+		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret.unshift({ id: '', name: translate('commonDisabled') });
+
+		return ret;
 	};
 
 });

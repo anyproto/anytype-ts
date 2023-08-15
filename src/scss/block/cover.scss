@@ -6,7 +6,7 @@
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
 	
 	.loaderWrapper { 
-		position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 10; 
+		position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; 
 		border-radius: 0px !important; display: none; pointer-events: none;
 	}
 	.loaderWrapper {
@@ -38,6 +38,13 @@
 
 	.elements {
 		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
+		.controlButtons.small {
+			.btn { padding: 0px 6px; }
+			.btn {
+				.icon { margin: 0px; }
+				.txt { display: none; }
+			}
+		}
 		
 		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {

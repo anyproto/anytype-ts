@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, Util, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
@@ -72,8 +72,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						icon={item.icon}
 						className={cn.join(' ')} 
 						checkbox={this.isActive(item)} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={e => this.onClick(e, item)} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={param.style}
 					/>
 				);
@@ -96,7 +96,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			<React.Fragment>
 				{withFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						value={filter}
 						placeholder={placeholder}
 						onChange={this.onFilterChange}
@@ -105,7 +105,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				) : ''}
 				
 				{!items.length ? (
-					<div className="item empty">No options found</div>
+					<div className="item empty">{translate('menuSelectEmpty')}</div>
 				) : ''}
 
 				<div className="items">
@@ -114,11 +114,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -175,12 +175,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const { filter } = data;
 		const withFilter = this.isWithFilter();
+		const items = this.getItems(true);
 
 		if (withFilter && (this.filter != filter)) {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
 		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_ITEM,
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);
@@ -194,12 +201,13 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 	};
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -237,7 +245,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let items: any[] = [];
 
 		if (sections && sections.length) {
-			for (let section of sections) {
+			for (const section of sections) {
 				if (withSections) {
 					items.push({ id: section.id, name: section.name, isSection: true });
 				};
@@ -248,7 +256,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (data.filter && !preventFilter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
 		};

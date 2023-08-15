@@ -1,19 +1,14 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
 	loading: boolean;
-};
-
-enum Tab {
-	Type = 'type',
-	Relation = 'relation',
 };
 
 enum View {
@@ -22,9 +17,10 @@ enum View {
 };
 
 const cmd = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + Alt + T` },
+	{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+	{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -40,11 +36,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
-	tab: Tab = Tab.Type;
+	tab: I.StoreTab = I.StoreTab.Type;
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
+	filter: string = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -64,10 +61,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
+		const length = items.length;
 
 		let title = '';
 		let placeholder = '';
@@ -78,23 +77,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let iconSize = 0;
 
 		switch (this.tab) {
-			case Tab.Type:
-				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
-				placeholder = 'Search or create a new type...';
-				textService = 'Service type';
-				textInstalled = 'Type is installed';
-				textInstall = 'Install type';
-				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+			case I.StoreTab.Type:
+				title = translate('pageMainStoreTypesTitle');
+				placeholder = translate('pageMainStoreTypesPlaceholder');
+				textService = translate('pageMainStoreTypesService');
+				textInstalled = translate('pageMainStoreTypeInstalled');
+				textInstall = translate('pageMainStoreTypeInstall');
+				textEmpty = translate('pageMainStoreTypeEmpty');
 				iconSize = 18;
 				break;
 
-			case Tab.Relation:
-				title = 'All objects are connected.<br />Use relations to build connections between objects.';
-				placeholder = 'Search or create a new relation...';
-				textService = 'Service relation';
-				textInstalled = 'Relation is installed';
-				textInstall = 'Install relation';
-				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+			case I.StoreTab.Relation:
+				title = translate('pageMainStoreRelationsTitle');
+				placeholder = translate('pageMainStoreRelationsPlaceholder');
+				textService = translate('pageMainStoreRelationsService');
+				textInstalled = translate('pageMainStoreRelationsInstalled');
+				textInstall = translate('pageMainStoreRelationsInstall');
+				textEmpty = translate('pageMainStoreRelationsEmpty');
 				iconSize = 20;
 				break;
 		};
@@ -103,7 +102,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			<div className="mid">
 				<Title text={title} />
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
@@ -139,7 +138,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			switch (this.view) {
 				case View.Library:
 					if (allowedDelete) {
-						buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+						buttons.push({ text: translate('commonRemove'), onClick: e => this.onRemove(e, item) });
 					} else {
 						icons.push({ className: 'lock', tooltip: textService });
 					};
@@ -218,28 +217,37 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
-							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
+							isRowLoaded={({ index }) => !!items[index]}
+							rowCount={length}
+							threshold={10}
 						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => { this.refList = ref; }}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-											scrollToAlignment="start"
-										/>
+							{({ onRowsRendered }) => (
+								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									{({ height, isScrolling, registerChild, scrollTop }) => (
+										<AutoSizer disableHeight={true}>
+											{({ width }) => {
+												return (
+													<div ref={registerChild}>
+														<List
+															autoHeight={true}
+															height={Number(height) || 0}
+															width={Number(width) || 0}
+															isScrolling={isScrolling}
+															rowCount={length}
+															rowHeight={({ index }) => this.getRowHeight(items[index])}
+															onRowsRendered={onRowsRendered}
+															rowRenderer={rowRenderer}
+															onScroll={this.onScroll}
+															scrollTop={scrollTop}
+															scrollToAlignment="start"
+														/>
+													</div>
+												);
+											}}
+										</AutoSizer>
 									)}
-								</AutoSizer>
+								</WindowScroller>
 							)}
 						</InfiniteLoader>
 					</div>
@@ -263,18 +271,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || Tab.Type, false);
+		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-
 		this.resize();
+
 		if (this.refList) {
 			this.refList.recomputeRowHeights();
 		};
-
-		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -286,7 +291,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.store', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.store', e => this.onKeyDown(e));
 	};
 
 	unbind () {
@@ -296,8 +301,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => this.onTab(I.StoreTab.Type, true));
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
 	getRowHeight (item: any) {
@@ -312,10 +317,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onTab (id: any, isInner: boolean) {
+		const { isPopup } = this.props;
+
 		this.tab = id;
 		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
+
+		if (!isPopup) {
+			let key = '';
+			switch (id) {
+				case I.StoreTab.Type: key = 'storeType'; break;
+				case I.StoreTab.Relation: key = 'storeRelation'; break;
+			};
+
+			if (key) {
+				Onboarding.start(key, false);
+			};
+		};
 	};
 
 	onView (id: View, isInner: boolean) {
@@ -329,7 +348,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onClick (e: any, item: any) {
-		ObjectUtil.openAuto(item);
+		UtilObject.openAuto(item);
 	};
 
 	onCreateType (e: any) {
@@ -351,6 +370,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterChange (v: string) {
+		this.filter = v;
 		menuStore.updateData(this.getMenuId(), { filter: v });
 	};
 
@@ -363,7 +383,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filter = node.find('#store-filter');
 
 		const menuParam: any = {
-			element: filter,
+			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
 			width: filter.outerWidth(),
@@ -376,7 +396,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuParam.data = Object.assign(menuParam.data, {
 					onClick: (item: any) => {
 						this.onClick(e, item);
@@ -384,7 +404,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				});
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuParam.data = Object.assign(menuParam.data, {
 					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
@@ -408,11 +428,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getMenuId () {
 		let menuId = '';
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuId = 'typeSuggest';
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuId = 'relationSuggest';
 				break;
 		};
@@ -425,7 +445,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'createdDate' },
+			{ type: I.SortType.Desc, relationKey: 'createdDate', includeTime: true },
 		];
 
 		let keys: string[] = Constant.defaultRelationKeys;
@@ -441,11 +461,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				keys = keys.concat(Constant.typeRelationKeys);
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				keys = keys.concat(Constant.relationRelationKeys);
 				break;
 		};
@@ -455,7 +475,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId: Constant.subId.store,
 			filters,
 			sorts,
@@ -477,15 +497,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		switch (this.view) {
 			case View.Marketplace:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.storeTypeId.type; break;
-					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.storeTypeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.storeTypeId.relation; break;
 				};
 				break;
 
 			case View.Library:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.typeId.type; break;
-					case Tab.Relation:	 type = Constant.typeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.typeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.typeId.relation; break;
 				};
 				break;
 		};
@@ -518,7 +538,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
 		};
 
-		for (let item of records) {
+		for (const item of records) {
 			row.children.push(item);
 
 			n++;
@@ -541,28 +561,28 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const views: any[] = [];
 
 		switch (this.tab) {
-			case Tab.Type:
-				views.push({ id: View.Library, name: 'My types' });
+			case I.StoreTab.Type:
+				views.push({ id: View.Library, name: translate('pageMainStoreMyTypes') });
 				break;
 
-			case Tab.Relation:
-				views.push({ id: View.Library, name: 'My relations' });
+			case I.StoreTab.Relation:
+				views.push({ id: View.Library, name: translate('pageMainStoreMyRelations') });
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: 'Anytype library' });
+		views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
 		return views;
 	};
 
 	getSources (): string[] {
-		let sources: any[] = []
+		let sources: any[] = [];
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				sources = dbStore.getTypes();
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				sources = dbStore.getRelations();
 				break;
 		};
@@ -594,48 +614,50 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.top = scrollTop;
 		};
 
-		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+		if (this.refFilter) {
+			this.refFilter.forceUpdate();
+		};
+
+		for (const menu of menus) {
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};
 
 	getLimit () {
-		const ww = $(window).width();
+		const container = UtilCommon.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
-		const maxWidth = ww - size.border * 2;
+		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
 		return Math.max(1, Math.min(5, limit));
 	};
 
 	resize () {
-		const win = $(window);
-		const container = Util.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
-		const content = $('#popupPage .content');
-		const body = node.find('.body');
-		const hh = Util.sizeHeader();
-		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
-		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
+		const filter = node.find('#store-filter');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const items = this.getItems();
+		const height = items.reduce((res, current) => res += this.getRowHeight(current), 0);
 
-		node.css({ height: wh });
-		
-		if (isPopup) {
-			body.css({ height: wh - hh });
-			content.css({ minHeight: 'unset', height: '100%' });
-		} else {
-			body.css({ height: '' });
-			content.css({ minHeight: '', height: '' });
-		};
+		grid.css({ height });
 
 		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
 			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
-			this.frame = raf(() => { this.forceUpdate(); });
+			this.frame = raf(() => this.forceUpdate());
+		};
+
+		if (menuStore.isOpen(this.getMenuId())) {
+			if (this.refFilter && this.filter.length) {
+				this.refFilter.setValue(this.filter);
+				this.refFilter.focus();
+			};
+
+			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
 	};
 

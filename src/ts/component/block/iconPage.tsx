@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject } from 'Component';
-import { I, ObjectUtil } from 'Lib';
+import { I, UtilObject } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -17,25 +17,23 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<I.Blo
 		const { rootId, readonly } = this.props;
 		
 		return (
-			<React.Fragment>
-				<IconObject 
-					id={`block-icon-${rootId}`} 
-					canEdit={!readonly} 
-					getObject={() => detailStore.get(rootId, rootId, [])} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					size={96} 
-				/>
-			</React.Fragment>
+			<IconObject 
+				id={`block-icon-${rootId}`} 
+				canEdit={!readonly} 
+				getObject={() => detailStore.get(rootId, rootId, [])} 
+				onSelect={this.onSelect} 
+				onUpload={this.onUpload} 
+				size={96} 
+			/>
 		);
 	};
 
 	onSelect (icon: string) {
-		ObjectUtil.setIcon(this.props.rootId, icon, '');
+		UtilObject.setIcon(this.props.rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
-		ObjectUtil.setIcon(this.props.rootId, '', hash);
+		UtilObject.setIcon(this.props.rootId, '', hash);
 	};
 	
 });

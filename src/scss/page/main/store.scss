@@ -1,21 +1,16 @@
 @import "~scss/_vars";
 
 .pageMainStore {
-	.wrapper { height: 100%; width: 100%; margin: 0px 0px 0px -50%; position: absolute; left: 50%; top: 0px; }
-
 	.content { height: 100%; padding-top: 40px; }
 
-	.body { width: 100%; height: 100%; display: flex; flex-direction: column; }
+	.body { display: flex; flex-direction: column; }
 	.body {
 		.mid { text-align: center; padding: 60px 0px 52px 0px; margin: 0px auto; max-width: 640px; }
 		.mid {
 			.title { margin-bottom: 25px; line-height: 40px; }
 			.label { @include text-paragraph; margin: 0px auto 24px auto; max-width: 610px; }
 
-			.filter { 
-				max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center;
-				cursor: pointer;
-			}
+			.filter { max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center; }
 			.filter {
 				.line { display: none; }
 				.filterInputWrap { height: 100%; width: auto; }
@@ -46,7 +41,7 @@
 		}
 
 		.loaderWrapper { position: relative !important; }
-		.ReactVirtualized__List { padding: 48px 80px; }
+		.ReactVirtualized__List { padding: 48px 80px 80px 80px; }
 
 		.emptySearch { padding: 56px 0px; border: 1px solid $colorBorderDark; border-radius: 12px; height: auto; @include text-paragraph; }
 		.emptySearch { 

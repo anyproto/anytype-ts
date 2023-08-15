@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, Util, DataUtil, ObjectUtil, keyboard, translate, Relation } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -19,7 +19,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		isEditing: false,
 	};
 	range: any = null;
-	ref: any = null;
+	ref = null;
 	value: any = null;
 
 	constructor (props: I.Cell) {
@@ -76,8 +76,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
-				let mask = [ '99.99.9999' ];
-				let ph = [];
+				const mask = [ '99.99.9999' ];
+				const ph = [];
 
 				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
 					ph.push('mm.dd.yyyy');
@@ -90,7 +90,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					ph.push('hh:mm');
 				};
 
-				let maskOptions = {
+				const maskOptions = {
 					mask: mask.join(' '),
 					separator: '.',
 					hourFormat: 12,
@@ -99,7 +99,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={ref => { this.ref = ref; }} 
+						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
@@ -111,7 +111,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			} else {
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={ref => { this.ref = ref; }} 
+						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
@@ -134,7 +134,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				let name = item.name;
 				if (name) {
 					if (textLimit) {
-						name = Util.shorten(name, textLimit);
+						name = UtilCommon.shorten(name, textLimit);
 					};
 					return <div className="name" dangerouslySetInnerHTML={{ __html: name }} />;
 				} else {
@@ -150,9 +150,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = Util.day(value);
-					const date = day ? day : Util.date(DataUtil.dateFormat(viewRelation.dateFormat), value);
-					const time = Util.date(DataUtil.timeFormat(viewRelation.timeFormat), value);
+					const day = UtilCommon.dayString(value);
+					const date = day ? day : UtilCommon.date(UtilData.dateFormat(viewRelation.dateFormat), value);
+					const time = UtilCommon.date(UtilData.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -161,16 +161,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			if ((relation.format == I.RelationType.Url) && shortUrl) {
-				value = value !== null ? Util.shortUrl(value) : '';
+				value = value !== null ? UtilCommon.shortUrl(value) : '';
 			};
 
 			if (relation.format == I.RelationType.Number) {
 				if (value !== null) {
-					let mapped = Relation.mapValue(relation, value);
+					const mapped = Relation.mapValue(relation, value);
 					if (mapped !== null) {
 						value = mapped;
 					} else {
-						value = Util.formatNumber(value);
+						value = UtilCommon.formatNumber(value);
 					};
 				} else {
 					value = '';
@@ -196,7 +196,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			};
 
-			value = value || ObjectUtil.defaultName('Page');
+			value = value || UtilObject.defaultName('Page');
 			if (record.layout == I.ObjectLayout.Note) {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
@@ -220,29 +220,37 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, cellPosition, getView } = this.props;
+		const { id, relation, recordId, viewType, cellPosition, getView, getRecord } = this.props;
 		const cell = $(`#${id}`);
+		const record = getRecord(recordId);
+
+		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
 		let view = null;
 		let viewRelation: any = {};
+		let card = null;
 		
 		if (getView) {
 			view = getView();
 			viewRelation = view.getRelation(relation.relationKey);
 		};
 
+		if (viewType != I.ViewType.Grid) {
+			card = $(`#record-${recordId}`);
+		};
+
 		if (isEditing) {
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [
+				const format = [
 					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
 				];
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};
 
-				value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
+				value = this.value !== null ? UtilCommon.date(format.join(' ').trim(), this.value) : '';
 			};
 
 			if (relation.format == I.RelationType.Number) {
@@ -253,12 +261,15 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			if (this.ref) {
 				this.ref.setValue(value);
 				if (this.ref.setRange) {
-					let length = String(value || '').length;
+					const length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
 
 			cell.addClass('isEditing');
+			if (card && card.length) {
+				card.addClass('isEditing');
+			};
 
 			if (cellPosition) {
 				cellPosition(id);
@@ -266,6 +277,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		} else {
 			cell.removeClass('isEditing');
 			cell.find('.cellContent').css({ left: '', right: '' });
+
+			if (card && card.length) {
+				card.removeClass('isEditing');
+			};
 		};
 
 		if (commonStore.cellId) {
@@ -391,22 +406,22 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		v = String(v || '').replace(/_/g, '');
-		return v ? Util.parseDate(v, viewRelation.dateFormat) : null;
+		return v ? UtilCommon.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onIconSelect (icon: string) {
-		ObjectUtil.setIcon(this.props.recordId, icon, '');
+		UtilObject.setIcon(this.props.recordId, icon, '');
 	};
 
 	onIconUpload (hash: string) {
-		ObjectUtil.setIcon(this.props.recordId, '', hash);
+		UtilObject.setIcon(this.props.recordId, '', hash);
 	};
 
 	onCheckbox () {
 		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
-		ObjectUtil.setDone(recordId, !record.done, () => this.forceUpdate());
+		UtilObject.setDone(recordId, !record.done, () => this.forceUpdate());
 	};
 
 });

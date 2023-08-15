@@ -17,7 +17,7 @@
 		.description { @include text-small; @include text-overflow-nw; }
 		.featured { @include text-very-small; color: $colorMediumGrey; }
 		.featured {
-			.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorMediumGrey; display: inline-block; vertical-align: middle; margin: -2px 4px 0px 4px; }
+			.bullet { width: 2px; height: 2px; border-radius: 50%; background: $colorMediumGrey; display: inline-block; vertical-align: middle; margin: -1px 4px 0px 4px; }
 		}
 	}
 
@@ -118,4 +118,10 @@
 }
 .previewObject.align2 {
 	.heading { text-align: right; }
+}
+
+.previewObject.blank {
+	.heading {
+		.name { color: $colorSecondary; }
+	}
 }

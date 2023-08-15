@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, focus, ObjectUtil, Util } from 'Lib';
+import { I, focus, UtilObject, UtilCommon, translate } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -35,7 +35,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!tree.length ? (
-					<div className="empty">Add headings to create a table of contents</div>
+					<div className="empty">{translate('blockTableOfContentsAdd')}</div>
 				) : (
 					<React.Fragment>
 						{tree.map((item: any, i: number) => (
@@ -106,7 +106,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			list.push({ 
 				depth, 
 				id: block.id,
-				text: String(block.content.text || ObjectUtil.defaultName('Page')),
+				text: String(block.content.text || UtilObject.defaultName('Page')),
 			});
 		});
 		return list;
@@ -120,10 +120,10 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const no = node.offset().top;
 		const st = container.scrollTop();
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);

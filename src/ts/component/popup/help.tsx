@@ -3,13 +3,15 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import Block from 'Component/block/help';
 import Url from 'json/url.json';
 
 interface State {
 	showFull: boolean;
 };
+
+const LIMIT = 1;
 
 class PopupHelp extends React.Component<I.Popup, State> {
 
@@ -37,7 +39,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 		let sections = this.getSections();
 		if (isWhatsNew && !showFull) {
-			sections = sections.slice(0, 3);
+			sections = sections.slice(0, LIMIT);
 		};
 
 		return (
@@ -51,8 +53,8 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={(e) => { Util.onUrl(Url.telegram); }} className="telegram" />
-						<Icon onClick={(e) => { Util.onUrl(Url.twitter); }} className="twitter" />
+						<Icon onClick={(e) => { UtilCommon.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { UtilCommon.onUrl(Url.twitter); }} className="twitter" />
 					</div>
 				</div>
 				
@@ -67,7 +69,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 					{isWhatsNew && !showFull ? (
 						<div className="buttons">
-							<Button text="Older releases" onClick={() => { this.setState({ showFull: true }) }} />
+							<Button text={translate('popupHelpOlderReleases')} onClick={() => { this.setState({ showFull: true }); }} />
 						</div>
 					) : ''}
 				</div>
@@ -80,13 +82,13 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		this.rebind();
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentWillUnmount () {
@@ -95,14 +97,8 @@ class PopupHelp extends React.Component<I.Popup, State> {
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.off('resize.help').on('resize.help', () => { this.resize(); });
+		$(window).off('resize.popupHelp').on('resize.popupHelp', () => this.resize());
 	};
 
 	unbind () {
@@ -113,7 +109,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 
-		return Util.toUpperCamelCase(data.document);
+		return UtilCommon.toUpperCamelCase(data.document);
 	};
 
 	getBlocks () {
@@ -157,14 +153,15 @@ class PopupHelp extends React.Component<I.Popup, State> {
 			return;
 		};
 
-		raf(() => {
-			const { getId } = this.props;
-			const win = $(window);
-			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, win.width() - 128));
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const hh = UtilCommon.sizeHeader();
 
-			obj.css({ width: width, marginLeft: -width / 2 });
-		});
+		loader.css({ width: obj.width(), height: obj.height() });
+		position();
+
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 	
 };

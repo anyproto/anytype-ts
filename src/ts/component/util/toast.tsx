@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { commonStore } from 'Store';
-import { I, C, Util, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
+import { commonStore, popupStore } from 'Store';
+import { I, C, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -30,7 +30,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			return null;
 		};
 
-        const { count, action, text, value, object, target, origin } = toast;
+        const { count, action, text, value, object, target, origin, ids } = toast;
 
         let buttons = [];
         let textObject = null;
@@ -58,7 +58,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 };
 
                 textObject = <Element {...object} />;
-                textAction = value ? 'is locked' : 'is unlocked';
+                textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
                 break;
 			};
 
@@ -67,20 +67,20 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				const cnt = `${count} ${Util.cntWord(count, 'block', 'blocks')}`;
+				const cnt = `${count} ${UtilCommon.plural(count, translate('pluralBlock'))}`;
 
-				textAction = `${cnt} moved to`;
+				textAction = UtilCommon.sprintf(translate('toastMovedTo'), cnt);
 				textTarget = <Element {...target} />;
 
 				if (origin) {
-					textAction = `${cnt} moved from`;
+					textAction = UtilCommon.sprintf(translate('toastMovedFrom'), cnt);
 					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
 
 				buttons = buttons.concat([
-					{ action: 'open', label: 'Open' },
-					{ action: 'undo', label: 'Undo' }
+					{ action: 'open', label: translate('commonOpen') },
+					{ action: 'undo', label: translate('commonUndo') }
 				]);
                 break;
 			};
@@ -91,16 +91,48 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				textAction = action == I.ToastAction.Collection ? 'has been added to collection' : 'has been linked to';
+				textAction = translate(action == I.ToastAction.Collection ? 'toastAddedToCollection' : 'toastLinkedTo');
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 
                 if (target.id != keyboard.getRootId()) {
                     buttons = buttons.concat([
-                        { action: 'open', label: 'Open' }
+                        { action: 'open', label: translate('commonOpen') }
                     ]);
                 };
                 break;
+			};
+
+            case I.ToastAction.StorageFull: {
+                textAction = translate('toastUploadLimitExceeded');
+
+                buttons = buttons.concat([ 
+					{ action: 'manageStorage', label: translate('toastManageFiles') }
+				]);
+            };
+
+            case I.ToastAction.TemplateCreate: {
+                if (!object) {
+                    break;
+                };
+
+                textObject = <Element {...object} />;
+                textAction = translate('toastTemplateCreate');
+                break;
+            };
+
+			case I.ToastAction.Archive: {
+				if (!ids) {
+					break;
+				};
+
+				const cnt = `${ids.length} ${UtilCommon.plural(ids.length, translate('pluralObject'))}`;
+				textAction = UtilCommon.sprintf(translate('toastMovedToBin'), cnt);
+
+				buttons = buttons.concat([
+					{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
+				]);
+				break;
 			};
         };
 
@@ -118,7 +150,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                     {buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button key={i} text={item.label} onClick={e => this.onClick(e, item.action)} />
+								<Button key={i} text={item.label} onClick={e => this.onClick(e, item)} />
 							))}
 						</div>
 					) : ''}
@@ -135,9 +167,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		Preview.toastHide(true);
 	};
 
-    onClick (e: any, action: string) {
+    onClick (e: any, item: any) {
        
-		switch (action) {
+		switch (item.action) {
             case 'open': {
                 this.onOpen(e);
                 break;
@@ -147,13 +179,25 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 keyboard.onUndo(commonStore.toast.originId, 'Toast');
                 break;
 			};
+
+			case 'undoArchive': {
+				if (item.data) {
+          Action.restore(item.data);
+				};
+				break;
+			};
+
+            case 'manageStorage': {
+                popupStore.open('settings', { data: { page: 'storageManager' }});
+                commonStore.toastClear();
+            };
         };
 
 		this.close();
     };
 
     onOpen (e: any) {
-        ObjectUtil.openEvent(e, commonStore.toast.target);
+        UtilObject.openEvent(e, commonStore.toast.target);
     };
 
 });

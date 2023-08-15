@@ -113,6 +113,7 @@ export interface ViewComponent {
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
 	getRecord(id: string): any;
+	getCoverObject?(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
 	getTarget?(): any;
@@ -121,7 +122,8 @@ export interface ViewComponent {
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
 	getEmpty?(type: string): any;
-	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
+	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
+	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
@@ -129,8 +131,12 @@ export interface ViewComponent {
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
+	isAllowedTemplate?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
-	applyObjectOrder?: (records: any[], groupId?: string) => any[];
+	applyObjectOrder?: (groupId: string, records: any[]) => any[];
+	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
+	onSourceTypeSelect?(element: any): void;
+	refCells?: any;
 };
 
 export interface ViewEmpty {
@@ -158,6 +164,7 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
+	defaultTemplateId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
 	isGrid?: () => boolean;

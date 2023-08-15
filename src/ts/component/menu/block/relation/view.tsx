@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, Util, Relation, analytics, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -27,7 +27,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, readonly } = data;
+		const { rootId } = data;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -35,8 +35,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const isLocked = root.isLocked();
+		const readonly = data.readonly || isLocked;
 
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -69,7 +69,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
 								canDrag={allowedBlock && !readonly}
-								canFav={allowedValue}
+								canFav={allowedValue && !readonly}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -81,12 +81,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			</div>
 		);
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = () => (
 			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
-					<div className="name">New</div>
+					<div className="name">{translate('commonNew')}</div>
 				</div>
 			</div>
 		);
@@ -97,9 +97,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				className="sections"
 			>
 				<div id="scrollWrap" className="scrollWrap">
-					{sections.map((item: any, i: number) => {
-						return <Section key={i} {...item} index={i} />;
-					})}
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} index={i} />
+					))}
 				</div>
 				{!readonly ? <ItemAdd /> : ''}
 			</div>
@@ -142,8 +142,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const win = $(window);
 		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
-		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+		for (const menu of menus) {
+			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 	};
 
@@ -153,7 +153,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType', 'featuredRelations' ]);
-		const isTemplate = object.type == Constant.typeId.template;
+		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
 		const relations = dbStore.getObjectRelations(rootId, rootId);
@@ -164,24 +164,24 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
+		items = items.sort(UtilData.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
 		let sections = [ 
 			{ 
-				id: 'featured', name: 'Featured relations', 
+				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),
 			},
 			{ 
-				id: 'object', name: 'In this object', 
+				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
 		];
 
 		if (type) {
 			sections.push({ 
-				id: 'type', name: `From type ${type.name}`,
+				id: 'type', name: UtilCommon.sprintf(translate('menuBlockRelationViewFromType'), type.name),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			});
 		};
@@ -194,7 +194,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -209,7 +209,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const items = this.getItems();
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = Util.objectCopy(object.featuredRelations || []);
+		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
@@ -243,7 +243,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationsKeys(rootId, rootId),
+				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -331,12 +331,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 
 		obj.css({ 
-			height: container.height() - Util.sizeHeader() - 16,
+			height: container.height() - UtilCommon.sizeHeader() - 16,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
@@ -47,7 +48,7 @@ class Util {
 	};
 
 	getTheme () {
-		const { theme } = ConfigManager.config || {};
+		const theme = ConfigManager.config.theme;
 
 		switch (theme) {
 			default:
@@ -58,11 +59,10 @@ class Util {
 		};
 	};
 
-	getBgColor () {
-		let theme = this.getTheme();
-		let bg = {
+	getBgColor (theme) {
+		const bg = {
 			'': '#fff',
-			dark: '#171717',
+			dark: '#060606',
 		};
 		return bg[theme];
 	};
@@ -113,22 +113,24 @@ class Util {
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
 
+		try { fs.mkdirSync(filesPath); } catch (e) {};
+
 		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
 
 			// Replace files loaded by url and copy them in page folder
 			try {
-				content = content.replace(/"(file:\/\/[^"]+)"/g, function (s, p, o) {
-					let a = p.split('app.asar/dist/');
+				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
+					const a = p.split('app.asar/dist/');
 					let name = a[1].split('/');
 
 					name = name[name.length - 1];
 
-					let src = p.replace('file://', '').replace(/\?.*/, '');
-					let dst = path.join(filesPath, name).replace(/\?.*/, '');
+					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
+					const dst = path.join(filesPath, name).replace(/\?.*/, '');
 
 					fs.copyFileSync(src, dst);
-					return `./${fn}/${name}`;
+					return `'./${fn}/${name}'`;
 				});
 			} catch (e) {
 				this.log('info', e);
@@ -143,19 +145,23 @@ class Util {
 
 				let replaceJs = '';
 				let replaceCss = '';
+				const replaceMeta = `
+					<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+				`;
 
 				js.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
-					replaceJs += `<script src="./${fn}/${it}.js" type="text/javascript"></script>`;
+					replaceJs += `<script src='./${fn}/${it}.js' type='text/javascript'></script>`;
 				});
 
 				css.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/css/${it}.css`, path.join(filesPath, it + '.css'));
-					replaceCss += `<link rel="stylesheet" href="./${fn}/${it}.css" type="text/css" />`;
+					replaceCss += `<link rel='stylesheet' href='./${fn}/${it}.css' type='text/css' />`;
 				});
 
 				content = content.replace('<!-- %REPLACE-JS% -->', replaceJs);
 				content = content.replace('</head>', replaceCss + '</head>');
+				content = content.replace('<head>', '<head>' + replaceMeta);
 			} catch (e) {
 				this.log('info', e);
 			};
@@ -173,9 +179,9 @@ class Util {
 				this.log('info', err);
 			});
 
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 		}).catch(err => { 
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			this.log('info', err); 
 		});
 	};
@@ -189,16 +195,67 @@ class Util {
 					this.log('info', err);
 				});
 
-				this.send(win, 'command', 'saveAsHTMLSuccess');
+				this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			});
 		}).catch(err => {
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			this.log('info', err);
 		});
 	};
 
 	fileName (name) {
 		return sanitize(String(name || 'untitled').trim());
+	};
+
+	getLang () {
+		return ConfigManager.config.interfaceLang || 'en-US';
+	};
+
+	enabledLangs () {
+		return [
+			"da-DK",
+			"de-DE",
+			"en-US",
+			"es-ES",
+			"fr-FR",
+			"hi-IN",
+			"id-ID",
+			"it-IT",
+			"nl-NL",
+			"no-NO",
+			"ro-RO",
+			"ru-RU",
+			"uk-UA",
+			"zh-CN",
+			"zh-TW"
+		];
+	};
+
+	translate (key) {
+		const lang = this.getLang();
+		const defaultData = require(`../../dist/lib/json/lang/en-US.json`);
+
+		let data = {};
+		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
+
+		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+	};
+
+	execPromise (command) {
+		return new Promise(function(resolve, reject) {
+			exec(command, (error, stdout, stderr) => {
+				console.log('Error: ', error, stderr);
+
+				if (error || stderr) {
+					reject(error || stderr);
+					return;
+				};
+
+				console.log('Out: ', stdout.trim());
+
+				resolve(stdout.trim());
+			});
+		});
 	};
 
 };

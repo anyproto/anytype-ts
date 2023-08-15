@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { commonStore } from 'Store';
 
@@ -61,7 +61,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		this.unbind();
 
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -88,17 +88,17 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 
 		let sections: any[] = [
 			{ 
-				name: 'Appearance', children: [
-					{ id: 'label', name: 'Titles' },
-					{ id: 'marker', name: 'Arrows' },
-					{ id: 'icon', name: 'Icons' },
+				name: translate('commonAppearance'), children: [
+					{ id: 'label', name: translate('menuGraphSettingsTitles') },
+					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
+					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
 				] 
 			},
 			{ 
-				name: 'Show on graph', children: [
-					{ id: 'link', name: 'Links' },
-					{ id: 'relation', name: 'Relations' },
-					{ id: 'orphan', name: 'Orphans' },
+				name: translate('menuGraphSettingsShowOnGraph'), children: [
+					{ id: 'link', name: translate('menuGraphSettingsLinks') },
+					{ id: 'relation', name: translate('menuGraphSettingsRelations') },
+					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
 				] 
 			}
 		];
@@ -120,7 +120,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const sections = this.getSections();
 
 		let items = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};

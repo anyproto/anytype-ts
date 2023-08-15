@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, ObjectUtil, focus } from 'Lib';
+import { I, C, keyboard, analytics, translate, UtilObject, focus, Action } from 'Lib';
 import { detailStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -55,7 +55,7 @@ class MenuContext extends React.Component<I.Menu> {
 						))}
 					</React.Fragment>
 				) : (
-					<div className="item empty">No available actions</div>
+					<div className="item empty">{translate('menuDataviewContextNoAvailableActions')}</div>
 				)}
 			</div>
 		);
@@ -72,7 +72,7 @@ class MenuContext extends React.Component<I.Menu> {
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -84,10 +84,11 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
+		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 
-		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
-		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
+		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
+		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -101,7 +102,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (isCollection) {
 			div = { isDiv: true };
-			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' };
+			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		};
 
 		objectIds.forEach((it: string) => {
@@ -132,9 +133,9 @@ class MenuContext extends React.Component<I.Menu> {
 		});
 
 		if (favCnt == length) {
-			fav = { id: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
 		} else {
-			fav = { id: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', name: translate('commonAddToFavorites') };
 		};
 
 		if (length > 1) {
@@ -146,9 +147,9 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
-			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
+			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
+			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
 		};
 
 		if (!allowedArchive)	 archive = null;
@@ -156,7 +157,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -171,7 +172,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -184,7 +185,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
 
 		if (!keyboard.isMouseDisabled) {
@@ -192,18 +193,19 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(Constant.menuIds.more)
+			menuStore.closeAll(Constant.menuIds.more);
 			return;
 		};
 
-		let itemId = objectIds[0];
+		const itemId = objectIds[0];
 		let menuId = '';
-		let menuParam = {
+		const menuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			className,
 			classNameWrap,
 			data: {
 				rebind: this.rebind,
@@ -211,12 +213,29 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'linkTo':
+			case 'changeType': {
+				menuId = 'typeSuggest';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter: '',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					],
+					onClick: (item: any) => {
+						C.ObjectListSetObjectType(objectIds, item.id);
+						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
+
+						close();
+					}
+				});
+				break;
+			};
+
+			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -232,9 +251,10 @@ class MenuContext extends React.Component<I.Menu> {
 						};
 
 						close();
-					}
+					},
 				});
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -264,18 +284,19 @@ class MenuContext extends React.Component<I.Menu> {
 		
 		switch (item.id) {
 
-			case 'open':
-				ObjectUtil.openPopup(detailStore.get(subId, objectIds[0], []));
+			case 'open': {
+				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
 				break;
+			};
 
-			case 'copy':
+			case 'copy': {
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (message.error.code || !message.ids.length) {
 						return;
 					};
 
 					if (count == 1) {
-						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
+						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
 					analytics.event('DuplicateObject', { count });
@@ -291,43 +312,42 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 				});
 				break;
+			};
 
-			case 'archive':
-				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
-					cb();
-					analytics.event('MoveToBin', { count });
-				});
-
+			case 'archive': {
+				Action.archive(objectIds, cb);
 				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
+			};
 
-			case 'unarchive':
-				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
-					cb();
-					analytics.event('RestoreFromBin', { count });
-				});
+			case 'unarchive': {
+				Action.restore(objectIds, cb);
 				break;
+			};
 
-			case 'fav':
+			case 'fav': {
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
 					analytics.event('AddToFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unfav':
+			case 'unfav': {
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
 					analytics.event('RemoveFromFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unlink':
+			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
 					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
+			};
 
 		};
 		

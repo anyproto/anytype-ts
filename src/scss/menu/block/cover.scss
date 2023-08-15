@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockCover { width: 410px; }
 	.menu.menuBlockCover {
-		.content { max-height: 450px; padding: 0px; overflow: visible; }
+		.content { max-height: 450px; padding: 0px; overflow: visible !important; }
 
 		.wrap { display: flex; flex-direction: column; }
 
@@ -35,7 +35,7 @@
 			grid-row-gap: 8px;
 		}
 		.items {
-			.item { padding: 0px; width: 100%; cursor: pointer; position: relative; }
+			.item { padding: 0px; width: 100%; position: relative; }
 			.item {
 				.cover { height: 48px; position: relative; border-radius: 2px; }
 				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorDarkGrey; }
@@ -63,8 +63,8 @@
 			.loaderWrapper { height: 336px; }
 
 			.dropzone { 
-				height: 336px; display: flex; align-items: center; border-radius: 2px; background: rgba(80, 73, 28, 0.08);
-				justify-content: center; flex-direction: column; gap: 6px 0px; cursor: pointer;
+				height: 336px; display: flex; align-items: center; border-radius: 2px; background: $colorHoverMedium;
+				justify-content: center; flex-direction: column; gap: 6px 0px;
 			}
 			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
 

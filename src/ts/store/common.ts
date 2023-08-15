@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, ObjectUtil } from 'Lib';
+import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -8,12 +8,6 @@ import * as Sentry from '@sentry/browser';
 interface Filter {
 	from: number;
 	text: string;
-};
-
-interface Cover {
-	id: string;
-	image: string;
-	type: I.CoverType;
 };
 
 interface Graph {
@@ -24,6 +18,12 @@ interface Graph {
 	relation: boolean;
 	link: boolean;
 	filter: string;
+};
+
+interface SpaceStorage {
+	bytesUsed: number;
+	bytesLimit: number;
+	localUsage: number;
 };
 
 class CommonStore {
@@ -46,12 +46,6 @@ class CommonStore {
 	public workspaceId = '';
 	public notionToken = '';
 
-	public coverObj: Cover = { 
-		id: '', 
-		type: 0, 
-		image: '',
-	};
-
 	public previewObj: I.Preview = { 
 		type: null, 
 		target: null, 
@@ -62,7 +56,7 @@ class CommonStore {
 
 	public graphObj: Graph = { 
 		icon: true,
-		orphan: false,
+		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
@@ -70,15 +64,21 @@ class CommonStore {
 		filter: '',
 	};
 
+	public spaceStorageObj: SpaceStorage = {
+		bytesUsed: 0,
+		bytesLimit: 0,
+		localUsage: 0,
+	};
+
     constructor() {
         makeObservable(this, {
-            coverObj: observable,
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
             previewObj: observable,
 			toastObj: observable,
             configObj: observable,
+			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
 			typeId: observable,
@@ -91,12 +91,10 @@ class CommonStore {
             preview: computed,
 			toast: computed,
             filter: computed,
-            cover: computed,
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
 			workspace: computed,
-            coverSet: action,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -109,7 +107,8 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
-        });
+			spaceStorageSet: action,
+		});
     };
 
     get config(): any {
@@ -132,10 +131,6 @@ class CommonStore {
 		return this.filterObj;
 	};
 
-    get cover(): Cover {
-		return this.coverObj;
-	};
-
     get gateway(): string {
 		return String(this.gatewayUrl || '');
 	};
@@ -149,7 +144,7 @@ class CommonStore {
 
 		const type = dbStore.getType(typeId);
 
-		if (!type || !type.isInstalled || !ObjectUtil.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;
 		};
 
@@ -169,7 +164,7 @@ class CommonStore {
 	};
 
 	get isSidebarFixed(): boolean {
-		return Boolean(this.isSidebarFixedValue)  || Storage.get('isSidebarFixed');
+		return Boolean(this.isSidebarFixedValue) || Storage.get('isSidebarFixed');
 	};
 
 	get theme(): string {
@@ -188,18 +183,17 @@ class CommonStore {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
 
-    coverSet (id: string, image: string, type: I.CoverType) {
-		this.coverObj = { id, image, type };
-	};
+	get spaceStorage (): SpaceStorage {
+		let { bytesUsed, localUsage } = this.spaceStorageObj;
+		
+		if (bytesUsed <= 1024 * 1024) {
+			bytesUsed = 0;
+		};
+		if (localUsage <= 1024 * 1024) {
+			localUsage = 0;
+		};
 
-    coverSetDefault () {
-		const cover = this.coverGetDefault();
-
-		this.coverSet(cover.id, '', cover.type);
-	};
-
-	coverGetDefault () {
-		return { id: Constant.default.cover, type: I.CoverType.Gradient };
+		return { ...this.spaceStorageObj, bytesUsed, localUsage };
 	};
 
     gatewaySet (v: string) {
@@ -256,8 +250,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			ObjectUtil.getByIds(ids, (objects: any[]) => {
-				const map = Util.mapToObject(objects, 'id');
+			UtilObject.getByIds(ids, (objects: any[]) => {
+				const map = UtilCommon.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -298,16 +292,19 @@ class CommonStore {
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
+
 		Storage.set('pinTime', this.pinTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
 		this.autoSidebarValue = Boolean(v);
+
 		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
 	isSidebarFixedSet (v: boolean) {
 		this.isSidebarFixedValue = Boolean(v);
+
 		Storage.set('isSidebarFixed', this.isSidebarFixedValue);
 	};
 
@@ -321,9 +318,7 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
-		this.themeId = v;
-		Storage.set('theme', v);
-		
+		this.themeId = String(v || '');
 		this.setThemeClass();
 	};
 
@@ -347,7 +342,8 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		Util.addBodyClass('theme', c);
+		UtilCommon.addBodyClass('theme', c);
+		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
 		if (c == 'dark') {
@@ -398,6 +394,10 @@ class CommonStore {
 
 		this.configObj.debug = this.configObj.debug || {};
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+	};
+
+	spaceStorageSet (value: Partial<SpaceStorage>) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
 	};
 
 };

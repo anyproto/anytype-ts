@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'Component';
-import { I, Util, ObjectUtil, FileUtil, focus, translate, Action } from 'Lib';
+import { I, UtilCommon, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -26,11 +26,11 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._empty_) {
-			object = Util.objectCopy(content);
+			object = UtilCommon.objectCopy(content);
 			object.sizeInBytes = object.size;
 		};
 
-		let { name, sizeInBytes } = object;
+		const { name, sizeInBytes } = object;
 		let element = null;
 
 		switch (state) {
@@ -43,7 +43,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 						<InputWithFile 
 							block={block} 
 							icon="file" 
-							textFile="Upload a file" 
+							textFile={translate('blockFileUpload')} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -61,7 +61,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 					<div className="flex" onMouseDown={this.onOpen}>
 						<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
 						<span className="name">{name}</span>
-						<span className="size">{FileUtil.size(sizeInBytes)}</span>
+						<span className="size">{UtilFile.size(sizeInBytes)}</span>
 					</div>
 				);
 				break;
@@ -120,11 +120,13 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	};
 	
 	onOpen (e: any) {
+		if (e.button) {
+			return;
+		};
+
 		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
 		
-		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.File });
+		UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 	};
 	
 });

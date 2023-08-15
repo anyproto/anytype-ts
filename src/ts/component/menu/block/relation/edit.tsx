@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, analytics, MenuUtil, ObjectUtil, DataUtil, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -12,7 +12,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
-	ref: any = null;
+	ref = null;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -38,22 +38,30 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const root = blockStore.getLeaf(rootId, rootId);
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const allowed = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
-		const canDelete = allowed && relation && !Relation.systemKeys().includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
+		let canDuplicate = true;
+		let canDelete = true;
 		let opts: any = null;
-		let deleteText = 'Delete';
+		let deleteText = translate('commonDelete');
 		let deleteIcon = 'remove';
+
+		if (root) {
+			canDuplicate = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		};
+		if (relation && Relation.isSystem(relation.relationKey)) {
+			canDuplicate = false;
+		};
+		canDelete = canDuplicate;
 
 		switch (ref) {
 			case 'type':
-				deleteText = 'Unlink from type';
+				deleteText = translate('menuBlockRelationEditUnlinkFromType');
 				deleteIcon = 'unlink';
 				break;
 
 			case 'object':
-				deleteText = 'Unlink from object';
+				deleteText = translate('menuBlockRelationEditUnlinkFromObject');
 				deleteIcon = 'unlink';
 				break;
 		};
@@ -63,7 +71,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
 			const typeProps: any = { 
-				name: 'Select object type',
+				name: translate('menuBlockRelationEditSelectObjectType'),
 				caption: (length > 1 ? '+' + (length - 1) : ''),
 			};
 
@@ -74,7 +82,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 			opts = (
 				<div className="section noLine">
-					<div className="name">Limit object Types</div>
+					<div className="name">{translate('menuBlockRelationEditLimitObjectTypes')}</div>
 					<MenuItemVertical
 						id="object-type"
 						onMouseEnter={this.onObjectType}
@@ -93,14 +101,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
-							<div className="name">Include time</div>
+							<div className="name">{translate('menuBlockRelationEditIncludeTime')}</div>
 							<Switch value={relation ? relation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
 						<MenuItemVertical 
 							id="date-settings" 
 							icon="settings" 
-							name="Preferences" 
+							name={translate('commonPreferences')}
 							arrow={!isReadonly} 
 							readonly={isReadonly}
 							onMouseEnter={this.onDateSettings} 
@@ -119,12 +127,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				onMouseDown={this.menuClose}
 			>
 				<div className="section">
-					<div className="name">Relation name</div>
+					<div className="name">{translate('menuBlockRelationEditRelationName')}</div>
 
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
-								ref={ref => { this.ref = ref; }} 
+								ref={ref => this.ref = ref} 
 								value={relation ? relation.name : ''}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
@@ -139,11 +147,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				</div>
 
 				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
-					<div className="name">Relation type</div>
+					<div className="name">{translate('menuBlockRelationEditRelationType')}</div>
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
-						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
+						name={this.format === null ? translate('menuBlockRelationEditSelectRelationType') : translate('relationName' + this.format)}
 						onMouseEnter={this.onRelationType} 
 						onClick={this.onRelationType} 
 						readonly={isReadonly}
@@ -156,15 +164,15 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				{!isReadonly ? (
 					<div className="section">
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="blank" className="c28" />
+							<Button id="button" type="input" text={translate(relation ? 'commonSave' : 'commonCreate')} color="blank" className="c28" />
 						</div>
 					</div>
 				) : ''}
 
-				{relation && (allowed || canDelete) ? (
+				{relation && (canDuplicate || canDelete) ? (
 					<div className="section">
-						{relation ? <MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} /> : ''}
-						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
+						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon={deleteIcon} name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
@@ -206,7 +214,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 	
 	unbind () {
@@ -248,7 +256,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				...data,
 				filter: '',
 				value: this.format,
-				options: MenuUtil.getRelationTypes(),
+				options: UtilMenu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -284,13 +292,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			data: {
 				rootId,
 				blockId,
-				nameAdd: 'Add object type',
-				placeholderFocus: 'Filter object types...',
+				nameAdd: translate('menuBlockRelationEditAddObjectType'),
+				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),
@@ -375,7 +383,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onOpen (e: any) {
 		this.props.close();
-		ObjectUtil.openPopup(this.getRelation());
+		UtilObject.openPopup(this.getRelation());
 	};
 
 	onCopy (e: any) {
@@ -441,7 +449,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, blockId, addCommand, onChange, ref } = data;
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
-		C.ObjectCreateRelation(item, [], (message: any) => {
+		C.ObjectCreateRelation(item, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -455,7 +463,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				addCommand(rootId, blockId, details, onChange);
 			};
 
-			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
@@ -466,7 +474,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { relationId } = data;
 		const details: any[] = [];
 
-		for (let k in item) {
+		for (const k in item) {
 			details.push({ key: k, value: item[k] });
 		};
 
@@ -480,15 +488,29 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		return dbStore.getRelationById(relationId);
 	};
+
+	isAllowed () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const relation = this.getRelation();
+
+		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		if (ret && root) {
+			ret = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		};
+		return ret;
+	};
 	
 	isReadonly () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readonly } = data;
+		const { readonly } = data;
 		const relation = this.getRelation();
-		const allowed = rootId ? blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
+		const isAllowed = this.isAllowed();
 
-		return readonly || !allowed || (relation && relation.isReadonlyRelation);
+		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
 	};
 
 });

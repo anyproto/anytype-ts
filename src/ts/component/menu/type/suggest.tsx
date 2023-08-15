@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -56,7 +56,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div 
 						id="item-add" 
 						className="item add" 
@@ -107,8 +107,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
-						placeholderFocus="Filter types..." 
+						ref={ref => this.refFilter = ref} 
+						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -127,7 +127,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -203,7 +203,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -246,7 +246,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
@@ -259,6 +259,11 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				return;
 			};
 
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -267,7 +272,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
+			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -282,34 +287,30 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
-			{ id: 'library', name: 'My types', children: library },
+			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
 		];
-		let name = 'Create new type';
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
-				{ id: 'store', name: 'Anytype library', children: store },
+				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
 			]);
-
-			name = `Create type "${filter}"`;
 		} else {
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
+						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
 					] 
 				},
-			])
+			]);
 		};
-
-		sections.unshift({ children: [ { id: 'add', name } ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
@@ -320,7 +321,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 	
 	getItems () {
-		let sections = this.getSections();
+		const sections = this.getSections();
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -367,9 +368,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { getId, getSize, param } = this.props;
 		const { data } = param;
 		const sources = this.getLibrarySources();
+		const className = [];
 
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -385,8 +387,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		switch (item.id) {
 			case 'store': {
+				className.push('single');
+
+				if (param.className) {
+					className.push(param.className);
+				};
+
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
@@ -413,9 +421,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => {
-				menuStore.open(menuId, menuParam);
-			});
+			menuStore.closeAll([ 'searchObject' ], () => menuStore.open(menuId, menuParam));
 		};
 	};
 	
@@ -431,7 +437,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		e.preventDefault();
 		e.stopPropagation();
 
-		const cb  = (item: any) => {
+		const cb = (item: any) => {
 			close(); 
 
 			if (onClick) {

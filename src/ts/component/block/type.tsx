@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -58,9 +58,10 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	componentDidMount () {
+		const { isPopup } = this.props;
 		this._isMounted = true;
 
-		Onboarding.start('typeSelect', this.props.isPopup);
+		Onboarding.start('objectCreationStart', isPopup);
 	};
 
 	componentWillUnmount () {
@@ -70,15 +71,15 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = DataUtil.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
 
-		items.push({ id: 'menu', icon: 'search', name: 'My types' });
+		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
 
 		return items;
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen() || popupStore.isOpenKeyboard()) {
 			return;
 		};
 
@@ -88,7 +89,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowleft', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowleft', e, () => {
 			e.preventDefault();
 			e.key = 'arrowup';
 
@@ -106,7 +107,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('arrowdown, arrowright', e, (pressed: string) => {
+		keyboard.shortcut('arrowdown, arrowright', e, () => {
 			e.preventDefault();
 			e.key = 'arrowdown';
 
@@ -124,7 +125,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.preventDefault();
 
 			if (items[this.n]) {
@@ -133,7 +134,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		});
 
 		for (let i = 1; i <= 4; ++i) {
-			keyboard.shortcut(`${cmd}+${i}`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+${i}`, e, () => {
 				const item = items[(i - 1)];
 				if (item) {
 					this.onClick(e, item);
@@ -192,7 +193,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
@@ -211,21 +212,20 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (ObjectUtil.getSetTypes().includes(item.id)) {
+		if (UtilObject.getSetTypes().includes(item.id)) {
 			this.onObjectTo(item.id);
 		} else {
-			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
-				if (message.records.length > 1) {
+			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
+				if (cnt) {
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
-							onSelect: (template: any) => {
-								this.onCreate(item.id, template);
-							} 
+							onSelect: (template: any) => this.onCreate(item.id, template),
+							route: 'Navigation'
 						} 
 					});
 				} else {
-					this.onCreate(item.id, message.records.length ? message.records[0] : null);
+					this.onCreate(item.id, null);
 				};
 			});
 		};
@@ -242,13 +242,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 
 			keyboard.disableClose(true);
-			ObjectUtil.openAuto({ id: rootId, layout }, { replace: true });
-
-			analytics.event('CreateObject', {
-				route: 'SelectType',
-				objectType: type,
-				layout,
-			});
+			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
 		};
 
 		setLoading(true);
@@ -269,7 +263,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onCreate (typeId: any, template: any) {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		if (template) {
 			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
@@ -277,18 +271,17 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);
 		};
 
-		analytics.event('CreateObject', {
-			route: 'SelectType',
+		Onboarding.start('objectCreationFinish', isPopup);
+
+		analytics.event('SelectObjectType', {
 			objectType: typeId,
 			layout: template?.layout,
-			template: (template && template.templateIsBundled ? template.id : 'custom'),
 		});
 	};
 
 	onBlock (id: string) {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		const namespace = isPopup ? '-popup' : '';
 
 		if (block) {
 			const l = block.getLength();
@@ -297,7 +290,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		$(window).trigger('resize.editor' + namespace);
+		UtilCommon.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

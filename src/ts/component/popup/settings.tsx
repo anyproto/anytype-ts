@@ -1,12 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, ObjectName, Icon } from 'Component';
-import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
-import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
+import { Loader, IconObject, Icon } from 'Component';
+import { I, C, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
+import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
+import PageDataManagement from './page/settings/data';
 import PageDelete from './page/settings/delete';
 import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
@@ -29,6 +30,7 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
 import PageSpaceLeave from './page/settings/space/leave';
@@ -40,6 +42,7 @@ interface State {
 
 const Components: any = {
 	account:			 PageAccount,
+	dataManagement: 	 PageDataManagement,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
@@ -49,6 +52,7 @@ const Components: any = {
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
+
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -62,6 +66,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceStorageManager: PageSpaceStorageManager,
 	spaceInvite:		 PageSpaceInvite,
 	spaceTeam:		 	 PageSpaceTeam,
 	spaceLeave:		 	 PageSpaceLeave,
@@ -84,7 +89,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
-		this.onImport = this.onImport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.setLoading = this.setLoading.bind(this);
@@ -95,10 +99,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
-		const { account } = authStore;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
+		const length = sections.length;
+
+		if (!length) {
+			cnr.push('isFull');
+		};
 
 		let content = null;
 
@@ -111,40 +119,61 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					prevPage={this.prevPage}
 					onPage={this.onPage} 
 					onExport={this.onExport} 
-					onImport={this.onImport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}
 					setPinConfirmed={this.setPinConfirmed}
 					setLoading={this.setLoading}
 				/>
 			);
+
+			if (this.isSubPage(page)) {
+				cnr.push('isSubPage');
+			};
+		};
+
+		const Item = (action: any) => {
+			const cn = [ 'item' ];
+
+			let icon = null;
+			let name = null;
+			const onlineStatus = null;
+
+			if (action.id == 'account') {
+				const isOnline = true;
+				const status = isOnline ? 'online' : 'offline';
+
+				icon = <IconObject object={profile} size={40} iconSize={40} forceLetter={true} />;
+				name = profile.name;
+				cn.push('itemAccount');
+				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>
+			} else {
+				icon = <Icon className={action.icon || action.id} />;
+				name = action.name;
+			};
+
+			return (
+				<div
+					id={`item-${action.id}`}
+					className={cn.join(' ')}
+					onClick={() => this.onPage(action.id)}
+				>
+					{icon}
+					<div className="name">
+						{name}
+						{onlineStatus}
+					</div>
+				</div>
+			);
 		};
 
 		const Section = (item: any) => (
-			<div className="section">
+			<div className={[ 'section', String(item.id || '') ].join(' ')}>
 				{item.name ? <div className="name">{item.name}</div> : ''}
 
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icon = null;
-						if (action.id == 'account') {
-							icon = <IconObject object={profile} size={22} iconSize={22} forceLetter={true} />;
-						} else {
-							icon = <Icon className={action.icon || action.id} />;
-						};
-
-						return (
-							<div 
-								key={i} 
-								id={`item-${action.id}`} 
-								className="item" 
-								onClick={() => { this.onPage(action.id); }}
-							>
-								{icon}
-								<div className="name">{action.name}</div>
-							</div>
-						);
-					})}
+					{item.children.map((action: any, i: number) => (
+						<Item key={i} {...action} />
+					))}
 				</div>
 			</div>
 		);
@@ -154,23 +183,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				ref={node => this.node = node}
 				className="sides"
 			>
-				<div id="sideLeft" className="side left">
-
-					{account ? (
-						<div className="space" onClick={() => this.onPage('spaceIndex')}>
-							<IconObject object={space} forceLetter={true} size={40} />
-							<div className="txt">
-								<ObjectName object={space} />
-								<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
-							</div>
-						</div>
-					) : ''}
-
-					{sections.map((item: any, i: number) => (
-						<Section key={i} {...item} />
-					))}
-				</div>
-				<div id="sideRight" className={[ 'side', 'right', Util.toCamelCase('tab-' + page) ].join(' ')}>
+				{sections.length ? (
+					<div id="sideLeft" className="side left">
+						{sections.map((item: any, i: number) => (
+							<Section key={i} {...item} />
+						))}
+					</div>
+				) : ''}
+				<div id="sideRight" className={cnr.join(' ')}>
 					{loading ? <Loader id="loader" /> : ''}
 					{content}
 				</div>
@@ -182,8 +202,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data;
+		const items = this.getItems();
 
-		this.onPage(page || 'spaceIndex');
+		this.onPage(page || items[0].id);
 		this.rebind();
 
 		keyboard.disableNavigation(true);
@@ -204,7 +225,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.unbind();
 		win.on('resize.settings', () => { this.resize(); });
-		win.on('keydown.settings', (e: any) => { this.onKeyDown(e); });
+		win.on('keydown.settings', e => this.onKeyDown(e));
 		win.on('mousedown.settings', (e: any) => { this.onMouseDown(e); });
 	};
 
@@ -212,41 +233,52 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		$(window).off('resize.settings keydown.settings mousedown.settings');
 	};
 
-	getSections () {
-		return [
-			{ 
-				name: 'Space', isHidden: true, children: [
-					{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
-				]
-			},
-			{ 
-				name: 'Account & data', children: [
-					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
-					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					//{ id: 'cloud', name: 'Cloud storage' },
-				] 
-			},
-			{ 
-				name: 'Customization', children: [
-					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-					{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
-				] 
-			},
-			{ 
-				name: 'Integrations', children: [
-					{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
-					{ id: 'exportIndex', name: translate('popupSettingsExportTitle'), icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
-				] 
-			}
-		];
+	getSections (): any[] {
+		const { param } = this.props;
+		const { data } = param;
+		const { isSpace } = data;
+
+		if (isSpace) {
+			return [
+				{ 
+					name: translate('popupSettingsSpaceTitle'), isHidden: true, children: [
+						{
+							id: 'spaceIndex',
+							name: translate('popupSettingsSpaceTitle'),
+							subPages: [
+								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
+								'exportIndex', 'exportProtobuf', 'exportMarkdown'
+							]
+						},
+					]
+				},
+			];
+		} else {
+			return [
+				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle'), subPages: [ 'logout' ] } ] },
+				{
+					name: translate('popupSettingsApplicationTitle'), children: [
+						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
+						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
+						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					]
+				},
+				{ 
+					name: translate('popupSettingsVoidTitle'), children: [
+						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
+						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+					]
+				}
+			];
+		};
 	};
 
 	getItems () {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -270,48 +302,22 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
-		const pin = Storage.get('pin');
 
 		this.prevPage = page;
-
-		if (pin && (id == 'phrase') && !this.pinConfirmed) {
-			this.setConfirmPin(() => { 
-				this.setPinConfirmed(true);
-				this.onPage('phrase');
-				this.setPinConfirmed(false);
-			});
-
-			this.onPage('pinConfirm');
-			return;
-		};
 
 		popupStore.updateData(this.props.id, { page: id });
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (!message.error.code) {
-				analytics.event('Import', { middleTime: message.middleTime, type });
-			};
-		});
-	};
-
-	onExport (format: I.ExportType, param: any) {
+	onExport (type: I.ExportType, param: any) {
 		const { zip, nested, files, archived } = param || {};
 
-		Action.export([], format, zip, nested, files, archived, () => { this.props.close(); });
+		analytics.event('ClickExport', { type });
+		Action.export([], type, zip, nested, files, archived, () => { this.props.close(); });
 	};
 
 	onKeyDown (e: any) {
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
-
-		keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+		keyboard.shortcut(UtilCommon.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 	};
 
 	onMouseDown (e: any) {
@@ -349,6 +355,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			obj.find(`#item-${active}`).addClass('active');
 		};
+	};
+
+	isSubPage (page) {
+		const items = this.getItems();
+
+		for (const item of items) {
+			if ((item.subPages || []).includes(page)) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	resize () {

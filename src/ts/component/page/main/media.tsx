@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, Util, Action, Renderer, ObjectUtil } from 'Lib';
+import { I, M, C, UtilCommon, Action, Renderer, UtilObject, translate } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -113,17 +113,31 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									<ObjectName className="title" object={object} />
 									<div className="descr">{object.description}</div>
 
-									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} isSelectionDisabled={true} />
+									<Block 
+										{...this.props} 
+										key={featured.id} 
+										rootId={rootId} 
+										iconSize={20} 
+										block={featured} 
+										isSelectionDisabled={true} 
+									/>
 
 									<div className="buttons">
-										<Button text="Open" color="blank" onClick={this.onOpen} />
-										<Button text="Download" color="blank" onClick={this.onDownload} />
+										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
+										<Button text={translate('commonDownload')} color="blank" onClick={this.onDownload} />
 									</div>
 								</div>
 
 								<div className="section">
 									{relations.map((item: any) => (
-										<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} isSelectionDisabled={true} />
+										<Block 
+											{...this.props} 
+											key={item.id} 
+											rootId={rootId} 
+											block={item} 
+											readonly={true} 
+											isSelectionDisabled={true} 
+										/>
 									))}
 								</div>
 							</div>
@@ -173,7 +187,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -262,7 +276,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const wh = container.height() - 60;
 
 		if (blocks.hasClass('vertical')) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, Util, DataUtil, ObjectUtil, MenuUtil, Mark, analytics } from 'Lib';
+import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -44,6 +44,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};			
+
 			const type = dbStore.getType(item.type);
 			const cn = [];
 
@@ -99,11 +103,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						isRowLoaded={({ index }) => !!this.items[index]}
 						threshold={LIMIT_HEIGHT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -159,7 +163,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -175,13 +179,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sections: any[] = [];
 
 		if (this.items.length) {
-			sections.push({ id: I.MarkType.Object, name: 'Objects', children: this.items.concat({ isDiv: true }) });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items.concat({ isDiv: true }) });
 		};
 
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: `Create object "${filter}"` }
+					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter) }
 				]
 			});
 		};
@@ -193,7 +197,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		return items;
@@ -204,8 +208,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
+		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeId.date);
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -219,13 +224,18 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(null);
 			};
@@ -234,7 +244,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -272,12 +282,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || ObjectUtil.defaultName('Page'));
-			name = Util.shorten(name, 30);
+			name = String(name || UtilObject.defaultName('Page'));
+			name = UtilCommon.shorten(name, 30);
 
 			const to = from + name.length;
 
-			let marks = Util.objectCopy(data.marks || []);
+			let marks = UtilCommon.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
@@ -292,7 +302,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const type = dbStore.getType(commonStore.type);
 			const name = this.getFilter();
 
-			ObjectUtil.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

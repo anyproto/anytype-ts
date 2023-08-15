@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName } from 'Component';
-import { I, keyboard, Storage, ObjectUtil } from 'Lib';
+import { I, keyboard, Storage, UtilObject, translate } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -68,23 +68,27 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			<div className="inner" style={{ paddingLeft }}>
 				<div
 					className="clickable"
-					onMouseDown={(e: React.MouseEvent) => { onClick(e, object); }}
+					onMouseDown={e => onClick(e, object)}
 				>
 					{arrow}
 					<IconObject 
-						id={`widget-icon-${id}`}
+						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
 						canEdit={!isReadonly && !isArchived} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox} 
+						onCheckbox={this.onCheckbox}
+						menuParam={{ 
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
 					/>
 					<ObjectName object={object} />
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
+					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
@@ -127,6 +131,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const more = node.find('.icon.more');
 		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
@@ -166,13 +171,13 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	onSelect (icon: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, icon, '');
+		UtilObject.setIcon(id, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, '', hash);
+		UtilObject.setIcon(id, '', hash);
 	};
 
 	onCheckbox () {
@@ -181,7 +186,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = dbStore.getSubId(subKey, parentId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
-		ObjectUtil.setDone(id, !object.done);
+		UtilObject.setDone(id, !object.done);
 	};
 
 });

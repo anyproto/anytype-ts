@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
-import { I, C, Util, FileUtil, ObjectUtil, Relation, Renderer, keyboard, Action } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -40,7 +40,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{FileUtil.name(item)}</div>
+				<div className="name">{UtilFile.name(item)}</div>
 			</React.Fragment>
 		);
 
@@ -50,7 +50,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
         const Item = SortableElement((item: any) => {
 			let content = null;
-			let cn = [ 'item' ];
+			const cn = [ 'item' ];
 
 			switch (item.layout) {
 				default:
@@ -70,7 +70,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={(e: any) => { ObjectUtil.openPopup(item); }}>
+					<div className="clickable" onClick={(e: any) => { UtilObject.openPopup(item); }}>
 						{content}
 					</div>
 					<div className="buttons">
@@ -96,8 +96,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				className="items"
 			>
 				<div className="section">
-					<MenuItemVertical id="add" icon="plus" name="Add" onClick={this.onAdd} />
-					<MenuItemVertical id="upload" icon="upload" name="Upload" onClick={this.onUpload} />
+					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
+					<MenuItemVertical id="upload" icon="upload" name={translate('commonUpload')} onClick={this.onUpload} />
 				</div>
 
 				{value.length ? (
@@ -165,7 +165,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			data: {
 				...data,
 				noClose: true,
-				placeholderFocus: 'Find a file...',
+				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
@@ -196,7 +196,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 		let value = Relation.getArrayValue(data.value);
 		value.push(hash);
-		value = Util.arrayUnique(value);
+		value = UtilCommon.arrayUnique(value);
 
 		this.save(value);
 	};	
@@ -230,8 +230,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			data: {
 				value: '',
 				options: [
-					{ id: 'download', icon: 'download', name: 'Download' },
-					{ id: 'remove', icon: 'remove', name: 'Delete' },
+					{ id: 'download', icon: 'download', name: translate('commonDownload') },
+					{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
 				],
 				onSelect: (event: any, el: any) => {
 
@@ -255,7 +255,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 						case 'remove': {
 							value = value.filter(it => it != item.id);
-							value = Util.arrayUnique(value);
+							value = UtilCommon.arrayUnique(value);
 
 							onChange(value, () => {
 								menuStore.updateData(id, { value });

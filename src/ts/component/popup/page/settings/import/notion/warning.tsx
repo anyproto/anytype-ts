@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, translate, analytics } from 'Lib';
+import { I, C, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../../head';
 
@@ -16,37 +16,33 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text="Some data formats will be imported as text" />
+				<Title text={translate('popupSettingsImportNotionWarningTitle')} />
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label">
-							All <b>@mentions</b> will be converted to text
-						</li>
-						<li className="label">
-							<b>Date ranges</b> will be imported as text
-						</li>
-						<li className="label">
-							<b>Formulas and rollups</b> will be placed as values
-						</li>
-						<li className="label">
-							<b>Databases</b> will look as Objects with Relations in Anytype documents
-						</li>
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi1') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi2') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi3') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi4') }} />
 					</ol>
 				</div>
 
-				<Button className="c36" text="Proceed" onClick={this.onImport} />
+				<Button className="c36" text={translate('popupSettingsImportNotionWarningProceed')} onClick={this.onImport} />
 			</div>
 		);
 	};
 
 	onImport (): void {
-		const { close, onImport } = this.props;
+		const { close } = this.props;
 
 		analytics.event('ImportNotionProceed');
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });
+		C.ObjectImport({ apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+			if (!message.error.code) {
+				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion });
+			};
+		});
 	};
 
 };

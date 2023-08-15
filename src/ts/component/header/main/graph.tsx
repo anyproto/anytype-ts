@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -18,15 +18,20 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
+					<Icon
+						className="toggle big"
+						tooltip={translate('sidebarToggle')}
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center">
@@ -35,7 +40,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 							<div 
 								key={i}
 								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => { onTab(item.id); }}
+								onClick={() => onTab(item.id)}
 								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
 								onMouseOut={onTooltipHide}
 							>
@@ -46,9 +51,9 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="filter big dn" tooltip="Filters" onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
+					<Icon id="button-header-search" className="btn-search big" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="btn-filter big dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
+					<Icon id="button-header-settings" className="btn-settings big" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);
@@ -59,7 +64,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
+		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
@@ -72,7 +77,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
-				filters: DataUtil.graphFilters(),
+				filters: UtilData.graphFilters(),
 				filter: graph.filter,
 				canAdd: true,
 				onSelect: (item: any) => {

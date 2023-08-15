@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';
+import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
@@ -25,6 +25,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	frames: any[] = [];
 	rowId = '';
 	cellId = '';
+	data: any = {};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -57,7 +58,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	render () {
 		const { block, readonly } = this.props;
-		const { rows, columns } = this.getData();
+
+		this.data = this.getData();
+
+		const { rows, columns } = this.data;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
 		// Subscriptions
@@ -85,7 +89,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 											{...this.props}
 											block={row}
 											index={i}
-											getData={this.getData}
+											getData={() => this.data}
 											onOptions={this.onOptions}
 											onEnterHandle={this.onEnterHandle}
 											onLeaveHandle={this.onLeaveHandle}
@@ -128,6 +132,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	
 	componentDidMount () {
 		this._isMounted = true;
+
+		this.data = this.getData();
 		this.initSize();
 		this.resize();
 		this.rebind();
@@ -137,6 +143,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 
+		this.data = this.getData();
 		this.initSize();
 		this.resize();
 
@@ -156,24 +163,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	rebind () {
 		const { block } = this.props;
 		const win = $(window);
-		const node = $(this.node);
 
 		this.unbind();
 
-		win.on('resize.' + block.id, () => { this.resize(); });
-		node.on('resize', () => { this.resize(); });
+		win.on(`resize.${block.id} resizeInit`, () => this.resize());
 	};
 
 	getData () {
 		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = columnContainer ? blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
-		const rows = rowContainer ? blockStore.unwrapTree([ blockStore.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
-
-		return { columnContainer, columns, rowContainer, rows };
+		return blockStore.getTableData(rootId, block.id);
 	};
 
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -221,7 +219,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			case I.BlockType.TableColumn: {
 				options = options.concat([
-					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
+					{ id: 'sort', icon: 'sort', name: translate('commonSort'), arrow: true },
 					{ isDiv: true },
 				]);
 				options = options.concat(this.optionsColumn(columnId));
@@ -232,8 +230,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			default: {
 				options = options.concat([
-					{ id: 'row', name: 'Row', arrow: true },
-					{ id: 'column', name: 'Column', arrow: true },
+					{ id: 'row', name: translate('blockTableRow'), arrow: true },
+					{ id: 'column', name: translate('blockTableColumn'), arrow: true },
 					{ isDiv: true },
 				]);
 				options = options.concat(this.optionsColor(cellId));
@@ -343,6 +341,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 				},
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.closeAll(subIds);
 						return;
@@ -350,7 +352,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 					let menuSubContext = null;
 					let menuId = '';
-					let menuParam: any = {
+					const menuParam: any = {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
@@ -501,7 +503,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const { rootId } = this.props;
-		const { rows, columns } = this.getData();
+		const { columns } = this.getData();
 
 		let position: I.BlockPosition = I.BlockPosition.None;
 		let next: any = null;
@@ -547,11 +549,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case 'rowMoveTop':
 			case 'rowMoveBottom': {
 				position = (item.id == 'rowMoveTop') ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-				idx = rows.findIndex(it => it.id == rowId);
-				nextIdx = idx + (position == I.BlockPosition.Top ? -1 : 1);
-				next = rows[nextIdx];
+				next = this.getNextRow(rowId, position == I.BlockPosition.Top ? -1 : 1);
 
-				if (next) {
+				if (next && !next.content.isHeader) {
 					this.onSortEndRow(rowId, next.id, position);
 				};
 				break;
@@ -838,7 +838,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		widths[idx] = this.checkWidth(e.pageX - this.offsetX);
 
-		this.setColumnsWidths(widths);
+		this.setColumnWidths(widths);
 		this.resize();
 	};
 
@@ -866,15 +866,18 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		return ret;
 	};
 
-	setColumnsWidths (widths: number[]) {
+	setColumnWidths (widths: number[]) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		const node = $(this.node);
 		const rows = node.find('.row');
+		const gridTemplateColumns = widths.map(it => it + 'px').join(' ');
 
-		rows.css({ gridTemplateColumns: widths.map(it => it + 'px').join(' ') });
+		rows.each((i, item) => {
+			item.style.gridTemplateColumns = gridTemplateColumns;
+		});
 	};
 
 	onDragStartColumn (e: any, id: string) {
@@ -938,7 +941,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
 				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
@@ -1030,7 +1033,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -1099,10 +1102,14 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case I.BlockType.TableColumn: {
 				columns.forEach((column: I.Block, i: number) => {
 					const cell = node.find(`.cell.column${column.id}`).first();
-					const p = cell.offset();
+					if (!cell.length) {
+						return;
+					};
+
+					const { left } = cell.offset();
 
 					this.cache[column.id] = {
-						x: p.left,
+						x: left,
 						y: 0,
 						height: 1,
 						width: cell.outerWidth(),
@@ -1117,11 +1124,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				rows.forEach((row: I.Block, i: number) => {
 					const el = node.find(`#row-${row.id}`).first();
-					const p = el.offset();
+					if (!el.length) {
+						return;
+					};
+
+					const { left, top } = el.offset();
 
 					this.cache[row.id] = {
-						x: p.left,
-						y: p.top,
+						x: left,
+						y: top,
 						height: el.height(),
 						width: width,
 						index: i,
@@ -1181,20 +1192,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	initSize () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { columns } = this.getData();
-		const node = $(this.node);
-		const rows = node.find('.row');
-		const sizes = [];
+		const widths = columns.map(it => this.checkWidth(it.fields.width || Constant.size.table.default));
 
-		columns.forEach((it: I.Block) => {
-			sizes.push(this.checkWidth(it.fields.width || Constant.size.table.default));
-		});
-
-		rows.css({ gridTemplateColumns: sizes.map(it => it + 'px').join(' ') });
+		this.setColumnWidths(widths);
 	};
 
 	checkWidth (w: number) {
@@ -1203,7 +1204,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let width = Math.max(min, Math.min(max, w));
 		for (let x = 1; x <= steps; ++x) {
-			let s = max / steps * x;
+			const s = max / steps * x;
 			if ((width >= s - SNAP) && (width <= s + SNAP)) {
 				width = s;
 			};
@@ -1221,7 +1222,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let options: any[] = [
 			{ 
-				id: 'rowHeader', icon: 'table-header-row', name: 'Header row', withSwitch: true, switchValue: isHeader,
+				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, (message: any) => {
 						this.frames.forEach((it: any) => {
@@ -1238,19 +1239,33 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		];
 
 		if (!isHeader) {
+			const nextTop = this.getNextRow(id, -1);
+			const nextBot = this.getNextRow(id, 1);
+
+			let moveTop = null;
+			let moveBot = null;
+
+			if (nextTop && !nextTop.content.isHeader && (idx > 0)) {
+				moveTop = { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') };
+			};
+
+			if (nextBot && !nextBot.content.isHeader && (idx < length - 1)) {
+				moveBot = { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') };
+			};
+
 			options = options.concat([
-				{ id: 'rowBefore', icon: 'table-insert-top', name: 'Insert above' },
-				{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Insert below' },
-				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: 'Move up' } : null,
-				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move down' } : null,
-				{ id: 'rowCopy', icon: 'copy', name: 'Duplicate' },
+				{ id: 'rowBefore', icon: 'table-insert-top', name: translate('blockTableOptionsRowRowBefore') },
+				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
+				moveTop,
+				moveBot,
+				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
 				{ isDiv: true },
 			]);
 		};
 
 		options = options.concat([
-			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
-			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: 'Delete row' } : null,
+			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
+			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: translate('blockTableOptionsRowRowRemove') } : null,
 			!isInner ? { isDiv: true } : null,
 		]);
 
@@ -1262,14 +1277,14 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const idx = columns.findIndex(it => it.id == id);
 		const length = columns.length;
 		const options: any[] = [
-			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Insert left' },
-			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Insert right' },
-			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move left' } : null,
-			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: 'Move right' } : null,
-			{ id: 'columnCopy', icon: 'copy', name: 'Duplicate' },
+			{ id: 'columnBefore', icon: 'table-insert-left', name: translate('blockTableOptionsColumnColumnBefore') },
+			{ id: 'columnAfter', icon: 'table-insert-right', name: translate('blockTableOptionsColumnColumnAfter') },
+			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
+			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
+			{ id: 'columnCopy', icon: 'copy', name: translate('commonDuplicate') },
 			{ isDiv: true },
-			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
-			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: 'Delete column' } : null,
+			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
+			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: translate('blockTableOptionsColumnColumnRemove') } : null,
 			!isInner ? { isDiv: true } : null,
 		];
 		return options;
@@ -1282,10 +1297,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
 		return [
-			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
-			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
-			{ id: 'style', icon: 'paragraph', name: 'Style', arrow: true },
-			{ id: 'clearStyle', icon: 'clear', name: 'Clear style' },
+			{ id: 'color', icon: 'color', name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
+			{ id: 'background', icon: 'color', name: translate('blockTableOptionsColorBackground'), inner: innerBackground, arrow: true },
+			{ id: 'style', icon: 'paragraph', name: translate('blockTableOptionsColorStyle'), arrow: true },
+			{ id: 'clearStyle', icon: 'clear', name: translate('blockTableOptionsColorClearStyle') },
 			{ isDiv: true },
 		];
 	};
@@ -1295,16 +1310,16 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const current = blockStore.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: 'Text align', arrow: true },
-			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: 'Vertical align', arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
+			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
 		];
 	};
 
 	optionsHAlign () {
 		return [
-			{ id: I.BlockHAlign.Left, name: 'Left' },
-			{ id: I.BlockHAlign.Center, name: 'Center' },
-			{ id: I.BlockHAlign.Right, name: 'Right' },
+			{ id: I.BlockHAlign.Left, name: translate('blockTableOptionsAlignTextLeft') },
+			{ id: I.BlockHAlign.Center, name: translate('blockTableOptionsAlignTextCenter') },
+			{ id: I.BlockHAlign.Right, name: translate('blockTableOptionsAlignTextRight') },
 		].map((it: any) => {
 			it.icon = this.alignHIcon(it.id);
 			return it;
@@ -1313,9 +1328,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsVAlign () {
 		return [
-			{ id: I.BlockVAlign.Top, name: 'Top' },
-			{ id: I.BlockVAlign.Middle, name: 'Middle' },
-			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
+			{ id: I.BlockVAlign.Top, name: translate('blockTableOptionsAlignVerticalTop') },
+			{ id: I.BlockVAlign.Middle, name: translate('blockTableOptionsAlignVerticalMiddle') },
+			{ id: I.BlockVAlign.Bottom, name: translate('blockTableOptionsAlignVerticalBottom') },
 		].map((it: any) => {
 			it.icon = this.alignVIcon(it.id);
 			return it;
@@ -1326,10 +1341,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const current = blockStore.getLeaf(rootId, cellId);
 		const ret: any[] = [
-			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
-			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
-			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
-			{ id: I.MarkType.Underline, icon: 'underline', name: 'Underline' },
+			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
+			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
+			{ id: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough') },
+			{ id: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline') },
 		];
 
 		let length = 0;
@@ -1345,8 +1360,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsSort () {
 		return [
-			{ id: I.SortType.Asc, name: 'Ascending' },
-			{ id: I.SortType.Desc, name: 'Descending' },
+			{ id: I.SortType.Asc, name: translate('commonAscending') },
+			{ id: I.SortType.Desc, name: translate('commonDescending') },
 		];
 	};
 
@@ -1456,7 +1471,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		w += 2;
 		h += 2;
 
-		let frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
+		const frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
 		let current = this.frames.find(it => it.id == frame.id);
 		
 		if (!current) {
@@ -1503,6 +1518,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		return I.BlockPosition[position].toLowerCase();
 	};
 
+	getNextRow (id: string, dir: number) {
+		const { rows } = this.getData();
+		const idx = rows.findIndex(it => it.id == id);
+		const nextIdx = idx + dir;
+		const next = rows[nextIdx];
+
+		return next;
+	};
+
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -1527,7 +1551,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const obj = $(`#block-${block.id}`);
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;

@@ -1,15 +1,18 @@
-import { I, Storage, Util } from 'Lib';
+import { I, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
 import { menuStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 class Onboarding {
+
+	getSection (key: string) {
+		return Docs.Help.Onboarding[key] ? Docs.Help.Onboarding[key]() : {};
+	};
 	
 	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
 		options = options || {};
 
-		const section = Docs.Help.Onboarding[key];
+		const section = this.getSection(key);
 		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key))) {
 			return;
 		};
@@ -19,7 +22,7 @@ class Onboarding {
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
-				let param = this.getParam(section, items[0], isPopup);
+				let param = this.getParam(section, items[0], isPopup, force);
 
 				if (options.parseParam) {
 					param = options.parseParam(param);
@@ -48,10 +51,10 @@ class Onboarding {
 	};
 
 	getReminderKey (key: string) {
-		return Util.toCamelCase([ key, 'reminder' ].join('-'));
+		return UtilCommon.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
-	getParam (section: any, item: any, isPopup: boolean): any {
+	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
 		section.param = section.param || {};
 		item.param = item.param || {};
 
@@ -81,6 +84,7 @@ class Onboarding {
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;
 		param.recalcRect = null;
+		param.force = force;
 
 		const cnw = [];
 		if (param.classNameWrap) {
@@ -96,7 +100,7 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = Util.getScrollContainer(isPopup);
+				const container = UtilCommon.getScrollContainer(isPopup);
 				const height = container.height();
 				const width = container.width();
 				const scrollTop = $(window).scrollTop();

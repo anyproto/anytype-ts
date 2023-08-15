@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { Util, C, Storage } from 'Lib';
+import { UtilCommon, C, Storage, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 
 const Progress = observer(class Progress extends React.Component {
@@ -30,7 +30,7 @@ const Progress = observer(class Progress extends React.Component {
 			return null;
 		};
 		
-		const text = Util.sprintf(status, current, total);
+		const text = UtilCommon.sprintf(status, current, total);
 		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
 		
 		return (
@@ -66,7 +66,7 @@ const Progress = observer(class Progress extends React.Component {
 		node.removeClass('hide');
 		this.resize();
 
-		win.off('resize.progress').on('resize.progress', () => { this.resize(); });
+		win.off('resize.progress').on('resize.progress', () => this.resize());
 		
 		if (total && (current >= total)) {
 			node.addClass('hide');
@@ -111,6 +111,9 @@ const Progress = observer(class Progress extends React.Component {
 		this.dx = e.pageX - offset.left;
 		this.dy = e.pageY - offset.top;
 
+		keyboard.disableSelection(true);
+		keyboard.setDragging(true);
+
 		win.off('mousemove.progress mouseup.progress');
 		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.progress', (e: any) => { this.onDragEnd(e); });
@@ -125,20 +128,21 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	onDragEnd (e: any) {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+
 		$(window).off('mousemove.progress mouseup.progress');
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
-		y = Math.max(Util.sizeHeader(), y);
+		y = Math.max(UtilCommon.sizeHeader(), y);
 		y = Math.min(wh - this.height, y);
 
 		return { x, y };

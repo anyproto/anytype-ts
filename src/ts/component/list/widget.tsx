@@ -2,9 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import { C, I, M, keyboard, ObjectUtil, analytics } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
-import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -33,7 +32,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	constructor (props: Props) {
 		super(props);
 
-		this.toggleEditMode = this.toggleEditMode.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.addWidget = this.addWidget.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
@@ -42,6 +41,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.setEditing = this.setEditing.bind(this);
+		this.onLibrary = this.onLibrary.bind(this);
+		this.onArchive = this.onArchive.bind(this);
 	};
 
 	render(): React.ReactNode {
@@ -72,19 +73,21 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
 				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
-					return;
+					return false;
 				};
 
 				const child = blockStore.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
-					return;
+					return false;
 				};
 
-				if (Object.values(Constant.widgetId).includes(child.content.targetBlockId)) {
+				const target = child.content.targetBlockId;
+
+				if (Object.values(Constant.widgetId).includes(target)) {
 					return true;
 				};
 
-				const object = detailStore.get(widgets, child.content.targetBlockId, [ 'isArchived', 'isDeleted' ], true);
+				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};
@@ -98,12 +101,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 			if (isEditing) {
 				if (blocks.length <= Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
+					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onClick: this.addWidget });
 				};
 
-				buttons.push({ id: 'widget-list-done', text: 'Done', onClick: this.toggleEditMode });
+				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onClick: this.onEdit });
 			} else {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: 'Edit widgets', onClick: this.toggleEditMode });
+				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onClick: this.onEdit });
 			};
 
 			content = (
@@ -131,19 +134,19 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					))}
 
 					<Button 
-						text="Library" 
+						text={translate('widgetLibrary')}
 						color="" 
 						className="widget" 
-						icon="library" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
+						icon="store" 
+						onClick={this.onLibrary} 
 					/>
 
 					<Button 
-						text="Bin" 
+						text={translate('widgetBin')}
 						color="" 
 						className="widget" 
 						icon="bin" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
+						onClick={this.onArchive} 
 					/>
 
 					<div className="buttons">
@@ -161,6 +164,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				id="listWidget"
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
+				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
@@ -173,11 +177,14 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		$(this.node).scrollTop(this.top);
 	};
 
-	toggleEditMode (): void {
-		if (!this.state.isEditing) {
+	onEdit (): void {
+		const { isEditing } = this.state;
+		
+		this.setState({ isEditing: !isEditing });
+
+		if (!isEditing) {
 			analytics.event('EditWidget');
 		};
-		this.setState({ isEditing: !this.state.isEditing });
 	};
 
 	addWidget (): void {
@@ -242,7 +249,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.frame = raf(() => {
 			this.clear();
 			this.dropTargetId = blockId;
-			this.position = this.getPosition(y, target.get(0));
+
+			const { top } = target.offset();
+			const height = target.height();
+
+			this.position = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
 			target.addClass([ 'isOver', (this.position == I.BlockPosition.Top ? 'top' : 'bottom') ].join(' '));
 		});
@@ -250,7 +261,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onDrop (e: React.DragEvent): void {
 		const { isEditing } = this.state;
-
 		if (!isEditing) {
 			return;
 		};
@@ -258,16 +268,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const { preventCommonDrop } = dataset;
 		const { widgets } = blockStore;
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
-			const childrenIds = blockStore.getChildrenIds(widgets, widgets);
-			const oldIndex = childrenIds.indexOf(blockId);
-			const newIndex = childrenIds.indexOf(this.dropTargetId);
-
-			blockStore.updateStructure(widgets, widgets, arrayMove(childrenIds, oldIndex, newIndex));
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
@@ -282,6 +287,22 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.top = $(this.node).scrollTop();
 	};
 
+	onLibrary (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store });
+		};
+	};
+
+	onArchive (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive });
+		};
+	};
+
 	onContextMenu () {
 		const { previewId } = this.state;
 		if (previewId) {
@@ -291,17 +312,19 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const win = $(window);
 		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 		const options: any[] = [
-			{ id: 'edit', name: 'Edit widgets' },
+			{ id: 'edit', name: translate('widgetEdit') },
 		];
 
 		if (widgetIds.length < Constant.limit.widgets) {
-			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
+			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
 		};
 
 		let menuContext = null;
 
 		menuStore.open('selectList', {
 			component: 'select',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			onOpen: (context) => {
 				menuContext = context;
 			},
@@ -313,6 +336,10 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			data: {
 				options,
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.close('widget');
 						return;
@@ -325,6 +352,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						offsetX: menuContext.getSize().width,
 						isSub: true,
 						vertical: I.MenuDirection.Center,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
 						data: {
 							coords: { x, y },
 							onSave: () => {
@@ -360,12 +389,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.position = null;
 
 		raf.cancel(this.frame);
-	};
-
-	getPosition (y: number, target): I.BlockPosition {
-		const { top, height } = target.getBoundingClientRect();
-
-		return y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 	};
 
 	setPreview (previewId: string) {

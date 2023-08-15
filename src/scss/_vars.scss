@@ -18,9 +18,11 @@ $colorGreen: #57c600;
 $colorBorderLight: #ebebeb;
 $colorBorderDark: #e3e3e3;
 $colorSecondary: #d4d4d4;
+$colorLineTertiary: #2b2b2b;
 
 $colorHoverMedium: rgba(79,79,79,0.08);
 $colorHoverLight: rgba(79,79,79,0.04);
+$colorBgLoader: rgba(255,255,255,0.7);
 
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
@@ -40,7 +42,6 @@ $transitionAllCommon: all $transitionCommon;
 @mixin text-header2 { font-family: 'Inter'; font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; }
 @mixin text-header3 { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; font-weight: 700; }
 @mixin text-description { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
-@mixin text-quote { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
 
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
 

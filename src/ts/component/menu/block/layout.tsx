@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil } from 'Lib';
+import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -62,7 +62,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -77,8 +77,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
+		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
 			align = null;
@@ -89,7 +89,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: 'Choose layout type', children: MenuUtil.turnLayouts() });
+			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: UtilMenu.turnLayouts() });
 		};
 
 		sections.push({ 
@@ -111,7 +111,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -137,7 +137,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const object = detailStore.get(rootId, rootId);
 
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -158,7 +158,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
 					onSelect: (align: I.BlockHAlign) => {
-						ObjectUtil.setAlign(rootId, align);
+						UtilObject.setAlign(rootId, align);
 
 						analytics.event('SetLayoutAlign', { align });
 						close();
@@ -191,7 +191,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 			analytics.event('SetLayoutWidth');
 		} else {
-			ObjectUtil.setLayout(rootId, item.id, (message: any) => {
+			UtilObject.setLayout(rootId, item.id, (message: any) => {
 				if (onLayoutSelect) {
 					onLayoutSelect(item.id);
 				};
@@ -202,7 +202,17 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	onResize (e: any) {
-		$('#editorWrapper').addClass('isResizing');
+		const container = UtilCommon.getPageContainer(keyboard.isPopup());
+		const wrapper = $('#editorWrapper');
+
+		wrapper.addClass('isResizing');
+
+		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => { 
+			if (!$(e.target).parents(`#editorSize`).length) {
+				wrapper.removeClass('isResizing');
+				container.off('mousedown.editorSize');
+			};
+		});
 	};
 	
 };

@@ -28,16 +28,16 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit; text-decoration: none; font-weight: 500; border-bottom: 0.075em solid; transition: border-color $transitionCommon; }
+		lnk, obj { color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 
-		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
+		mention { display: inline; user-select: all !important; position: relative; cursor: default; }
 		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
-			.space { width: 2px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
+			.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; vertical-align: top; position: relative; font-weight: 500; }
+			name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
@@ -73,7 +73,6 @@
 			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
 			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
 			
-			.marker.check, .marker.toggle { cursor: pointer; }
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
 			}
@@ -105,45 +104,45 @@
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 0px; }
-	.block.blockText.textTitle:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockText.textTitle > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	/* Description */
 
-	.block.blockText.textDescription:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
+	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	/* Header1 */
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 4px; }
 		name { font-weight: inherit; }
 	}
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget {
 		lnk, obj { font-weight: inherit; }
 	}
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget bold { font-weight: 700; }
 
 	/* Header2 */
 	
-	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
+	.block.blockText.textHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 4px; }
 		name { font-weight: inherit; }
 	}
+	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget {
 		lnk, obj { font-weight: inherit; }
 	}
 
 	/* Header3 */
 	
-	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
+	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 3px; }
 		name { font-weight: inherit; }
 	}
+	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget {
 		lnk, obj { font-weight: inherit; }
 	}
@@ -151,8 +150,15 @@
 	/* Quote */
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
-	.block.blockText.textQuote > .wrapContent > .additional > .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid $colorBlack; }
+	.block.blockText.textQuote {
+		> .wrapContent {
+			> .selectable > .dropTarget { padding: 1px 0px 2px 0px; }
+
+			> .additional {
+				> .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid; }
+			}
+		}
+	}
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-left: 28px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: 28px; }
 
@@ -163,7 +169,7 @@
 	/* Callout */
 	
 	.block.blockText.textCallout { min-width: 130px; }
-	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 2px; margin: 6px 0px; }
+	.block.blockText.textCallout > .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: $colorVeryLightGrey; }
 	.block.blockText.textCallout > .wrapContent > .selectable { position: static; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget { padding: 16px 16px 0px 16px; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex { gap: 0px 14px; }
@@ -181,7 +187,8 @@
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable { background: rgba(247,245,240,0.5); border-radius: 6px; }
+	.block.blockText.textCode > .wrapContent { border-radius: 2px; background-color: $colorVeryLightGrey; }
+	.block.blockText.textCode > .wrapContent > .selectable { border-radius: 6px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget .placeholder { display: none !important; }
@@ -205,11 +212,11 @@
 			}
 			.buttons {
 				.btn { 
-					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; 
+					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; 
 					display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
 				}
 				.btn {
-					.icon { flex-shrink: 0; width: 20px; height: 20px; cursor: pointer; }
+					.icon { flex-shrink: 0; width: 20px; height: 20px; }
 					.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
 					.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 

@@ -2,10 +2,7 @@
 
 .popups {
 	.popup.popupPreview {
-		.innerWrap { 
-			min-width: 450px; min-height: 300px; margin: 0px !important; transform: translate3d(-50%, -50%, 0px) !important;
-			border-radius: 6px;
-		}
+		.innerWrap { border-radius: 6px; }
 		.innerWrap.anim { transition: $transitionAllCommon; }
 		#loader { background: #fff; width: 100%; height: 100%; }
 

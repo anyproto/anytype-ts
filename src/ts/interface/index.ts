@@ -16,7 +16,6 @@ import {
 	ExportType, 
 	Source, 
 	EdgeType, 
-	TabIndex,
 	HeaderComponent,
 	PageComponent,
 	FooterComponent,
@@ -25,6 +24,10 @@ import {
 	Dataset,
 	ButtonComponent,
 	SpaceType,
+	FileSyncStatus,
+	StoreTab,
+	HomePredefinedId,
+	Usecase,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -88,7 +91,6 @@ export {
 	HistoryVersion,
 	Source,
 	EdgeType,
-	TabIndex,
 	HeaderComponent,
 	PageComponent,
 	FooterComponent,
@@ -96,6 +98,8 @@ export {
 	SliceOperation,
 	Dataset,
 	ButtonComponent,
+	HomePredefinedId,
+	Usecase,
 
 	ImportType,
 	ImportMode,
@@ -122,6 +126,10 @@ export {
 	PreviewType,
 
 	SpaceType,
+
+	FileSyncStatus,
+
+	StoreTab,
 
 	MenuTab,
 	MenuType,

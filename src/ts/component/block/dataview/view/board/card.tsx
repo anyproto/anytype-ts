@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, Icon } from 'Component';
@@ -23,7 +23,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 
 		let content = (
@@ -41,7 +41,8 @@ const Card = observer(class Card extends React.Component<Props> {
 						arrayLimit={2}
 						showTooltip={true}
 						tooltipX={I.MenuDirection.Left}
-						iconSize={18}
+						onClick={e => this.onCellClick(e, relation)}
+						iconSize={relation.relationKey == 'name' ? 20 : 18}
 					/>
 				))}
 			</div>
@@ -52,37 +53,23 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
+					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
-					<Icon
-						className="checkbox"
-						onClick={e => onSelectToggle(e, record.id)}
-						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/>
 					{content}
 				</div>
 			);
-		
-			if (isCollection) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-						{content}
-					</DropTarget>
-				);
-			};
 		};
 
 		return (
 			<div 
 				ref={node => this.node = node} 
-				id={`card-${record.id}`}
+				id={`record-${record.id}`}
 				className={cn.join(' ')} 
 				draggable={true}
-				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
-				onClick={(e: any) => { this.onClick(e); }}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
-				{...Util.dataProps({ id: record.id })}
+				onDragStart={e => onDragStartCard(e, groupId, record)}
+				onClick={e => this.onClick(e)}
+				onContextMenu={e => onContext(e, record.id)}
+				{...UtilCommon.dataProps({ id: record.id })}
 			>
 				{content}
 			</div>
@@ -111,7 +98,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};
@@ -124,6 +111,20 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (cb[e.button]) {
 			cb[e.button]();
 		};
+	};
+
+	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
+		const { onCellClick, recordId } = this.props;
+		const relation = dbStore.getRelationByKey(vr.relationKey);
+
+		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		onCellClick(e, relation.relationKey, recordId);
 	};
 
 	resize () {

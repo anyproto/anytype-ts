@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, Util, MenuUtil } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilMenu, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
@@ -60,7 +60,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -102,18 +102,18 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 		let sections = [
 			{ 
-				id: 'date', name: 'Date format', children: [
+				id: 'date', name: translate('menuDataviewDateDateFormat'), children: [
 					{ id: 'dateFormat', name: dateFormat?.name, arrow: true }
 				] 
 			},
 			{ 
-				id: 'time', name: 'Time format', children: [
+				id: 'time', name: translate('menuDataviewDateTimeFormat'), children: [
 					{ id: 'timeFormat', name: timeFormat?.name, arrow: true }
 				] 
 			},
 		];
 
-		sections = MenuUtil.sectionsMap(sections);
+		sections = UtilMenu.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -121,7 +121,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -133,18 +133,18 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		switch (key) {
 			case 'dateFormat':
 				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: Util.date('M d, Y', Util.time()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: Util.date('d M, Y', Util.time()) },
-					{ id: I.DateFormat.Short, name: Util.date('d.m.Y', Util.time()) },
-					{ id: I.DateFormat.ShortUS, name: Util.date('m.d.Y', Util.time()) },
-					{ id: I.DateFormat.ISO, name: Util.date('Y-m-d', Util.time()) },
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: UtilCommon.date('M d, Y', UtilCommon.time()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: UtilCommon.date('d M, Y', UtilCommon.time()) },
+					{ id: I.DateFormat.Short, name: UtilCommon.date('d.m.Y', UtilCommon.time()) },
+					{ id: I.DateFormat.ShortUS, name: UtilCommon.date('m.d.Y', UtilCommon.time()) },
+					{ id: I.DateFormat.ISO, name: UtilCommon.date('Y-m-d', UtilCommon.time()) },
 				];
 				break;
 
 			case 'timeFormat':
 				options = [
-					{ id: I.TimeFormat.H12, name: '12 hour' },
-					{ id: I.TimeFormat.H24, name: '24 hour' },
+					{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+					{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
 				];
 				break;
 		};

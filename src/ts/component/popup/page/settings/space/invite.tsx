@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
-import { I, translate, Util } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -10,9 +10,9 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
 
     render () {
         const memberTypes = [
-            { id: 'reader', name: 'Reader'},
-            { id: 'editor', name: 'Editor'},
-            { id: 'admin', name: 'Admin'}
+            { id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
+            { id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
+            { id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')}
         ];
 
         return (
@@ -41,7 +41,7 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
                     </div>
                 </div>
 
-                <Label className="description" text={translate(`popupSettingsSpaceInviteMemberTypeText${Util.toUpperCamelCase(this.memberType)}`)} />
+                <Label className="description" text={translate(`popupSettingsSpaceInviteMemberTypeText${UtilCommon.toUpperCamelCase(this.memberType)}`)} />
                 <Button className="c36" text={translate('popupSettingsSpaceInviteButton')} />
             </div>
         );

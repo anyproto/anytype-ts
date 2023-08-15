@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, ObjectUtil, Relation } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -14,20 +14,18 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
+		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter((it: any) => { 
-				return (it.relationKey == 'name') || !it.isHidden; 
-			});
+			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).forEach((it: any) => {
+		(view.relations || []).filter(it => it).forEach(it => {
 			order[it.relationKey] = o++;
 		});
 
-		relations.forEach((it: any) => {
+		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};
@@ -49,7 +47,7 @@ class Dataview {
 			return 0;
 		});
 
-		const ret = relations.map((relation: any) => {
+		const ret = relations.filter(it => it).map(relation => {
 			const vr = (view.relations || []).find(it => it.relationKey == relation.relationKey) || {};
 
 			if (relation.relationKey == 'name') {
@@ -63,7 +61,7 @@ class Dataview {
 			});
 		});
 
-		return Util.arrayUniqueObjects(ret, 'relationKey');
+		return UtilCommon.arrayUniqueObjects(ret, 'relationKey');
 	};
 
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
@@ -86,9 +84,15 @@ class Dataview {
 				if (index >= 0) {
 					const newView = dbStore.getView(rootId, blockId, view.id);
 					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+					
+					let keys = newView.relations.map(it => it.relationKey);
+					if (oldIndex < 0) {
+						keys.splice(index, 0, relationKey);
+					} else {
+						keys = arrayMove(keys, oldIndex, index);
+					};
 
-					newView.relations = arrayMove(newView.relations, oldIndex, index);
-					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
+					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 				} else {
 					if (callBack) {
 						callBack(message);
@@ -113,6 +117,7 @@ class Dataview {
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
+		const block = blockStore.getLeaf(rootId, blockId);
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		
 		if (!view) {
@@ -129,6 +134,11 @@ class Dataview {
 			if (vr) {
 				it.includeTime = vr.includeTime;
 			};
+
+			// TODO: Hack until we implement proper logic on Middleware
+			if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
+				it.includeTime = true;
+			};
 			return it;
 		};
 
@@ -136,6 +146,7 @@ class Dataview {
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
+		const sorts = UtilCommon.objectCopy(view.sorts);
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -146,11 +157,20 @@ class Dataview {
 
 		dbStore.metaSet(subId, '', meta);
 
-		DataUtil.searchSubscribe({
+		if (block) {
+			const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
+			const objectIds = el ? el.objectIds || [] : [];
+
+			if (objectIds.length) {
+				sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+			};
+		};
+
+		UtilData.searchSubscribe({
 			...param,
 			subId,
 			filters: view.filters.map(mapper),
-			sorts: view.sorts.map(mapper),
+			sorts: sorts.map(mapper),
 			keys,
 			limit,
 			offset,
@@ -167,9 +187,9 @@ class Dataview {
 		};
 
 		const tabs: I.MenuTab[] = [
-			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-			view.isBoard() ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
-			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
+			{ id: 'relation', name: translate('libDataviewRelations'), component: 'dataviewRelationList' },
+			view.isBoard() ? { id: 'group', name: translate('libDataviewGroups'), component: 'dataviewGroupList' } : null,
+			{ id: 'view', name: translate('libDataviewView'), component: 'dataviewViewEdit' },
 		];
 		return tabs.filter(it => it);
 	};
@@ -187,7 +207,7 @@ class Dataview {
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 		const { type } = object;
-		const isInline = !ObjectUtil.getSetTypes().includes(type);
+		const isInline = !UtilObject.getSetTypes().includes(type);
 
 		if (!isInline) {
 			return type == Constant.typeId.collection;
@@ -224,7 +244,7 @@ class Dataview {
 			return;
 		};
 
-		const groupOrder = Util.objectCopy(block.content.groupOrder);
+		const groupOrder = UtilCommon.objectCopy(block.content.groupOrder);
 		const idx = groupOrder.findIndex(it => it.viewId == viewId);
 
 		if (idx >= 0) {
@@ -234,6 +254,33 @@ class Dataview {
 		};
 
 		blockStore.updateContent(rootId, blockId, { groupOrder });
+	};
+
+	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
+		records = records || [];
+
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return records;
+		};
+
+		const el = block.content.objectOrder.find(it => (it.viewId == viewId) && (groupId ? it.groupId == groupId : true));
+		if (!el) {
+			return records;
+		};
+
+		const objectIds = el.objectIds || [];
+
+		records.sort((c1: any, c2: any) => {
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return records;
 	};
 
 };

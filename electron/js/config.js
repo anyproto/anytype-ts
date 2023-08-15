@@ -3,9 +3,9 @@ const storage = require('electron-json-storage');
 const version = app.getVersion();
 
 const ChannelSettings = [
-	{ id: 'alpha', name: 'Alpha' },
-	{ id: 'beta', name: 'Pre-release' },
-	{ id: 'latest', name: 'Public' },
+	{ id: 'alpha', lang: 'electronChannelAlpha' },
+	{ id: 'beta', lang: 'electronChannelBeta' },
+	{ id: 'latest', lang: 'electronChannelLatest' },
 ];
 
 const CONFIG_NAME = 'devconfig';
@@ -21,6 +21,7 @@ class ConfigManager {
 		storage.get(CONFIG_NAME, (error, data) => {
 			this.config = data || {};
 			this.checkChannel();
+			this.checkTheme();
 
 			console.log('[ConfigManager].init:', this.config);
 
@@ -37,6 +38,7 @@ class ConfigManager {
 	set (obj, callBack) {
 		this.config = Object.assign(this.config, obj);
 		this.checkChannel();
+		this.checkTheme();
 
 		console.log('[ConfigManager].set:', this.config);
 
@@ -45,6 +47,10 @@ class ConfigManager {
 				callBack(error);
 			};
 		});
+	};
+
+	checkTheme () {
+		this.config.theme = (undefined !== this.config.theme) ? this.config.theme : 'system';
 	};
 
 	checkChannel () {
@@ -68,8 +74,10 @@ class ConfigManager {
 	};
 
 	getChannels () {
+		const Util = require('./util.js');
+
 		let channels = ChannelSettings.map((it) => {
-			return { id: it.id, label: it.name, type: 'radio', checked: (this.config.channel == it.id) };
+			return { id: it.id, label: Util.translate(it.lang), type: 'radio', checked: (this.config.channel == it.id) };
 		});
 		if (!this.config.sudo) {
 			channels = channels.filter(it => it.id != 'alpha');

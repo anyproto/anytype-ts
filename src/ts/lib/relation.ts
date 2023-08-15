@@ -1,11 +1,11 @@
-import { I, Util, FileUtil, translate, Dataview } from 'Lib';
+import { I, UtilCommon, UtilFile, translate, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Relation {
 
 	public typeName (v: I.RelationType): string {
-		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return UtilCommon.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	public className (v: I.RelationType): string {
@@ -17,7 +17,7 @@ class Relation {
 	};
 
 	public selectClassName (v: I.RelationType): string {
-		return Util.toCamelCase('is-' + I.RelationType[v]);
+		return UtilCommon.toCamelCase('is-' + I.RelationType[v]);
 	};
 
 	public cellId (prefix: string, relationKey: string, id: string|number) {
@@ -104,34 +104,34 @@ class Relation {
 			return [];
 		};
 
-		let ret: { id: I.FilterQuickOption, name: string }[] = [];
+		let ret = [];
 
 		switch (type) {
 			case I.RelationType.Date: {
-				const defaultOptions: I.Option[] = [
-					{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
-					{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
-					{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
+				const defaultOptions = [
+					I.FilterQuickOption.NumberOfDaysAgo,
+					I.FilterQuickOption.NumberOfDaysNow,
+					I.FilterQuickOption.ExactDate,
 				];
 
-				const extendedOptions: I.Option[] = [
-					{ id: I.FilterQuickOption.Today,		 name: 'Today' },
-					{ id: I.FilterQuickOption.Tomorrow,		 name: 'Tomorrow' },
-					{ id: I.FilterQuickOption.Yesterday,	 name: 'Yesterday' },
-					{ id: I.FilterQuickOption.LastWeek,		 name: 'Last week' },
-					{ id: I.FilterQuickOption.CurrentWeek,	 name: 'Current week' },
-					{ id: I.FilterQuickOption.NextWeek,		 name: 'Next week' },
-					{ id: I.FilterQuickOption.LastMonth,	 name: 'Last month' },
-					{ id: I.FilterQuickOption.CurrentMonth,	 name: 'Current month' },
-					{ id: I.FilterQuickOption.NextMonth,	 name: 'Next month' },
+				const extendedOptions = [
+					I.FilterQuickOption.Today,
+					I.FilterQuickOption.Tomorrow,
+					I.FilterQuickOption.Yesterday,
+					I.FilterQuickOption.LastWeek,
+					I.FilterQuickOption.CurrentWeek,
+					I.FilterQuickOption.NextWeek,
+					I.FilterQuickOption.LastMonth,
+					I.FilterQuickOption.CurrentMonth,
+					I.FilterQuickOption.NextMonth,
 				];
 
 				switch (condition) {
 					case I.FilterCondition.Equal: {
 						ret = ret.concat([
-							{ id: I.FilterQuickOption.Today, name: 'Today' },
-							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
-							{ id: I.FilterQuickOption.Yesterday, name: 'Yesterday' },
+							I.FilterQuickOption.Today,
+							I.FilterQuickOption.Tomorrow,
+							I.FilterQuickOption.Yesterday,
 						]);
 						ret = ret.concat(defaultOptions);
 						break;
@@ -163,7 +163,7 @@ class Relation {
 			};
 		};
 
-		return ret;
+		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
 	};
 
 	public formatValue (relation: any, value: any, maxCount: boolean) {
@@ -207,7 +207,7 @@ class Relation {
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				value = this.getArrayValue(Util.objectCopy(value));
+				value = this.getArrayValue(UtilCommon.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -248,12 +248,12 @@ class Relation {
 	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
-				return FileUtil.size(value);
+				return UtilFile.size(value);
 			};
 
 			case 'widthInPixels':
 			case 'heightInPixels': {
-				return Util.formatNumber(value) + 'px';
+				return UtilCommon.formatNumber(value) + 'px';
 			};
 
 			case 'layout': {
@@ -299,27 +299,25 @@ class Relation {
 
 	public getSizeOptions () {
 		return [
-			{ id: I.CardSize.Small, name: 'Small' },
-			{ id: I.CardSize.Medium, name: 'Medium' },
-			{ id: I.CardSize.Large, name: 'Large' },
+			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
+			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
+			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
 		];
 	};
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
+		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
-		}).map((it: any) => {
-			return { 
-				id: it.relationKey, 
-				icon: 'relation ' + this.className(it.format),
-				name: it.name, 
-			};
-		});
+		}).map(it => ({
+			id: it.relationKey, 
+			icon: 'relation ' + this.className(it.format),
+			name: it.name, 
+		}));
 
 		return [
-			{ id: '', icon: '', name: 'None' },
-			{ id: 'pageCover', icon: 'image', name: 'Page cover' },
+			{ id: '', icon: '', name: translate('libRelationNone') },
+			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 
@@ -345,13 +343,11 @@ class Relation {
 			return 0;
 		});
 
-		options = options.map((it: any) => {
-			return { 
-				id: it.relationKey, 
-				icon: 'relation ' + this.className(it.format),
-				name: it.name, 
-			};
-		});
+		options = options.map(it => ({
+			id: it.relationKey, 
+			icon: 'relation ' + this.className(it.format),
+			name: it.name, 
+		}));
 
 		return options;
 	};
@@ -370,7 +366,7 @@ class Relation {
 	};
 
 	public getStringValue (value: any) {
-		if ((typeof value === 'object') && value && Util.hasProperty(value, 'length')) {
+		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
@@ -384,10 +380,10 @@ class Relation {
 		if (typeof value !== 'object') {
 			return [ value ];
 		};
-		if (!Util.objectLength(value)) {
+		if (!UtilCommon.objectLength(value)) {
 			return [];
 		};
-		return Util.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
+		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
 	private isEmpty (v: any) {
@@ -440,8 +436,67 @@ class Relation {
 		return ret;
 	};
 
+	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+		const time = UtilCommon.time();
+
+		switch (option) {
+			case I.FilterQuickOption.Yesterday: {
+				value = time - 86400;
+				break;
+			};
+
+			case I.FilterQuickOption.CurrentWeek:
+			case I.FilterQuickOption.CurrentMonth:
+			case I.FilterQuickOption.Today: {
+				value = time;
+				break;
+			};
+
+			case I.FilterQuickOption.Tomorrow: {
+				value = time + 86400;
+				break;
+			};
+
+			case I.FilterQuickOption.LastWeek: {
+				value = time - 86400 * 7;
+				break;
+			};
+
+			case I.FilterQuickOption.LastMonth: {
+				value = time - 86400 * 30;
+				break;
+			};
+
+			case I.FilterQuickOption.NextWeek: {
+				value = time + 86400 * 7;
+				break;
+			};
+
+			case I.FilterQuickOption.NextMonth: {
+				value = time + 86400 * 30;
+				break;
+			};
+
+			case I.FilterQuickOption.NumberOfDaysAgo: {
+				value = time - 86400 * value;
+				break;
+			};
+
+			case I.FilterQuickOption.NumberOfDaysNow: {
+				value = time + 86400 * value;
+				break;
+			};
+		};
+
+		return value;
+	};
+
 	systemKeys () {
-		return require('lib/json/systemRelations.json');
+		return require('lib/json/generated/systemRelations.json');
+	};
+
+	isSystem (relationKey: string) {
+		return this.systemKeys().includes(relationKey);
 	};
 	
 };

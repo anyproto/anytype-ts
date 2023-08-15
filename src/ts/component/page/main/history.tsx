@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, ObjectUtil } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -53,7 +53,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
@@ -87,14 +87,14 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						onClick={e => this.loadVersion(item.id)}
 					>
 						{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
-						<div className="date">{Util.date('d F, H:i', item.time)}</div>
+						<div className="date">{UtilCommon.date('d F, H:i', item.time)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 
 					{withChildren ? (
 						<div id={'children-' + item.id} className="children">
 							{item.list.map((child: any, i: number) => {
-								return <Version key={i} {...child} />
+								return <Version key={i} {...child} />;
 							})}
 						</div>
 					) : ''}
@@ -294,7 +294,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				ObjectUtil.openRoute({ id: rootId, layout: object.layout });
+				UtilObject.openRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 
@@ -305,8 +305,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				this.loadVersion(list[0].id);
 			};
 		});
-  	};
-  
+	};
+
 	loadVersion (id: string) {
 		const rootId = this.getRootId();
 
@@ -315,7 +315,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -326,13 +326,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 	
 	groupData (versions: I.HistoryVersion[]) {
-		let months: any[] = [];
-    	let groups: any[] = [];
-		let groupId = 0;
+		const months: any[] = [];
+		const groups: any[] = [];
 
+		let groupId = 0;
 		for (let i = 0; i < versions.length; ++i) {
-			let version = versions[i];
-			let prev = versions[i - 1];
+			const version = versions[i];
+			const prev = versions[i - 1];
 
 			if (prev && ((prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
 				groupId++;
@@ -342,26 +342,26 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			if (!group) {
 				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
-      		} else {
+			} else {
 				version.groupId = groupId;
 				group.list.push(version);
 			};
 		};
 
-		for (let group of groups) {
+		for (const group of groups) {
 			if ((group.list.length == 1) && (group.time == group.list[0].time)) {
 				group.list = [];
 			};
 
-			let groupId = this.monthId(group.time);
+			const groupId = this.monthId(group.time);
+
 			let month = months.find(it => it.groupId == groupId);
-      
 			if (!month) {
 				month = { groupId: groupId, list: [] };
 				months.push(month);
-      		};
+			};
 
-      		month.list.push(group);
+			month.list.push(group);
 		};
 
 		return months;
@@ -369,8 +369,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	ungroupData (groups: any[]): I.HistoryVersion[] {
 		let ret: I.HistoryVersion[] = [] as I.HistoryVersion[];
-		for (let month of groups) {
-			for (let group of month.list) {
+		for (const month of groups) {
+			for (const group of month.list) {
 				ret.push(group);
 				ret = ret.concat(group.list);
 			};
@@ -379,7 +379,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	monthId (time: number) {
-		return Util.date('F Y', time);
+		return UtilCommon.date('F Y', time);
 	};
 
 	resize () {
@@ -390,10 +390,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#body > #sideRight');
 		const editorWrapper = sideLeft.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
+		const sc = UtilCommon.getScrollContainer(isPopup);
 		const header = container.find('#header');
-		const height = container.height();
-		const hh = isPopup ? header.height() : Util.sizeHeader();
+		const height = sc.height();
+		const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 		const cssl: any = { height };
 
 		sideRight.css({ height });
@@ -404,6 +405,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		if (isPopup) {
 			const page = $('.pageMainHistory.isPopup');
+
 			page.css({ height });
 			cssl.paddingTop = hh;
 		};
@@ -423,7 +425,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		w = Number(w) || 0;
 
 		const { isPopup, rootId } = this.props;
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const sideLeft = container.find('#body > #sideLeft');
 		const root = blockStore.getLeaf(rootId, rootId);
 

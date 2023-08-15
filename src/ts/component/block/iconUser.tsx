@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Loader } from 'Component';
-import { I, C, ObjectUtil, Action } from 'Lib';
+import { I, C, UtilObject, Action, translate } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -47,11 +47,11 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 
 		const object = detailStore.get(rootId, rootId, []);
 		const options = [
-			{ id: 'upload', name: 'Change' },
+			{ id: 'upload', name: translate('commonChange') },
 		];
 
 		if (object.iconImage) {
-			options.push({ id: 'remove', name: 'Remove' });
+			options.push({ id: 'remove', name: translate('commonRemove') });
 		};
 		
 		menuStore.open('select', { 
@@ -62,7 +62,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 				options: options,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'remove') {
-						ObjectUtil.setIcon(rootId, '', '');
+						UtilObject.setIcon(rootId, '', '');
 					};
 					if (item.id == 'upload') {
 						this.onUpload();
@@ -80,7 +80,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
-					ObjectUtil.setIcon(rootId, '', message.hash, () => {
+					UtilObject.setIcon(rootId, '', message.hash, () => {
 						this.setState({ loading: false });
 					});
 				};

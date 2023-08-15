@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -24,41 +24,22 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const record = getRecord(recordId);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
-		const readonly = true;
+		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
 		const subId = dbStore.getSubId(rootId, block.id);
+		const cover = this.getCover();
 
 		if (coverFit) {
 			cn.push('coverFit');
 		};
 
-		const BlankCover = (item: any) => (
-			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
-				<div className="inner">
-					{!readonly ? (
-						<div className="add">
-							<Icon className="plus" />
-							Add picture
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
-
-		let cover = null;
-		if (view.coverRelationKey) {
-			cover = <BlankCover />;
-
-			const coverNode = this.getCover();
-			if (coverNode) {
-				cover = coverNode;
-			};
+		if (cover) {
+			cn.push('withCover');
 		};
 
 		let content = (
@@ -80,9 +61,9 @@ const Card = observer(class Card extends React.Component<Props> {
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								showTooltip={true}
-								onClick={(e: any) => { this.onCellClick(e, relation); }}
+								onClick={e => this.onCellClick(e, relation)}
 								tooltipX={I.MenuDirection.Left}
-								iconSize={18}
+								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 							/>
 						);
@@ -96,14 +77,8 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
+					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
-					<Icon
-						className="checkbox"
-						onClick={e => onSelectToggle(e, record.id)}
-						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/>
 					{content}
 				</div>
 			);
@@ -119,13 +94,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + record.id}
+				id={`record-${record.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}
-				draggable={true}
+				draggable={isCollection && !isInline}
 				onClick={this.onClick}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onContextMenu={(e: any) => onContext(e, record.id)}
 				onDragStart={this.onDragStart}
 			>
 				{content}
@@ -176,7 +151,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = getRecord(recordId);
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};
@@ -191,40 +166,25 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 	};
 
-	onCellClick (e: React.MouseEvent, relation) {
+	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
 		const { onCellClick, recordId } = this.props;
+		const relation = dbStore.getRelationByKey(vr.relationKey);
 
-		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
+
+		e.preventDefault();
+		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, recordId);
 	};
 
 	getCover (): any {
-		const { rootId, block, recordId, getView, getRecord } = this.props;
-		const view = getView();
+		const { recordId, getCoverObject } = this.props;
+		const cover = getCoverObject(recordId);
 
-		if (!view.coverRelationKey) {
-			return null;
-		};
-
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(recordId);
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-
-		let cover = null;
-		if (view.coverRelationKey == 'pageCover') {
-			cover = this.mediaCover(record);
-		} else {
-			for (const id of value) {
-				const f = detailStore.get(subId, id, []);
-				if (!f._empty_) {
-					cover = this.mediaCover(f);
-				};
-			};
-		};
-		return cover;
+		return cover ? this.mediaCover(cover) : null;
 	};
 
 	mediaCover (item: any) {

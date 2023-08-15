@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -18,31 +18,22 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 	};
 
 	render () {
-		const { text, onSearch, onForward, onBack, onTooltipShow, onTooltipHide } = this.props;
-		
+		const cmd = keyboard.cmdSymbol();
+
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
+					<Icon
+						className="toggle big"
+						tooltip={translate('sidebarToggle')}
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
-				<div className="side center">
-					<div 
-						id="path" 
-						className="path" 
-						onClick={onSearch} 
-						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
-						onMouseOut={onTooltipHide}
-					>	
-						<div className="inner">
-							<div className="name">{text}</div>
-						</div>
-					</div>
-				</div>
-
+				<div className="side center" />
 				<div className="side right" />
 			</React.Fragment>
 		);
@@ -50,7 +41,7 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 
 	onOpen () {
 		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ layout: this.props.layout });
+			UtilObject.openRoute({ layout: this.props.layout });
 		});
 	};
 

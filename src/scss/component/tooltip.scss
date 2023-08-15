@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-#tooltip { position: fixed; left: 0px; top: 0px; z-index: 1000; pointer-events: none; }
+#tooltipContainer { position: fixed; left: 0px; top: 0px; z-index: 1000; pointer-events: none; }
 
 .tooltip { 
 	position: absolute; border-radius: 4px; background: #373632; padding: 3px 7px; text-transform: none;
@@ -9,6 +9,15 @@
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
 .tooltip {
-	.txt { line-height: 1; margin-top: -1px; }
+	.txt { line-height: 1.2; list-style-position: inside; }
 	.caption { color: $colorDarkGrey; }
+}
+
+.tooltip.big {
+	background-color: $colorWhite; color: $colorBlack; width: 316px; white-space: normal; padding: 12px 16px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px;
+}
+.tooltip.big {
+	.title { @include text-common; font-weight: 500; margin-bottom: 2px; }
+	.txt { @include text-small; }
 }

@@ -1,4 +1,4 @@
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 
 class Renderer {
 
@@ -6,9 +6,11 @@ class Renderer {
 		args = args || [];
 
 		const cmd = args[0];
+		const winId = Number(window.Electron.currentWindow().windowId) || 0;
+
 		args.shift();
 
-		window.Electron.Api(window.Electron.currentWindow().windowId, cmd, Util.objectCopy(args));
+		window.Electron.Api(winId, cmd, UtilCommon.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {

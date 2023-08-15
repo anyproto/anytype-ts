@@ -3,9 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import Head from './head';
 import arrayMove from 'array-move';
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
@@ -23,7 +24,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -31,25 +32,33 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const filterCnt = filters.length;
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
+		const buttonWrapperCn = [ 'buttonNewWrapper' ];
 		const isAllowedObject = this.props.isAllowedObject();
+		const isAllowedTemplate = this.props.isAllowedTemplate();
+
+		if (isAllowedTemplate) {
+			buttonWrapperCn.push('withSelect');
+		};
 
 		if (className) {
 			cn.push(className);
 		};
 
+		let head = null;
 		if (isInline) {
 			cn.push('isInline');
+			head = <Head {...this.props} />;
 		};
 
 		const buttons = [
-			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', on: filterCnt > 0 },
-			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
+			{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+			{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
-			const cn = [ item.id ];
+			const cn = [ `btn-${item.id}` ];
 
 			if (item.on) {
 				cn.push('on');
@@ -60,7 +69,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
+					onClick={e => this.onButton(e, `#${elementId}`, item.menu)}
 				/>
 			);
 		};
@@ -71,10 +80,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				<div 
 					id={elementId} 
 					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-					onClick={(e: any) => { this.onViewSet(item); }} 
-					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+					onClick={() => this.onViewSet(item)} 
+					onContextMenu={e => this.onViewEdit(e, `#views #${elementId}`, item)}
 				>
-					{item.name}
+					{item.name || UtilObject.defaultName('Page')}
 				</div>
 			);
 		});
@@ -84,18 +93,20 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
 		return (
 			<div
 				ref={node => this.node = node}
-				 id="dataviewControls"
+				id="dataviewControls"
 				className={cn.join(' ')}
 			>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
+						{head}
+
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
@@ -103,7 +114,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
-							<Icon className="arrow light" />
+							<Icon className="arrow dark" />
 						</div>
 
 						<Views 
@@ -124,14 +135,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{isAllowedObject ? (
-							<Button 
-								id={`button-${block.id}-add-record`}
-								className="addRecord c28" 
-								tooltip="Create new object" 
-								text="New" 
-								onClick={(e: any) => { onRecordAdd(e, -1); }} 
-							/>
- 						) : ''}
+							<div className={buttonWrapperCn.join(' ')}>
+								<Button
+									id={`button-${block.id}-add-record`}
+									className="addRecord c28"
+									tooltip={translate('blockDataviewCreateNew')}
+									text={translate('commonNew')}
+									onClick={e => onRecordAdd(e, -1)}
+								/>
+								{isAllowedTemplate ? (
+									<Button
+										id={`button-${block.id}-add-record-select`}
+										className="select c28"
+										tooltip={translate('blockDataviewShowTemplates')}
+										onClick={e => onTemplateMenu(e, -1)}
+									/>
+								) : ''}
+							</div>
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -188,20 +209,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			let tabs: any[] = [];
 
 			switch (component) {
-				case 'dataviewViewList':
+				case 'dataviewViewList': {
 					break;
+				};
 
-				case 'dataviewFilterList':
-					tabs = [ { id: 'filter', name: 'Filters', component } ];
+				case 'dataviewFilterList': {
+					tabs = [ { id: 'filter', name: translate('blockDataviewControlsFilters'), component } ];
 					break;
+				};
 
-				case 'dataviewSort':
-					tabs = [ { id: 'sort', name: 'Sorts', component } ];
+				case 'dataviewSort': {
+					tabs = [ { id: 'sort', name: translate('blockDataviewControlsSorts'), component } ];
 					break;
+				};
 
-				default:
+				default: {
 					tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
 					break;
+				};
 			};
 
 			return tabs;
@@ -214,15 +239,17 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getSources, getTarget, isInline } = this.props;
+		const { rootId, block, getSources, getTarget, isInline, getView } = this.props;
 		const sources = getSources();
 		const object = getTarget();
-
+		const view = getView();
 		const newView = {
+			...view,
+			id: '',
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
-			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
-			cardSize: I.CardSize.Medium,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, '')?.id,
+			cardSize: view.cardSize || I.CardSize.Medium,
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, sources, (message: any) => {
@@ -235,7 +262,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				return;
 			};
 
-			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
+			this.resize();
+
+			const node = $(this.node);
+			const sideLeft = node.find('#sideLeft');
+			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
+
+			this.onViewEdit(e, element, view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -323,26 +356,30 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 
-		sideLeft.removeClass('small');
-
-		let width = sideLeft.outerWidth() + sideRight.outerWidth();
-		let offset = 0;
-		let sw = sidebar.outerWidth();
-
-		if (isPopup) {
-			offset = container.offset().left;
+		if (sideLeft.hasClass('small')) {
+			sideLeft.removeClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 
-		if (left + width - offset - sw >= container.width()) {
-			sideLeft.addClass('small');
-		};
+		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const offset = isPopup ? container.offset().left : 0;
 
+		let add = false;
+		if (left + width - offset - sw + 50 >= container.width()) {
+			add = true;
+		};
 		if (isInline && (width >= node.outerWidth())) {
+			add = true;
+		};
+
+		if (add) {
 			sideLeft.addClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 	};
 

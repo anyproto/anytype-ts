@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
-import { I, Util, ObjectUtil, keyboard, analytics } from 'Lib';
+import { I, UtilCommon, UtilObject, keyboard, analytics, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 type Props = {
@@ -35,12 +35,13 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source, done } = object;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const iconKey = `widget-icon-${block.id}-${id}`;
 
 		let descr = null;
 		if (object.type == Constant.typeId.bookmark) {
 			descr = (
 				<div className="descr">
-					{Util.shortUrl(source)}
+					{UtilCommon.shortUrl(source)}
 				</div>
 			);
 		} else {
@@ -54,14 +55,19 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		let inner = (
 			<div className="inner">
 				<IconObject 
-					id={`widget-icon-${id}`}
+					id={iconKey}
+					key={iconKey}
 					object={object} 
 					size={isCompact ? 18 : 48} 
-					iconSize={isCompact ? 18 : 24}
+					iconSize={isCompact ? 18 : 28}
 					canEdit={!isReadonly && !isArchived} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					onCheckbox={this.onCheckbox} 
+					menuParam={{ 
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+					}}
 				/>
 
 				<div className="info">
@@ -69,7 +75,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					{descr}
 				</div>
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
+					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
@@ -94,8 +100,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className="item"
 				key={object.id}
-				onMouseDown={(e) => this.onClick(e, object)}
-				onContextMenu={(e) => this.onContext(e, false)}
+				onMouseDown={e => this.onClick(e)}
+				onContextMenu={e => this.onContext(e, false)}
 				style={style}
 			>
 				{inner}
@@ -111,11 +117,18 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		this.resize();
 	};
 
-	onClick = (e: React.MouseEvent, item: unknown): void => {
+	onClick = (e: React.MouseEvent): void => {
+		if (e.button) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
-		ObjectUtil.openEvent(e, item);
+		const { subId, id, } = this.props;
+		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+
+		UtilObject.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -128,13 +141,10 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const more = node.find('.icon.more');
 		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => {
-				node.addClass('active');
-			},
-			onClose: () => {
-				node.removeClass('active');
-			},
+			onOpen: () => { node.addClass('active'); },
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				objectIds: [ id ],
 				subId,
@@ -155,20 +165,20 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	onSelect (icon: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, icon, '');
+		UtilObject.setIcon(id, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, '', hash);
+		UtilObject.setIcon(id, '', hash);
 	};
 
 	onCheckbox () {
 		const { subId, id } = this.props;
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
-		ObjectUtil.setDone(id, !object.done);
+		UtilObject.setDone(id, !object.done);
 	};
 
 	resize () {

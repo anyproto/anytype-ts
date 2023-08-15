@@ -1,4 +1,4 @@
-import { I, M, Util, DataUtil } from 'Lib';
+import { I, M, UtilCommon, UtilData } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
@@ -14,6 +14,7 @@ class View implements I.View {
 	groupRelationKey = '';
 	groupBackgroundColors = false;
 	pageLimit = 0;
+	defaultTemplateId = '';
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -29,6 +30,7 @@ class View implements I.View {
 		this.groupRelationKey = String(props.groupRelationKey || '');
 		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		this.pageLimit = Number(props.pageLimit) || 0;
+		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		
 		this.relations = (props.relations || []).map(it => new M.ViewRelation(it));
 		this.filters = (props.filters || []).map(it => new M.Filter(it));
@@ -45,12 +47,13 @@ class View implements I.View {
 			groupRelationKey: observable,
 			groupBackgroundColors: observable,
 			pageLimit: observable,
+			defaultTemplateId: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 	};
 
 	isGrid () {
@@ -74,7 +77,7 @@ class View implements I.View {
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find(it => it.relationKey == relationKey);
+		return this.relations.find(it => it && (it.relationKey == relationKey));
 	};
 
 	getFilter (id: string) {

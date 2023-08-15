@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, IconObject, Header, Icon } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil } from 'Lib';
-import { detailStore, commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { Title, Label, IconObject, Header, Footer, Icon } from 'Component';
+import { I, UtilMenu, UtilObject, translate } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -16,31 +14,31 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
-		const home = ObjectUtil.getSpaceDashboard();
+		const space = UtilObject.getSpace();
+		const home = UtilObject.getSpaceDashboard();
 
 		return (
 			<div 
 				ref={node => this.node = node}
 				className="wrapper"
 			>
-				<Header component="mainEmpty" text="Search" layout={I.ObjectLayout.Space} {...this.props} />
+				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.Space} {...this.props} />
 
 				<div className="wrapper">
 					<IconObject object={space} size={112} forceLetter={true} />
 					<Title text={space.name} />
-					<Label text="Select an object to set as your homepage. You can always change it in Settings." />
+					<Label text={translate('pageMainEmptyDescription')} />
 							
 					<div className="row">
 						<div className="side left">
-							<Label text="Homepage" />
+							<Label text={translate('commonHomepage')} />
 						</div>
 
 						<div className="side right">
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
 									<div className="name">
-										{home ? home.name : 'Select'}
+										{home ? home.name : translate('commonSelect')}
 									</div>
 								</div>
 								<Icon className="arrow light" />
@@ -48,40 +46,14 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 						</div>
 					</div>
 				</div>
+
+				<Footer component="mainObject" />
 			</div>
 		);
 	};
 	
 	onDashboard () {
-		const { workspace } = commonStore;
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
-
-		menuStore.open('searchObject', {
-			element: `#empty-dashboard-select`,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-				],
-				canAdd: true,
-				dataChange: (items: any[]) => {
-					const fixed: any[] = [ ObjectUtil.graph() ];
-					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
-				},
-				onSelect: (el: any) => {
-					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
-						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
-
-						ObjectUtil.openHome('route');
-					});
-				}
-			}
-		});
+		UtilMenu.dashboardSelect('#empty-dashboard-select', true);
 	};
 
 });

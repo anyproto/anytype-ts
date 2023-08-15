@@ -34,9 +34,9 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
 		
-		let { width } = fields;
+		const { width } = fields;
 		let element = null;
-		let css: any = {};
+		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
@@ -53,7 +53,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 						<InputWithFile 
 							block={block} 
 							icon="video" 
-							textFile="Upload a video" 
+							textFile={translate('blockVideoUpload')} 
 							accept={Constant.extension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 

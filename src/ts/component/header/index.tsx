@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, ObjectUtil, Renderer, keyboard, sidebar, Preview } from 'Lib';
-import { menuStore } from 'Store';
+import { I, UtilObject, Renderer, keyboard, sidebar, Preview } from 'Lib';
+import { detailStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -12,6 +12,7 @@ import HeaderMainEmpty from './main/empty';
 
 interface Props extends I.HeaderComponent {
 	component: string;
+	className?: string;
 };
 
 const Components = {
@@ -41,9 +42,9 @@ class Header extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component } = this.props;
+		const { component, className, rootId } = this.props;
 		const Component = Components[component] || null;
-		const cn = [ 'header', component ];
+		const cn = [ 'header', component, className ];
 
 		if (![ 'authIndex', 'mainIndex' ].includes(component)) {
 			cn.push('isCommon');
@@ -54,8 +55,6 @@ class Header extends React.Component<Props> {
 				<Component 
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
-					onBack={() => { keyboard.onBack(); }}
-					onForward={() => { keyboard.onForward(); }}
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
@@ -81,11 +80,11 @@ class Header extends React.Component<Props> {
 	};
 
 	onNavigation () {
-		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
+		UtilObject.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
 	onGraph () {
-		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+		UtilObject.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {
@@ -104,11 +103,6 @@ class Header extends React.Component<Props> {
 	};
 
 	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
 		const { isPopup } = this.props;
 		const st = $(window).scrollTop();
 		const element = $(`${this.getContainer()} ${elementId}`);
@@ -122,7 +116,7 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAll(null, () => { menuStore.open(id, menuParam); });
+		menuStore.closeAllForced(null, () => { menuStore.open(id, menuParam); });
 	};
 
 	getContainer () {

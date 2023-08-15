@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 interface Props {
 	id: string;
@@ -14,8 +14,10 @@ interface Props {
 	isTargetTop?: boolean;
 	isTargetBottom?: boolean;
 	isTargetColumn?: boolean;
+	isReversed?: boolean;
 	children?: React.ReactNode;
 	onClick?(e: any): void;
+	onContextMenu?(e: any): void;
 };
 
 class DropTarget extends React.Component<Props> {
@@ -27,7 +29,10 @@ class DropTarget extends React.Component<Props> {
 	};
 	
 	render () {
-		const { id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn } = this.props;
+		const { 
+			id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn, 
+			isReversed, onContextMenu,
+		} = this.props;
 		const key = [ dropType, cacheKey || id ];
 		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId, 'drop-target-' + id ];
 
@@ -52,10 +57,12 @@ class DropTarget extends React.Component<Props> {
 				key={'drop-target-' + id}
 				className={cn.join(' ')} 
 				onClick={this.onClick} 
-				{...Util.dataProps({
+				onContextMenu={onContextMenu}
+				{...UtilCommon.dataProps({
 					id,
 					type,
 					style: Number(style) || 0,
+					reversed: isReversed,
 					'root-id': rootId,
 					'cache-key': key.join('-'),
 					'drop-type': dropType,

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard } from 'Lib';
+import { Icon } from 'Component';
+import { I, UtilCommon, keyboard, translate } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	multiSelectAction?: (id: string) => void;
@@ -23,18 +24,18 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: 'Move to bin', className: [ 'black' ] },
-			{ id: 'done', text: 'Done', className: [ 'orange' ] },
+			{ id: 'archive', text: translate('blockDataviewSelectionMoveToBin'), className: [ 'black' ] },
+			{ id: 'done', text: translate('blockDataviewSelectionDeselect'), className: [ 'black' ] },
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
+			buttons.unshift({ id: 'unlink', text: translate('commonUnlink'), className: [ 'black' ] });
 		};
 
 		return (
 			<div id="dataviewSelection" className={cn.join(' ')}>
 				<div className="sides">
-					<div id="sideLeft" className="side left">{this.ids.length} selected</div>
+					<div id="sideLeft" className="side left">{UtilCommon.sprintf(translate('blockDataviewSelectionSelected'), this.ids.length)}</div>
 
 					<div id="sideRight" className="side right">
 						{buttons.map((item: any, i: number) => (
@@ -45,6 +46,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 							>
+								<Icon className={item.id} />
 								{item.text}
 							</div>
 						))}

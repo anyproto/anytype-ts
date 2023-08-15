@@ -1,4 +1,4 @@
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
@@ -11,6 +11,7 @@ class AccountInfo implements I.AccountInfo {
 	accountSpaceId = '';
 	widgetsId = '';
 	analyticsId = '';
+	networkId = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
@@ -21,6 +22,7 @@ class AccountInfo implements I.AccountInfo {
 		this.accountSpaceId = String(props.accountSpaceId || '');
 		this.widgetsId = String(props.widgetsId || '');
 		this.analyticsId = String(props.analyticsId || '');
+		this.networkId = String(props.networkId || '');
 
 		makeObservable(this, {
 			homeObjectId: observable,
@@ -31,9 +33,10 @@ class AccountInfo implements I.AccountInfo {
 			accountSpaceId: observable,
 			widgetsId: observable,
 			analyticsId: observable,
+			networkId: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
 	};
 
@@ -61,7 +64,7 @@ class AccountStatus implements I.AccountStatus {
 			date: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
 	};
 
@@ -85,7 +88,7 @@ class Account implements I.Account {
 			status: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
 	};
 

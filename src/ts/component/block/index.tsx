@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -36,7 +36,7 @@ const SNAP = 0.01;
 const Block = observer(class Block extends React.Component<Props> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 	ids: string[] = [];
 
 	public static defaultProps = {
@@ -79,11 +79,11 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign, 'index' + index ];
-		let cd: string[] = [ 'wrapContent' ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
-		let empty = null;
-		let setRef = ref => this.ref = ref;
+		const empty = null;
+		const setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
@@ -110,7 +110,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 
 				if (block.isTextQuote()) {
-					additional = <div className="line" />;
+					additional = <div className={[ 'line', (content.color ? `textColor-${content.color}` : '') ].join(' ')} />;
 				};
 
 				if (block.isTextTitle() || block.isTextDescription()) {
@@ -141,6 +141,10 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
+				if (content.state == I.BookmarkState.Done) {
+					cn.push('withContent');
+				};
+
 				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
@@ -197,6 +201,8 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDropMiddle = canDrop;
 				};
 
+				cn.push(UtilData.linkCardClass(content.cardStyle));
+
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -206,6 +212,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
+				};
+
+				if (content.state == I.BookmarkState.Done) {
+					cn.push('withContent');
 				};
 
 				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
@@ -261,22 +271,32 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle}>
+				<DropTarget 
+					{...this.props} 
+					rootId={rootId} 
+					id={id} 
+					style={style} 
+					type={type} 
+					dropType={I.DropType.Block} 
+					canDropMiddle={canDropMiddle} 
+					onContextMenu={this.onContextMenu}
+				>
 					{blockComponent}
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 			targetBot = <DropTarget {...this.props} isTargetBottom={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
-			object = <div className="dropTarget">{blockComponent}</div>;
-
-			targetTop = <div className="dropTarget targetTop" />;
+			object = <div className="dropTarget" onContextMenu={this.onContextMenu}>{blockComponent}</div>;
 			targetBot = <div className="dropTarget targetBot" />;
 		};
 
-		if (!block.isLayoutRow()) {
-			targetTop = null;
+		if (block.isLayoutRow()) {
+			if (canDrop) {
+				targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			} else {
+				targetTop = <div className="dropTarget targetTop" />;
+			};
 		};
 
 		if (block.isLayoutColumn() && canDrop) {
@@ -305,7 +325,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div 
 					id={`selectable-${id}`} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
-					{...Util.dataProps({ id, type: I.SelectType.Block })}
+					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
 				</div>
@@ -327,8 +347,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				id={'block-' + id} 
 				className={cn.join(' ')} 
 				style={css}
-				{...Util.dataProps({ id })}
-				onContextMenu={this.onContextMenu} 
+				{...UtilCommon.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 
@@ -428,17 +447,15 @@ const Block = observer(class Block extends React.Component<Props> {
 			selection.setIsSelecting(false);
 		};
 
-		this.ids = DataUtil.selectionGet(block.id, false, true, this.props);
+		this.ids = UtilData.selectionGet(block.id, false, true, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
 		e.stopPropagation();
 
-		const { block } = this.props;
-
 		focus.clear(true);
-		this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
+		this.ids = UtilData.selectionGet(this.props.block.id, false, false, this.props);
 	};
 	
 	onMenuClick () {
@@ -464,14 +481,14 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable()) {
 			return;
 		};
 
-		if (root.isObjectSet() || root.isObjectCollection()) {
+		if (root.isLocked() || root.isObjectSet() || root.isObjectCollection()) {
 			return;
 		};
 
@@ -480,15 +497,15 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
-			this.ids = DataUtil.selectionGet(block.id, true, true, this.props);
+			this.ids = UtilData.selectionGet(block.id, false, false, this.props);
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
 		});
 	};
 
-	menuOpen (param?: any) {
-		const { dataset, rootId, block, blockRemove } = this.props;
+	menuOpen (param?: Partial<I.MenuParam>) {
+		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
 		const { selection } = dataset || {};
 
 		// Hide block menus and plus button
@@ -496,7 +513,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		const menuParam = Object.assign({
+		const menuParam: Partial<I.MenuParam> = Object.assign({
+			subIds: Constant.menuIds.action,
 			onClose: () => {
 				selection.clear();
 				focus.apply();
@@ -507,6 +525,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				rootId,
 				dataset,
 				blockRemove,
+				onCopy,
 			}
 		}, param || {});
 
@@ -645,7 +664,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		x = x / (sum * width);
 		
 		// Snap
-		for (let s of snaps) {
+		for (const s of snaps) {
 			if ((x >= s - SNAP) && (x <= s + SNAP)) {
 				x = s;
 			};
@@ -673,7 +692,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let c = 0;
 		let num = 0;
 
-		for (let i in children) {
+		for (const i in children) {
 			const child = children[i];
 
 			c += child.fields.width || 1 / length;
@@ -707,7 +726,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const param =  {
+		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};

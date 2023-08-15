@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager } from 'Component';
-import { I, C, translate, focus, Action, Util, ObjectUtil, FileUtil, Renderer, keyboard } from 'Lib';
+import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -45,16 +45,16 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._empty_) {
-			object = Util.objectCopy(content);
+			object = UtilCommon.objectCopy(content);
 			object.sizeInBytes = object.size;
 		};
 
-		let { name, sizeInBytes } = object;
+		const { name, sizeInBytes } = object;
 
-		let { width } = fields;
+		const { width } = fields;
 		let element = null;
 		let pager = null;
-		let css: any = {};
+		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
@@ -74,7 +74,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 						<InputWithFile 
 							block={block} 
 							icon="pdf" 
-							textFile="Upload a PDF file" 
+							textFile={translate('blockPdfUpload')}
 							accept={Constant.extension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
@@ -106,7 +106,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
 							<span className="name">{name}</span>
-							<span className="size">{FileUtil.size(sizeInBytes)}</span>
+							<span className="size">{UtilFile.size(sizeInBytes)}</span>
 						</div>
 
 						<Document
@@ -211,7 +211,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { content } = block;
 		const { hash } = content;
 
-		ObjectUtil.openPopup({ id: hash, layout: I.ObjectLayout.Image });
+		UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 });

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil, ObjectUtil } from 'Lib';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
 import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -54,7 +54,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				onDragOver={this.onDragOver} 
 				onDrop={this.onDropCommon}
 			>
-				<DragLayer {...this.props} ref={ref => { this.refLayer = ref; }} />
+				<DragLayer {...this.props} ref={ref => this.refLayer = ref} />
 				{children}
 			</div>
 		);
@@ -81,7 +81,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				type: item.attr('data-type'),
 				style: item.attr('data-style'),
 				targetContextId: item.attr('data-target-context-id'),
-				dropMiddle: item.attr('data-drop-middle'),
 			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
@@ -89,10 +88,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			const isTargetTop = item.hasClass('targetTop');
 			const isTargetBot = item.hasClass('targetBot');
 			const isTargetCol = item.hasClass('targetCol');
+			const isEmptyToggle = item.hasClass('emptyToggle');
+			const x = offset.left;
+			const width = rect.width;
 
-			let x = offset.left;
 			let y = offset.top;
-			let { width, height } = rect;
+			let height = rect.height;
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
@@ -117,6 +118,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				isTargetTop,
 				isTargetBot,
 				isTargetCol,
+				isEmptyToggle,
 			});
 		});
 	};
@@ -135,7 +137,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const dataTransfer = e.dataTransfer;
-		const items = Util.getDataTransferItems(dataTransfer.items);
+		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 
@@ -165,7 +167,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		// String items drop
 		if (items && items.length) {
-			Util.getDataTransferString(items, (html: string) => {
+			UtilCommon.getDataTransferString(items, (html: string) => {
 				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
 			});
 
@@ -174,8 +176,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		if (isFileDrop) {
-			let paths: string[] = [];
-			for (let file of dataTransfer.files) {
+			const paths: string[] = [];
+			for (const file of dataTransfer.files) {
 				paths.push(file.path);
 			};
 
@@ -201,7 +203,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(this.node);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -254,10 +256,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		e.preventDefault();
-   		e.stopPropagation();
+		e.stopPropagation();
 
 		const isPopup = keyboard.isPopup();
-		const top = Util.getScrollContainer(isPopup).scrollTop();
+		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
 		this.initData();
@@ -271,7 +273,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDragEnd (e: any) {
 		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const body = $('body');
 
@@ -300,9 +302,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };
 
-		let { rootId, dropType, withAlt } = data;
-		let ids = data.ids || [];
-		let contextId = rootId;
+		const { rootId, dropType, withAlt } = data;
+		const ids = data.ids || [];
+		const contextId = rootId;
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
@@ -325,7 +327,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const processAddRecord = () => {
-			ObjectUtil.getById(targetContextId, (object) => {
+			UtilObject.getById(targetContextId, (object) => {
 				if (object.type === Constant.typeId.collection) {
 					// add to collection
 					C.ObjectCollectionAdd(targetContextId, ids);
@@ -334,7 +336,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						const newBlock = {
 							type: I.BlockType.Link,
 							content: {
-								...DataUtil.defaultLinkSettings(),
+								...UtilData.defaultLinkSettings(),
 								targetBlockId: key,
 							}
 						};
@@ -416,6 +418,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
+						if (!this.origin) {
+							break;
+						};
+
 						// Sort
 						const { onRecordDrop } = this.origin;
 
@@ -444,23 +450,23 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
-		for (let [ key, value ] of this.objectData) {
-			let rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
+		for (const [ key, value ] of this.objectData) {
+			const rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
 			this.objectData.set(key, { ...value, y: rect.y + top });
 		};
 	};
 
 	checkNodes (e: any, ex: number, ey: number) {
-		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
-		let isItemDrag = Util.getDataTransferItems(dataTransfer.items).length ? true : false;
-		let isFileDrag = dataTransfer.types.includes('Files');
+		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		const isItemDrag = UtilCommon.getDataTransferItems(dataTransfer.items).length ? true : false;
+		const isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 
 		try {
-			for (let type of dataTransfer.types) {
+			for (const type of dataTransfer.types) {
 				if (type.match(/^data-/)) {
 					data = JSON.parse(type.replace(/^data-/, ''));
 					break;
@@ -471,9 +477,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.setHoverData(null);
 		this.setPosition(I.BlockPosition.None);
 
-		for (let [ key, value ] of this.objectData) {
-			let { x, y, width, height, dropType } = value;
+		for (const [ key, value ] of this.objectData) {
+			const { y, height, dropType } = value;
 
+			let { x, width } = value;
 			if (dropType == I.DropType.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
@@ -485,9 +492,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 		};
 
-		let dropType = String(data.droptype) || '';
-		let rootId = String(data.rootid) || '';
-		let ids = data.ids || [];
+		const dropType = String(data.droptype) || '';
+		const rootId = String(data.rootid) || '';
+		const ids = data.ids || [];
 		let x = 0;
 		let y = 0;
 		let width = 0;
@@ -495,16 +502,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let isTargetTop = false;
 		let isTargetBot = false;
 		let isTargetCol = false;
+		let isEmptyToggle = false;
 		let obj = null;
 		let type: any = '';
 		let style = 0;
 		let canDropMiddle = 0;
+		let isReversed = false;
 		let col1 = 0; 
 		let col2 = 0;
-
-		let isText = false;
-		let isFeatured = false;
-		let isType = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -521,18 +526,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				isTargetTop = this.hoverData.isTargetTop;
 				isTargetBot = this.hoverData.isTargetBot;
 				isTargetCol = this.hoverData.isTargetCol;
+				isEmptyToggle = this.hoverData.isEmptyToggle;
 
 				obj = $(this.hoverData.obj);
 				type = obj.attr('data-type');
 				style = Number(obj.attr('data-style')) || 0;
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
+				isReversed = Boolean(obj.attr('data-reversed'));
 
 				col1 = x - Constant.size.blockMenu / 4;
 				col2 = x + width;
-
-				isText = type == I.BlockType.Text;
-				isFeatured = type == I.BlockType.Featured;
-				isType = type == I.BlockType.Type;
 			};
 
 			initVars();
@@ -564,12 +567,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// canDropMiddle flag for restricted objects
 			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
-				this.recalcPosition(ey, y, height);
+				this.recalcPositionY(ey, y, height);
 			};
 
 			// Recalc position if dataTransfer items are dragged
 			if (isItemDrag && (this.position != I.BlockPosition.None)) {
-				this.recalcPosition(ey, y, height);
+				this.recalcPositionY(ey, y, height);
 			};
 
 			// You can drop vertically on Layout.Row
@@ -580,19 +583,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				if (isTargetBot) {
 					this.setPosition(I.BlockPosition.Bottom);
 				};
-			};
-
-			// You can only drop inside of menu items
-			if ((this.hoverData.dropType == I.DropType.Menu) && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.InnerFirst);
-
-				if (rootId == this.hoverData.targetContextId) {
-					this.setPosition(I.BlockPosition.None);
-				};
-			};
-
-			if ((this.hoverData.id == 'blockLast') && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Top);
 			};
 
 			if (!isTargetBot &&
@@ -610,16 +600,31 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.None);
 			};
 
-			if (isTargetTop && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Top);
-			};
+			if (this.position != I.BlockPosition.None) {
+				// You can only drop inside of menu items
+				if (this.hoverData.dropType == I.DropType.Menu) {
+					this.setPosition(I.BlockPosition.InnerFirst);
 
-			if ((isTargetBot || isTargetCol) && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Bottom);
+					if (rootId == this.hoverData.targetContextId) {
+						this.setPosition(I.BlockPosition.None);
+					};
+				};
+
+				if (isTargetTop || (this.hoverData.id == 'blockLast')) {
+					this.setPosition(I.BlockPosition.Top);
+				};
+
+				if (isTargetBot || isTargetCol) {
+					this.setPosition(I.BlockPosition.Bottom);
+				};
+
+				if (isEmptyToggle) {
+					this.setPosition(I.BlockPosition.InnerFirst);
+				};
 			};
 
 			if ((dropType == I.DropType.Record) && (this.hoverData.dropType == I.DropType.Record) && !canDropMiddle) {
-				this.setPosition(I.BlockPosition.Top);
+				isReversed ? this.recalcPositionX(ex, x, width) : this.recalcPositionY(ey, y, height);
 			};
 		};
 
@@ -635,7 +640,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		});
 	};
 
-	recalcPosition = (ey: number, y: number, height: number) => {
+	recalcPositionY = (ey: number, y: number, height: number) => {
 		if (ey <= y + height * 0.5) {
 			this.setPosition(I.BlockPosition.Top);
 		} else
@@ -644,18 +649,27 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 	};
 
+	recalcPositionX = (ex: number, x: number, width: number) => {
+		if (ex <= x + width * 0.5) {
+			this.setPosition(I.BlockPosition.Top);
+		} else
+		if (ex >= x + width * 0.5) {
+			this.setPosition(I.BlockPosition.Bottom);
+		};
+	};
+
 	setClass (ids: string[]) {
 		$('.block.isDragging').removeClass('isDragging');
-		for (let id of ids) {
+		for (const id of ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
 	};
 
 	checkParentIds (ids: string[], id: string): boolean {
-		let parentIds: string[] = [];
+		const parentIds: string[] = [];
 		this.getParentIds(id, parentIds);
 
-		for (let dropId of ids) {
+		for (const dropId of ids) {
 			if ((dropId == id) || (parentIds.length && parentIds.includes(dropId))) {
 				return false;
 			};
@@ -695,9 +709,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				return null;
 			};
 
-			let props = child.props || {};
-			let children = props.children;
-			let dataset = props.dataset || {};
+			const props = child.props || {};
+			const children = props.children;
+			const dataset = props.dataset || {};
 
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });

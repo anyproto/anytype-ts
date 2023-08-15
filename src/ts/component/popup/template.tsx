@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, focus, Util, DataUtil } from 'Lib';
+import { I, focus, UtilCommon, UtilData, translate, analytics } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -15,7 +15,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 	_isMounted = false;
 	page = 0;
 	n = 0;
-	ref: any = null;
+	ref = null;
 
 	state = {
 		items: [],
@@ -43,15 +43,19 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		return (
 			<div className="wrapper">
 				<div className="head">
-					<Title text="Choose a template" />
-					<Label text={`Type “${Util.shorten(type.name, 32)}” has ${length} ${Util.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
+					<Title text={translate('popupTemplateTitle')} />
+					<Label text={UtilCommon.sprintf(translate('popupTemplateText'), UtilCommon.shorten(type.name, 32), length, UtilCommon.plural(length, translate('pluralTemplate')))} />
 				</div>
 
 				<ListObjectPreview 
-					ref={ref => { this.ref = ref; }}
+					ref={ref => this.ref = ref}
 					getItems={() => items}
 					offsetX={-128}
-					onClick={this.onClick} 
+					onClick={this.onClick}
+					withBlank={true}
+					onBlank={e => this.onClick(e, { id: Constant.templateId.blank })}
+					blankId={Constant.templateId.blank}
+					defaultId={type.defaultTemplateId || Constant.templateId.blank}
 				/>
 			</div>
 		);
@@ -72,8 +76,6 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 	};
 
 	componentWillUnmount () {
-		const { items } = this.state;
-
 		this._isMounted = false;
 		this.unbind();
 	};
@@ -96,15 +98,20 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: typeId },
 		];
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		this.setState({ loading: true });
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 		}, (message: any) => {
-			this.setState({ loading: false, items: message.records });
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
+			this.setState({ loading: false, items: message.records || [] });
 		});
 	};
 
@@ -117,17 +124,19 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		};
 	};
 
-	onClick (e: any, item: any) {
+	onClick (e: any, template: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, route } = data;
 
 		close();
 		window.setTimeout(() => {
 			if (onSelect) {
-				onSelect(item);
+				onSelect(UtilData.checkBlankTemplate(template));
 			};
 		}, Constant.delay.popup);
+
+		analytics.event('SelectTemplate', { route });
 	};
 
 };

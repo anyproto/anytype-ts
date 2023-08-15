@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockFeatured { 
-		@include text-common; line-height: 28px; color: $colorDarkGrey; padding: 0px 0px 30px 0px; white-space: nowrap; display: flex; 
+		@include text-common; line-height: 28px; color: $colorDarkGrey; padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
 		margin-top: -3px;
 	}
 	.block.blockFeatured {
@@ -13,8 +13,18 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
+		.cell.canEdit {
+			.cellContent {
+				.empty { display: inline; }
+			}
+		}
+
+		.cell.first .bullet { display: none; }
+
 		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
-		.cellContent:hover, .cellContent.hover { background: $colorHoverMedium; }
+		.cellContent.disabled { opacity: 1; }
+
+		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: $colorHoverMedium; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
@@ -38,12 +48,6 @@
 			.more { margin: 0px; vertical-align: middle; }
 		} 
 
-		.cell.canEdit {
-			.cellContent {
-				.empty { display: inline; }
-			}
-		}
-
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
 			.element:last-child { margin-right: 0px; }
@@ -59,11 +63,10 @@
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
-	.block.blockFeatured:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }
-		.cell.first .bullet { display: none; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }

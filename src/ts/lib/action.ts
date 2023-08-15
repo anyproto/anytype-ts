@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, Util, Storage, DataUtil } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -6,6 +6,7 @@ class Action {
 
 	pageClose (rootId: string, close: boolean) {
 		const { profile } = blockStore;
+
 		if (rootId == profile) {
 			return;
 		};
@@ -13,7 +14,7 @@ class Action {
 		const onClose = () => {
 			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
 
-			for (let block of blocks) {
+			for (const block of blocks) {
 				this.dbClearBlock(rootId, block.id);
 			};
 
@@ -114,12 +115,18 @@ class Action {
 				callBack(message);
 			};
 
-			analytics.event((contextId == targetContextId ? 'ReorderBlock' : 'MoveBlock'), { count: blockIds.length });
+			const count = blockIds.length;
+
+			if (contextId != targetContextId) {
+				Preview.toastShow({ action: I.ToastAction.Move, originId: contextId, targetId: targetContextId, count });
+			};
+
+			analytics.event(contextId != targetContextId ? 'MoveBlock' : 'ReorderBlock', { count });
 		});
 	};
 
 	remove (rootId: string, blockId: string, blockIds: string[]) {
-		let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
+		const next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
 		});
 		
@@ -145,7 +152,7 @@ class Action {
 		};
 
 		C.BlockListDelete(widgets, [ id ]);
-		Storage.deleteToggleId('widget', id);
+		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
 
 		const childrenIds = blockStore.getChildrenIds(widgets, id);
@@ -173,7 +180,9 @@ class Action {
 		};
 
 		if (extensions && extensions.length) {
-			options.filters = [ { name: '', extensions } ];
+			options.filters = [ 
+				{ name: 'Filtered extensions', extensions },
+			];
 		};
 		
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
@@ -187,10 +196,12 @@ class Action {
 		});
 	};
 
-	openDir (callBack?: (paths: string[]) => void) {
-		const options = { 
+	openDir (param: any, callBack?: (paths: string[]) => void) {
+		param = Object.assign({}, param);
+
+		const options = Object.assign(param, { 
 			properties: [ 'openDirectory' ],
-		};
+		});
 
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
@@ -204,7 +215,7 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir(paths => {
+		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
@@ -234,18 +245,18 @@ class Action {
 				callBack(message);
 			};
 
-			let { details } = message;
+			const { details } = message;
 			let toast = '';
 			let subId = '';
 
 			switch (object.type) {
 				case Constant.storeTypeId.type:
-					toast = `Object type <b>${object.name}</b> has been added to your library`;
+					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
 					break;
 
 				case Constant.storeTypeId.relation:
-					toast = `Relation <b>${object.name}</b> has been added to your library`;
+					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
 					break;
 			};
@@ -266,15 +277,15 @@ class Action {
 		
 		switch (object.type) {
 			case Constant.typeId.type:
-				title = 'Are you sure you want to remove this Type?';
-				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
-				toast = `Object type <b>${object.name}</b> has been removed from your library`;
+				title = translate('libActionUninstallTypeTitle');
+				text = translate('libActionUninstallTypeText');
+				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
 				break;
 
 			case Constant.typeId.relation:
-				title = 'Are you sure you want to remove this Relation?';
-				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
-				toast = `Relation <b>${object.name}</b> has been removed from your library`;
+				title = translate('libActionUninstallRelationTitle');
+				text = translate('libActionUninstallRelationText');
+				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
 				break;
 		};
 
@@ -282,7 +293,7 @@ class Action {
 			data: {
 				title,
 				text,
-				textConfirm: 'Remove',
+				textConfirm: translate('commonRemove'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {
@@ -311,15 +322,15 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${count} ${Util.cntWord(count, 'object', 'objects')}?`,
-				text: `These objects will be deleted irrevocably. You can't undo this action.`,
-				textConfirm: 'Delete',
+				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('commonDeletionWarningText'),
+				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
 					callBack();
 					analytics.event('RemoveCompletely', { count });
 				},
-				onCancel: () => { callBack(); }
+				onCancel: () => callBack(),
 			},
 		});
 	};
@@ -328,7 +339,7 @@ class Action {
 		const { walletPath } = authStore;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, Util.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -345,18 +356,78 @@ class Action {
 							return;
 						};
 
-						DataUtil.onAuth(message.account, () => {
+						UtilData.onAuth(message.account, { routeParam: { animate: true } }, () => {
 							window.setTimeout(() => {
 								popupStore.open('migration', { data: { type: 'import' } });
 							}, Constant.delay.popup);
 
-							const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-							if (blocks.length) {
-								Storage.setToggle('widget', blocks[0].parentId, true);
-							};
+							blockStore.closeRecentWidgets();
 						});
 					});
 				});
+			});
+		});
+	};
+
+	archive (ids: string[], callBack?: () => void) {
+		C.ObjectListSetIsArchived(ids, true, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Archive, ids });
+			analytics.event('MoveToBin', { count: ids.length });
+
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
+	restore (ids: string[], callBack?: () => void) {
+		C.ObjectListSetIsArchived(ids, false, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			analytics.event('RestoreFromBin', { count: ids.length });
+
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
+	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
+		const fileOptions: any = { 
+			properties: [ 'openFile' ],
+			filters: [ 
+				{ name: 'Filtered extensions', extensions },
+			],
+		};
+
+		if (UtilCommon.isPlatformMac()) {
+			fileOptions.properties.push('openDirectory');
+		};
+
+		analytics.event('ClickImport', { type });
+
+		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
+				return;
+			};
+
+			analytics.event('ClickImportFile', { type });
+
+			C.ObjectImport(Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
+
+				if (callBack) {	
+					callBack(message);
+				};
 			});
 		});
 	};

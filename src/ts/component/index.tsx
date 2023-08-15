@@ -15,6 +15,7 @@ import ListMenu from './list/menu';
 import ListChildren from './list/children';
 import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
+import ListObjectManager from './list/objectManager';
 
 import Header from './header';
 import Footer from './footer';
@@ -33,19 +34,21 @@ import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
+import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 
-import Input from './util/form/input';
-import InputWithFile from './util/form/inputWithFile';
-import Switch from './util/form/switch';
-import Editable from './util/form/editable';
-import Checkbox from './util/form/checkbox';
-import Textarea from './util/form/textarea';
-import Button from './util/form/button';
-import Select from './util/form/select';
-import Drag from './util/form/drag';
-import Pin from './util/form/pin';
-import Filter from './util/form/filter';
+import Input from './form/input';
+import InputWithFile from './form/inputWithFile';
+import Switch from './form/switch';
+import Editable from './form/editable';
+import Checkbox from './form/checkbox';
+import Textarea from './form/textarea';
+import Button from './form/button';
+import Select from './form/select';
+import Drag from './form/drag';
+import Pin from './form/pin';
+import Filter from './form/filter';
+import Phrase from './form/phrase';
 
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
@@ -54,6 +57,7 @@ import Toast from './util/toast';
 import Marker from './util/marker';
 import Sync from './util/sync';
 import LoadMore from './util/loadMore';
+import Navigation from './util/navigation';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
@@ -74,6 +78,8 @@ import ObjectDescription from './util/object/description';
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 
+import ProgressBar from './util/progressBar';
+
 export {
 	Page,
 	EditorPage,
@@ -89,6 +95,7 @@ export {
 	ListChildren,
 	ListObjectPreview,
 	ListObject,
+	ListObjectManager,
 
 	Header,
 	Footer,
@@ -113,6 +120,8 @@ export {
 	Loader,
 	Deleted,
 	Progress,
+	DotIndicator,
+	Phrase,
 	EmptySearch,
 	SelectionProvider,
 	Popup,
@@ -121,6 +130,7 @@ export {
 	Title,
 	Label,
 	Error,
+	Navigation,
 
 	Icon,
 	IconObject,
@@ -144,5 +154,7 @@ export {
 	MenuItemVertical,
 
 	MediaAudio,
-	MediaVideo
+	MediaVideo,
+
+	ProgressBar
 };

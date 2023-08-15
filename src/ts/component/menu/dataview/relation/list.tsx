@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, Relation, keyboard, Dataview } from 'Lib';
+import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
 import { menuStore, dbStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -75,13 +75,14 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							value={item.isVisible} 
 							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
 						/>
-					 ) : ''}
+					) : ''}
 				</div>
 			);
 		});
 		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -103,11 +104,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<VList
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -155,7 +156,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add relation</div>
+							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>
 						</div>
 					</div>
 				) : ''}
@@ -195,8 +196,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -205,8 +206,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	onKeyDown (e: any) {
 		let ret = false;
-		let items = this.getItems();
-		let item = items[this.n];
+		const items = this.getItems();
+		const item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();

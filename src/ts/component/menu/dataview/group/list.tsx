@@ -78,7 +78,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							readonly={true} 
 							arrayLimit={4}
 							withLabel={true}
-							placeholder={translate('placeholderCellCommon')}
+							placeholder={translate('commonUncategorized')}
 						/>
 					</span>
 					{canHide ? (
@@ -86,13 +86,14 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							value={!item.isHidden} 
 							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
 						/>
-					 ) : ''}
+					) : ''}
 				</div>
 			);
 		});
 		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -114,11 +115,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<VList
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -187,8 +188,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -197,8 +198,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	onKeyDown (e: any) {
 		let ret = false;
-		let items = this.getItems();
-		let item = items[this.n];
+		const items = this.getItems();
+		const item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();

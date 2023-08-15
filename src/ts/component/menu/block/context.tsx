@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
+import { I, C, Mark, UtilData, focus, keyboard, Storage, translate } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,7 +27,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { type, content } = block;
 		const { style } = content;
-		const styleIcon = DataUtil.styleIcon(type, style);
+		const styleIcon = UtilData.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;
@@ -43,24 +43,24 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		);
 		
 		let markActions = [
-			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold', caption: `${cmd}+B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic', caption: `${cmd}+I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough', caption: `${cmd}+Shift+S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: 'Underline', caption: `${cmd}+U` },
-			{ type: I.MarkType.Link, icon: 'link', name: 'Link', caption: `${cmd}+K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code', caption: `${cmd}+L` },
+			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
+			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
+			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
+			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
+			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
 		];
-		
+
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
 			markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 		};
-
+		
 		return (
 			<div className="flex">
 				{canTurn ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" tooltipY={I.MenuDirection.Top} className={[ styleIcon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
+						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip={translate('menuBlockContextSwitchStyle')} tooltipY={I.MenuDirection.Top} className={[ styleIcon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
 				) : ''}
 				
@@ -103,8 +103,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								id={`button-${blockId}-${I.MarkType.Color}`}
 								className="color"
 								inner={color}
-								tooltip="Color"
-								tooltipCaption={`${cmd}+Shift+C`}
+								tooltip={translate('commonColor')}
+								tooltipCaption={`${cmd} + Shift + C`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} 
 							/>
@@ -113,8 +113,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								id={`button-${blockId}-${I.MarkType.BgColor}`}
 								className="color"
 								inner={background} 
-								tooltip="Background"
-								tooltipCaption={`${cmd}+Shift+H`}
+								tooltip={translate('commonBackground')}
+								tooltipCaption={`${cmd} + Shift + H`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} 
 							/>
@@ -127,14 +127,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						<Icon
 							id={`button-${blockId}-comment`}
 							className="comment dn"
-							tooltip="Comment"
+							tooltip={translate('commonComment')}
 							tooltipY={I.MenuDirection.Top}
 						/>
 
 						<Icon 
 							id={`button-${blockId}-more`}
 							className="more"
-							tooltip="More options"
+							tooltip={translate('menuBlockContextMoreOptions')}
 							tooltipY={I.MenuDirection.Top}
 							onMouseDown={(e: any) => { this.onMark(e, 'more'); }}
 						/>
@@ -268,7 +268,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			case I.MarkType.BgColor:
 			case I.MarkType.Color: {
-				let storageKey = ''
+				let storageKey = '';
 
 				switch (type) {
 					case I.MarkType.Color: {

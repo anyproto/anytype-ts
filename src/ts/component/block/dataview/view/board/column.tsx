@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, translate, Relation, DataUtil, Util } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -10,7 +10,6 @@ import Cell from 'Component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onRecordAdd (groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
@@ -29,11 +28,12 @@ const Column = observer(class Column extends React.Component<Props> {
 		super(props);
 
 		this.onLoadMore = this.onLoadMore.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -64,14 +64,15 @@ const Column = observer(class Column extends React.Component<Props> {
 				ref={node => this.node = node} 
 				id={'column-' + id} 
 				className={cn.join(' ')}
-				{...Util.dataProps({ id })}
+				{...UtilCommon.dataProps({ id })}
 			>
-				<div className="head">
+				<div id={`column-${id}-head`} className="head">
 					<div className="sides">
 						<div 
 							className="side left"
 							draggable={true}
-							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
+							onDragStart={e => onDragStartColumn(e, id)}
+							onClick={this.onMore}
 						>
 							<Cell 
 								id={'board-head-' + id} 
@@ -85,13 +86,13 @@ const Column = observer(class Column extends React.Component<Props> {
 								readonly={true} 
 								arrayLimit={4}
 								withLabel={true}
-								placeholder={translate('placeholderCellCommon')}
+								placeholder={translate('commonUncategorized')}
 							/>
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltip="Column settings" onClick={this.onMore} />
-							<Icon className="add" tooltip="Create new object" onClick={() => { onRecordAdd(id, -1); }} />
+							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
+							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={(e) => this.onAdd(e, -1)} />
 						</div>
 					</div>
 
@@ -113,7 +114,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={(e) => { this.onAdd(e, 1); }}>
 								<Icon className="plus" />
 							</div>
 						) : ''}
@@ -155,7 +156,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		let value = this.props.value;
-		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
 
 		switch (relation.format) {
 			default:
@@ -182,7 +183,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			this.setState({ loading: true });
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId,
 			filters,
 			sorts,
@@ -193,7 +194,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -208,7 +209,8 @@ const Column = observer(class Column extends React.Component<Props> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(Util.objectCopy(dbStore.getRecords(getSubId(), '')), id).map(id => ({ id }));
+
+		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {
@@ -218,17 +220,26 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.load(false);
 	};
 
-	onMore () {
+	onAdd (e: any, dir: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.props.onRecordAdd(e, dir, this.props.id);
+	};
+
+	onMore (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
 
 		node.addClass('active');
 
 		menuStore.open('dataviewGroupEdit', {
-			element: `#button-${id}-more`,
-			onClose: () => {
-				node.removeClass('active');
-			},
+			element: `#column-${id}-head`,
+			horizontal: I.MenuDirection.Center,
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				rootId,
 				blockId: block.id,

@@ -4,15 +4,15 @@ import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
-import { I, translate } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import Row from './list/row';
 
-const HEIGHT = 32;
+const HEIGHT = 34;
 
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -125,15 +125,14 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-		win.trigger('resize.editor');
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		let { rootId, block, loadData, getView, getLimit } = this.props;
-		let subId = dbStore.getSubId(rootId, block.id);
+		const { rootId, block, loadData, getView, getLimit } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
-		let view = getView();
+		const view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();

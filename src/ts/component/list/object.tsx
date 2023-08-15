@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, DataUtil, Relation, ObjectUtil } from 'Lib';
+import { I, C, UtilData, Relation, UtilObject, translate } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -61,7 +61,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			return (
 				<tr className={cn.join(' ')}>
 					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { ObjectUtil.openEvent(e, item); }}>
+						<div className="cellContent isName" onClick={(e: any) => { UtilObject.openEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
@@ -84,7 +84,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							if (column.isObject) {
 								const object = detailStore.get(subId, value, []);
 								if (!object._empty_) {
-									onClick = (e: any) => ObjectUtil.openEvent(e, object);
+									onClick = (e: any) => UtilObject.openEvent(e, object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />
@@ -136,7 +136,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					<thead>
 						<tr className="row">
 							<th className="cellHead">
-								<div className="name">Name</div>
+								<div className="name">{translate('commonName')}</div>
 							</th>
 							{columns.map(column => (
 								<th key={`head-${column.relationKey}`} className="cellHead">
@@ -148,7 +148,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					<tbody>
 						{!items.length ? (
 							<tr>
-								<td className="cell empty" colSpan={3}>No objects yet</td>
+								<td className="cell empty" colSpan={3}>{translate('commonNoObjects')}</td>
 							</tr>
 						) : (
 							<React.Fragment>
@@ -193,10 +193,10 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 		dbStore.metaSet(subId, '', { offset });
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId,
 			sorts: [
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true }
 			],
 			keys: this.getKeys(),
 			sources: [ rootId ],

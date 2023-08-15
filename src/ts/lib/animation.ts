@@ -3,49 +3,68 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.3,
+	Normal: 0.2,
 	Word: 0.1,
 };
 
-const WORD_DELAY_COEF = 0.75;
+const WORD_DELAY_COEF = 0.1;
 
 class Animation {
 
+	isAnimating = false;
+
 	to (callBack?: () => void) {
-		const css = { opacity: 0, transform: 'translate3d(0px,10%,0px)' };
-		
+		if (this.isAnimating) {
+			return;
+		};
+
+		const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
+
+		this.isAnimating = true;
 		this.initNodes(css, I.AnimDirection.To);
 
 		raf(() => {
-			const css = { opacity: 1, transform: 'translate3d(0px,0px,0px)' };
+			const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
 		});
 
-		if (callBack) {
-			window.setTimeout(callBack, this.getDuration());
-		};
+		this.finish(callBack);
 	};
 
 	from (callBack?: () => void) {
-		const css = { opacity: 1, transform: 'translate3d(0px,0px,0px)' };
+		if (this.isAnimating) {
+			return;
+		};
+
+		const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
+
+		this.isAnimating = true;
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
-			const css = { opacity: 0, transform: 'translate3d(0px,-10%,0px)' };
+			const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
 		});
 
-		if (callBack) {
-			window.setTimeout(callBack, this.getDuration());
-		};
+		this.finish(callBack);
+	};
+
+	finish (callBack?: () => void) {
+		window.setTimeout(() => {
+			if (callBack) {
+				callBack();
+			};
+
+			this.isAnimating = false;
+		}, this.getDuration());
 	};
 
 	getSortedNodes (dir: I.AnimDirection) {
-		const nodes = [];
+		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
 
 		$('.animation').each((i: number, el: any) => {
 			el = $(el);
@@ -77,14 +96,13 @@ class Animation {
 		return nodes;
 	};
 
-	initNodes (css: any, dir: I.AnimDirection) {
+	initNodes (css: object, dir: I.AnimDirection) {
 		const nodes = this.getSortedNodes(dir);
 
-		let n = 0;
 		let delay = 0;
 
-		for (let node of nodes) {
-			let { el, type } = node;
+		for (const node of nodes) {
+			const { el, type } = node;
 
 			switch (type) {
 				case I.AnimType.Normal: {
@@ -94,40 +112,42 @@ class Animation {
 				};
 
 				case I.AnimType.Text: {
-					el.html(el.attr('data-content'));
-
 					if (dir == I.AnimDirection.From) {
+						el.html(el.attr('data-content'));
+
 						this.applyCss(el, css, Duration.Normal, delay);
 						delay += Duration.Normal;
 						break;
 					};
 
-					const html = el.html();
-					const words = html.split(' ');
-
 					el.html('');
 
-					words.forEach(word => {
-						const w = $('<span></span>').text(word).addClass('animationWord');
+					const processWord = (word) => {
+						const w = $('<span></span>').html(word).addClass('animationWord');
 
 						el.append(w);
 						el.append(' ');
 
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word * WORD_DELAY_COEF;
-						n++;
+					};
+
+					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
+						if (child.nodeType == 3) {
+							child.textContent.trim().split(' ').forEach(processWord);
+						} else {
+							processWord(child);
+						};
 					});
 					break;
 				};
 			};
-
-			n++;
 		};
 
 		return nodes;
 	};
 
-	applyCss (obj, css: any, duration: number, delay: number) {
+	applyCss (obj: JQuery<HTMLElement>, css: object, duration: number, delay: number) {
 		obj.css({ ...css, transition: '' });
 
 		raf(() => {

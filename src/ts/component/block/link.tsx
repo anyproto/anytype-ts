@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -31,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
-		const content = DataUtil.checkLinkSettings(block.content, layout);
+		const content = UtilData.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
@@ -56,7 +56,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			element = (
 				<div 
 					className="loading" 
-					{...Util.dataProps({ 'target-block-id': object.id })}
+					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
 				>
 					<Loader />
 					<div className="name">{translate('blockLinkSyncing')}</div>
@@ -71,11 +71,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				</div>
 			);
 		} else {
-			if (!isArchived) {
-				cn.push('cp');
-			};
-
-			const cnc = [ 'linkCard', DataUtil.layoutClass(object.id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
+			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			
@@ -259,28 +255,28 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { selection } = dataset || {};
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ , isArchived } = object;
+		const { _empty_ } = object;
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		if (_empty_ || isArchived || (targetBlockId == rootId)) {
+		if (_empty_ || (targetBlockId == rootId)) {
 			return;
 		};
 		
 		if (!(keyboard.withCommand(e) && ids.length)) {
-			ObjectUtil.openEvent(e, object);
+			UtilObject.openEvent(e, object);
 		};
 	};
 	
 	onSelect (icon: string) {
 		const { block } = this.props;
 
-		ObjectUtil.setIcon(block.content.targetBlockId, icon, '');
+		UtilObject.setIcon(block.content.targetBlockId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { block } = this.props;
 
-		ObjectUtil.setIcon(block.content.targetBlockId, '', hash);
+		UtilObject.setIcon(block.content.targetBlockId, '', hash);
 	};
 
 	onCheckbox () {
@@ -288,20 +284,25 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 
-		ObjectUtil.setDone(targetBlockId, !object.done);
+		UtilObject.setDone(targetBlockId, !object.done);
 	};
 
 	onMouseEnter (e: React.MouseEvent) {
 		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
 
-		if (object.isArchived) {
+		if (!targetBlockId) {
+			return;
+		};
+
+		const object = detailStore.get(rootId, targetBlockId, []);
+		if (object._empty_ || object.isDeleted) {
 			return;
 		};
 
 		Preview.previewShow({ 
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 }, 
+			object,
 			target: targetBlockId, 
 			noUnlink: true,
 			passThrough: true,
@@ -315,23 +316,18 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	getIconSize () {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
-		const content = DataUtil.checkLinkSettings(block.content, object.layout);
-		const { iconSize, cardStyle } = content;
+		const content = UtilData.checkLinkSettings(block.content, object.layout);
+		const { cardStyle } = content;
 
-		let size = 24;
-		let is = 0;
+		let size = 20;
+		let iconSize = 20;
 
-		if (cardStyle != I.LinkCardStyle.Text) {
-			switch (iconSize) {
-				case I.LinkIconSize.Medium: {
-					size = 48;
-					is = 28;
-					break;
-				};
-			};
+		if ((cardStyle != I.LinkCardStyle.Text) && (content.iconSize == I.LinkIconSize.Medium)) {
+			size = 48;
+			iconSize = 28;
 		};
 
-		return { size, iconSize: is };
+		return { size, iconSize };
 	};
 
 	resize () {

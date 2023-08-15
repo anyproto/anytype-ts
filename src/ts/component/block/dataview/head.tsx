@@ -1,20 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Editable } from 'Component';
-import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
+import { Icon, Editable } from 'Component';
+import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.ViewComponent {
-	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
-	onSourceTypeSelect?(element: any): void;
-};
 
 interface State {
 	isEditing: boolean;
 };
 
-const Head = observer(class Head extends React.Component<Props, State> {
+const Head = observer(class Head extends React.Component<I.ViewComponent, State> {
 
 	state = {
 		isEditing: false,
@@ -23,10 +18,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	node: any = null;
 	menuContext: any = null;
 	timeout = 0;
-	ref: any = null;
+	ref = null;
 	range: I.TextRange = null;
 
-	constructor (props: Props) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -59,49 +54,31 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			cn.push('isEditing');
 		};
 
+		let icon = <div id="head-source-select" />;
+		if (targetObjectId && !isCollection) {
+			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+		};
+
 		return (
 			<div 
 				id={`block-head-${block.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 			>
-				<div id="head-title-wrapper" className="side left">
-					<IconObject
-						id={`icon-set-${block.id}`}
-						object={object} 
-						size={20}
-						iconSize={20}
-						canEdit={!readonly}
-						onSelect={this.onIconSelect}
-						onUpload={this.onIconUpload}
-					/>
-
-					<Editable
-						ref={(ref: any) => { this.ref = ref; }}
-						id="value"
-						readonly={readonly || !isEditing}
-						placeholder={ObjectUtil.defaultName(isCollection ? 'Collection' : 'Set')}
-						onFocus={this.onFocus}
-						onMouseDown={this.onTitle}
-						onBlur={this.onBlur}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onSelect={this.onSelect}
-						onCompositionStart={this.onCompositionStart}
-					/>
-
-					{targetObjectId && !isCollection ? (
-						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
-							<Icon className="set" />
-						</div>
- 					) : ''}
-
-				</div>
-				<div className="side right">
-					<div className="iconWrap dn" onClick={this.onFullscreen}>
-						<Icon className="expand" tooltip="Open fullscreen" />
-					</div>
-				</div>
+				<Editable
+					ref={ref => this.ref = ref}
+					id="value"
+					readonly={readonly || !isEditing}
+					placeholder={UtilObject.defaultName(isCollection ? 'Collection' : 'Set')}
+					onFocus={this.onFocus}
+					onMouseDown={this.onTitle}
+					onBlur={this.onBlur}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onSelect={this.onSelect}
+					onCompositionStart={this.onCompositionStart}
+				/>
+				{icon}
 			</div>
 		);
 	};
@@ -130,7 +107,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { rootId, block, onSourceSelect, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
-		const element = `#block-${block.id} #head-title-wrapper`;
+		const element = `#block-head-${block.id}`;
 		const object = detailStore.get(rootId, targetObjectId);
 		const sourceName = isCollection ? 'collection' : 'set';
 
@@ -144,12 +121,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		};
 
 		let options: any[] = [
-			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: `Open source ${sourceName}` },
+			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
+			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 
@@ -177,42 +154,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		let filters: I.Filter[] = [];
-		let addParam: any = {};
-
-		if (isCollection) {
-			addParam.name = 'Create new collection';
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
-					analytics.event('InlineSetSetSource', { type: 'newObject' });
-				});
-			};
-
-			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
-			]);
-		} else {
-			addParam.name = 'Create new set';
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => {
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						$(this.node).find('#head-source-select').trigger('click');
-						onCreate(message);
-					});
-
-					analytics.event('InlineSetSetSource', { type: 'newObject' });
-				});
-			};
-
-			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-			]);
-		};
-
-		let menuId = '';
-		let menuParam: any = {
+		const addParam: any = {};
+		const menuParam: any = {
 			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
@@ -220,10 +163,42 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			isSub: true,
 			data: {},
 		};
-
-		const onCreate = (message: any) => {
+		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
 				window.setTimeout(() => { loadData(message.views[0].id, 0, true); }, 50);
+			};
+
+			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
+		};
+
+		let filters: I.Filter[] = [];
+		let menuId = '';
+
+		if (isCollection) {
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+			]);
+
+			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
+				});
+			};
+		} else {
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+			]);
+
+			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', (message: any) => {
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+						$(this.node).find('#head-source-select').trigger('click');
+						onCreate(message, true);
+					});
+				});
 			};
 		};
 
@@ -241,8 +216,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					value: [ targetObjectId ],
 					addParam,
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
-						analytics.event('InlineSetSetSource', { type: 'externalObject' });
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => onCreate(message, false));
 						this.menuContext.close();
 					}
 				});
@@ -274,7 +248,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			};
 
 			case 'sourceOpen': {
-				ObjectUtil.openAuto(object);
+				UtilObject.openAuto(object);
 				analytics.event('InlineSetOpenSource');
 				break;
 			};
@@ -315,7 +289,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		this.checkInput(!this.getValue());
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => this.save(), 1000);
 	};
 
 	onSelect () {
@@ -333,7 +307,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const object = getTarget();
 
 		let name = String(object.name || '');
-		if ((name == ObjectUtil.defaultName('Page')) || (name == ObjectUtil.defaultName('Set'))) {
+		if ((name == UtilObject.defaultName('Page')) || (name == UtilObject.defaultName('Set'))) {
 			name = '';
 		};
 
@@ -366,12 +340,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		if ((value == ObjectUtil.defaultName('Page')) || (value == ObjectUtil.defaultName('Set'))) {
+		if ((value == UtilObject.defaultName('Page')) || (value == UtilObject.defaultName('Set'))) {
 			value = '';
 		};
 
 		if (targetObjectId) {
-			ObjectUtil.setName(targetObjectId, this.getValue());
+			UtilObject.setName(targetObjectId, this.getValue());
 		};
 		
 		if (this.ref) {
@@ -384,7 +358,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { targetObjectId } = block.content;
 
 		if (targetObjectId) {
-			ObjectUtil.setIcon(targetObjectId, icon, '');
+			UtilObject.setIcon(targetObjectId, icon, '');
 		};
 	};
 
@@ -393,14 +367,14 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const { targetObjectId } = block.content;
 
 		if (targetObjectId) {
-			ObjectUtil.setIcon(targetObjectId, '', hash);
+			UtilObject.setIcon(targetObjectId, '', hash);
 		};
 	};
 
 	onFullscreen () {
 		const { rootId, block } = this.props;
 
-		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
+		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 		analytics.event('InlineSetOpenFullscreen');
 	};
 

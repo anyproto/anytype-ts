@@ -1,22 +1,22 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockDataview { @include text-common; padding: 6px 0px; }
+	.block.blockDataview { @include text-common; padding: 8px 0px 6px 0px; }
 	.block.blockDataview {
 		.wrapContent { z-index: 1; }
 
 		#set-loader { margin: 24px auto; }
-		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		
 		.icon.edit { 
-			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
+			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); 
 			background-size: 20px;
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
-			transition: $transitionAllCommon; cursor: pointer;
+			transition: $transitionAllCommon;
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
@@ -39,36 +39,13 @@
 			.button { color: $colorBlack; }
 		}
 
-		.dataviewHead, .dataviewControls {
-			.sides, .side { display: flex; flex-direction: row; align-items: center; }
-			.sides { justify-content: stretch; width: 100%; }
-			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
-		}
-
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorBlack; }
 		.dataviewHead {
-			.side.left { gap: 0px 6px; }
-			.side.right { opacity: 0; transition: $transitionAllCommon; }
+			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
+			.icon.source.active { opacity: 1; }
 
-			.iconWrap { 
-				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; cursor: pointer; display: flex; align-items: center;
-				line-height: 20px; @include text-small; color: $colorMediumGrey;
-			}
-			.iconWrap:hover { background-color: $colorHoverMedium; }
-			.iconWrap.icon { flex-shrink: 0; }
-			.iconWrap {
-				.icon { width: 20px; height: 20px; }
-				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
-			}
-
-			.editableWrap { @include text-header3; height: 26px; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
-			.editableWrap.isEmpty { min-width: 70px; }
-
-			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
-
-			#head-source-select { opacity: 0; }
-			#head-source-select.active { opacity: 1; }
+			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
+			.editableWrap.isEmpty { min-width: 90px; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
@@ -78,27 +55,45 @@
 			#head-source-select { display: none; }
 		}
 		.dataviewHead.isCollection {
-			.editableWrap.isEmpty { min-width: 130px; }
+			.editableWrap.isEmpty { min-width: 160px; }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 
-		.dataviewControls.viewGrid::after { display: block; }
+		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
 		.dataviewControls {
-			.sides { gap: 0px 16px; }
-			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
-			.side.left { padding-left: 14px; }
+			> .sides { gap: 0px 16px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; width: 100%; }
+			> .sides {
+				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; display: flex; flex-direction: row; align-items: center; }
+				> .side.left { flex-grow: 1; padding-left: 14px; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
+				> .side.right {
+					.button { margin-left: 6px; }
 
-			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
+					.buttonNewWrapper { margin-left: 6px; }
+					.buttonNewWrapper {
+						.button { margin-left: 0; }
+					}
+					.buttonNewWrapper.withSelect {
+						.button.addRecord { border-radius: 6px 0 0 6px; }
+						.button.select {
+							width: 24px; height: 28px; border: 0 solid; border-left: 1px solid rgba(255, 255, 255, .1); border-radius: 0 6px 6px 0;
+						}
+						.button.select:after { content: ''; position: absolute; left: 1px; top: 4px; width: 20px; height: 20px; background: url('~img/arrow/button/white.svg') 50% 50% no-repeat; }
+					}
+				}
+			}
+
+			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
-			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
-			.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-			.icon.sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
-			.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
@@ -106,7 +101,7 @@
 			}
 
 			.viewItem { 
-				transition: color $transitionCommon; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: $colorMediumGrey;
 			}
 			.viewItem { 
@@ -116,7 +111,7 @@
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
 			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 
-			.viewSelect { display: none; border: 0px; padding-left: 0px; }
+			.viewSelect { display: none; border: 0px; padding-left: 0px; color: $colorBlack; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
 			}
@@ -128,14 +123,23 @@
 
 			.button { padding: 0px 8px; @include text-common; }
 		}
+		.dataviewControls.isCollection {
+			.side.left { padding-left: 20px; }
+		}
 
 		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
-			.side.left { @include text-paragraph; color: $colorBlack;  }
+			.side.left { @include text-header3; color: $colorBlack;  }
 			.side.right {
 				.element {
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px;
 					transition: $transitionAllCommon;
+				}
+				.element {
+					.icon { width: 20px; height: 20px; }
+					.icon.unlink { background-image: url('~img/icon/dataview/selection/unlink.svg'); }
+					.icon.archive { background-image: url('~img/icon/menu/action/remove0.svg'); }
+					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
 				.element.black { color: $colorBlack; }
 				.element.orange { color: #f09c0e; font-weight: 500; }
@@ -144,43 +148,66 @@
 		}
 
 		.content {
-			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-			.scrollWrap { background: #fff; padding-bottom: 14px; }
+			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
+			.scrollWrap { background: #fff; }
 		}
 
-		.dataviewControls.isCollection { padding-left: 8px; }
-		.dataviewControls.isCollection.viewList {
-			.line { width: 100%; margin: 0px; }
+		.viewContent {
+			.icon.drag { 
+				z-index: 1; width: 7px; height: 12px; background-image: url('~img/icon/dataview/dnd.svg'); cursor: grab;
+				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 4px; opacity: 0; transition: opacity $transitionCommon;
+			}
 		}
 
+		.hoverArea.active,
 		.hoverArea:hover {
 			.dataviewControls {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				.views {
 					.icon.plus { opacity: 1; }
 				}
 			}
 			.dataviewHead {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				#head-source-select { opacity: 1; }
 			}
 		}
 	}
 
 	.block.blockDataview.isInline {
-		.wrapMenu > .icon.dnd { height: 88px; }
+		.wrapMenu > .icon.dnd { height: 60px; }
 
-		.dataviewEmpty { height: auto; padding: 48px 0px; }
-		.dataviewHead { padding-left: 0px; padding-right: 0px; }
+		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid $colorBorderLight; border-bottom: 1px solid $colorBorderLight; }
 
 		.dataviewControls {
-			.side { padding: 9px 0px; }
-			.side.left { padding-left: 0px; }
-			.side.right { transition: opacity $transitionCommon; opacity: 0; }
-			.line { display: none; }
+			> .sides {
+				> .side { padding: 0px 0px 8px 0px; }
+				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
+				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
+			}
+
+			.views { gap: 0px 12px; }
+			.viewItem { @include text-common; font-weight: 500; }
+			.button { margin-left: 6px; }
+
+			.icon.plus { width: 20px; height: 20px; }
+			.icon.plus:hover { background-color: transparent; }
 		}
+		.dataviewControls::after { display: none !important; }
 		.dataviewControls.active {
-			.side.right { opacity: 1; }
+			> .sides {
+				> .side.right { opacity: 1; }
+			}
+		}
+
+		.dataviewSelection {
+			.side.left { @include text-paragraph; }
 		}
 
 		.content {
@@ -190,28 +217,18 @@
 
 	.block.blockDataview.showMenu {
 		.dataviewHead {
-			.side.right { opacity: 1; }
-			#head-source-select { opacity: 1; }
+			.icon.source { opacity: 1; }
 		}
 		.dataviewControls {
-			.side.right { opacity: 1; }
+			> .sides {
+				> .side.right { opacity: 1; }
+			}
 			.views {
 				.icon.plus { opacity: 1; }
 			}
 		}
 	}
 	
-}
-
-html.platformMac {
-	.blocks {
-		.block.blockDataview {
-			.content {
-				.scrollWrap { padding: 0px; }
-				.scroll::-webkit-scrollbar { display: none; }
-			}
-		}
-	}
 }
 
 html.platformWindows {

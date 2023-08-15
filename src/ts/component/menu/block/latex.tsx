@@ -1,11 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
-import katex from 'katex';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, DataUtil, MenuUtil } from 'Lib';
+import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
+
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
@@ -13,20 +15,20 @@ const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
-	
+
 	_isMounted = false;
 	emptyLength = 0;
 	refList: any = null;
 	cache: any = {};
 	n = -1;
 	filter = '';
-	
+
 	constructor (props: I.Menu) {
 		super(props);
-		
+
 		this.rebind = this.rebind.bind(this);
 	};
-	
+
 	render () {
 		const { param } = this.props;
 		const { data } = param;
@@ -40,7 +42,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			
+
 			let content = null;
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
@@ -48,19 +50,19 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				const name = String(item.name || '').replace(/\\\\/g, '\\');
 
 				const math = katex.renderToString(item.comment || item.symbol, {
-					displayMode: true, 
+					displayMode: true,
 					throwOnError: false,
 					output: 'html',
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				});
 
 				content = (
-					<div 
-						id={'item-' + item.id} 
-						className="item" 
-						style={param.style} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
-						onClick={(e: any) => { this.onClick(e, item) }}
+					<div
+						id={'item-' + item.id}
+						className="item"
+						style={param.style}
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onClick={e => this.onClick(e, item)}
 					>
 						{isTemplate ? (
 							<div className="inner">
@@ -95,19 +97,16 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => {
-											const item = items[index];
-											return this.getItemHeight(item);
-										}}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
@@ -125,7 +124,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			</div>
 		);
 	};
-	
+
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
@@ -179,7 +178,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
 	unbind () {
@@ -206,7 +205,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			isSub: true,
 			data: {
 				text: item.comment || item.symbol,
-				example: item.comment == "" ? false : true
+				example: item.comment ? true : false,
 			}
 		});
 	};
@@ -225,7 +224,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect, isTemplate } = data;
-		
+
 		let from = filter.from;
 		let to = filter.from;
 
@@ -239,12 +238,12 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	};
 
 	getSections () {
-		const { filter } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
+		const filter = UtilCommon.regexEscape(commonStore.filter.text);
 
-		let sections = MenuUtil.sectionsMap(Sections);
+		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
@@ -256,20 +255,19 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			return it;
 		});
 
-		if (filter.text) {
-			sections = MenuUtil.sectionsFilter(sections, filter.text);
+		if (filter) {
+			sections = UtilMenu.sectionsFilter(sections, filter);
 
-			const regS = new RegExp('/^' + filter.text + '/', 'gi');
-			const regC = new RegExp(filter.text, 'gi');
+			const regS = new RegExp('/^' + filter + '/', 'gi');
 
 			sections = sections.map((s: any) => {
 				s._sortWeight_ = 0;
 				s.children = s.children.map((c: any) => {
 					const n = c.name.replace(/\\/g, '');
 					let w = 0;
-					if (n === filter.text) {
+					if (n === filter) {
 						w = 10000;
-					} else 
+					} else
 					if (n.match(regS)) {
 						w = 1000;
 					};
@@ -277,10 +275,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+				s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 				return s;
 			});
-			sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 		};
 
 		return sections;
@@ -290,7 +288,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const sections = this.getSections();
 
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
@@ -300,7 +298,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		return items;
 	};
 
-	getItemHeight (item: any) {
+	getRowHeight (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
@@ -330,10 +328,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		let height = offset;
 
-		for (let item of items) {
-			height += this.getItemHeight(item);
+		for (const item of items) {
+			height += this.getRowHeight(item);
 		};
-		
+
 		height = Math.max(ih + offset, Math.min(ih * 10, height));
 
 		if (!items.length) {
@@ -343,7 +341,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		obj.css({ height: height });
 		position();
 	};
-	
+
 });
 
 export default MenuBlockLatex;

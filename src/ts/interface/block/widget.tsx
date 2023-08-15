@@ -19,12 +19,14 @@ export interface WidgetComponent {
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
+	getLimit?: (content: ContentWidget) => number;
+	sortFavorite?: (records: string[]) => string[];
 };
 
 export interface WidgetTreeItem {
 	id: string;
 	rootId: string; // the id of the root node (root node)
-	parentId: string;  // the id of the parent node
+	parentId: string; // the id of the parent node
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
 };
@@ -37,6 +39,8 @@ export interface WidgetTreeDetails {
 
 export interface ContentWidget {
 	layout: I.WidgetLayout;
+	limit: number;
+	viewId: string;
 };
 
 export interface BlockWidget extends I.Block {

@@ -55,7 +55,48 @@
 			}
         }
 
-		.linkCard.text {
+		.linkCard.c18.withIcon {
+			.cardName { position: relative; }
+			.cardName {
+				.iconObject { position: absolute; left: 0; top: 0; }
+				.name { text-indent: 24px; }
+			}
+		}
+
+		.linkCard.c48.withIcon {
+			.sides { min-height: 80px; }
+			.side.left { padding: 16px 16px 16px 80px; flex-grow: 1; }
+			.iconObject { position: absolute; left: 16px; top: 15px; background-color: $colorVeryLightGrey; border-radius: 10px; }
+		}
+
+		.linkCard.c48.withIcon.withCover.vertical {
+			.sides { min-height: 62px; }
+			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
+			.iconObject { top: -32px; transform: none; }
+		}
+
+		.linkCard.withCover {
+			.sides { align-items: stretch; }
+			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px !important; border-right-width: 0px; }
+			.side.right { width: 28%; display: block; border: 1px solid $colorBorderLight; border-left: 0px; }
+		}
+
+		.linkCard.vertical { display: block; }
+		.linkCard.vertical {
+			.sides { flex-direction: column-reverse; }
+			.side.left { width: 100%; border-right-width: 1px; }
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid $colorBorderLight; border-bottom: 0px; }
+		}
+
+		.linkCard.withCover.vertical {
+			.side.left { border-radius: 0px 0px 12px 12px !important; }
+		}
+
+		.linkCard.withCover.vertical.text { padding-top: 0px; }
+	}
+
+	.block.blockLink.text {
+		.linkCard {
 			.side.left { line-height: 24px; vertical-align: top; gap: 0px 6px; flex-direction: row; align-items: center;  }
 			.side.right { display: none !important; }
 
@@ -69,7 +110,7 @@
 
 			.cardName { flex-wrap: nowrap; vertical-align: top; max-width: 100%; }
 			.cardName {
-				.name { @include text-overflow-nw; }
+				.name { @include text-overflow-nw; line-height: 19px; }
 			}
 
 			.cardDescription { @include text-small; }
@@ -80,20 +121,23 @@
 			.cardType { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; flex-grow: 0; }
 		}
 
-		.linkCard.text.c2 {
+		.linkCard.c2 {
 			.cardName { max-width: 70%; }
 			.cardDescription { max-width: 30%; }
 			.cardType { max-width: 30%; }
 		}
 
-		.linkCard.text.c3 {
+		.linkCard.c3 {
 			.cardName { max-width: 60%; }
 			.cardDescription { max-width: 30%; }
 			.cardType { max-width: 10%; }
 		}
+	}
 
-		.linkCard.card { margin: 8px 0px; }
-		.linkCard.card {
+	.block.blockLink.card { padding: 6px 0px; }
+	.block.blockLink.card {
+		.linkCard { box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); border-radius: 12px; }
+		.linkCard {
 			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
 
@@ -106,54 +150,15 @@
 
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
-
-		.linkCard.c18.withIcon {
-			.cardName { position: relative; }
-			.cardName {
-				.iconObject { position: absolute; left: 0; top: 0; }
-				.name { text-indent: 24px; }
-			}
-		}
-
-		.linkCard.c48.withIcon {
-			.sides { min-height: 80px; }
-			.side.left { padding: 16px 16px 16px 72px; flex-grow: 1; }
-			.iconObject { position: absolute; left: 16px; top: 15px; background-color: $colorVeryLightGrey; border-radius: 10px; }
-		}
-
-		.linkCard.c48.withIcon.withCover.vertical {
-			.sides { min-height: 62px; }
-			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
-			.iconObject { top: -32px; transform: none; }
-		}
-
-		.linkCard.withCover {
-			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
-			.side.right { width: 28%; display: block; border: 1px solid $colorBorderLight; border-left: 0px; }
-		}
-
-		.linkCard.vertical { display: block; }
-		.linkCard.vertical {
-			.sides { flex-direction: column-reverse; }
-			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { 
-				aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px;
-			}
-		}
-
-		.linkCard.withCover.vertical {
-			.side.left { border-radius: 0px 0px 12px 12px; }
-		}
-
-		.linkCard.withCover.vertical.text { padding-top: 0px; }
-
 	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorBlack; }
 		}
+	}
+
+	.block.blockLink.card:hover {
 		.linkCard.card {
 			.side.left, .side.right { border-color: $colorBorderDark; }
 		}
@@ -164,5 +169,6 @@
 	}
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
-
+	.block.blockLink.text > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
+	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 12px; left: 0px; width: 100%; }
 }

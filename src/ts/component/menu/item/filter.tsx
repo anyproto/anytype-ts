@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Relation, Util } from 'Lib';
+import { I, Relation, UtilCommon, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -22,12 +22,13 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 	_isMounted = false;
 
 	render () {
-		let { id, index, relation, condition, quickOption, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;
-		let conditionOptions = Relation.filterConditionsByType(relation.format);
-		let conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
-		let filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
-		let filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
+		const { id, index, relation, condition, quickOption, subId, readonly, style, onOver, onClick, onRemove } = this.props;
+		const conditionOptions = Relation.filterConditionsByType(relation.format);
+		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
+		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
+		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
+		let value = this.props.value;
 		let v: any = null;
 		let list = [];
 		let Item: any = null;
@@ -39,7 +40,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 		switch (relation.format) {
 
 			default: {
-				v = `“${value}”`
+				v = `“${value}”`;
 				break;
 			};
 
@@ -54,12 +55,12 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				let name = String(filterOption.name || '').toLowerCase();
 
 				if (quickOption == I.FilterQuickOption.ExactDate) {
-					v.push(value !== null ? Util.date('d.m.Y', value) : '');
+					v.push(value !== null ? UtilCommon.date('d.m.Y', value) : '');
 				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 					value = Number(value) || 0;
-					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `%d %s ago` : `%d %s from now`;
-					v.push(Util.sprintf(name, value, Util.cntWord(value, 'day', 'days')));
+					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
+					v.push(UtilCommon.sprintf(translate(name), value, UtilCommon.plural(value, translate('pluralDay'))));
 				} else 
 				if (filterOption) {
 					v.push(name);
@@ -70,7 +71,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 			};
 
 			case I.RelationType.Checkbox: {
-				v = value ? 'checked' : 'unchecked';
+				v = translate(`relationCheckboxLabelShort${Number(value)}`);
 				break;
 			};
 

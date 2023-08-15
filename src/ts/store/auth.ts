@@ -9,11 +9,8 @@ class AuthStore {
 	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
-	public icon = '';
-	public preview = '';
 	public name = '';
 	public phrase = '';
-	public code = '';
 	public token = '';
 	public threadMap: Map<string, any> = new Map();
 
@@ -23,11 +20,8 @@ class AuthStore {
 			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
-			icon: observable,
-			preview: observable,
 			name: observable,
 			phrase: observable,
-			code: observable,
 			threadMap: observable,
 			walletPath: computed,
 			accountPath: computed,
@@ -36,9 +30,6 @@ class AuthStore {
 			walletPathSet: action,
 			accountPathSet: action,
 			phraseSet: action,
-			codeSet: action,
-			iconSet: action,
-			previewSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -77,18 +68,6 @@ class AuthStore {
 		this.phrase = v;
     };
 
-	codeSet (v: string) {
-		this.code = v;
-    };
-
-	iconSet (v: string) {
-		this.icon = v;
-    };
-
-	previewSet (v: string) {
-		this.preview = v;
-    };
-
 	nameSet (v: string) {
 		this.name = v;
     };
@@ -110,11 +89,11 @@ class AuthStore {
     };
 
 	accountSet (account: any) {
-		if (!this.accountItem) {
-			account.info = account.info || {};
-			account.status = account.status || {};
-			account.config = account.config || {};
+		account.info = account.info || {};
+		account.status = account.status || {};
+		account.config = account.config || {};
 
+		if (!this.accountItem) {
 			this.accountItem = new M.Account(account);
 		} else {
 			set(this.accountItem, account);
@@ -161,11 +140,8 @@ class AuthStore {
 		this.accountItem = null;
 
 		this.accountListClear();
-		this.iconSet('');
-		this.previewSet('');
 		this.nameSet('');
 		this.phraseSet('');
-		this.codeSet('');
 	};
 
 	logout (removeData: boolean) {
@@ -176,10 +152,10 @@ class AuthStore {
 
 		analytics.event('LogOut');
 		analytics.profile('');
+		analytics.removeContext();
 
 		keyboard.setPinChecked(false);
 
-		commonStore.coverSetDefault();
 		commonStore.workspaceSet('');
 
 		blockStore.clearAll();

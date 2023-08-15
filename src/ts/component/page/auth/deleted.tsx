@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Label, Error, Header, Footer } from 'Component';
-import { I, Util, C, Action, Survey, ObjectUtil, analytics } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
+import { Frame, Title, Label, Error, Header, Button } from 'Component';
+import { I, UtilCommon, C, Action, Survey, UtilObject, analytics, translate } from 'Lib';
+import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
-
+import CanvasWorkerBridge from './animation/canvasWorkerBridge';
+import { OnboardStage } from './animation/constants';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -22,9 +23,10 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	constructor (props: I.PageComponent) {
         super(props);
 
-		this.onReset = this.onReset.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.onLogout = this.onLogout.bind(this);
 	};
 	
 	render () {
@@ -33,115 +35,111 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			return null;
 		};
 
-		const { cover } = commonStore;
 		const { error } = this.state;
-		const duration = Math.max(0, account.status.date - Util.time());
+		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
-		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
+		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
+		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
-		let title = '';
-		let description = '';
-		let showPie = false;
-		let pieValue = 0;
-		let rows: any[] = [];
+		// Deletion Status
 		let status: I.AccountStatusType = account.status.type;
-
-		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
+		if ((status == I.AccountStatusType.PendingDeletion) && !daysUntilDeletion) {
 			status = I.AccountStatusType.Deleted;
 		};
 
+		// UI Elements
+		let showPie = false;
+		let title = '';
+		let description = '';
+		let cancelButton = null;
+
 		switch (status) {
-			case I.AccountStatusType.PendingDeletion:
-				title = `This account is planned for deletion in ${dt}...`;
-				description = `We're sorry to see you go. You have ${dt} to cancel this request. After ${dt}, your encrypted account data is permanently removed from the backup node.`;
-
-				rows = rows.concat([
-					{ name: 'Cancel deletion', onClick: this.onCancel },
-					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
-				]);
-
+			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - days));
+				title = UtilCommon.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
+				description = translate('authDeleteDescription');
+				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={this.onCancel} />;
 				break;
+			};
 
 			case I.AccountStatusType.StartedDeletion:
-			case I.AccountStatusType.Deleted:
-				title = `This account has been deleted`;
-				description = `This device stores your data locally. You can export it, however, you are not able to use this account anymore.`;
-
-				rows = rows.concat([
-					{ name: 'Logout and clear data', className: 'red', onClick: this.onReset },
-					{ name: 'Export data to markdown', className: '', onClick: this.onExport },
-				]);
+			case I.AccountStatusType.Deleted: {
+				title = translate('authDeleteTitleDeleted');
+				description = translate('authDeleteDescriptionDeleted');
 				break;
+			};
 		};
 
         return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
+				<CanvasWorkerBridge state={OnboardStage.Void} />
 				
 				<Frame>
 					{showPie ? (
-						<div className="pie">
+						<div className="animation pie">
 							<div className="inner">
 								<PieChart
 									totalValue={DAYS}
 									startAngle={270}
-									data={[ { title: '', value: pieValue, color: '#f55522' } ]}
+									lengthAngle={-360}
+									data={[ { title: '', value: daysUntilDeletion, color: '#d4d4d4' } ]}
 								/>
 							</div>
 						</div>
-					) : ''}
+					) : null}
 
-					<Title text={title} />
-					<Label text={description} />
-					<Error text={error} />
+					<Title className="animation" text={title} />
+					<Label className="animation" text={description} />
+					<Error className="animation" text={error} />
 								
-					<div className="rows">
-						{rows.map((item: any, i: number) => (
-							<div key={i} className={[ 'row', item.className ].join(' ')} onClick={item.onClick}>
-								{item.name}
-							</div>
-						))}
+					<div className="animation buttons">
+						{cancelButton}
+						<Button color="blank" text={translate('authDeleteExportButton')} onClick={this.onExport} />
+						<div className="remove" onClick={this.onRemove}>{translate('authDeleteRemoveButton')}</div>
 					</div>
 				</Frame>
+
+				<div className="animation small bottom" onClick={this.onLogout}>
+					Log out
+				</div>
 			</div>
 		);
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => {
-			Survey.check(I.SurveyType.Delete);
-		}, Constant.delay.popup);
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), Constant.delay.popup);
 	};
 
-	onReset (e: any) {
+	onRemove () {
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete your local account data?`,
-				text: `These objects will be deleted irrevocably. You can't undo this action.`,
-				textConfirm: 'Delete',
+				title: translate('authDeleteRemovePopupTitle'),
+				text: translate('authDeleteRemovePopupText'),
+				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
-					Util.route('/');
+					UtilCommon.route('/', { replace: true });
 				},
 			},
 		});
 	};
 
-	onExport (e: any) {
+	onExport () {
 		Action.export([], I.ExportType.Markdown, true, true, true, true);
 	};
 
-	onCancel (e: any) {
-		C.AccountDelete(true, (message: any) => {
+	onCancel () {
+		C.AccountDelete(true, (message) => {
 			authStore.accountSet({ status: message.status });
-			ObjectUtil.openHome('route');
-
+			UtilObject.openHome('route');
 			analytics.event('CancelDeletion');
 		});
+	};
+
+	onLogout () {
+		UtilCommon.route('/', { replace: true, animate: true });
+		window.setTimeout(() => authStore.logout(false), Constant.delay.route * 2);
 	};
 	
 });

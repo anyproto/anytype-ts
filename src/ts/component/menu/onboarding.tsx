@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import * as Docs from 'Docs';
+import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -10,7 +10,7 @@ interface State {
 	error: { description: string, code: number };
 };
 
-class MenuOnboarding extends React.Component<I.Menu, State> {
+const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu, State> {
 
 	node: any = null;
 	confetti: any = null;
@@ -28,9 +28,9 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, force } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
@@ -38,11 +38,25 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		let buttons = [];
 
 		if (!item.noButton) {
-			buttons.push({ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' });
+			let buttonText = translate('commonNext');
+
+			if (current == l - 1) {
+				buttonText = translate('commonFinish');
+			};
+
+			if (item.buttonText) {
+				buttonText = item.buttonText;
+			};
+
+			buttons.push({ text: buttonText, action: 'next' });
 		};
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
+		};
+
+		if (force && item.forceButtons) {
+			buttons = item.forceButtons;
 		};
 
 		const Steps = () => (
@@ -100,14 +114,16 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	componentDidMount () {
 		this.rebind();
-		Util.renderLinks($(this.node));
+		this.event();
+
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, showConfetti } = section;
 		const l = items.length;
 		const node = $(this.node);
@@ -119,9 +135,9 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 		this.rebind();
 		this.scroll();
+		this.event();
 
-		Util.renderLinks(node);
-		analytics.event('ScreenOnboarding');
+		UtilCommon.renderLinks(node);
 
 		if (showConfetti && (current == l - 1)) {
 			this.confettiShot();
@@ -129,16 +145,29 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onClose () {
-		this.props.close();
+		const { param, close } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		close();
+		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	event () {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		analytics.event('OnboardingTooltip', { step: (current + 1), id: key });
 	};
 
 	scroll () {
@@ -150,7 +179,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
 
@@ -159,7 +188,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		};
 
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		let containerOffset = { top: 0, left: 0 };
 		if (isPopup) {
@@ -173,12 +202,21 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowleft', e, () => { this.onArrow(e, -1); });
-		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
+		keyboard.shortcut('arrowleft', e, () => this.onArrow(e, -1));
+		keyboard.shortcut('arrowright', e, () => this.onArrow(e, 1));
 	};
 
 	onButton (e: any, action: string) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
 		switch (action) {
+			case 'close': {
+				close();
+				break;
+			};
+
 			case 'next': {
 				this.onArrow(e, 1);
 				break;
@@ -190,23 +228,28 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			};
 
 			case 'dashboard': {
-				ObjectUtil.openHome('route');
+				close();
+				UtilObject.openHome('route');
 				break;
 			};
 		};
+
+		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });
 	};
 
 	onArrow (e: any, dir: number) {
-		const { data } = this.props.param;
+		const { param, close } = this.props;
+		const { data } = param;
 		const { key, current } = data;
-		const items = Docs.Help.Onboarding[key].items;
+		const section = Onboarding.getSection(key);
+		const { items } = section;
 
 		if ((dir < 0) && (current == 0)) {
 			return;
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			this.onClose();
+			close();
 			return;
 		};
 
@@ -214,9 +257,10 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onClick (e: any, next: number) {
-		const { data, onOpen, onClose } = this.props.param;
+		const { param } = this.props;
+		const { data, onOpen, onClose } = param;
 		const { key, isPopup, options } = data;
-		const section = Docs.Help.Onboarding[key];
+		const section = Onboarding.getSection(key);
 		const { items } = section;
 		const item = items[next];
 
@@ -224,40 +268,40 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		let param = Onboarding.getParam(section, item, isPopup);
+		let menuParam = Onboarding.getParam(section, item, isPopup);
 
 		if (options.parseParam) {
-			param = options.parseParam(param);
+			menuParam = options.parseParam(menuParam);
 		};
 
 		menuStore.open('onboarding', {
-			...param,
+			...menuParam,
 			onOpen: () => {
 				if (onOpen) {
 					onOpen();
 				};
-				if (param.onOpen) {
-					param.onOpen();
+				if (menuParam.onOpen) {
+					menuParam.onOpen();
 				};
 			},
 			onClose: () => {
 				if (onClose) {
 					onClose();
 				};
-				if (param.onClose) {
-					param.onClose();
+				if (menuParam.onClose) {
+					menuParam.onClose();
 				};
 			},
 			data: {
 				...data,
-				...param.data,
+				...menuParam.data,
 				current: next,
 			},
 		});
 	};
 
 	onVideoClick (e: any, src: string) {
-		Util.pauseMedia();
+		UtilCommon.pauseMedia();
 
 		popupStore.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,
@@ -281,9 +325,9 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Error',
+				title: translate('commonError'),
 				text: error.description,
-				textConfirm: 'Ok',
+				textConfirm: translate('commonOk'),
 				canCancel: false,
 			},
 		});
@@ -295,6 +339,6 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
 
-};
+});
 
 export default MenuOnboarding;

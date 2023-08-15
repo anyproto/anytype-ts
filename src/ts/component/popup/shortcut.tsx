@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util } from 'Lib';
+import { I, UtilCommon, keyboard, translate } from 'Lib';
 
 interface State {
 	page: string;
@@ -16,13 +16,12 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	render () {
 		const { page } = this.state;
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = UtilCommon.isPlatformMac();
 		const tabs = [
-			{ id: 'main', name: 'Main' },
-			{ id: 'navigation', name: 'Navigation' },
-			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'command', name: 'Commands' },
+			{ id: 'main', name: translate('popupShortcutMain') },
+			{ id: 'navigation', name: translate('popupShortcutNavigation') },
+			{ id: 'markdown', name: translate('popupShortcutMarkdown') },
+			{ id: 'command', name: translate('popupShortcutCommands') },
 		];
 		const sections = this.getSections(page);
 
@@ -81,13 +80,22 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
+		this.rebind();
 		this.resize();
-		this.props.position();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.popupShortcut', () => this.resize());
+	};
+
+	unbind () {
+		$(window).off('resize.popupShortcut');
 	};
 
 	onPage (id: string) {
@@ -95,205 +103,208 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 	};
 
 	getSections (id: string) {
-		const cmd = '&#8984;';
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
+
 		const sections = {
 
 			main: [
 				{
-					name: 'Basics', children: [
-						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create new object' },
-						{ mac: `${cmd} + Shift + N`,	 com: 'Ctrl + Shift + N',	 name: 'New Anytype window' },
-						{ mac: `${cmd} + Option + N`,	 com: 'Ctrl + Alt + N',		 name: 'Create a new object in new window' },
-						{ mac: `${cmd} + Enter`,		 com: 'Ctrl + Enter',		 name: 'Opens object in new window from search interface' },
-						{ mac: `${cmd} + Option + F`,	 com: 'Ctrl + Alt + F',		 name: 'Toggle fullscreen' },
-						{ mac: `${cmd} + Z`,			 com: 'Ctrl + Z',			 name: 'Undo' },
-						{ mac: `${cmd} + Shift + Z`,	 com: 'Ctrl + Shift + Z',	 name: 'Redo' },
-						{ mac: `${cmd} + P`,			 com: 'Ctrl + P',			 name: 'Print' },
-						{ mac: `${cmd} + F`,			 com: 'Ctrl + F',			 name: 'Find on page' },
-						{ mac: `${cmd} + Q`,			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
-						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: 'Show page edit history' },
-						{ com: 'Shift + Click',		 name: 'On page link will open it in modal view' },
-						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On page link will open it in new window' },
-						{ mac: `Ctrl + Space`,			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
-						{ mac: `${cmd} + \\`,			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
-						{ mac: `${cmd} + =`,			 com: 'Ctrl + =',		 name: 'Zoom in' },
-						{ mac: `${cmd} + Minus`,		 com: 'Ctrl + Minus',		 name: 'Zoom out' },
-						{ mac: `${cmd} + 0`,			 com: 'Ctrl + 0',			 name: 'Default zoom' },
+					name: translate('popupShortcutBasics'), children: [
+						{ com: `${cmd} + N`,			 name: translate('popupShortcutMainBasics1') },
+						{ com: `${cmd} + Shift + N`,	 name: translate('popupShortcutMainBasics2') },
+						{ com: `${cmd} + ${alt} + N`,	 name: translate('popupShortcutMainBasics3') },
+						{ com: `${cmd} + Enter`,		 name: translate('popupShortcutMainBasics4') },
+						{ com: `${cmd} + ${alt} + F`,	 name: translate('popupShortcutMainBasics5') },
+						{ com: `${cmd} + Z`,			 name: translate('popupShortcutMainBasics6') },
+						{ com: `${cmd} + Shift + Z`,	 name: translate('popupShortcutMainBasics7') },
+						{ com: `${cmd} + P`,			 name: translate('popupShortcutMainBasics8') },
+						{ com: `${cmd} + F`,			 name: translate('popupShortcutMainBasics9') },
+						{ com: `${cmd} + Q`,			 name: translate('popupShortcutMainBasics10') },
+						{ mac: `${cmd} + Y`,			 com: 'Ctrl + H',			 name: translate('popupShortcutMainBasics11') },
+						{ com: 'Shift + Click',			 name: translate('popupShortcutMainBasics12') },
+						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainBasics13') },
+						{ com: 'Ctrl + Space',		 	 name: translate('popupShortcutMainBasics14') },
+						{ com: `${cmd} + \\, ${cmd} + .`, name: translate('popupShortcutMainBasics15') },
+						{ com: `${cmd} + =`,			 name: translate('popupShortcutMainBasics16') },
+						{ com: `${cmd} + Minus`,		 name: translate('popupShortcutMainBasics17') },
+						{ com: `${cmd} + 0`,			 name: translate('popupShortcutMainBasics18') },
 					]
 				},
 
 				{
-					name: 'Structuring', children: [
-						{ com: 'Enter',				 name: 'Create a new text block' },
-						{ com: 'Shift + Enter',		 name: 'Create a line break within a block of text' },
-						{ com: 'Delete',			 name: 'Merge block with the one above' },
-						{ com: 'Tab',				 name: 'Indent. Сreates a nested block. Moves it to the right' },
-						{ com: 'Shift + Tab',		 name: 'Outdent. Move block to the parent block level to the left' },
+					name: translate('popupShortcutMainStructuring'), children: [
+						{ com: 'Enter',				 name: translate('popupShortcutMainStructuring1') },
+						{ com: 'Shift + Enter',		 name: translate('popupShortcutMainStructuring2') },
+						{ com: 'Delete',			 name: translate('popupShortcutMainStructuring3') },
+						{ com: 'Tab',				 name: translate('popupShortcutMainStructuring4') },
+						{ com: 'Shift + Tab',		 name: translate('popupShortcutMainStructuring5') },
 					]
 				},
 
 				{
-					name: 'Selection', children: [
-						{ com: 'Double Click',			 name: 'Select word' },
-						{ com: 'Triple Click',			 name: 'Select an entire block' },
-						{ mac: `${cmd} + A`,			 com: 'Ctrl + A',			 name: 'Select all blocks in the page' },
-						{ com: 'Shift + ↑ or ↓',		 name: 'Expand your selection up or down' },
-						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On block will select or de-select an entire block' },
-						{ com: 'Shift + Click',			 name: 'Select block and all blocks in between' },
+					name: translate('popupShortcutMainSelection'), children: [
+						{ com: 'Double Click',			 name: translate('popupShortcutMainSelection1') },
+						{ com: 'Triple Click',			 name: translate('popupShortcutMainSelection2') },
+						{ com: `${cmd} + A`,			 name: translate('popupShortcutMainSelection3') },
+						{ com: 'Shift + ↑ or ↓',		 name: translate('popupShortcutMainSelection4') },
+						{ com: `${cmd} + Click`,		 name: translate('popupShortcutMainSelection5') },
+						{ com: 'Shift + Click',			 name: translate('popupShortcutMainSelection6') },
 					]
 				},
 
 				{
-					name: 'Actions', children: [
-						{ com: '/',						 name: 'Activate command menu' },
-						{ mac: `${cmd} + /`,			 com: 'Ctrl + /',			 name: 'Open action menu' },
-						{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: 'Deletes the words left to the cursor' },
-						{ mac: `${cmd} + C`,			 com: 'Ctrl + C',			 name: 'Copy selected block/blocks or text part' },
-						{ mac: `${cmd} + X`,			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
-						{ mac: `${cmd} + V`,			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
-						{ mac: `${cmd} + D`,			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
-						{ mac: `${cmd} + E, ${cmd} + .`, com: 'Ctrl + E, Ctrl + .',		 name: 'Show emoji picker 🏄‍♂️' },
+					name: translate('popupShortcutMainActions'), children: [
+						{ com: '/',						 name: translate('popupShortcutMainActions1') },
+						{ com: `${cmd} + /`,			 name: translate('popupShortcutMainActions2') },
+						{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: translate('popupShortcutMainActions3') },
+						{ com: `${cmd} + C`,			 name: translate('popupShortcutMainActions4') },
+						{ com: `${cmd} + X`,			 name: translate('popupShortcutMainActions5') },
+						{ com: `${cmd} + V`,			 name: translate('popupShortcutMainActions6') },
+						{ com: `${cmd} + D`,			 name: translate('popupShortcutMainActions7') },
+						{ com: `${cmd} + E`,			 name: translate('popupShortcutMainActions8') + ' 🏄‍♂' },
 					]
 				},
 
 				{
-					name: 'Text style', children: [
-						{ mac: `${cmd} + B`,			 com: 'Ctrl + B',			 name: 'Bold' },
-						{ mac: `${cmd} + I`,			 com: 'Ctrl + I',			 name: 'Italic' },
-						{ mac: `${cmd} + U`,			 com: 'Ctrl + U',			 name: 'Underline' },
-						{ mac: `${cmd} + Shift +S`,		 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
-						{ mac: `${cmd} + K`,			 com: 'Ctrl + K',			 name: 'Add a link' },
-						{ mac: `${cmd} + L`,			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
-						{ mac: `${cmd} + Shift + C`,	 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
-						{ mac: `${cmd} + Shift + H`,	 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
+					name: translate('popupShortcutMainTextStyle'), children: [
+						{ com: `${cmd} + B`,			 name: translate('popupShortcutMainTextStyle1') },
+						{ com: `${cmd} + I`,			 name: translate('popupShortcutMainTextStyle2') },
+						{ com: `${cmd} + U`,			 name: translate('popupShortcutMainTextStyle3') },
+						{ com: `${cmd} + Shift +S`,		 name: translate('popupShortcutMainTextStyle4') },
+						{ com: `${cmd} + K`,			 name: translate('popupShortcutMainTextStyle5') },
+						{ com: `${cmd} + L`,			 name: translate('popupShortcutMainTextStyle6') },
+						{ com: `${cmd} + Shift + C`,	 name: translate('popupShortcutMainTextStyle7') },
+						{ com: `${cmd} + Shift + H`,	 name: translate('popupShortcutMainTextStyle8') },
 					]
 				},
 			],
 
 			navigation: [
 				{
-					name: 'Basics', children: [
-						{ mac: `${cmd} + ,(comma)`,			 com: 'Ctrl + ,(comma)',			 name: 'Open settings' },
-						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
-						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
-						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
-						{ com: 'Alt + H',				 name: 'Return to the home screen' },
-						{ mac: `${cmd} + [`,			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
-						{ mac: `${cmd} + ]`,			 com: 'Alt + →',			 name: 'Show the next page from history' },
+					name: translate('popupShortcutBasics'), children: [
+						{ com: `${cmd} + ,(comma)`,		 name: translate('popupShortcutNavigationBasics1') },
+						{ com: `${cmd} + O`,			 name: translate('popupShortcutNavigationBasics2') },
+						{ com: `${cmd} + ${alt} + O`,	 name: translate('popupShortcutNavigationBasics3') },
+						{ com: `${cmd} + S, ${cmd} + K`, name: translate('popupShortcutNavigationBasics4') },
+						{ com: `${cmd} + L`,			 name: translate('popupShortcutNavigationBasics5') },
+						{ com: `${alt} + H`,			 name: translate('popupShortcutNavigationBasics6') },
+						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: translate('popupShortcutNavigationBasics7') },
+						{ mac: `${cmd} + ], ${cmd} + →`, com: 'Alt + →',			 name: translate('popupShortcutNavigationBasics8') },
 					]
 				},
 
 				{
-					name: 'Menu, search and navigation pane', children: [
-						{ com: '↓ or Tab',			 name: 'Go the next option' },
-						{ com: '↑ or Shift + Tab',	 name: 'Go to the previous option' },
-						{ com: '←',					 name: 'Go to the left side of navigation. Link from page' },
-						{ com: '→',					 name: 'Go to the right side of navigation. Link to page' },
-						{ com: 'Enter',				 name: 'Select option' },
+					name: translate('popupShortcutNavigationMenu'), children: [
+						{ com: '↓ or Tab',			 name: translate('popupShortcutNavigationMenu1') },
+						{ com: '↑ or Shift + Tab',	 name: translate('popupShortcutNavigationMenu2') },
+						{ com: '←',					 name: translate('popupShortcutNavigationMenu3') },
+						{ com: '→',					 name: translate('popupShortcutNavigationMenu4') },
+						{ com: 'Enter',				 name: translate('popupShortcutNavigationMenu5') },
 					]
 				},
 
 				{
-					name: 'Page navigation', children: [
-						{ mac: `${cmd} + Shift + T`, com: 'Ctrl + Shift + T', name: 'Expand / Collapse Toggle' },
-						{ com: '↓',				 name: 'Go down one line' },
-						{ com: '↑',				 name: 'Go up one line' },
-						{ mac: `${cmd} + ←`,	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
-						{ mac: `${cmd} + →`,	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
-						{ mac: `${cmd} + ↑`,	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
-						{ mac: `${cmd} + ↓`,	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
-						{ mac: `${cmd} + Shift + ↑↓`,	 com: 'Ctrl + Shift + ↑↓',	 name: 'Move selected block(s) around' },
+					name: translate('popupShortcutNavigationPage'), children: [
+						{ com: `${cmd} + Shift + T`, name: translate('popupShortcutNavigationPage1') },
+						{ com: '↓',				 name: translate('popupShortcutNavigationPage2') },
+						{ com: '↑',				 name: translate('popupShortcutNavigationPage3') },
+						{ com: `${cmd} + ←`,	 name: translate('popupShortcutNavigationPage4') },
+						{ com: `${cmd} + →`,	 name: translate('popupShortcutNavigationPage5') },
+						{ com: `${cmd} + ↑`,	 name: translate('popupShortcutNavigationPage6') },
+						{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
+						{ com: `${cmd} + Shift + ↑↓`, name: translate('popupShortcutNavigationPage8') },
 					]
 				},
 			],
 
 			markdown: [
 				{
-					name: 'While typing', 
+					name: translate('popupShortcutMarkdownWhileTyping'),
 					children: [
-						{ com: '`',					 name: 'Inline code' },
-						{ com: '** or __',			 name: 'Inline bold' },
-						{ com: '* or _',			 name: 'Inline italic' },
-						{ com: '~~',				 name: 'Inline strikethrough' },
-						{ com: '-->',				 name: 'Inserts: ⟶' },
-						{ com: '<--',				 name: 'Inserts: ⟵' },
-						{ com: '<-->',				 name: 'Inserts: ⟷' },
-						{ com: '->',				 name: 'Inserts: →' },
-						{ com: '<-',				 name: 'Inserts: ←' },
-						{ com: '--',				 name: 'Inserts: —' },
-						{ com: '—>',				 name: 'Inserts: ⟶' },
-						{ com: '<—',				 name: 'Inserts: ⟵' },
-						{ com: '(c)',				 name: 'Inserts: ©' },
-						{ com: '(r)',				 name: 'Inserts: ®' },
-						{ com: '(tm)',				 name: 'Inserts: ™' },
-						{ com: '...',				 name: 'Inserts: …' },
+						{ com: '`',					 name: translate('popupShortcutMarkdownWhileTyping1') },
+						{ com: '** or __',			 name: translate('popupShortcutMarkdownWhileTyping2') },
+						{ com: '* or _',			 name: translate('popupShortcutMarkdownWhileTyping3') },
+						{ com: '~~',				 name: translate('popupShortcutMarkdownWhileTyping4') },
+						{ com: '-->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
+						{ com: '<--',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
+						{ com: '<-->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷') },
+						{ com: '->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
+						{ com: '<-',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
+						{ com: '--',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
+						{ com: '—>',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
+						{ com: '<—',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
+						{ com: '(c)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '©') },
+						{ com: '(r)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
+						{ com: '(tm)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
+						{ com: '...',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },
 					]
 				},
 				{
-					name: 'At the beginning of any new line', 
+					name: translate('popupShortcutMarkdownBeginningOfLine'),
 					children: [
-						{ com: '# + Space',			 name: 'Create an H1 heading' },
-						{ com: '# # + Space',		 name: 'Create an H2 heading' },
-						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
-						{ com: '" + Space',			 name: 'Create a highlighted block' },
-						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
-						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
-						{ com: '1. + Space',		 name: 'Create a numbered list' },
-						{ com: '>  + Space',		 name: 'Create a toggle list' },
-						{ com: '```',				 name: 'Create a code block' },
-						{ com: '---',				 name: 'Create line divider' },
-						{ com: '***',				 name: 'Create dots divider' },
+						{ com: '# + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine1') },
+						{ com: '# # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine2') },
+						{ com: '# # # + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine3') },
+						{ com: '" + Space',			 name: translate('popupShortcutMarkdownBeginningOfLine4') },
+						{ com: '* or + or - and Space',	 name: translate('popupShortcutMarkdownBeginningOfLine5') },
+						{ com: '[] + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine6') },
+						{ com: '1. + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine7') },
+						{ com: '>  + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine8') },
+						{ com: '```',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
+						{ com: '---',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
+						{ com: '***',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
 					]
 				},
 			],
 
 			command: [
 				{
-					name: 'Menu', children: [
-						{ com: '/',					 name: 'Activate command menu' },
-						{ com: '↓ & ↑',				 name: 'Move in menu' },
-						{ com: '→ & ←',				 name: 'Get into & close sub menu' },
-						{ com: 'Esc or Clear /',	 name: 'Close menu' },
+					name: translate('popupShortcutCommandMenu'), children: [
+						{ com: '/',					 name: translate('popupShortcutCommandMenu1') },
+						{ com: '↓ & ↑',				 name: translate('popupShortcutCommandMenu2') },
+						{ com: '→ & ←',				 name: translate('popupShortcutCommandMenu3') },
+						{ com: 'Esc or Clear /',	 name: translate('popupShortcutCommandMenu4') },
 					]
 				},
 
-				{ description: 'After pressing / start writing the block name to choose the right one without a mouse, change block colors, and activate actions.', children: [], className: 'separator' },
+				{ description: translate('popupShortcutCommandDescription'), children: [], className: 'separator' },
 				{
-					name: 'Text', children: [
-						{ com: '/text',			 name: 'Text block' },
-						{ com: '/h1',			 name: 'Large heading' },
-						{ com: '/h2',			 name: 'Medium-sized heading' },
-						{ com: '/h3',			 name: 'Small heading' },
-						{ com: '/high',			 name: 'Highlighted block of larger text' },
-					]
-				},
-
-				{
-					name: 'Lists', children: [
-						{ com: '/todo',			 name: 'To-do list with checkboxes' },
-						{ com: '/bullet',		 name: 'Bulleted list' },
-						{ com: '/num',			 name: 'Numbered list' },
-						{ com: '/toggle',		 name: 'Toggle list' },
+					name: translate('popupShortcutCommandText'), children: [
+						{ com: '/text',			 name: translate('popupShortcutCommandText1') },
+						{ com: '/h1',			 name: translate('popupShortcutCommandText2') },
+						{ com: '/h2',			 name: translate('popupShortcutCommandText3') },
+						{ com: '/h3',			 name: translate('popupShortcutCommandText4') },
+						{ com: '/high',			 name: translate('popupShortcutCommandText5') },
 					]
 				},
 
 				{
-					name: 'Objects', children: [
-						{ com: '@today, @tomorrow',	name: 'Create an object with a relative date. Also available: @three days ago, @last month, @2016-05-12' },
-						{ com: '/page',			 name: 'Page' },
-						{ com: '/file',			 name: 'File' },
-						{ com: '/image',		 name: 'Image' },
-						{ com: '/video',		 name: 'Video' },
-						{ com: '/bookmark',		 name: 'Bookmark' },
-						{ com: '/link',			 name: 'Link to page' },
+					name: translate('popupShortcutCommandLists'), children: [
+						{ com: '/todo',			 name: translate('popupShortcutCommandLists1') },
+						{ com: '/bullet',		 name: translate('popupShortcutCommandLists2') },
+						{ com: '/num',			 name: translate('popupShortcutCommandLists3') },
+						{ com: '/toggle',		 name: translate('popupShortcutCommandLists4') },
 					]
 				},
 
 				{
-					name: 'Other', children: [
-						{ com: '/line',			 name: 'Line divider' },
-						{ com: '/dots',			 name: 'Dots divider' },
-						{ com: '/code',			 name: 'Code  snippet' },
+					name: translate('popupShortcutCommandObjects'), children: [
+						{ com: '@today, @tomorrow',	name: translate('popupShortcutCommandObjects1') },
+						{ com: '/page',			 	name: translate('popupShortcutCommandObjects2') },
+						{ com: '/file',			 	name: translate('popupShortcutCommandObjects3') },
+						{ com: '/image',		 	name: translate('popupShortcutCommandObjects4') },
+						{ com: '/video',		 	name: translate('popupShortcutCommandObjects5') },
+						{ com: '/bookmark',		 	name: translate('popupShortcutCommandObjects6') },
+						{ com: '/link',			 	name: translate('popupShortcutCommandObjects7') },
+					]
+				},
+
+				{
+					name: translate('popupShortcutCommandOther'), children: [
+						{ com: '/line',			 name: translate('popupShortcutCommandOther1') },
+						{ com: '/dots',			 name: translate('popupShortcutCommandOther2') },
+						{ com: '/code',			 name: translate('popupShortcutCommandOther3') },
 					]
 				},
 			]
@@ -308,15 +319,15 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 			return;
 		};
 
-		const { getId } = this.props;
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const hh = UtilCommon.sizeHeader();
 
-		raf(() => {
-			const win = $(window);
-			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, win.width() - 128));
+		loader.css({ width: obj.width(), height: obj.height() });
+		position();
 
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
-		});
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 
 };

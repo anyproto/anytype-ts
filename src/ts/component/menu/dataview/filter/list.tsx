@@ -6,7 +6,7 @@ import { SortableContainer } from 'react-sortable-hoc';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { dbStore, menuStore, blockStore } from 'Store';
-import { I, C, Util, keyboard, analytics, Relation } from 'Lib';
+import { I, C, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 import Constant from 'json/constant.json';
 
@@ -46,12 +46,13 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const filterCnt = view.filters.length;
 		const items = this.getItems();
 
-		for (let filter of items) {
+		for (const filter of items) {
 			const { relationKey, condition, value } = filter;
 		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -80,7 +81,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+							<div className="inner">{translate('menuDataviewFilterListEmpty')}</div>
 						</div>
 					) : (
 						<InfiniteLoader
@@ -89,11 +90,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<VList
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -187,7 +188,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -307,7 +308,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return [];
 		};
 
-		return Util.objectCopy(view.filters || []).map((it: any) => {
+		return UtilCommon.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
 				relation: dbStore.getRelationByKey(it.relationKey),

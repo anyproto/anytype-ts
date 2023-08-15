@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHoverMedium; }
+    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorHoverMedium; }
 
     /* BlockDataview */
 
@@ -92,13 +92,21 @@
 			.button { color: $colorPrimary; }
 		}
 
-		.dataviewHead { border-color: $colorLineSecondary; }
+		.dataviewHead { border-color: $colorLineSecondary; color: $colorPrimary; }
 		.dataviewHead {
-			.iconWrap:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorHoverMedium; }
+			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
 		}
 
         .dataviewControls {
-            .line { background: $colorLineSecondary; }
+			> .sides {
+				> .side.right {
+					.buttonNewWrapper.withSelect {
+						.button.select { border-left-color: rgba(23,23,23,0.1); }
+						.button.select:after { background-image:  url('~img/arrow/button/black.svg'); }
+					}
+				}
+			}
             .viewItem { color: $colorSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
@@ -107,16 +115,10 @@
             .viewItem.isDragging { background: $colorHoverMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
-			/*
-            .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
-			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
-			.icon.plus { background-image: url('#{$themePath}/icon/dataview/button/plus0.svg'); }
-			*/
-
-			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
-			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
+			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
+			.icon.btn-sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
-		.dataviewControls::after { background-color: $colorLinePrimary; }
+		.dataviewControls::after { background-color: $colorLineSecondary; }
 
 		.dataviewSelection {
 			.side.left { color: $colorPrimary; }
@@ -142,6 +144,8 @@
 
         .viewContent.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
+
 			.loadMore { box-shadow: 0px 1px $colorLineSecondary inset; border-color: $colorLineSecondary; }
 
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
@@ -169,15 +173,18 @@
 		}
 
         .viewContent.viewGallery {
-            .card { background: $colorBlack; border-color: $colorLinePrimary; }
+            .card { background: $colorBlack; border-color: $colorLineTertiary; }
+			.card:hover { border-color: $colorLineSecondary; background: rgba(166, 166, 166, 0.04); }
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
+
+			.card.isEditing { border: 2px solid $colorOrange; }
         }
 
         .viewContent.viewBoard {
 			.ghost { border-color: $colorOrange; }
-            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+            .cardContent { background: $colorBgLight; border-color: $colorLineTertiary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
 			.column {
@@ -194,6 +201,10 @@
 			.card.add:hover {
                 .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
             }
+
+			.card.isEditing {
+				.cardContent { border: 2px solid $colorOrange; }
+			}
         }
 
 		.content {
@@ -216,33 +227,36 @@
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
-    .block.blockText.textCallout > .wrapContent { background: $colorHoverMedium; }
-    .block.blockText.textCode > .wrapContent > .selectable { background: $colorHoverMedium; }
-	.block.blockText.textQuote > .wrapContent > .additional > .line { border-color: $colorPrimary; }
+    .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
+    .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
 
     /* BlockLink */
 
     .block.blockLink {
         .loading, .deleted { color: $colorSecondary; }
 
-		.linkCard.text {
-			.cardName .name { border-color: $colorLinePrimary; }
-		}
-
 		.linkCard.c48.withIcon {
-			.iconObject { background-color: $colorBgIcon; }
-		}
-
-		.linkCard.card {
-			.side.left, .side.right { border-color: $colorLineSecondary; }
+			.iconObject { background-color: $colorLineTertiary; }
 		}
     }
+	.block.blockLink.text {
+		.linkCard {
+			.cardName .name { border-color: $colorLineTertiary; }
+		}
+	}
+	.block.blockLink.card {
+		.linkCard {
+			.side.left, .side.right { border-color: $colorLineTertiary; }
+		}
+	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorPrimary; }
 		}
-		.linkCard.card {
+	}
+	.block.blockLink.card:hover {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}
@@ -250,8 +264,8 @@
     /* BlockDiv */
 
     .block.blockDiv {
-        .line { border-color: $colorSecondary; }
-        .dot { background: $colorSecondary !important; }
+        .line { border-color: $colorLinePrimary; }
+        .dot { background: $colorLinePrimary !important; }
     }
 
     /* BlockLatex */
@@ -274,7 +288,7 @@
     	    .descr { color: $colorSecondary; }
 	        .link { color: $colorSecondary; }
 
-            .side.right { border-color: $colorLinePrimary; }
+            .side.right { border-color: $colorLineTertiary; }
         }
     }
 
@@ -288,8 +302,8 @@
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: #42413A; background-image: url('#{$themePath}/icon/table/plus.svg'); }
-		.plusButton.circle .icon { background-color: #42413A; }
+		.plusButton .icon { background-color: #42413a; background-image: url('#{$themePath}/icon/table/plus.svg'); }
+		.plusButton.circle .icon { background-color: #42413a; }
 
 		.handle { 
 			.inner::before { background-color: $colorBlack; }

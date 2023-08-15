@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, Util, DataUtil, Dataview, analytics, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -30,7 +30,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		super(props);
 		
 		this.onView = this.onView.bind(this);
-		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 	};
@@ -46,9 +45,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return (
 				<Empty 
 					{...this.props}
-					title="Relation has been deleted" 
-					description="Choose another relation to group your Kanban"
-					button="Open view menu"
+					title={translate('blockDataviewBoardRelationDeletedTitle')}
+					description={translate('blockDataviewBoardRelationDeletedDescription')}
+					button={translate('blockDataviewBoardOpenViewMenu')}
 					className="withHead"
 					onClick={this.onView}
 				/>
@@ -59,7 +58,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			<div 
 				ref={node => this.node = node} 
 				id="scrollWrap"
-				className="wrap"
+				className="scrollWrap"
 			>
 				<div id="scroll" className="scroll">
 					<div className={cn.join(' ')}>
@@ -70,7 +69,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									ref={ref => this.columnRefs[group.id] = ref}
 									{...this.props} 
 									{...group}
-									onRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
 									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
@@ -90,7 +88,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		$(window).trigger('resize.editor');
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -140,7 +138,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		const groupOrder: any = {};
- 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
@@ -151,7 +149,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				return;
 			};
 
-			let groups = (message.groups || []).map((it: any) => {
+			const groups = (message.groups || []).map((it: any) => {
 				let bgColor = 'grey';
 				let value: any = it.value;
 				let option: any = null;
@@ -180,120 +178,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
-	onRecordAdd (groupId: string, dir: number) {
-		if (this.creating) {
-			return;
-		};
-
-		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
-		const view = getView();
-		const group = dbStore.getGroup(rootId, block.id, groupId);
-		const objectId = isInline ? block.content.targetObjectId : rootId;
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
-		const setOf = object.setOf || [];
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		const node = $(this.node);
-		const element = node.find(`#card-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {
-			type: types.length ? types[0].id : commonStore.type,
-		};
-		const conditions = [
-			I.FilterCondition.Equal,
-			I.FilterCondition.In,
-			I.FilterCondition.AllIn,
-		]; 
-		const flags: I.ObjectFlag[] = [];
-
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
-
-		details[view.groupRelationKey] = group.value;
-
-		if (types.length) {
-			details.type = types[0].id;
-		};
-
-		if (relations.length) {
-			relations.forEach((it: any) => {
-				details[it.id] = Relation.formatValue(it, null, true);
-			});
-		};
-
-		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition) || !filter.value) {
-				continue;
-			};
-			
-			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (relation && !relation.isReadonlyValue) {
-				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
-			};
-		};
-
-		this.creating = true;
-
-		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
-				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				const object = detailStore.get(subId, message.objectId, []);
-				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-				const update = arrayMove(records, oldIndex, newIndex);
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
-					dbStore.recordsSet(subId, '', update);
-				});
-
-				analytics.event('CreateObject', {
-					route: isCollection ? 'Collection' : 'Set',
-					objectType: object.type,
-					layout: object.layout,
-					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
-				});
-			});
-		};
-
-		if (details.type == Constant.typeId.bookmark) {
-			menuStore.open('dataviewCreateBookmark', {
-				type: I.MenuType.Horizontal,
-				element,
-				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				onClose: () => {
-					this.creating = false;
-				},
-				data: {
-					details,
-				},
-			});
-			return;
-		};
-
-		DataUtil.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length > 1) {
-				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
-			} else {
-				create(message.records.length ? message.records[0] : '');
-			};
-		});
-	};
-
 	getGroups (withHidden: boolean) {
-		let { rootId, block } = this.props;
-		let groups = this.applyGroupOrder(Util.objectCopy(dbStore.getGroups(rootId, block.id)));
+		const { rootId, block } = this.props;
+		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
 
 		if (!withHidden) {
 			groups = groups.filter(it => !it.isHidden);
@@ -347,7 +234,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
-				const el = node.find(`#card-${item.id}`);
+				const el = node.find(`#record-${item.id}`);
 				if (!el.length) {
 					return;
 				};
@@ -376,7 +263,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const view = node.find('.viewContent');
 		const clone = target.clone();
 		
-		this.ox =  node.find('#columns').offset().left;
+		this.ox = node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
@@ -441,17 +328,25 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let isLeft = false;
 		let hoverId = '';
 
-		for (let group of groups) {
+		for (const group of groups) {
 			const rect = this.cache[group.id];
 			if (!rect || (group.id == groupId)) {
 				continue;
 			};
 
-			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && this.cache[groupId] && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+				this.newIndex = rect.index;
+
+				if (isLeft && (rect.index > current.index)) {
+					this.newIndex--;
+				};
+
+				if (!isLeft && (rect.index < current.index)) {
+					this.newIndex++;
+				};
 				break;
 			};
 		};
@@ -514,13 +409,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let isTop = false;
 		let hoverId = '';
 
-		for (let i in this.cache) {
+		for (const i in this.cache) {
 			const rect = this.cache[i];
 			if (!rect || (rect.id == record.id)) {
 				continue;
 			};
 
-			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
+			if (UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
@@ -538,7 +433,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				node.find(`#card-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#record-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -605,7 +500,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return [];
 		};
 
- 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 		const groupOrder: any = {};
 
 		if (el) {
@@ -653,7 +548,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
-					const el = node.find(`#card-${item.id}`);
+					const el = node.find(`#record-${item.id}`);
 					if (!el.length) {
 						return;
 					};
@@ -700,18 +595,18 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * size.card;
+		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
+			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + 4 });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
@@ -719,7 +614,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const margin = (cw - ww) / 2;
 
 				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
-				view.css({ width: width + margin });
+				view.css({ width: width + margin + 2 });
 			};
 		};
 	};

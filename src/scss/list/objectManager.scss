@@ -1,0 +1,79 @@
+@import "~scss/_vars";
+
+.objectManagerWrapper { height: 100%; display: flex; flex-direction: column; }
+.objectManagerWrapper {
+
+    .controls { display: flex; flex-direction: row; padding: 0px 0px 16px 0px; border-bottom: 1px solid $colorBorderLight; margin: 0px; }
+	.controls.withFilter { border: 0px; }
+
+    .controls {
+        .side { width: 70%; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+        .side.left {
+            .element {
+                display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px;
+                transition: $transitionAllCommon;
+            }
+            .element {
+                .name { @include text-overflow-nw; width: calc(100% - 26px); }
+            }
+            .element:first-child { margin-left: -4px; }
+            .element:hover { background-color: $colorHoverMedium; }
+        }
+        .side.right { justify-content: flex-end; }
+
+        .icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .icon.checkbox { background-image: url('~img/icon/archive/controls/checkbox0.svg'); }
+        .icon.checkbox.active { background-image: url('~img/icon/archive/controls/checkbox1.svg'); }
+        .icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
+        .icon.search { background-image: url('~img/icon/menu/action/search0.svg'); }
+
+        .filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
+        .filterWrapper.active { width: 200px; }
+
+        .filter { padding: 0px; }
+        .filter {
+            .line { display: none; }
+            .inner { height: 20px; }
+        }
+    }
+
+    @media (max-width: 940px) {
+        .controls.withSelected {
+            .side.left {
+				.element { height: 28px; }
+				.element {
+					.name { display: none; }
+				}
+			}
+        }
+    }
+
+    .items { height: 100%; }
+    .items {
+        .row { display: grid !important; grid-column-gap: 32px; border-bottom: 0; }
+
+        .item { display: flex; flex-direction: row; align-items: center; gap: 0px; margin: 0px 0px 16px 0px; }
+        .item {
+            .objectClickArea { display: flex; width: 100%; flex-direction: row; align-items: center; gap: 0 12px; }
+            .info { width: calc(100% - 100px); flex-grow: 1; }
+
+            .icon.checkbox {
+                flex-shrink: 0; cursor: default !important; background-image: url('~img/icon/archive/checkbox0.svg');
+                width: 18px; height: 18px; transition: none; flex-basis: 18px;
+            }
+            .icon.checkbox.active { background-image: url('~img/icon/archive/checkbox1.svg'); }
+        }
+    }
+
+	.loaderWrapper { width: 100%; height: 100%; }
+
+	.emptySearch {
+		color: $colorDarkGrey; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorBorderLight;
+		border-top: 1px solid $colorBorderLight; text-align: center; padding: 16px 0px; height: 300px;
+	}
+	.emptySearch {
+		.inner { width: 300px; }
+	}
+
+    .controls + .managerEmpty { border-top: 0; }
+}

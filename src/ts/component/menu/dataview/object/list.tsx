@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, Util, keyboard, DataUtil, ObjectUtil, Relation, translate } from 'Lib';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -49,10 +49,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const name = <ObjectName object={item} />;
 
@@ -64,7 +68,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					</div>
 				);
 			} else if (item.id == 'add') {
-				content =  (
+				content = (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
@@ -101,7 +105,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -111,7 +115,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				{loading ? <Loader /> : ''}
 
 				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !loading ? (
@@ -122,11 +126,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -199,8 +203,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -232,13 +236,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = Util.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
 
 		if (data.filter && canAdd) {
 			if (ret.length) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: `Create object "${data.filter}"` });
+			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
 		};
 
 		return ret;
@@ -256,20 +260,25 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (types && types.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
 		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() });
 		};
 
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -278,8 +287,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || ObjectUtil.defaultName('Page'));
+			this.items = this.items.concat((message.records || []).map((it: any) => {
+				it.name = String(it.name || UtilObject.defaultName('Page'));
 				return it;
 			}));
 
@@ -331,7 +340,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = Util.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
+			let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
@@ -345,17 +354,17 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			let details: any = { name: filter };
-			let typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			let flags: I.ObjectFlag[] = [];
+			const details: any = { name: filter };
+			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+			const flags: I.ObjectFlag[] = [];
 			
 			if (typeId) {
-				details.typeId = typeId;
+				details.type = typeId;
 			} else {
 				flags.push(I.ObjectFlag.SelectType);
 			};
 
-			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

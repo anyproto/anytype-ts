@@ -1,26 +1,26 @@
 const fs = require('fs');
 const https = require('https');
-const remoteConfigUrl = 'https://raw.githubusercontent.com/anytypeio/open/main/compliance/licenses-config.json';
+const remoteConfigUrl = 'https://raw.githubusercontent.com/anyproto/open/main/compliance/licenses-config.json';
 
 function processLicenses(licenses, allowedLicenses) {
 	const disallowedPackages = Object.keys(licenses).filter(pkg => {
-		var pkgLicenses = licenses[pkg].licenses.replace(/[()*]/g, '')
+		let pkgLicenses = licenses[pkg].licenses.replace(/[()*]/g, '');
 	
 		// The hyphenation language patterns are licensed under the LGPL (unless otherwise noted) and copyrighted to their respective creators and maintainers.
 		// https://github.com/bramstein/hyphenation-patterns
-		if (pkg.startsWith("hyphenation.")) {
-			pkgLicenses = "LGPL"
-		}
+		if (pkg.startsWith('hyphenation.')) {
+			pkgLicenses = 'LGPL';
+		};
 
-		// Solutions developed by Anytype are allowed
-		if (licenses[pkg].publisher == "Anytype") {
+		// Solutions developed by Anytype or Any Association are allowed
+		if (licenses[pkg].publisher == 'Anytype' || licenses[pkg].publisher == 'Any' || licenses[pkg].publisher == 'Any Association') {
 			return false;
-		}
+		};
 		
 		if (pkgLicenses.includes(' AND ')) {
-			const licenseNames = pkgLicenses.split(' AND ')
+			const licenseNames = pkgLicenses.split(' AND ');
 			return !licenseNames.every(name => allowedLicenses.includes(name));
-		}
+		};
 
 		const licenseNames = pkgLicenses.split(' OR ');
 		return !licenseNames.some(name => allowedLicenses.includes(name));
@@ -32,9 +32,9 @@ function processLicenses(licenses, allowedLicenses) {
 		});
 		process.exit(1);
 	} else {
-		console.info('All packages have allowed licenses.')
-	}
-}
+		console.info('All packages have allowed licenses.');
+	};
+};
 
 https.get(remoteConfigUrl, (res) => {
 	let data = '';

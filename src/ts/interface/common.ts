@@ -47,14 +47,18 @@ export interface Toast {
 	origin?: any;
 	count?: number;
 	value?: boolean;
+	ids?: string[];
 };
 
 export enum ToastAction {
-	None		 = 0,
-	Move		 = 1,
-	Link		 = 2,
-	Lock 		 = 3,
-	Collection	 = 4,
+	None		 	= 0,
+	Move		 	= 1,
+	Link		 	= 2,
+	Lock 		 	= 3,
+	Collection	 	= 4,
+	StorageFull = 5,
+	TemplateCreate	= 6,
+	Archive 		= 7,
 };
 
 export interface Option {
@@ -113,12 +117,17 @@ export enum EdgeType {
 	Relation	 = 1,
 };
 
-export enum TabIndex {
-	None		 = '',
-	Favorite	 = 'favorite',
-	Recent		 = 'recent',
-	Set			 = 'set',
-	Archive		 = 'archive',
+export enum Usecase {
+	None		 = 0,
+	Personal	 = 1,
+    Knowledge	 = 2,
+    Notes		 = 3,
+};
+
+export enum HomePredefinedId {
+	Graph = 'graph',
+	Last = 'lastOpened',
+	Existing = 'existing',
 };
 
 export interface HeaderComponent extends RouteComponentProps<any> {
@@ -130,8 +139,6 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	text?: string;
 	layout?: I.ObjectLayout;
 	onTab?: (id: string) => void;
-	onForward?: () => void;
-	onBack?: () => void;
 	onSearch?: () => void;
 	onNavigation?: () => void;
 	onGraph?: () => void;
@@ -176,10 +183,10 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 'register',
-	Delete 		= 'delete',
-	Pmf 		= 'pmf',
-	Object 		= 'object',
+	Register 	= 0,
+	Delete 		= 1,
+	Pmf 		= 2,
+	Object 		= 3,
 };
 
 export enum SliceOperation {
@@ -211,4 +218,15 @@ export interface Dataset {
 	};
 	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
 	preventCommonDrop: (value: boolean) => void;
+};
+
+export enum FileSyncStatus {
+	Unknown		 = 0,
+	Synced		 = 1,
+	NotSynced	 = 2,
+};
+
+export enum StoreTab {
+	Type = 'type',
+	Relation = 'relation',
 };

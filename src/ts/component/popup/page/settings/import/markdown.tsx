@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate, analytics, Action } from 'Lib';
 import Head from '../head';
 
 class PopupSettingsPageImportMarkdown extends React.Component<I.PopupSettings> {
@@ -39,28 +39,8 @@ class PopupSettingsPageImportMarkdown extends React.Component<I.PopupSettings> {
 	};
 
 	onImport () {
-		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
-		const options: any = { 
-			properties: [ 'openFile' ],
-			filters: [
-				{ name: '', extensions: [ 'zip', 'md' ] }
-			]
-		};
-
-		if (platform == I.Platform.Mac) {
-			options.properties.push('openDirectory');
-		};
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
-				return;
-			};
-
-			close();
-			onImport(I.ImportType.Markdown, { paths });
-		});
+		Action.import(I.ImportType.Markdown, [ 'zip', 'md' ]);
+		this.props.close();
 	};
 
 };

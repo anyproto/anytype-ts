@@ -1,14 +1,19 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { keyboard } from 'Lib';
+import { UtilCommon, keyboard, translate } from 'Lib';
 
 interface Props {
-	getItems: () => any[];
 	offsetX: number;
 	canAdd?: boolean;
+	withBlank?: boolean;
+	blankId?: string;
+	defaultId?: string;
+	getItems: () => any[];
 	onClick?: (e: any, item: any) => void;
 	onAdd?: (e: any) => void;
+	onBlank?: (e: any) => void;
+	onMenu?: (e: any, item: any) => void;
 };
 
 const WIDTH = 344;
@@ -28,31 +33,72 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd } = this.props;
-		const items = getItems();
+		const { onAdd, onBlank, onMenu, defaultId, blankId } = this.props;
+		const items = this.getItems();
+
+		const ItemAdd = () => (
+			<div id="item-add" className="item add" onClick={onAdd}>
+				<Icon className="plus" />
+				<div className="hoverArea" />
+			</div>
+		);
 
 		const Item = (item: any) => {
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
-				>
-					<PreviewObject 
-						ref={ref => { this.refObj[item.id] = ref; }} 
-						rootId={item.id} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+			if (item.id == 'add') {
+				return <ItemAdd />;
+			};
+
+			const cn = [ 'item' ];
+
+			let icon = null;
+			let label = null;
+			let content = null;
+
+			if (onMenu) {
+				cn.push('withMenu');
+				icon = <Icon className="more" onClick={e => onMenu(e, item)} />;
+			};
+
+			if (defaultId == item.id) {
+				label = <div className="defaultLabel">{translate('commonDefault')}</div>;
+			};
+
+			if (item.id == blankId) {
+				content = (
+					<div className="previewObject blank" onClick={onBlank}>
+						<div className="scroller">
+							<div className="heading">
+								<div className="name">Blank</div>
+							</div>
+						</div>
+						<div className="border" />
+					</div>
+				);
+			} else {
+				content = (
+					<PreviewObject
+						ref={ref => this.refObj[item.id] = ref}
+						rootId={item.id}
+						onClick={e => this.onClick(e, item)}
 					/>
+				);
+			};
+
+			return (
+				<div id={`item-${item.id}`} className={cn.join(' ')}>
+					{label}
+					{icon}
+
+					<div
+						className="hoverArea"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={e => this.onMouseLeave(e, item)}
+					>
+						{content}
+					</div>
 				</div>
 			);
 		};
-
-		const ItemAdd = () => (
-			<div className="item add" onClick={onAdd}>
-				<Icon className="plus" />
-			</div>
-		);
 
 		return (
 			<div 
@@ -64,12 +110,11 @@ class ListObjectPreview extends React.Component<Props> {
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}
-						{canAdd ? <ItemAdd /> : ''}
 					</div>
 				</div>
 
-				<Icon id="arrowLeft" className="arrow left" onClick={() => { this.onArrow(-1); }} />
-				<Icon id="arrowRight" className="arrow right" onClick={() => { this.onArrow(1); }} />	
+				<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
+				<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />	
 			</div>
 		);
 	};
@@ -80,22 +125,31 @@ class ListObjectPreview extends React.Component<Props> {
 
 	componentDidUpdate () {
 		this.resize();
-		this.setActive();
+	};
+
+	getItems () {
+		const { getItems, canAdd, withBlank, blankId } = this.props;
+		const items = UtilCommon.objectCopy(getItems());
+
+		if (withBlank) {
+			items.unshift({ id: blankId });
+		};
+		if (canAdd) {
+			items.push({ id: 'add' });
+		};
+		return items;
 	};
 
 	getMaxPage () {
-		const { getItems, canAdd } = this.props;
-		const items = getItems();
-		const length = items.length + (canAdd ? 1 : 0);
 		const node = $(this.node);
+		const items = this.getItems();
 		const cnt = Math.floor(node.width() / WIDTH);
 
-		return Math.max(0, Math.ceil(length / cnt) - 1);
+		return Math.max(0, Math.ceil(items.length / cnt) - 1);
 	};
 
 	onMouseEnter (e: any, item: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.id == item.id);
 		this.setActive();
@@ -104,18 +158,19 @@ class ListObjectPreview extends React.Component<Props> {
 	onMouseLeave (e: any, item: any) {
 		const node = $(this.node);
 		node.find('.item.hover').removeClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
 	};
 
 	onClick (e: any, item: any) {
 		const { onClick } = this.props;
+
 		if (onClick) {
 			onClick(e, item);
 		};
 	};
 
 	setActive () {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 		const item = items[this.n];
 
 		if (!item) {
@@ -125,12 +180,13 @@ class ListObjectPreview extends React.Component<Props> {
 		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
-		node.find('#item-' + item.id).addClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
+		node.find(`#item-${item.id}`).addClass('hover');
+		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
 	onKeyUp (e: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;
@@ -148,7 +204,7 @@ class ListObjectPreview extends React.Component<Props> {
 			this.setActive();
 		});
 
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			this.onClick(e, items[this.n]);
 		});
 	};
@@ -165,6 +221,8 @@ class ListObjectPreview extends React.Component<Props> {
 		this.page += dir;
 		this.page = Math.min(max, Math.max(0, this.page));
 
+		const x = -this.page * (w + 16 + offsetX);
+
 		arrowLeft.removeClass('dn');
 		arrowRight.removeClass('dn');
 
@@ -174,8 +232,6 @@ class ListObjectPreview extends React.Component<Props> {
 		if (this.page == max) {
 			arrowRight.addClass('dn');
 		};
-
-		let x = -this.page * (w + 16 + offsetX);
 
 		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};

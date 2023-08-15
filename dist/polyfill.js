@@ -1,4 +1,4 @@
-let RendererEvents = {};
+const RendererEvents = {};
 
 window.Config = {
     debug: {
@@ -30,7 +30,7 @@ window.Electron = {
 };
 
 window.require = window.require || function (mod) {
-    let ret = {};
+    const ret = {};
 
     switch (mod) {
         case '@electron/remote':

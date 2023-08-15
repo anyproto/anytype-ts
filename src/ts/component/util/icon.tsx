@@ -49,7 +49,7 @@ class Icon extends React.Component<Props> {
 		};
 		
 		if (icon) {
-			style.backgroundImage = 'url("' + icon + '")';
+			style.backgroundImage = `url("${icon}")`;
 		};
 		
 		return (

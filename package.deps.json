@@ -8,6 +8,7 @@
 	"!dist/*",
 	"dist/index.html",
 	"dist/main.js",
+	"dist/main.js.map",
 	"dist/run.js",
 	"dist/lib/**/*",
 	"dist/img/**/*",
@@ -18,6 +19,7 @@
 	"dist/nativeMessagingHost.exe",
 	"dist/nativeMessagingHost",
 	"dist/*.node",
+	"dist/font/**/*",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
 	{

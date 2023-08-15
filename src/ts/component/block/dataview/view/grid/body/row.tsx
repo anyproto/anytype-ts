@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
@@ -58,7 +58,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
+					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>
 					{content}
@@ -70,7 +70,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			content = (
 				<React.Fragment>
 					<Icon
-						className="dnd"
+						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, recordId)}
@@ -86,7 +86,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				id={'row-' + recordId}
+				id={'record-' + recordId}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

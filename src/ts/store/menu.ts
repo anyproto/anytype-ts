@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, Util, Preview } from 'Lib';
+import { I, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
 
@@ -9,6 +9,7 @@ class MenuStore {
     public menuList: I.Menu[] = [];
 
     timeout = 0;
+	isAnimatingFlag: Map<string, boolean> = new Map();
 
     constructor () {
         makeObservable(this, {
@@ -31,6 +32,19 @@ class MenuStore {
 			return;
 		};
 
+		param = this.normaliseParam(param);
+
+		const item = this.get(id);
+		if (item) {
+			this.update(id, param);
+		} else {
+			this.menuList.push({ id, param });
+		};
+
+		Preview.previewHide(true);
+	};
+
+	normaliseParam (param: I.MenuParam) {
 		param.type = Number(param.type) || I.MenuType.Vertical;
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
@@ -41,20 +55,14 @@ class MenuStore {
 			param.passThrough = true;
 		};
 
-		const item = this.get(id);
-		if (item) {
-			this.update(id, param);
-		} else {
-			this.menuList.push({ id: id, param: param });
-		};
-
-		Preview.previewHide(true);
+		return param;
 	};
 
     update (id: string, param: any) {
 		const item = this.get(id);
-
 		if (item) {
+			param = this.normaliseParam(param);
+			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
 		};
 	};
@@ -66,13 +74,28 @@ class MenuStore {
 		};
 	};
 
+	replace (oldId: string, newId: string, param: I.MenuParam) {
+		param = this.normaliseParam(param);
+
+		const idx = this.menuList.findIndex(it => it.id == oldId);
+
+		this.menuList = this.menuList.filter(it => it.id != oldId);
+		idx >= 0 ? this.menuList.splice(idx, 0, { id: newId, param }) : this.menuList.push({ id: newId, param });
+	};
+
     get (id: string): I.Menu {
 		return this.menuList.find(it => it.id == id);
 	};
 
-    isOpen (id?: string, key?: string): boolean {
+    isOpen (id?: string, key?: string, filter?: string[]): boolean {
 		if (!id) {
-			return this.menuList.length > 0;
+			let length = 0;
+			if (filter) {
+				length = this.menuList.filter(it => filter ? !filter.includes(it.id) : true).length;
+			} else {
+				length = this.menuList.length;
+			};
+			return length > 0;
 		};
 
 		const item = this.get(id);
@@ -104,7 +127,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const el = $('#' + Util.toCamelCase('menu-' + id));
+		const el = $('#' + UtilCommon.toCamelCase('menu-' + id));
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -127,30 +150,58 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
+
+			this.setIsAnimating(id, false);
 		};
 
 		if (t) {
+			this.setIsAnimating(id, true);
 			window.setTimeout(onTimeout, t);
 		} else {
 			onTimeout();
 		};
 	};
 
+	setIsAnimating (id: string, v: boolean) {
+		this.isAnimatingFlag.set(id, v);
+	};
+
+	isAnimating (id: string): boolean {
+		return this.isAnimatingFlag.get(id);
+	};
+
     closeAll (ids?: string[], callBack?: () => void) {
-		this.getItems(ids).filter(it => !it.param.noClose).forEach(it => this.close(it.id));
-		this.onCloseAll(callBack);
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
+
+		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
+		this.onCloseAll(timeout, callBack);
 	};
 
 	closeAllForced (ids?: string[], callBack?: () => void) {
-		this.getItems(ids).forEach(it => this.close(it.id));
-		this.onCloseAll(callBack);
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
+
+		items.forEach(it => this.close(it.id));
+		this.onCloseAll(timeout, callBack);
 	};
 
-	onCloseAll (callBack?: () => void) {
+	onCloseAll (timeout: number, callBack?: () => void) {
 		this.clearTimeout();
+
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => callBack(), timeout);
 		};
+	};
+
+	getTimeout (items: I.Menu[]): number {
+		let t = 0;
+		for (const item of items) {
+			if (!item.param.noAnimation) {
+				t = Constant.delay.menu;
+			};
+		};
+		return t;
 	};
 
 	getItems (ids?: string[]) {

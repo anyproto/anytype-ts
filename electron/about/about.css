@@ -15,20 +15,19 @@ body {
 .description { margin: 0.2em; font-weight: 400; }
 .footer { display: none; }
 
-.clickable { cursor: pointer; }
 .description { margin-bottom: 1em; text-align: center; }
 .version { border-collapse: collapse; margin-top: 1em; }
 
 .copyright,
-.version { color: #999; cursor: pointer; }
+.version { color: #999; }
 .version .copy { 
 	width: 18px; height: 18px; display: inline-block; vertical-align: middle; background-image: url('../img/copy.svg'); 
-	background-repeat: no-repeat; background-size: 14px; background-position: center; margin: -4px 0px 0px 0px; cursor: pointer;
+	background-repeat: no-repeat; background-size: 14px; background-position: center; margin: -4px 0px 0px 0px;
 }
 
 .buttons { margin-bottom: 1em; text-align: center; }
 .buttons button { margin-top: 1em; width: 100px; height: 24px; }
-.link { cursor: pointer; color: #80a0c2; }
+.link { color: #80a0c2; }
 .bug-report-link { position: absolute; right: 0.5em; bottom: 0.5em; }
 
 .clickable,
@@ -36,8 +35,8 @@ body {
 .buttons button { -webkit-app-region: no-drag; }
 
 .buttons button {
-    display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none; cursor: pointer;
-	height: 30px; line-height: 30px; padding: 0px 16px; border-radius: 4px; transition: background $transitionCommon;
+    display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none;
+	height: 30px; line-height: 30px; padding: 0px 16px; border-radius: 4px; transition: background 0.2s ease-in-out;
     font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
     background: #ffb522; color: #fff;
 }

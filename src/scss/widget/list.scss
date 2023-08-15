@@ -1,0 +1,121 @@
+@import "~scss/_vars";
+
+.widget.widgetList, .widget.widgetCompact { display: flex; flex-direction: column; };
+.widget.widgetList, .widget.widgetCompact {
+	.loaderWrapper { position: relative; }
+	.innerWrap { height: 100%; }
+	.contentWrapper { flex-grow: 1; }
+
+	#viewSelect { padding: 0px 16px; }
+	#viewSelect:empty { display: none; }
+	#viewSelect {
+		.viewList { width: 100%; overflow-x: auto; overflow-y: hidden; }
+		.viewList {
+			.inner { padding: 0px 16px; white-space: nowrap; }
+
+			.viewItem { 
+				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
+				vertical-align: top;
+			}
+			.viewItem:last-child { margin: 0px; }
+			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+		}
+
+		.select { border: none; margin-left: -6px; padding-right: 16px; }
+		.select {
+			.item { @include text-small; line-height: 18px !important; font-weight: 500; }
+			.icon.arrow { 
+				width: 8px !important; height: 5px !important; margin-top: -2.5px !important; background-image: url('~img/arrow/widget.svg') !important; 
+				background-size: contain; right: 4px !important;
+			}
+		}
+	}
+
+	.body { display: flex; flex-direction: column; padding-bottom: 8px; }
+	.body {
+		.item { position: relative; }
+		.item:hover, .item.active {
+			.buttons { display: flex; }
+			.icon.more { opacity: 1; }
+		}
+
+		.item.active { 
+			.icon.more { background-color: $colorHoverMedium; }
+		}
+
+		.item::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHoverMedium; z-index: 1; pointer-events: none;
+			opacity: 0;
+		}
+		.item:hover::before { opacity: 1; }
+
+		.item { 
+			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; }
+			.dropTarget { border-radius: 6px; height: 100%; }
+			.iconObject { flex-shrink: 0; }
+			.iconObject.isTask { background: none; }
+
+			.name { @include text-overflow-nw; }
+			.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
+
+			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
+			.buttons {
+				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+				.icon:hover { background-color: $colorHoverMedium; }
+				.icon.active { opacity: 1; background-color: $colorHoverMedium; }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			}
+		}
+	}
+};
+
+.widget.widgetList.isPreview, .widget.widgetCompact.isPreview { padding: 0px; }
+.widget.widgetList.isPreview, .widget.widgetCompact.isPreview {
+	.head { margin: 0px; }
+	.body { height: 100%; padding: 0px; }
+	.ReactVirtualized__List { padding: 12px 8px; }
+	.contentWrapper { height: calc(100% - 77px); }
+}
+
+.widget.widgetList {
+	.body { padding: 0px 8px 8px 8px; }
+	.body {
+		.item { height: 64px; }
+		.item {
+			.info { width: 100%; }
+			.inner { padding: 8px; gap: 0px 12px; }
+			.iconObject { background: $colorVeryLightGrey; border-radius: 10px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 36px); }
+		}
+
+		.item.withIcon {
+			.info { width: calc(100% - 60px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
+			.info { width: calc(100% - 96px); }
+		}
+
+		.item::before { border-radius: 12px; }
+	}
+}
+
+.widget.widgetCompact {
+	.body { padding: 0px 4px 8px 4px; }
+	.body {
+		.item { height: 28px; }
+		.item {
+			.inner { gap: 0px 6px; padding: 0px 8px 0px 12px; }
+			.info { width: calc(100% - 28px); }
+			.iconObject { background: none; border-radius: 0px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 30px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
+			.info { width: calc(100% - 54px); }
+		}
+		.item::before { border-radius: 4px; }
+	}
+}

@@ -20,13 +20,13 @@
 		.body { padding: 0px 16px; }
 		.foot { padding: 0px 16px; }
 		.foot {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionAllCommon; }
+			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin: 0px; }
 			.btn:hover { color: #e89d00; }
 		}
 
 		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; cursor: pointer; margin-right: 8px; 
+			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; 
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
@@ -43,7 +43,7 @@
 			.name { margin: 0px; }
 			.icons { position: absolute; right: 0px; top: 0px; }
 			.icon.arrow { 
-				cursor: pointer; width: 28px; height: 28px; background-image: url('~img/arrow/calendar.svg');
+				width: 28px; height: 28px; background-image: url('~img/arrow/calendar.svg');
 				background-size: 8px 12px; border-radius: 4px; margin: 0px;
 			}
 			.icon.arrow:hover { background-color: #ebe9e0; }

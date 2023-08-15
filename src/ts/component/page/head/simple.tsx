@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard, Relation } from 'Lib';
+import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation, translate } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -34,13 +34,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	render (): any {
 		const { rootId, type, onCreate } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
-			title: ObjectUtil.defaultName(type),
-			description: 'Add a description',
+			title: UtilObject.defaultName(type),
+			description: translate('placeholderBlockDescription'),
 		};
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -56,44 +56,52 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			canEditIcon = false;
 		};
 
-		const Editor = (item: any) => {
-			return (
-				<Editable
-					ref={(ref: any) => { this.refEditable[item.id] = ref; }}
-					id={'editor-' + item.id}
-					placeholder={placeholder[item.id]}
-					readonly={!allowDetails}
-					classNameWrap={item.className}
-					classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
-					classNamePlaceholder={'c' + item.id}
-					onFocus={(e: any) => { this.onFocus(e, item); }}
-					onBlur={(e: any) => { this.onBlur(e, item); }}
-					onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-					onKeyUp={() => { this.onKeyUp(); }}
-					onSelect={(e: any) => { this.onSelectText(e, item); }}
-					onCompositionStart={this.onCompositionStart}
-				/>
-			);
-		};
+		const Editor = (item: any) => (
+			<Editable
+				ref={ref => this.refEditable[item.id] = ref}
+				id={'editor-' + item.id}
+				placeholder={placeholder[item.id]}
+				readonly={!allowDetails}
+				classNameWrap={item.className}
+				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
+				classNamePlaceholder={'c' + item.id}
+				onFocus={(e: any) => { this.onFocus(e, item); }}
+				onBlur={(e: any) => { this.onBlur(e, item); }}
+				onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+				onKeyUp={() => { this.onKeyUp(); }}
+				onSelect={(e: any) => { this.onSelectText(e, item); }}
+				onCompositionStart={this.onCompositionStart}
+			/>
+		);
 
 		let button = null;
 		let descr = null;
 		let featured = null;
-		let cn = [ 'headSimple', check.className ];
+		const cn = [ 'headSimple', check.className ];
 
 		if (!isTypeOrRelation) {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
-			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
+			featured = (
+				<Block 
+					{...this.props} 
+					key={blockFeatured.id} 
+					rootId={rootId} 
+					iconSize={20} 
+					block={blockFeatured} 
+					className="small" 
+					isSelectionDisabled={true}
+				/>
+			);
 		};
 
 		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
-			let text = 'Create';
+			let text = translate('commonCreate');
 			let arrow = false;
 
 			if (object.type == Constant.typeId.relation) {
-				text = 'Create set';
+				text = translate('pageHeadSimpleCreateSet');
 			} else {
 				arrow = true;
 			};
@@ -101,18 +109,18 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if (ObjectUtil.isStoreType(object.type)) {
+		if (UtilObject.isStoreType(object.type)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
-			let onClick = isInstalled ? null : this.onInstall;
-			let color = isInstalled ? 'blank' : 'black';
+			const onClick = isInstalled ? null : this.onInstall;
+			const color = isInstalled ? 'blank' : 'black';
 
 			if (isInstalled) {
 				cn.push('disabled');
 			};
 
-			button = <Button id="button-install" text="Install" color={color} className={cn.join(' ')} onClick={onClick} />;
+			button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (
@@ -156,11 +164,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		this.setValue();
 
-		for (let item of EDITORS) {
+		for (const item of EDITORS) {
 			this.placeholderCheck(item.blockId);
 		};
 
-		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('Page'))) {
+		if (!focused && !object._empty_ && (object.name == UtilObject.defaultName('Page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
@@ -187,12 +195,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onSelect (icon: string) {
 		const { rootId } = this.props;
-		ObjectUtil.setIcon(rootId, icon, '');
+		UtilObject.setIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { rootId } = this.props;
-		ObjectUtil.setIcon(rootId, '', hash);
+		UtilObject.setIcon(rootId, '', hash);
 	};
 
 	onKeyDown (e: any, item: any) {
@@ -220,7 +228,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		for (const item of EDITORS) {
-			DataUtil.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
+			UtilData.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
 		};
 	};
 
@@ -242,7 +250,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == ObjectUtil.defaultName('Page')) {
+			if (text == UtilObject.defaultName('Page')) {
 				text = '';
 			};
 
@@ -273,7 +281,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = detailStore.get(rootId, rootId);
 
 		Action.install(object, false, (message: any) => {
-			ObjectUtil.openAuto(message.details);
+			UtilObject.openAuto(message.details);
 		});
 	};
 

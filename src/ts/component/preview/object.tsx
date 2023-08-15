@@ -2,8 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, DataUtil, Action, translate, Util } from 'Lib';
+import { I, C, UtilData, Action, translate, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
+import $ from 'jquery';
 
 interface Props {
 	rootId: string;
@@ -36,7 +37,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { loading } = this.state;
 		const { rootId, className, onClick } = this.props;
 		const contextId = this.getRootId();
-		const check = DataUtil.checkDetails(contextId, rootId);
+		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
@@ -61,7 +62,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			const { text, style, checked } = content;
 			const childBlocks = blockStore.getChildren(contextId, item.id);
 			const length = childBlocks.length;
-			const cn = [ 'element', DataUtil.blockClass(item), item.className ];
+			const cn = [ 'element', UtilData.blockClass(item), item.className ];
 
 			let bullet = null;
 			let inner = null;
@@ -169,7 +170,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 					switch (content.type) {
 						default:
 						case I.FileType.File: {
-							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
+							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 							inner = (
 								<React.Fragment>
 									<Icon className="color" inner={bullet} />
@@ -191,7 +192,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
+							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />;
 							break;
 						};
 
@@ -204,7 +205,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				};
 
 				case I.BlockType.Link: {
-					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 					inner = (
 						<React.Fragment>
 							<Icon className="color" inner={bullet} />
@@ -224,7 +225,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						break;
 					};
 
-					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-grey' ].join(' ')} />
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-grey' ].join(' ')} />;
 					inner = (
 						<div className="bookmark">
 							<div className="side left">
@@ -277,7 +278,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 								n++;
 								n = this.checkNumber(child, n);
-								return <Block key={child.id} {...child} className={cn.join(' ')} css={css} />
+								return <Block key={child.id} {...child} className={cn.join(' ')} css={css} />;
 							})}
 						</div>
 					) : ''}
@@ -290,7 +291,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
+							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
 
 							{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							<div className="heading">
@@ -298,7 +299,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
 								<div className="featured">
-									{!type._empty_ && !type.isDeleted ? Util.shorten(type.name, 32) : (
+									{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
 										<span className="textColor-red">
 											{translate('commonDeletedType')}
 										</span>
@@ -335,6 +336,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -355,7 +357,22 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+
 		Action.pageClose(this.getRootId(), false);
+	};
+
+	rebind () {
+		const { rootId } = this.props;
+
+		this.unbind();
+		$(window).on(`updatePreviewObject.${rootId}`, () => this.update());
+	};
+
+	unbind () {
+		const { rootId } = this.props;
+
+		$(window).off(`updatePreviewObject.${rootId}`);
 	};
 
 	load () {

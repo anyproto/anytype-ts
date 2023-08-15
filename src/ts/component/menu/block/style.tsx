@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, MenuUtil, analytics } from 'Lib';
+import { I, keyboard, UtilMenu, analytics, translate } from 'Lib';
 import { blockStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
@@ -53,7 +53,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -70,7 +70,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 			return 0;
 		};
 
-		let style = block.content.style;
+		const style = block.content.style;
 
 		if (block.isFile()) {
 			return style != I.FileStyle.Link ? I.FileStyle.Embed : I.FileStyle.Link;
@@ -84,18 +84,18 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { data } = param;
 		const { rootId, blockIds } = data;
 
-		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: MenuUtil.getBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: MenuUtil.getBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: MenuUtil.getTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: 'Turn into file', color: '', children: MenuUtil.getTurnFile() };
+		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: UtilMenu.getBlockText() };
+		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: UtilMenu.getBlockList() };
+		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: UtilMenu.getTurnDiv() };
+		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: UtilMenu.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
 		let hasTurnDiv = true;
 		let hasTurnFile = true;
-		let sections: any[] = [];
+		const sections: any[] = [];
 
-		for (let id of blockIds) {
+		for (const id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);
 			if (!block) {
 				continue;
@@ -109,16 +109,16 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		if (hasTurnText)	 sections.push(turnText);
 		if (hasTurnList)	 sections.push(turnList);
 		if (hasTurnDiv)		 sections.push(turnDiv);
-		if (hasTurnFile)     sections.push(turnFile);
+		if (hasTurnFile) sections.push(turnFile);
 
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 	
 	getItems () {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		return items;
