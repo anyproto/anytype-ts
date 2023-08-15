@@ -78,10 +78,11 @@ class MenuStore {
 		param = this.normaliseParam(param);
 
 		const idx = this.menuList.findIndex(it => it.id == oldId);
-
-		this.menuList = this.menuList.filter(it => it.id != oldId);
-
-		idx >= 0 ? this.menuList.splice(idx, 0, { id: newId, param }) : this.menuList.push({ id: newId, param });
+		if (idx >= 0) {
+			set(this.menuList[idx], { id: newId, param });
+		} else {
+			this.menuList.push({ id: newId, param })
+		};
 	};
 
     get (id: string): I.Menu {
