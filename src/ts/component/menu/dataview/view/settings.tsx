@@ -335,13 +335,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			const size = getSize();
 			const addParam = {
 				component: item.subComponent,
 				title: item.name,
 				withBack: true,
-				width: size.width,
-				data: param.data
+				width: getSize().width,
+				data: param.data,
+				noAnimation: true,
 			};
 
 			if (item.onSubClick) {

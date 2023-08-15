@@ -60,8 +60,8 @@ class MenuStore {
 
     update (id: string, param: any) {
 		const item = this.get(id);
+
 		if (item) {
-			param = this.normaliseParam(param);
 			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
 		};
@@ -75,8 +75,6 @@ class MenuStore {
 	};
 
 	replace (oldId: string, newId: string, param: I.MenuParam) {
-		param = this.normaliseParam(param);
-
 		const idx = this.menuList.findIndex(it => it.id == oldId);
 		if (idx >= 0) {
 			set(this.menuList[idx], { id: newId, param });
@@ -136,9 +134,7 @@ class MenuStore {
 		};
 
 		if (el.length) {
-			if (noAnimation) {
-				el.addClass('noAnimation');
-			};
+			noAnimation ? el.addClass('noAnimation') : el.removeClass('noAnimation');
 			el.css({ transform: '' }).removeClass('show');
 		};
 

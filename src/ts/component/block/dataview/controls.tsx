@@ -191,7 +191,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				obj.removeClass('active');
 			},
 			onBack: (id) => {
-				menuStore.replace(id, component, param);
+				menuStore.replace(id, component, { ...param, noAnimation: true });
+				window.setTimeout(() => menuStore.update(component, { noAnimation: false }), 50);
 			},
 			data: {
 				readonly,

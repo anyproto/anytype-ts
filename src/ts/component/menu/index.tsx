@@ -256,10 +256,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={menuId + '-wrap'} 
+				id={`${menuId}-wrap`} 
 				className="menuWrap"
 			>
-				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
+				<div 
+					id={menuId} 
+					className={cn.join(' ')} 
+					onMouseLeave={this.onMouseLeave}
+				>
 					{tabs.length ? (
 						<div className="tabs">
 							{tabs.map((item: any, i: number) => (
@@ -402,11 +406,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.' + this.getId(), () => this.position());
+		$(window).on(`resize.${this.getId()}`, () => this.position());
 	};
 	
 	unbind () {
-		$(window).off('resize.' + this.getId());
+		$(window).off(`resize.${this.getId()}`);
 	};
 	
 	animate () {
@@ -416,7 +420,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const { param } = this.props;
 		const { noAnimation } = param;
-		const menu = $('#' + this.getId());
+		const menu = $(`#${this.getId()}`);
 
 		if (noAnimation) {
 			menu.addClass('noAnimation show').css({ transform: 'none' });
