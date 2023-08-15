@@ -217,7 +217,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	onIconUser () {
 		const { rootId } = this.props;
 
-		Action.openFile(Constant.extension.cover, paths => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setIcon(rootId, '', message.hash);

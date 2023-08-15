@@ -15,6 +15,7 @@
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-win": "npm-run-all --parallel start:watch start:electron-wait-webpack-win",
 		"build": "webpack --mode=production --node-env=production --config webpack.config.js",
+		"build:dev": "webpack --mode=development --node-env=development --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --stats detailed | grep 'node_modules' | sed -E 's/.*(node_modules[\\/][^\\\\/[:space:]]{1,})[\\\\/].*/\\1/' | uniq | node save-node-deps.js",
 		"build:nmh": "go build -o dist/nativeMessagingHost ./go/nativeMessagingHost.go",
 		"build:nmh-win": "go build -o dist/nativeMessagingHost.exe ./gonativeMessagingHost.go",

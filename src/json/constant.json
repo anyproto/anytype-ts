@@ -6,6 +6,13 @@
 	"protocol": "anytype",
 	"appName": "Anytype",
 
+	"extension": {
+		"clipper": {
+			"id": "jkmhmgghdjjbafmkgjmplhemjjnkligf",
+			"prefix": "anytypeWebclipper"
+		}
+	},
+
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",
@@ -35,7 +42,7 @@
 		"route": 250
 	},
 	
-	"extension": {
+	"fileExtension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],

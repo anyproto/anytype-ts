@@ -98,8 +98,8 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (const k in Constant.extension) {
-			if (Constant.extension[k].indexOf(e) >= 0) {
+		for (const k in Constant.fileExtension) {
+			if (Constant.fileExtension[k].indexOf(e) >= 0) {
 				icon = k;
 				break;
 			};

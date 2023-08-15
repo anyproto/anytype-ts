@@ -75,7 +75,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 	onUpload () {
 		const { rootId } = this.props;
 
-		Action.openFile(Constant.extension.cover, paths => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
 			this.setState({ loading: true });
 
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {

@@ -23,7 +23,7 @@ module.exports = (env, argv) => {
 			},
 			extension: {
 				import: './extension/entry.tsx', 
-				filename: 'extension/main.js',
+				filename: 'extension/js/main.js',
 			},
 		},
 
