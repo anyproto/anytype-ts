@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, analytics } from 'Lib';
+import { I, UtilCommon, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
@@ -65,29 +65,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		const { close, onImport } = this.props;
-		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ 
-				{ name: 'Filtered extensions', extensions },
-			],
-		};
-
-		if (UtilCommon.isPlatformMac()) {
-			fileOptions.properties.push('openDirectory');
-		};
-
-		analytics.event('ClickImport', { type });
-
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
-				return;
-			};
-
-			close();
-			onImport(type, Object.assign(options || {}, { paths }));
-		});
+		Action.import(type, extensions, options);
+		this.props.close();
 	};
 
 	onImportHtml () {

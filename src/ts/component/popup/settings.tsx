@@ -89,7 +89,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
-		this.onImport = this.onImport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.setLoading = this.setLoading.bind(this);
@@ -120,7 +119,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					prevPage={this.prevPage}
 					onPage={this.onPage} 
 					onExport={this.onExport} 
-					onImport={this.onImport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}
 					setPinConfirmed={this.setPinConfirmed}
@@ -309,18 +307,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		popupStore.updateData(this.props.id, { page: id });
 		analytics.event('settings', { params: { id } });
-	};
-
-	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (!message.error.code) {
-				analytics.event('Import', { middleTime: message.middleTime, type });
-			};
-		});
 	};
 
 	onExport (type: I.ExportType, param: any) {

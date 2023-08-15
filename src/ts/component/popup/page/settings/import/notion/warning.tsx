@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, translate, analytics } from 'Lib';
+import { I, C, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../../head';
 
@@ -33,12 +33,16 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 	};
 
 	onImport (): void {
-		const { close, onImport } = this.props;
+		const { close } = this.props;
 
 		analytics.event('ImportNotionProceed');
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });
+		C.ObjectImport({ apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+			if (!message.error.code) {
+				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion });
+			};
+		});
 	};
 
 };
