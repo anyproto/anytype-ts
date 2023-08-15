@@ -599,15 +599,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Constant.templateId.blank;
 	};
 
-	setDefaultTemplateForView (id: string, cb?: () => void) {
+	setDefaultTemplateForView (id: string, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, () => {
-			if (cb) {
-				cb();
-			};
-		});
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, callBack);
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
@@ -719,7 +715,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
 		const typeId = this.getTypeId();
-		const defaultTemplateId = this.getDefaultTemplateId();
+
+		let defaultTemplateId = this.getDefaultTemplateId();
+
+		const dataMapper = it => ({
+			...it,
+			typeId,
+			withMore: (it.id != NEW_TEMPLATE_ID),
+			caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
+			isDefault: (it.id == defaultTemplateId),
+			isBlank: (it.id == Constant.templateId.blank),
+		});
+		const update = () => {
+			defaultTemplateId = this.getDefaultTemplateId();
+
+			menuStore.updateData(this.menuContext.id, { dataMapper });
+			this.menuContext.ref.reload();
+		};
 
 		analytics.event('ClickNewOption', { route: (this.isCollection() ? 'Collection' : 'Set') });
 
@@ -734,14 +746,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				label: translate('blockDataviewSelectTemplate'),
 				noFilter: true,
 				noIcon: true,
-				mapElement: it => ({
-					...it,
-					typeId,
-					withMore: (it.id != NEW_TEMPLATE_ID),
-					caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
-					isDefault: (it.id == defaultTemplateId),
-					isBlank: (it.id == Constant.templateId.blank),
-				}),
+				dataMapper,
 				dataChange: (items: any[]) => {
 					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
 					const bottom: any[] = [
@@ -805,15 +810,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 								route: this.isCollection() ? 'Collection' : 'Set',
 								onOver: () => menuStore.closeAll([ 'previewObject' ]),
 								onSetDefault: () => {
-									this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
+									this.setDefaultTemplateForView(item.id, () => update());
 								},
 								onDuplicate: (object) => UtilObject.openPopup(object, {}),
 								onArchive: () => {
 									if (item.isDefault) {
-										this.setDefaultTemplateForView(Constant.templateId.blank);
+										this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
+									} else {
+										update();
 									};
-
-									this.menuContext.ref.reload();
 								}
 							}
 						});

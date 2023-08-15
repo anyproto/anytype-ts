@@ -12,14 +12,6 @@ interface State {
 	error: string;
 };
 
-const Delimiters: any[] = [
-	{ id: 'comma', name: 'Comma', caption: ',' },
-	{ id: 'semicolon', name: 'Semicolon', caption: ';' },
-	{ id: 'space', name: 'Space', caption: '_', value: ' ' },
-	{ id: 'tab', name: 'Tab', caption: '\\t', value: '\t' },
-	{ id: 'pipe', name: 'Pipe', caption: '|' },
-];
-
 class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 	refMode = null;
@@ -164,7 +156,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	delimiterSet (id: string, v: string) {
-		const option = Delimiters.find(it => {
+		const delimiters = this.getDelimiters();
+		const option = delimiters.find(it => {
 			if (id && (it.id == id)) {
 				return true;
 			};
@@ -185,7 +178,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	delimiterOptions () {
-		const delimiters = UtilCommon.objectCopy(Delimiters);
+		const delimiters = this.getDelimiters();
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
@@ -232,6 +225,16 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		const { storageSet } = this.props;
 
 		storageSet({ csv: this.data });
+	};
+
+	getDelimiters () {
+		return [
+			{ id: 'comma', name: translate('delimiterComma'), caption: ',' },
+			{ id: 'semicolon', name: translate('delimiterSemicolon'), caption: ';' },
+			{ id: 'space', name: translate('delimiterSpace'), caption: '_', value: ' ' },
+			{ id: 'tab', name: translate('delimiterTab'), caption: '\\t', value: '\t' },
+			{ id: 'pipe', name: translate('delimiterPipe'), caption: '|' },
+		];
 	};
 
 };

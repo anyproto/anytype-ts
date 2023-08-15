@@ -302,8 +302,8 @@
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: #42413A; background-image: url('#{$themePath}/icon/table/plus.svg'); }
-		.plusButton.circle .icon { background-color: #42413A; }
+		.plusButton .icon { background-color: #42413a; background-image: url('#{$themePath}/icon/table/plus.svg'); }
+		.plusButton.circle .icon { background-color: #42413a; }
 
 		.handle { 
 			.inner::before { background-color: $colorBlack; }

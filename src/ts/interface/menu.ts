@@ -32,6 +32,7 @@ export interface MenuParam {
 	className?: string;
 	classNameWrap?: string;
 	withArrow?: boolean;
+	withBack?: boolean;
 	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
@@ -41,13 +42,9 @@ export interface MenuParam {
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
+	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
 	force?: boolean;
-};
-
-export interface SubmenuParam {
-	component?: string;
-	title?: string;
 };
 
 export interface Menu {
@@ -57,7 +54,6 @@ export interface Menu {
 	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
-	setSubmenu?(item?: any): void;
 	onKeyDown?(e: any): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;

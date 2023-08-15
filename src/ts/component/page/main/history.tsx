@@ -405,6 +405,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		if (isPopup) {
 			const page = $('.pageMainHistory.isPopup');
+
 			page.css({ height });
 			cssl.paddingTop = hh;
 		};

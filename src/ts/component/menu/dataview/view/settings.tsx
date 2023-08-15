@@ -248,13 +248,27 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 
+		const relations = view.getVisibleRelations().map(it => UtilCommon.toUpperCamelCase(UtilCommon.shorten(it.relationKey, 16)));
+
+		let relationCnt = relations.join(', ');
+		if (relations.length > 2) {
+			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
+		};
+
 		const defaultSettings = [
-			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType') }
+			{
+				id: 'defaultType',
+				name: translate('menuDataviewViewDefaultType'),
+				subComponent: 'typeSuggest',
+				onSubClick: (type) => {
+					console.log('SET DEFAULT TYPE: ', type.name);
+				}
+			}
 		];
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList' }
+			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt }
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
@@ -308,7 +322,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close, setSubmenu } = this.props;
+		const { id, param, close, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
@@ -321,7 +335,20 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			setSubmenu({ component: item.subComponent, title: item.name });
+			const size = getSize();
+			const addParam = {
+				component: item.subComponent,
+				title: item.name,
+				withBack: true,
+				width: size.width,
+				data: param.data
+			};
+
+			if (item.onSubClick) {
+				param.data = Object.assign(addParam.data, { onClick: item.onSubClick });
+			};
+
+			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));
 			return;
 		};
 

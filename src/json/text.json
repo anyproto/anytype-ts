@@ -767,7 +767,7 @@
 
     "popupSettingsImportCsvTable": "Table",
     "popupSettingsImportCsvCollection": "Collection",
-    "popupSettingsImportCsvMode": "Mode",
+    "popupSettingsImportCsvMode": "Import CSV into",
     "popupSettingsImportCsvUseFirstRow": "Use the first row as column names",
     "popupSettingsImportCsvTranspose": "Transpose rows and columns",
     "popupSettingsImportCsvColumnsDivider": "Columns are divided by",
@@ -1521,6 +1521,12 @@
     "utilLoadMoreText": "Show %s more %s",
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist",
+
+	"delimiterComma": "Comma",
+	"delimiterSemicolon": "Semicolon",
+	"delimiterSpace": "Space",
+	"delimiterTab": "Tab",
+	"delimiterPipe": "Pipe",
 
 	"errorAccountCreate901": "Network error",
 	"errorAccountCreate902": "Connection refused",
