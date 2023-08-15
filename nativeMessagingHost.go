@@ -2,7 +2,7 @@
 
 - This is the native messaging host for the AnyType browser extension.
 - It enables the web extension to find the open ports of the AnyType application and to start it if it is not running.
-- It is installed by the Electron script found in electron/js/installNativeMessagingHost.js
+- It is installed by the Electron script found in electron/js/lib/installNativeMessagingHost.js
 - for more docs, checkout the webclipper repository: https://github.com/anytypeio/webclipper
 
 

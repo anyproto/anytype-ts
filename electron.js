@@ -8,6 +8,7 @@ const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 
 const userPath = app.getPath('userData');
 const logPath = path.join(userPath, 'logs');
@@ -130,6 +131,8 @@ function createWindow () {
 	MenuManager.setWindow(mainWindow);
 	MenuManager.initMenu();
 	MenuManager.initTray();
+
+	installNativeMessagingHost();
 
 	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
