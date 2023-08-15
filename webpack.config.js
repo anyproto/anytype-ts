@@ -19,11 +19,11 @@ module.exports = (env, argv) => {
 		entry: {
 			app: { 
 				import: './src/ts/entry.tsx', 
-				filename: './dist/[name][ext]',
+				filename: 'main.js',
 			},
 			extension: {
-				import: './src/ts/entry.tsx', 
-				filename: './extension/dist/[name][ext]',
+				import: './extension/entry.tsx', 
+				filename: 'extension/main.js',
 			},
 		},
 
