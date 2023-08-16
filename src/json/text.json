@@ -662,14 +662,6 @@
     "popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
 
-    "popupSettingsImportMarkdownTitle": "How to import Markdown",
-
-    "popupSettingsImportNotionExample": "Notion example",
-    "popupSettingsImportNotionExampleStep1": "Select the page you wish to import",
-    "popupSettingsImportNotionExampleStep2": "Click the three dots menu in the top-left corner",
-    "popupSettingsImportNotionExampleStep3": "Chose the export format: Markdown & CSV",
-    "popupSettingsImportNotionExampleComplete": "Then, select either a <b>Zip archive or Markdown file<\/b> (.md) to complete the import",
-
     "popupSettingsImportCsvTitle": "CSV Import",
     "popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
