@@ -438,6 +438,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const recommendedRelations = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey);
+		const skipKeys = recommendedRelations.concat(Relation.systemKeys().filter(it => ![ 'tag', 'description' ].includes(it)));
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
@@ -447,7 +448,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedRelations.concat(Relation.systemKeys()),
+				skipKeys,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 
