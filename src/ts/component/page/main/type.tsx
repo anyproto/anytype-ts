@@ -372,6 +372,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = {
 			type: rootId,
 		};
@@ -383,30 +384,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			details.layout = I.ObjectLayout.Collection;
 		};
 
-		const create = (template: any) => {
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
-				UtilObject.openPopup({ ...details, id: message.targetId });
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, object.defaultTemplateId, {}, [], (message: any) => {
+			UtilObject.openPopup({ ...details, id: message.targetId });
 
-				analytics.event('CreateObject', {
-					route: 'ObjectType',
-					objectType: rootId,
-					layout: template?.layout,
-				});
+			analytics.event('CreateObject', {
+				route: 'ObjectType',
+				objectType: rootId,
 			});
-		};
-
-		const showMenu = () => {
-			popupStore.open('template', {
-				data: {
-					typeId: rootId,
-					onSelect: create,
-					route: 'ObjectType',
-				},
-			});
-		};
-
-		UtilData.checkTemplateCnt([ rootId ], (cnt: number) => {
-			cnt ? showMenu() : create('');
 		});
 	};
 
