@@ -384,12 +384,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			details.layout = I.ObjectLayout.Collection;
 		};
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, object.defaultTemplateId, {}, [], (message: any) => {
-			UtilObject.openPopup({ ...details, id: message.targetId });
+		C.ObjectCreate(details, [], object.defaultTemplateId, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			UtilObject.openPopup(message.details);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',
 				objectType: rootId,
+				layout: message.details.layout,
 			});
 		});
 	};
@@ -421,8 +426,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const recommendedRelations = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey);
-		const skipKeys = recommendedRelations.concat(Relation.systemKeys().filter(it => ![ 'tag', 'description' ].includes(it)));
+		const recommendedKeys = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey);
+		const systemKeys = Relation.systemKeys().filter(it => ![ 'tag', 'description' ].includes(it));
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
@@ -432,7 +437,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys,
+				skipKeys: recommendedKeys.concat(systemKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 
