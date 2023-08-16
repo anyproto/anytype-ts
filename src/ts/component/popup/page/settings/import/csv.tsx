@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import { I, translate, keyboard, Action } from 'Lib';
-import { menuStore, commonStore } from 'Store';
+import { commonStore, menuStore } from 'Store';
 import Head from '../head';
 
 interface State {
