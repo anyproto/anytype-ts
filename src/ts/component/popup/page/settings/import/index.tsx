@@ -46,7 +46,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const item = items.find(it => it.id == id);
 		const fn = UtilCommon.toCamelCase('onImport-' + item.id);
 
-		if (item.skipPage && this[fn]) {
+		if (this[fn]) {
 			this[fn]();
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));
@@ -57,9 +57,9 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		return [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'html', name: 'HTML', skipPage: true },
-			{ id: 'text', name: 'TXT', skipPage: true },
-			{ id: 'protobuf', name: 'Protobuf', skipPage: true },
+			{ id: 'html', name: 'HTML' },
+			{ id: 'text', name: 'TXT' },
+			{ id: 'protobuf', name: 'Protobuf' },
 			{ id: 'csv', name: 'CSV' },
 		];
 	};
@@ -79,6 +79,10 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportProtobuf () {
 		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb' ]);
+	};
+
+	onImportMarkdown () {
+		this.onImportCommon(I.ImportType.Markdown, [ 'zip', 'md' ]);
 	};
 
 });

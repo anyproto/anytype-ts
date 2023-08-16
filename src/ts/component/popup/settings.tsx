@@ -22,7 +22,6 @@ import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportNotionWarning from './page/settings/import/notion/warning';
-import PageImportMarkdown from './page/settings/import/markdown';
 import PageImportCsv from './page/settings/import/csv';
 
 import PageExportIndex from './page/settings/export/index';
@@ -58,7 +57,6 @@ const Components: any = {
 	importNotion:		 PageImportNotion,
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
-	importMarkdown:		 PageImportMarkdown,
 	importCsv:			 PageImportCsv,
 
 	exportIndex:		 PageExportIndex,
@@ -247,7 +245,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
 								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
-								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
+								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv',
 								'exportIndex', 'exportProtobuf', 'exportMarkdown'
 							]
 						},
