@@ -29,7 +29,7 @@ const getHomeDir = () => {
 		return userInfo().homedir;
 	} else {
 		return homedir();
-	}
+	};
 };
 
 const installNativeMessagingHost = () => {
@@ -59,7 +59,7 @@ const installNativeMessagingHost = () => {
 		default:
 			console.log('unsupported platform: ', platform);
 			break;
-	}
+	};
 };
 
 const installToWindows = (manifest) => {
@@ -97,7 +97,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 	} catch {
 		console.log(`Not finding registry ${check} skipping.`);
 		return;
-	}
+	};
 
 	try {
 		await createKey(location);
@@ -114,7 +114,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 		return putValue(obj);
 	} catch (error) {
 		console.log(error);
-	}
+	};
 };
 
 const installToMacOS = (manifest) => {
@@ -135,8 +135,8 @@ const installToMacOS = (manifest) => {
 			);
 		} else {
 			console.log(`Warning: ${key} not found skipping.`);
-		}
-	}
+		};
+	};
 };
 
 const getDarwinNMHDirectory = () => {
@@ -167,13 +167,13 @@ const installToLinux = (manifest) => {
 			`${config_dir}NativeMessagingHosts/${MANIFEST_FILENAME}`,
 			manifest
 		);
-	}
+	};
 };
 
 const writeManifest = async (destination, manifest) => {
 	if (!existsSync(path.dirname(destination))) {
 		await mkdir(path.dirname(destination));
-	}
+	};
 	writeFile(destination, JSON.stringify(manifest, null, 2), console.log);
 };
 
