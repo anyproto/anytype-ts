@@ -133,7 +133,7 @@ const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
 	grey:	 '#f2f2f2',
-	black:	 '#2c2b27',
+	black:	 '#252525',
 	brown:	 '#b6b6b6',
 	orange:	 '#ffb522',
 	red:	 '#f55522',
