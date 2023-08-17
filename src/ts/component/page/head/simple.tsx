@@ -45,7 +45,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
+		const isRelation = UtilObject.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
+		const cn = [ 'headSimple', check.className ];
 
 		const Editor = (item: any) => (
 			<Editable
@@ -68,7 +70,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let button = null;
 		let descr = null;
 		let featured = null;
-		const cn = [ 'headSimple', check.className ];
 
 		if (!isTypeOrRelation) {
 			if (featuredRelations.includes('description')) {
@@ -87,31 +88,25 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
-		if (object.isInstalled && isTypeOrRelation) {
-			let text = translate('commonCreate');
-			let arrow = false;
+		if (isTypeOrRelation) {
+			if (object.isInstalled) {
+				const text = isRelation ? translate('pageHeadSimpleCreateSet') : translate('commonCreate');
+				const arrow = !isRelation;
 
-			if (object.layout == I.ObjectLayout.Relation) {
-				text = translate('pageHeadSimpleCreateSet');
+				button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 			} else {
-				arrow = true;
+				const cn = [ 'c36' ];
+				const isInstalled = this.isInstalled();
+
+				const onClick = isInstalled ? null : this.onInstall;
+				const color = isInstalled ? 'blank' : 'black';
+
+				if (isInstalled) {
+					cn.push('disabled');
+				};
+
+				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
-
-			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
-		};
-
-		if (UtilObject.isTypeOrRelationLayout(object.layout)) {
-			const cn = [ 'c36' ];
-			const isInstalled = this.isInstalled();
-
-			const onClick = isInstalled ? null : this.onInstall;
-			const color = isInstalled ? 'blank' : 'black';
-
-			if (isInstalled) {
-				cn.push('disabled');
-			};
-
-			button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (
@@ -271,9 +266,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
 
-		Action.install(object, false, (message: any) => {
-			UtilObject.openAuto(message.details);
-		});
+		Action.install(object, false, (message: any) => UtilObject.openAuto(message.details));
 	};
 
 	isInstalled () {
@@ -283,13 +276,15 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let sources: string[] = [];
 
 		switch (object.layout) {
-			case I.ObjectLayout.Type:
+			case I.ObjectLayout.Type: {
 				sources = dbStore.getTypes().map(it => it.sourceObject);
 				break;
+			};
 
-			case I.ObjectLayout.Relation:
+			case I.ObjectLayout.Relation: {
 				sources = dbStore.getRelations().map(it => it.sourceObject);
 				break;
+			};
 		};
 
 		return sources.includes(rootId);
