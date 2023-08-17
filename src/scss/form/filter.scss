@@ -2,24 +2,22 @@
 
 .filter { padding: 0px 14px; cursor: text; }
 .filter {
-	.inner { position: relative; width: 100%; height: 35px; display: flex; align-items: center; gap: 0px 8px; }
+	.inner { position: relative; width: 100%; height: 36px; display: flex; align-items: center; gap: 0px 8px; border-radius: 8px; border: 1px solid $colorBorderLight; padding-right: 4px;  }
 	.filterInputWrap { position: relative; width: 100%; }
 
-	.input { padding: 6px 12px; height: 40px; line-height: 40px; vertical-align: top; border-radius: 8px; border: 1px solid $colorBorderLight; background: none; }
-	.placeholder { padding: 6px 12px; }
+	.input { padding: 6px 12px !important; height: 36px; line-height: 36px; vertical-align: top; background: none; border: 0px solid !important; }
+	.placeholder { padding: 5px 12px; }
 	.input:hover { border-color: $colorBorderDark; }
 
 	.icon { flex-shrink: 0; cursor: default; }
-	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; opacity: 0; }
-	.icon.clear:hover { background-image: url('~img/icon/clear1.svg') !important; }
+	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear/clear0.svg') !important; opacity: 0; }
 
 	.icon.search { width: 20px; height: 20px; background-size: 18px; background-image: url('~img/icon/search.svg'); }
 
 	.line { height: 1px; margin: 0px !important; background: $colorBorderLight; display: block; }
 }
 .filter.isFocused {
-	.input, .input:hover { padding: 5px 11px !important; border: 2px solid $colorOrange !important; }
-	.placeholder { padding: 6px 13px; }
+	.inner, .inner:hover { border: 2px solid $colorOrange !important; }
 }
 .filter.isName .input { font-weight: 700; }
 .filter.active { 

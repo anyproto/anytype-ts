@@ -28,7 +28,10 @@
 
 	.menu.menuDataviewViewSettings {
 		.content { padding-top: 0; }
-		.filter.isName { margin-bottom: 4px; }
+		.inputWithLabel { margin: 0 14px 4px; }
+		.inputWithLabel {
+			.input { font-weight: 700; }
+		}
 	}
 
 	.menu.menuDataviewViewEdit,

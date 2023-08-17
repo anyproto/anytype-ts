@@ -53,20 +53,18 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		return (
 			<div>
-				<div className="filter isName">
-					<InputWithLabel
-						ref={ref => this.ref = ref}
-						value={name}
-						label={translate('menuDataviewViewName')}
-						readonly={readonly}
-						placeholder={this.defaultName(type)}
-						maxLength={32}
-						onKeyUp={this.onKeyUp}
-						onFocus={this.onNameFocus}
-						onBlur={this.onNameBlur}
-						onMouseEnter={this.onNameEnter}
-					/>
-				</div>
+				<InputWithLabel
+					ref={ref => this.ref = ref}
+					value={name}
+					label={translate('menuDataviewViewName')}
+					readonly={readonly}
+					placeholder={this.defaultName(type)}
+					maxLength={32}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onNameFocus}
+					onBlur={this.onNameBlur}
+					onMouseEnter={this.onNameEnter}
+				/>
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
