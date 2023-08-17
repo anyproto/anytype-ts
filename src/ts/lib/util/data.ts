@@ -671,7 +671,9 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		keys.push(idField);
+		if (!keys.includes(idField)) {
+			keys.push(idField);
+		};
 
 		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
