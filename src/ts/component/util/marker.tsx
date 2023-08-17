@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -42,6 +42,16 @@ const Theme = {
 			default: require('img/theme/dark/icon/bullet/default.svg').default,
 		},
 		toggle:		 require('img/theme/dark/icon/marker/toggle.svg').default,
+		checkbox: {
+			0:		 require('img/icon/marker/checkbox0.svg').default,
+			1:		 require('img/theme/dark/icon/marker/checkbox1.svg').default,
+			2:		 require('img/icon/marker/checkbox2.svg').default,
+		},
+		task: {
+			0:		 require('img/icon/object/checkbox0.svg').default,
+			1:		 require('img/theme/dark/icon/object/checkbox1.svg').default,
+			2:		 require('img/icon/object/checkbox2.svg').default,
+		},
 	},
 };
 
@@ -92,7 +102,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 			case I.TextStyle.Checkbox: {
 				inner = (
 					<img 
-						src={Icons.checkbox[active ? 2 : 0]} 
+						src={this.getCheckbox(active ? 2 : 0)} 
 						onDragStart={e => e.preventDefault()} 
 						onMouseEnter={this.onCheckboxEnter} 
 						onMouseLeave={this.onCheckboxLeave} 
@@ -104,7 +114,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 			case 'checkboxTask': {
 				inner = (
 					<img 
-						src={Icons.task[active ? 2 : 0]} 
+						src={this.getTask(active ? 2 : 0)} 
 						onDragStart={e => e.preventDefault()} 
 						onMouseEnter={this.onCheckboxEnter} 
 						onMouseLeave={this.onCheckboxLeave} 
@@ -132,15 +142,19 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	onCheckboxEnter () {
 		const { active } = this.props;
-		if (!active) {
-			$(this.node).find('img').attr({ src: Icons[this.getIconKey()][1] });
+		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+
+		if (!active && this[fn]) {
+			$(this.node).find('img').attr({ src: this[fn](1) });
 		};
 	};
 
 	onCheckboxLeave () {
 		const { active } = this.props;
-		if (!active) {
-			$(this.node).find('img').attr({ src: Icons[this.getIconKey()][0] });
+		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+
+		if (!active && this[fn]) {
+			$(this.node).find('img').attr({ src: this[fn](0) });
 		};
 	};
 
@@ -155,6 +169,13 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		return key;
 	};
 
+	getIcon (type: string) {
+		const cn = commonStore.getThemeClass();
+		const item = Theme[cn];
+
+		return (item && item[type]) ? item[type] : Icons[type];
+	};
+
 	getBullet () {
 		const cn = commonStore.getThemeClass();
 		const t = Theme[cn];
@@ -163,13 +184,18 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		return (t && t.bullets[color]) ? t.bullets[color] : Icons.bullets[color];
 	};
 
-	getToggle () {
-		const cn = commonStore.getThemeClass();
-		const t = Theme[cn];
-
-		return (t && t.toggle) ? t.toggle : Icons.toggle;
+	getCheckbox (state: number) {
+		return this.getIcon('checkbox')[state];
 	};
-	
+
+	getTask (state: number) {
+		return this.getIcon('task')[state];
+	};
+
+	getToggle () {
+		return this.getIcon('toggle');
+	};
+
 });
 
 export default Marker;

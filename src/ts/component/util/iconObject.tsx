@@ -127,9 +127,6 @@ Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg').
 Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg').default;
 Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg').default;
 
-const CheckboxTask0 = require('img/icon/object/checkbox0.svg').default;
-const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
-const CheckboxTask2 = require('img/icon/object/checkbox2.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
@@ -148,6 +145,19 @@ const BgColor = {
 const Color = {
 	'':		 '#b6b6b6',
 	dark:	 '#dfddd3'
+};
+
+const CheckboxTask = {
+	'': {
+		0: require('img/icon/object/checkbox0.svg').default,
+		1: require('img/icon/object/checkbox1.svg').default,
+		2: require('img/icon/object/checkbox2.svg').default,
+	},
+	dark: {
+		0: require('img/icon/object/checkbox0.svg').default,
+		1: require('img/theme/dark/icon/object/checkbox1.svg').default,
+		2: require('img/icon/object/checkbox2.svg').default,
+	},
 };
 
 const Theme = {
@@ -186,6 +196,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
+		const tc = commonStore.getThemeClass();
 
 		if (className) {
 			cn.push(className);
@@ -196,6 +207,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		let icon = null;
 		let icn = [];
+
 		const onLetter = () => {
 			cn.push('withLetter');
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
@@ -242,7 +254,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Task: {
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img id="checkbox" src={done ? CheckboxTask2 : CheckboxTask0} className={icn.join(' ')} />;
+				icon = <img id="checkbox" src={done ? CheckboxTask[tc][2] : CheckboxTask[tc][0]} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -354,6 +366,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const tc = commonStore.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
 
@@ -362,7 +375,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
-			node.find('#checkbox').attr({ src: CheckboxTask1 });
+			node.find('#checkbox').attr({ src: CheckboxTask[tc][1] });
 		};
 		
 		if (onMouseEnter) {
@@ -372,13 +385,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	
 	onMouseLeave (e: any) {
 		const { onMouseLeave } = this.props;
+		const tc = commonStore.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
 		
 		Preview.tooltipHide(false);
 
 		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
-			node.find('#checkbox').attr({ src: CheckboxTask0 });
+			node.find('#checkbox').attr({ src: CheckboxTask[tc][0] });
 		};
 		
 		if (onMouseLeave) {
