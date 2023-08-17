@@ -177,7 +177,7 @@ func startApplication() (int, error) {
 	} else if platform == "darwin" {
 		appPath = filepath.Join(appPath, "MacOS", "Anytype")
 	} else if platform == "linux" {
-		appPath = filepath.Join(appPath, "anytype2")
+		appPath = filepath.Join(appPath, "anytype")
 	} else {
 		return 0, errors.New("unsupported platform")
 	}

@@ -5,7 +5,7 @@ import Constant from 'json/constant.json';
 class UtilFile {
 
 	fromPath (path: string) {
-		const { buffer, type } = window.Electron.fileParam(path);
+		const { buffer, type } = UtilCommon.getElectron().fileParam(path);
 		if (!type) {
 			return null;
 		};

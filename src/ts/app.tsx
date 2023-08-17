@@ -262,8 +262,8 @@ enableLogging({
 */
 
 Sentry.init({
-	release: window.Electron.version.app,
-	environment: window.Electron.isPackaged ? 'production' : 'development',
+	release: UtilCommon.getElectron().version.app,
+	environment: UtilCommon.getElectron().isPackaged ? 'production' : 'development',
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -327,7 +327,7 @@ class App extends React.Component<object, State> {
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
-									<div className="version anim from">{window.Electron.version.app}</div>
+									<div className="version anim from">{UtilCommon.getElectron().version.app}</div>
 								</div>
 							</div>
 						) : ''}
@@ -362,14 +362,14 @@ class App extends React.Component<object, State> {
 	init () {
 		UtilCommon.init(history);
 
-		dispatcher.init(window.Electron.getGlobal('serverAddress'));
+		dispatcher.init(UtilCommon.getElectron().getGlobal('serverAddress'));
 		keyboard.init();
 
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
-		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
+		console.log('[Process] os version:', UtilCommon.getElectron().version.system, 'arch:', UtilCommon.getElectron().arch);
+		console.log('[App] version:', UtilCommon.getElectron().version.app, 'isPackaged', UtilCommon.getElectron().isPackaged);
 	};
 
 	initStorage () {
@@ -592,7 +592,7 @@ class App extends React.Component<object, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), UtilCommon.getElectron().version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				canCancel: false,
 			},

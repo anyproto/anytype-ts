@@ -12,7 +12,10 @@
 			"default_title": "Chrome Addon v3 Starter",
 			"default_popup": "popup/index.html"
 	},
-	"permissions": [],
+	"permissions": [
+		"contextMenus",
+		"nativeMessaging"
+	],
 	"host_permissions": [
 			"*://*/*"
 	],
@@ -21,7 +24,7 @@
 	},
 	"content_scripts": [
 		{
-			"js": [ "js/foreground.js" ],
+			"js": [ "js/main.js" ],
 			"matches": [ "<all_urls>" ]
 		}
 	]

@@ -24,7 +24,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
 	init () {
@@ -35,11 +35,11 @@ class Analytics {
 		const { config, interfaceLang } = commonStore;
 		const platform = UtilCommon.getPlatform();
 
-		let version = String(window.Electron.version.app || '').split('-');
+		let version = String(UtilCommon.getElectron().version.app || '').split('-');
 		if (version.length) {
 			version = [ version[0] ];
 		};
-		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
+		if (config.sudo || !UtilCommon.getElectron().isPackaged || [ 'alpha' ].includes(config.channel)) {
 			version.push('dev');
 		} else
 		if ([ 'beta' ].includes(config.channel)) {
@@ -58,11 +58,11 @@ class Analytics {
 			platform,
 		});
 
-		this.instance.setVersionName(window.Electron.version.app);
+		this.instance.setVersionName(UtilCommon.getElectron().version.app);
 		this.instance.setUserProperties({ 
 			deviceType: 'Desktop',
 			platform,
-			osVersion: window.Electron.version.os,
+			osVersion: UtilCommon.getElectron().version.os,
 			interfaceLang,
 		});
 

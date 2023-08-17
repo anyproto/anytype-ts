@@ -3,6 +3,7 @@ import * as hs from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
+import { dispatcher, C } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
 import Index from './page/index';
@@ -55,6 +56,22 @@ class App extends React.Component {
 	};
 
 	componentDidMount () {
+		commonStore.configSet({ debug: { mw: true } }, false);
+
+		// @ts-ignore: saying 'chrome' is not found
+		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+			console.log(msg);
+			return true;
+		});
+
+		// @ts-ignore: saying 'chrome' is not found
+		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
+			dispatcher.init(`http://127.0.0.1:${response.port}`);
+
+			C.AppGetVersion((message: any) => {
+				console.log(message);
+			});
+		});
 	};
 
 	componentDidUpdate () {

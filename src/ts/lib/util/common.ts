@@ -9,6 +9,10 @@ class UtilCommon {
 
 	history: any = null;
 
+	getElectron () {
+		return window.Electron || {};
+	};
+
 	init (history: any) {
 		this.history = history;
 	};
@@ -732,7 +736,7 @@ class UtilCommon {
 	};
 
 	getPlatform () {
-		return Constant.platforms[window.Electron.platform];
+		return Constant.platforms[this.getElectron().platform];
 	};
 
 	isPlatformMac () {
@@ -1002,7 +1006,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),
+						path: this.getElectron().fileWrite(item.name, reader.result, 'binary'),
 					});
 					cb();
 				};

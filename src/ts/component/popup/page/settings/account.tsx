@@ -110,7 +110,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 			properties: [ 'openDirectory' ],
 		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
+		UtilCommon.getElectron().showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
