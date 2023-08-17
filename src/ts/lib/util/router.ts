@@ -56,7 +56,7 @@ class UtilRouter {
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && (routeParam.spaceId != commonStore.space)) {
+		if (routeParam.spaceId && (routeParam.spaceId != Constant.storeSpaceId) && (routeParam.spaceId != commonStore.space)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
