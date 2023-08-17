@@ -42,7 +42,7 @@ import { commonStore } from 'Store';
  * Defaults to the default lang set in constant.json (english)
  */
 const translate = (key: string): string => {
-	const lang = commonStore.config.interfaceLang || Constant.default.interfaceLang;
+	const lang = commonStore.interfaceLang;
 	const defaultData = require(`json/text.json`);
 
 	let data = defaultData;

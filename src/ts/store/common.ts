@@ -191,6 +191,10 @@ class CommonStore {
 		return { ...this.spaceStorageObj, bytesUsed, localUsage };
 	};
 
+	get interfaceLang (): string {
+		return this.config.interfaceLang || Constant.default.interfaceLang;
+	};
+
     gatewaySet (v: string) {
 		this.gatewayUrl = v;
 	};

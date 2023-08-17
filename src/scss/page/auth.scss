@@ -60,7 +60,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.loaderWrapper {
-		.loader { border-color: $colorDarkGrey; border-left-color: $colorOrange; }
+		.loader { border-color: #555; border-left-color: $colorOrange; }
 	}
 }
 

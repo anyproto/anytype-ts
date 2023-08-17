@@ -12,7 +12,6 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 		const { onExport } = this.props;
 		const items = [
 			{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
-			{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
 			{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
 			{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 		];
@@ -51,7 +50,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Markdown, this.data); }} 
+						onClick={() => onExport(I.ExportType.Markdown, this.data)} 
 					/>
 				</div>
 			</React.Fragment>

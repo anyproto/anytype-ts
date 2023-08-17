@@ -61,7 +61,7 @@ const request = async (lang) => {
 		};
 
 		const error = error => {
-			console.log("Error: " + error.message);
+			console.log('Error: ' + error.message);
 			reject(error);
 		};
 

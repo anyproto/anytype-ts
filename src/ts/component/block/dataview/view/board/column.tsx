@@ -92,7 +92,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 						<div className="side right">
 							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
-							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={(e) => this.onAdd(e, -1)} />
+							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={e => this.onAdd(e, -1)} />
 						</div>
 					</div>
 
@@ -114,7 +114,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`record-${id}-add`} className="card add" onClick={(e) => { this.onAdd(e, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={e => this.onAdd(e, 1)}>
 								<Icon className="plus" />
 							</div>
 						) : ''}

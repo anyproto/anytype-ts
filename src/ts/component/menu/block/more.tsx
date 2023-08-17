@@ -444,7 +444,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 				
 			case 'pageArchive': {
-				Action.archive([ object.id ]);
+				Action.archive([ object.id ], () => onBack());
 				break;
 			};
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, analytics } from 'Lib';
+import { I, UtilCommon, translate, analytics, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
@@ -46,7 +46,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const item = items.find(it => it.id == id);
 		const fn = UtilCommon.toCamelCase('onImport-' + item.id);
 
-		if (item.skipPage && this[fn]) {
+		if (this[fn]) {
 			this[fn]();
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));
@@ -57,37 +57,16 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		return [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'html', name: 'HTML', skipPage: true },
-			{ id: 'text', name: 'TXT', skipPage: true },
-			{ id: 'protobuf', name: 'Protobuf', skipPage: true },
+			{ id: 'html', name: 'HTML' },
+			{ id: 'text', name: 'TXT' },
+			{ id: 'protobuf', name: 'Protobuf' },
 			{ id: 'csv', name: 'CSV' },
 		];
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		const { close, onImport } = this.props;
-		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ 
-				{ name: 'Filtered extensions', extensions },
-			],
-		};
-
-		if (UtilCommon.isPlatformMac()) {
-			fileOptions.properties.push('openDirectory');
-		};
-
-		analytics.event('ClickImport', { type });
-
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
-				return;
-			};
-
-			close();
-			onImport(type, Object.assign(options || {}, { paths }));
-		});
+		Action.import(type, extensions, options);
+		this.props.close();
 	};
 
 	onImportHtml () {
@@ -100,6 +79,10 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportProtobuf () {
 		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb' ]);
+	};
+
+	onImportMarkdown () {
+		this.onImportCommon(I.ImportType.Markdown, [ 'zip', 'md' ]);
 	};
 
 });

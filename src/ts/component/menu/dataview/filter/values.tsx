@@ -129,7 +129,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								<div className="name">{element.name}</div>
 							</div>
 							<div className="caption">
-								{type.name}
+								{type?.name}
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />

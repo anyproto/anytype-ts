@@ -2,7 +2,6 @@ import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilDat
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
@@ -335,7 +334,7 @@ class Action {
 					callBack();
 					analytics.event('RemoveCompletely', { count });
 				},
-				onCancel: () => { callBack(); }
+				onCancel: () => callBack(),
 			},
 		});
 	};
@@ -376,7 +375,7 @@ class Action {
 
 	archive (ids: string[], callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
-			if (!message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 
@@ -391,7 +390,7 @@ class Action {
 
 	restore (ids: string[], callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (!message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 
@@ -400,6 +399,40 @@ class Action {
 			if (callBack) {
 				callBack();
 			};
+		});
+	};
+
+	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
+		const fileOptions: any = { 
+			properties: [ 'openFile' ],
+			filters: [ 
+				{ name: 'Filtered extensions', extensions },
+			],
+		};
+
+		if (UtilCommon.isPlatformMac()) {
+			fileOptions.properties.push('openDirectory');
+		};
+
+		analytics.event('ClickImport', { type });
+
+		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
+				return;
+			};
+
+			analytics.event('ClickImportFile', { type });
+
+			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
+
+				if (callBack) {	
+					callBack(message);
+				};
+			});
 		});
 	};
 

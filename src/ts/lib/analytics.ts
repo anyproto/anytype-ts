@@ -32,7 +32,7 @@ class Analytics {
 			return;
 		};
 
-		const { config } = commonStore;
+		const { config, interfaceLang } = commonStore;
 		const platform = UtilCommon.getPlatform();
 
 		let version = String(window.Electron.version.app || '').split('-');
@@ -63,6 +63,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			osVersion: window.Electron.version.os,
+			interfaceLang,
 		});
 
 		this.removeContext();

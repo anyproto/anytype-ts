@@ -23,6 +23,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	node = null;
 	ref = null;
+	timeout = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -173,7 +174,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	componentWillUnmount(): void {
-		this.unbind();	
+		this.unbind();
+		window.clearTimeout(this.timeout);
 	};
 
 	unbind () {
@@ -298,6 +300,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	open () {
+		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
@@ -308,13 +311,20 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		wrapper.css({ height: 0 });
 
 		raf(() => { wrapper.css({ height }); });
-		window.setTimeout(() => { 
-			node.removeClass('isClosed');
-			wrapper.css({ height: 'auto' });
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { 
+			const isClosed = Storage.checkToggle('widget', block.id);
+
+			if (!isClosed) {
+				node.removeClass('isClosed');
+				wrapper.css({ height: 'auto' });
+			};
 		}, 450);
 	};
 
 	close () {
+		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
 		const wrapper = node.find('#wrapper');
@@ -326,7 +336,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			node.addClass('isClosed'); 
 			wrapper.css({ height: 0 });
 		});
-		window.setTimeout(() => { wrapper.css({ height: '' }); }, 450);
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			const isClosed = Storage.checkToggle('widget', block.id);
+
+			if (isClosed) {
+				wrapper.css({ height: '' });
+			};
+		}, 450);
 	};
 
 	getData (subId: string, callBack?: () => void) {

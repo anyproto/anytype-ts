@@ -130,11 +130,12 @@ Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg'
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg').default;
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
+const CheckboxTask2 = require('img/icon/object/checkbox2.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
 	grey:	 '#f2f2f2',
-	black:	 '#2c2b27',
+	black:	 '#252525',
 	brown:	 '#b6b6b6',
 	orange:	 '#ffb522',
 	red:	 '#f55522',
@@ -242,7 +243,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Task: {
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img id="checkbox" src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
+				icon = <img id="checkbox" src={done ? CheckboxTask2 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -349,6 +350,40 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	onClick (e: any) {
 		if (this.props.noClick) {
 			e.stopPropagation();
+		};
+	};
+
+	onMouseEnter (e: any) {
+		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const node = $(this.node);
+		const object = this.getObject();
+
+		if (tooltip) {
+			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
+		};
+
+		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
+			node.find('#checkbox').attr({ src: CheckboxTask1 });
+		};
+		
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+		const node = $(this.node);
+		const object = this.getObject();
+		
+		Preview.tooltipHide(false);
+
+		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
+			node.find('#checkbox').attr({ src: CheckboxTask0 });
+		};
+		
+		if (onMouseLeave) {
+			onMouseLeave(e);
 		};
 	};
 
@@ -535,29 +570,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		name = name.trim().substring(0, 1).toUpperCase();
 
 		return name;
-	};
-
-	onMouseEnter (e: any) {
-		const { tooltip, tooltipY, onMouseEnter } = this.props;
-		const node = $(this.node);
-
-		if (tooltip) {
-			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
-		};
-		
-		if (onMouseEnter) {
-			onMouseEnter(e);
-		};
-	};
-	
-	onMouseLeave (e: any) {
-		const { onMouseLeave } = this.props;
-		
-		Preview.tooltipHide(false);
-		
-		if (onMouseLeave) {
-			onMouseLeave(e);
-		};
 	};
 
 });

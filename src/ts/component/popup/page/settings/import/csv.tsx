@@ -1,26 +1,14 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
-import { I, UtilCommon, translate, keyboard, analytics } from 'Lib';
-import { menuStore } from 'Store';
+import { I, translate, keyboard, Action } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 import Head from '../head';
-
-interface Props extends I.PopupSettings {
-	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-};
 
 interface State {
 	error: string;
 };
 
-const Delimiters: any[] = [
-	{ id: 'comma', name: 'Comma', caption: ',' },
-	{ id: 'semicolon', name: 'Semicolon', caption: ';' },
-	{ id: 'space', name: 'Space', caption: '_', value: ' ' },
-	{ id: 'tab', name: 'Tab', caption: '\\t', value: '\t' },
-	{ id: 'pipe', name: 'Pipe', caption: '|' },
-];
-
-class PopupSettingsPageImportCsv extends React.Component<Props, State> {
+class PopupSettingsPageImportCsv extends React.Component<I.PopupSettings, State> {
 
 	refMode = null;
 	refDelimiter = null;
@@ -29,7 +17,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		error: '',
 	};
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);
@@ -39,12 +27,19 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	render () {
 		this.init();
 
+		const { config } = commonStore;
 		const { error } = this.state;
-		const modeOptions = [ 
-			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') },
-			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
-		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
+
+		let modeOptions: any[] = [ 
+			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
+		];
+
+		if (config.experimental) {
+			modeOptions.unshift({ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') });
+		};
+
+		modeOptions = modeOptions.map(it => ({ ...it, id: String(it.id) }));
 
 		return (
 			<div>
@@ -164,7 +159,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	delimiterSet (id: string, v: string) {
-		const option = Delimiters.find(it => {
+		const delimiters = this.getDelimiters();
+		const option = delimiters.find(it => {
 			if (id && (it.id == id)) {
 				return true;
 			};
@@ -185,7 +181,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	delimiterOptions () {
-		const delimiters = UtilCommon.objectCopy(Delimiters);
+		const delimiters = this.getDelimiters();
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
@@ -197,39 +193,30 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	onImport () {
-		const { close, onImport } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ],
-			filters: [
-				{ name: 'ZIP & CSV', extensions: [ 'csv', 'zip' ] }
-			]
-		};
+		const { close } = this.props;
 
-		if (UtilCommon.isPlatformMac()) {
-			options.properties.push('openDirectory');
-		};
-
-		analytics.event('ClickImport', { type: I.ImportType.Csv });
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
+		Action.import(I.ImportType.Csv, [ 'csv', 'zip' ], this.data, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
 				return;
 			};
 
-			onImport(I.ImportType.Csv, { paths, ...this.data }, (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
-
-				close();
-			});
+			close();
 		});
 	};
 
 	save () {
 		this.props.storageSet({ csv: this.data });
+	};
+
+	getDelimiters () {
+		return [
+			{ id: 'comma', name: translate('delimiterComma'), caption: ',' },
+			{ id: 'semicolon', name: translate('delimiterSemicolon'), caption: ';' },
+			{ id: 'space', name: translate('delimiterSpace'), caption: '_', value: ' ' },
+			{ id: 'tab', name: translate('delimiterTab'), caption: '\\t', value: '\t' },
+			{ id: 'pipe', name: translate('delimiterPipe'), caption: '|' },
+		];
 	};
 
 };

@@ -21,7 +21,6 @@ import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportNotionWarning from './page/settings/import/notion/warning';
-import PageImportMarkdown from './page/settings/import/markdown';
 import PageImportCsv from './page/settings/import/csv';
 
 import PageExportIndex from './page/settings/export/index';
@@ -58,7 +57,6 @@ const Components: any = {
 	importNotion:		 PageImportNotion,
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
-	importMarkdown:		 PageImportMarkdown,
 	importCsv:			 PageImportCsv,
 
 	exportIndex:		 PageExportIndex,
@@ -90,7 +88,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.onPage = this.onPage.bind(this);
 		this.onExport = this.onExport.bind(this);
-		this.onImport = this.onImport.bind(this);
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.setLoading = this.setLoading.bind(this);
@@ -121,7 +118,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					prevPage={this.prevPage}
 					onPage={this.onPage} 
 					onExport={this.onExport} 
-					onImport={this.onImport}
 					onConfirmPin={this.onConfirmPin}
 					setConfirmPin={this.setConfirmPin}
 					setPinConfirmed={this.setPinConfirmed}
@@ -250,7 +246,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
 								'spaceInvite', 'spaceCreate', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
-								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
+								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv',
 								'exportIndex', 'exportProtobuf', 'exportMarkdown'
 							],
 							noHeader: [ 'spaceCreate' ],
@@ -313,23 +309,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		analytics.event('settings', { params: { id } });
 	};
 
-	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(commonStore.space, param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (!message.error.code) {
-				analytics.event('Import', { middleTime: message.middleTime, type });
-			};
-		});
-	};
-
 	onExport (type: I.ExportType, param: any) {
-		const { zip, nested, files, archived } = param || {};
+		const { zip, files, archived } = param || {};
 
 		analytics.event('ClickExport', { type });
-		Action.export([], type, zip, nested, files, archived, () => { this.props.close(); });
+		Action.export([], type, zip, false, files, archived, () => { this.props.close(); });
 	};
 
 	onKeyDown (e: any) {

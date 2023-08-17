@@ -94,7 +94,7 @@ class Survey {
 		const rand = UtilCommon.rand(0, randSeed);
 
 		// Show this survey to 5% of users
-		if (rand > randSeed * 1) {
+		if (rand > randSeed * 0.05) {
 			Storage.set('survey', { ...obj, time: UtilCommon.time() });
 			return;
 		};

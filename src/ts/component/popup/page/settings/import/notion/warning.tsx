@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, translate, analytics } from 'Lib';
+import { I, C, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../../head';
 
@@ -20,18 +20,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label">
-							{translate('popupSettingsImportNotionWarningLi1')}
-						</li>
-						<li className="label">
-							{translate('popupSettingsImportNotionWarningLi2')}
-						</li>
-						<li className="label">
-							{translate('popupSettingsImportNotionWarningLi3')}
-						</li>
-						<li className="label">
-							{translate('popupSettingsImportNotionWarningLi4')}
-						</li>
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi1') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi2') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi3') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi4') }} />
 					</ol>
 				</div>
 
@@ -41,12 +33,16 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 	};
 
 	onImport (): void {
-		const { close, onImport } = this.props;
+		const { close } = this.props;
 
 		analytics.event('ImportNotionProceed');
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });
+		C.ObjectImport(commonStore.space, { apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+			if (!message.error.code) {
+				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion });
+			};
+		});
 	};
 
 };

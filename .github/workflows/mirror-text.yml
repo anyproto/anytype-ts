@@ -49,7 +49,7 @@ jobs:
         with:
           payload: |
             {
-              "diff_link": ${{ github.event.head_commit.url }}
+              "diff_link": "${{ github.event.compare }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
