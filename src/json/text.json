@@ -9,7 +9,7 @@
     "commonSave": "Save",
     "commonCancel": "Cancel",
     "commonDelete": "Delete",
-    "commonDeleteImmediately": "Delete immediately",
+    "commonDeleteImmediately": "Delete permanently",
     "commonDefault": "Default",
     "commonSoon": "Soon",
     "commonTitle": "anytype",
@@ -662,14 +662,6 @@
     "popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
 
-    "popupSettingsImportMarkdownTitle": "How to import Markdown",
-
-    "popupSettingsImportNotionExample": "Notion example",
-    "popupSettingsImportNotionExampleStep1": "Select the page you wish to import",
-    "popupSettingsImportNotionExampleStep2": "Click the three dots menu in the top-left corner",
-    "popupSettingsImportNotionExampleStep3": "Chose the export format: Markdown & CSV",
-    "popupSettingsImportNotionExampleComplete": "Then, select either a <b>Zip archive or Markdown file<\/b> (.md) to complete the import",
-
     "popupSettingsImportCsvTitle": "CSV Import",
     "popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
@@ -767,7 +759,7 @@
 
     "popupSettingsImportCsvTable": "Table",
     "popupSettingsImportCsvCollection": "Collection",
-    "popupSettingsImportCsvMode": "Import CSV into",
+    "popupSettingsImportCsvMode": "Import CSV as",
     "popupSettingsImportCsvUseFirstRow": "Use the first row as column names",
     "popupSettingsImportCsvTranspose": "Transpose rows and columns",
     "popupSettingsImportCsvColumnsDivider": "Columns are divided by",
@@ -780,7 +772,7 @@
     "popupSettingsImportNotionHelpStep12": "Open My Connections and then Develop or manage integrations.",
     "popupSettingsImportNotionHelpStep13": "Click New integration or Create new integration.",
     "popupSettingsImportNotionHelpStep14": "Create a name (e.g. Anytype). Check the Capabilities (Read content and Read user information are required for the integration process).",
-    "popupSettingsImportNotionHelpStep15": "You integration will be created permanently. Internal Integration Token requires for connecting and importing your content from Notion. Copy it.",
+    "popupSettingsImportNotionHelpStep15": "Your integration will be created permanently. Internal Integration Token requires for connecting and importing your content from Notion. Copy it.",
     "popupSettingsImportNotionHelpStep21": "Select the pages you want to import into Anytype. Click on three dots on the upper right corner, then Add connections. Select your Anytype integration.",
     "popupSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
 

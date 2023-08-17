@@ -196,9 +196,12 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			};
 
-			value = value || UtilObject.defaultName('Page');
-			if (record.layout == I.ObjectLayout.Note) {
-				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
+			if (!isEditing) {
+				if (record.layout == I.ObjectLayout.Note) {
+					value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
+				} else {
+					value = value || UtilObject.defaultName('Page');
+				};
 			};
 		};
 
@@ -242,6 +245,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		if (isEditing) {
 			let value = this.value;
 
+			if (relation.relationKey == 'name') {
+				if (value == UtilObject.defaultName('Page')) {
+					value = '';
+				};
+			} else
 			if (relation.format == I.RelationType.Date) {
 				const format = [
 					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
@@ -251,8 +259,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				};
 
 				value = this.value !== null ? UtilCommon.date(format.join(' ').trim(), this.value) : '';
-			};
-
+			} else
 			if (relation.format == I.RelationType.Number) {
 				value = Relation.formatValue(relation, this.value, true);
 				value = value === null ? null : String(value);
@@ -260,6 +267,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 			if (this.ref) {
 				this.ref.setValue(value);
+
 				if (this.ref.setRange) {
 					const length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });

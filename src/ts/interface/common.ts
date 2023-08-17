@@ -125,9 +125,9 @@ export enum Usecase {
 };
 
 export enum HomePredefinedId {
-	Graph = 'graph',
-	Last = 'lastOpened',
-	Existing = 'existing',
+	Graph		 = 'graph',
+	Last		 = 'lastOpened',
+	Existing	 = 'existing',
 };
 
 export interface HeaderComponent extends RouteComponentProps<any> {

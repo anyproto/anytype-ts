@@ -28,7 +28,7 @@ export default [
 
 	h3(`Introduction of Localized Interfaces`),
 	img('./img/help/34/1.png', 'c70 screen'),
-	text(`With the help of our linguistically gifted community, we're thrilled to bring you the very first iteration of a localized interface. Anytype desktop is now available in 12 languages! To change your interface language, jump to Settings > Preferences and select the language of your choosing.`),
+	text(`With the help of our linguistically gifted community, we're thrilled to bring you the very first iteration of a localized interface. Anytype desktop is now available in 14 languages! To change your interface language, jump to Settings > Preferences and select the language of your choosing.`),
 	text(`Please note that all translations from the English language are community-contributed. If you notice any errors, you're free to submit your corrections ${link(`https://community.anytype.io/t/localization-launch/10269/13`, `using this platform`)}. Any updates will be shipped in the successive release.`),
 	text(`Don't see your language? Feel free to ${link(`https://github.com/orgs/anyproto/discussions/45`, `start contributing your own translations`)}!`),
 
