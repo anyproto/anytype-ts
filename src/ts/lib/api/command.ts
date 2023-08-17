@@ -1429,9 +1429,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
-const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
+const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.GroupsSubscribe.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setRelationkey(relationKey);
 	request.setFiltersList(filters.map(Mapper.To.Filter));

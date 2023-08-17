@@ -386,7 +386,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			details.layout = object.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [], object.defaultTemplateId, (message: any) => {
+		C.ObjectCreate(details, [], object.defaultTemplateId, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
