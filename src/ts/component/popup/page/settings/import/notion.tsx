@@ -51,7 +51,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="helpWrapper flex">
 					<Title text={translate('popupSettingsImportNotionHowTo')} />
 					<div className="btn" onClick={() => { onPage('importNotionHelp'); }}>
-						<Icon className="help" />{translate('popupSettingsImportNotionLearnMore')}
+						<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
 					</div>
 				</div>
 
@@ -63,6 +63,10 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 					<li>
 						<Label text={translate('popupSettingsImportNotionIntegrationList21')} />
 						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList22')} />
+					</li>
+					<li>
+						<Label text={translate('popupSettingsImportNotionIntegrationList31')} />
+						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList32')} />
 					</li>
 				</ol>
 			</React.Fragment>
