@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
-import { UtilObject, UtilCommon, I, C, translate, keyboard } from 'Lib';
+import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -158,8 +158,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		this.setState({ isLoading: true });
 
-		C.WorkspaceCreate(this.state,  this.state.useCase, () => {
+		C.WorkspaceCreate(this.state,  this.state.useCase, (message: any) => {
 			this.setState({ isLoading: false });
+			UtilRouter.switchSpace(message.objectId);
 			close();
 		});
 	};

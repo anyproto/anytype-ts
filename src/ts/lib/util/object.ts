@@ -367,7 +367,6 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
-			I.ObjectLayout.Date,
 			I.ObjectLayout.Space,
 		];
 	};
