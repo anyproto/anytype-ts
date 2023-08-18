@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -361,14 +361,14 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { space } = commonStore;
+		const { workspace } = blockStore;
 		const onSelect = (object: any, update: boolean) => {
-			C.ObjectWorkspaceSetDashboard(space, object.id, (message: any) => {
+			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: space, details: { spaceDashboardId: object.id } }, false);
+				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
