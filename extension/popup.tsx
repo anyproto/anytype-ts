@@ -6,8 +6,6 @@ import { configure } from 'mobx';
 import { dispatcher, C } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
-import 'scss/form/phrase.scss';
-
 import Index from './popup/index';
 import Util from './lib/util';
 
@@ -72,7 +70,6 @@ class Popup extends React.Component {
 		// @ts-ignore: saying 'chrome' is not found
 		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
-
 			C.AppGetVersion((message: any) => {
 				console.log(message);
 			});
