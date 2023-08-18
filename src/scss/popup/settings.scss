@@ -505,7 +505,7 @@
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
 			.label.stepDescription { @include text-common; margin: 0px 0px 16px 0px; }
 
-			.list { margin: 0px 0px 64px 1em; }
+			.list { margin: 0px 0px 64px 0px; }
 			.list:last-child { margin-bottom: 0px; }
 			.list {
 				li { margin: 0px 0px 48px 0px; }
