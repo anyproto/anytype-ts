@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from './app';
+import Popup from './popup';
+import Foreground from './foreground';
+import Util from './lib/util';
 
 const body = document.querySelector('body');
 const root = document.createElement('div');
@@ -11,4 +13,4 @@ if (body) {
 	body.appendChild(root);
 };
 
-ReactDOM.render(<App />, root);
+ReactDOM.render(Util.isPopup() ? <Popup /> : <Foreground />, root);

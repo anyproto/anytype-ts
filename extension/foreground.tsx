@@ -6,7 +6,7 @@ import { configure } from 'mobx';
 import { dispatcher, C } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
-import Index from './page/index';
+import Index from './foreground/index';
 
 configure({ enforceActions: 'never' });
 
@@ -31,7 +31,7 @@ const rootStore = {
 	popupStore,
 };
 
-class App extends React.Component {
+class Foreground extends React.Component {
 
 	node: any = null;
 
@@ -79,4 +79,4 @@ class App extends React.Component {
 
 };
 
-export default App;
+export default Foreground;
