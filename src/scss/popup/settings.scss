@@ -492,7 +492,8 @@
 			.list { @include text-small; margin-left: 1.35em; }
 			.list {
 				li { margin: 0px 0px 12px 0px; }
-				.label { margin: 0px 0px 4px 0px; }
+				.label { margin: 0px 0px 4px 0px; font-weight: 500; }
+				.label.grey { font-weight: 400; }
 				.label:last-child { margin: 0px; }
 			}
 		}

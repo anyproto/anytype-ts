@@ -185,7 +185,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				className="flex"
 			>
 				<div className="markers">
-					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
+					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
 				</div>
 				{additional ? (
 					<div className="additional">

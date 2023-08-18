@@ -366,7 +366,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	onMouseEnter (e: any) {
-		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const { canEdit, tooltip, tooltipY, onMouseEnter } = this.props;
 		const tc = commonStore.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
@@ -375,7 +375,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
 		};
 
-		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
+		if (canEdit && (object.layout == I.ObjectLayout.Task) && !object.done) {
 			node.find('#checkbox').attr({ src: CheckboxTask[tc][1] });
 		};
 		
@@ -385,14 +385,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 	
 	onMouseLeave (e: any) {
-		const { onMouseLeave } = this.props;
+		const { canEdit, onMouseLeave } = this.props;
 		const tc = commonStore.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
 		
 		Preview.tooltipHide(false);
 
-		if ((object.layout == I.ObjectLayout.Task) && !object.done) {
+		if (canEdit && (object.layout == I.ObjectLayout.Task) && !object.done) {
 			node.find('#checkbox').attr({ src: CheckboxTask[tc][0] });
 		};
 		

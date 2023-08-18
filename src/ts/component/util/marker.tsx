@@ -11,6 +11,7 @@ interface Props {
 	type: any;
 	color: string;
 	className?: string;
+	readonly?: boolean;
 	active: boolean;
 	onClick?(): void;
 };
@@ -141,19 +142,19 @@ const Marker = observer(class Marker extends React.Component<Props> {
 	};
 
 	onCheckboxEnter () {
-		const { active } = this.props;
+		const { active, readonly } = this.props;
 		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
 
-		if (!active && this[fn]) {
+		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](1) });
 		};
 	};
 
 	onCheckboxLeave () {
-		const { active } = this.props;
+		const { active, readonly } = this.props;
 		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
 
-		if (!active && this[fn]) {
+		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](0) });
 		};
 	};
