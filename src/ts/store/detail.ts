@@ -1,3 +1,4 @@
+import { htmlEncode } from 'js-htmlencode';
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, UtilObject, translate } from 'Lib';
 import { dbStore } from 'Store';
@@ -205,7 +206,7 @@ class DetailStore {
 
 	private mapCommon (object: any) {
 		object.name = Relation.getStringValue(object.name) || UtilObject.defaultName('Page');
-		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object.snippet = htmlEncode(Relation.getStringValue(object.snippet).replace(/\n/g, ' '));
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 		object.iconImage = Relation.getStringValue(object.iconImage);
