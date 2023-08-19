@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I } from 'Lib';
-import Constant from 'json/constant.json';
+import Extension from 'json/extension.json';
 
 interface State {
 	error: string;
@@ -14,7 +14,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	render () {
-		const prefix = Constant.extension.clipper.prefix;
+		const prefix = Extension.clipper.prefix;
 
 		return (
 			<div className={`${prefix}-page ${prefix}-pageIndex`}>

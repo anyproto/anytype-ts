@@ -6,13 +6,6 @@
 	"protocol": "anytype",
 	"appName": "Anytype",
 
-	"extension": {
-		"clipper": {
-			"id": "jkmhmgghdjjbafmkgjmplhemjjnkligf",
-			"prefix": "anytypeWebclipper"
-		}
-	},
-
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",

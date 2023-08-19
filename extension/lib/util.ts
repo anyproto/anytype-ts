@@ -1,9 +1,9 @@
-import Constant from 'json/constant.json';
+import Extension from 'json/extension.json';
 
 class Util {
 
 	extensionId () {
-		return Constant.extension.clipper.id;
+		return Extension.clipper.id;
 	};
 
 	isPopup () {
