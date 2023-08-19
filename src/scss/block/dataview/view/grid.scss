@@ -79,6 +79,13 @@
 				.name { width: calc(100% - 40px) !important; }
 				.icon.edit { display: block; }
 			}
+
+			.row.isNote {
+				.cell.isName.canEdit:hover {
+					.name { width: 100% !important; }
+					.icon.edit { display: none; }
+				}
+			};
 			
 			.cell.c-object, .cell.c-file { padding-right: 0px; }
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
