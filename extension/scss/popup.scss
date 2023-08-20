@@ -3,12 +3,12 @@ html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 #anytypeWebclipper-popup {
 	@import "~scss/form/button.scss";
 	@import "~scss/component/icon.scss";
-	@import "~scss/component/frame.scss";
 	@import "~scss/menu/common.scss";
 	@import "~scss/menu/select.scss";
 
 	.input, .select { @include text-small; height: 32px; padding: 0px 10px; border: 1px solid $colorBorderDark; width: 100%; }
 	.select { display: flex; align-items: center; }
+	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; }
 
 	.menus {
 		.menu.vertical { 
@@ -22,20 +22,17 @@ html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 		}
 	}
 
-	.page.pageIndex { height: 232px; }
+	.page.pageIndex { padding: 50px 16px; }
 	.page.pageIndex {
-		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.frame { padding: 0px 32px; width: 100%; display: flex; flex-direction: column; gap: 24px 0px; justify-content: center; text-align: center; }
 	}
 
-	.page.pageCreate { padding: 14px 16px 16px 16px; }
+	.page.pageCreate { padding: 16px; }
 	.page.pageCreate {
 		.row { margin: 0px 0px 10px 0px; }
 		.row:last-child { margin: 0px; }
 
 		.label { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; }
-		.buttons { display: flex; flex-direction: column; justify-content: center; }
-
 		.item.add { 
 			margin: 11px 0px; @include text-small; color: $colorDarkGrey; cursor: default; display: flex; flex-direction: row; align-items: center; 
 			gap: 0px 6px;
@@ -43,9 +40,10 @@ html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 		.icon.plus { width: 12px; height: 12px; background-image: url('../img/icon/plus.svg'); }
 	}
 
-	.page.pageSuccess { padding: 18px 16px 16px 16px; }
+	.page.pageSuccess { padding: 16px; text-align: center; }
 	.page.pageSuccess {
 		.label { @include text-small; }
 		.label.bold { @include text-common; font-weight: 600; }
+		.buttons { margin: 16px 0px 0px 0px; }
 	}
 }

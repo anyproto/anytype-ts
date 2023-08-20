@@ -1,16 +1,16 @@
 {
 	"manifest_version": 3,
-	"name": "Anytype",
+	"name": "Anytype Web Clipper",
 	"description": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
 	"version": "0.0.1",
 	"icons": {
-			"16": "img/icon16x16.png",
-			"128": "img/icon128x128.png"
+		"16": "img/icon16x16.png",
+		"128": "img/icon128x128.png"
 	},
 	"options_page": "settings/index.html",
 	"action": {
-			"default_title": "Chrome Addon v3 Starter",
-			"default_popup": "popup/index.html"
+		"default_title": "Anytype Web Clipper",
+		"default_popup": "popup/index.html"
 	},
 	"permissions": [
 		"contextMenus",
@@ -18,10 +18,10 @@
 		"tabs"
 	],
 	"host_permissions": [
-			"*://*/*"
+		"*://*/*"
 	],
 	"background": {
-			"service_worker": "js/background.js"
+		"service_worker": "js/background.js"
 	},
 	"content_scripts": [
 		{
