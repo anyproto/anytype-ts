@@ -7,6 +7,7 @@ import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
+import Extension from 'json/extension.json';
 
 import Index from './popup/index';
 import Create from './popup/create';
@@ -87,20 +88,23 @@ class Popup extends React.Component {
 		console.log('isPopup', Util.isPopup());
 
 		UtilCommon.init(history);
-
 		commonStore.configSet({ debug: { mw: true } }, false);
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log(msg);
+			console.log('Popup message', msg, sender);
+
+			if (sender.id != Extension.clipper.id) {
+				return;
+			};
 			return true;
 		});
 
-		/* @ts-ignore */
-		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
+		Util.sendMessage({ type: 'initNative' }, (response) => {
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 
-			UtilCommon.route('/create', {});
+			//UtilCommon.route('/create', {});
+			UtilCommon.route('/success', {});
 
 			C.AppGetVersion((message: any) => {
 				console.log(message);

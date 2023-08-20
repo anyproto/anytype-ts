@@ -1,7 +1,20 @@
 (() => {
 
-	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+	chrome.runtime.onInstalled.addListener((details) => {
+		if (![ 'install', 'update' ].includes(details.reason)) {
+			return;
+		};
 
+		if (details.reason == 'update') {
+			const { version } = chrome.runtime.getManifest();
+
+			console.log('Updated', details.previousVersion, version);
+		};
+
+		initMenu();
+	});
+
+	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		switch (msg.type) {
 			case 'initNative': {
 				initNative(sendResponse);
@@ -44,14 +57,21 @@
 		client.postMessage({ type: 'NMHGetOpenPorts' });
 	};
 
-	chrome.contextMenus.create({
-		id: 'webclipper',
-		title: 'Anytype Web Clipper',
-		contexts: [ 'selection' ]
-	});
+	initMenu = () => {
+		chrome.contextMenus.create({
+			id: 'webclipper',
+			title: 'Anytype Web Clipper',
+			contexts: [ 'selection' ]
+		});
 
-	chrome.contextMenus.onClicked.addListener((data) => {
-		console.log('Click');
-	});
+		chrome.contextMenus.onClicked.addListener(() => {
+			chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+				chrome.tabs.sendMessage(tabs[0].id, { type: 'clickMenu' }, (response) => {
+					console.log('Res', response);
+					return true;
+				});
+			});
+		});
+	};
 
 })();

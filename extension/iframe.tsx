@@ -5,6 +5,8 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
+import { Icon } from 'Component';
+import Extension from 'json/extension.json';
 
 import Index from './iframe/index';
 import Util from './lib/util';
@@ -40,6 +42,8 @@ class Iframe extends React.Component {
 
 	constructor (props: any) {
 		super(props);
+
+		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
@@ -47,6 +51,8 @@ class Iframe extends React.Component {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div ref={node => this.node = node}>
+						<Icon className="close" onClick={this.onClose} />
+
 						<Switch>
 							{Routes.map((item: any, i: number) => (
 								<Route path={item.path} exact={true} key={i} component={Components[item.path]} />
@@ -62,17 +68,20 @@ class Iframe extends React.Component {
 		console.log('isIframe', Util.isIframe());
 
 		UtilCommon.init(history);
-
 		commonStore.configSet({ debug: { mw: true } }, false);
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log(msg);
+			console.log('Iframe message', msg, sender);
+
+			if (sender.id != Extension.clipper.id) {
+				return;
+			};
+
 			return true;
 		});
 
-		/* @ts-ignore */
-		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
+		Util.sendMessage({ type: 'initNative' }, (response) => {
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 			C.AppGetVersion((message: any) => {
 				console.log(message);
@@ -81,6 +90,10 @@ class Iframe extends React.Component {
 	};
 
 	componentDidUpdate () {
+	};
+
+	onClose () {
+		parent.postMessage({ type: 'clickClose' }, '*');
 	};
 
 };

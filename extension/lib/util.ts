@@ -27,6 +27,11 @@ class Util {
 		);
 	};
 
+	sendMessage (msg: any, callBack: (response) => void){
+		/* @ts-ignore */
+		chrome.runtime.sendMessage(msg, callBack);
+	};
+
 };
 
 export default new Util();

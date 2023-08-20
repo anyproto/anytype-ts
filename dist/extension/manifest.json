@@ -14,7 +14,8 @@
 	},
 	"permissions": [
 		"contextMenus",
-		"nativeMessaging"
+		"nativeMessaging",
+		"tabs"
 	],
 	"host_permissions": [
 			"*://*/*"
