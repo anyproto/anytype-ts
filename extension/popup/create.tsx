@@ -16,6 +16,18 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	render () {
+		const spaceOptions = [
+			{ id: '1', name: '1' },
+			{ id: '2', name: '2' },
+			{ id: '3', name: '3' },
+		];
+
+		const typeOptions = [
+			{ id: '1', name: '1' },
+			{ id: '2', name: '2' },
+			{ id: '3', name: '3' },
+		];
+
 		return (
 			<div className="page pageCreate">
 				<form onSubmit={this.onSubmit}>
@@ -27,12 +39,28 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 						<div className="row">
 							<Label text="Space" />
-							<Select id="select-space" value="" options={[]} />
+							<Select 
+								id="select-space" 
+								value="1" 
+								options={spaceOptions} 
+								menuParam={{
+									horizontal: I.MenuDirection.Center,
+									vertical: I.MenuDirection.Center,
+								}}
+							/>
 						</div>
 
 						<div className="row">
 							<Label text="Save as" />
-							<Select id="select-type" value="" options={[]} />
+							<Select 
+								id="select-type" 
+								value="1" 
+								options={typeOptions} 
+								menuParam={{
+									horizontal: I.MenuDirection.Center,
+									vertical: I.MenuDirection.Center,
+								}}
+							/>
 						</div>
 					</div>
 
