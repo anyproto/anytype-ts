@@ -6,11 +6,24 @@ class Util {
 		return Extension.clipper.id;
 	};
 
-	isPopup () {
+	isExtension () {
 		return (
 			(location.protocol == 'chrome-extension:') && 
-			(location.hostname == this.extensionId()) && 
+			(location.hostname == this.extensionId())
+		);
+	};
+
+	isPopup () {
+		return (
+			this.isExtension() && 
 			(location.pathname == '/popup/index.html')
+		);
+	};
+
+	isIframe () {
+		return (
+			this.isExtension() && 
+			(location.pathname == '/iframe/index.html')
 		);
 	};
 

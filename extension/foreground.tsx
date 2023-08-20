@@ -1,80 +1,28 @@
 import * as React from 'react';
-import * as hs from 'history';
-import { Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'mobx-react';
-import { configure } from 'mobx';
-import { dispatcher, C } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
-
-import Index from './foreground/index';
-
-configure({ enforceActions: 'never' });
-
-const Routes = [
-	{ 'path': '/' },
-];
-
-const Components = {
-	'/': Index,
-};
-
-const memoryHistory = hs.createMemoryHistory;
-const history = memoryHistory();
-
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-};
 
 class Foreground extends React.Component {
 
-	node: any = null;
-
-	constructor (props: any) {
-		super(props);
-	};
-
 	render () {
+		/* @ts-ignore */
+		const url = chrome.runtime.getURL('iframe/index.html');	
+		const style: any = {
+			position: 'fixed',
+			zIndex: 10000,
+			width: 800,
+			height: 600,
+			background: '#fff',
+			borderRadius: 12,
+			left: '50%',
+			top: '50%',
+			marginTop: -300,
+			marginLeft: -400,
+			border: 0,
+			boxShadow: '0px 2px 28px rgba(0, 0, 0, 0.2)',
+		};
+
 		return (
-			<Router history={history}>
-				<Provider {...rootStore}>
-					<div ref={node => this.node = node}>
-						<Switch>
-							{Routes.map((item: any, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Components[item.path]} />
-							))}
-						</Switch>
-					</div>
-				</Provider>
-			</Router>
+			<iframe src={url} style={style} />
 		);
-	};
-
-	componentDidMount () {
-		commonStore.configSet({ debug: { mw: true } }, false);
-
-		// @ts-ignore: saying 'chrome' is not found
-		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log(msg);
-			return true;
-		});
-
-		// @ts-ignore: saying 'chrome' is not found
-		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
-			dispatcher.init(`http://127.0.0.1:${response.port}`);
-
-			C.AppGetVersion((message: any) => {
-				console.log(message);
-			});
-		});
-	};
-
-	componentDidUpdate () {
 	};
 
 };

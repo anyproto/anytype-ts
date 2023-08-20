@@ -6,7 +6,7 @@ import { configure } from 'mobx';
 import { dispatcher, C } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
-import Index from './popup/index';
+import Index from './iframe/index';
 import Util from './lib/util';
 
 configure({ enforceActions: 'never' });
@@ -32,7 +32,7 @@ const rootStore = {
 	popupStore,
 };
 
-class Popup extends React.Component {
+class Iframe extends React.Component {
 
 	node: any = null;
 
@@ -57,7 +57,7 @@ class Popup extends React.Component {
 	};
 
 	componentDidMount () {
-		console.log('isPopup', Util.isPopup());
+		console.log('isIframe', Util.isIframe());
 
 		commonStore.configSet({ debug: { mw: true } }, false);
 
@@ -76,6 +76,9 @@ class Popup extends React.Component {
 		});
 	};
 
+	componentDidUpdate () {
+	};
+
 };
 
-export default Popup;
+export default Iframe;

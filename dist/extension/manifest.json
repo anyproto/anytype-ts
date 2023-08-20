@@ -27,5 +27,11 @@
 			"js": [ "js/main.js" ],
 			"matches": [ "<all_urls>" ]
 		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [ "iframe/index.html" ],
+			"matches": [ "<all_urls>" ]
+		}
 	]
 }
