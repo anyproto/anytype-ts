@@ -790,11 +790,11 @@
     "popupSettingsImportNotionHowTo": "How to import from Notion",
     "popupSettingsImportNotionStepByStepGuide": "Step-by-step guide",
     "popupSettingsImportNotionIntegrationList11": "Create the integration you need to get Notion files",
-    "popupSettingsImportNotionIntegrationList12": "Settings &amp; members -> My connections -> Develop or manage integrations -> <b><a href=\"https://www.notion.so/my-integrations\">New integration</a></b>",
+    "popupSettingsImportNotionIntegrationList12": "Settings &amp; members → My connections → Develop or manage integrations → <b><a href=\"https://www.notion.so/my-integrations\">New integration</a></b>",
     "popupSettingsImportNotionIntegrationList21": "Provide read user information capability to integration",
     "popupSettingsImportNotionIntegrationList22": "Integration settings → Capabilities → Read user information without email addresses",
     "popupSettingsImportNotionIntegrationList31": "Add integration to the pages you want to import",
-    "popupSettingsImportNotionIntegrationList32": "Select document -> ... -> Add Connections -> Confirm Integration",
+    "popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
     "popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
