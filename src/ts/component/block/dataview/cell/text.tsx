@@ -40,9 +40,15 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
 		const record = getRecord(recordId);
 		
-		if (!record) {
+		if (!record || !relation) {
 			return null;
 		};
+
+		const isName = relation.relationKey == 'name';
+		const isLongText = relation.format == I.RelationType.LongText;
+		const isDate = relation.format == I.RelationType.Date;
+		const isNumber = relation.format == I.RelationType.Number;
+		const isUrl = relation.format == I.RelationType.Url;
 
 		let view = null;
 		let viewRelation: any = {};
@@ -56,26 +62,26 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		let EditorComponent = null;
 		let value = record[relation.relationKey];
 
-		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
+		if (isDate || isNumber) {
 			value = Relation.formatValue(relation, record[relation.relationKey], true);
-			if (relation.format == I.RelationType.Number) {
+			if (isNumber) {
 				value = value === null ? null : String(value);
 			};
 		} else {
 			value = String(value || '');
 		};
 
-		if (relation.format == I.RelationType.LongText) {
+		if (isLongText) {
 			value = value.replace(/\n/g, !isEditing && isInline ? ' ' : '<br/>');
 		};
 
 		if (isEditing) {
-			if (relation.format == I.RelationType.LongText) {
+			if (isLongText) {
 				EditorComponent = (item: any) => (
 					<span dangerouslySetInnerHTML={{ __html: value }} />
 				);
 			} else 
-			if (relation.format == I.RelationType.Date) {
+			if (isDate) {
 				const mask = [ '99.99.9999' ];
 				const ph = [];
 
@@ -132,21 +138,32 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		} else {
 			Name = (item: any) => {
 				let name = item.name;
+				let content = null;
+
 				if (name) {
 					if (textLimit) {
 						name = UtilCommon.shorten(name, textLimit);
 					};
-					return <div className="name" dangerouslySetInnerHTML={{ __html: name }} />;
+					content = <div className="name">{name}</div>;
 				} else {
-					return (
-						<div className="empty">
-							{placeholder || translate(`placeholderCell${relation.format}`)}
-						</div>
-					);
+					if (isName && (record.layout == I.ObjectLayout.Note)) {
+						content = (
+							<span className="emptyText">
+								{translate('commonEmpty')}
+							</span>
+						);
+					} else {
+						content = (
+							<div className="empty">
+								{placeholder || translate(`placeholderCell${relation.format}`)}
+							</div>
+						);
+					};
 				};
+				return content;
 			};
 
-			if (relation.format == I.RelationType.Date) {
+			if (isDate) {
 				if (value !== null) {
 					value = Number(value) || 0;
 
@@ -160,18 +177,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				};
 			};
 
-			if ((relation.format == I.RelationType.Url) && shortUrl) {
+			if (isUrl && shortUrl) {
 				value = value !== null ? UtilCommon.shortUrl(value) : '';
 			};
 
-			if (relation.format == I.RelationType.Number) {
+			if (isNumber) {
 				if (value !== null) {
 					const mapped = Relation.mapValue(relation, value);
-					if (mapped !== null) {
-						value = mapped;
-					} else {
-						value = UtilCommon.formatNumber(value);
-					};
+					value = mapped !== null ? mapped : UtilCommon.formatNumber(value);
 				} else {
 					value = '';
 				};
@@ -179,7 +192,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		let icon = null;
-		if (relation.relationKey == 'name') {
+		if (isName) {
 			if (!view || (view && !view.hideIcon)) {
 				icon = (
 					<IconObject 
@@ -198,7 +211,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 			if (!isEditing) {
 				if (record.layout == I.ObjectLayout.Note) {
-					value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
+					value = record.snippet;
 				} else {
 					value = value || UtilObject.defaultName('Page');
 				};

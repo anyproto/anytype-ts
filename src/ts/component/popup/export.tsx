@@ -183,21 +183,23 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { data } = param;
 		const { rootId } = data;
 
+		analytics.event('ClickExport', { type: this.format, route: 'MenuObject' });
+
 		switch (this.format) {
 			default:
-				Action.export([ rootId ], this.format, this.zip, this.nested, this.files, this.archived);
+				Action.export([ rootId ], this.format, this.zip, this.nested, this.files, this.archived, 'MenuObject');
 				break;
 
 			case I.ExportType.Html:
 				keyboard.onSaveAsHTML();
 
-				analytics.event('Export', { type: this.format });
+				analytics.event('Export', { type: this.format, route: 'MenuObject' });
 				break;
 
 			case I.ExportType.Pdf:
 				keyboard.onPrintToPDF({ landscape: this.landscape, printBg: this.printBg, pageSize: this.pageSize });
 
-				analytics.event('Export', { type: this.format });
+				analytics.event('Export', { type: this.format, route: 'MenuObject' });
 				break;
 		};
 		
