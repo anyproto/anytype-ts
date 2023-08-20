@@ -9,6 +9,7 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 
 import Index from './popup/index';
 import Create from './popup/create';
+import Success from './popup/success';
 import Util from './lib/util';
 
 import './scss/popup.scss';
@@ -23,6 +24,7 @@ const Routes = [
 const Components = {
 	index: Index,
 	create: Create,
+	success: Success,
 };
 
 const memoryHistory = hs.createMemoryHistory;

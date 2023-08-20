@@ -20,4 +20,10 @@ html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 		.buttons { display: flex; flex-direction: column; justify-content: center; }
 		.item.add { margin: 11px 0px; @include text-small; color: $colorDarkGrey; cursor: default; }
 	}
+
+	.page.pageSuccess { padding: 18px 16px 16px 16px; }
+	.page.pageSuccess {
+		.label { @include text-small; }
+		.label.bold { @include text-common; font-weight: 600; }
+	}
 }
