@@ -9,6 +9,8 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 import Index from './popup/index';
 import Util from './lib/util';
 
+import './scss/popup.scss';
+
 configure({ enforceActions: 'never' });
 
 const Routes = [

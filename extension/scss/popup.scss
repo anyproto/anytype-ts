@@ -1,0 +1,12 @@
+body.anytypeWebclipper-popup { width: 268px; font-family: 'Inter'; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; }
+
+#anytypeWebclipper-popup {
+	@import "~scss/form/button.scss";
+	@import "~scss/component/frame.scss";
+
+	.page.pageIndex { height: 232px; }
+	.page.pageIndex {
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+		.frame { padding: 0px 32px; width: 100%; display: flex; flex-direction: column; gap: 24px 0px; justify-content: center; text-align: center; }
+	}
+}

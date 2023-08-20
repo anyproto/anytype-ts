@@ -45,8 +45,8 @@
 	};
 
 	chrome.contextMenus.create({
-		id: 'workTime',
-		title: 'WorkTime',
+		id: 'webclipper',
+		title: 'Anytype Web Clipper',
 		contexts: [ 'selection' ]
 	});
 

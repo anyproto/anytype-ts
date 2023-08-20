@@ -9,6 +9,8 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 import Index from './iframe/index';
 import Util from './lib/util';
 
+require('./scss/iframe.scss');
+
 configure({ enforceActions: 'never' });
 
 const Routes = [

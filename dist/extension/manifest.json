@@ -24,7 +24,7 @@
 	},
 	"content_scripts": [
 		{
-			"js": [ "js/main.js" ],
+			"js": [ "js/foreground.js" ],
 			"matches": [ "<all_urls>" ]
 		}
 	],

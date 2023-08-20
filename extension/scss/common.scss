@@ -1,0 +1,11 @@
+@import "~scss/font.scss";
+
+body.anytypeWebclipper-iframe, 
+body.anytypeWebclipper-popup { 
+	font-family: 'Inter'; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; 
+}
+
+#anytypeWebclipper-iframe, 
+#anytypeWebclipper-popup {
+	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }
+}
