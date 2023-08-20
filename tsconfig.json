@@ -64,6 +64,5 @@
     "exclude": [ 
 		"node_modules/**/*", 
 		"dist/**/*", 
-		"extension/**/*"
 	]
 }

@@ -3,7 +3,7 @@ import * as hs from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
-import { dispatcher, C } from 'Lib'; 
+import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
 import Index from './iframe/index';
@@ -60,6 +60,8 @@ class Iframe extends React.Component {
 
 	componentDidMount () {
 		console.log('isIframe', Util.isIframe());
+
+		UtilCommon.init(history);
 
 		commonStore.configSet({ debug: { mw: true } }, false);
 

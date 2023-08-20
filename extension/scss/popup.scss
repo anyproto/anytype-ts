@@ -1,4 +1,4 @@
-body.anytypeWebclipper-popup { width: 268px; font-family: 'Inter'; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; }
+html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 
 #anytypeWebclipper-popup {
 	@import "~scss/form/button.scss";
@@ -8,5 +8,16 @@ body.anytypeWebclipper-popup { width: 268px; font-family: 'Inter'; font-size: 14
 	.page.pageIndex {
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.frame { padding: 0px 32px; width: 100%; display: flex; flex-direction: column; gap: 24px 0px; justify-content: center; text-align: center; }
+	}
+
+	.page.pageCreate { height: 424px; padding: 14px 16px 16px 16px; }
+	.page.pageCreate {
+		.row { margin: 0px 0px 10px 0px; }
+		.row:last-child { margin: 0px; }
+
+		.label { @include text-small; color: $colorDarkGrey; }
+		.input, .select { height: 32px; padding: 0px 10px; border: 1px solid $colorBorderDark; width: 100%; }
+		.buttons { display: flex; flex-direction: column; justify-content: center; }
+		.item.add { margin: 11px 0px; @include text-small; color: $colorDarkGrey; cursor: default; }
 	}
 }

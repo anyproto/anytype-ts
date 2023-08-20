@@ -24,8 +24,8 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					<Label text="To save in Anytype you need to Pair with app" />
 
 					<div className="buttons">
-						<Button color="orange" className="c28" text="Pair with app" onClick={this.onLogin} />
-						<Button color="blank" className="c28" text="Download app" onClick={this.onDownload} />
+						<Button color="orange" className="c32" text="Pair with app" onClick={this.onLogin} />
+						<Button color="blank" className="c32" text="Download app" onClick={this.onDownload} />
 					</div>
 				</Frame>
 			</div>

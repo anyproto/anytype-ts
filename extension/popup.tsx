@@ -1,12 +1,14 @@
 import * as React from 'react';
 import * as hs from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
-import { dispatcher, C } from 'Lib'; 
+import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 
 import Index from './popup/index';
+import Create from './popup/create';
 import Util from './lib/util';
 
 import './scss/popup.scss';
@@ -14,11 +16,13 @@ import './scss/popup.scss';
 configure({ enforceActions: 'never' });
 
 const Routes = [
-	{ 'path': '/' },
+	{ path: '/' },
+	{ path: '/:page' },
 ];
 
 const Components = {
-	'/': Index,
+	index: Index,
+	create: Create,
 };
 
 const memoryHistory = hs.createMemoryHistory;
@@ -32,6 +36,18 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+};
+
+class RoutePage extends React.Component<RouteComponentProps> {
+
+	render () {
+		const { match } = this.props;
+		const params = match.params as any;
+		const page = params.page || 'index';
+		const Component = Components[page];
+
+		return Component ? <Component /> : null;
+	};
 };
 
 class Popup extends React.Component {
@@ -49,7 +65,7 @@ class Popup extends React.Component {
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Components[item.path]} />
+								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
 					</div>
@@ -60,6 +76,8 @@ class Popup extends React.Component {
 
 	componentDidMount () {
 		console.log('isPopup', Util.isPopup());
+
+		UtilCommon.init(history);
 
 		commonStore.configSet({ debug: { mw: true } }, false);
 
@@ -72,6 +90,9 @@ class Popup extends React.Component {
 		/* @ts-ignore */
 		chrome.runtime.sendMessage({ type: 'initNative' }, (response) => {
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
+
+			UtilCommon.route('/create', {});
+
 			C.AppGetVersion((message: any) => {
 				console.log(message);
 			});

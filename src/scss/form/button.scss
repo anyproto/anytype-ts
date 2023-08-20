@@ -15,6 +15,9 @@
 .button.orange { background: $colorOrange; color: $colorWhite; }
 .button.orange:not(.disabled):hover { background: #f09c0e; }
 
+.button.pink { background: #ff6a7b; color: $colorWhite; }
+.button.orange:not(.disabled):hover { background: #ff6a7b; }
+
 .button.black { background: $colorBlack; color: $colorWhite; }
 .button.black:not(.disabled):hover { background: #41403d; }
 .button.black {
@@ -31,6 +34,7 @@
 .button.blank:not(.disabled):hover { background: $colorHoverMedium; }
 
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
+.button.c32{ @include text-small; height: 32px; border-radius: 6px; padding: 0px 10px; }
 .button.c28 { @include text-common; height: 28px; border-radius: 6px; padding: 0px 10px; }
 .button.c16 { @include text-9; height: 16px; border-radius: 4px; padding: 0px 4px; }
 

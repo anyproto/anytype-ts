@@ -356,9 +356,6 @@ class App extends React.Component<object, State> {
 		this.init();
 	};
 
-	componentDidUpdate () {
-	};
-
 	init () {
 		UtilCommon.init(history);
 
