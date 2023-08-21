@@ -1,3 +1,14 @@
 #anytypeWebclipper-iframe {
-	.icon.close { position: fixed; z-index: 1000; right: 16px; top: 16px; width: 20px; height: 20px; background: red; }
+	@import "~scss/_vars";
+
+	.head { 
+		display: flex; flex-direction: row; align-items: center; height: 43px; border-bottom: 1px solid $colorBorderLight; 
+		padding: 0px 16px;
+	}
+	.head {
+		.side { display: flex; flex-direction: row; align-items: center; width: 50%; }
+		.side.right { justify-content: flex-end; gap: 0px 14px; }
+
+		.button.simple { @include text-common; font-weight: 500; }
+	}
 }

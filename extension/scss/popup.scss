@@ -1,7 +1,8 @@
 html.anytypeWebclipper-popup { width: 268px; }
 
 #anytypeWebclipper-popup {
-	@import "~scss/form/button.scss";
+	@import "~scss/_vars";
+
 	@import "~scss/form/select.scss";
 	@import "~scss/form/filter.scss";
 

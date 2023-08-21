@@ -1,8 +1,10 @@
-@import "~scss/font.scss";
-@import "~scss/_vars";
-
 html.anytypeWebclipper-iframe, 
 html.anytypeWebclipper-popup { 
+	@import "~scss/font.scss";
+	@import "~scss/_vars";
+
+	@import "~scss/form/button.scss";
+
 	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }
 	body { font-family: 'Inter'; @include text-common; }
 

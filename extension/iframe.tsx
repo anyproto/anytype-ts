@@ -51,8 +51,6 @@ class Iframe extends React.Component {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div ref={node => this.node = node}>
-						<Icon className="close" onClick={this.onClose} />
-
 						<Switch>
 							{Routes.map((item: any, i: number) => (
 								<Route path={item.path} exact={true} key={i} component={Components[item.path]} />
@@ -85,8 +83,7 @@ class Iframe extends React.Component {
 			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
 
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
-			C.AppGetVersion((message: any) => {
-			});
+			C.AppGetVersion();
 		});
 	};
 

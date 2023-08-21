@@ -1,4 +1,4 @@
 #anytypeWebclipper-iframe {
-	position: fixed; z-index: 100000; width: 800px; height: 600px; background: #fff; border-radius: 12px;
-	left: 50%; top: 50%; margin: -300px 0px 0px -400px; border: 0px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2); display: none;
+	position: fixed; z-index: 100000; width: 800px; height: 600px; background: #fff; left: 50%; top: 50%; margin: -300px 0px 0px -400px; 
+	display: none; border-radius: 16px; border: 1px solid rgba(172, 169, 152, 0.12); box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.10);
 }
