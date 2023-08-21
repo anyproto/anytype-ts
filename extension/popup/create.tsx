@@ -1,20 +1,28 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Input, Button, Icon, Select } from 'Component';
-import { I, UtilData, UtilCommon } from 'Lib';
+import { Label, Input, Button, Icon, Select, Loader, Error } from 'Component';
+import { I, C, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
+import Util from '../lib/util';
+
 interface State {
 	error: string;
+	isLoading: boolean;
 };
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
 	spaceId = '';
 	typeId = '';
+	refName: any = null;
 	refSpace: any = null;
 	refType: any = null;
+	state = {
+		isLoading: false,
+		error: '',
+	};
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -25,13 +33,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	render () {
+		const { isLoading, error } = this.state;
+
 		return (
 			<div className="page pageCreate">
+				{isLoading ? <Loader type="loader" /> : ''}
+
 				<form onSubmit={this.onSubmit}>
 					<div className="rows">
 						<div className="row">
 							<Label text="Title" />
-							<Input />
+							<Input ref={ref => this.refName = ref} />
 						</div>
 
 						<div className="row">
@@ -72,8 +84,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 					</div>
 
 					<div className="buttons">
-						<Button color="pink" className="c32" text="Save" type="input" subType="submit" />
+						<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={this.onSubmit} />
 					</div>
+
+					<Error text={error} />
 				</form>
 			</div>
 		);
@@ -114,15 +128,26 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			subId: Constant.subId.type,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.type },
+				{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 			],
 		});
 	};
 
 	getOptions (subId: string) {
 		return dbStore.getRecords(subId, '').map(id => {
-			const object = detailStore.get(subId, id);
-			return { id, name: object.name, object };
-		});
+			let object = detailStore.get(subId, id);
+			if (object._empty_) {
+				return null;
+			};
+
+			let { name } = object;
+
+			if (object.iconEmoji) {
+				object = null;
+			};
+
+			return { id, name, object };
+		}).filter(it => it);
 	};
 
 	onTypeChange (id: string): void {
@@ -138,7 +163,29 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		UtilCommon.route('/success', {});
+		Util.getCurrentTab(tab => {
+			if (!tab) {
+				return;
+			};
+
+			const details = {
+				type: this.typeId,
+				source: tab.url,
+				name: this.refName.getValue(),
+			};
+
+			this.setState({ isLoading: true, error: '' });
+
+			C.ObjectCreateBookmark(details, (message: any) => {
+				this.setState({ isLoading: false });
+
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				} else {
+					UtilCommon.route('/success', {});
+				};
+			});
+		});
 	};
 
 });

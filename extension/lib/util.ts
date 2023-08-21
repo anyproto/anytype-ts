@@ -32,6 +32,11 @@ class Util {
 		chrome.runtime.sendMessage(msg, callBack);
 	};
 
+	getCurrentTab (callBack: (tab) => void) {
+		/* @ts-ignore */
+		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
+	};
+	
 };
 
 export default new Util();

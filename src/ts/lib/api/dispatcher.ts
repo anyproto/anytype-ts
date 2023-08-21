@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/browser';
+import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observable } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
