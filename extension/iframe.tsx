@@ -5,6 +5,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
+import { ListMenu } from 'Component';
 import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 import Extension from 'json/extension.json';
@@ -71,7 +72,13 @@ class RoutePage extends React.Component<RouteComponentProps> {
 		const page = params.page || 'index';
 		const Component = Components[page];
 
-		return Component ? <Component /> : null;
+		return (
+			<React.Fragment>
+				<ListMenu key="listMenu" {...this.props} />
+
+				{Component ? <Component /> : null}
+			</React.Fragment>
+		);
 	};
 };
 

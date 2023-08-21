@@ -68,7 +68,6 @@ window.Lib = {
 };
 
 class RoutePage extends React.Component<RouteComponentProps> {
-
 	render () {
 		const { match } = this.props;
 		const params = match.params as any;
