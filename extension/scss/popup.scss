@@ -8,6 +8,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 	@import "~scss/component/error.scss";
 	@import "~scss/component/icon.scss";
 	@import "~scss/component/iconObject.scss";
+	@import "~scss/component/loader.scss";
 
 	@import "~scss/menu/common.scss";
 	@import "~scss/menu/select.scss";
@@ -17,6 +18,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 	.input, .select { @include text-small; height: 32px; padding: 0px 10px; border: 1px solid $colorBorderDark; width: 100%; }
 	.select { display: flex; align-items: center; }
 	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; }
+	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; }
 
 	.menus {
 		.menu.vertical { 
