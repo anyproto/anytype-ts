@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as hs from 'history';
+import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
@@ -56,6 +57,7 @@ declare global {
 	}
 };
 
+window.$ = $;
 window.Store = rootStore;
 window.Lib = {
 	C,

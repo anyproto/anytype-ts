@@ -1,14 +1,16 @@
 import * as React from 'react';
 import * as hs from 'history';
+import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { dispatcher, C, UtilCommon } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
-import { Icon } from 'Component';
 import Extension from 'json/extension.json';
 
 import Index from './iframe/index';
+import Create from './iframe/create';
 import Util from './lib/util';
 
 require('./scss/iframe.scss');
@@ -16,11 +18,13 @@ require('./scss/iframe.scss');
 configure({ enforceActions: 'never' });
 
 const Routes = [
-	{ 'path': '/' },
+	{ path: '/' },
+	{ path: '/:page' },
 ];
 
 const Components = {
-	'/': Index,
+	index: Index,
+	create: Create,
 };
 
 const memoryHistory = hs.createMemoryHistory;
@@ -36,15 +40,44 @@ const rootStore = {
 	popupStore,
 };
 
+declare global {
+	interface Window {
+		Electron: any;
+		Store: any;
+		$: any;
+		Lib: any;
+		Graph: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
+	}
+};
+
+window.$ = $;
+window.Store = rootStore;
+window.Lib = {
+	C,
+	UtilCommon,
+	dispatcher,
+	Storage,
+	Animation,
+};
+
+class RoutePage extends React.Component<RouteComponentProps> {
+	render () {
+		const { match } = this.props;
+		const params = match.params as any;
+		const page = params.page || 'index';
+		const Component = Components[page];
+
+		return Component ? <Component /> : null;
+	};
+};
+
 class Iframe extends React.Component {
 
 	node: any = null;
-
-	constructor (props: any) {
-		super(props);
-
-		this.onClose = this.onClose.bind(this);
-	};
 
 	render () {
 		return (
@@ -53,7 +86,7 @@ class Iframe extends React.Component {
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Components[item.path]} />
+								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
 					</div>
@@ -67,6 +100,7 @@ class Iframe extends React.Component {
 
 		UtilCommon.init(history);
 		commonStore.configSet({ debug: { mw: true } }, false);
+		commonStore.gatewaySet('http://127.0.0.1:63423');
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -81,17 +115,10 @@ class Iframe extends React.Component {
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
 			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
-
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
-			C.AppGetVersion();
+
+			UtilCommon.route('/create', {});
 		});
-	};
-
-	componentDidUpdate () {
-	};
-
-	onClose () {
-		parent.postMessage({ type: 'clickClose' }, '*');
 	};
 
 };

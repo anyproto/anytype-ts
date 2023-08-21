@@ -34,6 +34,10 @@
 		{
 			"resources": [ "iframe/index.html" ],
 			"matches": [ "<all_urls>" ]
+		},
+		{
+			"resources": [ "iframe/index.html" ],
+			"matches": [ "<all_urls>" ]
 		}
 	]
 }

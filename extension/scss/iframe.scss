@@ -1,9 +1,10 @@
 #anytypeWebclipper-iframe {
 	@import "~scss/_vars";
+	@import "~scss/block/common";
 
 	.head { 
 		display: flex; flex-direction: row; align-items: center; height: 43px; border-bottom: 1px solid $colorBorderLight; 
-		padding: 0px 16px;
+		padding: 0px 16px; position: fixed; left: 0px; top: 0px; width: 100%; background: #fff; z-index: 9;
 	}
 	.head {
 		.side { display: flex; flex-direction: row; align-items: center; width: 50%; }
@@ -11,4 +12,6 @@
 
 		.button.simple { @include text-common; font-weight: 500; }
 	}
+
+	.blocks { padding: 96px 48px 48px 0px; }
 }
