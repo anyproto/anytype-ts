@@ -7,6 +7,18 @@ html.anytypeWebclipper-popup {
 	@import "~scss/form/button.scss";
 	@import "~scss/component/loader.scss";
 
+	@import "~scss/form/select.scss";
+	@import "~scss/form/filter.scss";
+
+	@import "~scss/component/error.scss";
+	@import "~scss/component/icon.scss";
+	@import "~scss/component/iconObject.scss";
+
+	@import "~scss/menu/common.scss";
+	@import "~scss/menu/select.scss";
+	@import "~scss/menu/type.scss";
+	@import "~scss/menu/search/object.scss";
+
 	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }
 	body { font-family: 'Inter'; @include text-common; }
 

@@ -9,6 +9,7 @@
 	};
 
 	iframe.id = 'anytypeWebclipper-iframe';
+	iframe.src = chrome.runtime.getURL('iframe/index.html');
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		console.log('Foreground message', msg, sender);
@@ -19,7 +20,6 @@
 
 		switch (msg.type) {
 			case 'clickMenu':
-				iframe.src = chrome.runtime.getURL('iframe/index.html');
 				iframe.style.display = 'block';
 				break;
 		};
@@ -38,7 +38,6 @@
 
 		switch (data.type) {
 			case 'clickClose':
-				iframe.src = '';
 				iframe.style.display = 'none';
 				break;
 		};
