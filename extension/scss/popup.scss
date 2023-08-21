@@ -1,10 +1,17 @@
-html.anytypeWebclipper-popup { width: 268px; background: #fff; }
+html.anytypeWebclipper-popup { width: 268px; }
 
 #anytypeWebclipper-popup {
 	@import "~scss/form/button.scss";
+	@import "~scss/form/select.scss";
+	@import "~scss/form/filter.scss";
+
 	@import "~scss/component/icon.scss";
+	@import "~scss/component/iconObject.scss";
+
 	@import "~scss/menu/common.scss";
 	@import "~scss/menu/select.scss";
+	@import "~scss/menu/type.scss";
+	@import "~scss/menu/search/object.scss";
 
 	.input, .select { @include text-small; height: 32px; padding: 0px 10px; border: 1px solid $colorBorderDark; width: 100%; }
 	.select { display: flex; align-items: center; }
@@ -14,17 +21,15 @@ html.anytypeWebclipper-popup { width: 268px; background: #fff; }
 		.menu.vertical { 
 			width: calc(100% - 32px); height: calc(100% - 32px); left: 16px !important; top: 16px !important; position: fixed;
 		}
-		.dimmer { background: rgba(0,0,0,0.5); }
-
-		.menu.menuSelect {
+		.menu.vertical {
 			.content { height: 100% !important; }
-			.items { height: 100%; }
 		}
+		.dimmer { background: rgba(0,0,0,0.5); }
 	}
 
-	.page.pageIndex { padding: 50px 16px; }
+	.page.pageIndex { padding: 50px 16px; text-align: center; }
 	.page.pageIndex {
-		.frame { padding: 0px 32px; width: 100%; display: flex; flex-direction: column; gap: 24px 0px; justify-content: center; text-align: center; }
+		.buttons { margin: 16px 0px 0px 0px; }
 	}
 
 	.page.pageCreate { padding: 16px; }

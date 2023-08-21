@@ -26,6 +26,7 @@
 	"content_scripts": [
 		{
 			"js": [ "js/foreground.js" ],
+			"css": [ "css/foreground.css" ],
 			"matches": [ "<all_urls>" ]
 		}
 	],

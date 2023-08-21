@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import Url from 'json/url.json';
 
 interface State {
@@ -31,6 +31,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	onLogin () {
+		UtilCommon.route('/create', {});
 	};
 
 	onDownload () {

@@ -112,6 +112,7 @@ class Select extends React.Component<Props, State> {
 		for (const option of this.props.options) {
 			options.push(option);
 		};
+
 		return options;
 	};
 

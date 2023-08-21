@@ -5,4 +5,9 @@ html.anytypeWebclipper-iframe,
 html.anytypeWebclipper-popup { 
 	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }
 	body { font-family: 'Inter'; @include text-common; }
+
+	.placeholder { 
+		pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
+		overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+	}
 }

@@ -82,9 +82,10 @@ class Iframe extends React.Component {
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
+
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 			C.AppGetVersion((message: any) => {
-				console.log(message);
 			});
 		});
 	};

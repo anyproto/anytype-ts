@@ -42,6 +42,29 @@ const rootStore = {
 	popupStore,
 };
 
+declare global {
+	interface Window {
+		Electron: any;
+		Store: any;
+		$: any;
+		Lib: any;
+		Graph: any;
+
+		isWebVersion: boolean;
+		Config: any;
+		Renderer: any;
+	}
+};
+
+window.Store = rootStore;
+window.Lib = {
+	C,
+	UtilCommon,
+	dispatcher,
+	Storage,
+	Animation,
+};
+
 class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
@@ -101,14 +124,11 @@ class Popup extends React.Component {
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
+
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 
-			//UtilCommon.route('/create', {});
-			UtilCommon.route('/success', {});
-
-			C.AppGetVersion((message: any) => {
-				console.log(message);
-			});
+			C.AppGetVersion();
 		});
 	};
 
