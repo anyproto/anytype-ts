@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Input, Button, Icon, Select } from 'Component';
-import { I, UtilData, UtilObject } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { I, UtilData, UtilCommon } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -21,6 +21,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onSpaceChange = this.onSpaceChange.bind(this);
+		this.onTypeChange = this.onTypeChange.bind(this);
 	};
 
 	render () {
@@ -136,6 +137,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSubmit (e: any) {
 		e.preventDefault();
+
+		UtilCommon.route('/success', {});
 	};
 
 });
