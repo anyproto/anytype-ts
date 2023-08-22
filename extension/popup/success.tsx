@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button } from 'Component';
-import { I, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { Button } from 'Component';
+import { I, UtilCommon, UtilObject } from 'Lib';
+import { extensionStore } from 'Store';
+import Url from 'json/url.json';
 
 interface State {
 	error: string;
@@ -17,12 +18,18 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
-		console.log(commonStore.createdObject);
+		const object = extensionStore.createdObject;
+
+		if (!object) {
+			return null;
+		};
+
+		const name = object.name || UtilObject.defaultName('Page');
 
 		return (
 			<div className="page pageSuccess">
-				<Label className="bold" text={UtilCommon.sprintf('"%s" is saved!', 'Wiki-Capybara')} />
-				<Label text="The quick brown fox jumps over the lazy dog" />
+				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(name, 64))}</div>
+				<div className="label">{object.description}</div>
 
 				<div className="buttons">
 					<Button color="blank" className="c32" text="Open in app" onClick={this.onOpen} />
@@ -32,6 +39,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	onOpen () {
+		window.open(Url.protocol + UtilObject.route(extensionStore.createdObject));
 	};
 
 });

@@ -121,7 +121,7 @@ class Iframe extends React.Component {
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiR3JSaVhmTncifQ.Tn0XaEtKoJbRkMmBGVnWJKcDdbaJiMQ6xmyaL7vdblY');
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 
 			UtilCommon.route('/create', {});

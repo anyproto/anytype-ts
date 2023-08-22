@@ -3,9 +3,9 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
-import { Label, Input, Button, Icon, Select, Loader, Error, DragBox, Tag, Textarea } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard } from 'Lib';
-import { dbStore, detailStore, commonStore, menuStore } from 'Store';
+import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Textarea } from 'Component';
+import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject } from 'Lib';
+import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
 import Util from '../lib/util';
 
@@ -204,7 +204,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTypes () {
-		return this.getObjects(Constant.subId.type).map(it => this.mapper(it)).filter(it => this.filter(it));
+		const layouts = UtilObject.getPageLayouts();
+		return this.getObjects(Constant.subId.type).map(it => this.mapper(it)).filter(it => this.filter(it)).filter(it => layouts.includes(it.recommendedLayout));
 	};
 
 	mapper (it: any) {
@@ -226,7 +227,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTagsValue () {
-		return this.details.tag.map(id => detailStore.get(Constant.subId.option, id)).filter(it => it && !it._empty_);
+		return dbStore.getRecords(Constant.subId.option, '').
+			filter(id => this.details.tag.includes(id)).
+			map(id => detailStore.get(Constant.subId.option, id)).
+			filter(it => it && !it._empty_);
 	};
 
 	clear () {
@@ -377,7 +381,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		this.details.tag = value;
 		this.clear();
-		this.forceUpdate();
+		
+		window.setTimeout(() => this.forceUpdate(), 50);
 	};
 
 	onSubmit (e: any) {
@@ -401,13 +406,13 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			this.setState({ isLoading: true, error: '' });
 
-			C.ObjectCreateBookmark(details, (message: any) => {
+			C.ObjectCreate(details, [], '', (message: any) => {
 				this.setState({ isLoading: false });
 
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				} else {
-					commonStore.createdObject = message.details;
+					extensionStore.createdObject = message.details;
 
 					UtilCommon.route('/success', {});
 				};

@@ -7,7 +7,7 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { dispatcher, C, UtilCommon } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
 
 import Index from './popup/index';
@@ -41,6 +41,7 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	extensionStore,
 };
 
 declare global {
@@ -125,7 +126,7 @@ class Popup extends React.Component {
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoib1dQc3hQaWoifQ.FcfYkCJPbzCFYP5mryoYNdebgLaTWl04wa-Zu4IPTyk');
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiR3JSaVhmTncifQ.Tn0XaEtKoJbRkMmBGVnWJKcDdbaJiMQ6xmyaL7vdblY');
 
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 
