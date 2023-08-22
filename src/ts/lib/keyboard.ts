@@ -509,7 +509,7 @@ class Keyboard {
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true, 'MenuSystem');
 				break;
 			};
 

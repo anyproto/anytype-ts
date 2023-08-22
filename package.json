@@ -108,6 +108,7 @@
 		"inputmask": "^5.0.5",
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
+		"js-htmlencode": "^0.3.0",
 		"katex": "^0.16.8",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",

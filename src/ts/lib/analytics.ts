@@ -238,6 +238,7 @@ class Analytics {
 			};
 
 			case 'ClickImport':
+			case 'ClickImportFile':
 			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];

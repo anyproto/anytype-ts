@@ -214,27 +214,6 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
-			if (onSelectPath) {
-				onSelectPath();
-			};
-
-			C.ObjectListExport(commonStore.space, paths[0], ids, format, zip, nested, files, archived, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export', { type: format, middleTime: message.middleTime });
-
-				if (callBack) {
-					callBack(message);
-				};
-			});
-		});
-	};
-
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		C.WorkspaceObjectAdd(commonStore.space, object.id, (message: any) => {
 			if (message.error.code) {
@@ -430,6 +409,27 @@ class Action {
 				};
 
 				if (callBack) {	
+					callBack(message);
+				};
+			});
+		});
+	};
+
+	export (ids: string[], type: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, route: string, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
+			if (onSelectPath) {
+				onSelectPath();
+			};
+
+			C.ObjectListExport(paths[0], ids, type, zip, nested, files, archived, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				Renderer.send('pathOpen', paths[0]);
+				analytics.event('Export', { type, middleTime: message.middleTime, route });
+
+				if (callBack) {
 					callBack(message);
 				};
 			});
