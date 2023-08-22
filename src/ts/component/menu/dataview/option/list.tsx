@@ -329,9 +329,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const relation = data.relation.get();
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
+		const ret = [];
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
-		const ret = [];
 		let check = [];
 
 		if (filterMapper) {
@@ -361,11 +361,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
-		const { noFilter } = data;
+		const { noFilter, maxHeight } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = noFilter ? 16 : 58;
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT + offset, Math.min(maxHeight || 360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

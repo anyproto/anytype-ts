@@ -367,7 +367,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noScroll } = data;
+		const { noScroll, maxHeight } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
@@ -388,7 +388,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (!noScroll) {
-			height = Math.min(370, height);
+			height = Math.min(maxHeight || 370, height);
 		};
 		height = Math.max(44, height);
 

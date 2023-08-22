@@ -40,16 +40,17 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const { isEditing } = this.state;
 		const record = getRecord(recordId);
 		const isStatus = relation.format == I.RelationType.Status;
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
-		const length = value.length;
 		let content = null;
+
+		const length = value.length;
 
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
@@ -354,8 +355,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const length = value.length;
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
 		};
 
 		if (onChange) {
@@ -368,8 +370,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	resize () {
-		const win = $(window);
-		win.trigger('resize.menuDataviewOptionList');
+		$(window).trigger('resize.menuDataviewOptionList');
 	};
 
 });

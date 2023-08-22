@@ -2,26 +2,17 @@ html.anytypeWebclipper-popup { width: 268px; }
 
 #anytypeWebclipper-popup {
 	@import "~scss/_vars";
+	@import "~scss/component/dragbox.scss";
 
-	.input, .select { @include text-small; height: 32px; padding: 0px 10px; border: 1px solid $colorBorderDark; width: 100%; }
+	.input, .select, .textarea { @include text-small; border: 1px solid $colorBorderDark; width: 100%; border-radius: 1px; }
+
+	.input, .select { height: 32px; padding: 0px 10px; }
 	.select { display: flex; align-items: center; }
-	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; }
+	.textarea { padding: 10px; resize: none; height: 68px; display: block; }
+	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; margin: 16px 0px 0px 0px; }
 	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; }
 
-	.menus {
-		.menu.vertical { 
-			width: calc(100% - 32px); height: calc(100% - 32px); left: 16px !important; top: 16px !important; position: fixed;
-		}
-		.menu.vertical {
-			.content { height: 100% !important; }
-		}
-		.dimmer { background: rgba(0,0,0,0.5); }
-	}
-
 	.page.pageIndex { padding: 50px 16px; text-align: center; }
-	.page.pageIndex {
-		.buttons { margin: 16px 0px 0px 0px; }
-	}
 
 	.page.pageCreate { padding: 16px; }
 	.page.pageCreate {
@@ -33,13 +24,24 @@ html.anytypeWebclipper-popup { width: 268px; }
 			margin: 11px 0px; @include text-small; color: $colorDarkGrey; cursor: default; display: flex; flex-direction: row; align-items: center; 
 			gap: 0px 6px;
 		}
+
 		.icon.plus { width: 12px; height: 12px; background-image: url('../img/icon/plus.svg'); }
+
+		.box { border: 1px solid $colorBorderDark; border-radius: 1px; }
+		.box {
+			.value { padding: 6px 10px 0px 10px; }
+			.value {
+				.itemWrap { margin: 0px 6px 6px 0px; }
+			}
+
+			.entryWrap { position: relative; line-height: 18px; display: inline; vertical-align: top; }
+			.cellContent { height: auto !important; position: relative; box-shadow: 0px 0px; }
+		}
 	}
 
 	.page.pageSuccess { padding: 16px; text-align: center; }
 	.page.pageSuccess {
 		.label { @include text-small; }
 		.label.bold { @include text-common; font-weight: 600; }
-		.buttons { margin: 16px 0px 0px 0px; }
 	}
 }

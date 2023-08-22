@@ -252,8 +252,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const length = value.length;
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
 		};
 
 		if (onChange) {
