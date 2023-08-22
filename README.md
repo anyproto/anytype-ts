@@ -9,24 +9,28 @@ Official Anytype client for MacOS, Linux, and Windows.
 
 ```
 apt install libsecret-1-dev
+apt install jq
 ```
 
 [Fedora](https://packages.fedoraproject.org/pkgs/libsecret/libsecret):
 
 ```
 dnf install libsecret
+dnf install jq
 ```
 
 [Arch-based](https://archlinux.org/packages/core/x86_64/libsecret) (Manjaro / EndeavourOS / ... ):
 
 ```
 pacman -S libsecret
+pacman -S jq
 ```
 
 [Alpine](https://pkgs.alpinelinux.org/packages?name=libsecret) (usually for docker-related stuff):
 
 ```
 apk add libsecret
+apk add jq
 ```
 
 ### Installation
