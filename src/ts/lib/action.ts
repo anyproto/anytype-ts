@@ -421,7 +421,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, type, zip, nested, files, archived, (message: any) => {
+			C.ObjectListExport(commonStore.space, paths[0], ids, type, zip, nested, files, archived, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
