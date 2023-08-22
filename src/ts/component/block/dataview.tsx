@@ -1175,12 +1175,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return allowed;
 	};
 
-	isAllowedTemplate () {
-		const typeId = this.getTypeId();
-		const type = dbStore.getType(typeId);
-		const restrictions = UtilObject.getLayoutsWithoutTemplates();
-
-		return !restrictions.includes(type.recommendedLayout);
+	isAllowedTemplate (): boolean {
+		const type = dbStore.getType(this.getTypeId());
+		return type ? !UtilObject.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 
 	isCollection (): boolean {

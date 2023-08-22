@@ -317,6 +317,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			}
 		];
 
@@ -629,8 +630,8 @@ class UtilData {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
-			ignoreHidden: false,
-			ignoreDeleted: false,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 			withArchived: false,
 			noDeps: false,
 			afterId: '',

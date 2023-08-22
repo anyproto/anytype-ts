@@ -238,6 +238,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		if (!keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, () => {
+				e.preventDefault();
+
 				const subId = dbStore.getSubId(rootId, Constant.blockId.dataview);
 				const records = dbStore.getRecords(subId, '');
 

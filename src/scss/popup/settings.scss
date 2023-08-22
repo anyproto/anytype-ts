@@ -495,7 +495,8 @@
 			.list { @include text-small; margin-left: 1.35em; }
 			.list {
 				li { margin: 0px 0px 12px 0px; }
-				.label { margin: 0px 0px 4px 0px; }
+				.label { margin: 0px 0px 4px 0px; font-weight: 500; }
+				.label.grey { font-weight: 400; }
 				.label:last-child { margin: 0px; }
 			}
 		}
@@ -503,11 +504,16 @@
 		.side.right.tabImportNotionHelp {
 			.title { margin: 0px 0px 44px 0px !important; }
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
+			.label.stepDescription { @include text-common; margin: 0px 0px 16px 0px; }
 
-			.list { margin: 0px 0px 64px 1em; }
+			.list { margin: 0px 0px 64px 0px; }
 			.list:last-child { margin-bottom: 0px; }
 			.list {
 				li { margin: 0px 0px 48px 0px; }
+				li {
+					ul { display: block; padding: 0px; }
+					li { margin-bottom: 0px; list-style-type: disc; }
+				}
 				li:last-child { margin: 0px; }
 				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorVeryLightGrey; border-radius: 6px; }
 			}

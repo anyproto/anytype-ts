@@ -213,23 +213,15 @@ class Util {
 
 	enabledLangs () {
 		return [
-			"da-DK",
-			"de-DE",
-			"en-US",
-			"es-ES",
-			"fr-FR",
-			"hi-IN",
-			"id-ID",
-			"it-IT",
-			"nl-NL",
-			"no-NO",
-			"ro-RO",
-			"ru-RU",
-			"uk-UA",
-			"zh-CN",
-			"zh-TW"
+			"da-DK", "de-DE", "en-US",
+			"es-ES", "fr-FR", "hi-IN",
+			"id-ID", "it-IT", "nl-NL",
+			"no-NO", "pt-BR", "ro-RO",
+			"ru-RU", "uk-UA", "vi-VN",
+			"zh-CN", "zh-TW"
 		];
 	};
+
 
 	translate (key) {
 		const lang = this.getLang();

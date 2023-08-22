@@ -53,8 +53,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={(e) => { UtilCommon.onUrl(Url.telegram); }} className="telegram" />
-						<Icon onClick={(e) => { UtilCommon.onUrl(Url.twitter); }} className="twitter" />
+						<Icon onClick={() => UtilCommon.onUrl(Url.mail)} className="mail" />
 					</div>
 				</div>
 				
