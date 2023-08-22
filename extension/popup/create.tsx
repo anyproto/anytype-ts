@@ -407,6 +407,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				} else {
+					commonStore.createdObject = message.details;
+
 					UtilCommon.route('/success', {});
 				};
 

@@ -45,6 +45,7 @@ class CommonStore {
 	public languages: string[] = [];
 	public workspaceId = '';
 	public notionToken = '';
+	public createdObject = null;
 
 	public previewObj: I.Preview = { 
 		type: null, 

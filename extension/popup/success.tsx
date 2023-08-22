@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
 import { I, UtilCommon } from 'Lib';
+import { commonStore } from 'Store';
 
 interface State {
 	error: string;
@@ -16,6 +17,8 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
+		console.log(commonStore.createdObject);
+
 		return (
 			<div className="page pageSuccess">
 				<Label className="bold" text={UtilCommon.sprintf('"%s" is saved!', 'Wiki-Capybara')} />
