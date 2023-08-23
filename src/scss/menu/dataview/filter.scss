@@ -18,7 +18,7 @@
 			}
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			.select {
 				.icon.relation { display: none; }
 				.icon.arrow { display: none; }
@@ -61,7 +61,7 @@
 	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
-		.select:hover, .select.active { background: none; }
+		.select:hover, .select.isFocused { background: none; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}

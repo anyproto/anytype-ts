@@ -19,7 +19,7 @@
 			.name { @include text-overflow-nw; width: 100%; vertical-align: middle; }
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			.select {
 				.icon.relation { display: none; }
 				.icon.arrow { display: none; }

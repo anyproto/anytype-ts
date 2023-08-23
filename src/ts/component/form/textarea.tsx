@@ -130,6 +130,7 @@ class Textarea extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(true);
+		this.addClass('isFocused');
 	};
 	
 	onBlur (e: any) {
@@ -138,6 +139,7 @@ class Textarea extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
+		this.removeClass('isFocused');
 	};
 
 	onCopy (e: any) {
@@ -181,12 +183,19 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	setError (v: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
+		v ? this.addClass('withError') : this.removeClass('withError');
+	};
 
-		const node = $(this.node);
-		v ? node.addClass('withError') : node.removeClass('withError');
+	addClass (v: string) {
+		if (this._isMounted) {
+			$(this.node).addClass(v);
+		};
+	};
+	
+	removeClass (v: string) {
+		if (this._isMounted) {
+			$(this.node).removeClass(v);
+		};
 	};
 	
 };

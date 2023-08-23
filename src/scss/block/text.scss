@@ -204,7 +204,7 @@
 				.item { @include text-common; }
 				.name { overflow: visible; }
 			}
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			
 			.buttons { 
 				position: absolute; right: 16px; top: 0px; display: flex; flex-direction: row; gap: 0px 8px; opacity: 0; 

@@ -20,7 +20,7 @@
 			.select {
 				.name { overflow: visible; }
 			}
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 		}
 
 		#value { font-size: 20px; line-height: 20px; width: 100%; }

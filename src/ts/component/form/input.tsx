@@ -158,6 +158,7 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(true);
+		this.addClass('isFocused');
 	};
 	
 	onBlur (e: any) {
@@ -166,6 +167,7 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
+		this.removeClass('isFocused');
 	};
 	
 	onPaste (e: any) {
@@ -260,19 +262,15 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	addClass (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass(v);
 		};
-
-		$(this.node).addClass(v);
 	};
 	
 	removeClass (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass(v);
 		};
-
-		$(this.node).removeClass(v);
 	};
 	
 };

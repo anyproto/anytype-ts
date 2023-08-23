@@ -12,7 +12,7 @@
 			.iconObject { margin-right: 10px; }
 			
 			.select { border: 0px; padding: 0px; display: block; }
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			.select.grey { color: $colorMediumGrey; }
 			.select {
 				.icon.relation { display: none; }

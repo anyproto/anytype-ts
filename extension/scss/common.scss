@@ -31,7 +31,9 @@ html.anytypeWebclipper-popup {
 	.menus {
 		.menu.vertical { width: calc(100% - 32px); left: 16px; }
 		.menu.vertical {
-			.wrap, .items, .scrollArea { border-radius: inherit; }
+			.wrap, .items, .scrollArea, .ReactVirtualized__List { border-radius: inherit; }
 		}
 	}
+
+	.tagItem { @include text-small; }
 }

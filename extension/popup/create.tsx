@@ -19,6 +19,7 @@ const MAX_LENGTH = 320;
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
 	details: any = {
+		source: '',
 		type: '',
 		tag: [],
 	};
@@ -91,7 +92,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 							<Select 
 								id="select-type" 
 								ref={ref => this.refType = ref}
-								readonly={workspace ? true : false}
+								readonly={!workspace}
 								value="" 
 								options={[]}
 								onChange={this.onTypeChange}
@@ -105,8 +106,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						<div className="row">
 							<Label text="Tag" />
 
-							<div className="box cell isEditing c-select" onClick={this.focus}>
-								<div id="select-tag" className="value cellContent c-select">
+							<div id="select-tag" className="box cell isEditing c-select" onClick={this.focus}>
+								<div className="value cellContent c-select">
 									<span id="list">
 										<DragBox onDragEnd={this.onDragEnd}>
 											{tags.map((item: any, i: number) => (
@@ -173,26 +174,57 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount(): void {
-		this.init();
+		this.initSpace();
+		this.initName();
+		this.initType();
 	};
 
 	componentDidUpdate(): void {
-		this.init();
+		this.initType();
 	};
 
-	init () {
+	initSpace () {
 		const spaces = this.getSpaces();
+
+		if (!this.refSpace || !spaces.length) {
+			return;
+		};
+
+		const space = commonStore.workspace || spaces[0].id;
+
+		this.refSpace.setOptions(spaces);
+		this.refSpace.setValue(space);
+		this.onSpaceChange(space);
+	};
+
+	initType () {
 		const types = this.getTypes();
 
-		if (this.refSpace && spaces.length) {
-			this.refSpace.setOptions(spaces);
-			this.refSpace.setValue(commonStore.workspace || spaces[0].id);
+		if (!this.refType || !types.length) {
+			return;
 		};
 
-		if (this.refType && types.length) {
-			this.refType.setOptions(types);
-			this.refType.setValue(this.details.type || types[0].id);
+		const type = this.details.type || types[0].id;
+
+		this.refType.setOptions(types);
+		this.refType.setValue(type);
+	};
+
+	initName () {
+		if (!this.refName) {
+			return;
 		};
+
+		Util.getCurrentTab(tab => {
+			if (!tab) {
+				return;
+			};
+
+			this.refName.setValue(tab.title);
+			this.refName.focus();
+
+			this.details.source = tab.url;
+		});
 	};
 
 	getObjects (subId: string) {
@@ -308,12 +340,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onFocus () {
 		const relation = dbStore.getRelationByKey('tag');
+		const element = '#select-tag';
 
 		menuStore.open('dataviewOptionList', {
-			element: '#select-tag',
+			element,
 			horizontal: I.MenuDirection.Center,
 			commonFilter: true,
 			noFlipY: true,
+			onOpen: () => {
+				window.setTimeout(() => { $(element).addClass('isFocused'); });
+			},
+			onClose: () => { $(element).removeClass('isFocused'); },
 			data: {
 				canAdd: true,
 				filter: '',
@@ -381,8 +418,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		this.details.tag = value;
 		this.clear();
-		
-		window.setTimeout(() => this.forceUpdate(), 50);
+		this.forceUpdate();
 	};
 
 	onSubmit (e: any) {
@@ -392,33 +428,23 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		Util.getCurrentTab(tab => {
-			if (!tab) {
-				return;
+		this.isCreating = true;
+		this.setState({ isLoading: true, error: '' });
+
+		const details = Object.assign({ name: this.refName?.getValue() }, this.details);
+
+		C.ObjectCreate(details, [], '', (message: any) => {
+			this.setState({ isLoading: false });
+
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			} else {
+				extensionStore.createdObject = message.details;
+
+				UtilCommon.route('/success', {});
 			};
 
-			this.isCreating = true;
-
-			const details = Object.assign({
-				source: tab.url,
-				name: this.refName?.getValue(),
-			}, this.details);
-
-			this.setState({ isLoading: true, error: '' });
-
-			C.ObjectCreate(details, [], '', (message: any) => {
-				this.setState({ isLoading: false });
-
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-				} else {
-					extensionStore.createdObject = message.details;
-
-					UtilCommon.route('/success', {});
-				};
-
-				this.isCreating = false;
-			});
+			this.isCreating = false;
 		});
 	};
 

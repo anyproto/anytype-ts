@@ -20,10 +20,10 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	render () {
 		return (
 			<div className="page pageIndex">
-				<Label text="To save in Anytype you need to Pair with app" />
+				<Label text="To save in Anytype you need to Pair with the app" />
 
 				<div className="buttons">
-					<Button color="orange" className="c32" text="Pair with app" onClick={this.onLogin} />
+					<Button color="pink" className="c32" text="Pair with app" onClick={this.onLogin} />
 					<Button color="blank" className="c32" text="Download app" onClick={this.onDownload} />
 				</div>
 			</div>

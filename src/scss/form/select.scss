@@ -5,7 +5,7 @@
 	transition: $transitionAllCommon; position: relative; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 20px 3px 6px; line-height: 20px !important;
 }
-.select:hover, .select.active { background: $colorVeryLightGrey; }
+.select:hover, .select.isFocused { background: $colorVeryLightGrey; }
 
 .select {
 	.icon { transition: none; }

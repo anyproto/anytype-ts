@@ -153,9 +153,9 @@ class Select extends React.Component<Props, State> {
 			element,
 			noFlipX: true,
 			onOpen: () => {
-				window.setTimeout(() => { $(element).addClass('active'); });
+				window.setTimeout(() => { $(element).addClass('isFocused'); });
 			},
-			onClose: () => { $(element).removeClass('active'); },
+			onClose: () => { $(element).removeClass('isFocused'); },
 		}, mp);
 
 		menuParam.data = Object.assign({
