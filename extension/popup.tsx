@@ -126,8 +126,7 @@ class Popup extends React.Component {
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiR3JSaVhmTncifQ.Tn0XaEtKoJbRkMmBGVnWJKcDdbaJiMQ6xmyaL7vdblY');
-
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiWGhYdXlEUFYifQ.pnNEnTksl5pFacCTv5aFJd-Ur8X2cRfmIXcT30w02ro');
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 
 			C.AppGetVersion();

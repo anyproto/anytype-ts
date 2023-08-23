@@ -22,8 +22,13 @@
 			case 'clickMenu':
 				iframe.style.display = 'block';
 				break;
+
+			case 'hide':
+				iframe.style.display = 'none';
+				break;
 		};
 
+		sendResponse({});
 		return true;
 	});
 

@@ -11,6 +11,18 @@
 			console.log('Updated', details.previousVersion, version);
 		};
 
+		chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+			getActiveTab((currentTab) => {
+				if (!currentTab) {
+					return;
+				};
+
+				if (currentTab && (tabId == currentTab.id) && (undefined !== changeInfo.url)) {
+					sendToTab(currentTab, { type: 'hide' });
+				};
+			});
+		});
+
 		initMenu();
 	});
 
@@ -65,12 +77,28 @@
 		});
 
 		chrome.contextMenus.onClicked.addListener(() => {
-			chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-				chrome.tabs.sendMessage(tabs[0].id, { type: 'clickMenu' }, (response) => {
-					console.log('Res', response);
-					return true;
-				});
-			});
+			sendToActiveTab({ type: 'clickMenu' });
+		});
+	};
+
+	getActiveTab = (callBack) => {
+		chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => callBack(tabs.length ? tabs[0] : null));
+	};
+
+	sendToActiveTab = (msg) => {
+		getActiveTab((tab) => {
+			sendToTab(tab, msg);
+		});
+	};
+
+	sendToTab = (tab, msg) => {
+		if (!tab) {
+			return;
+		};
+
+		chrome.tabs.sendMessage(tab.id, msg, (response) => {
+			console.log('Res', response);
+			return true;
 		});
 	};
 
