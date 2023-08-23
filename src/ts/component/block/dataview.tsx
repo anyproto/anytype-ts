@@ -726,6 +726,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isDefault: (it.id == defaultTemplateId),
 			isBlank: (it.id == Constant.templateId.blank),
 		});
+
 		const update = () => {
 			defaultTemplateId = this.getDefaultTemplateId();
 
@@ -746,25 +747,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				typeId,
 				defaultTemplateId,
 				newTemplateId: NEW_TEMPLATE_ID,
-				label: translate('blockDataviewSelectTemplate'),
-				noFilter: true,
-				noIcon: true,
-				dataMapper,
-				dataChange: (items: any[]) => {
-					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
-					const bottom: any[] = [
-						{ isDiv: true },
-						{ id: NEW_TEMPLATE_ID, name: translate('blockDataviewNewTemplate'), icon: 'plus' }
-					];
-
-					return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
-				},
-				onOver: (e: any, context: any, item: any) => {
-					if (item.isBlank || (item.id == NEW_TEMPLATE_ID)) {
-						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-						return;
-					};
-				},
 				onSelect: (item: any) => {
 					if (item.id == NEW_TEMPLATE_ID) {
 						this.onTemplateAdd();
@@ -814,99 +796,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				}
 			}
 		});
-
-
-		// menuStore.open('searchObject', {
-		// 	...menuParam,
-		// 	offsetY: 10,
-		// 	noAnimation: true,
-		// 	subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
-		// 	vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-		// 	horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-		// 	data: {
-		// 		label: translate('blockDataviewSelectTemplate'),
-		// 		noFilter: true,
-		// 		noIcon: true,
-		// 		dataMapper,
-		// 		dataChange: (items: any[]) => {
-		// 			const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
-		// 			const bottom: any[] = [
-		// 				{ isDiv: true },
-		// 				{ id: NEW_TEMPLATE_ID, name: translate('blockDataviewNewTemplate'), icon: 'plus' }
-		// 			];
-		//
-		// 			return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
-		// 		},
-		// 		filters: [
-		// 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-		// 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: this.getTypeId() },
-		// 		],
-		// 		sorts: [
-		// 			{ relationKey: 'name', type: I.SortType.Asc },
-		// 		],
-		// 		onOver: (e: any, context: any, item: any) => {
-		// 			if (item.isBlank || (item.id == NEW_TEMPLATE_ID)) {
-		// 				menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-		// 				return;
-		// 			};
-		//
-		// 			menuStore.open('previewObject', {
-		// 				element: `#${this.menuContext.getId()} #item-${item.id}`,
-		// 				offsetX: this.menuContext.getSize().width,
-		// 				isSub: true,
-		// 				vertical: I.MenuDirection.Center,
-		// 				data: { rootId: item.id }
-		// 			});
-		// 		},
-		// 		onSelect: (item: any) => {
-		// 			if (item.id == NEW_TEMPLATE_ID) {
-		// 				this.onTemplateAdd();
-		// 				return;
-		// 			};
-		//
-		// 			this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
-		// 			menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
-		//
-		// 			analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
-		// 		},
-		// 		onMore: (e: any, item: any) => {
-		// 			e.preventDefault();
-		// 			e.stopPropagation();
-		//
-		// 			if (menuStore.isOpen('dataviewTemplate', item.id)) {
-		// 				menuStore.close('dataviewTemplate');
-		// 				return;
-		// 			};
-		//
-		// 			menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-		// 				menuStore.open('dataviewTemplate', {
-		// 					menuKey: item.id,
-		// 					element: `#${this.menuContext.getId()} #item-${item.id}`,
-		// 					vertical: I.MenuDirection.Bottom,
-		// 					horizontal: I.MenuDirection.Right,
-		// 					subIds: Constant.menuIds.dataviewTemplate,
-		// 					data: {
-		// 						template: item,
-		// 						isView: true,
-		// 						route: this.isCollection() ? 'Collection' : 'Set',
-		// 						onOver: () => menuStore.closeAll([ 'previewObject' ]),
-		// 						onSetDefault: () => {
-		// 							this.setDefaultTemplateForView(item.id, () => update());
-		// 						},
-		// 						onDuplicate: (object) => UtilObject.openPopup(object, {}),
-		// 						onArchive: () => {
-		// 							if (item.isDefault) {
-		// 								this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
-		// 							} else {
-		// 								update();
-		// 							};
-		// 						}
-		// 					}
-		// 				});
-		// 			});
-		// 		}
-		// 	}
-		// });
 	};
 
 	onTemplateAdd () {

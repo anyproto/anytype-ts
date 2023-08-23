@@ -21,7 +21,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	render () {
-		const items = this.getItems();
 
 		return (
 			<div>
@@ -49,17 +48,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { newTemplateId } = data;
-
-		const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
-		const bottom: any[] = [ { id: newTemplateId, name: translate('blockDataviewNewTemplate'), icon: 'plus' } ];
-
-		return !this.items.length ? fixed.concat(bottom) : fixed.concat(this.items).concat(bottom);
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
