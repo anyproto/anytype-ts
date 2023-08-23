@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader } from 'Component';
-import { I, C } from 'Lib';
+import { I, C, UtilData } from 'Lib';
 import { blockStore } from 'Store';
 
 interface State {
@@ -10,7 +10,7 @@ interface State {
 	error: string;
 };
 
-const ROOT_ID = 'bafyreie6locdk72rrargvu6e55qzmrhauv2dt2gjnljm2fysz56rwjbyia';
+const ROOT_ID = 'bafyreid4jqmmox4monwirlsmgnobducuw57bvgxqzoguzs2acigiam6vym';
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
@@ -68,12 +68,14 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	load () {
 		this.setState({ isLoading: true });
 
-		C.ObjectOpen(ROOT_ID, '', (message: any) => {
-			if (message.error.code) {
-				return;
-			};
+		UtilData.createsSubscriptions(() => {
+			C.ObjectOpen(ROOT_ID, '', (message: any) => {
+				if (message.error.code) {
+					return;
+				};
 
-			this.setState({ isLoading: false });
+				this.setState({ isLoading: false });
+			});
 		});
 	};
 

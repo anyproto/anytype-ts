@@ -224,3 +224,44 @@ html.platformWindows {
 		}
 	}
 }
+
+@import "~scss/menu/button.scss";
+@import "~scss/menu/help.scss";
+@import "~scss/menu/onboarding.scss";
+@import "~scss/menu/relation.scss";
+@import "~scss/menu/select.scss";
+@import "~scss/menu/smile.scss";
+@import "~scss/menu/thread.scss";
+@import "~scss/menu/type.scss";
+@import "~scss/menu/widget.scss";
+
+@import "~scss/menu/account/path.scss";
+
+@import "~scss/menu/search/object.scss";
+@import "~scss/menu/search/text.scss";
+
+@import "~scss/menu/preview/object.scss";
+
+@import "~scss/menu/block/common.scss";
+@import "~scss/menu/block/context.scss";
+@import "~scss/menu/block/cover.scss";
+@import "~scss/menu/block/icon.scss";
+@import "~scss/menu/block/latex.scss";
+@import "~scss/menu/block/link.scss";
+@import "~scss/menu/block/linkSettings.scss";
+@import "~scss/menu/block/mention.scss";
+@import "~scss/menu/block/relation.scss";
+
+@import "~scss/menu/dataview/calendar.scss";
+@import "~scss/menu/dataview/common.scss";
+@import "~scss/menu/dataview/create/bookmark.scss";
+@import "~scss/menu/dataview/file.scss";
+@import "~scss/menu/dataview/filter.scss";
+@import "~scss/menu/dataview/group.scss";
+@import "~scss/menu/dataview/object.scss";
+@import "~scss/menu/dataview/option.scss";
+@import "~scss/menu/dataview/relation.scss";
+@import "~scss/menu/dataview/sort.scss";
+@import "~scss/menu/dataview/source.scss";
+@import "~scss/menu/dataview/text.scss";
+@import "~scss/menu/dataview/view.scss";
