@@ -354,10 +354,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => {
-			UtilCommon.route('/main/usecase', {});
-		}, 1500)
 	};
 
 	componentDidUpdate () {
