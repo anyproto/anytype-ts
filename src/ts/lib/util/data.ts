@@ -297,6 +297,7 @@ class UtilData {
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				ignoreHidden: false,
 				onSubscribe: () => {
 					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
