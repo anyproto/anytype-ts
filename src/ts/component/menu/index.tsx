@@ -73,6 +73,7 @@ import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplate from './dataview/template';
+import MenuDataviewTemplateList from './dataview/template/list';
 
 
 import MenuWidget from './widget';
@@ -156,6 +157,7 @@ const Components: any = {
 	dataviewContext:		 MenuDataviewContext,
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplate:		 MenuDataviewTemplate,
+	dataviewTemplateList:	 MenuDataviewTemplateList,
 
 	widget:				 MenuWidget,
 };
