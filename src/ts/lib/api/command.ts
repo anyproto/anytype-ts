@@ -1646,22 +1646,6 @@ const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) =
 	dispatcher.request(TemplateCreateFromObject.name, request, callBack);
 };
 
-const TemplateCreateFromObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.CreateFromObjectType.Request();
-
-	request.setObjecttype(objectTypeUrl);
-
-	dispatcher.request(TemplateCreateFromObjectType.name, request, callBack);
-};
-
-const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.Clone.Request();
-
-	request.setContextid(contextId);
-
-	dispatcher.request(TemplateClone.name, request, callBack);
-};
-
 const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Template.ExportAll.Request();
 
@@ -1913,8 +1897,6 @@ export {
 	ObjectListExport,
 
 	TemplateCreateFromObject,
-	TemplateCreateFromObjectType,
-	TemplateClone,
 	TemplateExportAll,
 
 	UnsplashSearch,

@@ -21,7 +21,6 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
-		this.onClone = this.onClone.bind(this);
 	};
 
 	render (): any {
@@ -125,19 +124,6 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 		const value = node.find('#dragValue');
 
 		value.text(Math.ceil(v * 100) + '%');
-	};
-
-	onClone (e: any) {
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
-
-		C.TemplateClone(rootId, (message: any) => {
-			if (message.id) {
-				UtilObject.openRoute({ id: message.id });
-			};
-
-			analytics.event('CreateTemplate', { objectType: object.targetObjectType });
-		});
 	};
 
 });

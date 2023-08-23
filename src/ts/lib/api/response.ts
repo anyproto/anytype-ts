@@ -343,17 +343,6 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 	};
 };
 
-export const TemplateCreateFromObjectType = (response: Rpc.Template.CreateFromObjectType.Response) => {
-	return {
-		id: response.getId(),
-	};
-};
-
-export const TemplateClone = (response: Rpc.Template.Clone.Response) => {
-	return {
-		id: response.getId(),
-	};
-};
 
 export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
 	return {
