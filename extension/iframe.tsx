@@ -114,9 +114,10 @@ class Iframe extends React.Component {
 			console.log('Iframe message', msg, sender);
 
 			if (sender.id != Extension.clipper.id) {
-				return;
+				return false;
 			};
 
+			sendResponse({});
 			return true;
 		});
 

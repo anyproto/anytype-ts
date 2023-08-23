@@ -120,8 +120,10 @@ class Popup extends React.Component {
 			console.log('Popup message', msg, sender);
 
 			if (sender.id != Extension.clipper.id) {
-				return;
+				return false;
 			};
+
+			sendResponse({});
 			return true;
 		});
 
