@@ -125,3 +125,33 @@
 		.name { color: $colorSecondary; }
 	}
 }
+
+.previewObject.small { width: 158px; height: 112px; }
+.previewObject.small {
+	.scroller { padding: 24px 16px; }
+	.heading { margin-bottom: 6px; }
+	.blocks {
+		.element {
+			.inner {
+				.line { margin: 2px 0; }
+			}
+		}
+	}
+
+	.name { @include text-small; font-weight: 700; margin-bottom: 4px; }
+	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorBorderLight; }
+	.description { display: none; }
+
+	.blocks {
+		.element:nth-child(n + 3) { display: none; }
+	}
+}
+.previewObject.isTask.small,
+.previewObject.isBookmark.small {
+	.heading {
+		.iconObject.isTask,
+		.iconObject.isBookmark { left: 0; top: 2px; }
+
+		.name { padding-left: 20px; }
+	}
+}

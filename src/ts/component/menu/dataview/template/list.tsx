@@ -28,6 +28,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					<PreviewObject
 						key={i}
 						rootId={item.id}
+						previewSize="small"
 						onClick={e => this.onClick(e, item)}
 					/>
 				))}

@@ -8,6 +8,7 @@ import $ from 'jquery';
 
 interface Props {
 	rootId: string;
+	previewSize?: string;
 	className?: string;
 	onClick? (e: any): void;
 	position?: () => void;
@@ -35,7 +36,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId, className, onClick } = this.props;
+		const { rootId, className, onClick, previewSize } = this.props;
 		const contextId = this.getRootId();
 		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
@@ -47,6 +48,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
 		const cn = [ 'previewObject' , check.className, className ];
 
+		if (previewSize) {
+			cn.push(previewSize);
+		};
+
 		let n = 0;
 		let c = 0;
 		let size = 48;
@@ -55,6 +60,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		if (isTask || isBookmark) {
 			size = 20;
 			iconSize = 18;
+
+			if (previewSize && previewSize == 'small') {
+				size = 14;
+				iconSize = 14;
+			};
 		};
 
 		const Block = (item: any) => {
