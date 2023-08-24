@@ -40,7 +40,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const contextId = this.getRootId();
 		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
-		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
+		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const type = detailStore.get(contextId, object.type, []);
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
@@ -56,8 +56,18 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		if (previewSize) {
 			cn.push(previewSize);
 
-			size = 32;
-			iconSize = 20;
+			switch (previewSize) {
+				case 'small': {
+					size = 32;
+					iconSize = 20;
+					break;
+				};
+				case 'medium': {
+					size = 40;
+					iconSize = 24;
+					break;
+				};
+			};
 		};
 
 		if (isTask || isBookmark) {
@@ -68,6 +78,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				size = 14;
 				iconSize = 14;
 			};
+		};
+
+		if (previewSize && iconImage) {
+			iconSize = size;
 		};
 
 		const Block = (item: any) => {

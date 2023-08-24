@@ -11,7 +11,10 @@
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
+		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 2px $colorWhite inset; }
+		.iconObject {
+			.iconImage { border: 2px solid $colorWhite; }
+		}
 		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; }
 		.description { @include text-small; @include text-overflow-nw; }
@@ -119,6 +122,19 @@
 .previewObject.align2 {
 	.heading { text-align: right; }
 }
+.previewObject.isHuman { text-align: center; }
+.previewObject.isHuman {
+	.heading { text-align: center; }
+	.featured { margin: 0 auto; }
+	.blocks {
+		.element {
+			.inner { text-align: center; }
+			.inner {
+				.line { margin-left: auto !important; margin-right: auto !important; }
+			}
+		}
+	}
+}
 
 .previewObject.blank {
 	.heading {
@@ -127,11 +143,13 @@
 }
 
 .previewObject.small { width: 158px; height: 112px; }
+
 .previewObject.small {
+	.cover { height: 42px; }
 	.scroller { padding: 24px 16px; }
 	.heading { margin-bottom: 6px; }
 	.heading {
-		.iconObject { margin: -8px 0px 2px 0px; }
+		.iconObject { margin-bottom: 2px; }
 	}
 	.blocks {
 		.element:nth-child(n + 3) { display: none; }
@@ -146,6 +164,15 @@
 	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorBorderLight; }
 	.description { display: none; }
 }
+
+.previewObject.small.withCover {
+	.scroller { padding-top: 48px; }
+}
+.previewObject.small.withIcon,
+.previewObject.small.withIconAndCover {
+	.scroller { padding-top: 16px; }
+}
+
 .previewObject.isTask.small,
 .previewObject.isBookmark.small {
 	.heading {
