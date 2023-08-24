@@ -130,10 +130,14 @@
 .previewObject.small {
 	.scroller { padding: 24px 16px; }
 	.heading { margin-bottom: 6px; }
+	.heading {
+		.iconObject { margin: -8px 0px 2px 0px; }
+	}
 	.blocks {
+		.element:nth-child(n + 3) { display: none; }
 		.element {
 			.inner {
-				.line { margin: 2px 0; }
+				.line { margin: 2px 0px; }
 			}
 		}
 	}
@@ -141,16 +145,12 @@
 	.name { @include text-small; font-weight: 700; margin-bottom: 4px; }
 	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorBorderLight; }
 	.description { display: none; }
-
-	.blocks {
-		.element:nth-child(n + 3) { display: none; }
-	}
 }
 .previewObject.isTask.small,
 .previewObject.isBookmark.small {
 	.heading {
 		.iconObject.isTask,
-		.iconObject.isBookmark { left: 0; top: 2px; }
+		.iconObject.isBookmark { left: 0px; top: 2px; margin: 0px; }
 
 		.name { padding-left: 20px; }
 	}

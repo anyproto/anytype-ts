@@ -48,14 +48,17 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
 		const cn = [ 'previewObject' , check.className, className ];
 
-		if (previewSize) {
-			cn.push(previewSize);
-		};
-
 		let n = 0;
 		let c = 0;
 		let size = 48;
 		let iconSize = 32;
+
+		if (previewSize) {
+			cn.push(previewSize);
+
+			size = 32;
+			iconSize = 20;
+		};
 
 		if (isTask || isBookmark) {
 			size = 20;
