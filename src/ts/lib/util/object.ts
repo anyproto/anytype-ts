@@ -115,8 +115,6 @@ class UtilObject {
 		e.preventDefault();
 		e.stopPropagation();
 
-		console.log(e, e.shiftKey);
-
 		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else

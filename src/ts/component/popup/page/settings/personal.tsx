@@ -84,8 +84,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					console.log(item);
-
 					commonStore.typeSet(item.uniqueKey);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey });
 				},
