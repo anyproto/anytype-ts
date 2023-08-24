@@ -719,19 +719,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let defaultTemplateId = this.getDefaultTemplateId();
 
-		const dataMapper = it => ({
-			...it,
-			typeId,
-			withMore: (it.id != NEW_TEMPLATE_ID),
-			caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
-			isDefault: (it.id == defaultTemplateId),
-			isBlank: (it.id == Constant.templateId.blank),
-		});
-
 		const update = () => {
 			defaultTemplateId = this.getDefaultTemplateId();
-
-			menuStore.updateData(this.menuContext.id, { dataMapper });
 			this.menuContext.ref.reload();
 		};
 
