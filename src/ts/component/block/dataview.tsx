@@ -522,9 +522,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		];
-		const details: any = {
-			type: this.getTypeId(),
-		};
+		const details: any = {};
 
 		let group = null;
 
@@ -617,12 +615,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
+		const type = dbStore.getTypeById(this.getTypeId());
 
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		C.ObjectCreate(details, flags, template?.id, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -833,12 +832,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const type = dbStore.getTypeById(typeId);
 		const template = dbStore.getTemplateType();
 		const details: any = {
-			type: template?.id,
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', commonStore.space, (message) => {
+		C.ObjectCreate(details, [], '', template?.uniqueKey, commonStore.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -953,7 +951,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, message => onSelect(message.details, true));
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([

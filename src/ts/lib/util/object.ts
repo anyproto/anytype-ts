@@ -188,13 +188,18 @@ class UtilObject {
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
-		details = details || {};
+		let typeKey = '';
 
+		details = details || {};
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};
+		if (details.type) {
+			const type = dbStore.getTypeById(details.type);
+			typeKey = type ? type.uniqueKey : '';
+		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, commonStore.space, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

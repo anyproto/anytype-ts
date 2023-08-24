@@ -468,12 +468,12 @@ const BlockListMoveToExistingObject = (contextId: string, targetContextId: strin
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-const BlockListConvertToObjects = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
+const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-	request.setObjecttype(type);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };
@@ -535,7 +535,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
+const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -547,6 +547,7 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+	request.setObjecttypeuniquekey(typeKey);
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
@@ -1129,13 +1130,14 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], 
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, spaceId: string, callBack?: (message: any) => void) => {
+const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1368,11 +1370,11 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
+const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 
 	request.setContextid(contextId);
-	request.setObjecttypeurl(url);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectSetObjectType.name, request, callBack);
 };
@@ -1652,15 +1654,13 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListSetObjectType = (ids: string[], typeId: string, callBack?: (message: any) => void) => {
-	/*
+const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetObjectType.Request();
 
 	request.setObjectidsList(ids);
-	request.setObjecttypeid(typeId);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
-	*/
 };
 
 const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, callBack?: (message: any) => void) => {
@@ -1686,14 +1686,6 @@ const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) =
 	request.setContextid(contextId);
 
 	dispatcher.request(TemplateCreateFromObject.name, request, callBack);
-};
-
-const TemplateCreateFromObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.CreateFromObjectType.Request();
-
-	request.setObjecttype(objectTypeUrl);
-
-	dispatcher.request(TemplateCreateFromObjectType.name, request, callBack);
 };
 
 const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
@@ -1958,7 +1950,6 @@ export {
 	ObjectListExport,
 
 	TemplateCreateFromObject,
-	TemplateCreateFromObjectType,
 	TemplateClone,
 	TemplateExportAll,
 

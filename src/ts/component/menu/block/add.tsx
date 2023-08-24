@@ -666,11 +666,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
-	moveToPage (type: string) {
+	moveToPage (typeId: string) {
 		const { param, dataset } = this.props;
 		const { data } = param;
 		const { blockId, rootId, } = data;
 		const { selection } = dataset || {};
+		const type = dbStore.getTypeById(typeId);
 		
 		let ids = [];
 		if (selection) {
@@ -680,7 +681,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey);
 	};
 
 	resize () {

@@ -600,7 +600,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -753,11 +753,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		close();
 	};
 
-	moveToPage (type: string) {
+	moveToPage (typeId: string) {
 		const { param, dataset } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const { selection } = dataset || {};
+		const type = dbStore.getTypeById(typeId);
 		
 		let ids = [];
 		if (selection) {
@@ -767,10 +768,10 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type, () => {
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
 			analytics.event('CreateObject', {
 				route: 'TurnInto',
-				objectType: type,
+				objectType: typeId,
 			});
 		});
 	};

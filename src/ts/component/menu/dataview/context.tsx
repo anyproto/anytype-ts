@@ -221,7 +221,7 @@ class MenuContext extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.ObjectListSetObjectType(objectIds, item.id);
+						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
 						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
 
 						close();

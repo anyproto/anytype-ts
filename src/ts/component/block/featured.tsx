@@ -438,7 +438,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					],
 					onClick: (item: any) => {
 						detailStore.update(rootId, { id: item.id, details: item }, false);
-						C.ObjectSetObjectType(rootId, item.id, () => {
+
+						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
 						});
 

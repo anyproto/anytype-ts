@@ -3,8 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
-import { popupStore, detailStore, blockStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
@@ -260,11 +259,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onCreate (typeId: any, template: any) {
 		const { rootId, isPopup } = this.props;
+		const type = dbStore.getTypeById(typeId);
 
 		if (template) {
 			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
 		} else {
-			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);
+			C.ObjectSetObjectType(rootId, type?.uniqueKey, this.onTemplate);
 		};
 
 		Onboarding.start('objectCreationFinish', isPopup);

@@ -301,7 +301,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
 						close();
 
 						if (onMenuSelect) {

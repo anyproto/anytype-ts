@@ -88,14 +88,14 @@ class MenuTemplate extends React.Component<I.Menu> {
 				analytics.event('DuplicateTemplate', { route });
 
 				if (template.id == Constant.templateId.blank) {
+					const templateType = dbStore.getTemplateType();
 					const type = dbStore.getTypeById(template.typeId);
 					const details: any = {
-						type: Constant.typeKey.template,
 						targetObjectType: template.typeId,
-						layout: type.recommendedLayout,
+						layout: type?.recommendedLayout,
 					};
 
-					C.ObjectCreate(details, [], '', commonStore.space, (message) => {
+					C.ObjectCreate(details, [], '', templateType?.uniqueKey, commonStore.space, (message) => {
 						if (message.error.code) {
 							return;
 						};
