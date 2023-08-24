@@ -5,6 +5,14 @@
 	.loaderWrapper { width: 100%; height: 100% !important; margin: 0px; border: 1px solid $colorBorderLight; border-radius: 8px; }
 	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/icon/type/logo.svg'); z-index: 1; }
 
+	.moreWrapper {
+		position: absolute; z-index: 2; right: 8px; top: 8px; border-radius: 6px; width: 28px; height: 28px; display: flex;
+		align-items: center; justify-content: center; background: $colorVeryLightGrey; opacity: 0; transition: $transitionAllCommon;
+	}
+	.moreWrapper {
+		.icon { width: 20px; height: 20px; }
+	}
+
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
 	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid $colorBorderLight; border-radius: 8px; }
 	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
@@ -111,6 +119,11 @@
 		.element.withBullet > .inner > .line { width: calc(100% - 20px); }
 		.element.withBullet.odd > .inner > .line { width: calc(50% - 10px); }
 	}
+}
+
+.previewObject:hover,
+.previewObject.active {
+	.moreWrapper { opacity: 1; }
 }
 
 .previewObject.withCover .scroller { padding-top: 104px; }

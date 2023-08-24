@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical, PreviewObject } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, UtilData } from 'Lib';
-import { dbStore } from 'Store';
+import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplateList extends React.Component<I.Menu> {
@@ -18,6 +18,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
@@ -30,6 +31,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 						rootId={item.id}
 						previewSize="small"
 						onClick={e => this.onClick(e, item)}
+						onMore={e => this.onMore(e, item)}
 					/>
 				))}
 			</div>
@@ -49,6 +51,11 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	reload () {
+		this.n = 1;
+		this.load(true);
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -109,8 +116,47 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		});
 	};
 
+	onMore (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onSetDefault, onArchive, route } = data;
+		const node = $(`#item-${item.id}`)
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (menuStore.isOpen('dataviewTemplate', item.id)) {
+			menuStore.close('dataviewTemplate');
+			return;
+		};
+
+		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
+			menuStore.open('dataviewTemplate', {
+				menuKey: item.id,
+				element: `#item-${item.id} #item-more-${item.id}`,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				subIds: Constant.menuIds.dataviewTemplate,
+				onOpen: () => {
+					node.addClass('active');
+				},
+				onClose: () => {
+					node.removeClass('active');
+				},
+				data: {
+					template: item,
+					isView: true,
+					route,
+					onSetDefault: () => onSetDefault(item.id),
+					onArchive: () => onArchive(item),
+					onDuplicate: (object) => UtilObject.openPopup(object, {})
+				}
+			});
+		});
+	};
+
 	onClick (e: any, item: any) {
-		console.log('CLICK!')
+		console.log('CLICK! ! !')
 	};
 
 	onMouseEnter (e: any, item: any) {

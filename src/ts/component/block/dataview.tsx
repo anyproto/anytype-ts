@@ -715,6 +715,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
 		const typeId = this.getTypeId();
+		const route = this.isCollection() ? 'Collection' : 'Set';
 
 		let defaultTemplateId = this.getDefaultTemplateId();
 
@@ -734,7 +735,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.menuContext.ref.reload();
 		};
 
-		analytics.event('ClickNewOption', { route: (this.isCollection() ? 'Collection' : 'Set') });
+		analytics.event('ClickNewOption', { route });
 
 		menuStore.open('dataviewTemplateList', {
 			...menuParam,
@@ -745,6 +746,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			data: {
 				typeId,
+				route,
 				defaultTemplateId,
 				newTemplateId: NEW_TEMPLATE_ID,
 				onSelect: (item: any) => {
@@ -758,41 +760,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
 				},
-				onMore: (e: any, item: any) => {
-					e.preventDefault();
-					e.stopPropagation();
-
-					if (menuStore.isOpen('dataviewTemplate', item.id)) {
-						menuStore.close('dataviewTemplate');
-						return;
+				onSetDefault: (item) => {
+					this.setDefaultTemplateForView(item.id, () => update());
+				},
+				onArchive: (item) => {
+					if (item.isDefault) {
+						this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
+					} else {
+						update();
 					};
-
-					menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-						menuStore.open('dataviewTemplate', {
-							menuKey: item.id,
-							element: `#${this.menuContext.getId()} #item-${item.id}`,
-							vertical: I.MenuDirection.Bottom,
-							horizontal: I.MenuDirection.Right,
-							subIds: Constant.menuIds.dataviewTemplate,
-							data: {
-								template: item,
-								isView: true,
-								route: this.isCollection() ? 'Collection' : 'Set',
-								onOver: () => menuStore.closeAll([ 'previewObject' ]),
-								onSetDefault: () => {
-									this.setDefaultTemplateForView(item.id, () => update());
-								},
-								onDuplicate: (object) => UtilObject.openPopup(object, {}),
-								onArchive: () => {
-									if (item.isDefault) {
-										this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
-									} else {
-										update();
-									};
-								}
-							}
-						});
-					});
 				}
 			}
 		});
