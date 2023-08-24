@@ -117,11 +117,15 @@ class Iframe extends React.Component {
 				return false;
 			};
 
-			sendResponse({});
+			sendResponse({ type: msg.type, ref: 'iframe' });
 			return true;
 		});
 
 		Util.sendMessage({ type: 'initNative' }, (response) => {
+			if (response.error) {
+				return;
+			};
+
 			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiWGhYdXlEUFYifQ.pnNEnTksl5pFacCTv5aFJd-Ur8X2cRfmIXcT30w02ro');
 			dispatcher.init(`http://127.0.0.1:${response.port}`);
 

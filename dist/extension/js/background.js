@@ -41,10 +41,10 @@
 		const client = chrome.runtime.connectNative('com.anytype.desktop');
 
 		client.onMessage.addListener((msg) => {
-			console.log('Received', msg);
+			console.log('[Native]', msg);
 
 			if (msg.error) {
-				console.error(msg.error);
+				callBack({ type: msg.type, error: msg.error });
 				return;
 			};
 
@@ -56,14 +56,14 @@
 						break;
 					};
 
-					callBack({ type: 'NMHGetOpenPorts', port });
+					callBack({ type: msg.type, port });
 					break;
 				};
 			};
 		});
 
 		client.onDisconnect.addListener(() => {
-			console.log('Disconnected');
+			console.log('[Native] Disconnected');
 		});
 
 		client.postMessage({ type: 'NMHGetOpenPorts' });

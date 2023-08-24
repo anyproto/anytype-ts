@@ -15,6 +15,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 	.textarea { padding: 10px; resize: none; height: 68px; display: block; }
 	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; margin: 16px 0px 0px 0px; }
 	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; }
+	.error { @include text-small; margin: 1em 0px 0px 0px; }
 
 	.isFocused { border-color: $colorIce !important; box-shadow: 0px 0px 0px 1px $colorIce; }
 
