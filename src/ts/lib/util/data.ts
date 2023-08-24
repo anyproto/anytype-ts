@@ -793,6 +793,24 @@ class UtilData {
 		];
 	};
 
+	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
+		const { dataset } = props;
+		const { selection } = dataset || {};
+		const type = dbStore.getTypeById(typeId);
+		
+		let ids = [];
+		if (selection) {
+			ids = selection.get(I.SelectType.Block);
+		};
+		if (!ids.length) {
+			ids = [ blockId ];
+		};
+
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
+			analytics.event('CreateObject', { route, objectType: typeId });
+		});
+	};
+
 };
 
 export default new UtilData();

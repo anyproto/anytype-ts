@@ -754,26 +754,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 
 	moveToPage (typeId: string) {
-		const { param, dataset } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { selection } = dataset || {};
-		const type = dbStore.getTypeById(typeId);
 		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
-		};
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
-			analytics.event('CreateObject', {
-				route: 'TurnInto',
-				objectType: typeId,
-			});
-		});
+		UtilData.moveToPage(rootId, blockId, typeId, 'TurnInto', this.props);
 	};
 
 	setFocus (id: string) {

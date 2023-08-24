@@ -667,21 +667,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	moveToPage (typeId: string) {
-		const { param, dataset } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, } = data;
-		const { selection } = dataset || {};
-		const type = dbStore.getTypeById(typeId);
+		const { blockId, rootId } = data;
 		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
-		};
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey);
+		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
 	};
 
 	resize () {

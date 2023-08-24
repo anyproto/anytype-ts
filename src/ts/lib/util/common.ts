@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, Preview, Renderer, translate } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import Text from 'json/text.json';
