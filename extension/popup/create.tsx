@@ -156,13 +156,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						</div>
 					</div>
 
-					{/*
-					<div className="item add">
-						<Icon className="plus" />
-						Add relation
-					</div>
-					*/}
-
 					<div className="buttons">
 						<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={this.onSubmit} />
 					</div>

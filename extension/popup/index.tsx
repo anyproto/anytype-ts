@@ -46,7 +46,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 			console.log('Response', response);
 
 			if (response.error) {
-				this.setState({ error: response.error });
+				this.setState({ error: 'Pairing failed' });
 				return;
 			};
 
