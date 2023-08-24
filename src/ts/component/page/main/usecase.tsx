@@ -70,6 +70,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
 			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
 			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
+			{ id: I.Usecase.Strategic, img: 'img/usecase/strategic.png' },
 		]);
 	};
 

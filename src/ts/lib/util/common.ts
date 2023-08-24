@@ -594,7 +594,7 @@ class UtilCommon {
 		if (parts && parts.length) {
 			parts = parts.map((it: any) => {
 				if (it.type == 'group') {
-					it.value = '&thinsp;';
+					it.value = ' ';
 				};
 				return it.value;
 			});
