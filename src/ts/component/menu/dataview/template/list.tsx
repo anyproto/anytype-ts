@@ -147,7 +147,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					template: item,
 					isView: true,
 					route,
-					onSetDefault: () => onSetDefault(item.id),
+					onSetDefault: () => onSetDefault(item),
 					onArchive: () => onArchive(item),
 					onDuplicate: (object) => UtilObject.openPopup(object, {})
 				}
