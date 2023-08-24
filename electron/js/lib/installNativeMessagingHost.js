@@ -21,7 +21,10 @@ const EXTENSION_ID = 'jkmhmgghdjjbafmkgjmplhemjjnkligf';
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
-const getManifestPath = () => fixPathForAsarUnpack(path.join(process.cwd(), 'dist', `nativeMessagingHost${is.windows ? '.exe' : ''}`));
+const getManifestPath = () => {
+	const fn = `nativeMessagingHost${is.windows ? '.exe' : ''}`;
+	return path.join(fixPathForAsarUnpack(__dirname), '..', '..', '..', 'dist', fn);
+};
 
 const getHomeDir = () => {
 	if (process.platform === 'darwin') {

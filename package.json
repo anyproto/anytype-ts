@@ -190,7 +190,7 @@
 		"extraResources": [],
 		"files": [
 			"electron.js",
-			"electron/js/*",
+			"electron/js/**/*",
 			"electron/env.json",
 			"electron/img/*",
 			"electron/about/*",

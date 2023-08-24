@@ -27,6 +27,7 @@
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+
 		switch (msg.type) {
 			case 'initNative': {
 				initNative(sendResponse);
@@ -43,23 +44,37 @@
 		client.onMessage.addListener((msg) => {
 			console.log('[Native]', msg);
 
-			if (msg.error) {
-				callBack({ type: msg.type, error: msg.error });
-				return;
-			};
+			const res = { ...msg };
 
 			switch (msg.type) {
+				case 'NMHStartApplication': {
+					if (!msg.error) {
+						client.postMessage({ type: 'NMHGetOpenPorts' });
+					};
+					break;
+				};
+
 				case 'NMHGetOpenPorts': {
 					let port = '';
-					for (let pid in msg.response) {
-						port = msg.response[pid][1];
-						break;
+
+					if (msg.response) {
+						for (let pid in msg.response) {
+							port = msg.response[pid][1];
+							break;
+						};
 					};
 
-					callBack({ type: msg.type, port });
+					if (!port || msg.error) {
+						res.error = '';
+						client.postMessage({ type: 'NMHStartApplication' });
+					} else {
+						res.port = port;
+					};
 					break;
 				};
 			};
+
+			callBack(res);
 		});
 
 		client.onDisconnect.addListener(() => {
