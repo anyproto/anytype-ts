@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
 import { I, UtilCommon, UtilData, dispatcher } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, commonStore } from 'Store';
 import Url from 'json/url.json';
 
 import Util from '../lib/util';
@@ -42,16 +42,17 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	onLogin () {
-		Util.sendMessage({ type: 'initNative' }, (response) => {
-			console.log('Response', response);
+		Util.sendMessage({ type: 'getPorts' }, (response) => {
+			console.log('[onLogin]', response);
 
-			if (response.error) {
+			if (!response.ports || !response.ports.length) {
 				this.setState({ error: 'Pairing failed' });
 				return;
 			};
 
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiWGhYdXlEUFYifQ.pnNEnTksl5pFacCTv5aFJd-Ur8X2cRfmIXcT30w02ro');
-			dispatcher.init(`http://127.0.0.1:${response.port}`);
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiVXFrdVJid0gifQ.iwzQLqS7znIuiCGTCLtMWxCxNboNZnS1hssU-rwrjWA');
+			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[0]}`);
+			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
 
 			UtilData.createsSubscriptions(() => {
 				UtilCommon.route('/create', {});

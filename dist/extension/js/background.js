@@ -1,5 +1,40 @@
 (() => {
 
+	let ports = [];
+
+	const native = chrome.runtime.connectNative('com.anytype.desktop');
+
+	native.postMessage({ type: 'getPorts' });
+
+	native.onMessage.addListener((msg) => {
+		console.log('[Native]', msg);
+
+		if (msg.error) {
+			console.error(msg.error);
+		};
+
+		switch (msg.type) {
+			case 'launchApp': {
+				break;
+			};
+
+			case 'getPorts': {
+				if (msg.response) {
+					for (let pid in msg.response) {
+						ports = msg.response[pid];
+						break;
+					};
+				};
+				break;
+			};
+		};
+
+	});
+
+	native.onDisconnect.addListener(() => {
+		console.log('[Native] Disconnected');
+	});
+
 	chrome.runtime.onInstalled.addListener((details) => {
 		if (![ 'install', 'update' ].includes(details.reason)) {
 			return;
@@ -29,60 +64,16 @@
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 		switch (msg.type) {
-			case 'initNative': {
-				initNative(sendResponse);
+			case 'getPorts': {
+				console.log('PORTS', ports);
+
+				sendResponse({ ports });
 				break;
 			};
 		};
 
 		return true;
 	});
-
-	const initNative = (callBack) => {
-		const client = chrome.runtime.connectNative('com.anytype.desktop');
-
-		client.onMessage.addListener((msg) => {
-			console.log('[Native]', msg);
-
-			const res = { ...msg };
-
-			switch (msg.type) {
-				case 'NMHStartApplication': {
-					if (!msg.error) {
-						client.postMessage({ type: 'NMHGetOpenPorts' });
-					};
-					break;
-				};
-
-				case 'NMHGetOpenPorts': {
-					let port = '';
-
-					if (msg.response) {
-						for (let pid in msg.response) {
-							port = msg.response[pid][1];
-							break;
-						};
-					};
-
-					if (!port || msg.error) {
-						res.error = '';
-						client.postMessage({ type: 'NMHStartApplication' });
-					} else {
-						res.port = port;
-					};
-					break;
-				};
-			};
-
-			callBack(res);
-		});
-
-		client.onDisconnect.addListener(() => {
-			console.log('[Native] Disconnected');
-		});
-
-		client.postMessage({ type: 'NMHGetOpenPorts' });
-	};
 
 	initMenu = () => {
 		chrome.contextMenus.create({
@@ -101,9 +92,7 @@
 	};
 
 	sendToActiveTab = (msg) => {
-		getActiveTab((tab) => {
-			sendToTab(tab, msg);
-		});
+		getActiveTab((tab) => sendToTab(tab, msg));
 	};
 
 	sendToTab = (tab, msg) => {
@@ -112,7 +101,7 @@
 		};
 
 		chrome.tabs.sendMessage(tab.id, msg, (response) => {
-			console.log('Res', response);
+			console.log('[sendToTab]', response);
 			return true;
 		});
 	};

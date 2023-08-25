@@ -5,8 +5,6 @@
 		.content { overflow: visible !important; padding: 0px; }
 		.items { height: 100%; }
 
-		.item.empty { margin-top: 8px; }
-
 		.item.add {
 			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}

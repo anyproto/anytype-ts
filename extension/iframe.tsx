@@ -107,8 +107,7 @@ class Iframe extends React.Component {
 
 		UtilCommon.init(history);
 		commonStore.configSet({ debug: { mw: true } }, false);
-		commonStore.gatewaySet('http://127.0.0.1:63423');
-
+		
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			console.log('Iframe message', msg, sender);
@@ -121,13 +120,14 @@ class Iframe extends React.Component {
 			return true;
 		});
 
-		Util.sendMessage({ type: 'initNative' }, (response) => {
-			if (response.error) {
+		Util.sendMessage({ type: 'getPorts' }, (response) => {
+			if (!response.ports || !response.ports.length) {
 				return;
 			};
 
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiWGhYdXlEUFYifQ.pnNEnTksl5pFacCTv5aFJd-Ur8X2cRfmIXcT30w02ro');
-			dispatcher.init(`http://127.0.0.1:${response.port}`);
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiVXFrdVJid0gifQ.iwzQLqS7znIuiCGTCLtMWxCxNboNZnS1hssU-rwrjWA');
+			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[0]}`);
+			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
 
 			UtilCommon.route('/create', {});
 		});

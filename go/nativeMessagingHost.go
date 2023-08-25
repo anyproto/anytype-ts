@@ -311,7 +311,7 @@ func parseMessage(msg []byte) {
 	}
 
 	switch iMsg.Type {
-	case "NMHGetOpenPorts":
+	case "getPorts":
 
 		// Get open ports
 		openPorts, err := getOpenPorts()
@@ -320,7 +320,7 @@ func parseMessage(msg []byte) {
 		} else {
 			oMsg.Response = openPorts
 		}
-	case "NMHStartApplication":
+	case "launchApp":
 		// Start application
 		pid, err := startApplication()
 		if err != nil {
