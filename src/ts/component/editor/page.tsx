@@ -166,6 +166,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.resizePage();
 		this.checkDeleted();
 
+		focus.apply();
 		blockStore.updateNumbers(rootId);
 		sidebar.resizePage();
 
@@ -2246,7 +2247,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	isReadonly () {
 		const { rootId } = this.props;
 		const { isDeleted } = this.state;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'isArchived' ], true);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
