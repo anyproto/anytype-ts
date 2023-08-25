@@ -25,21 +25,23 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { newTemplateId, typeId } = data;
+		const { newTemplateId, typeId, onTypeChange } = data;
 
-		const type = dbStore.getType(typeId)
+		const type = dbStore.getType(typeId);
 		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: newTemplateId };
 
 		return (
 			<React.Fragment>
 
-				<div id="defaultType" className="select" onClick={this.onType}>
-					<div className="item">
-						<div className="name">{type.name || translate('commonObjectType')}</div>
+				{ onTypeChange ? (
+					<div id="defaultType" className="select" onClick={this.onType}>
+						<div className="item">
+							<div className="name">{type.name || translate('commonObjectType')}</div>
+						</div>
+						<Icon className="arrow black" />
 					</div>
-					<Icon className="arrow black" />
-				</div>
+				) : ''}
 
 				<Title text={translate('commonTemplates')} />
 				<div className="items">
@@ -210,7 +212,9 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	onType () {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { onTypeChange } = data;
 
 		menuStore.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
@@ -220,10 +224,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
-				onClick: (item: any) => {
-					console.log('TYPE CHANGE!')
-					// this.onTypeChange(item.id);
-				},
+				onClick: item => onTypeChange(item.id),
 			}
 		});
 	};

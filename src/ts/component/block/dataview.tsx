@@ -73,6 +73,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
+		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
@@ -726,6 +727,37 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		analytics.event('ClickNewOption', { route });
 
+		const menuActions: any = {
+			onSelect: (item: any) => {
+				if (item.id == NEW_TEMPLATE_ID) {
+					this.onTemplateAdd();
+					return;
+				};
+
+				this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
+				menuStore.closeAll();
+
+				analytics.event('SelectTemplate', { route });
+			},
+			onSetDefault: (item) => {
+				this.setDefaultTemplateForView(item.id, () => update());
+			},
+			onArchive: (item) => {
+				if (item.isDefault) {
+					this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
+				} else {
+					update();
+				};
+			}
+		};
+
+		if (this.isAllowedDefaultType()) {
+			menuActions.onTypeChange = (id) => {
+				const type = dbStore.getType(id);
+				console.log('TYPE CHANGE: ', type)
+			};
+		};
+
 		menuStore.open('dataviewTemplateList', {
 			...menuParam,
 			offsetY: 10,
@@ -738,27 +770,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route,
 				defaultTemplateId,
 				newTemplateId: NEW_TEMPLATE_ID,
-				onSelect: (item: any) => {
-					if (item.id == NEW_TEMPLATE_ID) {
-						this.onTemplateAdd();
-						return;
-					};
-
-					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
-					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
-
-					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
-				},
-				onSetDefault: (item) => {
-					this.setDefaultTemplateForView(item.id, () => update());
-				},
-				onArchive: (item) => {
-					if (item.isDefault) {
-						this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
-					} else {
-						update();
-					};
-				}
+				...menuActions
 			}
 		});
 	};
@@ -1113,6 +1125,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedTemplate (): boolean {
 		const type = dbStore.getType(this.getTypeId());
 		return type ? !UtilObject.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	isAllowedDefaultType (): boolean {
+		if (this.isCollection()) {
+			return true;
+		};
+
+		const { rootId } = this.props;
+		const target = this.getTarget();
+		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
+
+		return !types.length;
 	};
 
 	isCollection (): boolean {
