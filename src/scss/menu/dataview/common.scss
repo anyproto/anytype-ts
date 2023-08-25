@@ -41,5 +41,15 @@
 		#item-remove { color: $colorRed; }
 	}
 
-	.menu.menuDataviewTemplateList { width: 360px; padding: 8px 16px; }
+	.menu.menuDataviewTemplateList { width: 360px; padding: 8px 16px; display: flex; gap: 12px; }
+	.menu.menuDataviewTemplateList {
+		.items { display: flex; gap: 12px; flex-wrap: wrap; }
+		.items {
+			.previewObject { flex-shrink: 0; }
+
+			.previewObject {
+				.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
+			}
+		}
+	}
 }

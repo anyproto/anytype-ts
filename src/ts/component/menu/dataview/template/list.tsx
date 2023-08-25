@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { MenuItemVertical, PreviewObject } from 'Component';
+import { Icon, MenuItemVertical, PreviewObject } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, UtilData } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -22,9 +22,35 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { newTemplateId } = data;
+
+		const itemBlank = { id: Constant.templateId.blank };
+		const itemAdd = { id: newTemplateId };
 
 		return (
-			<div>
+			<div className="items">
+				<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
+					<div
+						id={`item-more-${Constant.templateId.blank}`}
+						className="moreWrapper"
+						onClick={e => this.onMore(e, itemBlank)}
+					>
+						<Icon className="more" />
+					</div>
+
+					<div onClick={e => this.onClick(e, itemBlank)}>
+						<div className="scroller">
+							<div className="heading">
+								<div className="name">{translate('commonBlank')}</div>
+								<div className="featured" />
+							</div>
+						</div>
+						<div className="border" />
+					</div>
+				</div>
+
 				{this.items.map((item: any, i: number) => (
 					<PreviewObject
 						key={i}
@@ -34,6 +60,11 @@ class MenuTemplateList extends React.Component<I.Menu> {
 						onMore={e => this.onMore(e, item)}
 					/>
 				))}
+
+				<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
+					<div className="border" />
+					<Icon className="add" />
+				</div>
 			</div>
 		);
 	};
@@ -156,7 +187,13 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		console.log('CLICK! ! !')
+		const { param } = this.props;
+		const { data } = param;
+		const { onSelect } = data;
+
+		if (onSelect) {
+			onSelect(item);
+		};
 	};
 
 	onMouseEnter (e: any, item: any) {
