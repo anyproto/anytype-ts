@@ -165,6 +165,7 @@ export interface View {
 	filters: Filter[];
 	relations: any[];
 	defaultTemplateId?: string;
+	defaultTypeId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
 	isGrid?: () => boolean;

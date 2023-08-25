@@ -226,6 +226,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
 
+		console.log('VIEW: ', view)
+
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
 			this.loadData(view.id, 0, true);
@@ -600,6 +602,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Constant.templateId.blank;
 	};
 
+	setDefaultTypeForView (id: string, callBack?: (message: any) => void) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id }, callBack);
+	};
+
 	setDefaultTemplateForView (id: string, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
@@ -754,7 +763,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (this.isAllowedDefaultType()) {
 			menuActions.onTypeChange = (id) => {
 				const type = dbStore.getType(id);
-				console.log('TYPE CHANGE: ', type)
+				this.setDefaultTypeForView(id, (message) => {
+					console.log('MESSAGE ON TYPE SET: ', message)
+				});
 			};
 		};
 
