@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, MenuItemVertical, PreviewObject } from 'Component';
+import { Icon, Title, PreviewObject } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, UtilData } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { commonStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplateList extends React.Component<I.Menu> {
@@ -19,53 +19,66 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		this.onClick = this.onClick.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { newTemplateId } = data;
+		const { newTemplateId, typeId } = data;
 
+		const type = dbStore.getType(typeId)
 		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: newTemplateId };
 
 		return (
-			<div className="items">
-				<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
-					<div
-						id={`item-more-${Constant.templateId.blank}`}
-						className="moreWrapper"
-						onClick={e => this.onMore(e, itemBlank)}
-					>
-						<Icon className="more" />
-					</div>
+			<React.Fragment>
 
-					<div onClick={e => this.onClick(e, itemBlank)}>
-						<div className="scroller">
-							<div className="heading">
-								<div className="name">{translate('commonBlank')}</div>
-								<div className="featured" />
-							</div>
+				<div id="defaultType" className="select" onClick={this.onType}>
+					<div className="item">
+						<div className="name">{type.name || translate('commonObjectType')}</div>
+					</div>
+					<Icon className="arrow black" />
+				</div>
+
+				<Title text={translate('commonTemplates')} />
+				<div className="items">
+					<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
+						<div
+							id={`item-more-${Constant.templateId.blank}`}
+							className="moreWrapper"
+							onClick={e => this.onMore(e, itemBlank)}
+						>
+							<Icon className="more" />
 						</div>
+
+						<div onClick={e => this.onClick(e, itemBlank)}>
+							<div className="scroller">
+								<div className="heading">
+									<div className="name">{translate('commonBlank')}</div>
+									<div className="featured" />
+								</div>
+							</div>
+							<div className="border" />
+						</div>
+					</div>
+
+					{this.items.map((item: any, i: number) => (
+						<PreviewObject
+							key={i}
+							rootId={item.id}
+							previewSize="small"
+							onClick={e => this.onClick(e, item)}
+							onMore={e => this.onMore(e, item)}
+						/>
+					))}
+
+					<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
 						<div className="border" />
+						<Icon className="add" />
 					</div>
 				</div>
-
-				{this.items.map((item: any, i: number) => (
-					<PreviewObject
-						key={i}
-						rootId={item.id}
-						previewSize="small"
-						onClick={e => this.onClick(e, item)}
-						onMore={e => this.onMore(e, item)}
-					/>
-				))}
-
-				<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
-					<div className="border" />
-					<Icon className="add" />
-				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
@@ -194,6 +207,25 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		if (onSelect) {
 			onSelect(item);
 		};
+	};
+
+	onType () {
+		const { getId } = this.props;
+
+		menuStore.open('typeSuggest', {
+			element: `#${getId()} #defaultType`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filter: '',
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+				],
+				onClick: (item: any) => {
+					console.log('TYPE CHANGE!')
+					// this.onTypeChange(item.id);
+				},
+			}
+		});
 	};
 
 	onMouseEnter (e: any, item: any) {

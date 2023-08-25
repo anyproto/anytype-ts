@@ -43,6 +43,10 @@
 
 	.menu.menuDataviewTemplateList { width: 360px; padding: 8px 16px; display: flex; gap: 12px; }
 	.menu.menuDataviewTemplateList {
+		.select { margin-bottom: 16px; }
+
+		.title { padding: 4px 0; margin-bottom: 6px; }
+
 		.items { display: flex; gap: 12px; flex-wrap: wrap; }
 		.items {
 			.previewObject { flex-shrink: 0; }
