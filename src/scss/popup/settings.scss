@@ -107,10 +107,7 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { border: 0px; color: $colorDarkGrey;  cursor: default; }
-				.select {
-					.icon.arrow { margin: 0px !important; top: 3px; }
-				}
+				.select { padding-left: 10px; }
 
 				.name { width: 100%; }
 				.name {
@@ -220,10 +217,10 @@
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
 					.sectionContent {
-						.item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
-						.item:last-child { border-bottom: 0; }
+						> .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						> .item:last-child { border-bottom: 0; }
 
-						.item {
+						> .item {
 							.sides { display: flex; justify-content: space-between; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
@@ -250,7 +247,7 @@
 
 				.section.sectionSpaceManager {
 					.sectionContent {
-						.item {
+						> .item {
 							.storageLabel { margin-bottom: 12px; line-height: 18px; }
 							.storageLabel {
 								.label { display: inline; }
@@ -260,7 +257,7 @@
 								.fill { background: $colorLime; }
 							}
 						}
-						.item.red {
+						> .item.red {
 							.progressBar {
 								.fill { background: $colorRed; }
 							}
@@ -270,9 +267,9 @@
 
 				.section.sectionIntegrations {
 					.sectionContent {
-						.item { transition: $transitionAllCommon; }
-						.item:hover { background: $colorHoverLight; }
-						.item {
+						> .item { transition: $transitionAllCommon; }
+						> .item:hover { background: $colorHoverLight; }
+						> .item {
 							.side.left { display: flex; gap: 0 12px; }
 							.side.left {
 								.icon { width: 22px; height: 22px; }
@@ -285,11 +282,11 @@
 
 				.section.sectionInfo {
 					.sectionContent {
-						.item {
+						> .item {
 							.sides { align-items: center; }
 							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
 						}
-						.item:hover {
+						> .item:hover {
 							.icon { opacity: 1; }
 						}
 					}
