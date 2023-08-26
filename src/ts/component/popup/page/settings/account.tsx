@@ -44,56 +44,56 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
 		return (
-			<React.Fragment>
-				<Error text={error} />
+			<div className="sections">
+				<div className="section top">
+					<Error text={error} />
 
-				<div className="iconWrapper">
-					{loading ? <Loader /> : ''}
-					<IconObject
-						id="userpic"
-						object={profile}
-						size={108}
-						onClick={this.onMenu}
+					<div className="iconWrapper">
+						{loading ? <Loader /> : ''}
+						<IconObject
+							id="userpic"
+							object={profile}
+							size={108}
+							onClick={this.onMenu}
+						/>
+					</div>
+				</div>
+
+				<div className="section">
+					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
+
+					<Input
+						ref={ref => this.refName = ref}
+						value={profile.name}
+						onKeyUp={this.onName}
+						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
+					/>
+
+					<Input
+						ref={ref => this.refDescription = ref}
+						value={profile.description}
+						onKeyUp={this.onDescription}
+						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 					/>
 				</div>
 
-				<div className="sections">
-					<div className="section">
-						<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
+				<div className="section">
+					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
 
+					<div className="inputWrapper withIcon">
 						<Input
-							ref={ref => this.refName = ref}
-							value={profile.name}
-							onKeyUp={this.onName}
-							placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
+							value={account.id}
+							readonly={true}
+							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
 						/>
-
-						<Input
-							ref={ref => this.refDescription = ref}
-							value={profile.description}
-							onKeyUp={this.onDescription}
-							placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
-						/>
-					</div>
-
-					<div className="section">
-						<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
-
-						<div className="inputWrapper withIcon">
-							<Input
-								value={account.id}
-								readonly={true}
-								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
-							/>
-							<Icon className="copy" />
-						</div>
-					</div>
-
-					<div className="section bottom">
-						<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+						<Icon className="copy" />
 					</div>
 				</div>
-			</React.Fragment>
+
+				<div className="section bottom">
+					<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+				</div>
+			</div>
 		);
 	};
 

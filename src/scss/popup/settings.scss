@@ -159,7 +159,7 @@
 			.sections { display: flex; flex-direction: column; height: 100%; }
 			.sections {
 				.section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px 0px; }
-				.section.top { margin-bottom: 16px; }
+				.section.top { margin-bottom: 16px; justify-content: flex-start; flex-direction: row; }
 				.section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
 
 				.section {
