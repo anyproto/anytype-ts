@@ -1006,6 +1006,7 @@
 
     "menuBlockLinkSettingsStyleText": "Text",
     "menuBlockLinkSettingsStyleCard": "Card",
+    "menuBlockLinkSettingsStyleEmbed": "Embed",
     "menuBlockLinkSettingsSizeNone": "None",
     "menuBlockLinkSettingsSizeSmall": "Small",
     "menuBlockLinkSettingsSizeMedium": "Medium",
@@ -1018,6 +1019,7 @@
     "menuBlockLinkSettingsDescription": "Description",
     "menuBlockLinkSettingsTags": "Tags",
     "menuBlockLinkSettingsAttributes": "Attributes",
+    "menuBlockLinkSettingsRelations": "Featured relations",
 
     "menuBlockLinkFilterPlaceholder": "Paste link or search objects",
     "menuBlockLinkSectionsLinkToWebsite": "Link to website",

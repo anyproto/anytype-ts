@@ -3,9 +3,11 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview, Relation } from 'Lib';
+import { detailStore, blockStore, dbStore, commonStore } from 'Store';
+import Card from './dataview/view/gallery/card';
 import Constant from 'json/constant.json';
+import BlockLinkImage from './link/image';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
@@ -29,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
+		const object = detailStore.get(rootId, block.content.targetBlockId);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = UtilData.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -42,6 +44,72 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const withIcon = content.iconSize != I.LinkIconSize.None;
 		const withType = relations.includes('type');
         const withCover = relations.includes('cover') && coverId && coverType;
+
+
+
+
+
+		console.log("MG test LINKS --------------------- ");
+		let myrootID = object.id;
+		console.log("myrootID : " + myrootID + "vs rootID "+ rootId);
+		console.log(myrootID);
+		console.log("Recordid (=object.id, récupéré par rootID + block.content.targetBlockID)? : "+myrootID)
+		console.log(object); // Object est bien ce qui est récupéré???
+		console.log("type :  ");
+		console.log(type);
+		const relationstest = dbStore.getObjectRelations(myrootID, myrootID);
+		console.log("Relationstest avec id = "+myrootID+" : ");
+		console.log(relationstest);
+		const relationKeys = relationstest.map(it => it.relationKey); // clé des relations (relation.relationKey)
+		console.log("RelationsKeys : ");
+		console.log(relationKeys);
+		let items = relationstest.map(it => ({ ...it, scope: I.RelationScope.Object })); // ajout l'item "scope=0" dans relations
+		console.log("items : ");
+		console.log(items);
+		const { config } = commonStore;
+		console.log("config : ");
+		console.log(config);
+		const ret = relationstest.filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
+		console.log("ret : ");
+		console.log(ret);
+
+
+		
+		// for (const valueRelation of object.featuredRelations) {
+  			
+		// 	  let relation = dbStore.getRelationByKey(valueRelation);
+		// 	  if (!relation) {
+		// 		  relation = dbStore.getRelations().find(it => it.relationKey == valueRelation);
+		// 	  };
+		// 	  const value=detailStore.get(myrootID, myrootID, [ valueRelation ], true)[valueRelation];
+		// 	  console.log("RootID : "+myrootID+"Key : " + valueRelation + "; Name : " + relation.name + " et valeur = "+value);
+		// 	  console.log(relation);
+		// 	  console.log("Record complet : ");
+		// 	  console.log(detailStore.get(myrootID, myrootID, [ valueRelation ], true));
+		// }
+		
+
+		
+		/* //console.log("Relation Key :  "+relationKey);
+		console.log(relation);
+		console.log("Recordid? : "+rootId)
+		console.log(detailStore.get(rootId, rootId, [ relation.relationKey ], true));
+		console.log("object : ");
+		console.log(object);
+		console.log(object.featuredRelations);
+		console.log(object.featuredRelations[3]); // Relatiokey
+		console.log("tag0 : " + object.tag[0]);
+		console.log("tag sans : " + object.tag);
+		console.log(dbStore.getRelationByKey(object.tag));
+		//console.log(dbStore.getObjectRelations(rootId, rootId)); // Ne récupère rien */
+		
+		console.log(" MG fin test --------------------------------");
+
+
+
+
+
+
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -130,6 +198,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			if (withType && type) n++;
 			cnc.push('c' + n);
 
+			if (cardStyle == I.LinkCardStyle.Embed) {
+				element = <BlockLinkImage key={`block-${block.id}-component`} ref={myrootID} {...this.props} />;
+			}
+			else{
 			element = (
 				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
@@ -172,6 +244,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 					</div>
 				</div>
 			);
+		}
 		};
 
 		return (

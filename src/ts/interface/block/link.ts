@@ -4,6 +4,7 @@ export enum LinkCardStyle {
 	Text		 = 0,
 	Card		 = 1,
 	Inline		 = 2,
+	Embed		 = 3,	
 };
 
 export enum LinkIconSize {

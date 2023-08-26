@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { I, C, UtilCommon, UtilData, UtilObject, UtilMenu, keyboard, Relation, translate } from 'Lib';
+import { blockStore, detailStore, menuStore, commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
@@ -125,7 +125,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			case 'description':
 				options = this.getDescriptions();
 				break;
-		};
+				
+				case 'relations':
+					options = this.getRelations();
+					break;
+			};
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
@@ -146,11 +150,67 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         return UtilData.checkLinkSettings(block.content, object.layout);
 	};
 
+	getRelations () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const { config } = commonStore;
+		const block = blockStore.getLeaf(rootId, blockId);
+		const {targetBlockId} = block.content;
+		// -> this.props.param.data.rootId : page en cours;
+		// BlockId : Id du block // targetBlockId : bloc cible (celui lié)
+
+		const object = detailStore.get(rootId, targetBlockId, [ 'targetObjectType', 'featuredRelations' ]);
+		const type = dbStore.getType(object.type);
+
+		const relations = dbStore.getObjectRelations(targetBlockId, targetBlockId);
+		const relationKeys = relations.map(it => it.relationKey);
+		const typeRelations = (type ? type.recommendedRelations || [] : []).
+			map(it => dbStore.getRelationById(it)).
+			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
+
+		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
+
+		const content = this.getContent();
+		let transformedRet = ret.map(rel => ({
+			id: rel.id,
+			name:rel.name,
+			icon: "relation " + Relation.className(rel.relationFormat),
+			withSwitch: true,
+			switchValue: this.hasRelationKey(rel.id),
+			onSwitch: (e: any, v: boolean) => {
+				let key = '';
+				content.relations = v ? content.relations.concat([ rel.id ]) : content.relations.filter(it => it !== rel.id);
+				key = 'relations';
+				console.log("Sauvegarde de " + key + " -> " + content[key]);
+				this.save(key, content[key]);
+			}
+		}));
+
+		//return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
+		return transformedRet;
+	};
+	
 	getStyles () {
-		return [
+		const { param } = this.props;
+        const { data } = param;
+        const { rootId, blockId } = data;
+        const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return [];
+		};
+		const object = detailStore.get(rootId, block.content.targetBlockId);
+
+		const styles = [
 			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
 			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
-        ].map((it: any) => {
+		];
+	
+		if (object.type === "ot-image") {
+			styles.push({ id: I.LinkCardStyle.Embed, name: translate('menuBlockLinkSettingsStyleEmbed'), icon: 'style-embed' });
+		}
+
+		return styles.map((it: any) => {
 			it.icon = 'linkStyle' + it.id;
 			return it;
 		});
@@ -194,6 +254,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const canIconSwitch = canIcon && (content.cardStyle == I.LinkCardStyle.Text);
         const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
         const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+		const canAttributes = (content.cardStyle != I.LinkCardStyle.Embed) && (this.getRelations().length >0);
+
 
         const styles = this.getStyles();
 		const style = styles.find(it => it.id == content.cardStyle) || styles[0];
@@ -224,11 +286,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			caption: description.name, arrow: true
 		} : null;
 		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
+		const itemRelations = { id: 'relations', name: translate('menuBlockLinkSettingsRelations'), icon: 'relation default', arrow: true  };
 
 		let sections: any[] = [
-			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },
-			{ name: translate('menuBlockLinkSettingsAttributes'), children: [ itemName, itemDescription, itemType ] },
+			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] }
 		];
+		if (canAttributes)
+			sections.push({ name: translate('menuBlockLinkSettingsAttributes'), children: [ itemName, itemDescription, itemType, itemRelations ] });
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);
