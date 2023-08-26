@@ -25,7 +25,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.Space} {...this.props} />
 
 				<div className="wrapper">
-					<IconObject object={space} size={112} forceLetter={true} />
+					<IconObject object={space} size={96} forceLetter={true} />
 					<Title text={space.name} />
 					<Label text={translate('pageMainEmptyDescription')} />
 							

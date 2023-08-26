@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
+import { IconObject, Input, Title, Loader, Button, Icon, Error } from 'Component';
 import { I, C, translate, UtilCommon, Action, UtilObject } from 'Lib';
 import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -44,56 +44,56 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
 		return (
-			<div className="sections">
-				<div className="section top">
-					{error ? <div className="message">{error}</div> : ''}
+			<React.Fragment>
+				<Error text={error} />
 
-					<div className="iconWrapper">
-						{loading ? <Loader /> : ''}
-						<IconObject
-							id="userpic"
-							object={profile}
-							size={108}
-							onClick={this.onMenu}
-						/>
-					</div>
-				</div>
-
-				<div className="section">
-					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
-
-					<Input
-						ref={ref => this.refName = ref}
-						value={profile.name}
-						onKeyUp={this.onName}
-						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
-					/>
-
-					<Input
-						ref={ref => this.refDescription = ref}
-						value={profile.description}
-						onKeyUp={this.onDescription}
-						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
+				<div className="iconWrapper">
+					{loading ? <Loader /> : ''}
+					<IconObject
+						id="userpic"
+						object={profile}
+						size={108}
+						onClick={this.onMenu}
 					/>
 				</div>
 
-				<div className="section">
-					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
+				<div className="sections">
+					<div className="section">
+						<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
 
-					<div className="inputWrapper withIcon">
 						<Input
-							value={account.id}
-							readonly={true}
-							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							ref={ref => this.refName = ref}
+							value={profile.name}
+							onKeyUp={this.onName}
+							placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 						/>
-						<Icon className="copy" />
+
+						<Input
+							ref={ref => this.refDescription = ref}
+							value={profile.description}
+							onKeyUp={this.onDescription}
+							placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
+						/>
+					</div>
+
+					<div className="section">
+						<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
+
+						<div className="inputWrapper withIcon">
+							<Input
+								value={account.id}
+								readonly={true}
+								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							/>
+							<Icon className="copy" />
+						</div>
+					</div>
+
+					<div className="section bottom">
+						<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 					</div>
 				</div>
-
-				<div className="section bottom">
-					<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
-				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 

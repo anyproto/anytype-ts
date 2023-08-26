@@ -125,7 +125,7 @@ class Iframe extends React.Component {
 				return;
 			};
 
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiVXFrdVJid0gifQ.iwzQLqS7znIuiCGTCLtMWxCxNboNZnS1hssU-rwrjWA');
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoic2xNeUVvUEgifQ.p-bYr8Sp0pfwnIeZzc7bEsMnIwbuS87sQNPbSf_WlNI');
 			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[0]}`);
 			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
 
