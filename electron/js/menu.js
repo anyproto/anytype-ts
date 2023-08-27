@@ -324,13 +324,12 @@ class MenuManager {
 			{ label: Util.translate('electronMenuQuit'), click: () => { hide(); Api.exit(this.win, '', false); } },
 		]));
 
+		// Force on top and focus because in some case Electron fail with show()
 		this.tray.on('double-click', () => {
-			// Force on top and focus because in some case Electron fail with show()
 			this.win.setAlwaysOnTop(true);
 			this.win.show();
 			this.win.setAlwaysOnTop(false);
-		  });
-
+		});
 	};
 
 	openSettings (page, param) {
