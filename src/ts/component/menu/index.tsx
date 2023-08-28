@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Dimmer, Icon } from 'Component';
+import { Dimmer, Icon, Button, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 
@@ -62,6 +62,8 @@ import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
+import MenuDataviewViewSettings from './dataview/view/settings';
+import MenuDataviewViewLayout from './dataview/view/layout';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
@@ -145,6 +147,8 @@ const Components: any = {
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
 	dataviewViewEdit:		 MenuDataviewViewEdit,
+	dataviewViewSettings:	 MenuDataviewViewSettings,
+	dataviewViewLayout:	 	 MenuDataviewViewLayout,
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
@@ -188,39 +192,43 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
+		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack } = param;
 		const { data } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
-		
-		let tab = '';
-		if (tabs.length) {
-			tab = this.state.tab || tabs[0].id;
-		};
-		
 		const menuId = this.getId();
-		let Component = null;
 		const arrowDirection = this.getArrowDirection();
-
-		const cn = [ 
-			'menu', 
+		const cn = [
+			'menu',
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
 			'v' + vertical,
 			'h' + horizontal
 		];
+		const cd = [];
+		
+		let tab = '';
+		let title = '';
+		let Component = null;
+
+		if (tabs.length) {
+			tab = this.state.tab || tabs[0].id;
+		};
+
+		if (param.title) {
+			title = param.title;
+		};
+
 		if (component) {
 			cn.push(UtilCommon.toCamelCase('menu-' + component));
 		} else {
 			cn.push(menuId);
 		};
 
-		const cd = [];
-
 		if (tab) {
 			const item = tabs.find(it => it.id == tab);
 			if (item) {
 				Component = Components[item.component];
 			};
-		} else 
+		} else
 		if (component) {
 			Component = Components[component];
 		} else {
@@ -248,15 +256,26 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={menuId + '-wrap'} 
+				id={`${menuId}-wrap`} 
 				className="menuWrap"
 			>
-				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
+				<div 
+					id={menuId} 
+					className={cn.join(' ')} 
+					onMouseLeave={this.onMouseLeave}
+				>
 					{tabs.length ? (
 						<div className="tabs">
 							{tabs.map((item: any, i: number) => (
 								<Tab key={i} {...item} />
 							))}
+						</div>
+					) : ''}
+
+					{title ? (
+						<div className="titleWrapper">
+							{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
+							<Title text={title} />
 						</div>
 					) : ''}
 
@@ -387,11 +406,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.' + this.getId(), () => this.position());
+		$(window).on(`resize.${this.getId()}`, () => this.position());
 	};
 	
 	unbind () {
-		$(window).off('resize.' + this.getId());
+		$(window).off(`resize.${this.getId()}`);
 	};
 	
 	animate () {
@@ -401,7 +420,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const { param } = this.props;
 		const { noAnimation } = param;
-		const menu = $('#' + this.getId());
+		const menu = $(`#${this.getId()}`);
 
 		if (noAnimation) {
 			menu.addClass('noAnimation show').css({ transform: 'none' });

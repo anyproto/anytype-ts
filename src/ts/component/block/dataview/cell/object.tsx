@@ -408,12 +408,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	blur () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).find('#entry').trigger('blur');
 		};
-
-		const node = $(this.node);
-		node.find('#entry').blur();
 	};
 
 	scrollToBottom () {
@@ -421,11 +418,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
-		if (!content.length) {
-			return;
+		if (content.length) {
+			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 		};
-
-		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 	};
 
 	resize () {

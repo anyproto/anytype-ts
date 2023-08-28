@@ -675,7 +675,8 @@
     "popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
     "popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
-    "popupSettingsExportProtobufTitle": "Export to Protobuf",
+    "popupSettingsExportProtobufTitle": "Export to Any-Block",
+	"popupSettingsExportProtobufFormat": "File Format",
 
     "popupSettingsLogout": "Log out",
 
@@ -738,11 +739,13 @@
     "popupExportIncludeLinkedObjects": "Include linked objects",
     "popupExportIncludeFiles": "Include files",
     "popupExportIncludeArchivedObjects": "Include archived objects",
+	"popupExportFileFormat": "File Format",
     "popupExportPageSize": "Page size",
     "popupExportLandscape": "Landscape",
     "popupExportPrintBackground": "Print background",
-    "popupExportExport": "Export",
-    "popupExportExportFormat": "Export format",
+    "popupExportTitle": "Export",
+    "popupExportFormat": "Export format",
+	"popupExportOk": "Export",
 
     "popupHelpOlderReleases": "Older releases",
 
@@ -1137,6 +1140,12 @@
     "menuDataviewViewEditViewAs": "View as",
     "menuDataviewViewEditDuplicateView": "Duplicate view",
     "menuDataviewViewEditRemoveView": "Remove view",
+    "menuDataviewViewSettings": "View settings",
+    "menuDataviewViewDefaultType": "Default type",
+    "menuDataviewViewFilter": "Filter",
+    "menuDataviewViewSort": "Sort",
+    "menuDataviewViewApplied": "%s applied",
+    "menuDataviewViewName": "View name",
 
     "menuDataviewViewListNoViewsFound": "No views found",
     "menuDataviewViewListAddView": "Add a view",

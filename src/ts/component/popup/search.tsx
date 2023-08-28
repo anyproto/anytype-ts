@@ -337,7 +337,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const skipTypes = [].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-			{ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

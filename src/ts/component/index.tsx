@@ -39,6 +39,7 @@ import EmptySearch from './util/emptySearch';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
+import InputWithLabel from './form/inputWithLabel';
 import Switch from './form/switch';
 import Editable from './form/editable';
 import Checkbox from './form/checkbox';
@@ -104,6 +105,7 @@ export {
 	Switch,
 	Input,
 	InputWithFile,
+	InputWithLabel,
 	Editable,
 	Pin,
 	Sync,

@@ -11,6 +11,7 @@ export interface MenuTab {
 
 export interface MenuParam {
 	component?: string;
+	title?: string;
 	menuKey?: string;
 	element?: any;
 	rect?: any;
@@ -31,6 +32,7 @@ export interface MenuParam {
 	className?: string;
 	classNameWrap?: string;
 	withArrow?: boolean;
+	withBack?: boolean;
 	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
@@ -40,6 +42,7 @@ export interface MenuParam {
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
+	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
 	force?: boolean;
 };
@@ -86,6 +89,7 @@ export interface MenuItem {
 	withSwitch?: boolean;
 	withSelect?: boolean;
 	withMore?: boolean;
+	subComponent?: string;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
