@@ -427,7 +427,7 @@ class BlockStore {
 		const blocks = UtilCommon.objectCopy(this.getBlocks(rootId, it => it.isText()));
 
 		for (const block of blocks) {
-			const marks = block.content.marks || [];
+			let marks = block.content.marks || [];
 
 			if (!marks.length) {
 				continue;
@@ -457,7 +457,11 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name, marks).trim();
+
+				const parsed = Mark.fromUnicode(name, marks);
+
+				name = parsed.text.trim();
+				marks = parsed.marks;
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;

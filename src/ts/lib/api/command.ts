@@ -1663,7 +1663,7 @@ const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (mes
 	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
 };
 
-const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, callBack?: (message: any) => void) => {
+const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
 	request.setSpaceid(spaceId);
@@ -1674,6 +1674,7 @@ const ObjectListExport = (spaceId: string, path: string, objectIds: string[], fo
 	request.setIncludenested(includeNested);
 	request.setIncludefiles(includeFiles);
 	request.setIncludearchived(includeArchived);
+	request.setIsjson(isJson);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
 };

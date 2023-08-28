@@ -577,10 +577,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			let type = null;
 			let param = '';
-			const markParam = this.getMarkParam();
 
-			for (const item of markParam) {
-				keyboard.shortcut(item.key, e, (pressed: string) => {
+			for (const item of this.getMarkParam()) {
+				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
 					param = item.param;
 				});

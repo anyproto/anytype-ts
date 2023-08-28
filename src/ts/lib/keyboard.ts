@@ -144,21 +144,23 @@ class Keyboard {
 		// Close popups and menus
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
+
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
 			} else 
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (UtilCommon.getSelectionRange()) {
-					$(document.activeElement).blur();
-					window.getSelection().removeAllRanges();
-					canClose = false;
-				} else
-				if (this.selection) {
-					const ids = this.selection.get(I.SelectType.Block);
-					if (ids.length) {
+				if (this.isPopup()) {
+					if (UtilCommon.getSelectionRange()) {
+						UtilCommon.clearSelection();
 						canClose = false;
+					} else
+					if (this.selection) {
+						const ids = this.selection.get(I.SelectType.Block);
+						if (ids.length) {
+							canClose = false;
+						};
 					};
 				};
 
@@ -509,7 +511,13 @@ class Keyboard {
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true, 'MenuSystem');
+				Action.export([ rootId ], I.ExportType.Protobuf, {
+					zip: true, 
+					nested: true, 
+					files: true, 
+					archived: true, 
+					route: 'MenuSystem',
+				});
 				break;
 			};
 

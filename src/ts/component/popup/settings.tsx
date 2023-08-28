@@ -310,10 +310,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onExport (type: I.ExportType, param: any) {
-		const { zip, files, archived } = param || {};
-
 		analytics.event('ClickExport', { type, route: 'Settings' });
-		Action.export([], type, zip, false, files, archived, 'Settings', () => this.props.close());
+		Action.export([], type, { ...param, route: 'Settings' }, () => this.props.close());
 	};
 
 	onKeyDown (e: any) {

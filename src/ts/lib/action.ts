@@ -415,13 +415,15 @@ class Action {
 		});
 	};
 
-	export (ids: string[], type: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, route: string, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+		const { zip, nested, files, archived, json, route } = param;
+
 		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(commonStore.space, paths[0], ids, type, zip, nested, files, archived, (message: any) => {
+			C.ObjectListExport(commonStore.space, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
