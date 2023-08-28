@@ -40,6 +40,10 @@
             .tab:hover, .tab.active { color: $colorPrimary; }
         }
 
+        .titleWrapper {
+            .title { color: $colorSecondary; }
+        }
+
         .line { background: $colorLineSecondary; }
         .section::after { background: $colorLineSecondary; }
 		.separator .inner { background: $colorLineSecondary; }
