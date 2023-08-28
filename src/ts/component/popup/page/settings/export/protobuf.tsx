@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Button, Switch } from 'Component';
+import { Title, Label, Button, Switch, Select } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
@@ -15,6 +15,10 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 			{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
 			{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 		];
+		const formatOptios = [
+			{ id: 'json', name: 'JSON' },
+			{ id: 'pb', name: 'Protobuf' },
+		];
 
 		this.init();
 
@@ -25,6 +29,20 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 				<Title text={translate('popupSettingsExportProtobufTitle')} />
 
 				<div className="actionItems">
+					<div className="item">
+						<Label text={translate('popupSettingsExportProtobufFormat')} />
+
+						<Select 
+							id="file-format"
+							value={this.data.json ? 'json' : ''}
+							options={formatOptios}
+							onChange={(v: string) => {
+								this.data.json = v == 'json';
+								this.save();
+							}}
+						/>
+					</div>
+
 					{items.map((item: any, i: number) => (
 						<div key={i} className="item">
 							<Label text={item.name} />
@@ -45,7 +63,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Protobuf, this.data); }} 
+						onClick={() => onExport(I.ExportType.Protobuf, this.data)} 
 					/>
 				</div>
 			</React.Fragment>

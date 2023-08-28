@@ -26,8 +26,17 @@
 		}
 	}
 
-	.menu.menuDataviewViewEdit { width: 360px; }
-	.menu.menuDataviewViewEdit {
+	.menu.menuDataviewViewSettings {
+		.content { padding-top: 0; }
+		.filter.isName { margin-bottom: 4px; }
+	}
+
+	.menu.menuDataviewViewEdit,
+	.menu.menuDataviewViewSettings,
+	.menu.menuDataviewViewLayout { width: 360px; }
+	.menu.menuDataviewViewEdit,
+	.menu.menuDataviewViewSettings,
+	.menu.menuDataviewViewLayout {
 		.content { max-height: 450px; }
 		.item.withCaption {
 			.caption { @include text-common; line-height: 20px; width: 150px; padding-right: 16px; }
