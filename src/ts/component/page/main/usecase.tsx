@@ -2,9 +2,8 @@ import * as React from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, translate, analytics, UtilCommon, Storage } from 'Lib';
-import { blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { C, I, translate, analytics, UtilCommon } from 'Lib';
+import { blockStore, commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -66,12 +65,18 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 	};
 
 	getItems () {
-		return _.shuffle([
+		const { config } = commonStore;
+		const items = [
 			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
 			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
 			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
-			{ id: I.Usecase.Strategic, img: 'img/usecase/strategic.png' },
-		]);
+		];
+
+		if (config.experimental) {
+			items.push({ id: I.Usecase.Strategic, img: 'img/usecase/strategic.png' });
+		};
+
+		return _.shuffle(items);
 	};
 
 	onClick (e: any, id: number) {
