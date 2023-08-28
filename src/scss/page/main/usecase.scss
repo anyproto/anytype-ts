@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
 .pageMainUsecase {
-	.frame { width: 830px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
+	.frame { width: 1082px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
 	.frame {
 		> .title { @include text-header1; margin-bottom: 8px; }
 		> .label { color: $colorDarkGrey; margin-bottom: 18px; }
 
-		.list { display: grid; gap: 0px 16px; margin-bottom: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.list { display: grid; gap: 0px 16px; margin-bottom: 18px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 		.list {
 			.item { 
 				position: relative; overflow: hidden; min-height: 236px; transition: $transitionAllCommon; 
