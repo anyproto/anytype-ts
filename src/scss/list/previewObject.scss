@@ -17,7 +17,7 @@
 		> .icon.more { opacity: 0; }
 		> .icon.more {
 			width: 28px; height: 28px; background-size: 20px; position: absolute; right: 8px; top: 8px;
-			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer;
+			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg');
 		}
 		> .icon.more:hover,
 		> .icon.more.hover { background-color: $colorHoverMedium; }
