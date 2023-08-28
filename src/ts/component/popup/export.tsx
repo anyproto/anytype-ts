@@ -183,7 +183,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		analytics.event('ClickExport', { type: format, route });
 
-		switch (this.format) {
+		switch (format) {
 			default:
 				Action.export([ rootId ], format, { ...this.data, route });
 				break;
