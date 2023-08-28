@@ -105,7 +105,7 @@
     "commonUndo": "Undo",
     "commonRedo": "Redo",
     "commonBlank": "Blank",
-    "commonTemplateSetDefault": "Set as default",
+    "commonSetDefault": "Set as default",
     "commonTemplates": "Templates",
 
     "commonLCCollection": "collection",

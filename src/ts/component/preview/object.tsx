@@ -85,7 +85,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			size = 20;
 			iconSize = 18;
 
-			if (previewSize && previewSize == 'small') {
+			if (previewSize && (previewSize == 'small')) {
 				size = 14;
 				iconSize = 14;
 			};
@@ -341,6 +341,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
 
 								{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+
 								<div className="heading">
 									<IconObject size={size} iconSize={iconSize} object={object} />
 									<div className="name">{name}</div>
@@ -348,13 +349,14 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 									<div className="featured">
 										{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
 											<span className="textColor-red">
-											{translate('commonDeletedType')}
-										</span>
+												{translate('commonDeletedType')}
+											</span>
 										)}
 										<div className="bullet" />
 										{author.name}
 									</div>
 								</div>
+
 								<div className="blocks">
 									{childBlocks.map((child: any, i: number) => {
 										const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
@@ -424,15 +426,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 
 	onMouseEnter (e: any) {
-		const node = $(this.node);
-
-		node.addClass('hover');
+		$(this.node).addClass('hover');
 	};
 
 	onMouseLeave (e: any) {
-		const node = $(this.node);
-
-		node.removeClass('hover');
+		 $(this.node).removeClass('hover');
 	};
 
 	load () {
