@@ -12,8 +12,10 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	files = true;
 	archived = true;
 	landscape = false;
+	json = false;
 	pageSize = '';
 	printBg = true;
+	data: any = {};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -43,6 +45,11 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 			{ id: 'tabloid', name: 'Tabloid'},
 		];
 
+		const formatOptions = [
+			{ id: 'json', name: 'JSON'},
+			{ id: 'pb', name: 'Protobuf'},
+		];
+
 		const Option = (item: any) => {
 			let control = null;
 
@@ -53,7 +60,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 							className="big"
 							value={this[item.id]}
 							onChange={(e: any, v: boolean) => {
-								this[item.id] = v;
+								this.data[item.id] = v;
 								this.save();
 							}}
 						/>
@@ -67,7 +74,11 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 							value={this[item.id]}
 							options={item.options}
 							onChange={(v: any) => {
-								this[item.id] = v;
+								if (item.id == 'json') {
+									v = (v == 'json') ? true : false;
+								};
+
+								this.data[item.id] = v;
 								this.save();
 							}}
 							arrowClassName="light"
@@ -90,9 +101,11 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		this.init();
 
+		const { format } = this.data;
+
 		let items: any[] = [];
 
-		switch (this.format) {
+		switch (format) {
 			case I.ExportType.Markdown:
 			case I.ExportType.Protobuf:
 				items = [
@@ -101,6 +114,10 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 					{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
 					{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 				];
+
+				if (format == I.ExportType.Protobuf) {
+					items.push({ id: 'json', name: translate('popupExportIncludeArchivedObjects'), control: 'select', options: formatOptions });
+				};
 				break;
 
 			case I.ExportType.Pdf:
@@ -156,50 +173,44 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { storageGet } = this.props;
 		const options = storageGet();
 
-		this.format = Number(options.format) || I.ExportType.Markdown;
-		this.zip = Boolean(options.zip);
-		this.nested = Boolean(options.nested);
-		this.files = Boolean(options.files);
-		this.archived = Boolean(options.archived);
-		this.landscape = Boolean(options.landscape);
-		this.printBg = Boolean(options.printBg);
-		this.pageSize = String(options.pageSize || 'A4');
+		this.data = {
+			format:		 Number(options.format) || I.ExportType.Markdown,
+			zip:		 Boolean(options.zip),
+			nested:		 Boolean(options.nested),
+			files:		 Boolean(options.files),
+			archived:	 Boolean(options.archived),
+			landscape:	 Boolean(options.landscape),
+			printBg:	 Boolean(options.printBg),
+			pageSize:	 String(options.pageSize || 'A4'),
+		};
 	};
 
 	save () {
-		const { storageSet } = this.props;
-		const keys = [ 'format', 'zip', 'nested', 'files', 'archived', 'landscape', 'pageSize', 'printBg' ];
-		const obj: any = {};
-
-		for (const key of keys) {
-			obj[key] = this[key];
-		};
-
-		storageSet(obj);
+		this.props.storageSet(this.data);
 	};
 
 	onConfirm (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { format } = this.data;
+		const route = 'MenuObject';
 
-		analytics.event('ClickExport', { type: this.format, route: 'MenuObject' });
+		analytics.event('ClickExport', { type: format, route });
 
 		switch (this.format) {
 			default:
-				Action.export([ rootId ], this.format, this.zip, this.nested, this.files, this.archived, 'MenuObject');
+				Action.export([ rootId ], format, { ...this.data, route });
 				break;
 
 			case I.ExportType.Html:
 				keyboard.onSaveAsHTML();
-
-				analytics.event('Export', { type: this.format, route: 'MenuObject' });
+				analytics.event('Export', { type: format, route });
 				break;
 
 			case I.ExportType.Pdf:
-				keyboard.onPrintToPDF({ landscape: this.landscape, printBg: this.printBg, pageSize: this.pageSize });
-
-				analytics.event('Export', { type: this.format, route: 'MenuObject' });
+				keyboard.onPrintToPDF({ ...this.data });
+				analytics.event('Export', { type: format, route });
 				break;
 		};
 		

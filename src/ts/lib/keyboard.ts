@@ -513,7 +513,13 @@ class Keyboard {
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true, 'MenuSystem');
+				Action.export([ rootId ], I.ExportType.Protobuf, {
+					zip: true, 
+					nested: true, 
+					files: true, 
+					archived: true, 
+					route: 'MenuSystem',
+				});
 				break;
 			};
 
