@@ -28,7 +28,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { config } = commonStore;
 		const formats = [
 			{ id: I.ExportType.Markdown, name: 'Markdown' },
-			{ id: I.ExportType.Protobuf, name: 'Protobuf' },
+			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
 			{ id: I.ExportType.Pdf, name: 'PDF' },
 		];
 
@@ -54,7 +54,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 			let control = null;
 
 			switch (item.control) {
-				case 'switch':
+				case 'switch': {
 					control = (
 						<Switch
 							className="big"
@@ -66,12 +66,19 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 						/>
 					);
 					break;
+				};
 
-				case 'select':
+				case 'select': {
+					let value = this.data[item.id];
+
+					if (item.id == 'json') {
+						value = this.data[item.id] ? 'json' : 'pb';
+					};
+
 					control = (
 						<Select
 							id={item.id}
-							value={this[item.id]}
+							value={value}
 							options={item.options}
 							onChange={(v: any) => {
 								if (item.id == 'json') {
@@ -80,6 +87,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 								this.data[item.id] = v;
 								this.save();
+								this.forceUpdate();
 							}}
 							arrowClassName="light"
 							isMultiple={false}
@@ -87,6 +95,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 						/>
 					);
 					break;
+				};
 			};
 
 			return (
@@ -103,58 +112,44 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		const { format } = this.data;
 
-		let items: any[] = [];
+		let items: any[] = [
+			{ id: 'format', name: translate('popupExportFormat'), control: 'select', options: formats },
+		];
 
 		switch (format) {
 			case I.ExportType.Markdown:
 			case I.ExportType.Protobuf:
-				items = [
+				if (format == I.ExportType.Protobuf) {
+					items.push({ id: 'json', name: translate('popupExportFileFormat'), control: 'select', options: formatOptions });
+				};
+
+				items = items.concat([
 					{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
 					{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
 					{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
 					{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
-				];
-
-				if (format == I.ExportType.Protobuf) {
-					items.push({ id: 'json', name: translate('popupExportIncludeArchivedObjects'), control: 'select', options: formatOptions });
-				};
+				]);
 				break;
 
 			case I.ExportType.Pdf:
-				items = [
+				items = items.concat([
 					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
 					{ id: 'printBg', name: translate('popupExportPrintBackground'), control: 'switch' },
-				];
+				]);
 				break;
 		};
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupExportExport')} />
-
-				<div className="row">
-					<div className="name">{translate('popupExportExportFormat')}</div>
-					<div className="value">
-						<Select 
-							id="format" 
-							value={this.format} 
-							options={formats} 
-							onChange={(v: any) => {
-								this.format = v;
-								this.save();
-								this.forceUpdate();
-							}}
-						/>
-					</div>
-				</div>
+				<Title text={translate('popupExportTitle')} />
 
 				{items.map((item: any, i: number) => (
 					<Option key={i} {...item} />
 				))}
 
 				<div className="buttons">
-					<Button text={translate('popupExportExport')} onClick={this.onConfirm} />
+					<Button text={translate('popupExportOk')} onClick={this.onConfirm} />
 					<Button color="blank" text={translate('commonCancel')} onClick={this.onCancel} />
 				</div>
 			</React.Fragment>

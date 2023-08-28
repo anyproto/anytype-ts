@@ -743,8 +743,9 @@
     "popupExportPageSize": "Page size",
     "popupExportLandscape": "Landscape",
     "popupExportPrintBackground": "Print background",
-    "popupExportExport": "Export",
-    "popupExportExportFormat": "Export format",
+    "popupExportTitle": "Export",
+    "popupExportFormat": "Export format",
+	"popupExportOk": "Export",
 
     "popupHelpOlderReleases": "Older releases",
 
