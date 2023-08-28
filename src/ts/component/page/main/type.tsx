@@ -427,7 +427,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const recommendedKeys = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it && it.relationKey);
-		const systemKeys = Relation.systemKeys().filter(it => ![ 'tag', 'description' ].includes(it));
+		const systemKeys = Relation.systemKeys().filter(it => ![ 'tag', 'description', 'source' ].includes(it));
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',

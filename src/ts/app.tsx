@@ -88,6 +88,7 @@ import 'scss/form/drag.scss';
 import 'scss/form/filter.scss';
 import 'scss/form/input.scss';
 import 'scss/form/inputWithFile.scss';
+import 'scss/form/inputWithLabel.scss';
 import 'scss/form/phrase.scss';
 import 'scss/form/pin.scss';
 import 'scss/form/select.scss';

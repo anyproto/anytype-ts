@@ -202,20 +202,16 @@ class Input extends React.Component<Props, State> {
 	
 	blur () {
 		window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
+			if (this._isMounted) {
+				$(this.node).trigger('blurr');
 			};
-			
-			$(this.node).blur(); 
 		});
 	};
 	
 	select () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			window.setTimeout(() => { this.getInputElement().select();	});
 		};
-
-		window.setTimeout(() => { this.getInputElement().select();	});
 	};
 	
 	setValue (v: string) {
@@ -232,11 +228,9 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	setType (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			this.setState({ type: v });
 		};
-
-		this.setState({ type: v });
 	};
 	
 	setError (v: boolean) {

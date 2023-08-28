@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.inputWithLabel { padding: 8px 12px; border-radius: 8px; border: 1px solid $colorBorderLight; cursor: text; }
+.inputWithLabel {
+	.inner { position: relative; width: 100%; height: 38px; display: block; }
+
+	.label { @include text-small; color: $colorDarkGrey; }
+	.input { padding: 0px !important; height: 22px; line-height: 22px; vertical-align: top; border: 0px !important; background: none; }
+}
+.inputWithLabel:hover { border-color: $colorBorderDark; }
+.inputWithLabel.isFocused, .inputWithLabel.isFocused:hover { padding: 7px 11px; border: 2px solid $colorOrange; }

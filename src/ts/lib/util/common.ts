@@ -722,6 +722,11 @@ class UtilCommon {
 		return rect;
 	};
 
+	clearSelection () {
+		$(document.activeElement).trigger('blur');
+		window.getSelection().removeAllRanges();
+	};
+
 	plural (cnt: any, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];
