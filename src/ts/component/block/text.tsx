@@ -281,7 +281,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html, this.marks);
+			const parsed = Mark.fromUnicode(html, this.marks);
+
+			html = parsed.text;
+			this.marks = parsed.marks;
+
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -874,11 +878,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.preventMenu = false;
 
 		let parsed: any = {};
-		let marksChanged = false;
+		let adjustMarks = false;
 
 		if (block.canHaveMarks()) {
 			parsed = this.getMarksFromHtml();
-			marksChanged = parsed.marksChanged;
+			adjustMarks = parsed.adjustMarks;
 			this.marks = parsed.marks;
 		};
 
@@ -1005,8 +1009,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		if (!ret && (marksChanged || (value != text))) {
+		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
+
 			const { focused, range } = focus.state;
 
 			diff += value.length - text.length;
