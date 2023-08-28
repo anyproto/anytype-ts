@@ -130,11 +130,14 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			if (withType && type) n++;
 			cnc.push('c' + n);
 
+			const first = blockStore.getFirstBlock(object.id, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+			const isEmpty = (!first || !first.getLength()) && (cardStyle == I.LinkCardStyle.Text) ;
+
 			element = (
 				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
-							<div className="relationItem cardName">
+							<div className={`relationItem cardName ${isEmpty ? 'empty-object-link' : ''}`}>
 								{icon}
 								<ObjectName object={object} />
 								{archive}

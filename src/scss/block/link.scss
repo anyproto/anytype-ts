@@ -22,6 +22,11 @@
             .icon.ghost { width: 24px; height: 24px; }
         }
 
+		.empty-object-link{
+    		border-bottom: $colorDarkGrey 0.05em dashed;
+    		line-height: 22px;
+		}
+
         .linkCard {
             .sides { display: flex; flex-direction: row; }
 			.side { transition: border-color $transitionCommon; }
