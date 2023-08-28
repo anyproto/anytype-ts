@@ -113,7 +113,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
 
 		this.worker = new Worker('workers/graph.js');
-		this.worker.onerror = (e: any) => { console.log(e); };
+		this.worker.onerror = (e: any) => console.log(e);
 		this.worker.addEventListener('message', this.onMessage);
 
 		this.send('init', { 

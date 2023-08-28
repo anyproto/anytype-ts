@@ -281,7 +281,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html, this.marks);
+			const parsed = Mark.fromUnicode(html, this.marks);
+
+			html = parsed.text;
+			this.marks = parsed.marks;
+
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -803,6 +807,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const closingSymbol = twineClose[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+
 			this.marks = Mark.adjust(this.marks, range.from, l);
 
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
@@ -874,11 +879,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.preventMenu = false;
 
 		let parsed: any = {};
-		let marksChanged = false;
+		let adjustMarks = false;
 
 		if (block.canHaveMarks()) {
 			parsed = this.getMarksFromHtml();
-			marksChanged = parsed.marksChanged;
+			adjustMarks = parsed.adjustMarks;
 			this.marks = parsed.marks;
 		};
 
@@ -965,7 +970,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					return s.replace(p, '');
 				});
 
-				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
+				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
 				this.setValue(value);
 
 				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
@@ -1005,8 +1010,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		if (!ret && (marksChanged || (value != text))) {
+		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
+
 			const { focused, range } = focus.state;
 
 			diff += value.length - text.length;
