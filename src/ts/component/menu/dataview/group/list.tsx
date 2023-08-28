@@ -282,7 +282,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	
