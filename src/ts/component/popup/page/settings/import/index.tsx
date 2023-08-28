@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, analytics, Action } from 'Lib';
+import { I, UtilCommon, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'Store';
 
 import Head from '../head';
 
@@ -59,7 +58,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'html', name: 'HTML' },
 			{ id: 'text', name: 'TXT' },
-			{ id: 'protobuf', name: 'Protobuf' },
+			{ id: 'protobuf', name: 'Any-Block' },
 			{ id: 'csv', name: 'CSV' },
 		];
 	};
@@ -78,7 +77,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onImportProtobuf () {
-		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb' ]);
+		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb', 'json' ]);
 	};
 
 	onImportMarkdown () {

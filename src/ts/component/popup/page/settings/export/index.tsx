@@ -55,7 +55,7 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 	getItems (): any[] {
 		return [
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'protobuf', name: 'Protobuf' },
+			{ id: 'protobuf', name: 'Any-Block' },
 		];
 	};
 
