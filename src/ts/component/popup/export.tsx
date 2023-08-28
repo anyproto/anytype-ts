@@ -164,6 +164,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 			nested:		 Boolean(options.nested),
 			files:		 Boolean(options.files),
 			archived:	 Boolean(options.archived),
+			json:		 Boolean(options.json),
 			landscape:	 Boolean(options.landscape),
 			printBg:	 Boolean(options.printBg),
 			pageSize:	 String(options.pageSize || 'A4'),
