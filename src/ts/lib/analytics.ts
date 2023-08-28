@@ -32,7 +32,7 @@ class Analytics {
 			return;
 		};
 
-		const { config } = commonStore;
+		const { config, interfaceLang } = commonStore;
 		const platform = UtilCommon.getPlatform();
 
 		let version = String(window.Electron.version.app || '').split('-');
@@ -63,6 +63,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			osVersion: window.Electron.version.os,
+			interfaceLang,
 		});
 
 		this.removeContext();
@@ -237,6 +238,7 @@ class Analytics {
 			};
 
 			case 'ClickImport':
+			case 'ClickImportFile':
 			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];

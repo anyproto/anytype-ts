@@ -72,7 +72,7 @@
 				> .side.right {
 					.button { margin-left: 6px; }
 
-					.buttonNewWrapper { margin-left: 6px; }
+					.buttonNewWrapper { margin-left: 6px; display: flex; }
 					.buttonNewWrapper {
 						.button { margin-left: 0; }
 					}

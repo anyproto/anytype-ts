@@ -122,12 +122,13 @@ export enum Usecase {
 	Personal	 = 1,
     Knowledge	 = 2,
     Notes		 = 3,
+	Strategic 	 = 4,
 };
 
 export enum HomePredefinedId {
-	Graph = 'graph',
-	Last = 'lastOpened',
-	Existing = 'existing',
+	Graph		 = 'graph',
+	Last		 = 'lastOpened',
+	Existing	 = 'existing',
 };
 
 export interface HeaderComponent extends RouteComponentProps<any> {

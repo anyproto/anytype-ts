@@ -107,10 +107,7 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { border: 0px; color: $colorDarkGrey;  cursor: default; }
-				.select {
-					.icon.arrow { margin: 0px !important; top: 3px; }
-				}
+				.select { padding-left: 10px; }
 
 				.name { width: 100%; }
 				.name {
@@ -220,10 +217,10 @@
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
 					.sectionContent {
-						.item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
-						.item:last-child { border-bottom: 0; }
+						> .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						> .item:last-child { border-bottom: 0; }
 
-						.item {
+						> .item {
 							.sides { display: flex; justify-content: space-between; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
@@ -250,7 +247,7 @@
 
 				.section.sectionSpaceManager {
 					.sectionContent {
-						.item {
+						> .item {
 							.storageLabel { margin-bottom: 12px; line-height: 18px; }
 							.storageLabel {
 								.label { display: inline; }
@@ -260,7 +257,7 @@
 								.fill { background: $colorLime; }
 							}
 						}
-						.item.red {
+						> .item.red {
 							.progressBar {
 								.fill { background: $colorRed; }
 							}
@@ -270,9 +267,9 @@
 
 				.section.sectionIntegrations {
 					.sectionContent {
-						.item { transition: $transitionAllCommon; }
-						.item:hover { background: $colorHoverLight; }
-						.item {
+						> .item { transition: $transitionAllCommon; }
+						> .item:hover { background: $colorHoverLight; }
+						> .item {
 							.side.left { display: flex; gap: 0 12px; }
 							.side.left {
 								.icon { width: 22px; height: 22px; }
@@ -285,11 +282,11 @@
 
 				.section.sectionInfo {
 					.sectionContent {
-						.item {
+						> .item {
 							.sides { align-items: center; }
 							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
 						}
-						.item:hover {
+						> .item:hover {
 							.icon { opacity: 1; }
 						}
 					}
@@ -495,7 +492,8 @@
 			.list { @include text-small; margin-left: 1.35em; }
 			.list {
 				li { margin: 0px 0px 12px 0px; }
-				.label { margin: 0px 0px 4px 0px; }
+				.label { margin: 0px 0px 4px 0px; font-weight: 500; }
+				.label.grey { font-weight: 400; }
 				.label:last-child { margin: 0px; }
 			}
 		}
@@ -503,11 +501,16 @@
 		.side.right.tabImportNotionHelp {
 			.title { margin: 0px 0px 44px 0px !important; }
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
+			.label.stepDescription { @include text-common; margin: 0px 0px 16px 0px; }
 
-			.list { margin: 0px 0px 64px 1em; }
+			.list { margin: 0px 0px 64px 0px; }
 			.list:last-child { margin-bottom: 0px; }
 			.list {
 				li { margin: 0px 0px 48px 0px; }
+				li {
+					ul { display: block; padding: 0px; }
+					li { margin-bottom: 0px; list-style-type: disc; }
+				}
 				li:last-child { margin: 0px; }
 				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorVeryLightGrey; border-radius: 6px; }
 			}

@@ -297,6 +297,7 @@ class UtilData {
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				ignoreHidden: false,
 				onSubscribe: () => {
 					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
 				}
@@ -317,6 +318,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			}
 		];
 
@@ -629,8 +631,8 @@ class UtilData {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
-			ignoreHidden: false,
-			ignoreDeleted: false,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 			withArchived: false,
 			noDeps: false,
 			afterId: '',

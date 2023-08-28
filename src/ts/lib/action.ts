@@ -2,7 +2,6 @@ import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilDat
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
@@ -215,27 +214,6 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
-			if (onSelectPath) {
-				onSelectPath();
-			};
-
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, archived, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export', { type: format, middleTime: message.middleTime });
-
-				if (callBack) {
-					callBack(message);
-				};
-			});
-		});
-	};
-
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		C.WorkspaceObjectAdd(object.id, (message: any) => {
 			if (message.error.code) {
@@ -396,6 +374,61 @@ class Action {
 			if (callBack) {
 				callBack();
 			};
+		});
+	};
+
+	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
+		const fileOptions: any = { 
+			properties: [ 'openFile' ],
+			filters: [ 
+				{ name: 'Filtered extensions', extensions },
+			],
+		};
+
+		if (UtilCommon.isPlatformMac()) {
+			fileOptions.properties.push('openDirectory');
+		};
+
+		analytics.event('ClickImport', { type });
+
+		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
+				return;
+			};
+
+			analytics.event('ClickImportFile', { type });
+
+			C.ObjectImport(Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('Import', { middleTime: message.middleTime, type });
+				};
+
+				if (callBack) {	
+					callBack(message);
+				};
+			});
+		});
+	};
+
+	export (ids: string[], type: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, route: string, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
+			if (onSelectPath) {
+				onSelectPath();
+			};
+
+			C.ObjectListExport(paths[0], ids, type, zip, nested, files, archived, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				Renderer.send('pathOpen', paths[0]);
+				analytics.event('Export', { type, middleTime: message.middleTime, route });
+
+				if (callBack) {
+					callBack(message);
+				};
+			});
 		});
 	};
 

@@ -12,15 +12,12 @@
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorMediumGrey; line-height: 24px; }
 		.head {
 			.side { width: 50%; }
-			.side.right { text-align: right; }
+			.side.right { display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: flex-end; }
 			.label { display: inline-block; vertical-align: top; }
 
-			.icon { width: 16px; height: 16px; margin: 0px 0px 0px 16px; }
-			.icon.telegram { background-image: url('~img/icon/social/telegram0.svg'); }
-			.icon.telegram:hover { background-image: url('~img/icon/social/telegram1.svg'); }
-
-			.icon.twitter { background-image: url('~img/icon/social/twitter0.svg'); }
-			.icon.twitter:hover { background-image: url('~img/icon/social/twitter1.svg'); }
+			.icon { width: 20px; height: 20px; }
+			.icon.mail { background-image: url('~img/icon/social/mail0.svg'); }
+			.icon.mail:hover { background-image: url('~img/icon/social/mail1.svg'); }
 		}
 
 		.content { padding: 60px 80px 40px 80px; }

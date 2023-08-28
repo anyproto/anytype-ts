@@ -608,7 +608,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
 			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + 4 });
 		} else {
-			if (parent.isPage() || parent.isLayoutDiv()) {
+			if (parent && parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
 				const ww = wrapper.width();
 				const margin = (cw - ww) / 2;
