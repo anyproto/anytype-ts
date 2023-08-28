@@ -807,6 +807,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const closingSymbol = twineClose[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+
 			this.marks = Mark.adjust(this.marks, range.from, l);
 
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
@@ -969,7 +970,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					return s.replace(p, '');
 				});
 
-				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
+				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
 				this.setValue(value);
 
 				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
