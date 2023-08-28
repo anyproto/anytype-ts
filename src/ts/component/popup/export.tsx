@@ -6,15 +6,6 @@ import { observer } from 'mobx-react';
 
 const PopupExport = observer(class PopupExport extends React.Component<I.Popup> {
 
-	format: I.ExportType = I.ExportType.Markdown;
-	zip = false;
-	nested = false;
-	files = true;
-	archived = true;
-	landscape = false;
-	json = false;
-	pageSize = '';
-	printBg = true;
 	data: any = {};
 
 	constructor (props: I.Popup) {
