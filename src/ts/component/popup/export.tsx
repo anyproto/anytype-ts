@@ -70,9 +70,8 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 				case 'select': {
 					let value = this.data[item.id];
-
 					if (item.id == 'json') {
-						value = this.data[item.id] ? 'json' : 'pb';
+						value = value ? 'json' : 'pb';
 					};
 
 					control = (
