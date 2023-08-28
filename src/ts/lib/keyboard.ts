@@ -144,21 +144,23 @@ class Keyboard {
 		// Close popups and menus
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
+
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
 			} else 
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (UtilCommon.getSelectionRange()) {
-					$(document.activeElement).blur();
-					window.getSelection().removeAllRanges();
-					canClose = false;
-				} else
-				if (this.selection) {
-					const ids = this.selection.get(I.SelectType.Block);
-					if (ids.length) {
+				if (this.isPopup()) {
+					if (UtilCommon.getSelectionRange()) {
+						UtilCommon.clearSelection();
 						canClose = false;
+					} else
+					if (this.selection) {
+						const ids = this.selection.get(I.SelectType.Block);
+						if (ids.length) {
+							canClose = false;
+						};
 					};
 				};
 
