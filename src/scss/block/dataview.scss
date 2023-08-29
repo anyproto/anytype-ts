@@ -114,6 +114,7 @@
 			.viewSelect { display: none; border: 0px; padding-left: 0px; color: $colorBlack; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
+				.name { @include text-overflow-nw; }
 			}
 
 			.side.left.small {
