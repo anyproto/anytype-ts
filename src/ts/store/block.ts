@@ -551,6 +551,33 @@ class BlockStore {
 		};
 	};
 
+	getLayoutIds (rootId: string, ids: string[]) {
+		if (!ids.length) {
+			return [];
+		};
+		
+		let ret: any[] = [];
+		for (const id of ids) {
+			const element = blockStore.getMapElement(rootId, id);
+			if (!element) {
+				continue;
+			};
+
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
+				continue;
+			};
+			
+			ret.push(parent.id);
+			
+			if (parent.isLayoutColumn()) {
+				ret = ret.concat(this.getLayoutIds(rootId, [ parent.id ]));
+			};
+		};
+		
+		return ret;
+	};
+
 };
 
  export const blockStore: BlockStore = new BlockStore();

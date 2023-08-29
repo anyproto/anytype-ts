@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -149,6 +149,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	componentDidMount () {
 		this.loadList('');
 		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -158,6 +159,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#body > #sideRight');
 
 		this.resize();
+		this.rebind();
 
 		if (this.version) {
 			this.show(this.version.id);
@@ -174,6 +176,40 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (this.refHeader) {
 			this.refHeader.refChild.setVersion(this.version);
 		};
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+	};
+
+	unbind () {
+		const { isPopup } = this.props;
+		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const events = [ 'keydown' ];
+
+		$(window).off(events.map(it => `${it}.history${namespace}`).join(' '));
+	};
+
+	rebind () {
+		const { isPopup } = this.props;
+		const win = $(window);
+		const namespace = UtilCommon.getEventNamespace(isPopup);
+
+		this.unbind();
+		win.on('keydown.history' + namespace, e => this.onKeyDown(e));
+	};
+
+	onKeyDown (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const rootId = this.getRootId();
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => {
+			const ids = selection.get(I.SelectType.Block, true);
+
+			Action.copyBlocks(rootId, ids, false);
+		});
 	};
 
 	onScrollLeft () {
