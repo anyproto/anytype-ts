@@ -358,9 +358,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const width = sideLeft.outerWidth() + sideRight.outerWidth();
 		const offset = isPopup ? container.offset().left : 0;
 
-		console.log('left', left);
-		console.log('width', width);
-
 		if (left + width - offset - sw + 50 >= cw) {
 			add = true;
 		};

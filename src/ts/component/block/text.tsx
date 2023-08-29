@@ -1172,7 +1172,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onBlur (e: any) {
 		const { block, onBlur } = this.props;
 
-		if (!block.isTextTitle() && !block.isTextDescription()) {
+		if (block.isTextTitle() || block.isTextDescription()) {
+			this.placeholderCheck();
+		} else {
 			this.placeholderHide();
 		};
 
@@ -1418,12 +1420,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	placeholderHide () {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
-		};
-	};
-	
-	placeholderShow () {
-		if (this.refEditable) {
-			this.refEditable.placeholderShow();
 		};
 	};
 	
