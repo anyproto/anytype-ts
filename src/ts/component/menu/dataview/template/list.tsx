@@ -185,6 +185,15 @@ class MenuTemplateList extends React.Component<I.Menu> {
 			return;
 		};
 
+		const menuActions: any = {
+			onArchive: () => onArchive(item, this.reload),
+			onDuplicate: (object) => UtilObject.openPopup(object, {})
+		};
+
+		if (onSetDefault) {
+			menuActions.onSetDefault = onSetDefault(item, this.reload)
+		};
+
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
 			menuStore.open('dataviewTemplate', {
 				menuKey: item.id,
@@ -202,9 +211,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					template: item,
 					isView: true,
 					route,
-					onSetDefault: () => onSetDefault(item, this.reload),
-					onArchive: () => onArchive(item, this.reload),
-					onDuplicate: (object) => UtilObject.openPopup(object, {})
+					...menuActions
 				}
 			});
 		});

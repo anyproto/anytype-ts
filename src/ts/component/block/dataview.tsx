@@ -735,10 +735,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuParam = this.getMenuParam(e, dir);
 		const route = this.isCollection() ? 'Collection' : 'Set';
 
-		const update = () => {
-			this.menuContext.ref.reload();
-		};
-
 		analytics.event('ClickNewOption', { route });
 
 		const menuActions: any = {
@@ -752,13 +748,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				menuStore.closeAll();
 
 				analytics.event('SelectTemplate', { route });
-			},
-			onSetDefault: (item, callback) => {
-				this.setDefaultTemplateForView(item.id);
-
-				if (callback) {
-					callback();
-				};
 			},
 			onArchive: (item, callback) => {
 				if (item.isDefault) {
