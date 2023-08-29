@@ -71,7 +71,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
 
@@ -182,6 +182,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const { block } = this.props;
 		const element = `#block-${block.id} #item-menu`;
 		const obj = $(element);
+		const items = this.getItems();
 
 		menuStore.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
@@ -193,7 +194,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: items.map(it => it.id) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
