@@ -128,10 +128,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const dataMapper = it => ({
 			...it,
 			typeId,
-			withMore: (it.id != Constant.templateId.new),
 			caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
 			isDefault: (it.id == defaultTemplateId),
-			isBlank: (it.id == Constant.templateId.blank),
 		});
 
 		if (clear) {
