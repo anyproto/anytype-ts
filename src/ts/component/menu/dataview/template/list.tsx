@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, PreviewObject } from 'Component';
+import { Icon, Title, Label, PreviewObject } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, UtilData } from 'Lib';
 import { commonStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -20,6 +20,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		this.onClick = this.onClick.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
+		this.reload = this.reload.bind(this);
 	};
 
 	render () {
@@ -27,9 +28,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { data } = param;
 		const { newTemplateId, typeId, onTypeChange } = data;
 
+		console.log('TYPE ID: ', typeId)
+
 		const type = dbStore.getType(typeId);
 		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: newTemplateId };
+		const templatesAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		return (
 			<React.Fragment>
@@ -45,42 +49,44 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				<Title text={translate('commonTemplates')} />
 
-				<div className="items">
-					<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
-						<div
-							id={`item-more-${Constant.templateId.blank}`}
-							className="moreWrapper"
-							onClick={e => this.onMore(e, itemBlank)}
-						>
-							<Icon className="more" />
-						</div>
-
-						<div onClick={e => this.onClick(e, itemBlank)}>
-							<div className="scroller">
-								<div className="heading">
-									<div className="name">{translate('commonBlank')}</div>
-									<div className="featured" />
-								</div>
+				{templatesAllowed ? (
+					<div className="items">
+						<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
+							<div
+								id={`item-more-${Constant.templateId.blank}`}
+								className="moreWrapper"
+								onClick={e => this.onMore(e, itemBlank)}
+							>
+								<Icon className="more" />
 							</div>
+
+							<div onClick={e => this.onClick(e, itemBlank)}>
+								<div className="scroller">
+									<div className="heading">
+										<div className="name">{translate('commonBlank')}</div>
+										<div className="featured" />
+									</div>
+								</div>
+								<div className="border" />
+							</div>
+						</div>
+
+						{this.items.map((item: any, i: number) => (
+							<PreviewObject
+								key={i}
+								rootId={item.id}
+								previewSize="small"
+								onClick={e => this.onClick(e, item)}
+								onMore={e => this.onMore(e, item)}
+							/>
+						))}
+
+						<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
 							<div className="border" />
+							<Icon className="add" />
 						</div>
 					</div>
-
-					{this.items.map((item: any, i: number) => (
-						<PreviewObject
-							key={i}
-							rootId={item.id}
-							previewSize="small"
-							onClick={e => this.onClick(e, item)}
-							onMore={e => this.onMore(e, item)}
-						/>
-					))}
-
-					<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
-						<div className="border" />
-						<Icon className="add" />
-					</div>
-				</div>
+				) : <Label text={'This object type doesn\'t support templates'} />}
 			</React.Fragment>
 		);
 	};
@@ -101,7 +107,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	reload () {
-		this.n = 1;
 		this.load(true);
 	};
 

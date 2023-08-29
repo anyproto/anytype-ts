@@ -41,18 +41,22 @@
 		#item-remove { color: $colorRed; }
 	}
 
-	.menu.menuDataviewTemplateList { width: 360px; padding: 8px 16px; display: flex; gap: 12px; }
+	.menu.menuDataviewTemplateList { width: 360px; }
 	.menu.menuDataviewTemplateList {
-		.select { margin-bottom: 16px; }
 
-		.title { padding: 4px 0; margin-bottom: 6px; }
+		.content { padding: 8px 16px; }
+		.content {
+			.select { margin-bottom: 16px; }
 
-		.items { display: flex; gap: 12px; flex-wrap: wrap; }
-		.items {
-			.previewObject { flex-shrink: 0; }
+			.title { padding: 4px 0; margin-bottom: 6px; }
 
-			.previewObject {
-				.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
+			.items { display: flex; gap: 12px; flex-wrap: wrap; }
+			.items {
+				.previewObject { flex-shrink: 0; }
+
+				.previewObject {
+					.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
+				}
 			}
 		}
 	}

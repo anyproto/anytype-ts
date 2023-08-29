@@ -58,6 +58,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
+		this.getTypeId = this.getTypeId.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -145,6 +146,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getIdPrefix: this.getIdPrefix,
 			getLimit: () => this.getLimit(view.type),
 			getVisibleRelations: this.getVisibleRelations,
+			getTypeId: this.getTypeId,
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
@@ -225,8 +227,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
-
-		console.log('VIEW: ', view)
 
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
@@ -485,6 +485,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getTypeId (): string {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
+		const view = this.getView();
+		const { defaultTypeId } = view;
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 
@@ -503,6 +505,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					};
 				};
 			});
+		};
+		if (!type && defaultTypeId) {
+			type = defaultTypeId;
 		};
 		if (!type) {
 			type = commonStore.type;
@@ -762,10 +767,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (this.isAllowedDefaultType()) {
 			menuActions.onTypeChange = (id) => {
-				const type = dbStore.getType(id);
-				this.setDefaultTypeForView(id, (message) => {
-					console.log('MESSAGE ON TYPE SET: ', message)
-				});
+				// const type = dbStore.getType(id);
+				// this.setDefaultTypeForView(id, (message) => {
+				// 	console.log('MESSAGE ON TYPE SET: ', message)
+				//
+				// });
+				menuStore.updateData('dataviewTemplateList', { typeId: id });
+				this.menuContext.ref.reload();
 			};
 		};
 
@@ -1134,8 +1142,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	isAllowedTemplate (): boolean {
-		const type = dbStore.getType(this.getTypeId());
-		return type ? !UtilObject.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+		return UtilObject.isAllowedTemplate(this.getTypeId());
 	};
 
 	isAllowedDefaultType (): boolean {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData } from 'Lib';
 import { Input, InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -238,7 +238,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { rootId, blockId, readonly, getTypeId } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -259,9 +259,36 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{
 				id: 'defaultType',
 				name: translate('menuDataviewViewDefaultType'),
-				subComponent: 'typeSuggest',
-				onSubClick: (type) => {
-					console.log('SET DEFAULT TYPE: ', type.name);
+				subComponent: 'dataviewTemplateList',
+				data: {
+					typeId: getTypeId(),
+					onSelect: (item: any) => {
+						console.log('SELECT')
+						// if (item.id == NEW_TEMPLATE_ID) {
+						// 	this.onTemplateAdd();
+						// 	return;
+						// };
+						//
+						// this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
+						// menuStore.closeAll();
+						//
+						// analytics.event('SelectTemplate', { route });
+					},
+					onSetDefault: (item) => {
+						console.log('SET DEFAULT TEMPLATE')
+						// this.setDefaultTemplateForView(item.id, () => update());
+					},
+					onArchive: (item) => {
+						console.log('ARCHIVE')
+						// if (item.isDefault) {
+						// 	this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
+						// } else {
+						// 	update();
+						// };
+					},
+					onTypeChange: (id) => {
+						console.log('DEFAULT TYPE CHANGE')
+					}
 				}
 			}
 		];
@@ -344,8 +371,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				noAnimation: true,
 			};
 
-			if (item.onSubClick) {
-				param.data = Object.assign(addParam.data, { onClick: item.onSubClick });
+			if (item.data) {
+				param.data = Object.assign(addParam.data, item.data);
 			};
 
 			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));

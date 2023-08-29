@@ -121,6 +121,7 @@ export interface ViewComponent {
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getTypeId?(): string;
 	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
