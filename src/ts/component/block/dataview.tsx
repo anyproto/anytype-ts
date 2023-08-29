@@ -25,8 +25,6 @@ interface State {
 	loading: boolean;
 };
 
-const NEW_TEMPLATE_ID = 'newTemplate';
-
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
 	state = {
@@ -59,7 +57,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
 		this.getTypeId = this.getTypeId.bind(this);
+		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
 		this.setDefaultTypeForView = this.setDefaultTypeForView.bind(this);
+		this.setDefaultTemplateForView = this.setDefaultTemplateForView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -148,14 +148,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getLimit: () => this.getLimit(view.type),
 			getVisibleRelations: this.getVisibleRelations,
 			getTypeId: this.getTypeId,
+			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
+			setDefaultType: this.setDefaultTypeForView,
+			setDefaultTemplate: this.setDefaultTemplateForView,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
-			onSetDefaultType: this.setDefaultTypeForView,
 		};
 
 		const controls = (
@@ -731,13 +733,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onTemplateMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
-		const typeId = this.getTypeId();
 		const route = this.isCollection() ? 'Collection' : 'Set';
 
-		let defaultTemplateId = this.getDefaultTemplateId();
-
 		const update = () => {
-			defaultTemplateId = this.getDefaultTemplateId();
 			this.menuContext.ref.reload();
 		};
 
@@ -745,7 +743,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const menuActions: any = {
 			onSelect: (item: any) => {
-				if (item.id == NEW_TEMPLATE_ID) {
+				if (item.id == Constant.templateId.new) {
 					this.onTemplateAdd();
 					return;
 				};
@@ -755,28 +753,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				analytics.event('SelectTemplate', { route });
 			},
-			onSetDefault: (item) => {
-				this.setDefaultTemplateForView(item.id, () => update());
+			onSetDefault: (item, callback) => {
+				this.setDefaultTemplateForView(item.id);
+
+				if (callback) {
+					callback();
+				};
 			},
-			onArchive: (item) => {
+			onArchive: (item, callback) => {
 				if (item.isDefault) {
-					this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
-				} else {
-					update();
+					this.setDefaultTemplateForView(Constant.templateId.blank);
+				};
+
+				if (callback) {
+					callback();
 				};
 			}
-		};
-
-		if (this.isAllowedDefaultType()) {
-			menuActions.onTypeChange = (id) => {
-				// const type = dbStore.getType(id);
-				// this.setDefaultTypeForView(id, (message) => {
-				// 	console.log('MESSAGE ON TYPE SET: ', message)
-				//
-				// });
-				menuStore.updateData('dataviewTemplateList', { typeId: id });
-				this.menuContext.ref.reload();
-			};
 		};
 
 		menuStore.open('dataviewTemplateList', {
@@ -787,10 +779,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			data: {
-				typeId,
+				withTypeSelect: this.isAllowedDefaultType(),
+				getTypeId: this.getTypeId,
+				getTemplateId: this.getDefaultTemplateId,
 				route,
-				defaultTemplateId,
-				newTemplateId: NEW_TEMPLATE_ID,
 				...menuActions
 			}
 		});

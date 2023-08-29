@@ -239,7 +239,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, onSetDefaultType } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -262,37 +262,29 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				name: translate('menuDataviewViewDefaultType'),
 				subComponent: 'dataviewTemplateList',
 				data: {
-					typeId: getTypeId(),
+					getTypeId,
+					getTemplateId,
+					withTypeSelect: true,
 					onSelect: (item: any) => {
 						console.log('SELECT')
-						// if (item.id == NEW_TEMPLATE_ID) {
-						// 	this.onTemplateAdd();
-						// 	return;
-						// };
-						//
-						// this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
-						// menuStore.closeAll();
-						//
-						// analytics.event('SelectTemplate', { route });
 					},
-					onSetDefault: (item) => {
-						console.log('SET DEFAULT TEMPLATE')
-						// this.setDefaultTemplateForView(item.id, () => update());
+					onSetDefault: (item, callback) => {
+						setDefaultTemplate(item.id);
+
+						if (callback) {
+							callback();
+						};
 					},
-					onArchive: (item) => {
-						console.log('ARCHIVE')
-						// if (item.isDefault) {
-						// 	this.setDefaultTemplateForView(Constant.templateId.blank, () => update());
-						// } else {
-						// 	update();
-						// };
+					onArchive: (item, callback) => {
+						if (item.isDefault) {
+							setDefaultTemplate(Constant.templateId.blank);
+						};
+
+						if (callback) {
+							callback();
+						};
 					},
-					onTypeChange: (id) => {
-						onSetDefaultType(id, () => {
-							menuStore.updateData('dataviewTemplateList', { typeId: id });
-							this.menuContext.ref.reload();
-						});
-					}
+					onTypeChange: setDefaultType
 				}
 			}
 		];

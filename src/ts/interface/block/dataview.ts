@@ -122,7 +122,10 @@ export interface ViewComponent {
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
 	getTypeId?(): string;
+	getTemplateId?(): string;
 	getEmpty?(type: string): any;
+	setDefaultType?: (id: string, callBack?: () => void) => void;
+	setDefaultTemplate?: (id: string, callBack?: () => void) => void;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
@@ -131,7 +134,6 @@ export interface ViewComponent {
 	onDragRecordStart?: (e: any, id?: string) => void;
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
-	onSetDefaultType?: (id: string, callBack?: () => void) => void;
 	isAllowedObject?: () => boolean;
 	isAllowedTemplate?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;

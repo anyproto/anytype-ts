@@ -13,6 +13,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	n = -1;
 	items: any = [];
+	typeId: string = '';
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -26,17 +27,18 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { newTemplateId, typeId, onTypeChange } = data;
+		const { getTypeId, withTypeSelect } = data;
 
+		const typeId = this.typeId || getTypeId();
 		const type = dbStore.getType(typeId);
 		const itemBlank = { id: Constant.templateId.blank };
-		const itemAdd = { id: newTemplateId };
+		const itemAdd = { id: Constant.templateId.new };
 		const templatesAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		return (
 			<React.Fragment>
 
-				{onTypeChange ? (
+				{withTypeSelect ? (
 					<div id="defaultType" className="select" onClick={this.onType}>
 						<div className="item">
 							<div className="name">{type.name || translate('commonObjectType')}</div>
@@ -111,7 +113,10 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { typeId, defaultTemplateId, newTemplateId } = data;
+		const { getTypeId, getTemplateId } = data;
+		const typeId = this.typeId || getTypeId();
+		const defaultTemplateId = getTemplateId();
+
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
@@ -123,7 +128,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const dataMapper = it => ({
 			...it,
 			typeId,
-			withMore: (it.id != newTemplateId),
+			withMore: (it.id != Constant.templateId.new),
 			caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
 			isDefault: (it.id == defaultTemplateId),
 			isBlank: (it.id == Constant.templateId.blank),
@@ -197,8 +202,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					template: item,
 					isView: true,
 					route,
-					onSetDefault: () => onSetDefault(item),
-					onArchive: () => onArchive(item),
+					onSetDefault: () => onSetDefault(item, this.reload),
+					onArchive: () => onArchive(item, this.reload),
 					onDuplicate: (object) => UtilObject.openPopup(object, {})
 				}
 			});
@@ -228,7 +233,13 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
-				onClick: item => onTypeChange(item.id),
+				onClick: (item) => {
+					this.typeId = item.id;
+					this.reload();
+					if (onTypeChange) {
+						onTypeChange(item.id)
+					};
+				},
 			}
 		});
 	};
