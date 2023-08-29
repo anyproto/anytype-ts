@@ -607,7 +607,7 @@ class Dispatcher {
 
 					if (data.hasFields()) {
 						const fields = Mapper.From.ViewFields(data.getFields());
-						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit', 'defaultTemplateId', 'defaultTypeId' ];
+						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
 
 						for (const f of updateKeys) {
 							if (fields[f] != view[f]) {

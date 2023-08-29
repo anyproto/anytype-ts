@@ -34,7 +34,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		return (
 			<React.Fragment>
 
-				{ onTypeChange ? (
+				{onTypeChange ? (
 					<div id="defaultType" className="select" onClick={this.onType}>
 						<div className="item">
 							<div className="name">{type.name || translate('commonObjectType')}</div>
@@ -44,6 +44,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				) : ''}
 
 				<Title text={translate('commonTemplates')} />
+
 				<div className="items">
 					<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
 						<div
