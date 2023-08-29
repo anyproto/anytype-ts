@@ -59,6 +59,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
 		this.getTypeId = this.getTypeId.bind(this);
+		this.setDefaultTypeForView = this.setDefaultTypeForView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -154,6 +155,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
+			onSetDefaultType: this.setDefaultTypeForView,
 		};
 
 		const controls = (

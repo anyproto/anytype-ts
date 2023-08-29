@@ -131,6 +131,7 @@ export interface ViewComponent {
 	onDragRecordStart?: (e: any, id?: string) => void;
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
+	onSetDefaultType?: (id: string, callBack?: () => void) => void;
 	isAllowedObject?: () => boolean;
 	isAllowedTemplate?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;

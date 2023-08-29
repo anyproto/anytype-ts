@@ -28,8 +28,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { data } = param;
 		const { newTemplateId, typeId, onTypeChange } = data;
 
-		console.log('TYPE ID: ', typeId)
-
 		const type = dbStore.getType(typeId);
 		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: newTemplateId };

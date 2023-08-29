@@ -13,6 +13,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
+	menuContext = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -238,7 +239,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId } = data;
+		const { rootId, blockId, readonly, getTypeId, onSetDefaultType } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -287,7 +288,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						// };
 					},
 					onTypeChange: (id) => {
-						console.log('DEFAULT TYPE CHANGE')
+						onSetDefaultType(id, () => {
+							menuStore.updateData('dataviewTemplateList', { typeId: id });
+							this.menuContext.ref.reload();
+						});
 					}
 				}
 			}
@@ -369,6 +373,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				width: getSize().width,
 				data: param.data,
 				noAnimation: true,
+				onOpen: (context) => {
+					this.menuContext = context;
+				}
 			};
 
 			if (item.data) {
