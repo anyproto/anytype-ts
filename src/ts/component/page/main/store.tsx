@@ -42,6 +42,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	limit = 0;
 	midHeight = 0;
 	filter: string = '';
+	timeoutFilter = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -287,6 +288,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.store);
+		window.clearTimeout(this.timeoutFilter);
 	};
 
 	rebind () {
@@ -370,8 +372,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterChange (v: string) {
-		this.filter = v;
-		menuStore.updateData(this.getMenuId(), { filter: v });
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.filter = v;
+			menuStore.updateData(this.getMenuId(), { filter: v });
+		}, 500);
 	};
 
 	onFilterClear () {	
