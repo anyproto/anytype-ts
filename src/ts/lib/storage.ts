@@ -1,4 +1,4 @@
-import { UtilCommon } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 
 const SPACE_KEYS = [
@@ -185,6 +185,11 @@ class Storage {
 		highlights[key] = value;
 
 		this.set('highlights', highlights);
+	};
+
+	getSurvey (type: I.SurveyType) {
+		const obj = this.get('survey') || {};
+		return obj[type] || {};
 	};
 
 	logout () {

@@ -73,33 +73,28 @@ class Survey {
 		analytics.event('SurveySkip', { type });
 	};
 
-	getStorage (type: I.SurveyType) {
-		const obj = Storage.get('survey') || {};
-		return obj[type] || {};
-	};
-
 	isComplete (type: I.SurveyType) {
-		return this.getStorage(type).complete;
+		return Storage.getSurvey(type).complete;
 	};
 
 	checkPmf () {
 		const time = UtilCommon.time();
+		const obj = Storage.getSurvey(I.SurveyType.Pmf);
 		const timeRegister = Number(Storage.get('timeRegister')) || 0;
-		const storage = Storage.get('survey') || {};
-		const obj = storage[I.SurveyType.Pmf] || {};
 		const lastTime = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
 		const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
-		const surveyTime = (timeRegister <= time - 86400 * 7) && (lastTime <= time - 86400 * 30);
+		const registerTime = timeRegister <= time - 86400 * 7;
+		const cancelTime = registerTime && (lastCanceled <= time - 86400 * 30);
 		const randSeed = 10000000;
 		const rand = UtilCommon.rand(0, randSeed);
 
 		// Show this survey to 5% of users
 		if (rand > randSeed * 0.05) {
-			Storage.set('survey', { ...obj, time: UtilCommon.time() });
+			Storage.set('survey', { ...obj, time });
 			return;
 		};
 
-		if (!popupStore.isOpen() && !lastCanceled && surveyTime) {
+		if (!popupStore.isOpen() && (cancelTime || !lastTime)) {
 			this.show(I.SurveyType.Pmf);
 		};
 	};
