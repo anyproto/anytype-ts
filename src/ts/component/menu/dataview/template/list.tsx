@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, Label, PreviewObject } from 'Component';
-import { analytics, I, UtilObject, translate, UtilData } from 'Lib';
+import { Icon, Title, Label, PreviewObject, IconObject } from 'Component';
+import { analytics, I, UtilObject, translate, UtilData, Action } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -39,8 +39,9 @@ class MenuTemplateList extends React.Component<I.Menu> {
 			<React.Fragment>
 
 				{withTypeSelect ? (
-					<div id="defaultType" className="select" onClick={this.onType}>
+					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
 						<div className="item">
+							<IconObject object={type} size={18} />
 							<div className="name">{type.name || translate('commonObjectType')}</div>
 						</div>
 						<Icon className="arrow black" />
@@ -226,10 +227,19 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item) => {
-					this.typeId = item.id;
-					this.reload();
-					if (onTypeChange) {
-						onTypeChange(item.id, this.reload);
+					const typesInstalled = dbStore.getTypes().map(it => it.sourceObject).filter(it => it);
+					const update = () => {
+						this.typeId = item.id;
+						this.reload();
+						if (onTypeChange) {
+							onTypeChange(item.id, this.reload);
+						};
+					};
+
+					if (!typesInstalled.includes(item.id)) {
+						window.setTimeout(update, 50);
+					} else {
+						update();
 					};
 				},
 			}
