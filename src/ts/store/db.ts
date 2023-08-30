@@ -210,6 +210,11 @@ class DbStore {
 		return object._empty_ ? null : object;
 	};
 
+	getTypeName (id: string) {
+		const type = this.getType(id);
+		return type.name ? type.name : '';
+	};
+
 	getTypes () {
 		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);

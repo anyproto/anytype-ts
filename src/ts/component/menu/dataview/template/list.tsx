@@ -53,7 +53,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					<div className="items">
 						<div
 							id={`item-${Constant.templateId.blank}`}
-							className={['previewObject', 'small', 'blank', this.isDefaultTempalte(Constant.templateId.blank) ? 'isDefault' : ''].join(' ')}>
+							className={['previewObject', 'small', 'blank', this.isDefaultTempalte(Constant.templateId.blank) ? 'isDefault' : ''].join(' ')}
+						>
 							<div
 								id={`item-more-${Constant.templateId.blank}`}
 								className="moreWrapper"

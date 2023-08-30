@@ -244,6 +244,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
 
+		const defaultTypeName = dbStore.getTypeName(getTypeId());
+
 		const isBoard = type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
@@ -261,6 +263,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				id: 'defaultType',
 				name: translate('menuDataviewViewDefaultType'),
 				subComponent: 'dataviewTemplateList',
+				caption: defaultTypeName,
 				data: {
 					getTypeId,
 					getTemplateId,
