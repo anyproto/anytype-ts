@@ -66,7 +66,7 @@ html.printMedia {
 			.placeholder { display: none !important; }
 		}
 
-		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: normal; overflow-x: visible; }
+		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
 	}
 }
 
