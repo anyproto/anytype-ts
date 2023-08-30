@@ -138,7 +138,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => detailStore.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => dbStore.getType(it));
 				list = list.filter(it => !it._empty_);
 
 				value = (
