@@ -41,6 +41,7 @@
         }
 
         .titleWrapper {
+            .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
             .title { color: $colorSecondary; }
         }
 
