@@ -10,7 +10,7 @@
 			.title { margin-bottom: 25px; line-height: 40px; }
 			.label { @include text-paragraph; margin: 0px auto 24px auto; max-width: 610px; }
 
-			.filter { max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center; }
+			.filter { max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorShapePrimary; border-radius: 10px; padding: 0px; text-align: center; }
 			.filter {
 				.line { display: none; }
 				.filterInputWrap { height: 100%; width: auto; }
@@ -43,7 +43,7 @@
 		.loaderWrapper { position: relative !important; }
 		.ReactVirtualized__List { padding: 48px 80px 80px 80px; }
 
-		.emptySearch { padding: 56px 0px; border: 1px solid $colorBorderDark; border-radius: 12px; height: auto; @include text-paragraph; }
+		.emptySearch { padding: 56px 0px; border: 1px solid $colorShapePrimary; border-radius: 12px; height: auto; @include text-paragraph; }
 		.emptySearch { 
 			.txt { width: 512px; }
 			b { font-weight: 700; }
@@ -57,10 +57,10 @@
 			.item { height: 48px; line-height: 48px; display: flex; position: relative; justify-content: space-between; }
 			.item {
 				.flex { 
-					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
+					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorShapePrimary; border-radius: 10px; font-weight: 600;
 					gap: 0px 8px; transition: $transitionAllCommon; max-width: calc(100% - 70px);
 				}
-				.flex:hover { background: $colorHoverMedium; }
+				.flex:hover { background: $colorShapeHighlightMedium; }
 
 				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; width: 100%; }

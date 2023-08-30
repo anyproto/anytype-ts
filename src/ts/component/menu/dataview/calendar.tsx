@@ -59,7 +59,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								onChange={m => { this.setValue(UtilCommon.timestamp(y, m, 1), false, false); }} 
 								menuParam={{ 
 									classNameWrap, 
-									className: 'orange',
 									width: 192,
 								}}
 							/>
@@ -73,7 +72,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								onChange={y => this.setValue(UtilCommon.timestamp(y, m, 1), false, false)} 
 								menuParam={{ 
 									classNameWrap, 
-									className: 'orange center',
+									className: 'center',
 									horizontal: I.MenuDirection.Right, 
 									width: 144,
 								}}

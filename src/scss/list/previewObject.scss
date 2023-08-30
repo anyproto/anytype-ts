@@ -9,7 +9,7 @@
 	.item {
 		.hoverArea { height: 100%; }
 		.hoverArea:before {
-			content: ""; background: $colorHoverMedium; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+			content: ""; background: $colorShapeHighlightMedium; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
 			z-index: 2; border-radius: 8px; display: none; pointer-events: none;
 		}
 		.hoverArea.hover:before, .hoverArea:hover:before { display: block; }
@@ -20,7 +20,7 @@
 			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg');
 		}
 		> .icon.more:hover,
-		> .icon.more.hover { background-color: $colorHoverMedium; }
+		> .icon.more.hover { background-color: $colorShapeHighlightMedium; }
 
 		> .defaultLabel {
 			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
@@ -43,7 +43,7 @@
 	}
 	.item:last-child { margin-right: 0px; }
 
-	.item.add { border: 1px solid $colorBorderLight; border-radius: 8px; width: 344px; height: 216px; }
+	.item.add { border: 1px solid $colorShapeSecondary; border-radius: 8px; width: 344px; height: 216px; }
 
 	.icon.arrow { 
 		position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); background-size: 8px 32px; z-index: 10;

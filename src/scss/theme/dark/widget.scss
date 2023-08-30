@@ -6,12 +6,12 @@
 
 .widget { background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
 .widget {
-	.iconWrap:hover, .iconWrap.active { background-color: $colorHoverMedium; }
+	.iconWrap:hover, .iconWrap.active { background-color: $colorShapeHighlightMedium; }
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
 	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
 	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 
-	.head::before { background-color: $colorHoverMedium; }
+	.head::before { background-color: $colorShapeHighlightMedium; }
 
 	.icon.remove .inner { background-color: $colorBgIcon; }
 	.icon.remove:hover .inner { background-color: $colorTertiary; }
@@ -19,13 +19,13 @@
 
 .widget.active {
 	.head {
-		.iconWrap.options { background-color: $colorHoverMedium; }
+		.iconWrap.options { background-color: $colorShapeHighlightMedium; }
 	}
 }
 
 .widget.widgetSpace {
 	.iconObject:not(.withOption) { background-color: $colorLineTertiary; }
-	.icon:hover { background-color: $colorHoverMedium; }
+	.icon:hover { background-color: $colorShapeHighlightMedium; }
 }
 
 .widget.isPreview {
@@ -37,13 +37,13 @@
 	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
 	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
-	.icon.arrow:hover { background-color: $colorHoverMedium; }
+	.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
 
 	.item {
-		.inner:hover::before { background: $colorHoverMedium; }
+		.inner:hover::before { background: $colorShapeHighlightMedium; }
 
 		.buttons {
-			.icon:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
 		}
 	}
 }
@@ -62,12 +62,12 @@
 	}
 
 	.body {
-		.item:hover::before { background: $colorHoverMedium; }
+		.item:hover::before { background: $colorShapeHighlightMedium; }
 		.item {
 			.iconObject.isTask, .iconObject.isBookmark { background: none; }
 
 			.buttons {
-				.icon:hover { background-color: $colorHoverMedium; }
+				.icon:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
 	}
@@ -76,7 +76,7 @@
 .widget.widgetList {
 	.body {
 		.item {
-			.iconObject { background: $colorHoverMedium; }
+			.iconObject { background: $colorShapeHighlightMedium; }
 		}
 	}
 }

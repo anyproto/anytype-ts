@@ -74,7 +74,7 @@
 	.item.orange { color: $colorOrange !important; font-weight: 500; }
 	
 	.item.grey:hover { color: $colorBlack; }
-	.item.orange:hover { color: #f09c0e !important; }
+	.item.orange:hover { color: $colorAccent125 !important; }
 
 	.item:hover {
 		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
@@ -90,7 +90,7 @@
 		.name { @include text-overflow-nw; }
 		.iconObject { flex-shrink: 0; }
 	}
-	.path:hover { border-color: $colorBorderLight; }
+	.path:hover { border-color: $colorShapeSecondary; }
 
 	.headerBanner {
 		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;

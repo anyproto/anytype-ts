@@ -28,7 +28,7 @@
 		}
 
 		.dataviewEmpty { 
-			color: $colorDarkGrey; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorBorderLight; 
+			color: $colorDarkGrey; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
 			text-align: center; padding: 16px 0px; height: 300px;
 		}
 		.dataviewEmpty.withHead { border-top: 0px; }
@@ -51,7 +51,7 @@
 			.editableWrap { cursor: text; }
 		}
 		.dataviewHead.isDeleted {
-			.editableWrap { color: $colorSecondary; }
+			.editableWrap { color: $colorTextTertiary; }
 			#head-source-select { display: none; }
 		}
 		.dataviewHead.isCollection {
@@ -59,7 +59,7 @@
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
-		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
+		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorShapeSecondary; position: absolute; bottom: 0px; }
 
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
@@ -87,7 +87,7 @@
 			}
 
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
-			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
+			.icon:hover, .icon.active { background-color: $colorShapeHighlightMedium; }
 
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
@@ -143,8 +143,8 @@
 					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
 				.element.black { color: $colorBlack; }
-				.element.orange { color: #f09c0e; font-weight: 500; }
-				.element:hover { background-color: $colorHoverMedium; }
+				.element.orange { color: $colorOrange; font-weight: 500; }
+				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
 
@@ -184,7 +184,7 @@
 	.block.blockDataview.isInline {
 		.wrapMenu > .icon.dnd { height: 60px; }
 
-		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid $colorBorderLight; border-bottom: 1px solid $colorBorderLight; }
+		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid $colorShapeSecondary; border-bottom: 1px solid $colorShapeSecondary; }
 
 		.dataviewControls {
 			> .sides {

@@ -11,7 +11,7 @@
 		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
 		transition: $transitionAllCommon;
 	}
-	.iconWrap:not(.disabled):hover { background-color: $colorHoverMedium; }
+	.iconWrap:not(.disabled):hover { background-color: $colorShapeHighlightMedium; }
 
 	.icon { width: 20px; height: 20px;  }
 	.icon.back, .icon.forward { background-image: url('~img/icon/navigation/back.svg'); }

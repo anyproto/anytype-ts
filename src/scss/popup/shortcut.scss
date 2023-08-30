@@ -27,10 +27,10 @@
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
 			.section {
-				.name { @include text-paragraph; font-weight: 700; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+				.name { @include text-paragraph; font-weight: 700; padding-bottom: 12px; border-bottom: 1px solid $colorShapeSecondary; }
 
 				.items {
-					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid $colorBorderLight; }
+					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid $colorShapeSecondary; }
 					.item {
 						.key { flex-basis: 180px; flex-shrink: 0; font-weight: 500; color: $colorMediumGrey; }
 						.descr { flex: 1; padding-left: 14px; }
@@ -38,7 +38,7 @@
 				}
 			}
 
-			.section > .descr { padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+			.section > .descr { padding-bottom: 12px; border-bottom: 1px solid $colorShapeSecondary; }
 
 			.section.separator { padding-top: 27px; margin-bottom: 41px; }
 			.section.separator > .descr { border: 0px; }

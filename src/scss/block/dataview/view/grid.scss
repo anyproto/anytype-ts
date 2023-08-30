@@ -34,7 +34,7 @@
 		.cellHead.isDragging { border: 0px; height: 38px; }
 		.cellHead.isDragging::after {
 			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
-			background-color: $colorHoverLight;
+			background-color: $colorShapeHighlightLight;
 		}
 		.cellHead.isDragging {
 			.resize { display: none; }
@@ -42,7 +42,7 @@
 
 		.cellHead.cellKeyHover::after, .cellHead.active::after { 
 			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
-			background-color: $colorHoverLight;
+			background-color: $colorShapeHighlightLight;
 		}
 
 		.cellHead.last::after, .cellHead.active::after { background: none; }
@@ -54,15 +54,15 @@
 		.viewContent.viewGrid {
 			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
 
-			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorBorderLight inset; }
+			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorShapeSecondary inset; }
 
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
-			.row { white-space: nowrap; box-shadow: 0px 1px $colorBorderLight inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
+			.row { white-space: nowrap; box-shadow: 0px 1px $colorShapeSecondary inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.add { margin-top: -2px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
-			.row:hover { background-color: $colorHoverLight; }
+			.row:hover { background-color: $colorShapeHighlightLight; }
 
 			.row > .selectable,
 			.row > .dropTarget > .selectable { display: grid; }
@@ -93,7 +93,7 @@
 			}
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
-			.cell.cellKeyHover { background-color: $colorHoverLight; }
+			.cell.cellKeyHover { background-color: $colorShapeHighlightLight; }
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }

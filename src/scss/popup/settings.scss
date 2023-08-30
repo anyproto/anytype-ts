@@ -31,7 +31,7 @@
 			> .side { position: relative; height: 100%; }
 			> .side.left { width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; }
 			> .side.left {
-				.iconObject.withLetter { background-color: $colorBorderDark; }
+				.iconObject.withLetter { background-color: $colorShapePrimary; }
 
 				.section { margin: 0px 0px 12px 0px; }
 				.section.account { margin-bottom: 8px; }
@@ -43,7 +43,7 @@
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
 
 				.item { display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; border-radius: 8px; transition: $transitionAllCommon; }
-				.item:hover, .item.active { background: $colorBorderDark; }
+				.item:hover, .item.active { background: $colorShapePrimary; }
 				.item {
 					.icon { width: 22px; height: 22px; flex-shrink: 0; }
 					.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
@@ -87,7 +87,7 @@
 						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
 						border-radius: 6px; margin-left: -5px;
 					}
-					.element:hover { background: $colorHoverMedium; }
+					.element:hover { background: $colorShapeHighlightMedium; }
 				}
 
 				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
@@ -96,12 +96,12 @@
 				b { font-weight: 500; }
 
 				.row { 
-					padding: 14px 0px 13px 0px; display: flex; justify-content: space-between; border-bottom: 1px solid $colorBorderLight; 
+					padding: 14px 0px 13px 0px; display: flex; justify-content: space-between; border-bottom: 1px solid $colorShapeSecondary; 
 					align-items: center; @include text-paragraph;
 				}
 				.row.red { color: $colorRed; }
 				.row {
-					> .input { width: 50%; border: 1px solid $colorBorderLight; border-radius: 6px; }
+					> .input { width: 50%; border: 1px solid $colorShapeSecondary; border-radius: 6px; }
 					> .input.short { width: 30px; padding: 0px 4px; }
 				}
 
@@ -136,9 +136,9 @@
 
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 
-				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
+				.actionItems { border: 1px solid $colorShapeSecondary; border-radius: 12px; margin-bottom: 40px; }
 				.actionItems {
-					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorShapeSecondary; }
 					> .item:last-child { border-bottom: 0; }
 					> .item.red { color: $colorRed; }
 					> .item {
@@ -169,8 +169,8 @@
 				.section {
 					.iconWrapper { margin-bottom: 0; }
 					.title { @include text-header3; margin: 0; }
-					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderLight; border-radius: 10px; }
-					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorShapeSecondary; border-radius: 10px; }
+					.input:hover:not(.isReadonly) { border-color: $colorShapePrimary; }
 					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
 
 					.input.isReadonly { background-color: unset; }
@@ -204,10 +204,10 @@
 
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
-						background: $colorHoverLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
+						background: $colorShapeHighlightLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
 						@include text-small; color: $colorDarkGrey; transition: $transitionAllCommon;
 					}
-					.spaceType:hover { background-color: $colorHoverMedium; }
+					.spaceType:hover { background-color: $colorShapeHighlightMedium; }
 				}
 			}
 
@@ -219,9 +219,9 @@
 					.title { @include text-header3; margin-bottom: 12px; }
 					.label { @include text-small; color: $colorDarkGrey; }
 
-					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
+					.sectionContent { border-radius: 12px; border: 1px solid $colorShapeSecondary; overflow: hidden; }
 					.sectionContent {
-						> .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						> .item { padding: 16px; border-bottom: 1px solid $colorShapeSecondary; }
 						> .item:last-child { border-bottom: 0; }
 
 						> .item {
@@ -272,7 +272,7 @@
 				.section.sectionIntegrations {
 					.sectionContent {
 						> .item { transition: $transitionAllCommon; }
-						> .item:hover { background: $colorHoverLight; }
+						> .item:hover { background: $colorShapeHighlightLight; }
 						> .item {
 							.side.left { display: flex; gap: 0 12px; }
 							.side.left {
@@ -331,7 +331,7 @@
 		.side.right.tabPinIndex {
 			.actionItems {
 				> .item { @include text-common; padding: 20px 16px; }
-				> .item.cp:hover { background-color: $colorHoverLight; }
+				> .item.cp:hover { background-color: $colorShapeHighlightLight; }
 				.arrow { width: 6px; height: 10px; }
 			}
 		}
@@ -372,7 +372,7 @@
 				p.first { margin: 0px 0px 20px 0px; }
 			}
 
-			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
+			.check { border-top: 1px solid $colorShapeSecondary; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
 		}
 
 		.side.right.tabAppearance {
@@ -389,7 +389,7 @@
 			}
 
 			.btn.light { 
-				.bg { box-shadow: 0px 0px 0px 1px $colorBorderDark; }
+				.bg { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
 			}
 
@@ -399,7 +399,7 @@
 			}
 			.btn.system {
 				.bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
-				.bg::before { left: 0px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 14px 0px 0px 14px; }
+				.bg::before { left: 0px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 14px 0px 0px 14px; }
 				.bg::after { right: 0px; background: $colorBlack; border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
@@ -417,10 +417,10 @@
 		.side.right.tabPersonal,
 		.side.right.tabPinIndex {
 			.select {
-				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+				background: none; border: solid 1px $colorShapePrimary; font-weight: 400; text-decoration: none;
 				min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
 			}
-			.select:hover { background: $colorHoverMedium; }
+			.select:hover { background: $colorShapeHighlightMedium; }
 			.select {
 				.item { border-bottom: 0; color: $colorBlack; }
 				.icon.arrow { right: 3px !important; }
@@ -435,7 +435,7 @@
 		.side.right.tabExportIndex {
 			.items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 			.item { 
-				height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
+				height: 94px; border: 1px solid $colorShapeSecondary; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 
@@ -468,8 +468,8 @@
 		.side.right.tabImportNotion {
 			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
 			.inputWrapper { 
-				.input { height: 36px; border: 1px solid $colorBorderLight; border-radius: 8px; }
-				.input:hover { border-color: $colorBorderDark; }
+				.input { height: 36px; border: 1px solid $colorShapeSecondary; border-radius: 8px; }
+				.input:hover { border-color: $colorShapePrimary; }
 				.input:focus { border-color: $colorOrange; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }

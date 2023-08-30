@@ -48,7 +48,7 @@ input, textarea, select { font-family: 'Inter'; }
 	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
 	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
-	.version { @include text-small; color: #fff; transition-delay: 0.25s; }
+	.version { @include text-small; color: $colorTextInversion; transition-delay: 0.25s; }
 }
 
 #globalFade { 
@@ -88,13 +88,13 @@ html.platformWindows, html.platformLinux {
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }
 .overPopup { overflow: hidden !important; }
-.empty, .emptyText { color: $colorSecondary; }
+.empty, .emptyText { color: $colorTextTertiary; }
 .isDone { color: $colorDarkGrey; }
 .placeholder { 
-	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
+	pointer-events: none; color: $colorTextTertiary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
-::-webkit-input-placeholder { color: $colorSecondary !important; }
+::-webkit-input-placeholder { color: $colorTextTertiary !important; }
 .isBlurred { filter: blur(7px); }
 .animationWord { display: inline-block; }
 
@@ -153,7 +153,7 @@ search.active { background: orange !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
 .isTag.archive { color: $colorDarkGrey; background: $colorVeryLightGrey; }
-.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorBorderLight inset; }
+.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
 .isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
 .isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
 .isTag.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
@@ -179,7 +179,7 @@ search.active { background: orange !important; }
 .isStatus.tagColor-lime { color: $colorLime !important; }
 
 .brokenMedia { 
-	@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorBorderLight; 
+	@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorShapeSecondary; 
 	color: $colorMediumGrey; height: 44px;
 }
 .brokenMedia {
