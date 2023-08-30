@@ -447,11 +447,6 @@ class BlockStore {
 					name = name || translate('commonEmpty');
 				};
 
-				const parsed = Mark.fromUnicode(name, marks);
-
-				name = parsed.text.trim();
-				marks = parsed.marks;
-
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
 					text = UtilCommon.stringInsert(text, name, mark.range.from, mark.range.to);
