@@ -49,9 +49,9 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { template, isView, onSetDefault } = data;
-		const { isDefault } = template;
+		const { template, isView, onSetDefault, templateId } = data;
 		const isBlank = template.id == Constant.templateId.blank;
+		const isDefault = template.id == templateId;
 
 		return [
 			!isDefault && onSetDefault ? ({ id: 'default', name: isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault') }) : null,
@@ -64,7 +64,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { template, onSetDefault, onArchive, onDuplicate, route } = data;
+		const { template, onSetDefault, onArchive, onDuplicate, route, typeId } = data;
 
 		close();
 
@@ -89,10 +89,10 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 				analytics.event('DuplicateTemplate', { route });
 
 				if (template.id == Constant.templateId.blank) {
-					const type = dbStore.getType(template.typeId);
+					const type = dbStore.getType(typeId);
 					const details: any = {
 						type: Constant.typeId.template,
-						targetObjectType: template.typeId,
+						targetObjectType: typeId,
 						layout: type.recommendedLayout,
 					};
 
@@ -101,7 +101,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 							return;
 						};
 
-						analytics.event('CreateTemplate', { objectType: template.typeId, route: 'menuDataviewTemplate' });
+						analytics.event('CreateTemplate', { objectType: typeId, route: 'menuDataviewTemplate' });
 
 						if (onDuplicate) {
 							onDuplicate(message.details);

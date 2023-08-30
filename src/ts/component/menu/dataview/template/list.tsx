@@ -31,7 +31,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		const typeId = this.typeId || getTypeId();
 		const type = dbStore.getType(typeId);
-		const itemBlank = { id: Constant.templateId.blank, typeId };
+		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: Constant.templateId.new };
 		const templatesAllowed = UtilObject.isAllowedTemplate(typeId);
 
@@ -113,9 +113,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getTypeId, getTemplateId } = data;
+		const { getTypeId } = data;
 		const typeId = this.typeId || getTypeId();
-		const defaultTemplateId = getTemplateId();
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
@@ -124,13 +123,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-
-		const dataMapper = it => ({
-			...it,
-			typeId,
-			caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
-			isDefault: (it.id == defaultTemplateId),
-		});
 
 		if (clear) {
 			this.setState({ loading: true });
@@ -159,8 +151,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				return it;
 			}));
 
-			this.items = this.items.map(dataMapper);
-
 			if (clear) {
 				this.setState({ loading: false });
 			} else {
@@ -172,7 +162,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, onArchive, route } = data;
+		const { onSetDefault, onArchive, route, getTypeId, getTemplateId } = data;
 		const node = $(`#item-${item.id}`)
 
 		e.preventDefault();
@@ -189,7 +179,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		};
 
 		if (onSetDefault) {
-			menuActions.onSetDefault = onSetDefault(item, this.reload)
+			menuActions.onSetDefault = () => onSetDefault(item, this.reload);
 		};
 
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
@@ -208,6 +198,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				data: {
 					template: item,
 					isView: true,
+					typeId: this.typeId || getTypeId(),
+					templateId: getTemplateId(),
 					route,
 					...menuActions
 				}
