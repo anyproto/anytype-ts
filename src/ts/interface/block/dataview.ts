@@ -136,6 +136,7 @@ export interface ViewComponent {
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	isAllowedTemplate?: () => boolean;
+	isAllowedDefaultType?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;

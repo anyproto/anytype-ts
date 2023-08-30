@@ -82,6 +82,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSelectEnd = this.onSelectEnd.bind(this);
 		this.multiSelectAction = this.multiSelectAction.bind(this);
 		this.onSelectToggle = this.onSelectToggle.bind(this);
+		this.checkDefaultTemplate = this.checkDefaultTemplate.bind(this);
 	};
 
 	render () {
@@ -156,6 +157,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedTemplate: this.isAllowedTemplate,
+			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 		};
@@ -336,6 +338,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
 
+		this.checkDefaultTemplate();
+
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
 			return;
@@ -510,7 +514,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			});
 		};
-		if (!type && defaultTypeId) {
+		if (!type && defaultTypeId && this.isAllowedDefaultType()) {
 			type = defaultTypeId;
 		};
 		if (!type) {
@@ -1264,6 +1268,38 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		selection.clear();
+	};
+
+	checkDefaultTemplate () {
+		const typeId = this.getTypeId();
+		const defaultTemplateId = this.getDefaultTemplateId();
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+
+		UtilData.search({
+			filters,
+			sorts,
+			limit: Constant.limit.menuRecords,
+		}, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const templateIds = [];
+			const items = message.records || [];
+			items.map((it: any) => {
+				templateIds.push(it.id);
+			});
+
+			if (!templateIds.includes(defaultTemplateId)) {
+				this.setDefaultTemplateForView(Constant.templateId.blank);
+			};
+		});
 	};
 
 	resize () {

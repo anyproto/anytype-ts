@@ -239,7 +239,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -312,10 +312,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		];
 
 		let sections: any[] = [
-			{ id: 'defaultSettings', name: '', children: defaultSettings },
+			isAllowedDefaultType() ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
 			{ id: 'layoutSettings', name: '', children: layoutSettings },
 			{ id: 'tools', name: '', children: tools }
-		];
+		].filter(it => it);
 
 		if (id && !readonly) {
 			sections.push({
