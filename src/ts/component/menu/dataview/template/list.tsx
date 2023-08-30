@@ -124,25 +124,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { getTypeId } = data;
 		const typeId = this.typeId || getTypeId();
 
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
-		];
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
-			filters,
-			sorts,
-			limit: Constant.limit.menuRecords,
-		}, (message: any) => {
+		UtilData.getTemplatesByTypeId(typeId, (message) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
 				return;
 			};
 

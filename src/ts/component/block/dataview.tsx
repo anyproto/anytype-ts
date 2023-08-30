@@ -1273,26 +1273,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	checkDefaultTemplate () {
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
-		];
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
 
-		UtilData.search({
-			filters,
-			sorts,
-			limit: Constant.limit.menuRecords,
-		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
+		UtilData.getTemplatesByTypeId(typeId, (message) => {
+			const templates = message.records || [];
 			const templateIds = [];
-			const items = message.records || [];
-			items.map((it: any) => {
+			templates.map((it: any) => {
 				templateIds.push(it.id);
 			});
 
