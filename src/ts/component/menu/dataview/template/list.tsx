@@ -208,7 +208,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { onSelect } = data;
 
 		if (onSelect) {
-			onSelect(item);
+			onSelect(item, this.reload);
 		};
 	};
 

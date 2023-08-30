@@ -239,12 +239,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
 
-		const defaultTypeName = dbStore.getTypeName(getTypeId());
+		const typeId = getTypeId();
+		const defaultTemplateId = getTemplateId();
+		const defaultTypeName = dbStore.getTypeName(typeId);
+		const allowedDefaultType = isAllowedDefaultType();
 
 		const isBoard = type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
@@ -258,18 +261,25 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
 		};
 
+		const defaultTemplateName = defaultTemplateId == Constant.templateId.blank ? translate('commonBlank') : '';
+		// need logic to get name of custom template
+
 		const defaultSettings = [
 			{
 				id: 'defaultType',
-				name: translate('menuDataviewViewDefaultType'),
+				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
 				subComponent: 'dataviewTemplateList',
-				caption: defaultTypeName,
+				caption: allowedDefaultType ? defaultTypeName : defaultTemplateName,
 				data: {
 					getTypeId,
 					getTemplateId,
-					withTypeSelect: true,
-					onSelect: (item: any) => {
-						console.log('SELECT')
+					withTypeSelect: isAllowedDefaultType(),
+					onSelect: (item, callback) => {
+						setDefaultTemplate(item.id);
+
+						if (callback) {
+							callback();
+						};
 					},
 					onSetDefault: (item, callback) => {
 						setDefaultTemplate(item.id);
@@ -312,7 +322,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		];
 
 		let sections: any[] = [
-			isAllowedDefaultType() ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
+			isAllowedDefaultType() || isAllowedTemplate() ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
 			{ id: 'layoutSettings', name: '', children: layoutSettings },
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
