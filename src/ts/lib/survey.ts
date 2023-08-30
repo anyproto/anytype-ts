@@ -36,19 +36,17 @@ class Survey {
 		const survey = Surveys[type];
 		const param: any = {};
 
-		param[type] = param[type] || {};
-
 		switch (type) {
 			default:
-				param[type].complete = true;
+				param.complete = true;
 				break;
 
 			case I.SurveyType.Pmf:
-				param[type].time = UtilCommon.time();
+				param.time = UtilCommon.time();
 				break;
 		};
 
-		Storage.set('survey', param);
+		Storage.setSurvey(type, param);
 		Renderer.send('urlOpen', UtilCommon.sprintf(survey.url, account.id));
 		analytics.event('SurveyOpen', { type });
 	};
@@ -56,20 +54,18 @@ class Survey {
 	onSkip (type: I.SurveyType) {
 		const param: any = {};
 
-		param[type] = param[type] || {};
-
 		switch (type) {
 			default:
-				param[type].complete = true;
+				param.complete = true;
 				break;
 
 			case I.SurveyType.Pmf:
-				param[type].cancel = true;
-				param[type].time = UtilCommon.time();
+				param.cancel = true;
+				param.time = UtilCommon.time();
 				break;
 		};
 
-		Storage.set('survey', param);
+		Storage.setSurvey(type, param);
 		analytics.event('SurveySkip', { type });
 	};
 
@@ -90,7 +86,7 @@ class Survey {
 
 		// Show this survey to 5% of users
 		if (rand > randSeed * 0.05) {
-			Storage.set('survey', { ...obj, time });
+			Storage.setSurvey(I.SurveyType.Pmf, { time });
 			return;
 		};
 

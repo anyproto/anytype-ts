@@ -192,6 +192,10 @@ class Storage {
 		return obj[type] || {};
 	};
 
+	setSurvey (type: I.SurveyType, param: any) {
+		this.set('survey', Object.assign(this.getSurvey(type), param));
+	};
+
 	logout () {
 		const keys = [ 
 			'accountId', 
