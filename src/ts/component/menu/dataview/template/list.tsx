@@ -31,7 +31,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		const typeId = this.typeId || getTypeId();
 		const type = dbStore.getType(typeId);
-		const itemBlank = { id: Constant.templateId.blank };
+		const itemBlank = { id: Constant.templateId.blank, typeId };
 		const itemAdd = { id: Constant.templateId.new };
 		const templatesAllowed = UtilObject.isAllowedTemplate(typeId);
 
