@@ -630,19 +630,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
 
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
 
 		C.ObjectCreate(details, flags, template?.id, (message: any) => {
 			this.creating = false;
