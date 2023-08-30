@@ -7,7 +7,7 @@
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
             .column { width: 262px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
 
-			.column.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
+			.column.isOver::before { content: ""; position: absolute; background: $colorAccent100; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
 			.column.isOver.left::before { left: -5px; }
 			.column.isOver.right::before { right: -5px; }
 
@@ -109,7 +109,7 @@
 				.icon.checkbox { opacity: 1; }
 			}
 
-			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
+			.card.isOver::before { content: ""; position: absolute; background: $colorAccent100; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
 			.card.isOver.top::before { top: -5px; }
 			.card.isOver.bottom::before { bottom: -5px; }
 
@@ -131,7 +131,7 @@
 
 			.card.add.isOver.bottom::before { top: -6px; }
 			.card.isEditing {
-				.cardContent { border: 2px solid $colorOrange; padding: 15px; }
+				.cardContent { border: 2px solid $colorAccent100; padding: 15px; }
 			}
         }
     }

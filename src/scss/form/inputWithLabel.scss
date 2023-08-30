@@ -8,4 +8,4 @@
 	.input { padding: 0px !important; height: 22px; line-height: 22px; vertical-align: top; border: 0px !important; background: none; }
 }
 .inputWithLabel:hover { border-color: $colorShapePrimary; }
-.inputWithLabel.isFocused, .inputWithLabel.isFocused:hover { padding: 7px 11px; border: 2px solid $colorOrange; }
+.inputWithLabel.isFocused, .inputWithLabel.isFocused:hover { padding: 7px 11px; border: 2px solid $colorAccent100; }

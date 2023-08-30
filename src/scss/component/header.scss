@@ -73,7 +73,7 @@
 	}
 	.item.orange { color: $colorOrange !important; font-weight: 500; }
 	
-	.item.grey:hover { color: $colorBlack; }
+	.item.grey:hover { color: $colorTextPrimary; }
 	.item.orange:hover { color: $colorAccent125 !important; }
 
 	.item:hover {

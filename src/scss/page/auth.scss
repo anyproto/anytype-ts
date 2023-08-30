@@ -64,7 +64,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: $colorOrange; }
+		.loader { border-color: #555; border-left-color: $colorAccent100; }
 	}
 }
 
@@ -150,7 +150,7 @@ html.bodyAuthDeleted {
 			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: $colorOrange; }
+		.input.active { box-shadow: 0px 0px; border-color: $colorAccent100; }
 	}
 }
 

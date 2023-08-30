@@ -171,7 +171,7 @@
 					.title { @include text-header3; margin: 0; }
 					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorShapeSecondary; border-radius: 10px; }
 					.input:hover:not(.isReadonly) { border-color: $colorShapePrimary; }
-					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorAccent100; padding: 5px 11px; }
 
 					.input.isReadonly { background-color: unset; }
 
@@ -470,7 +470,7 @@
 			.inputWrapper { 
 				.input { height: 36px; border: 1px solid $colorShapeSecondary; border-radius: 8px; }
 				.input:hover { border-color: $colorShapePrimary; }
-				.input:focus { border-color: $colorOrange; }
+				.input:focus { border-color: $colorAccent100; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }

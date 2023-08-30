@@ -94,7 +94,7 @@
 
 			.dropTarget.isOver { box-shadow: 0px 0px; }
 			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: $colorOrange; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
+				content: ""; position: absolute; background: $colorAccent100; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
 			}
 			.dropTarget.isOver.top::before { top: -6px; }
 			.dropTarget.isOver.bottom::before { bottom: 4px; }

@@ -39,7 +39,7 @@
 			}
 		}
 
-		.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange inset; }
+		.item.active { background: none; border-color: $colorAccent100 !important; box-shadow: 0px 0px 0px 1px $colorAccent100 inset; }
 		.item.active {
 			.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 		}
@@ -67,7 +67,7 @@
 			}
 		}
 	}
-	.selected.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+	.selected.active { border-color: $colorAccent100 !important; box-shadow: 0px 0px 0px 1px $colorAccent100; }
 	
 	.items.right {
 		.item {

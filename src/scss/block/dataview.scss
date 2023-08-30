@@ -108,10 +108,10 @@
 				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
 			}
 			.viewItem:last-child { margin: 0px; }
-			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+			.viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
 			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 
-			.viewSelect { display: none; border: 0px; padding-left: 0px; color: $colorBlack; }
+			.viewSelect { display: none; border: 0px; padding-left: 0px; color: $colorTextPrimary; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
 				.name { @include text-overflow-nw; }
@@ -130,11 +130,11 @@
 
 		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
-			.side.left { @include text-header3; color: $colorBlack;  }
+			.side.left { @include text-header3;  }
 			.side.right {
 				.element {
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px;
-					transition: $transitionAllCommon;
+					transition: $transitionAllCommon; color: $colorTextPrimary;
 				}
 				.element {
 					.icon { width: 20px; height: 20px; }
@@ -142,8 +142,6 @@
 					.icon.archive { background-image: url('~img/icon/menu/action/remove0.svg'); }
 					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
-				.element.black { color: $colorBlack; }
-				.element.orange { color: $colorOrange; font-weight: 500; }
 				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}

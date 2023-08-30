@@ -31,7 +31,7 @@
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
-				background: $colorOrange; transition: $transitionAllCommon;
+				background: $colorAccent100; transition: $transitionAllCommon;
 			}
 			.round:hover { background: #F09C0E; }
 			.round {
@@ -58,7 +58,7 @@
 				}
 				.step:hover { background: $colorShapePrimary; }
 				.step.active,
-				.step.active:hover { background: $colorOrange; cursor: default; }
+				.step.active:hover { background: $colorAccent100; cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 

@@ -110,14 +110,14 @@ search { background: yellow !important; color: $colorBlack !important; border-ra
 search.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: rgba(255,187,44,0.3) !important; }
-.dropTarget.isOver.top { box-shadow: 0px -2px 0px $colorOrange; }
-.dropTarget.isOver.bottom { box-shadow: 0px 2px 0px $colorOrange; }
-.dropTarget.isOver.left { box-shadow: -2px 0px 0px $colorOrange; }
-.dropTarget.isOver.right { box-shadow: 2px 0px 0px $colorOrange; }
+.dropTarget.isOver.top { box-shadow: 0px -2px 0px $colorAccent100; }
+.dropTarget.isOver.bottom { box-shadow: 0px 2px 0px $colorAccent100; }
+.dropTarget.isOver.left { box-shadow: -2px 0px 0px $colorAccent100; }
+.dropTarget.isOver.right { box-shadow: 2px 0px 0px $colorAccent100; }
 
 /* DropTarget for Layout.Row */
-.dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px $colorOrange inset; }
-.dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px $colorOrange inset; }
+.dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px $colorAccent100 inset; }
+.dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px $colorAccent100 inset; }
 
 .isSelectionSelected { position: relative; }
 

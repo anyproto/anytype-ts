@@ -12,7 +12,7 @@
 	.txt, .icon { display: none; }
 }
 
-.button.orange { background: $colorOrange; color: $colorWhite; }
+.button.orange { background: $colorAccent100; color: $colorWhite; }
 .button.orange:not(.disabled):hover { background: $colorAccent125; }
 
 .button.black { background: $colorBlack; color: $colorWhite; }

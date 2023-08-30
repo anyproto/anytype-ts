@@ -1,7 +1,7 @@
 .block.blockCover {
     .loaderWrapper { background: rgba(0,0,0,0.3); }
     .loaderWrapper {
-        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorAccent100; }
     }
 
     .elements {
@@ -16,7 +16,7 @@
 		}
     }
 
-    .author a:hover { color: $colorOrange; }
+    .author a:hover { color: $colorAccent100; }
 }
 
 .blocks {
@@ -179,11 +179,11 @@
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
 
-			.card.isEditing { border: 2px solid $colorOrange; }
+			.card.isEditing { border: 2px solid $colorAccent100; }
         }
 
         .viewContent.viewBoard {
-			.ghost { border-color: $colorOrange; }
+			.ghost { border-color: $colorAccent100; }
             .cardContent { background: $colorBgLight; border-color: $colorLineTertiary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
@@ -203,7 +203,7 @@
             }
 
 			.card.isEditing {
-				.cardContent { border: 2px solid $colorOrange; }
+				.cardContent { border: 2px solid $colorAccent100; }
 			}
         }
 
@@ -222,7 +222,7 @@
     /* BlockText */
 
     .block.blockText {
-        kbd { background: $colorShapeHighlightMedium; color: $colorOrange; }
+        kbd { background: $colorShapeHighlightMedium; color: $colorAccent100; }
 		lnk, obj { border-color: $colorSecondary; }
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }

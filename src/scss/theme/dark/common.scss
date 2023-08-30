@@ -74,7 +74,7 @@ html.themeDark {
 
 	.progressBar {
         .bar { background: $colorBgLight; }
-        .fill { background: $colorOrange; }
+        .fill { background: $colorAccent100; }
 	}
 
     /* Components */
@@ -86,7 +86,7 @@ html.themeDark {
 	}
 
     .loaderWrapper {
-        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorAccent100; }
 		.dot { animation-name: dots; }
     }
 
