@@ -284,7 +284,17 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 							callback();
 						};
 					},
-					onTypeChange: setDefaultType
+					onTypeChange: (id, callback) => {
+						if (id != getTypeId()) {
+							setDefaultType(id, () => {
+								setDefaultTemplate(Constant.templateId.blank);
+
+								if (callback) {
+									callback();
+								};
+							});
+						};
+					}
 				}
 			}
 		];

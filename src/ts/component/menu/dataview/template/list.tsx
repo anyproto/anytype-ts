@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, Label, PreviewObject } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, Action, UtilData } from 'Lib';
-import { commonStore, dbStore, menuStore } from 'Store';
+import { analytics, I, UtilObject, translate, UtilData } from 'Lib';
+import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplateList extends React.Component<I.Menu> {
@@ -51,7 +51,9 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				{templatesAllowed ? (
 					<div className="items">
-						<div id={`item-${Constant.templateId.blank}`} className="previewObject small blank">
+						<div
+							id={`item-${Constant.templateId.blank}`}
+							className={['previewObject', 'small', 'blank', this.isDefaultTempalte(Constant.templateId.blank) ? 'isDefault' : ''].join(' ')}>
 							<div
 								id={`item-more-${Constant.templateId.blank}`}
 								className="moreWrapper"
@@ -74,6 +76,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 						{this.items.map((item: any, i: number) => (
 							<PreviewObject
 								key={i}
+								className={this.isDefaultTempalte(item.id) ? 'isDefault' : ''}
 								rootId={item.id}
 								previewSize="small"
 								onClick={e => this.onClick(e, item)}
@@ -86,7 +89,11 @@ class MenuTemplateList extends React.Component<I.Menu> {
 							<Icon className="add" />
 						</div>
 					</div>
-				) : <Label text={'This object type doesn\'t support templates'} />}
+				) : (
+					<div className="empty">
+						<Label text={translate('menuDataviewTemplateUnsupported')} />
+					</div>
+				)}
 			</React.Fragment>
 		);
 	};
@@ -234,31 +241,20 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					this.typeId = item.id;
 					this.reload();
 					if (onTypeChange) {
-						onTypeChange(item.id)
+						onTypeChange(item.id, this.reload);
 					};
 				},
 			}
 		});
 	};
 
-	onMouseEnter (e: any, item: any) {
-		this.onOver(e, item);
-	};
-
-	onOver (e: any, item: any) {
+	isDefaultTempalte (id: string): boolean {
 		const { param } = this.props;
 		const { data } = param;
-		const { onOver } = data;
+		const { getTemplateId } = data;
 
-		if (!keyboard.isMouseDisabled) {
-			// this.props.setActive(item, false);
-		};
-
-		if (onOver) {
-			// onOver();
-		};
+		return id == getTemplateId();
 	};
-
 };
 
 export default MenuTemplateList;

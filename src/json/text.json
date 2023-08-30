@@ -1151,6 +1151,7 @@
 
     "menuDataviewTemplateSetDefaultForView": "Default for this view",
     "menuDataviewTemplateEdit": "Edit template",
+    "menuDataviewTemplateUnsupported": "This object type doesn't support templates",
 
     "menuGraphSettingsTitles": "Titles",
     "menuGraphSettingsArrows": "Arrows",
