@@ -5,7 +5,7 @@ import { analytics, C, I, keyboard, UtilObject, translate, Action } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-class MenuTemplate extends React.Component<I.Menu> {
+class MenuTemplateContext extends React.Component<I.Menu> {
 
 	n = -1;
 
@@ -152,4 +152,4 @@ class MenuTemplate extends React.Component<I.Menu> {
 
 };
 
-export default MenuTemplate;
+export default MenuTemplateContext;

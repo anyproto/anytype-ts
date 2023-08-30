@@ -178,8 +178,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (menuStore.isOpen('dataviewTemplate', item.id)) {
-			menuStore.close('dataviewTemplate');
+		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
+			menuStore.close('dataviewTemplateContext');
 			return;
 		};
 
@@ -193,7 +193,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		};
 
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplate', {
+			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-${item.id} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,

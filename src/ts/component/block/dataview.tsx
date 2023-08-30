@@ -764,7 +764,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
-			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
+			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			data: {
