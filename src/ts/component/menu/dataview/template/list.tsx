@@ -79,7 +79,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 								key={i}
 								className={this.isDefaultTempalte(item.id) ? 'isDefault' : ''}
 								rootId={item.id}
-								previewSize="small"
+								previewSize={I.PreviewSize.Small}
 								onClick={e => this.onClick(e, item)}
 								onMore={e => this.onMore(e, item)}
 							/>

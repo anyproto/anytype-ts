@@ -8,7 +8,7 @@ import $ from 'jquery';
 
 interface Props {
 	rootId: string;
-	previewSize?: string;
+	previewSize: I.PreviewSize;
 	className?: string;
 	onMore? (e: any): void;
 	onClick? (e: any): void;
@@ -63,36 +63,38 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		let c = 0;
 		let size = 48;
 		let iconSize = 32;
+		let cnPreviewSize;
 
-		if (previewSize) {
-			cn.push(previewSize);
-
-			switch (previewSize) {
-				case 'small': {
-					size = 32;
-					iconSize = 20;
-					break;
-				};
-				case 'medium': {
-					size = 40;
-					iconSize = 24;
-					break;
-				};
+		switch (previewSize) {
+			case I.PreviewSize.Medium: {
+				size = 40;
+				iconSize = 24;
+				cnPreviewSize = 'medium';
+				break;
+			};
+			case I.PreviewSize.Large: {
+				size = 48;
+				iconSize = 32;
+				cnPreviewSize = 'large';
+				break;
+			};
+			default: {
+				size = 32;
+				iconSize = 20;
+				cnPreviewSize = 'small';
+				break;
 			};
 		};
+		cn.push(cnPreviewSize);
 
 		if (isTask || isBookmark) {
 			size = 20;
 			iconSize = 18;
 
-			if (previewSize && (previewSize == 'small')) {
+			if (previewSize == I.PreviewSize.Small) {
 				size = 14;
 				iconSize = 14;
 			};
-		};
-
-		if (previewSize && iconImage) {
-			iconSize = size;
 		};
 
 		const Block = (item: any) => {
