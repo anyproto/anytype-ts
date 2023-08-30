@@ -74,17 +74,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
 
 		if (color) {
 			cv.push('textColor textColor-' + color);
-		};
-		if (readonly) {
-			cv.push('isReadonly');
 		};
 
 		// Subscriptions
