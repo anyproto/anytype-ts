@@ -55,35 +55,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onRemove () {
-        if (!this.refManager) {
-            return;
-        };
-
-		const selected = this.refManager.selected || [];
-        const count = selected.length;
-
-        analytics.event('ShowDeletionWarning', { route: 'Settings' });
-
-		popupStore.open('confirm', {
-			data: {
-				title: UtilCommon.sprintf(
-					translate(`commonDeletionWarningTitle`),
-					count,
-					UtilCommon.plural(count, translate(`pluralObject`))
-				),
-				text: translate(`commonDeletionWarningText`),
-				textConfirm: translate(`commonDelete`),
-				onConfirm: () => {
-					Action.archive(selected, () => {
-						C.ObjectListDelete(selected);
-						this.selectionClear();
-
-						analytics.event('RemoveCompletely', { count, route: 'Settings' });
-					});
-				},
-				onCancel: () => this.selectionClear(),
-			},
-		});
+		Action.delete(this.refManager?.selected || [], 'Settings', () => this.selectionClear());
     };
 
 	selectionClear () {

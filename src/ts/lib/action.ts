@@ -298,7 +298,7 @@ class Action {
 		});
 	};
 
-	delete (ids: string[], callBack?: () => void): void {
+	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
 		analytics.event('ShowDeletionWarning');
@@ -310,10 +310,18 @@ class Action {
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
-					callBack();
-					analytics.event('RemoveCompletely', { count });
+					
+					if (callBack) {
+						callBack();
+					};
+
+					analytics.event('RemoveCompletely', { count, route });
 				},
-				onCancel: () => callBack(),
+				onCancel: () => {
+					if (callBack) {
+						callBack();
+					};
+				},
 			},
 		});
 	};
