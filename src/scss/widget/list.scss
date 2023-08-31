@@ -40,11 +40,11 @@
 		}
 
 		.item.active { 
-			.icon.more { background-color: $colorHoverMedium; }
+			.icon.more { background-color: $colorShapeHighlightMedium; }
 		}
 
 		.item::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHoverMedium; z-index: 1; pointer-events: none;
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorShapeHighlightMedium; z-index: 1; pointer-events: none;
 			opacity: 0;
 		}
 		.item:hover::before { opacity: 1; }
@@ -61,8 +61,8 @@
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
 				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
-				.icon:hover { background-color: $colorHoverMedium; }
-				.icon.active { opacity: 1; background-color: $colorHoverMedium; }
+				.icon:hover { background-color: $colorShapeHighlightMedium; }
+				.icon.active { opacity: 1; background-color: $colorShapeHighlightMedium; }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			}
 		}

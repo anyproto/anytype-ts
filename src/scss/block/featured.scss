@@ -24,7 +24,7 @@
 		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
 		.cellContent.disabled { opacity: 1; }
 
-		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: $colorHoverMedium; }
+		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: $colorShapeHighlightMedium; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {

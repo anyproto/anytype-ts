@@ -17,7 +17,7 @@
 			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
 			display: flex; align-items: flex-start; gap: 0px 6px;
 		}
-		.info.noValue { width: 100%; color: $colorSecondary; }
+		.info.noValue { width: 100%; color: $colorTextTertiary; }
 
 		.info {
 			.name { 
@@ -37,7 +37,7 @@
 		}
 
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
-		.cell.canEdit:hover { background: $colorHoverLight; }
+		.cell.canEdit:hover { background: $colorShapeHighlightLight; }
 		
 		.cell.c-select { padding: 4px 8px; }
 		.cell.c-select {

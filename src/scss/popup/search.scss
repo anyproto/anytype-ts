@@ -10,7 +10,7 @@
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
-			border-bottom: 1px solid $colorBorderLight; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
+			border-bottom: 1px solid $colorShapeSecondary; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
 			flex-shrink: 0;
 		}
 		.head {
@@ -53,14 +53,14 @@
 				.caption { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; width: 33%; flex-grow: 0; text-align: right; }
 				.caption {
 					.label { 
-						padding: 0px 2px; border-radius: 4px; background: $colorHoverMedium; display: inline-block; vertical-align: middle; min-width: 18px; 
+						padding: 0px 2px; border-radius: 4px; background: $colorShapeHighlightMedium; display: inline-block; vertical-align: middle; min-width: 18px; 
 						text-align: center; margin-right: 4px;
 					}
 					.label:last-child { margin: 0px; }
 				}
 			}
 
-			.item.active { background-color: $colorHoverMedium; }
+			.item.active { background-color: $colorShapeHighlightMedium; }
 		}
 	}
 }

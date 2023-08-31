@@ -27,9 +27,9 @@
         .input-drag { display: inline-block; vertical-align: top; height: 20px; }
         .input-drag {
             .icon { width: 6px; height: 6px; border: 0px; background: none;  }
-            .bullet { width: 6px; height: 6px; border-radius: 100%; background: #f09c0e; }
-            .fill { background: #f09c0e; }
-            .back { background: $colorHoverMedium; }
+            .bullet { width: 6px; height: 6px; border-radius: 100%; background: $colorAccent125; }
+            .fill { background: $colorAccent125; }
+            .back { background: $colorShapeHighlightMedium; }
         }
 
         #time { margin: 6px 0px; width: 100%; display: block; }

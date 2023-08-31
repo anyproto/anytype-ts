@@ -15,7 +15,7 @@
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
 		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
 
-		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorShapePrimary; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
@@ -23,7 +23,7 @@
 		video { width: 100%; }
 
 		.pdfWrapper { 
-			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorBorderDark;
+			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorShapePrimary;
 			border-radius: 0px; display: flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {

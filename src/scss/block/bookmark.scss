@@ -4,7 +4,7 @@
 	.block.blockBookmark { padding: 6px 0px; }
 	.block.blockBookmark {
 		.focusable { border-radius: 4px; }
-		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderLight; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorShapeSecondary; height: 48px; width: 100%; }
 
 		.deleted { display: flex; gap: 0px 6px; align-items: center; color: $colorMediumGrey; }
         .deleted {
@@ -13,10 +13,10 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorBorderLight; transition: border-color $transitionCommon; 
+			display: flex; border: 1px solid $colorShapeSecondary; transition: border-color $transitionCommon; 
 			position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 		}
-		.inner:hover { border-color: $colorBorderDark; }
+		.inner:hover { border-color: $colorShapePrimary; }
 		.inner.bgColor { border: 0px; }
 		
 		.inner {
@@ -31,7 +31,7 @@
 		.inner.vertical { display: flex; flex-direction: column-reverse; }
 		.inner.vertical {
 			.side.left { width: 100%; border-radius: 0px; }
-			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 0px; border-bottom: 0.05em solid $colorBorderLight; }
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 0px; border-bottom: 0.05em solid $colorShapeSecondary; }
 		}
 
 		.inner.withImage {

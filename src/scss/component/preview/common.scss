@@ -9,7 +9,7 @@
 
 	.head { 
 		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500;
-		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px;
+		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorShapeSecondary; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
 		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
@@ -32,7 +32,7 @@
 }
 
 .previewGraph {
-	background: $colorWhite; height: auto; padding: 8px 12px; border: 1px solid $colorBorderLight; border-radius: 8px; width: 320px;
+	background: $colorWhite; height: auto; padding: 8px 12px; border: 1px solid $colorShapeSecondary; border-radius: 8px; width: 320px;
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }
 

@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
-		.content { padding: 16px 0px; }
+		.content { padding: 16px 0px 12px 0px; }
 		.inner { user-select: none; }
 
 		.head { padding: 0px 16px; }
@@ -22,7 +22,7 @@
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin: 0px; }
-			.btn:hover { color: #e89d00; }
+			.btn:hover { color: $colorAccent125; }
 		}
 
 		.day { 
@@ -30,30 +30,18 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: #fef3c5; color: #e89d00 !important; }
+		.day:hover { background: $colorAccent25; color: $colorAccent125 !important; }
 
 		.day.th { color: $colorMediumGrey; cursor: default; }
 		.day.th:hover { background: none; font-weight: 400; color: $colorMediumGrey !important; }
 		
-		.day.active { color: #e89d00; }
+		.day.active { color: $colorAccent125; }
 		.day.other { color: $colorMediumGrey; }
 		
-		.month { height: 28px; line-height: 28px; font-size: 12px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
-		.month { 
-			.name { margin: 0px; }
-			.icons { position: absolute; right: 0px; top: 0px; }
-			.icon.arrow { 
-				width: 28px; height: 28px; background-image: url('~img/arrow/calendar.svg');
-				background-size: 8px 12px; border-radius: 4px; margin: 0px;
-			}
-			.icon.arrow:hover { background-color: #ebe9e0; }
-			.icon.arrow.right { transform: rotateZ(180deg); }
-		}
-
 		.line { margin: 8px 16px 11px 16px; }
 		
 		.input { 
-			height: 28px; border-radius: 4px; border: solid 1px $colorBorderDark; margin-bottom: 10px; padding: 0px 10px;
+			height: 28px; border-radius: 4px; border: solid 1px $colorShapePrimary; margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
 

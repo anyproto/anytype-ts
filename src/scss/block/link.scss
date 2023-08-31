@@ -78,14 +78,14 @@
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
 			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px !important; border-right-width: 0px; }
-			.side.right { width: 28%; display: block; border: 1px solid $colorBorderLight; border-left: 0px; }
+			.side.right { width: 28%; display: block; border: 1px solid $colorShapeSecondary; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }
 		.linkCard.vertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid $colorBorderLight; border-bottom: 0px; }
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid $colorShapeSecondary; border-bottom: 0px; }
 		}
 
 		.linkCard.withCover.vertical {
@@ -138,7 +138,7 @@
 	.block.blockLink.card {
 		.linkCard { box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); border-radius: 12px; }
 		.linkCard {
-			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
+			.side.left { padding: 16px; border: 1px solid $colorShapeSecondary; border-radius: 12px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
 
 			.sides.withBgColor {
@@ -160,7 +160,7 @@
 
 	.block.blockLink.card:hover {
 		.linkCard.card {
-			.side.left, .side.right { border-color: $colorBorderDark; }
+			.side.left, .side.right { border-color: $colorShapePrimary; }
 		}
 	}
 
