@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, Label, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { analytics, I, UtilObject, translate, UtilData, Action } from 'Lib';
+import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
+import { analytics, I, UtilObject, translate, UtilData, } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
