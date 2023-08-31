@@ -141,7 +141,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				this.forceUpdate();
 			};
 		});
-	}
+	};
 
 	setName () {
 		const { name } = this.param;
