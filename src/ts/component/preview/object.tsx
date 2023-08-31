@@ -8,7 +8,9 @@ import $ from 'jquery';
 
 interface Props {
 	rootId: string;
+	size: I.PreviewSize;
 	className?: string;
+	onMore? (e: any): void;
 	onClick? (e: any): void;
 	position?: () => void;
 	setObject?: (object: any) => void;
@@ -25,6 +27,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	state = {
 		loading: false,
 	};
+
+	node: any = null;
 	isOpen = false;
 	_isMounted = false;
 	id = '';
@@ -32,14 +36,23 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	public static defaultProps = {
 		className: '',
 	};
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.setActive = this.setActive.bind(this);
+	};
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId, className, onClick } = this.props;
+		const { rootId, className, onClick, onMore } = this.props;
+		const previewSize = this.props.size;
 		const contextId = this.getRootId();
 		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
-		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
+		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const type = detailStore.get(contextId, object.type, []);
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
@@ -51,10 +64,41 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		let c = 0;
 		let size = 48;
 		let iconSize = 32;
+		let cnPreviewSize;
+
+		switch (previewSize) {
+			case I.PreviewSize.Large: {
+				size = 48;
+				iconSize = 32;
+				cnPreviewSize = 'large';
+				break;
+			};
+
+			case I.PreviewSize.Medium: {
+				size = 40;
+				iconSize = 24;
+				cnPreviewSize = 'medium';
+				break;
+			};
+
+			default:
+			case I.PreviewSize.Small: {
+				size = 32;
+				iconSize = 20;
+				cnPreviewSize = 'small';
+				break;
+			};
+		};
+		cn.push(cnPreviewSize);
 
 		if (isTask || isBookmark) {
 			size = 20;
 			iconSize = 18;
+
+			if (previewSize == I.PreviewSize.Small) {
+				size = 14;
+				iconSize = 14;
+			};
 		};
 
 		const Block = (item: any) => {
@@ -287,46 +331,58 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>
+			<div
+				ref={node => this.node = node}
+				id={`item-${rootId}`}
+				className={cn.join(' ')}
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
+			>
 				{loading ? <Loader /> : (
 					<React.Fragment>
-						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
+						{onMore ? <div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}><Icon className="more" /></div> : ''}
 
-							{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-							<div className="heading">
-								<IconObject size={size} iconSize={iconSize} object={object} />
-								<div className="name">{name}</div>
-								<div className="description">{description}</div>
-								<div className="featured">
-									{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
-										<span className="textColor-red">
-											{translate('commonDeletedType')}
-										</span>
-									)}
-									<div className="bullet" />
-									{author.name}
+						<div onClick={onClick}>
+							<div className="scroller">
+								{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
+
+								{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+
+								<div className="heading">
+									<IconObject size={size} iconSize={iconSize} object={object} />
+									<div className="name">{name}</div>
+									<div className="description">{description}</div>
+									<div className="featured">
+										{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
+											<span className="textColor-red">
+												{translate('commonDeletedType')}
+											</span>
+										)}
+										<div className="bullet" />
+										{author.name}
+									</div>
+								</div>
+
+								<div className="blocks">
+									{childBlocks.map((child: any, i: number) => {
+										const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+										if (i == 0) {
+											cn.push('first');
+										};
+
+										if (i == childBlocks.length - 1) {
+											cn.push('last');
+										};
+
+										n++;
+										n = this.checkNumber(child, n);
+										return <Block key={child.id} className={cn.join(' ')} {...child} />;
+									})}
 								</div>
 							</div>
-							<div className="blocks">
-								{childBlocks.map((child: any, i: number) => {
-									const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
-
-									if (i == 0) {
-										cn.push('first');
-									};
-
-									if (i == childBlocks.length - 1) {
-										cn.push('last');
-									};
-
-									n++;
-									n = this.checkNumber(child, n);
-									return <Block key={child.id} className={cn.join(' ')} {...child} />;
-								})}
-							</div>
+							<div className="border" />
 						</div>
-						<div className="border" />
 					</React.Fragment>
 				)}
 			</div>
@@ -375,6 +431,14 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		$(window).off(`updatePreviewObject.${rootId}`);
 	};
 
+	onMouseEnter (e: any) {
+		$(this.node).addClass('hover');
+	};
+
+	onMouseLeave (e: any) {
+		 $(this.node).removeClass('hover');
+	};
+
 	load () {
 		const { loading } = this.state;
 		const { rootId, setObject } = this.props;
@@ -421,6 +485,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.load();
 	};
 
+	setActive (v: boolean) {
+		const node = $(this.node);
+
+		v ? node.addClass('active') : node.removeClass('active');
+	};
 });
 
 export default PreviewObject;

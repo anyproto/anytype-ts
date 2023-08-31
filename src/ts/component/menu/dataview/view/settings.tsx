@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { Input, InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -13,6 +13,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
+	menuContext = null;
+	defaultTemplateName: string = '';
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -82,6 +84,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.param = UtilCommon.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
+		this.getDefaultTemplateName();
 
 		window.setTimeout(() => this.resize(), 5);
 	};
@@ -118,6 +121,25 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	getDefaultTemplateName () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getTemplateId } = data;
+		const templateId = getTemplateId();
+
+		if (templateId == Constant.templateId.blank) {
+			this.defaultTemplateName = translate('commonBlank');
+			return;
+		};
+
+		UtilObject.getById(getTemplateId(), (template) => {
+			if (template.name) {
+				this.defaultTemplateName = template.name;
+				this.forceUpdate();
+			};
+		});
 	};
 
 	setName () {
@@ -238,10 +260,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
+
+		const typeId = getTypeId();
+		const objectType = dbStore.getType(typeId);
+		const defaultTypeName = objectType.name || '';
+		const allowedDefaultType = isAllowedDefaultType();
 
 		const isBoard = type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
@@ -255,13 +282,47 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
 		};
 
+		const updateDefaultTemplate = (item, callback) => {
+			this.getDefaultTemplateName();
+			setDefaultTemplate(item.id);
+
+			if (callback) {
+				callback();
+			};
+		};
+
 		const defaultSettings = [
 			{
 				id: 'defaultType',
-				name: translate('menuDataviewViewDefaultType'),
-				subComponent: 'typeSuggest',
-				onSubClick: (type) => {
-					console.log('SET DEFAULT TYPE: ', type.name);
+				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
+				subComponent: 'dataviewTemplateList',
+				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
+				data: {
+					getTypeId,
+					getTemplateId,
+					withTypeSelect: isAllowedDefaultType(),
+					onSelect: updateDefaultTemplate,
+					onSetDefault: updateDefaultTemplate,
+					onArchive: (item, callback) => {
+						if (item.isDefault) {
+							setDefaultTemplate(Constant.templateId.blank);
+						};
+
+						if (callback) {
+							callback();
+						};
+					},
+					onTypeChange: (id, callback) => {
+						if (id != getTypeId()) {
+							setDefaultType(id, () => {
+								setDefaultTemplate(Constant.templateId.blank);
+
+								if (callback) {
+									callback();
+								};
+							});
+						};
+					}
 				}
 			}
 		];
@@ -276,10 +337,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		];
 
 		let sections: any[] = [
-			{ id: 'defaultSettings', name: '', children: defaultSettings },
+			isAllowedDefaultType() || isAllowedTemplate() ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
 			{ id: 'layoutSettings', name: '', children: layoutSettings },
 			{ id: 'tools', name: '', children: tools }
-		];
+		].filter(it => it);
 
 		if (id && !readonly) {
 			sections.push({
@@ -342,10 +403,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				width: getSize().width,
 				data: param.data,
 				noAnimation: true,
+				onOpen: (context) => {
+					this.menuContext = context;
+				}
 			};
 
-			if (item.onSubClick) {
-				param.data = Object.assign(addParam.data, { onClick: item.onSubClick });
+			if (item.data) {
+				param.data = Object.assign(addParam.data, item.data);
 			};
 
 			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));

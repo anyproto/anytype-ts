@@ -184,11 +184,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
 				</div>
-				{additional ? (
-					<div className="additional">
-						{additional}
-					</div>
-				) : ''}
+
+				{additional ? <div className="additional">{additional}</div> : ''}
 
 				<Editable 
 					ref={ref => this.refEditable = ref}
@@ -1275,16 +1272,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onSelect () {
 		const { rootId, dataset, block, isPopup, isInsideTable, readonly } = this.props;
 		const ids = UtilData.selectionGet('', false, true, this.props);
+		const range = this.getRange();
+
+		console.log(JSON.stringify(range, null, 3));
+
+		focus.set(block.id, range);
 
 		if (readonly) {
 			return;
 		};
 
-		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
-		const currentFrom = focus.state.range.from;
-		const currentTo = focus.state.range.to;
+		const currentFrom = range.from;
+		const currentTo = range.to;
 
 		window.clearTimeout(this.timeoutContext);
 

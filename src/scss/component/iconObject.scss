@@ -8,6 +8,7 @@
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
 
+	.iconCommon.c14, .smileImage.c14, .iconImage.c14, .iconFile.c14, .iconCheckbox.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
 	.iconCommon.c16, .smileImage.c16, .iconImage.c16, .iconFile.c16, .iconCheckbox.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
 	.iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
 	.iconCommon.c20, .smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
@@ -24,6 +25,7 @@
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 }
+.iconObject.c14 { width: 14px; height: 14px; }
 .iconObject.c16 { width: 16px; height: 16px; }
 .iconObject.c18 { width: 18px; height: 18px; }
 .iconObject.c22 { width: 22px; height: 22px; }

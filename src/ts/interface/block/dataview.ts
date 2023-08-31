@@ -121,7 +121,11 @@ export interface ViewComponent {
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getTypeId?(): string;
+	getTemplateId?(): string;
 	getEmpty?(type: string): any;
+	setDefaultType?: (id: string, callBack?: () => void) => void;
+	setDefaultTemplate?: (id: string, callBack?: () => void) => void;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
@@ -132,6 +136,7 @@ export interface ViewComponent {
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	isAllowedTemplate?: () => boolean;
+	isAllowedDefaultType?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
@@ -165,6 +170,7 @@ export interface View {
 	filters: Filter[];
 	relations: any[];
 	defaultTemplateId?: string;
+	defaultTypeId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
 	isGrid?: () => boolean;

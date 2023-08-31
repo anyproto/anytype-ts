@@ -1,0 +1,35 @@
+@import "~scss/_vars";
+
+.menus {
+    .menu.menuDataviewTemplateContext {
+        #item-remove { color: $colorRed; }
+    }
+
+    .menu.menuDataviewTemplateList { width: 360px; }
+    .menu.menuDataviewTemplateList {
+        .titleWrapper + .content { padding-top: 8px; }
+
+        .content { padding: 16px; max-height: 408px; }
+        .content {
+            .select { margin-bottom: 16px; }
+
+            .title { padding: 4px 0; margin-bottom: 6px; }
+
+            .items { display: flex; gap: 12px; flex-wrap: wrap; }
+            .items {
+                .previewObject { flex-shrink: 0; }
+                .previewObject {
+                    .add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
+                }
+                .previewObject.isDefault {
+                    .border { border: 2px solid $colorOrange; }
+                }
+            }
+
+            .emptySearch {
+                height: 112px; width: 100%; border-radius: 8px; border: 1px solid $colorShapeSecondary; @include text-small;
+                display: flex; align-items: center; justify-content: center;
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { UtilCommon, keyboard, translate } from 'Lib';
+import { I, UtilCommon, keyboard, translate } from 'Lib';
 
 interface Props {
 	offsetX: number;
@@ -78,6 +78,7 @@ class ListObjectPreview extends React.Component<Props> {
 				content = (
 					<PreviewObject
 						ref={ref => this.refObj[item.id] = ref}
+						size={I.PreviewSize.Large}
 						rootId={item.id}
 						onClick={e => this.onClick(e, item)}
 					/>

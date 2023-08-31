@@ -306,6 +306,7 @@ export const Mapper = {
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
 				defaultTemplateId: obj.getDefaulttemplateid(),
+				defaultTypeId: obj.getDefaultobjecttypeid(),
 			};
 		},
 
@@ -737,6 +738,7 @@ export const Mapper = {
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
 			item.setDefaulttemplateid(obj.defaultTemplateId);
+			item.setDefaultobjecttypeid(obj.defaultTypeId);
 
 			return item;
 		},

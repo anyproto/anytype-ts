@@ -24,6 +24,14 @@
 	.item::before { display: none; }
 }
 
+.select.big { padding: 9px 26px 9px 12px; border-radius: 10px; }
+.select.big {
+	.icon.arrow { right: 4px !important; }
+	.item {
+		.name { line-height: 22px; font-weight: 600; }
+	}
+}
+
 .select.isReadonly { cursor: default; }
 .select.isReadonly {
 	.icon.arrow { display: none; }
