@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
-import { Input, MenuItemVertical } from 'Component';
+import { Label, Icon, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -26,6 +26,18 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { readonly } = data;
 		const { type } = this.param;
 		const sections = this.getSections();
+		const layouts = UtilMenu.getViews().map((it: any) => {
+			it.sectionId = 'type';
+			it.icon = 'view c' + it.id;
+			return it;
+		});
+
+		const Layout = (item: any) => (
+			<div className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+				<Icon className={item.icon} />
+				<Label text={item.name} />
+			</div>
+		);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -49,6 +61,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		return (
 			<div>
+				<div className="layouts">
+					{layouts.map((item: any, i: number) => (
+						<Layout key={i} {...item} />
+					))}
+				</div>
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
 				))}
@@ -177,11 +194,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { data } = param;
 		const { rootId, blockId, readonly, isInline } = data;
 		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
-		const types = UtilMenu.getViews().map((it: any) => {
-			it.sectionId = 'type';
-			it.icon = 'view c' + it.id;
-			return it;
-		});
 
 		let settings: any[] = [];
 
@@ -222,7 +234,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		let sections: any[] = [
-			{ id: 'type', name: translate('menuDataviewViewEditViewAs'), children: types },
 			{ id: 'settings', name: '', children: settings }
 		];
 
@@ -346,6 +357,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		if (item.sectionId == 'type') {
 			this.param.type = item.id;
+			this.n = -1;
 			this.save();
 
 			analytics.event('ChangeViewType', {
