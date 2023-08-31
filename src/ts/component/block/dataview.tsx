@@ -640,7 +640,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 
-		if (template.targetType) {
+		if (template && template.targetType) {
 			details.type = template.targetType;
 		};
 
