@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, Label, PreviewObject, IconObject } from 'Component';
+import { Icon, Title, Label, EmptySearch, PreviewObject, IconObject } from 'Component';
 import { analytics, I, UtilObject, translate, UtilData, Action } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -91,11 +91,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 							<Icon className="add" />
 						</div>
 					</div>
-				) : (
-					<div className="empty">
-						<Label text={translate('menuDataviewTemplateUnsupported')} />
-					</div>
-				)}
+				) : <EmptySearch text={translate('menuDataviewTemplateUnsupported')} />}
 			</React.Fragment>
 		);
 	};
