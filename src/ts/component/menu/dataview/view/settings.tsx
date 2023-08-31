@@ -267,7 +267,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const view = data.view.get();
 
 		const typeId = getTypeId();
-		const defaultTemplateId = getTemplateId();
 		const defaultTypeName = dbStore.getTypeName(typeId);
 		const allowedDefaultType = isAllowedDefaultType();
 
@@ -282,9 +281,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		if (relations.length > 2) {
 			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
 		};
-
-		const defaultTemplateName = defaultTemplateId == Constant.templateId.blank ? translate('commonBlank') : '';
-		// need logic to get name of custom template
 
 		const defaultSettings = [
 			{
