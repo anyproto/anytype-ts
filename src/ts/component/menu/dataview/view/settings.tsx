@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { Input, InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -14,6 +14,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	preventSaveOnClose = false;
 	param: any = {};
 	menuContext = null;
+	defaultTemplateName: string = '';
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -83,6 +84,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.param = UtilCommon.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
+		this.getDefaultTemplateName();
 
 		window.setTimeout(() => this.resize(), 5);
 	};
@@ -92,6 +94,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.resize();
 		this.focus();
 		this.props.setActive();
+		this.getDefaultTemplateName();
 	};
 
 	componentWillUnmount () {
@@ -120,6 +123,25 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	unbind () {
 		$(window).off('keydown.menu');
 	};
+
+	getDefaultTemplateName () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getTemplateId } = data;
+		const templateId = getTemplateId();
+
+		if (templateId == Constant.templateId.blank) {
+			this.defaultTemplateName = translate('commonBlank');
+			return;
+		};
+
+		UtilObject.getById(getTemplateId(), (template) => {
+			if (template.name) {
+				this.defaultTemplateName = template.name;
+				this.forceUpdate();
+			};
+		});
+	}
 
 	setName () {
 		const { name } = this.param;
@@ -269,7 +291,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				id: 'defaultType',
 				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
 				subComponent: 'dataviewTemplateList',
-				caption: allowedDefaultType ? defaultTypeName : defaultTemplateName,
+				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
 				data: {
 					getTypeId,
 					getTemplateId,
