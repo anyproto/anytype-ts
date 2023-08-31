@@ -266,7 +266,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const view = data.view.get();
 
 		const typeId = getTypeId();
-		const defaultTypeName = dbStore.getTypeName(typeId);
+		const objectType = dbStore.getType(typeId);
+		const defaultTypeName = objectType.name || '';
 		const allowedDefaultType = isAllowedDefaultType();
 
 		const isBoard = type == I.ViewType.Board;

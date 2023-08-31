@@ -215,11 +215,6 @@ class DbStore {
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
-	getTypeName (id: string) {
-		const type = this.getType(id);
-		return type.name ? type.name : '';
-	};
-
 	getRelations () {
 		return dbStore.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived);
