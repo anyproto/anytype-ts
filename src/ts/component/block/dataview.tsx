@@ -709,6 +709,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
+		const objectId = this.getObjectId();
 		const defaultTemplateId = this.getDefaultTemplateId();
 		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
@@ -723,6 +724,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
 					details,
+					onSubmit: (id) => {
+						if (this.isCollection()) {
+							C.ObjectCollectionAdd(objectId, [ id ]);
+						};
+					}
 				},
 			});
 			return;
