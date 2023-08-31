@@ -31,6 +31,33 @@
 		.filter.isName { margin-bottom: 4px; }
 	}
 
+	.menu.menuDataviewViewLayout {
+		.layouts { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; padding: 0px 16px 4px 16px; }
+		.layouts {
+			.layout {
+				width: 104px; height: 88px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+				border: 1px solid $colorBorderLight; border-radius: 8px;
+			}
+			.layout {
+				.label { @include text-small; color: $colorDarkGrey; }
+				.icon.view { width: 56px; height: 56px; }
+				.icon.view.c0 { background: url('~img/icon/dataview/layout/grid0.svg'); }
+				.icon.view.c1 { background: url('~img/icon/dataview/layout/list0.svg'); }
+				.icon.view.c2 { background: url('~img/icon/dataview/layout/gallery0.svg'); }
+				.icon.view.c3 { background: url('~img/icon/dataview/layout/kanban0.svg'); }
+			}
+
+			.layout.active { border: 2px solid $colorOrange; }
+			.layout.active {
+				.label { font-weight: 500; color: $colorOrange; }
+				.icon.view.c0 { background: url('~img/icon/dataview/layout/grid1.svg'); }
+				.icon.view.c1 { background: url('~img/icon/dataview/layout/list1.svg'); }
+				.icon.view.c2 { background: url('~img/icon/dataview/layout/gallery1.svg'); }
+				.icon.view.c3 { background: url('~img/icon/dataview/layout/kanban1.svg'); }
+			}
+		}
+	}
+
 	.menu.menuDataviewViewEdit,
 	.menu.menuDataviewViewSettings,
 	.menu.menuDataviewViewLayout { width: 360px; }
