@@ -488,8 +488,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
-		if (menuStore.isOpen('dataviewTemplate', item.id)) {
-			menuStore.close('dataviewTemplate');
+		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
+			menuStore.close('dataviewTemplateContext');
 			return;
 		};
 
@@ -510,7 +510,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplate', {
+			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-${item.id} .more`,
 				vertical: I.MenuDirection.Bottom,
@@ -519,6 +519,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onClose: () => $(`#item-${item.id}`).removeClass('active'),
 				data: {
 					template,
+					typeId: rootId,
+					templateId: defaultTemplateId,
 					onSetDefault: () => {
 						UtilObject.setDefaultTemplateId(rootId, template.id);
 					},

@@ -40,6 +40,11 @@
             .tab:hover, .tab.active { color: $colorPrimary; }
         }
 
+        .titleWrapper {
+            .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
+            .title { color: $colorSecondary; }
+        }
+
         .line { background: $colorLineSecondary; }
         .section::after { background: $colorLineSecondary; }
 		.separator .inner { background: $colorLineSecondary; }

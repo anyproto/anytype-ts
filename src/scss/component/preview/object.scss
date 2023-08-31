@@ -5,13 +5,24 @@
 	.loaderWrapper { width: 100%; height: 100% !important; margin: 0px; border: 1px solid $colorBorderLight; border-radius: 8px; }
 	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/icon/type/logo.svg'); z-index: 1; }
 
+	.moreWrapper {
+		position: absolute; z-index: 2; right: 8px; top: 8px; border-radius: 6px; width: 28px; height: 28px; display: flex;
+		align-items: center; justify-content: center; background: $colorVeryLightGrey; opacity: 0; transition: $transitionAllCommon;
+	}
+	.moreWrapper {
+		.icon { width: 20px; height: 20px; }
+	}
+
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
 	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid $colorBorderLight; border-radius: 8px; }
 	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
+		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 2px $colorWhite inset; }
+		.iconObject {
+			.iconImage { border: 2px solid $colorWhite; }
+		}
 		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; }
 		.description { @include text-small; @include text-overflow-nw; }
@@ -110,6 +121,11 @@
 	}
 }
 
+.previewObject:hover,
+.previewObject.active {
+	.moreWrapper { opacity: 1; }
+}
+
 .previewObject.withCover .scroller { padding-top: 104px; }
 .previewObject.withIconAndCover .scroller { padding-top: 46px; }
 
@@ -119,9 +135,63 @@
 .previewObject.align2 {
 	.heading { text-align: right; }
 }
+.previewObject.isHuman { text-align: center; }
+.previewObject.isHuman {
+	.heading { text-align: center; }
+	.featured { margin: 0 auto; }
+	.blocks {
+		.element {
+			.inner { text-align: center; }
+			.inner {
+				.line { margin-left: auto !important; margin-right: auto !important; }
+			}
+		}
+	}
+}
 
 .previewObject.blank {
 	.heading {
 		.name { color: $colorSecondary; }
+	}
+}
+
+.previewObject.small { width: 158px; height: 112px; }
+
+.previewObject.small {
+	.cover { height: 42px; }
+	.scroller { padding: 24px 16px; }
+	.heading { margin-bottom: 6px; }
+	.heading {
+		.iconObject { margin-bottom: 2px; }
+	}
+	.blocks {
+		.element:nth-child(n + 3) { display: none; }
+		.element {
+			.inner {
+				.line { margin: 2px 0px; }
+			}
+		}
+	}
+
+	.name { @include text-small; font-weight: 700; margin-bottom: 4px; }
+	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorBorderLight; }
+	.description { display: none; }
+}
+
+.previewObject.small.withCover {
+	.scroller { padding-top: 48px; }
+}
+.previewObject.small.withIcon,
+.previewObject.small.withIconAndCover {
+	.scroller { padding-top: 16px; }
+}
+
+.previewObject.isTask.small,
+.previewObject.isBookmark.small {
+	.heading {
+		.iconObject.isTask,
+		.iconObject.isBookmark { left: 0px; top: 2px; margin: 0px; }
+
+		.name { padding-left: 20px; }
 	}
 }

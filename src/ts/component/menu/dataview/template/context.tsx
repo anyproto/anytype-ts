@@ -5,7 +5,7 @@ import { analytics, C, I, keyboard, UtilObject, translate, Action } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-class MenuTemplate extends React.Component<I.Menu> {
+class MenuTemplateContext extends React.Component<I.Menu> {
 
 	n = -1;
 
@@ -49,11 +49,12 @@ class MenuTemplate extends React.Component<I.Menu> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { template, isView } = data;
-		const { isBlank, isDefault } = template;
+		const { template, isView, onSetDefault, templateId } = data;
+		const isBlank = template.id == Constant.templateId.blank;
+		const isDefault = template.id == templateId;
 
 		return [
-			!isDefault ? ({ id: 'default', name: translate(isView ? 'menuDataviewTemplateSetDefaultForView' : 'commonTemplateSetDefault') }) : null,
+			!isDefault && onSetDefault ? ({ id: 'default', name: isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault') }) : null,
 			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
 			{ id: 'duplicate', name: translate('commonDuplicate') },
 			!isBlank ? ({ id: 'remove', name: translate('commonDelete') }) : null,
@@ -63,7 +64,7 @@ class MenuTemplate extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { template, onSetDefault, onArchive, onDuplicate, route } = data;
+		const { template, onSetDefault, onArchive, onDuplicate, route, typeId } = data;
 
 		close();
 
@@ -88,10 +89,14 @@ class MenuTemplate extends React.Component<I.Menu> {
 				analytics.event('DuplicateTemplate', { route });
 
 				if (template.id == Constant.templateId.blank) {
-					const type = dbStore.getType(template.typeId);
+					const type = dbStore.getType(typeId);
+					if (!type) {
+						break;
+					};
+
 					const details: any = {
 						type: Constant.typeId.template,
-						targetObjectType: template.typeId,
+						targetObjectType: typeId,
 						layout: type.recommendedLayout,
 					};
 
@@ -100,7 +105,7 @@ class MenuTemplate extends React.Component<I.Menu> {
 							return;
 						};
 
-						analytics.event('CreateTemplate', { objectType: template.typeId, route: 'menuDataviewTemplate' });
+						analytics.event('CreateTemplate', { objectType: typeId, route: 'menuDataviewTemplate' });
 
 						if (onDuplicate) {
 							onDuplicate(message.details);
@@ -151,4 +156,4 @@ class MenuTemplate extends React.Component<I.Menu> {
 
 };
 
-export default MenuTemplate;
+export default MenuTemplateContext;

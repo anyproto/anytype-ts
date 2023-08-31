@@ -15,7 +15,10 @@
 
 	.line { height: 1px; margin: 0px !important; background: $colorBorderLight; display: block; }
 }
-.filter.isName .input { font-weight: 700; }
+.filter.isName {
+	.input { font-weight: 700; }
+	.inputWithLabel .input { font-weight: 600; }
+}
 .filter.active { 
 	.icon.clear { opacity: 1; } 
 }
