@@ -640,6 +640,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 
+		if (template.targetType) {
+			details.type = template.targetType;
+		};
+
 		C.ObjectCreate(details, flags, template?.id, (message: any) => {
 			this.creating = false;
 
@@ -746,9 +750,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuActions: any = {
 			onSelect: (item: any) => {
 				if (item.id == Constant.templateId.new) {
-					this.onTemplateAdd();
+					this.onTemplateAdd(item.targetType);
 					return;
 				};
+
+				console.log('ITEM: ', item)
 
 				this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 				menuStore.closeAll();
@@ -783,8 +789,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onTemplateAdd () {
-		const typeId = this.getTypeId();
+	onTemplateAdd (id?: string) {
+		const typeId = id || this.getTypeId();
 		const type = dbStore.getType(typeId);
 		const details: any = {
 			type: Constant.typeId.template,
