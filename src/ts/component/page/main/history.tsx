@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -204,9 +204,14 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const { selection } = dataset || {};
 		const rootId = this.getRootId();
 		const cmd = keyboard.cmdKey();
+		const { focused } = focus.state;
 
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => {
-			const ids = selection.get(I.SelectType.Block, true);
+			let ids = selection.get(I.SelectType.Block, true);
+			if (!ids.length) {
+				ids = [ focused ];
+			};
+			ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
 
 			Action.copyBlocks(rootId, ids, false);
 		});
