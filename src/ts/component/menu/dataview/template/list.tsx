@@ -33,7 +33,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const type = dbStore.getType(typeId);
 		const itemBlank = { id: Constant.templateId.blank };
 		const itemAdd = { id: Constant.templateId.new };
-		const templatesAllowed = UtilObject.isAllowedTemplate(typeId);
+		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		return (
 			<React.Fragment>
@@ -50,7 +50,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				<Title text={translate('commonTemplates')} />
 
-				{templatesAllowed ? (
+				{isAllowed ? (
 					<div className="items">
 						<div
 							id={`item-${Constant.templateId.blank}`}

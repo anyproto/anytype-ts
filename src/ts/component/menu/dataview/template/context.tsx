@@ -90,6 +90,10 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getType(typeId);
+					if (!type) {
+						break;
+					};
+
 					const details: any = {
 						type: Constant.typeId.template,
 						targetObjectType: typeId,
