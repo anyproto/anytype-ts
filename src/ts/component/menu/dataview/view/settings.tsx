@@ -260,7 +260,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -301,7 +301,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					getTypeId,
 					getTemplateId,
 					withTypeSelect: isAllowedDefaultType(),
-					onSelect: updateDefaultTemplate,
+					onSelect: (item, callback) => {
+						if (item.id == Constant.templateId.new) {
+							if (onTemplateAdd) {
+								onTemplateAdd();
+							};
+							return;
+						};
+						updateDefaultTemplate(item, callback);
+					},
 					onSetDefault: updateDefaultTemplate,
 					onArchive: (item, callback) => {
 						if (item.isDefault) {

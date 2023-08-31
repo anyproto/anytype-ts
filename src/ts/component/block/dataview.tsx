@@ -73,6 +73,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
+		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
@@ -155,6 +156,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			setDefaultTemplate: this.setDefaultTemplateForView,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
+			onTemplateAdd: this.onTemplateAdd,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedTemplate: this.isAllowedTemplate,
 			isAllowedDefaultType: this.isAllowedDefaultType,

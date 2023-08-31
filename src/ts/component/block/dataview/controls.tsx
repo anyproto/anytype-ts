@@ -174,7 +174,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate
+			getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
@@ -214,6 +214,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				isCollection,
 				isAllowedDefaultType,
 				isAllowedTemplate,
+				onTemplateAdd,
 				view: observable.box(view)
 			},
 		};
