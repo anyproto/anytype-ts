@@ -34,8 +34,8 @@
 			}
 
 			> .side.right {
-				.head { background: $colorBlack; }
 				.head {
+					.inner { background: $colorBlack; }
 					.element:hover { background-color: $colorHoverMedium; }
 				}
 
