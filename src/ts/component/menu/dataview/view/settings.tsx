@@ -94,7 +94,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.resize();
 		this.focus();
 		this.props.setActive();
-		this.getDefaultTemplateName();
 	};
 
 	componentWillUnmount () {
@@ -282,6 +281,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
 		};
 
+		const updateDefaultTemplate = (item, callback) => {
+			this.getDefaultTemplateName();
+			setDefaultTemplate(item.id);
+
+			if (callback) {
+				callback();
+			};
+		};
+
 		const defaultSettings = [
 			{
 				id: 'defaultType',
@@ -292,20 +300,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					getTypeId,
 					getTemplateId,
 					withTypeSelect: isAllowedDefaultType(),
-					onSelect: (item, callback) => {
-						setDefaultTemplate(item.id);
-
-						if (callback) {
-							callback();
-						};
-					},
-					onSetDefault: (item, callback) => {
-						setDefaultTemplate(item.id);
-
-						if (callback) {
-							callback();
-						};
-					},
+					onSelect: updateDefaultTemplate,
+					onSetDefault: updateDefaultTemplate,
 					onArchive: (item, callback) => {
 						if (item.isDefault) {
 							setDefaultTemplate(Constant.templateId.blank);
