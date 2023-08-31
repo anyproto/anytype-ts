@@ -10,7 +10,7 @@ class MenuPreviewObject extends React.Component<I.Menu> {
 		const { rootId } = data;
 
 		return (
-			<PreviewObject key={'objectPreview-' + rootId} previewSize={I.PreviewSize.Small} rootId={rootId} />
+			<PreviewObject key={'objectPreview-' + rootId} size={I.PreviewSize.Small} rootId={rootId} />
 		);
 	};
 

@@ -78,7 +78,7 @@ class ListObjectPreview extends React.Component<Props> {
 				content = (
 					<PreviewObject
 						ref={ref => this.refObj[item.id] = ref}
-						previewSize={I.PreviewSize.Large}
+						size={I.PreviewSize.Large}
 						rootId={item.id}
 						onClick={e => this.onClick(e, item)}
 					/>

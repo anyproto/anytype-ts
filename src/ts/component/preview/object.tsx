@@ -8,7 +8,7 @@ import $ from 'jquery';
 
 interface Props {
 	rootId: string;
-	previewSize: I.PreviewSize;
+	size: I.PreviewSize;
 	className?: string;
 	onMore? (e: any): void;
 	onClick? (e: any): void;
@@ -47,7 +47,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId, className, onClick, onMore, previewSize } = this.props;
+		const { rootId, className, onClick, onMore } = this.props;
+		const previewSize = this.props.size;
 		const contextId = this.getRootId();
 		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
@@ -66,19 +67,22 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		let cnPreviewSize;
 
 		switch (previewSize) {
-			case I.PreviewSize.Medium: {
-				size = 40;
-				iconSize = 24;
-				cnPreviewSize = 'medium';
-				break;
-			};
 			case I.PreviewSize.Large: {
 				size = 48;
 				iconSize = 32;
 				cnPreviewSize = 'large';
 				break;
 			};
-			default: {
+
+			case I.PreviewSize.Medium: {
+				size = 40;
+				iconSize = 24;
+				cnPreviewSize = 'medium';
+				break;
+			};
+
+			default:
+			case I.PreviewSize.Small: {
 				size = 32;
 				iconSize = 20;
 				cnPreviewSize = 'small';
@@ -484,11 +488,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	setActive (v: boolean) {
 		const node = $(this.node);
 
-		if (!v) {
-			node.removeClass('active');
-			return;
-		};
-		node.addClass('active');
+		v ? node.addClass('active') : node.removeClass('active');
 	};
 });
 
