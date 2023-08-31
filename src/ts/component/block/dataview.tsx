@@ -754,8 +754,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					return;
 				};
 
-				console.log('ITEM: ', item)
-
 				this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 				menuStore.closeAll();
 
