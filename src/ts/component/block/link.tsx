@@ -130,7 +130,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			if (withType && type) n++;
 			cnc.push('c' + n);
 
-			const isEmpty = (cardStyle == I.LinkCardStyle.Text) && (layout === I.ObjectLayout.Page) && (object.snippet.length===0);
+			const isEmpty = (cardStyle == I.LinkCardStyle.Text) && (layout == I.ObjectLayout.Page) && !object.snippet.length;
 
 			element = (
 				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
@@ -138,7 +138,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
 								{icon}
-								{isEmpty ? <span className="emptyObjectLink"><ObjectName object={object} /></span> : <ObjectName object={object} />}
+								<ObjectName className={isEmpty ? "name emptyObjectLink" : "name"} object={object} />
 								{archive}
 							</div>
 
