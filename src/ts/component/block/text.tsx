@@ -1274,8 +1274,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const ids = UtilData.selectionGet('', false, true, this.props);
 		const range = this.getRange();
 
-		console.log(JSON.stringify(range, null, 3));
-
 		focus.set(block.id, range);
 
 		if (readonly) {
@@ -1284,8 +1282,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		keyboard.setFocus(true);
 		
-		const currentFrom = range.from;
-		const currentTo = range.to;
+		const currentFrom = focus.state.range.from;
+		const currentTo = focus.state.range.to;
 
 		window.clearTimeout(this.timeoutContext);
 
