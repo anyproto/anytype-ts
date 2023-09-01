@@ -55,14 +55,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { info, pagesIn, pagesOut, loading } = this.state;
 		const rootId = this.getRootId();
 
-		const iconHome = (
-			<div className="iconObject isRelation c48">
-				<div className="iconEmoji c48">
-					<Icon className="home-big" />
-				</div>
-			</div>
-		);
-
 		const Item = (item: any) => {
 			const { layout, name, description, snippet } = item || {};
 
@@ -74,7 +66,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					onMouseLeave={() => this.unsetActive()}
 				>
 					<div className="inner" onClick={e => this.onClick(e, item)}>
-						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} iconSize={24} />}
+						<IconObject object={item} forceLetter={true} size={48} iconSize={24} />
 						<div className="info">
 							<ObjectName object={item} />
 							<ObjectDescription object={item} />
