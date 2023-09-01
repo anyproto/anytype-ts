@@ -21,10 +21,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = object.isInstalled;
-		const showRelations = object.isInstalled;
+		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
-
 		const cmd = keyboard.cmdSymbol();
 
 		let center = null;
@@ -87,7 +85,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{showRelations ? <Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} /> : ''}
+					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} /> : ''}
 					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>
