@@ -447,6 +447,8 @@ class BlockStore {
 					name = name || translate('commonEmpty');
 				};
 
+				name = name.trim();
+
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
 					text = UtilCommon.stringInsert(text, name, mark.range.from, mark.range.to);
