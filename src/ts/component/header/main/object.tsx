@@ -85,7 +85,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
+					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} /> : ''}
 					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>

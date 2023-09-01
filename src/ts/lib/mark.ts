@@ -421,11 +421,11 @@ class Mark {
 		let text = html;
 
 		// TODO: find classes by color or background
-		html.replace(/<font([^>]*?)>([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+		html.replace(/<font([^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p1: string, p2: string) => {
 			text = text.replace(s, p2);
 			return '';
 		});
-		html.replace(/<span style="background-color: ([^;]+);">([^<]*)<\/span>/g, (s: string, p1: string, p2: string) => {
+		html.replace(/<span style="background-color: ([^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p1: string, p2: string) => {
 			text = text.replace(s, p2);
 			return '';
 		});

@@ -359,7 +359,7 @@
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
-    "pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in ",
+    "pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
 
     "pageAuthOnboardAccountDataLocation": "Account data location",
     "pageAuthOnboardEnterYourName": "Enter your name",
