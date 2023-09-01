@@ -115,6 +115,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				],
 				onSelect: (item: any) => {
 					this.save([ item.id ]);
+					$(window).trigger('sourceChange');
 
 					if (!value.length) {
 						analytics.event('SetSelectQuery', { type: 'relation' });
@@ -126,6 +127,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 	onRemove (e: any, item: any) {
 		this.save(this.getValue().filter(it => it != item.id));
+		$(window).trigger('sourceChange');
 	};
 
 	onOver (e: any, item: any) {
@@ -151,6 +153,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				filter: '',
 				onClick: (item: any) => {
 					this.save([ item.id ]);
+					$(window).trigger('sourceChange');
 
 					analytics.event('SetSelectQuery', { type: 'type' });
 					close();

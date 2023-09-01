@@ -281,7 +281,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'sourceChange' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -297,6 +297,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
 		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());
 		win.on(`selectionClear.${block.id}`, () => this.onSelectEnd());
+		win.on(`sourceChange.${block.id}`, () => this.checkDefaultTemplate());
 	};
 
 	onKeyDown (e: any) {
@@ -339,8 +340,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
-
-		this.checkDefaultTemplate();
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
@@ -1281,6 +1280,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	checkDefaultTemplate () {
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
+		const hasSources = this.isCollection() || this.getSources().length;
 
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
 			const templates = message.records || [];
@@ -1289,7 +1289,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateIds.push(it.id);
 			});
 
-			if (!templateIds.includes(defaultTemplateId)) {
+			if (!hasSources || !templateIds.includes(defaultTemplateId)) {
 				this.setDefaultTemplateForView(Constant.templateId.blank);
 			};
 		});
