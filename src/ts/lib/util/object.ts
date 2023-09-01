@@ -1,5 +1,5 @@
 import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage } from 'Lib';
-import { commonStore, blockStore, popupStore, detailStore } from 'Store';
+import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -381,6 +381,11 @@ class UtilObject {
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
 		];
+	};
+
+	isAllowedTemplate (typeId): boolean {
+		const type = dbStore.getType(typeId);
+		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 
 };

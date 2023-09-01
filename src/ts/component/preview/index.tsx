@@ -62,7 +62,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewObject ref={ref => this.ref = ref} rootId={target} setObject={this.setObject} position={this.position} />;
+				content = <PreviewObject ref={ref => this.ref = ref} size={I.PreviewSize.Small} rootId={target} setObject={this.setObject} position={this.position} />;
 				break;
 			};
 

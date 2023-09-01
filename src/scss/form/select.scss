@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .select { 
-	border-radius: 4px; border: solid 1px $colorBorderDark; display: inline-block; vertical-align: middle;
+	border-radius: 4px; border: solid 1px $colorShapePrimary; display: inline-block; vertical-align: middle;
 	transition: $transitionAllCommon; position: relative; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 20px 3px 6px; line-height: 20px !important;
 }
@@ -24,6 +24,14 @@
 	.item::before { display: none; }
 
 	.clickable { display: flex; }
+}
+
+.select.big { padding: 9px 26px 9px 12px; border-radius: 10px; }
+.select.big {
+	.icon.arrow { right: 4px !important; }
+	.item {
+		.name { line-height: 22px; font-weight: 600; }
+	}
 }
 
 .select.isReadonly { cursor: default; }

@@ -16,11 +16,11 @@
 .cover.type2.ice { background-color: #88cdf3 !important; }
 .cover.type2.teal { background-color: #9bb0b7 !important; }
 .cover.type2.green { background-color: #136E41 !important; }
-.cover.type2.lightgrey { background-color: $colorBorderLight !important; }
+.cover.type2.lightgrey { background-color: $colorShapeSecondary !important; }
 .cover.type2.darkgrey { background: $colorMediumGrey !important; }
 .cover.type2.black { background-color: $colorBlack !important; }
 		
-.cover.type3.yellow { background-image: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
+.cover.type3.yellow { background-image: linear-gradient(180deg, $colorAccent100 0%, $colorYellow 105.47%); }
 .cover.type3.red { background-image: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
 .cover.type3.blue { background-image: linear-gradient(180deg, $colorPurple 0%, $colorBlue 105.47%); }
 .cover.type3.teal { background-image: linear-gradient(180deg, $colorIce 0%, $colorTeal 105.47%); }

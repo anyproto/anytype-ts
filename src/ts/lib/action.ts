@@ -1,5 +1,5 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate, Mapper } from 'Lib';
+import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Action {
@@ -432,6 +432,69 @@ class Action {
 				};
 			});
 		});
+	};
+
+	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root) {
+			return;
+		};
+
+		const { focused } = focus.state;
+
+		if (root.isLocked() && !ids.length) {
+			return;
+		};
+
+		const range = UtilCommon.objectCopy(focus.state.range);
+		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
+		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const text: string[] = [];
+
+		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
+
+		ids.forEach((id: string) => {
+			const block = blockStore.getLeaf(rootId, id);
+			if (block && block.isTable()) {
+				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
+			};
+		});
+
+		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
+		blocks = blocks.map((it: I.Block) => {
+			const element = blockStore.getMapElement(rootId, it.id);
+
+			if (it.type == I.BlockType.Text) {
+				text.push(String(it.content.text || ''));
+			};
+
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = dbStore.getViews(rootId, it.id);
+			};
+
+			it.childrenIds = element.childrenIds;
+			return it;
+		});
+		
+		C[cmd](rootId, blocks, range, (message: any) => {
+			UtilCommon.clipboardCopy({
+				text: message.textSlot,
+				html: message.htmlSlot,
+				anytype: {
+					range,
+					blocks: (message.anySlot || []).map(Mapper.From.Block),
+				},
+			});
+
+			if (isCut) {
+				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
+
+				focus.set(focused, { from: range.from, to: range.from });
+				focus.apply();
+			};
+		});
+
+		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
 	};
 
 };

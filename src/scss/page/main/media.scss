@@ -27,7 +27,7 @@
 		.block.blockMedia {
 			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
 		}
-		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: $colorHoverMedium; }
+		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: $colorShapeHighlightMedium; }
 	}
 
 	.blocks {
@@ -41,7 +41,7 @@
 		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
 		.descr:empty { display: none; }
 
-		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorHoverMedium; }
+		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorShapeHighlightMedium; }
 		.block.blockMedia {
 			.wrap { position: static; overflow: visible; width: 100%; height: 100%; }
 			.selectable, .dropTarget { height: 100%; }

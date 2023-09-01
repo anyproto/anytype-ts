@@ -46,7 +46,7 @@
 		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px; display: flex; 
 		flex-direction: row; align-items: center;
 	}
-	.btn:hover, .btn.hover { background: $colorHoverMedium; color: $colorBlack; }
+	.btn:hover, .btn.hover { background: $colorShapeHighlightMedium; color: $colorBlack; }
 
 	.btn {
 		.icon { width: 20px; height: 20px; margin-right: 4px; }
@@ -80,7 +80,7 @@
 			.wrapContent { width: 100% !important; }
 			.wrapContent {
 				.link { white-space: nowrap; }
-				.note { text-align: right; color: #b6b6b6; display: block; }
+				.note { text-align: right; color: $colorTextTertiary; display: block; }
 		
 				.icon { width: 20px; height: 20px; margin-top: -4px; }
 				.icon.help { background-image: url('~img/icon/help.svg'); }

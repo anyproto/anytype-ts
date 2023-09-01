@@ -4,7 +4,7 @@
 	.block.blockLatex { padding: 6px 0px; }
 	.block.blockLatex { 
 		.wrap { padding: 2px 0px; }
-		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 6px; }
+		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 6px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			#input { display: block; }

@@ -7,6 +7,12 @@ export enum PreviewType {
 	Object	 = 3,
 };
 
+export enum PreviewSize {
+	Small 	= 0,
+	Medium 	= 1,
+	Large 	= 2,
+};
+
 export interface PreviewLink {
 	type: string;
 	title: string;

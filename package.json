@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.34.3",
+	"version": "0.34.4-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -553,6 +553,9 @@
 					"region": "fra1"
 				}
 			]
+		},
+		"rpm": {
+			"fpm": [ "--rpm-rpmbuild-define", "_build_id_links none" ]
 		}
 	},
 	"lint-staged": {

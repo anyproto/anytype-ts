@@ -39,7 +39,7 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isTag.archive { background-color: $colorHoverMedium; color: $colorSecondary; }
+	.isTag.archive { background-color: $colorShapeHighlightMedium; color: $colorSecondary; }
     .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
     .isTag.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
@@ -64,7 +64,7 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
-        .controls .side.left .element:hover { background-color: $colorHoverMedium; }
+        .controls .side.left .element:hover { background-color: $colorShapeHighlightMedium; }
         .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
         .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
         .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
@@ -74,7 +74,7 @@ html.themeDark {
 
 	.progressBar {
         .bar { background: $colorBgLight; }
-        .fill { background: $colorOrange; }
+        .fill { background: $colorAccent100; }
 	}
 
     /* Components */
@@ -86,7 +86,7 @@ html.themeDark {
 	}
 
     .loaderWrapper {
-        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorAccent100; }
 		.dot { animation-name: dots; }
     }
 
@@ -100,7 +100,7 @@ html.themeDark {
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
 
             .input-drag {
-                .back { background: $colorHoverMedium; }
+                .back { background: $colorShapeHighlightMedium; }
             }
         }
     }
@@ -114,7 +114,7 @@ html.themeDark {
 	}
 
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
-    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorHoverMedium; }
+    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorShapeHighlightMedium; }
 
 	.button.red,
     .button.red.blank { border-color: $colorLineSecondary; background: none; color: $colorRed; }
@@ -141,14 +141,14 @@ html.themeDark {
 	.textareaWrap { background-color: $colorBgLight; }
 
     .select { border-color: $colorLinePrimary; }
-    .select:hover, .select.isFocused { background: $colorHoverMedium; }
+    .select:hover, .select.isFocused { background: $colorShapeHighlightMedium; }
     .select {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorHoverMedium; color: $colorSecondary; border-color: transparent; }
+    .inputWithFile { background: $colorShapeHighlightMedium; color: $colorSecondary; border-color: transparent; }
     .inputWithFile {
         .input::placeholder { color: $colorSecondary; }
         .fileWrap:hover .border { color: $colorPrimary; }
@@ -158,11 +158,11 @@ html.themeDark {
 
     .listPreviewObject {
         .item.add { border-color: $colorLinePrimary; }
-        .item:before { background: $colorHoverMedium; }
+        .item:before { background: $colorShapeHighlightMedium; }
 
         .item {
             > .icon.more:hover,
-            > .icon.more.hover { background-color: $colorHoverMedium; }
+            > .icon.more.hover { background-color: $colorShapeHighlightMedium; }
             > .defaultLabel { background: $colorLineTertiary; color: $colorSecondary; }
         }
 
@@ -251,7 +251,7 @@ html.themeDark {
         .inner {
 			.fill { background: $colorSecondary; }
             .label { color: $colorPrimary; }
-            .bar { background: $colorHoverMedium; }
+            .bar { background: $colorShapeHighlightMedium; }
         }
     }
 
@@ -300,9 +300,9 @@ html.themeDark {
     .header.isCommon { background: $colorBlack; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-		.path:hover { background-color: $colorHoverMedium; color: $colorPrimary; }
+		.path:hover { background-color: $colorShapeHighlightMedium; color: $colorPrimary; }
 
-        .icon.big:hover, .icon.big.hover { background-color: $colorHoverMedium; }
+        .icon.big:hover, .icon.big.hover { background-color: $colorShapeHighlightMedium; }
 
         .tabs { color: $colorSecondary; }
         .tabs {
@@ -312,7 +312,7 @@ html.themeDark {
 		.headerBanner { background: $colorLineTertiary; color: $colorPrimary; }
     }
 	.header.isCommon.active {
-		.path { background-color: $colorHoverMedium; color: $colorPrimary; }
+		.path { background-color: $colorShapeHighlightMedium; color: $colorPrimary; }
 	}
 
     .header.mainHistory { background: $colorBlack; }
@@ -343,7 +343,7 @@ html.themeDark {
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
-			.icon:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
 		}
 
 		.resize-h .resize-handle::after { background-color: $colorBgIcon; }
@@ -353,7 +353,7 @@ html.themeDark {
 
 	.navigationPanel { background: rgba(141, 141, 141, 0.4); }
 	.navigationPanel {
-		.iconWrap:hover { background-color: $colorHoverMedium; }
+		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
 	}
 
     @import "./menu.scss";

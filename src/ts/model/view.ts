@@ -15,6 +15,7 @@ class View implements I.View {
 	groupBackgroundColors = false;
 	pageLimit = 0;
 	defaultTemplateId = '';
+	defaultTypeId = '';
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -31,6 +32,7 @@ class View implements I.View {
 		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		this.pageLimit = Number(props.pageLimit) || 0;
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
+		this.defaultTypeId = String(props.defaultTypeId || '');
 		
 		this.relations = (props.relations || []).map(it => new M.ViewRelation(it));
 		this.filters = (props.filters || []).map(it => new M.Filter(it));
@@ -48,6 +50,7 @@ class View implements I.View {
 			groupBackgroundColors: observable,
 			pageLimit: observable,
 			defaultTemplateId: observable,
+			defaultTypeId: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,

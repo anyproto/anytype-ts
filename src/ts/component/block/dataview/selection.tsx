@@ -24,12 +24,12 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: translate('blockDataviewSelectionMoveToBin'), className: [ 'black' ] },
-			{ id: 'done', text: translate('blockDataviewSelectionDeselect'), className: [ 'black' ] },
+			{ id: 'archive', text: translate('blockDataviewSelectionMoveToBin') },
+			{ id: 'done', text: translate('blockDataviewSelectionDeselect') },
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: translate('commonUnlink'), className: [ 'black' ] });
+			buttons.unshift({ id: 'unlink', text: translate('commonUnlink') });
 		};
 
 		return (
@@ -41,7 +41,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 						{buttons.map((item: any, i: number) => (
 							<div
 								key={i}
-								className={[ 'element' ].concat(item.className || []).join(' ')}
+								className="element"
 								onClick={() => multiSelectAction(item.id)}
 								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .switch { 
-	width: 26px; height: 16px; background: $colorBorderLight; border-radius: 16px; position: relative; 
+	width: 26px; height: 16px; background: $colorShapeSecondary; border-radius: 16px; position: relative; 
 	display: inline-block; vertical-align: middle;
 }
 .switch {
@@ -17,7 +17,7 @@
 
 .switch.active { background: $colorDarkGrey; }
 .switch.green.active { background: $colorLime; }
-.switch.orange.active { background: $colorOrange; }
+.switch.orange.active { background: $colorAccent50; }
 .switch.isReadonly { cursor: default; }
 
 .switch.active {

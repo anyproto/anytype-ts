@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UtilObject, I, sidebar } from 'Lib';
+import { I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
@@ -22,7 +22,6 @@ class Footer extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onAdd = this.onAdd.bind(this);
 		this.onHelp = this.onHelp.bind(this);
 	};
 	
@@ -37,7 +36,6 @@ class Footer extends React.Component<Props> {
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
 					onHelp={this.onHelp}
-					onAdd={this.onAdd}
 				/>
 			</div>
 		);
@@ -50,12 +48,6 @@ class Footer extends React.Component<Props> {
 	componentDidUpdate () {
 		sidebar.resizePage();	
 		this.refChild.forceUpdate();
-	};
-
-	onAdd () {
-		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			UtilObject.openAuto({ id: message.targetId });
-		});
 	};
 
 	onHelp () {

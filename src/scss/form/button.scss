@@ -12,8 +12,8 @@
 	.txt, .icon { display: none; }
 }
 
-.button.orange { background: $colorOrange; color: $colorWhite; }
-.button.orange:not(.disabled):hover { background: #f09c0e; }
+.button.orange { background: $colorAccent100; color: $colorWhite; }
+.button.orange:not(.disabled):hover { background: $colorAccent125; }
 
 .button.pink { background: #ff6a7b; color: $colorWhite; }
 .button.pink:not(.disabled):hover { background: #e5374b; }
@@ -24,14 +24,14 @@
 	.arrow { background-image: url('~img/arrow/button/white.svg'); }
 }
 
-.button.red { color: $colorRed; border: solid 1px $colorBorderDark; }
+.button.red { color: $colorRed; border: solid 1px $colorShapePrimary; }
 .button.red:not(.disabled):hover { background: #fee7e0; border-color: #fcd1c3; }
 
 .button.dark { background: rgba(0,0,0,0.3); color: $colorWhite; }
 .button.dark:not(.disabled):hover { background: rgba(0,0,0,0.4); }
 
-.button.blank { background: none; border: solid 1px $colorBorderDark; font-weight: 400; }
-.button.blank:not(.disabled):hover { background: $colorHoverMedium; }
+.button.blank { background: none; border: solid 1px $colorShapePrimary; font-weight: 400; }
+.button.blank:not(.disabled):hover { background: $colorShapeHighlightMedium; }
 
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
 .button.c32{ @include text-small; height: 32px; border-radius: 6px; padding: 0px 10px; }
