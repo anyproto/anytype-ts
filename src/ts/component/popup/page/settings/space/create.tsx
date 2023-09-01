@@ -179,6 +179,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			{ id: I.Usecase.Personal },
 			{ id: I.Usecase.Notes },
 			{ id: I.Usecase.Knowledge },
+			{ id: I.Usecase.Strategic },
         ])).map(it => ({
 			...it,
 			name: translate(`usecase${it.id}Title`),
