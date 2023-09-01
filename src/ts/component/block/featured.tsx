@@ -60,46 +60,48 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let typeRelation = null;
 
-		if (UtilObject.isTemplate(object.type)) {
-			typeRelation = (
-				<span className="cell">
-					<div className="cellContent type disabled">
-						{typeName}
-					</div>
-				</span>
-			);
-		} else
 		if (featuredRelations.includes('type')) {
-			typeRelation = (
-				<span className="cell canEdit">
-					<div
-						id={Relation.cellId(PREFIX, 'type', object.id)}
-						className="cellContent type"
-						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
-						onMouseLeave={this.onMouseLeave}
-					>
-						{typeName}
-					</div>
-				</span>
-			);
+			if (UtilObject.isTemplate(object.type)) {
+				typeRelation = (
+					<span className="cell">
+						<div className="cellContent type disabled">
+							{typeName}
+						</div>
+					</span>
+				);
+			} else {
+				typeRelation = (
+					<span className="cell canEdit">
+						<div
+							id={Relation.cellId(PREFIX, 'type', object.id)}
+							className="cellContent type"
+							onClick={this.onType}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							{typeName}
+						</div>
+					</span>
+				);
+			};
 		};
 
-		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name).slice(0, SOURCE_LIMIT);
-		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name).slice(0, SOURCE_LIMIT);
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
+
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.join(', ')));
+			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.join(', ')}`);
+			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);

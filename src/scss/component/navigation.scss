@@ -2,7 +2,7 @@
 
 .navigationPanel {
 	background: rgba(37, 37, 37, 0.4); backdrop-filter: blur(16px); border-radius: 16px; position: fixed; left: 0px; padding: 8px 16px; top: 0px;
-	height: 48px; z-index: 21;
+	height: 48px; z-index: 102;
 }
 .navigationPanel {
 	.inner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; position: relative; z-index: 1; }
@@ -11,7 +11,7 @@
 		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
 		transition: $transitionAllCommon;
 	}
-	.iconWrap:not(.disabled):hover { background-color: $colorHoverMedium; }
+	.iconWrap:not(.disabled):hover { background-color: $colorShapeHighlightMedium; }
 
 	.icon { width: 20px; height: 20px;  }
 	.icon.back, .icon.forward { background-image: url('~img/icon/navigation/back.svg'); }

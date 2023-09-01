@@ -74,17 +74,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
 
 		if (color) {
 			cv.push('textColor textColor-' + color);
-		};
-		if (readonly) {
-			cv.push('isReadonly');
 		};
 
 		// Subscriptions
@@ -187,11 +184,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
 				</div>
-				{additional ? (
-					<div className="additional">
-						{additional}
-					</div>
-				) : ''}
+
+				{additional ? <div className="additional">{additional}</div> : ''}
 
 				<Editable 
 					ref={ref => this.refEditable = ref}
@@ -1173,7 +1167,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onBlur (e: any) {
 		const { block, onBlur } = this.props;
 
-		if (!block.isTextTitle() && !block.isTextDescription()) {
+		if (block.isTextTitle() || block.isTextDescription()) {
+			this.placeholderCheck();
+		} else {
 			this.placeholderHide();
 		};
 
@@ -1277,12 +1273,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onSelect () {
 		const { rootId, dataset, block, isPopup, isInsideTable, readonly } = this.props;
 		const ids = UtilData.selectionGet('', false, true, this.props);
+		const range = this.getRange();
+
+		focus.set(block.id, range);
 
 		if (readonly) {
 			return;
 		};
 
-		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
 		const currentFrom = focus.state.range.from;
@@ -1419,12 +1417,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	placeholderHide () {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
-		};
-	};
-	
-	placeholderShow () {
-		if (this.refEditable) {
-			this.refEditable.placeholderShow();
 		};
 	};
 	

@@ -105,7 +105,8 @@
     "commonUndo": "Undo",
     "commonRedo": "Redo",
     "commonBlank": "Blank",
-    "commonTemplateSetDefault": "Set as default",
+    "commonSetDefault": "Set as default",
+    "commonTemplates": "Templates",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -1146,6 +1147,7 @@
     "menuDataviewViewEditRemoveView": "Remove view",
     "menuDataviewViewSettings": "View settings",
     "menuDataviewViewDefaultType": "Default type",
+    "menuDataviewViewDefaultTemplate": "Default template",
     "menuDataviewViewFilter": "Filter",
     "menuDataviewViewSort": "Sort",
     "menuDataviewViewApplied": "%s applied",
@@ -1157,6 +1159,7 @@
 
     "menuDataviewTemplateSetDefaultForView": "Default for this view",
     "menuDataviewTemplateEdit": "Edit template",
+    "menuDataviewTemplateUnsupported": "This object type doesn't support templates",
 
     "menuGraphSettingsTitles": "Titles",
     "menuGraphSettingsArrows": "Arrows",

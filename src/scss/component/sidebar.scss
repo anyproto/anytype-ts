@@ -33,7 +33,7 @@
 		> .head { height: 52px; cursor: default; }
 		> .head {
 			.icon { display: block; -webkit-app-region: no-drag; }
-			.icon:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
 		}
 		> .body { height: calc(100% - 52px); }
 	}
@@ -48,7 +48,7 @@
 		> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 12px; cursor: grab; }
 		> .head {
 			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; display: none; }
-			.icon:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
 			.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 		}
@@ -63,7 +63,7 @@
 			width: 12px; height: 32px;
 		}
 		.resize-handle::after {
-			content: ''; position: absolute; left: 6px; top: 0px; width: 6px; height: 100%; background-color: $colorBorderLight;
+			content: ''; position: absolute; left: 6px; top: 0px; width: 6px; height: 100%; background-color: $colorShapeSecondary;
 			border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
 		}
 	}
@@ -73,7 +73,7 @@
 	.resize-h:active {
 		.resize-handle { height: 64px; margin-top: -32px; }
 	}
-	.resize-handle:hover::after, .resize-handle:active::after { background-color: $colorBorderDark; }
+	.resize-handle:hover::after, .resize-handle:active::after { background-color: $colorShapePrimary; }
 
 	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }

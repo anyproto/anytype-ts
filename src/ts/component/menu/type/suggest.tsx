@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate } from 'Lib';
-import { commonStore, detailStore, menuStore } from 'Store';
+import { commonStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -370,7 +370,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const sources = this.getLibrarySources();
 		const className = [];
 
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -384,6 +383,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				ignoreWorkspace: true,
 			},
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'store': {
@@ -465,7 +466,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return this.items.filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
+		return dbStore.getTypes().filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

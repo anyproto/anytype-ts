@@ -444,6 +444,23 @@ class UtilData {
 		return items;
 	};
 
+	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
+		const templateType = dbStore.getTemplateType();
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+
+		this.search({
+			filters,
+			sorts,
+			limit: Constant.limit.menuRecords,
+		}, callBack);
+	};
+
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 

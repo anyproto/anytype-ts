@@ -62,7 +62,7 @@
 			background: $colorBgLoader;
 		}
 
-		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }
+		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorShapeSecondary; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -76,11 +76,11 @@
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }
-		.input { border: 1px solid $colorBorderLight; padding: 0px 8px; }
+		.input { border: 1px solid $colorShapeSecondary; padding: 0px 8px; }
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorMediumGrey; }
 
-		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorBorderLight; }
+		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorShapeSecondary; }
 	
 		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; width: 100%; background: $colorWhite; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
@@ -90,7 +90,7 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(80,73,28,0); z-index: 1;
 			pointer-events: none;
 		}
-		.item.hover::before { background: $colorHoverMedium; }
+		.item.hover::before { background: $colorShapeHighlightMedium; }
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
@@ -114,7 +114,7 @@
 				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
-			.icon.delete:hover, .icon.more:hover { background-color: $colorHoverMedium; }
+			.icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
@@ -180,11 +180,11 @@
 			.clickable { display: flex; }
 		}
 
-		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorBorderLight; }
+		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorShapeSecondary; }
 		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
-		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorBorderLight; display: block; }
+		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorShapeSecondary; display: block; }
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
@@ -196,7 +196,7 @@
 
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorBorderLight; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorShapeSecondary; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 20px; height: 20px; margin-right: 12px; }
@@ -210,16 +210,6 @@
 		}
 		.icon.active {
 			 .icon.arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
-		}
-	}
-
-	.menu.orange {
-		.item.active { color: #e89d00; }
-		.item.active::before { opacity: 0; }
-		.item.active { background: #fef3c5; color: #e89d00; }
-		.item.active {
-			.name { width: 100%; }
-			.icon.chk { display: none; }
 		}
 	}
 }

@@ -76,7 +76,7 @@
 			.row:hover {
 				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 				.icon.dnd:hover {
-					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
+					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorAccent100; box-shadow: 0px 0px 0px 1px $colorAccent100;
 				}
 			}
 		}

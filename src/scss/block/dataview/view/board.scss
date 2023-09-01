@@ -7,7 +7,7 @@
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
             .column { width: 262px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
 
-			.column.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
+			.column.isOver::before { content: ""; position: absolute; background: $colorAccent100; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
 			.column.isOver.left::before { left: -5px; }
 			.column.isOver.right::before { right: -5px; }
 
@@ -25,7 +25,7 @@
 
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
-						.empty { display: block; line-height: 24px; color: #8c9ea5; }
+						.empty { display: block; line-height: 24px; color: $colorTextSecondary; }
 						.wrap { display: inline-block; white-space: nowrap; width: 100%; }
 
 						.tagItem { margin: 3px 8px 0px 0px; max-width: 100%; }
@@ -44,7 +44,7 @@
 							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; 
 							opacity: 0; 
 						}
-						.icon:hover { background-color: $colorHoverMedium; }
+						.icon:hover { background-color: $colorShapeHighlightMedium; }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
@@ -79,7 +79,7 @@
             .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
 				.cardContent { 
-					border: 1px solid $colorHoverMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
+					border: 1px solid $colorShapeHighlightMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
 
@@ -105,11 +105,11 @@
 			.card:last-child { margin: 0px; }
 
 			.card.add:hover, .card:hover {
-				.cardContent { border-color: $colorBorderLight; }
+				.cardContent { border-color: $colorShapeSecondary; }
 				.icon.checkbox { opacity: 1; }
 			}
 
-			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
+			.card.isOver::before { content: ""; position: absolute; background: $colorAccent100; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
 			.card.isOver.top::before { top: -5px; }
 			.card.isOver.bottom::before { bottom: -5px; }
 
@@ -131,7 +131,7 @@
 
 			.card.add.isOver.bottom::before { top: -6px; }
 			.card.isEditing {
-				.cardContent { border: 2px solid $colorOrange; padding: 15px; }
+				.cardContent { border: 2px solid $colorAccent100; padding: 15px; }
 			}
         }
     }

@@ -9,7 +9,7 @@
 		> .label { @include text-paragraph; margin: 0px 0px 44px 0px; }
 
 		.row { 
-			display: flex; flex-direction: row; align-items: center; padding: 14px 0px 13px 0px; border-bottom: 1px solid $colorBorderLight; justify-content: space-between;
+			display: flex; flex-direction: row; align-items: center; padding: 14px 0px 13px 0px; border-bottom: 1px solid $colorShapeSecondary; justify-content: space-between;
 			@include text-paragraph; 
 		}
 

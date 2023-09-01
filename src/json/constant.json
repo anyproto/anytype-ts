@@ -128,7 +128,8 @@
 	"storeSpaceId": "_anytype_marketplace",
 
 	"templateId": {
-		"blank": "blank"
+		"blank": "blank",
+		"new": "newTemplate"
 	},
 
 	"blockId": {

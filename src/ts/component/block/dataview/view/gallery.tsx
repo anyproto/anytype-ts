@@ -196,6 +196,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	onResize ({ width }) {
 		this.width = width;
 		this.reset();
+		this.forceUpdate();
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
@@ -322,10 +323,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		};
 
 		return object;
-	};
-
-	resize () {
-		this.forceUpdate();
 	};
 
 });

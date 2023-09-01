@@ -22,7 +22,7 @@ class UtilFile {
 			return Number.isInteger(n) ? 0 : afterComma;
 		};
 
-		const unit = 1024;
+		const unit = 1000;
 		const g = v / (unit * unit * unit);
 		const m = v / (unit * unit);
 		const k = v / unit;

@@ -17,7 +17,7 @@
         .item {
             .descr { color: $colorSecondary; }
         }
-        .item.active { background-color: $colorHoverMedium; }
+        .item.active { background-color: $colorShapeHighlightMedium; }
     }
 
     /* PopupSettings */
@@ -27,16 +27,16 @@
 		.mainSides {
 			> .side.left { background: $colorBgLight; }
 			> .side.left {
-				.space:hover, .space.active { background: $colorHoverMedium; }
-				.item:hover, .item.active { background: $colorHoverMedium; }
+				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
+				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
 
 				.iconObject.withLetter { background-color: $colorLineTertiary; }
 			}
 
 			> .side.right {
-				.head { background: $colorBlack; }
 				.head {
-					.element:hover { background-color: $colorHoverMedium; }
+					.inner { background: $colorBlack; }
+					.element:hover { background-color: $colorShapeHighlightMedium; }
 				}
 
 				.label.section, .label.small, .label.grey { color: $colorSecondary; }
@@ -47,7 +47,7 @@
 				.select .item { color: $colorPrimary; }
 
 				.select { color: $colorSecondary; }
-				.select:hover { background-color: $colorHoverMedium; }
+				.select:hover { background-color: $colorShapeHighlightMedium; }
 
 				.actionItems,
 				.actionItems > .item { border-color: $colorLineSecondary; }
@@ -59,10 +59,22 @@
 			}
 		}
 
-		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
-			.spaceHeader {
-				.headerContent {
-					.spaceType { background-color: $colorHoverMedium; }
+		.side.right.tabSpaceIndex {
+			.sections {
+				.spaceHeader {
+					.headerContent {
+						.spaceType { background-color: $colorShapeHighlightMedium; }
+					}	
+				}
+
+				.section {
+					.sectionContent { border-color: $colorLineSecondary; }
+					.sectionContent {
+						.item { border-color: $colorLineSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+					}
 				}
 			}
 			.sections {
@@ -86,7 +98,7 @@
 		}
 
 		.side.right.tabDataManagement {
-			.iconObject { background: $colorHoverMedium; }
+			.iconObject { background: $colorShapeHighlightMedium; }
 		}
 
         .side.right.tabPhrase {
@@ -97,7 +109,7 @@
 			.sections .section {
 				.input { border-color: $colorLineSecondary; }
 				.input:hover { border-color: $colorLinePrimary; }
-				.input:focus:not(.isReadonly) { border-color: $colorOrange; }
+				.input:focus:not(.isReadonly) { border-color: $colorAccent100; }
 			}
 		}
 
@@ -205,7 +217,7 @@
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
 		}
 
-        .highlight { color: $colorOrange; background: $colorHoverMedium; }
+        .highlight { color: $colorOrange; background: $colorShapeHighlightMedium; }
 	}
 
     /* PopupPrompt */

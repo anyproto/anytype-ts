@@ -458,11 +458,6 @@ class BlockStore {
 					name = name || translate('commonEmpty');
 				};
 
-				const parsed = Mark.fromUnicode(name, marks);
-
-				name = parsed.text.trim();
-				marks = parsed.marks;
-
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
 					text = UtilCommon.stringInsert(text, name, mark.range.from, mark.range.to);
@@ -560,6 +555,33 @@ class BlockStore {
 		if (blocks.length) {
 			blocks.forEach(it => Storage.setToggle('widget', it.parentId, true));
 		};
+	};
+
+	getLayoutIds (rootId: string, ids: string[]) {
+		if (!ids.length) {
+			return [];
+		};
+		
+		let ret: any[] = [];
+		for (const id of ids) {
+			const element = blockStore.getMapElement(rootId, id);
+			if (!element) {
+				continue;
+			};
+
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
+				continue;
+			};
+			
+			ret.push(parent.id);
+			
+			if (parent.isLayoutColumn()) {
+				ret = ret.concat(this.getLayoutIds(rootId, [ parent.id ]));
+			};
+		};
+		
+		return ret;
 	};
 
 };

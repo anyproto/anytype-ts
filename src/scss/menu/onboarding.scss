@@ -15,23 +15,23 @@
 		}
 
 		.highlight { 
-			background: $colorBorderLight; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorBlack; 
+			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorBlack; 
 			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
 		}
-		a { color: #fff; text-decoration: underline; }
+		a { color: $colorTextInversion; text-decoration: underline; }
 
 		.icon.close { 
 			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
 		}
 
-		video { margin-top: 12px; border-radius: 4px; border: 1px solid $colorBorderLight; cursor: zoom-in; }
+		video { margin-top: 12px; border-radius: 4px; border: 1px solid $colorShapeSecondary; cursor: zoom-in; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		
 		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
-				background: $colorOrange; transition: $transitionAllCommon;
+				background: $colorAccent100; transition: $transitionAllCommon;
 			}
 			.round:hover { background: #F09C0E; }
 			.round {
@@ -56,9 +56,9 @@
 					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
 					background: $colorVeryLightGrey; transition: $transitionAllCommon;
 				}
-				.step:hover { background: $colorBorderDark; }
+				.step:hover { background: $colorShapePrimary; }
 				.step.active,
-				.step.active:hover { background: $colorOrange; cursor: default; }
+				.step.active:hover { background: $colorAccent100; cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 

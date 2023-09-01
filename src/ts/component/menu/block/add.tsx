@@ -414,6 +414,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 			case 'existing':
 				menuId = 'searchObject';
+				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
 				});

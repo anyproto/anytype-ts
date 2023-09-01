@@ -185,6 +185,7 @@ import 'scss/menu/dataview/sort.scss';
 import 'scss/menu/dataview/source.scss';
 import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
+import 'scss/menu/dataview/template.scss';
 
 import 'scss/media/print.scss';
 

@@ -49,6 +49,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		}
 	}
 
+	.dotIndicator {
+    	span.active { background-color: $colorPrimary; }
+	}
+
 	.tooltip { 
 		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; 
 		white-space: normal;
@@ -60,7 +64,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: $colorOrange; }
+		.loader { border-color: #555; border-left-color: $colorAccent100; }
 	}
 }
 
@@ -72,7 +76,7 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px $colorBorderDark; }
+	.input { height: 40px; border: solid 1px $colorShapePrimary; }
 
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
@@ -134,7 +138,7 @@ html.bodyAuthDeleted {
 .pageAuthInvite {
 	.frame { padding: 64px; }
 	.label { width: 500px; }
-	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorShapePrimary; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinCheck {
@@ -145,7 +149,7 @@ html.bodyAuthDeleted {
 			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: $colorOrange; }
+		.input.active { box-shadow: 0px 0px; border-color: $colorAccent100; }
 	}
 }
 
@@ -221,7 +225,6 @@ html.bodyAuthDeleted {
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
-		.iconObject.withOption.isSpace { background: $colorLineTertiary !important; border-radius: 8px; }
 		
 		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
 		.line.left { right: 50%; }

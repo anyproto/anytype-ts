@@ -6,7 +6,7 @@
 	.items {
 		.item { 
 			transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
-			height: 80px; border: 1px solid $colorBorderLight; border-radius: 8px;
+			height: 80px; border: 1px solid $colorShapeSecondary; border-radius: 8px;
 		}
 		.item {
 			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
@@ -23,7 +23,7 @@
 			}
 		}
 
-		.item.active { background-color: $colorHoverMedium; }
+		.item.active { background-color: $colorShapeHighlightMedium; }
 	}
 
 	.sides { display: flex; padding: 0px 16px; }
@@ -39,7 +39,7 @@
 			}
 		}
 
-		.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange inset; }
+		.item.active { background: none; border-color: $colorAccent100 !important; box-shadow: 0px 0px 0px 1px $colorAccent100 inset; }
 		.item.active {
 			.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 		}
@@ -52,7 +52,7 @@
 
 	.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; padding: 0px 16px; }
 	
-	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorBorderLight; transition: $transitionAllCommon; }
+	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorShapeSecondary; transition: $transitionAllCommon; }
 	.selected {
 		.iconObject { margin-bottom: 8px; }
 		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
@@ -67,7 +67,7 @@
 			}
 		}
 	}
-	.selected.active { border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange; }
+	.selected.active { border-color: $colorAccent100 !important; box-shadow: 0px 0px 0px 1px $colorAccent100; }
 	
 	.items.right {
 		.item {
