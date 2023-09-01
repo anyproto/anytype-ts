@@ -39,11 +39,10 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
 		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
-		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
 		// Deletion Status
 		let status: I.AccountStatusType = account.status.type;
-		if ((status == I.AccountStatusType.PendingDeletion) && !daysUntilDeletion) {
+		if ((status == I.AccountStatusType.PendingDeletion) && !duration) {
 			status = I.AccountStatusType.Deleted;
 		};
 
@@ -83,7 +82,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 									totalValue={DAYS}
 									startAngle={270}
 									lengthAngle={-360}
-									data={[ { title: '', value: daysUntilDeletion, color: '#d4d4d4' } ]}
+									data={[ { title: '', value: days, color: '#d4d4d4' } ]}
 								/>
 							</div>
 						</div>
