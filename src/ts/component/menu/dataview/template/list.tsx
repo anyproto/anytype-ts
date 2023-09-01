@@ -31,8 +31,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		const typeId = this.typeId || getTypeId();
 		const type = dbStore.getType(typeId);
-		const itemBlank = { id: Constant.templateId.blank, targetType: typeId };
-		const itemAdd = { id: Constant.templateId.new, targetType: typeId };
+		const itemBlank = { id: Constant.templateId.blank, targetTypeId: typeId };
+		const itemAdd = { id: Constant.templateId.new, targetTypeId: typeId };
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		return (
@@ -140,7 +140,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 			this.items = this.items.concat((message.records || []).map((it: any) => {
 				it.name = String(it.name || UtilObject.defaultName('Page'));
-				it.targetType = typeId;
 				return it;
 			}));
 

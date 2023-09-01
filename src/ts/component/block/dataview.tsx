@@ -640,9 +640,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 
-		if (template && template.targetType) {
-			details.type = template.targetType;
+		if (template && template.targetTypeId) {
+			details.type = template.targetTypeId;
 		};
+
+		template = UtilData.checkBlankTemplate(template);
 
 		C.ObjectCreate(details, flags, template?.id, (message: any) => {
 			this.creating = false;
@@ -738,7 +740,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir, groupId);
+		this.recordCreate(e, { id: defaultTemplateId }, dir, groupId);
 	};
 
 	onTemplateMenu (e: any, dir: number) {
@@ -750,11 +752,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuActions: any = {
 			onSelect: (item: any) => {
 				if (item.id == Constant.templateId.new) {
-					this.onTemplateAdd(item.targetType);
+					this.onTemplateAdd(item.targetTypeId);
 					return;
 				};
 
-				this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
+				this.recordCreate(e, item, dir);
 				menuStore.closeAll();
 
 				analytics.event('SelectTemplate', { route });
