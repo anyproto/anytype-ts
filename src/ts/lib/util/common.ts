@@ -9,12 +9,16 @@ class UtilCommon {
 
 	history: any = null;
 
+	init (history: any) {
+		this.history = history;
+	};
+
 	getElectron () {
 		return window.Electron || {};
 	};
 
-	init (history: any) {
-		this.history = history;
+	getGlobalConfig () {
+		return window.AnytypeGlobalConfig || {};
 	};
 
 	sprintf (...args: any[]) {

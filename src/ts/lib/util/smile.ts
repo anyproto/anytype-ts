@@ -138,6 +138,7 @@ class UtilSmile {
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
 		const item = EmojiData.emojis[id];
+		const prefix = UtilCommon.getGlobalConfig().emojiPrefix || './img/emoji/';
 
 		if (!item) {
 			return '';
@@ -152,7 +153,7 @@ class UtilSmile {
 			code = code.join(DIV_UNI);
 		};
 
-		return `./img/emoji/${code}.png`;
+		return `${prefix}${code}.png`;
 	};
 
 	data (icon: string) {

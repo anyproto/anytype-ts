@@ -10,7 +10,7 @@ interface State {
 	error: string;
 };
 
-const ROOT_ID = 'bafyreid4jqmmox4monwirlsmgnobducuw57bvgxqzoguzs2acigiam6vym';
+const ROOT_ID = 'bafyreihwzu7hzccsbalfe4ttkd6dr3usp2qlc3hc4xiv6ytbpdp2dqj4d4';
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 

@@ -53,7 +53,7 @@ declare global {
 		Graph: any;
 
 		isWebVersion: boolean;
-		Config: any;
+		AnytypeGlobalConfig: any;
 		Renderer: any;
 	}
 };

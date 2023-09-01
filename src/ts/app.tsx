@@ -148,7 +148,7 @@ declare global {
 		isWebVersion: boolean;
 		Config: any;
 		Renderer: any;
-		WebclipperConfig: any;
+		AnytypeGlobalConfig: any;
 	}
 };
 

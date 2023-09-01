@@ -2,7 +2,7 @@
 	@import "~scss/_vars";
 
 	.head { 
-		display: flex; flex-direction: row; align-items: center; height: 43px; border-bottom: 1px solid $colorBorderLight; 
+		display: flex; flex-direction: row; align-items: center; height: 43px; border-bottom: 1px solid $colorShapeSecondary; 
 		padding: 0px 16px; position: fixed; left: 0px; top: 0px; width: 100%; background: #fff; z-index: 9;
 	}
 	.head {

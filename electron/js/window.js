@@ -212,6 +212,7 @@ class WindowManager {
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
+
 		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {

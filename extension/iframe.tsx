@@ -50,7 +50,7 @@ declare global {
 		Graph: any;
 
 		isWebVersion: boolean;
-		Config: any;
+		AnytypeGlobalConfig: any;
 		Renderer: any;
 	}
 };
@@ -125,9 +125,9 @@ class Iframe extends React.Component {
 				return;
 			};
 
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoic2xNeUVvUEgifQ.p-bYr8Sp0pfwnIeZzc7bEsMnIwbuS87sQNPbSf_WlNI');
-			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[0]}`);
+			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiUkNRbnFkcnYifQ.g22qTAnn7fOD9KB9Z1xQBN3Iy6sSUvPgLSWfQSxcqCw');
 			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
+			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
 
 			UtilCommon.route('/create', {});
 		});

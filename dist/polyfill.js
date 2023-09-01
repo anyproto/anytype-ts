@@ -1,6 +1,6 @@
 const RendererEvents = {};
 
-window.Config = {
+window.AnytypeGlobalConfig = {
     debug: {
         mw: true,
     },

@@ -8,7 +8,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 		.menu.vertical { width: calc(100% - 32px); left: 16px; }
 	}
 
-	.input, .select, .textarea { @include text-small; border: 1px solid $colorBorderDark; width: 100%; border-radius: 1px; }
+	.input, .select, .textarea { @include text-small; border: 1px solid $colorShapeSecondary; width: 100%; border-radius: 1px; }
 
 	.input, .select { height: 32px; padding: 0px 10px; }
 	.select { display: flex; align-items: center; }
@@ -28,7 +28,7 @@ html.anytypeWebclipper-popup { width: 268px; }
 
 		.label { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; }
 
-		.box { border: 1px solid $colorBorderDark; border-radius: 1px; min-height: 32px; }
+		.box { border: 1px solid $colorShapeSecondary; border-radius: 1px; min-height: 32px; }
 		.box {
 			.value { padding: 6px 10px 0px 10px; }
 			.value {
