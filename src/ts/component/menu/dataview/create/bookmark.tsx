@@ -78,7 +78,6 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 					},
 				});
 			} else {
-				console.log('MESSAGE: ', message)
 				if (onSubmit && message.objectId) {
 					onSubmit(message.objectId);
 				};

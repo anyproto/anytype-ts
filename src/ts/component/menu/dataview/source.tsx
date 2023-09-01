@@ -97,7 +97,9 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onAdd (e: any) {
-		const { getId, getSize } = this.props;
+		const { getId, getSize, param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
 		const value = this.getValue();
 
 		menuStore.open('searchObject', { 
@@ -115,7 +117,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				],
 				onSelect: (item: any) => {
 					this.save([ item.id ]);
-					$(window).trigger('sourceChange');
+					$(window).trigger(`sourceChange.${blockId}`);
 
 					if (!value.length) {
 						analytics.event('SetSelectQuery', { type: 'relation' });
@@ -126,8 +128,12 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onRemove (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+
 		this.save(this.getValue().filter(it => it != item.id));
-		$(window).trigger('sourceChange');
+		$(window).trigger(`sourceChange.${blockId}`);
 	};
 
 	onOver (e: any, item: any) {
@@ -139,7 +145,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, blockId } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
@@ -153,7 +159,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				filter: '',
 				onClick: (item: any) => {
 					this.save([ item.id ]);
-					$(window).trigger('sourceChange');
+					$(window).trigger(`sourceChange.${blockId}`);
 
 					analytics.event('SetSelectQuery', { type: 'type' });
 					close();
