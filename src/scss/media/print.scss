@@ -56,8 +56,6 @@ html.printMedia {
 	.blocks {
 		#button-block-add { display: none; }
 
-		.block.blockMedia, .block.blockBookmark, .block.blockLink { break-inside: avoid-page; }
-
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
@@ -72,22 +70,20 @@ html.printMedia {
 				.scroll { width: 100% !important; margin: 0px !important; padding-left: 0px !important; }
 			}
 		}
-	}
-}
 
-html.printMedia.print {
-	#editorWrapper { width: 100% !important; }
-
-	.blocks { padding: 0px 0.5cm; }
-	.blocks {
 		.block.blockBookmark {
-			.side.left { width: 100% !important; }
-			.side.right { display: none; }
+			.inner { box-shadow: 0px 0px; }
 		}
 	}
+
+	.editor {
+		.blockLast { display: none; }
+	}
 }
 
-html.printMedia.withPopup .page.isFull { display: none !important; }
+html.printMedia.withPopup {
+	.page.isFull { display: none !important; }
+}
 
 @media (max-width: 500px) {
 	html.printMedia.save {
