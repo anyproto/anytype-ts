@@ -213,7 +213,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		if (skipIds && skipIds.length) {

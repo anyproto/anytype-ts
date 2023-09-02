@@ -372,13 +372,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			case Constant.widgetId.recentEdit: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: 0 });
-				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
+				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true });
 				break;
 			};
 
 			case Constant.widgetId.recentOpen: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
-				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc, includeTime: true });
 				break;
 			};
 

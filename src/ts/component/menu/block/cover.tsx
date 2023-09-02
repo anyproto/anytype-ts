@@ -224,7 +224,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 500 },
 				];
 				const sorts = [ 
-					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc, includeTime: true },
 				];
 
 				this.setState({ loading: true });
