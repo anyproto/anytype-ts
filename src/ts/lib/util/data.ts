@@ -767,7 +767,11 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys.concat([ idField ]), UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
+		if (!keys.includes(idField)) {
+			keys.push(idField);
+		};
+
+		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
 	};
 
 	sortMapper (it: any) {
