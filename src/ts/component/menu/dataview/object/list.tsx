@@ -254,7 +254,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { types, filter } = data;
 		const filters: I.Filter[] = [].concat(data.filters || []);
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc, includeTime: true },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {

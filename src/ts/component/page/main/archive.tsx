@@ -30,7 +30,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 		];
 		const sorts: I.Sort[] = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		const buttons: I.ButtonComponent[] = [

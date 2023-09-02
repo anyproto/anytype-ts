@@ -295,7 +295,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		if (skipIds && skipIds.length) {

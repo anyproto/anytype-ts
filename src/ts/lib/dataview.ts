@@ -131,12 +131,7 @@ class Dataview {
 			if (relation) {
 				it.format = relation.format;
 			};
-			if (vr) {
-				it.includeTime = vr.includeTime;
-			};
-
-			// TODO: Hack until we implement proper logic on Middleware
-			if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
+			if (vr && vr.includeTime) {
 				it.includeTime = true;
 			};
 			return it;

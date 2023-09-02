@@ -339,7 +339,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc, includeTime: true },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (clear) {
