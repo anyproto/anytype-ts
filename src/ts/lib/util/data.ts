@@ -446,10 +446,12 @@ class UtilData {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
 			sorts,
+			keys,
 			limit: Constant.limit.menuRecords,
 		}, callBack);
 	};
