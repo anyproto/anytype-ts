@@ -235,6 +235,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onObjectTo (layout: I.ObjectLayout) {
 		const { rootId, isPopup, setLoading } = this.props;
 
+		let typeId = '';
+
 		const cb = () => {
 			if (isPopup) {
 				historyPopup.clear();
@@ -242,17 +244,24 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			keyboard.disableClose(true);
 			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
+
+			analytics.event('SelectObjectType', {
+				objectType: typeId,
+				layout,
+			});
 		};
 
 		setLoading(true);
 
 		switch (layout) {
 			case I.ObjectLayout.Set: {
+				typeId = dbStore.getSetType()?.id;
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
 			case I.ObjectLayout.Collection: {
+				typeId = dbStore.getCollectionType()?.id;
 				C.ObjectToCollection(rootId, cb);
 				break;
 			};

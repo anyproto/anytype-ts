@@ -276,6 +276,10 @@ class DbStore {
 		return this.getTypeByKey(Constant.typeKey.collection);
 	};
 
+	getSetType () {
+		return this.getTypeByKey(Constant.typeKey.set);
+	};
+
 	getSpaceType () {
 		return this.getTypeByKey(Constant.typeKey.space);
 	};
