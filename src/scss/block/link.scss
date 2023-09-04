@@ -21,11 +21,7 @@
         .deleted {
             .icon.ghost { width: 24px; height: 24px; }
         }
-		
-		.emptyObjectLink{
-    		border-bottom: $colorShapePrimary 0.05em dashed;
-    		line-height: 22px;
-		}
+	.emptyObjectLink{border-bottom: $colorShapePrimary 0.05em dashed;line-height: 22px;}
 
         .linkCard {
             .sides { display: flex; flex-direction: row; }
