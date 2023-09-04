@@ -138,7 +138,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
 								{icon}
-								<ObjectName className={isEmpty ? "name emptyObjectLink" : "name"} object={object} />
+								<ObjectName className={isEmpty ? 'name emptyObjectLink' : 'name'} object={object} />
 								{archive}
 							</div>
 
