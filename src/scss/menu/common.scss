@@ -171,6 +171,10 @@
 			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }
 		}
 
+		.item.withCaption.withArrow {
+			.caption { padding-right: 12px; }
+		}
+
 		.item.withCaption.withCheckbox {
 			.icon.chk { display: none; }
 		}

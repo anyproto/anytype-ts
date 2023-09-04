@@ -344,7 +344,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnText) {
-				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true });
+				const caption = I.TextStyle[style] ? translate(UtilCommon.toCamelCase('blockName-' + I.TextStyle[style])) : '';
+
+				section2.children.push({ 
+					id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
+					caption,
+				});
 			};
 
 			if (hasTurnDiv) {

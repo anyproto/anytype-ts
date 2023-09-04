@@ -55,6 +55,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		const { close, param } = this.props;
 		const { data } = param;
+		const { onSubmit } = data;
 		const value = this.ref.getValue();
 		const details = data.details || {};
 
@@ -77,6 +78,9 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 					},
 				});
 			} else {
+				if (onSubmit) {
+					onSubmit(message.details);
+				};
 				close();
 			};
 		});

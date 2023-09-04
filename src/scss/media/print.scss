@@ -27,7 +27,7 @@ html.printMedia {
 		.dimmer { display: none !important; }
 	}
 	
-	#editorWrapper.withIcon .blocks { margin-top: 2cm; }
+	#editorWrapper { width: 100% !important; padding-left: 48px; }
 	#editorWrapper {
 		#editorSize { display: none !important; }
 	}
@@ -52,46 +52,41 @@ html.printMedia {
 
 	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; border-radius: 0px; }
 
-	.blocks { width: 100%; margin: 0px; }
+	.blocks { width: 100%; }
 	.blocks {
-		.wrapMenu { display: none; }
 		#button-block-add { display: none; }
-
-		.block.blockMedia, .block.blockBookmark { break-inside: avoid-page; }
 
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
+
 		.block.blockText {
 			.placeholder { display: none !important; }
 		}
-
 		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
-	}
-}
 
-html.printMedia.print {
-	#editorWrapper { width: 100% !important; }
+		.block.blockDataview.isInline {
+			.content {
+				.scroll { width: 100% !important; margin: 0px !important; padding-left: 0px !important; }
+			}
+		}
 
-	.blocks { padding: 0px 0.5cm; }
-	.blocks {
 		.block.blockBookmark {
-			.side.left { width: 100% !important; }
-			.side.right { display: none; }
+			.inner { box-shadow: 0px 0px; }
 		}
 	}
+
+	.editor {
+		.blockLast { display: none; }
+	}
 }
 
-html.printMedia.withPopup .page.isFull { display: none !important; }
+html.printMedia.withPopup {
+	.page.isFull { display: none !important; }
+}
 
 @media (max-width: 500px) {
 	html.printMedia.save {
 		#editorWrapper { width: 100% !important; margin: 0px 16px; }
-		#editorWrapper {
-			.blocks { margin: 0px; }
-			.blocks {
-				.wrapMenu { display: none; }
-			}
-		}
 	}
 }

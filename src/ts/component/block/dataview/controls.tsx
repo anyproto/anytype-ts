@@ -24,7 +24,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -33,8 +33,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapperCn = [ 'buttonNewWrapper' ];
+		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = this.props.isAllowedTemplate();
+		const isAllowedTemplate = this.props.isAllowedTemplate() && hasSources;
 
 		if (isAllowedTemplate) {
 			buttonWrapperCn.push('withSelect');
@@ -178,7 +179,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate
+			getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
@@ -218,6 +219,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				isCollection,
 				isAllowedDefaultType,
 				isAllowedTemplate,
+				onTemplateAdd,
 				view: observable.box(view)
 			},
 		};

@@ -7,9 +7,6 @@
 
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
-.icon.home { background-image: url('~img/icon/home.svg'); }
-.icon.home-big { background-image: url('~img/icon/home-big.svg'); }
-
 .icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
 

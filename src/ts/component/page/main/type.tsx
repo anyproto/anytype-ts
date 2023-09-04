@@ -282,7 +282,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],
 			sorts: [
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true }
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			],
 			keys: [ 'id' ],
 			ignoreWorkspace: true,

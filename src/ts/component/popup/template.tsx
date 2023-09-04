@@ -93,21 +93,10 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const templateType = dbStore.getTemplateType();
-
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: typeId },
-		];
-		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
-		];
 
 		this.setState({ loading: true });
-		UtilData.search({
-			filters,
-			sorts,
-		}, (message: any) => {
+
+		UtilData.getTemplatesByTypeId(typeId, (message) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
