@@ -729,9 +729,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
 					details,
-					onSubmit: (id) => {
+					onSubmit: (bookmark) => {
 						if (this.isCollection()) {
-							C.ObjectCollectionAdd(objectId, [ id ]);
+							C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
 						};
 					}
 				},
