@@ -416,7 +416,7 @@ class BlockStore {
 		const blocks = UtilCommon.objectCopy(this.getBlocks(rootId, it => it.isText()));
 
 		for (const block of blocks) {
-			const marks = block.content.marks || [];
+			let marks = block.content.marks || [];
 
 			if (!marks.length) {
 				continue;
@@ -446,7 +446,8 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name, marks).trim();
+
+				name = name.trim();
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
@@ -545,6 +546,33 @@ class BlockStore {
 		if (blocks.length) {
 			blocks.forEach(it => Storage.setToggle('widget', it.parentId, true));
 		};
+	};
+
+	getLayoutIds (rootId: string, ids: string[]) {
+		if (!ids.length) {
+			return [];
+		};
+		
+		let ret: any[] = [];
+		for (const id of ids) {
+			const element = blockStore.getMapElement(rootId, id);
+			if (!element) {
+				continue;
+			};
+
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
+				continue;
+			};
+			
+			ret.push(parent.id);
+			
+			if (parent.isLayoutColumn()) {
+				ret = ret.concat(this.getLayoutIds(rootId, [ parent.id ]));
+			};
+		};
+		
+		return ret;
 	};
 
 };

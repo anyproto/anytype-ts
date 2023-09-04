@@ -164,10 +164,14 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		this._isMounted = true;
 	};
 
+	componentDidUpdate () {
+		this.resize();	
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
-	
+
 	onButton (e: any, element: string, component: string) {
 		if (!component) {
 			return;
@@ -308,7 +312,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					getView,
 					loadData,
 					getSources,
-					onSave: () => { this.forceUpdate(); },
+					onSave: () => this.forceUpdate(),
 				}
 			});
 		}, 50);
@@ -351,25 +355,33 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
+		const cw = container.outerWidth();
+		const nw = node.outerWidth();
+
+		let add = false;
+		let close = false;
 
 		if (sideLeft.hasClass('small')) {
 			sideLeft.removeClass('small');
-			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
+			close = true;
 		};
 
 		const width = sideLeft.outerWidth() + sideRight.outerWidth();
 		const offset = isPopup ? container.offset().left : 0;
 
-		let add = false;
-		if (left + width - offset - sw + 50 >= container.width()) {
+		if (left + width - offset - sw + 50 >= cw) {
 			add = true;
 		};
-		if (isInline && (width >= node.outerWidth())) {
+		if (isInline && (width >= nw)) {
 			add = true;
 		};
 
 		if (add) {
 			sideLeft.addClass('small');
+			close = true;
+		};
+
+		if (close) {
 			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 	};

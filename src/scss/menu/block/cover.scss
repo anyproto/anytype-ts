@@ -8,7 +8,7 @@
 		.wrap { display: flex; flex-direction: column; }
 
 		.head { 
-			border-bottom: 1px solid $colorBorderLight; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
+			border-bottom: 1px solid $colorShapeSecondary; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
 			flex-shrink: 0;
 		}
 		.head {
@@ -63,7 +63,7 @@
 			.loaderWrapper { height: 336px; }
 
 			.dropzone { 
-				height: 336px; display: flex; align-items: center; border-radius: 2px; background: $colorHoverMedium;
+				height: 336px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
 				justify-content: center; flex-direction: column; gap: 6px 0px;
 			}
 			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }

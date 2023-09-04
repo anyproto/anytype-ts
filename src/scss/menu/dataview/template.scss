@@ -27,7 +27,7 @@
             }
 
             .emptySearch {
-                height: 112px; width: 100%; border-radius: 8px; border: 1px solid $colorBorderLight; @include text-small;
+                height: 112px; width: 100%; border-radius: 8px; border: 1px solid $colorShapeSecondary; @include text-small;
                 display: flex; align-items: center; justify-content: center;
             }
         }

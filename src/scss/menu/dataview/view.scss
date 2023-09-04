@@ -36,7 +36,7 @@
 		.layouts {
 			.layout {
 				width: 104px; height: 88px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-				border: 1px solid $colorBorderLight; border-radius: 8px;
+				border: 1px solid $colorShapeSecondary; border-radius: 8px;
 			}
 			.layout {
 				.label { @include text-small; color: $colorDarkGrey; }

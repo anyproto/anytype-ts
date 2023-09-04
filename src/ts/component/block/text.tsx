@@ -74,17 +74,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
 
 		if (color) {
 			cv.push('textColor textColor-' + color);
-		};
-		if (readonly) {
-			cv.push('isReadonly');
 		};
 
 		// Subscriptions
@@ -187,11 +184,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
 				</div>
-				{additional ? (
-					<div className="additional">
-						{additional}
-					</div>
-				) : ''}
+
+				{additional ? <div className="additional">{additional}</div> : ''}
 
 				<Editable 
 					ref={ref => this.refEditable = ref}
@@ -281,7 +275,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html, this.marks);
+			const parsed = Mark.fromUnicode(html, this.marks);
+
+			html = parsed.text;
+			this.marks = parsed.marks;
+
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -803,6 +801,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const closingSymbol = twineClose[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+
 			this.marks = Mark.adjust(this.marks, range.from, l);
 
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
@@ -874,11 +873,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.preventMenu = false;
 
 		let parsed: any = {};
-		let marksChanged = false;
+		let adjustMarks = false;
 
 		if (block.canHaveMarks()) {
 			parsed = this.getMarksFromHtml();
-			marksChanged = parsed.marksChanged;
+			adjustMarks = parsed.adjustMarks;
 			this.marks = parsed.marks;
 		};
 
@@ -965,7 +964,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					return s.replace(p, '');
 				});
 
-				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
+				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
 				this.setValue(value);
 
 				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
@@ -1005,8 +1004,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		if (!ret && (marksChanged || (value != text))) {
+		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
+
 			const { focused, range } = focus.state;
 
 			diff += value.length - text.length;
@@ -1166,7 +1166,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onBlur (e: any) {
 		const { block, onBlur } = this.props;
 
-		if (!block.isTextTitle() && !block.isTextDescription()) {
+		if (block.isTextTitle() || block.isTextDescription()) {
+			this.placeholderCheck();
+		} else {
 			this.placeholderHide();
 		};
 
@@ -1270,12 +1272,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onSelect () {
 		const { rootId, dataset, block, isPopup, isInsideTable, readonly } = this.props;
 		const ids = UtilData.selectionGet('', false, true, this.props);
+		const range = this.getRange();
+
+		focus.set(block.id, range);
 
 		if (readonly) {
 			return;
 		};
 
-		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
 		const currentFrom = focus.state.range.from;
@@ -1412,12 +1416,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	placeholderHide () {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
-		};
-	};
-	
-	placeholderShow () {
-		if (this.refEditable) {
-			this.refEditable.placeholderShow();
 		};
 	};
 	

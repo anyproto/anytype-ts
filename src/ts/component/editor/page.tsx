@@ -577,10 +577,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			let type = null;
 			let param = '';
-			const markParam = this.getMarkParam();
 
-			for (const item of markParam) {
-				keyboard.shortcut(item.key, e, (pressed: string) => {
+			for (const item of this.getMarkParam()) {
+				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
 					param = item.param;
 				});
@@ -1603,14 +1602,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Preview.previewHide(false);
 	};
 	
-	onCopy (e: any, cut: boolean) {
+	onCopy (e: any, isCut: boolean) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { focused } = focus.state;
 
-		if (!root || (readonly && cut)) {
+		if (!root || (readonly && isCut)) {
 			return;
 		};
 
@@ -1625,59 +1624,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!ids.length) {
 			ids = [ focused ];
 		};
-		ids = ids.concat(this.getLayoutIds(ids));
+		ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
 
-		const range = UtilCommon.objectCopy(focus.state.range);
-		const cmd = cut ? 'BlockCut' : 'BlockCopy';
-		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const text: string[] = [];
-
-		let blocks = blockStore.unwrapTree(tree).filter((it: I.Block) => {
-			return ids.indexOf(it.id) >= 0;
-		});
-
-		ids.forEach((id: string) => {
-			const block = blockStore.getLeaf(rootId, id);
-			if (block && block.isTable()) {
-				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
-			};
-		});
-
-		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
-		blocks = blocks.map((it: I.Block) => {
-			const element = blockStore.getMapElement(rootId, it.id);
-
-			if (it.type == I.BlockType.Text) {
-				text.push(String(it.content.text || ''));
-			};
-
-			if (it.type == I.BlockType.Dataview) {
-				it.content.views = dbStore.getViews(rootId, it.id);
-			};
-
-			it.childrenIds = element.childrenIds;
-			return it;
-		});
-		
-		C[cmd](rootId, blocks, range, (message: any) => {
-			UtilCommon.clipboardCopy({
-				text: message.textSlot,
-				html: message.htmlSlot,
-				anytype: {
-					range: range,
-					blocks: (message.anySlot || []).map(Mapper.From.Block),
-				},
-			});
-
-			if (cut) {
-				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
-
-				focus.set(focused, { from: range.from, to: range.from });
-				focus.apply();
-			};
-		});
-
-		analytics.event(cut ? 'CutBlock' : 'CopyBlock');
+		Action.copyBlocks(rootId, ids, isCut);
 	};
 
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
@@ -1875,35 +1824,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.metaKey = false;
 
 		UtilObject.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
-	};
-
-	getLayoutIds (ids: string[]) {
-		if (!ids.length) {
-			return [];
-		};
-		
-		const { rootId } = this.props;
-		
-		let ret: any[] = [];
-		for (const id of ids) {
-			const element = blockStore.getMapElement(rootId, id);
-			if (!element) {
-				continue;
-			};
-
-			const parent = blockStore.getLeaf(rootId, element.parentId);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
-				continue;
-			};
-			
-			ret.push(parent.id);
-			
-			if (parent.isLayoutColumn()) {
-				ret = ret.concat(this.getLayoutIds([ parent.id ]));
-			};
-		};
-		
-		return ret;
 	};
 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {

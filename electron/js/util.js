@@ -217,8 +217,8 @@ class Util {
 			"es-ES", "fr-FR", "hi-IN",
 			"id-ID", "it-IT", "nl-NL",
 			"no-NO", "pt-BR", "ro-RO",
-			"ru-RU", "uk-UA", "vi-VN",
-			"zh-CN", "zh-TW"
+			"ru-RU", "tr-TR", "uk-UA",
+			"vi-VN", "zh-CN", "zh-TW"
 		];
 	};
 

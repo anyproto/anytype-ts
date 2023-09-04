@@ -18,6 +18,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
+		this.menuClose = this.menuClose.bind(this);
 	};
 
 	render () {
@@ -33,7 +34,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		});
 
 		const Layout = (item: any) => (
-			<div className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+			<div 
+				className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')}
+				onClick={(e: any) => { this.onClick(e, item); }}
+				onMouseEnter={this.menuClose}
+			>
 				<Icon className={item.icon} />
 				<Label text={item.name} />
 			</div>
@@ -91,11 +96,12 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	componentWillUnmount () {
 		this.unbind();
+
 		if (!this.preventSaveOnClose) {
 			this.save();
 		};
 
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		this.menuClose();
 	};
 
 	rebind () {
@@ -370,6 +376,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		if (onSelect) {
 			onSelect();
 		};
+	};
+
+	menuClose () {
+		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 
 	resize () {

@@ -29,7 +29,7 @@
 
         .section {
             .item { background: $colorBlack; }
-            .item:hover::before { background: $colorHoverMedium; }
+            .item:hover::before { background: $colorShapeHighlightMedium; }
         }
     }
 
@@ -56,7 +56,7 @@
         .items {
             .item {
                 .flex { border-color: $colorLineSecondary; } 
-				.flex:hover {  border-color: $colorLinePrimary; background-color: $colorHoverMedium; }
+				.flex:hover {  border-color: $colorLinePrimary; background-color: $colorShapeHighlightMedium; }
 
 				.buttons {
 					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
@@ -99,7 +99,7 @@
                 .name { color: $colorSecondary; }
             }
             .item.canEdit, .item.add {
-				.clickable:hover { background: $colorHoverMedium; }
+				.clickable:hover { background: $colorShapeHighlightMedium; }
 			}
 
 			.item.add {
@@ -156,7 +156,7 @@
     .list {
         .section.fix { background: $colorBlack; }
 
-        .item:hover, .item.active { background: $colorHoverMedium; }
+        .item:hover, .item.active { background: $colorShapeHighlightMedium; }
         .item {
             .name { color: $colorSecondary; }
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
@@ -168,7 +168,7 @@
 
 .pageMainBookmark {
     .wrapper {
-        .item.add:hover { background: $colorHoverMedium; }
+        .item.add:hover { background: $colorShapeHighlightMedium; }
     }
 }
 
@@ -191,7 +191,7 @@
 		.controls { border-color: $colorLinePrimary; }
 		.controls {
 			.side.left {
-				.element:hover { background-color: $colorHoverMedium; }
+				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
 

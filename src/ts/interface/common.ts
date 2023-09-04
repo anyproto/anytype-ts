@@ -2,9 +2,9 @@ import { RouteComponentProps } from 'react-router';
 import { I } from 'Lib';
 
 export enum Platform {
-	Windows = 'Windows',
-	Mac = 'Mac',
-	Linux = 'Linux',
+	Windows	 = 'Windows',
+	Mac		 = 'Mac',
+	Linux	 = 'Linux',
 };
 
 export enum DropType {
@@ -56,7 +56,7 @@ export enum ToastAction {
 	Link		 	= 2,
 	Lock 		 	= 3,
 	Collection	 	= 4,
-	StorageFull = 5,
+	StorageFull		= 5,
 	TemplateCreate	= 6,
 	Archive 		= 7,
 };
@@ -97,19 +97,19 @@ export enum ImportType {
 };
 
 export enum ExportType {
-	Markdown = 0,
-	Protobuf = 1,
-	Json	 = 2,
-	Dot		 = 3,
-	Svg		 = 4,
-	GraphJson = 5,
+	Markdown	 = 0,
+	Protobuf	 = 1,
+	Json		 = 2,
+	Dot			 = 3,
+	Svg			 = 4,
+	GraphJson	 = 5,
 
-	Html	 = 100,
-	Pdf		 = 110,
+	Html		 = 100,
+	Pdf			 = 110,
 };
 
 export enum Source {
-	Popup = 0,
+	Popup		 = 0,
 };
 
 export enum EdgeType {
@@ -158,7 +158,6 @@ export interface PageComponent extends RouteComponentProps<any> {
 };
 
 export interface FooterComponent {
-	onAdd?: (e: any) => void;
 	onHelp?: (e: any) => void;
 	onTogglePanel?: (toggle: boolean) => void;
 };

@@ -1,6 +1,41 @@
+/* Text */
+
+$colorTextPrimary: #252525;
+$colorTextSecondary: #949494;
+$colorTextTertiary: #bfbfbf;
+$colorTextInversion: #fff;
+
+/* Shape */
+
+$colorShapePrimary: #e3e3e3;
+$colorShapeSecondary: #ebebeb;
+$colorShapeTertiary: #f2f2f2;
+
+$colorShapeHighlightMedium: rgba(79,79,79,0.08);
+$colorShapeHighlightLight: rgba(79,79,79,0.04);
+
+/* Control */
+
+$colorControlAccent: #252525;
+$colorControlActive: #b6b6b6;
+$colorControlInactive: #dcdcdc;
+$colorControlOnBg: #fff;
+
+/* Background */
+
 $colorVeryLightGrey: #f2f2f2;
 $colorMediumGrey: #b6b6b6;
 $colorDarkGrey: #949494;
+
+/* Accent */
+
+$colorAccent125: #f09c0e;
+$colorAccent100: #ffb522;
+$colorAccent80: #ffc532;
+$colorAccent50: #ffd15b;
+$colorAccent25: #ffee94;
+
+/* Color */
 
 $colorWhite: #fff;
 $colorBlack: #252525;
@@ -15,13 +50,6 @@ $colorTeal: #0fc8ba;
 $colorLime: #5dd400;
 $colorGreen: #57c600;
 
-$colorBorderLight: #ebebeb;
-$colorBorderDark: #e3e3e3;
-$colorSecondary: #d4d4d4;
-$colorLineTertiary: #2b2b2b;
-
-$colorHoverMedium: rgba(79,79,79,0.08);
-$colorHoverLight: rgba(79,79,79,0.04);
 $colorBgLoader: rgba(255,255,255,0.7);
 
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -32,7 +60,6 @@ $transitionAllCommon: all $transitionCommon;
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @mixin text-9 { font-size: 9px; line-height: 12px; letter-spacing: 0.14px; }
-@mixin text-extra-small { font-size: 10px; line-height: 18px; letter-spacing: 0.1px; color: $colorSecondary; }
 @mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: $colorMediumGrey; }
 @mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0px; }
 @mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; }

@@ -1,7 +1,7 @@
 .block.blockCover {
     .loaderWrapper { background: rgba(0,0,0,0.3); }
     .loaderWrapper {
-        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorAccent100; }
     }
 
     .elements {
@@ -16,7 +16,7 @@
 		}
     }
 
-    .author a:hover { color: $colorOrange; }
+    .author a:hover { color: $colorAccent100; }
 }
 
 .blocks {
@@ -46,7 +46,7 @@
 
 	.block.blockFeatured { color: $colorSecondary; }
     .block.blockFeatured {
-        .cellContent:hover, .cellContent.hover { background: $colorHoverMedium; }
+        .cellContent:hover, .cellContent.hover { background: $colorShapeHighlightMedium; }
     }
 
     /* BlockFile */
@@ -58,7 +58,7 @@
 	/* BlockRelation */
 
 	.block.blockRelation {
-        .cell.canEdit:hover { background: $colorHoverMedium; }
+        .cell.canEdit:hover { background: $colorShapeHighlightMedium; }
     }
 
     /* BlockMedia */
@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorHoverMedium; }
+    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorShapeHighlightMedium; }
 
     /* BlockDataview */
 
@@ -94,7 +94,7 @@
 
 		.dataviewHead { border-color: $colorLineSecondary; color: $colorPrimary; }
 		.dataviewHead {
-			.icon:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
 		}
 
@@ -112,9 +112,9 @@
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
-            .viewItem.isDragging { background: $colorHoverMedium; }
+            .viewItem.isDragging { background: $colorShapeHighlightMedium; }
 
-			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
+			.icon:hover, .icon.active { background-color: $colorShapeHighlightMedium; }
 			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.btn-sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
@@ -124,12 +124,12 @@
 			.side.left { color: $colorPrimary; }
 			.side.right {
 				.element.black { color: $colorPrimary; }
-				.element:hover { background-color: $colorHoverMedium; }
+				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
 
-        .cellHead.isDragging { background: $colorHoverMedium; }
-		.cellHead.isDragging::after { background-color: $colorHoverMedium; }
+        .cellHead.isDragging { background: $colorShapeHighlightMedium; }
+		.cellHead.isDragging::after { background-color: $colorShapeHighlightMedium; }
 
         .viewContent.viewGrid,
 		.viewContent.viewList {
@@ -179,11 +179,11 @@
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
 
-			.card.isEditing { border: 2px solid $colorOrange; }
+			.card.isEditing { border: 2px solid $colorAccent100; }
         }
 
         .viewContent.viewBoard {
-			.ghost { border-color: $colorOrange; }
+			.ghost { border-color: $colorAccent100; }
             .cardContent { background: $colorBgLight; border-color: $colorLineTertiary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
@@ -203,7 +203,7 @@
             }
 
 			.card.isEditing {
-				.cardContent { border: 2px solid $colorOrange; }
+				.cardContent { border: 2px solid $colorAccent100; }
 			}
         }
 
@@ -216,13 +216,13 @@
 
     .block.blockType {
         .item { border-color: $colorLineSecondary; color: $colorSecondary; }
-        .item.hover { background: $colorHoverMedium; }
+        .item.hover { background: $colorShapeHighlightMedium; }
     }
 
     /* BlockText */
 
     .block.blockText {
-        kbd { background: $colorHoverMedium; color: $colorOrange; }
+        kbd { background: $colorShapeHighlightMedium; color: $colorAccent100; }
 		lnk, obj { border-color: $colorSecondary; }
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
@@ -282,7 +282,7 @@
 		.loaderWrapper { border: 0px; }
 		.deleted { color: $colorSecondary; }
 
-        .inner { border-color: transparent; background-color: $colorHoverMedium; }
+        .inner { border-color: transparent; background-color: $colorShapeHighlightMedium; }
         .inner {
 			.name { color: $colorPrimary; }
     	    .descr { color: $colorSecondary; }
@@ -302,8 +302,8 @@
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: #42413a; background-image: url('#{$themePath}/icon/table/plus.svg'); }
-		.plusButton.circle .icon { background-color: #42413a; }
+		.plusButton .icon { background-color: $colorShapeTertiary; background-image: url('#{$themePath}/icon/table/plus.svg'); }
+		.plusButton.circle .icon { background-color: $colorShapeTertiary; }
 
 		.handle { 
 			.inner::before { background-color: $colorBlack; }
@@ -311,7 +311,7 @@
 		
 		.row { border-color: $colorLinePrimary; }
 		.row.isHeader {
-			.cell { background-color: rgba(140, 158, 165, 0.25); }
+			.cell { background-color: $colorShapeHighlightMedium; }
 		}
 
 		.cell { background: $colorBlack; border-color: $colorLinePrimary; }
@@ -319,7 +319,7 @@
 			.block { color: $colorPrimary; }
 
 			.icon.menu:hover {
-				.inner { box-shadow: 0px 0px; background-color: #484843; }
+				.inner { box-shadow: 0px 0px; background-color: $colorShapePrimary; }
 			}
 		}
 	}

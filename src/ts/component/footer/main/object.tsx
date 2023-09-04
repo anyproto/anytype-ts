@@ -8,18 +8,16 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 		const { onHelp } = this.props;
 
 		return (
-			<React.Fragment>
-				<div 
-					id="button-help" 
-					className="iconWrap" 
-					onClick={onHelp}
-					onMouseEnter={e => this.onTooltipShow(e, translate('commonHelp'))}
-					onMouseLeave={e => Preview.tooltipHide(false)}
-				>
-					<Icon />
-					<div className="bg" />
-				</div>
-			</React.Fragment>
+			<div 
+				id="button-help" 
+				className="iconWrap" 
+				onClick={onHelp}
+				onMouseEnter={e => this.onTooltipShow(e, translate('commonHelp'))}
+				onMouseLeave={() => Preview.tooltipHide(false)}
+			>
+				<Icon />
+				<div className="bg" />
+			</div>
 		);
 	};
 

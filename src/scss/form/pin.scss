@@ -3,9 +3,9 @@
 .pin {
     .input { 
         width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;
-        border: 1px solid $colorBorderDark; border-radius: 2px;
+        border: 1px solid $colorShapePrimary; border-radius: 2px;
     }
-    .input.active { box-shadow: 0px 0px 0px 1px $colorOrange inset; border-color: $colorOrange; }
+    .input.active { box-shadow: 0px 0px 0px 1px $colorAccent100 inset; border-color: $colorAccent100; }
     .input-password { font-size: 14px; line-height: 1; }
     .input:last-child { margin: 0px; }
 }

@@ -55,8 +55,7 @@ class Focus {
 		};
 
 		if (withRange) {
-			$(document.activeElement).blur();
-			window.getSelection().removeAllRanges();
+			UtilCommon.clearSelection();
 			keyboard.setFocus(false);
 		};
 
@@ -84,7 +83,7 @@ class Focus {
 		if (node.hasClass('input')) {
 			window.setTimeout(() => { (el as HTMLInputElement).setSelectionRange(range.from, range.to); });
 		} else
-		if (node.attr('contenteditable')) {
+		if (node.hasClass('editable')) {
 			keyboard.setFocus(true);
 			setRange(el, { start: range.from, end: range.to });
 		};

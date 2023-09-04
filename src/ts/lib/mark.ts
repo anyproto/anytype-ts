@@ -408,24 +408,24 @@ class Mark {
 		return obj;
 	};
 	
-	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, marksChanged: boolean } {
+	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
+		const marks: I.Mark[] = [];
 
 		html = obj.html();
 		html = html.replace(/data-range="[^"]+"/g, '');
 		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
-		const marks: any[] = [];
 
 		// TODO: find classes by color or background
-		html.replace(/<font([^>]*?)>([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+		html.replace(/<font([^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p1: string, p2: string) => {
 			text = text.replace(s, p2);
 			return '';
 		});
-		html.replace(/<span style="background-color: ([^;]+);">([^<]*)<\/span>/g, (s: string, p1: string, p2: string) => {
+		html.replace(/<span style="background-color: ([^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p1: string, p2: string) => {
 			text = text.replace(s, p2);
 			return '';
 		});
@@ -482,19 +482,19 @@ class Mark {
 			return '';
 		});
 
-		text = this.fromUnicode(text, marks);
-		return this.fromMarkdown(text, marks, restricted);
+		const parsed = this.fromUnicode(text, marks);
+		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks);
 	};
 
-	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]): { marks: I.Mark[], text: string, marksChanged: boolean } {
-		let text = html;
-		const test = /[`\*_~\[]{1}/.test(text);
+	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
+		const test = /[`\*_~\[]{1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
-		let marksChanged = false;
 
 		if (!test) {
-			return { marks, text, marksChanged };
+			return { marks, text: html, adjustMarks };
 		};
+
+		let text = html;
 
 		// Markdown
 		for (const item of this.regexpMarkdown) {
@@ -523,10 +523,11 @@ class Mark {
 				};
 
 				if (check) {
-					this.adjust(marks, from, -p2.length * 2);
+					marks = this.adjust(marks, from, -p2.length * 2);
+
 					marks.push({ type: item.type, range: { from, to }, param: '' });
 					text = text.replace(s, replace);
-					marksChanged = true;
+					adjustMarks = true;
 				};
 				return s;
 			});
@@ -556,7 +557,7 @@ class Mark {
 				};
 			};
 
-			this.adjust(marks, from, -(p2.length + 4));
+			marks = this.adjust(marks, from, -(p2.length + 4));
 
 			for (const i of innerIdx) {
 				marks[i].range.from = from;
@@ -564,27 +565,30 @@ class Mark {
 			};
 
 			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
-			marksChanged = true;
+			adjustMarks = true;
 
 			text = text.replace(s, p1 + ' ');
 			return s;
 		});
 
 		marks = this.checkRanges(text, marks);
-		return { marks, text, marksChanged };
+		return { marks, text, adjustMarks };
 	};
 
 	// Unicode symbols
-	fromUnicode (html: string, marks: I.Mark[]): string {
-		const checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
-		let text = html;
+	fromUnicode (html: string, marks: I.Mark[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
-		const reg = new RegExp('(' + keys.join('|') + ')', 'g');
-		const test = reg.test(text);
+		const reg = new RegExp(`(${keys.join('|')})`, 'g');
+		const test = reg.test(html);
 
 		if (!test) {
-			return text;
+			return { marks, text: html, adjustMarks: false };
 		};
+
+		const checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
+
+		let text = html;
+		let adjustMarks = false;
 
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
@@ -597,11 +601,13 @@ class Mark {
 
 			if (check && Patterns[p]) {
 				text = text.replace(s, Patterns[p]);
+				marks = this.adjust(marks, o, Patterns[p].length - p.length);
+				adjustMarks = true;
 			};
 			return '';
 		});
 
-		return text;
+		return { marks, text, adjustMarks };
 	};
 	
 	paramToAttr (type: I.MarkType, param: string): string {

@@ -3,5 +3,5 @@
 .dotIndicator { display: flex; justify-content: center; align-items: center; gap: 0px 6px; }
 .dotIndicator {
     span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: $colorBlack; }
-    span.active { background-color: $colorSecondary; opacity: 0.9; }
+    span.active { background-color: $colorShapePrimary; opacity: 0.9; }
 }
