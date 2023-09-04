@@ -15,7 +15,7 @@
 
             .title { padding: 4px 0; margin-bottom: 6px; }
 
-            .items { display: flex; gap: 12px; flex-wrap: wrap; }
+            .items { display: grid; grid-template-columns: repeat(2, 158px); grid-gap: 12px; }
             .items {
                 .previewObject { flex-shrink: 0; }
                 .previewObject {
