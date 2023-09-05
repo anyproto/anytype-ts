@@ -24,6 +24,8 @@
 		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
 		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
 
+        .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+
         .icon.color {
             .inner.textColor-default { background-color: $colorPrimary; }
             .inner.bgColor-default { background: transparent; }
@@ -351,4 +353,26 @@
 			.button:hover { color: $colorPrimary; }
 		}
 	}
+
+    /* MenuDataviewViewLayout */
+
+    .menu.menuDataviewViewLayout {
+        .layouts {
+            .layout { border-color: $colorLineSecondary; }
+            .layout {
+                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg'); }
+                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
+                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery0.svg'); }
+                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
+            }
+            .layout:hover { background-color: rgba(238, 238, 238, 0.06); }
+            .layout.active { border: 2px solid $colorOrange; }
+            .layout.active {
+                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg'); }
+                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
+                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
+                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
+            }
+        }
+    }
 }
