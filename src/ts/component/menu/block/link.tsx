@@ -247,7 +247,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		if (items.length) {
-			items.push({ isDiv: true });
+			buttons.push({ isDiv: true });
 		};
 
 		if (UtilCommon.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
@@ -256,11 +256,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const sections: any[] = [];
 
+		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
+
 		if (items.length) {
 			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: items });
 		};
-
-		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
 
 		return UtilMenu.sectionsMap(sections);
 	};
