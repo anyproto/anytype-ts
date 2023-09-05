@@ -105,7 +105,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 							return;
 						};
 
-						analytics.event('CreateTemplate', { objectType: typeId, route: 'menuDataviewTemplate' });
+						analytics.event('CreateTemplate', { objectType: typeId, route });
 
 						if (onDuplicate) {
 							onDuplicate(message.details);
@@ -119,7 +119,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 						if (onDuplicate) {
 							onDuplicate({ ...template, id: message.ids[0] });
 						};
-						analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
+						analytics.event('DuplicateObject', { count: 1, route });
 					};
 				});
 				break;
