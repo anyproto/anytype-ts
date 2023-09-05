@@ -31,6 +31,7 @@ class WindowManager {
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {},
+			autoHideMenuBar: true,
 		}, param);
 
 		param.webPreferences = Object.assign({
