@@ -69,6 +69,12 @@
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
 				}
+
+				.logoutWrapper { position: absolute; left: 8px; bottom: 12px; height: 32px; display: flex; gap: 0px 8px; align-items: center; padding: 0px 8px; }
+				.logoutWrapper {
+					.icon.logout { width: 22px; height: 22px; flex-shrink: 0; background-image: url('~img/icon/popup/settings/logout.svg'); }
+					.label { @include text-common; }
+				}
 			}
 
 			> .side.right { width: 70%; padding: 44px 54px; overflow-x: hidden; overflow-y: auto; }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
+import { IconObject, Input, Title, Loader, Icon } from 'Component';
 import { I, C, translate, UtilCommon, Action, UtilObject } from 'Lib';
 import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -19,9 +19,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	refName: any = null;
 	refDescription: any = null;
-	pinConfirmed = false;
 	format = '';
-	refCheckbox: any = null;
 	state = {
 		error: '',
 		loading: false,
@@ -34,7 +32,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
-		this.onLogout = this.onLogout.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
@@ -89,16 +86,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Icon className="copy" />
 					</div>
 				</div>
-
-				<div className="section bottom">
-					<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
-				</div>
 			</div>
 		);
-	};
-
-	onLogout (e: any) {
-		this.props.onPage('logout');
 	};
 
 	onLocationMove () {
