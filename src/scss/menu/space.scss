@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSpace { 
-		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 12px;
+		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 12px 8px 12px;
 		box-shadow: 0px 0px; min-width: 200px; max-width: 600px;
 	}
 
@@ -10,27 +10,27 @@
 		.wrap { width: 100%; }
 
 		.head { 
-			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 20px 0px; 
+			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
 			@include text-paragraph; font-weight: 500; padding: 0px 4px;
 		}
 		.head {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 		}
 
-		.items { display: flex; flex-direction: row; gap: 24px; flex-wrap: wrap; }
+		.items { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; }
 		.items {
-			.item { width: 104px; display: flex; flex-direction: column; align-items: center; gap: 10px 0px; }
+			.item { width: 104px; display: flex; flex-direction: column; align-items: center; gap: 6px 0px; }
 			.item {
 				.iconWrap { 
-					width: 100%; height: 104px; border: 4px solid rgba(255,255,255,0); border-radius: 8px; overflow: hidden; 
+					width: 100%; height: 104px; border: 4px solid rgba(255,255,255,0); border-radius: 16px; overflow: hidden; 
 					transition: border $transitionCommon;
 				}
 				.iconObject { border-radius: 0px; }
-				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; }
+				.name { @include text-overflow-nw; width: 100%; text-align: center; }
 			}
 			.item.add {
 				.iconWrap { 
-					border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.40); background: rgba(255, 255, 255, 0.20); 
+					border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.20); 
 					background: url('~img/icon/plus/space.svg') no-repeat; background-size: 20px; background-position: center;
 				}
 			}
@@ -39,7 +39,7 @@
 				.iconWrap { border-color: #fff; }
 			}
 			.item.add:hover { 
-				.iconWrap { border-width: 4px; }
+				.iconWrap { border-color: rgba(255, 255, 255, 0.7); }
 			}
 		}
 	}
