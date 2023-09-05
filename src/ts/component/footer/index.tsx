@@ -3,6 +3,7 @@ import { I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
+import FooterAuthDisclaimer from './auth/disclaimer';
 import FooterMainObject from './main/object';
 
 interface Props extends I.FooterComponent {
@@ -12,6 +13,7 @@ interface Props extends I.FooterComponent {
 
 const Components = {
 	authIndex:			 FooterAuthIndex,
+	authDisclaimer:		 FooterAuthDisclaimer,
 	mainObject:			 FooterMainObject,
 };
 
