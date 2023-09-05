@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilData, UtilObject, UtilRouter } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter } from 'Lib';
 import { dbStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -58,6 +58,14 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		);
 	};
 
+	componentDidMount (): void {
+		this.beforePosition();
+	};
+
+	componentDidUpdate (): void {
+		this.beforePosition();
+	};
+
 	getItems () {
 		const subId = Constant.subId.space;
 		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
@@ -78,8 +86,25 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		this.props.close();
 	};
 
-	resize () {
-		this.props.position();
+	beforePosition () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+		const container = UtilCommon.getPageContainer(false);
+		const editor = container.find('#editorWrapper');
+
+		let mw = 0;
+
+		if (editor.length) {
+			mw = editor.width();
+		} else {
+			const { ww } = UtilCommon.getWindowDimensions();
+			const sidebar = $('#sidebar');
+			const sw = sidebar.outerWidth();
+
+			mw = ww - sw;
+		};
+
+		obj.css({ maxWidth: mw });
 	};
 	
 });

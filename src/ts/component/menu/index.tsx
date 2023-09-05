@@ -446,6 +446,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
 
+		if (this.ref && this.ref.beforePosition) {
+			this.ref.beforePosition();
+		};
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;
