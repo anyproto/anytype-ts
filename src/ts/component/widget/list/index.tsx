@@ -117,7 +117,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let viewSelect = null;
 
-		if (!isCollection(targetBlockId)) {
+		if (!isCollection(targetBlockId) && (views.length > 1)) {
 			if (isSelect) {
 				viewSelect = (
 					<Select 

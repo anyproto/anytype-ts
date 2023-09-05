@@ -79,6 +79,9 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.spaceId = space);
+
+		console.log(items, space, this.n);
+
 		this.rebind();
 	};
 
