@@ -375,4 +375,12 @@
             }
         }
     }
+
+    /* MenuDataviewCreateBookmark */
+
+    .menu.menuDataviewTemplateList {
+        .content {
+            .emptySearch { border-color: $colorLinePrimary; }
+        }
+    }
 }
