@@ -27,6 +27,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				id={`item-${item.id}`}
 				className="item" 
 				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onMouseEnter(e, item)} 
 			>
 				<div className="iconWrap">
 					<IconObject object={item} size={96} forceLetter={true} />
@@ -35,8 +36,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			</div>
 		);
 
-		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
+		const ItemAdd = (item: any) => (
+			<div 
+				id="item-add" 
+				className="item add" 
+				onClick={this.onAdd}
+				onMouseEnter={e => this.onMouseEnter(e, item)} 
+			>
 				<div className="iconWrap" />
 			</div>
 		);
@@ -58,7 +64,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				<div className="items">
 					{items.map(item => {
 						if (item.id == 'add') {
-							return <ItemAdd key={`item-space-${item.id}`} />;
+							return <ItemAdd key={`item-space-${item.id}`} {...item} />;
 						} else {
 							return <Item key={`item-space-${item.id}`} {...item} />;
 						};
@@ -72,7 +78,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { space } = commonStore;
 		const items = this.getItems();
 
-		this.n = items.findIndex(it => it.id = space);
+		this.n = items.findIndex(it => it.spaceId = space);
 		this.rebind();
 	};
 
@@ -104,6 +110,12 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		if (!ret) {
 			this.props.onKeyDown(e);
+		};
+	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
 		};
 	};
 
