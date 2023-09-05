@@ -114,6 +114,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
+		if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'blockDataviewIsCollectionSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -421,6 +422,17 @@ class Dispatcher {
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
+
+				case 'blockDataviewIsCollectionSet':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.isCollection = data.getValue();
+					blockStore.updateContent(rootId, id, block.content);
+					break;
 
 				case 'blockSetWidget': {
 					id = data.getId();
