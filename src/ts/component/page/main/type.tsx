@@ -521,6 +521,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					template,
 					typeId: rootId,
 					templateId: defaultTemplateId,
+					route: 'Type',
 					onSetDefault: () => {
 						UtilObject.setDefaultTemplateId(rootId, template.id);
 					},

@@ -547,6 +547,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'setDefault': {
 				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
+				analytics.event('ChangeDefaultTemplate', { route: 'Type' });
 				break;
 			};
 		};
