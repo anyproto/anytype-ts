@@ -32,8 +32,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onName = this.onName.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	};
 
@@ -66,7 +66,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							noUpload={true}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}
-							onUpload={this.onUpload}
 						/>
 					</div>
 
@@ -76,7 +75,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<Input
 								ref={ref => this.refName = ref}
 								value=""
-								onKeyUp={this.onName}
+								onKeyDown={this.onKeyDown}
+								onKeyUp={this.onKeyUp}
 								placeholder={UtilObject.defaultName('Page')}
 							/>
 						</div>
@@ -123,6 +123,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		);
 	};
 
+	componentDidMount (): void {
+		window.setTimeout(() => this.refName?.focus(), 15);
+	};
+
 	componentWillUnmount(): void {
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
 	};
@@ -131,21 +135,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.setState({ iconEmoji, iconImage: '' });
 	};
 
-	onUpload (iconImage: string) {
-		this.setState({ iconEmoji: '', iconImage });
+	onKeyDown (e: any, v: string) {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+
+			this.onSubmit();
+		});
 	};
 
-	onName (e: any, v: string) {
-		let ret = false;
-		
-		keyboard.shortcut('enter', e, () => {
-			this.onSubmit();
-			ret = true;
-		});
-
-		if (!ret) {
-			this.setState({ name: this.checkName(v) });
-		};
+	onKeyUp (e: any, v: string) {
+		this.setState({ name: this.checkName(v) });
 	};
 
 	onSubmit () {
@@ -160,8 +159,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		C.WorkspaceCreate(this.state,  this.state.useCase, (message: any) => {
 			this.setState({ isLoading: false });
-			UtilRouter.switchSpace(message.objectId);
-			close();
+			UtilRouter.switchSpace(message.objectId, '', () => close());
 		});
 	};
 

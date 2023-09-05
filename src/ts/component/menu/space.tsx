@@ -78,10 +78,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { space } = commonStore;
 		const items = this.getItems();
 
-		this.n = items.findIndex(it => it.spaceId = space);
-
-		console.log(items, space, this.n);
-
+		this.n = items.findIndex(it => it.spaceId == space);
 		this.rebind();
 	};
 
@@ -139,11 +136,20 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
+		const { space } = commonStore;
 		const subId = Constant.subId.space;
 		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
 
-		items.push({ id: 'add' });
+		items.sort((c1, c2) => {
+			const isSpace1 = c1.spaceId == space;
+			const isSpace2 = c2.spaceId == space;
 
+			if (isSpace1 && !isSpace2) return -1;
+			if (!isSpace1 && isSpace2) return 1;
+			return 0;
+		});
+
+		items.push({ id: 'add' });
 		return items;
 	};
 
