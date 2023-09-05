@@ -132,12 +132,12 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
-			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
+			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
 			if (!UtilCommon.getSelectionRange() && isMac) {
-				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
-				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
+				this.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
+				this.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
 		};
 
@@ -179,13 +179,20 @@ class Keyboard {
 				popupStore.open('shortcut', { preventResize: true });
 			});
 
+			// Spaces
+			this.shortcut('ctrl+tab', e, () => {
+				if (!menuStore.isOpen('space')) {
+					this.onSpaceMenu();
+				};
+			});
+
 			// Lock/Unlock
-			keyboard.shortcut(`ctrl+shift+l`, e, () => {
-				keyboard.onToggleLock();
+			this.shortcut(`ctrl+shift+l`, e, () => {
+				this.onToggleLock();
 			});
 
 			// Print
-			keyboard.shortcut(`${cmd}+p`, e, () => {
+			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
 				this.onPrint('Shortcut');
 			});
@@ -448,7 +455,7 @@ class Keyboard {
 			return;
 		};
 
-		const rootId = keyboard.getRootId();
+		const rootId = this.getRootId();
 		const logPath = window.Electron.logPath;
 		const tmpPath = window.Electron.tmpPath;
 
@@ -727,6 +734,18 @@ class Keyboard {
 	onSearchPopup () {
 		popupStore.open('search', {
 			data: { isPopup: this.isPopup() },
+		});
+	};
+
+	onSpaceMenu () {
+		menuStore.open('space', {
+			element: '#navigationPanel',
+			className: 'fixed',
+			classNameWrap: 'fromNavigation',
+			type: I.MenuType.Horizontal,
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
+			offsetY: -12,
 		});
 	};
 

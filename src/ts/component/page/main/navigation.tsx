@@ -302,7 +302,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			const dir = pressed.match(Key.up) ? -1 : 1;
+			const dir = pressed == 'arrowup' ? -1 : 1;
 
 			this.n += dir;
 			if (this.n < 0) {
@@ -315,7 +315,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			const dir = pressed.match(Key.left) ? -1 : 1;
+			const dir = pressed == 'arrowleft' ? -1 : 1;
 
 			this.panel += dir;
 

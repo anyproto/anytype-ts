@@ -35,10 +35,10 @@
 				}
 			}
 
-			.item:hover, .item.active {
+			.item.hover, .item.active {
 				.iconWrap { border-color: #fff; }
 			}
-			.item.add:hover { 
+			.item.add.hover, .item.add.active { 
 				.iconWrap { border-color: rgba(255, 255, 255, 0.7); }
 			}
 		}

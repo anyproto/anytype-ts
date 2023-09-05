@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter } from 'Lib';
-import { dbStore, detailStore, popupStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard } from 'Lib';
+import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -20,15 +20,24 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	
 	render () {
 		const items = this.getItems();
-		const space = UtilObject.getWorkspace();
 		const profile = UtilObject.getProfile();
 
 		const Item = (item) => (
-			<div className={[ 'item', (item.spaceId == space.spaceId ? 'active' : '') ].join(' ')} onClick={e => this.onClick(e, item)}>
+			<div 
+				id={`item-${item.id}`}
+				className="item" 
+				onClick={e => this.onClick(e, item)}
+			>
 				<div className="iconWrap">
 					<IconObject object={item} size={96} forceLetter={true} />
 				</div>
 				<ObjectName object={item} />
+			</div>
+		);
+
+		const ItemAdd = () => (
+			<div id="item-add" className="item add" onClick={this.onAdd}>
+				<div className="iconWrap" />
 			</div>
 		);
 
@@ -47,33 +56,89 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 					</div>
 				</div>
 				<div className="items">
-					{items.map((item) => (
-						<Item key={`item-space-${item.id}`} {...item} />
-					))}
-					<div className="item add" onClick={this.onAdd}>
-						<div className="iconWrap" />
-					</div>
+					{items.map(item => {
+						if (item.id == 'add') {
+							return <ItemAdd key={`item-space-${item.id}`} />;
+						} else {
+							return <Item key={`item-space-${item.id}`} {...item} />;
+						};
+					})}
 				</div>
 			</div>
 		);
 	};
 
 	componentDidMount (): void {
-		this.beforePosition();
+		const { space } = commonStore;
+		const items = this.getItems();
+
+		this.n = items.findIndex(it => it.id = space);
+		this.rebind();
 	};
 
 	componentDidUpdate (): void {
 		this.beforePosition();
 	};
 
+	componentWillUnmount (): void {
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
+	};
+	
+	unbind () {
+		$(window).off('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		let ret = false;
+
+		keyboard.shortcut('arrowleft, arrowright, ctrl+tab', e, (pressed: string) => {
+			this.onArrow(pressed == 'arrowleft' ? -1 : 1);
+			ret = true;
+		});
+
+		if (!ret) {
+			this.props.onKeyDown(e);
+		};
+	};
+
+	onArrow (dir: number) {
+		const items = this.getItems();
+		const max = items.length - 1;
+
+		this.n += dir;
+
+		if (this.n < 0) {
+			this.n = max;
+		};
+		if (this.n > max) {
+			this.n = 0;
+		};
+
+		this.props.setActive();
+	};
+
 	getItems () {
 		const subId = Constant.subId.space;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+
+		items.push({ id: 'add' });
+
+		return items;
 	};
 
 	onClick (e: any, item: any) {
-		UtilRouter.switchSpace(item.spaceId);
-		this.props.close();
+		if (item.id == 'add') {
+			this.onAdd();
+		} else {
+			UtilRouter.switchSpace(item.spaceId);
+			this.props.close();
+		};
 	};
 
 	onAdd () {

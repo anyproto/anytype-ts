@@ -256,7 +256,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed.match(Key.up) ? -1 : 1);
+			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
