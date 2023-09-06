@@ -71,6 +71,10 @@ html.printMedia {
 			}
 		}
 
+		.block.blockLink.card {
+			.linkCard { box-shadow: 0px 0px; }
+		}
+
 		.block.blockBookmark {
 			.inner { box-shadow: 0px 0px; }
 		}
