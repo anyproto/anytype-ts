@@ -178,7 +178,6 @@ class Dispatcher {
 		let viewId = '';
 		let keys: string[] = [];
 		let subIds: string[] = [];
-		let uniqueSubIds: string[] = [];
 		let subId = '';
 		let afterId = '';
 		let content: any = {};
@@ -875,14 +874,10 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 
 					// Subscriptions
+					this.getUniqueSubIds(subIds).forEach(subId => detailStore.delete(subId, id, keys));
 
-					if (subIds.length) {
-						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						UtilCommon.arrayUnique(uniqueSubIds).forEach(subId => detailStore.delete(subId, id, keys));
-					} else {
-						detailStore.delete(rootId, id, keys);
-						blockStore.checkTypeSelect(rootId);
-					};
+					detailStore.delete(rootId, id, keys);
+					blockStore.checkTypeSelect(rootId);
 					break;
 				};
 
@@ -1047,26 +1042,26 @@ class Dispatcher {
 		}, 10);
 	};
 
+	getUniqueSubIds (subIds: string[]) {
+		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]))
+	};
+
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
+		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+
+		detailStore.update(rootId, { id, details }, clear);
+
 		const root = blockStore.getLeaf(rootId, id);
-
-		if (subIds.length) {
-			const uniqueSubIds = subIds.map(it => it.split('/')[0]);
-			UtilCommon.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
-		} else {
-			detailStore.update(rootId, { id, details }, clear);
-
-			if ((id == rootId) && root) {
-				if ((undefined !== details.layout) && (root.layout != details.layout)) {
-					blockStore.update(rootId, rootId, { layout: details.layout });
-				};
-
-				if (undefined !== details.setOf) {
-					blockStore.updateWidgetData(rootId);
-				};
-
-				blockStore.checkTypeSelect(rootId);
+		if ((id == rootId) && root) {
+			if ((undefined !== details.layout) && (root.layout != details.layout)) {
+				blockStore.update(rootId, rootId, { layout: details.layout });
 			};
+
+			if (undefined !== details.setOf) {
+				blockStore.updateWidgetData(rootId);
+			};
+
+			blockStore.checkTypeSelect(rootId);
 		};
 	};
 
