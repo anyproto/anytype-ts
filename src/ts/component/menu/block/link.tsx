@@ -226,7 +226,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { data } = param;
 		const { type, onChange } = data;
 
-		onChange(type, '');
+		if (type !== null) {
+			onChange(type, '');
+		};
 		close();
 		focus.apply();
 	};

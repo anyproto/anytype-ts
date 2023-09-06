@@ -89,12 +89,13 @@ class Mark {
 	};
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
-		if (mark.range.from == mark.range.to) {
+		if ((mark.type === null) || (mark.range.from == mark.range.to)) {
 			return marks;	
 		};
 
 		const map = UtilCommon.mapToArray(marks, 'type');
 		const type = mark.type;
+
 		let add = true;
 
 		map[type] = map[type] || [];
