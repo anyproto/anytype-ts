@@ -122,7 +122,7 @@ html.bodyAuthDeleted {
 	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
 	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorSecondary; }
 	.footer {
-		.disclaimer { color: $colorTertiary; }
+		.label.disclaimer { color: $colorTertiary; }
 	}
 
 	@media (max-width: 862px) {
