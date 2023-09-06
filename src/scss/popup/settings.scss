@@ -29,7 +29,10 @@
 		.sides { display: flex; height: 100%; }
 		.sides {
 			> .side { position: relative; height: 100%; }
-			> .side.left { width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; }
+			> .side.left { 
+				width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 
+				display: flex; flex-direction: column; justify-content: space-between;
+			}
 			> .side.left {
 				.iconObject.withLetter { background-color: $colorShapePrimary; }
 
@@ -54,6 +57,7 @@
 					.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
 					.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
@@ -68,12 +72,6 @@
 				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
-				}
-
-				.logoutWrapper { position: absolute; left: 8px; bottom: 12px; height: 32px; display: flex; gap: 0px 8px; align-items: center; padding: 0px 8px; }
-				.logoutWrapper {
-					.icon.logout { width: 22px; height: 22px; flex-shrink: 0; background-image: url('~img/icon/popup/settings/logout.svg'); }
-					.label { @include text-common; }
 				}
 			}
 
