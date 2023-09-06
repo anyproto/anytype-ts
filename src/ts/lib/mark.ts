@@ -102,9 +102,10 @@ class Mark {
 		map[type].slice().sort(this.sort);
 		
 		for (let i = 0; i < map[type].length; ++i) {
-			let del = false;
 			const el = map[type][i];
 			const overlap = this.overlap(mark.range, el.range);
+
+			let del = false;
 			
 			switch (overlap) {
 				case Overlap.Equal:
@@ -122,6 +123,7 @@ class Mark {
 				
 				case Overlap.InnerLeft:
 					el.range.from = mark.range.to;
+
 					if (!mark.param) {
 						add = false;
 					};
@@ -136,8 +138,8 @@ class Mark {
 					
 				case Overlap.Inner:
 					map[type].push({ type: el.type, param: el.param, range: { from: mark.range.to, to: el.range.to } });
-					el.range.to = mark.range.from;
 					
+					el.range.to = mark.range.from;
 					if (!mark.param) {
 						add = false;
 					};
@@ -154,7 +156,7 @@ class Mark {
 					break;
 					
 				case Overlap.Right:
-					if (el.param == mark.param) {
+					if (![ I.MarkType.Emoji ].includes(el.type) && (el.param == mark.param)) {
 						el.range.to = mark.range.to;
 						mark = el;
 						add = false;
@@ -201,23 +203,21 @@ class Mark {
 		for (let i = 0; i < marks.length; ++i) {
 			const mark = marks[i];
 			const prev = marks[(i - 1)];
+
 			let del = false;
-			
 			if (mark.range.from >= text.length) {
 				del = true;
 			};
-			
 			if (mark.range.from == mark.range.to) {
 				del = true;
 			};
-			
 			if ((mark.range.from < 0) || (mark.range.to < 0)) {
 				del = true;
 			};
 			
 			// Combine two marks into one
 			if (prev && 
-				([ I.MarkType.Mention, I.MarkType.Emoji ].indexOf(prev.type) < 0) && 
+				![ I.MarkType.Mention, I.MarkType.Emoji ].includes(prev.type) && 
 				(prev.range.to >= mark.range.from) && 
 				(prev.type == mark.type) && 
 				(prev.param == mark.param)) {
@@ -249,6 +249,7 @@ class Mark {
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
 		const map = UtilCommon.mapToArray(marks, 'type');
+
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
