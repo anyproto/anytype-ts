@@ -29,7 +29,10 @@
 		.sides { display: flex; height: 100%; }
 		.sides {
 			> .side { position: relative; height: 100%; }
-			> .side.left { width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; }
+			> .side.left { 
+				width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 
+				display: flex; flex-direction: column; justify-content: space-between;
+			}
 			> .side.left {
 				.iconObject.withLetter { background-color: $colorShapePrimary; }
 
@@ -54,6 +57,7 @@
 					.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
 					.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
