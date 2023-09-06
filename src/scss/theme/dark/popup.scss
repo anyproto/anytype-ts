@@ -31,6 +31,10 @@
 				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
 
 				.iconObject.withLetter { background-color: $colorLineTertiary; }
+
+				.logoutWrapper {
+					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
+				}
 			}
 
 			> .side.right {
