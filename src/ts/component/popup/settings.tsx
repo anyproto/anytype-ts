@@ -183,12 +183,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			>
 				{sections.length ? (
 					<div id="sideLeft" className="side left">
-						{sections.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
-						<div className="logoutWrapper" onClick={e => this.onPage('logout')}>
-							<Icon className="logout" />
-							<Label text={translate('popupSettingsLogout')} />
+						<div className="sections">
+							{sections.map((item: any, i: number) => (
+								<Section key={i} {...item} />
+							))}
+						</div>
+
+						<div className="section" onClick={e => this.onPage('logout')}>
+							<div className="items">
+								<div className="item">
+									<Icon className="logout" />
+									<Label text={translate('popupSettingsLogout')} />
+								</div>
+							</div>
 						</div>
 					</div>
 				) : ''}
