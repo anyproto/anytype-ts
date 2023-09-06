@@ -29,7 +29,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 						</div>
 					</div>
 				</Frame>
-				<Footer {...this.props} className="animation" component="authIndex" />
+				<Footer {...this.props} className="animation" component="authDisclaimer" />
 			</div>
 		);
 	};

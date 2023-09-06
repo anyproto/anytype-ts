@@ -266,6 +266,7 @@
     "authSelectLabel": "For those who celebrate trust &amp; autonomy. Anytype is your safe space to write, plan, think and organise everything that matters to you.",
     "authSelectLogin": "Login",
     "authSelectSignup": "Join",
+    "authDisclaimer": "By continuing you agree to <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
     "authLoginSelfHost": "Self-host",
     "authLoginSubmit": "Login",

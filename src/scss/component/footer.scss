@@ -6,6 +6,13 @@
 		width: 120px; position: absolute; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; 
 		opacity: 0.6;
 	}
+	.label.disclaimer {
+		@include text-small; position: absolute; left: 50%; bottom: 14px; width: 338px; margin-left: -169px;
+		white-space: nowrap; text-align: center; margin-bottom: 0;
+	}
+	.label.disclaimer {
+		a { text-decoration: none; color: unset; }
+	}
 
 	.iconWrap { width: 44px; height: 44px; position: relative; z-index: 10; position: absolute; bottom: 14px; }
 	.iconWrap {
