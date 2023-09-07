@@ -260,7 +260,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -288,19 +288,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
 		};
 
-		const updateDefaultTemplate = (item, callback) => {
+		const updateDefaultTemplate = (item, callBack: () => void) => {
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
 					onTemplateAdd();
 				};
-				return;
-			};
-
-			this.getDefaultTemplateName();
-			setDefaultTemplate(item.id);
-
-			if (callback) {
-				callback();
+			} else {
+				this.getDefaultTemplateName();
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
 		};
 
@@ -311,29 +306,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				subComponent: 'dataviewTemplateList',
 				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
 				data: {
-					getTypeId,
-					getTemplateId,
+					typeId,
+					templateId: getTemplateId(),
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,
 					onSetDefault: updateDefaultTemplate,
-					onArchive: (item, callback) => {
-						if (item.isDefault) {
-							setDefaultTemplate(Constant.templateId.blank);
-						};
-
-						if (callback) {
-							callback();
-						};
-					},
-					onTypeChange: (id, callback) => {
+					onTypeChange: (id, callBack: () => void) => {
 						if (id != getTypeId()) {
-							setDefaultType(id, () => {
-								setDefaultTemplate(Constant.templateId.blank);
-
-								if (callback) {
-									callback();
-								};
-							});
+							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: '' }, callBack);
 						};
 					}
 				}

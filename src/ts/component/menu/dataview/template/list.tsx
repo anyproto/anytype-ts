@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { analytics, I, UtilObject, translate, UtilData, } from 'Lib';
+import { I, UtilObject, translate, UtilData, } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,13 +27,37 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getTypeId, withTypeSelect } = data;
+		const { withTypeSelect, typeId } = data;
 
-		const typeId = this.typeId || getTypeId();
 		const type = dbStore.getType(typeId);
-		const itemBlank = { id: Constant.templateId.blank, targetTypeId: typeId };
-		const itemAdd = { id: Constant.templateId.new, targetTypeId: typeId };
+		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
+		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
+
+		const ItemBlank = () => (
+			<div
+				id={`item-${Constant.templateId.blank}`}
+				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+			>
+				<div
+					id={`item-more-${Constant.templateId.blank}`}
+					className="moreWrapper"
+					onClick={e => this.onMore(e, itemBlank)}
+				>
+					<Icon className="more" />
+				</div>
+
+				<div onClick={e => this.onClick(e, itemBlank)}>
+					<div className="scroller">
+						<div className="heading">
+							<div className="name">{translate('commonBlank')}</div>
+							<div className="featured" />
+						</div>
+					</div>
+					<div className="border" />
+				</div>
+			</div>
+		);
 
 		return (
 			<React.Fragment>
@@ -42,7 +66,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
 						<div className="item">
 							<IconObject object={type} size={18} />
-							<div className="name">{type.name || translate('commonObjectType')}</div>
+							<div className="name">{type?.name || translate('commonObjectType')}</div>
 						</div>
 						<Icon className="arrow black" />
 					</div>
@@ -52,33 +76,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				{isAllowed ? (
 					<div className="items">
-						<div
-							id={`item-${Constant.templateId.blank}`}
-							className={['previewObject', 'small', 'blank', this.isDefaultTempalte(Constant.templateId.blank) ? 'isDefault' : ''].join(' ')}
-						>
-							<div
-								id={`item-more-${Constant.templateId.blank}`}
-								className="moreWrapper"
-								onClick={e => this.onMore(e, itemBlank)}
-							>
-								<Icon className="more" />
-							</div>
-
-							<div onClick={e => this.onClick(e, itemBlank)}>
-								<div className="scroller">
-									<div className="heading">
-										<div className="name">{translate('commonBlank')}</div>
-										<div className="featured" />
-									</div>
-								</div>
-								<div className="border" />
-							</div>
-						</div>
+						<ItemBlank />
 
 						{this.items.map((item: any, i: number) => (
 							<PreviewObject
 								key={i}
-								className={this.isDefaultTempalte(item.id) ? 'isDefault' : ''}
+								className={this.isDefaultTemplate(item.id) ? 'isDefault' : ''}
 								rootId={item.id}
 								size={I.PreviewSize.Small}
 								onClick={e => this.onClick(e, item)}
@@ -118,8 +121,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getTypeId } = data;
-		const typeId = this.typeId || getTypeId();
+		const { typeId } = data;
 
 		if (clear) {
 			this.setState({ loading: true });
@@ -154,7 +156,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, onArchive, route, getTypeId, getTemplateId } = data;
+		const { onSetDefault, route, typeId, templateId } = data;
 		const node = $(`#item-${item.id}`)
 
 		e.preventDefault();
@@ -163,15 +165,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
 			menuStore.close('dataviewTemplateContext');
 			return;
-		};
-
-		const menuActions: any = {
-			onArchive: () => onArchive(item, this.reload),
-			onDuplicate: (object) => UtilObject.openPopup(object, {})
-		};
-
-		if (onSetDefault) {
-			menuActions.onSetDefault = () => onSetDefault(item, this.reload);
 		};
 
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
@@ -190,10 +183,16 @@ class MenuTemplateList extends React.Component<I.Menu> {
 				data: {
 					template: item,
 					isView: true,
-					typeId: this.typeId || getTypeId(),
-					templateId: getTemplateId(),
+					typeId,
+					templateId,
 					route,
-					...menuActions
+					onArchive: this.reload,
+					onDuplicate: (object) => UtilObject.openPopup(object, {}),
+					onSetDefault: () => { 
+						if (onSetDefault) {
+							onSetDefault(item, this.reload);
+						};
+					},
 				}
 			});
 		});
@@ -206,6 +205,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		if (onSelect) {
 			onSelect(item, this.reload);
+			menuStore.updateData(this.props.id, { templateId: item.id });
 		};
 	};
 
@@ -223,31 +223,30 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item) => {
-					const typesInstalled = dbStore.getTypes().map(it => it.sourceObject).filter(it => it);
-					const update = () => {
-						this.typeId = item.id;
+					const type = dbStore.getType(item.id);
+					if (!type) {
+						return;
+					};
+
+					window.setTimeout(() => {
+						menuStore.updateData(this.props.id, { typeId: item.id });
 						this.reload();
+
 						if (onTypeChange) {
 							onTypeChange(item.id, this.reload);
 						};
-					};
-
-					if (!typesInstalled.includes(item.id)) {
-						window.setTimeout(update, 50);
-					} else {
-						update();
-					};
+					}, type.isInstalled ? 0 : 50);
 				},
 			}
 		});
 	};
 
-	isDefaultTempalte (id: string): boolean {
+	isDefaultTemplate (id: string): boolean {
 		const { param } = this.props;
 		const { data } = param;
-		const { getTemplateId } = data;
+		const { templateId } = data;
 
-		return id == getTemplateId();
+		return id == templateId;
 	};
 };
 

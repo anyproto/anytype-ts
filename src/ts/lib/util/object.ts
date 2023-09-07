@@ -228,12 +228,9 @@ class UtilObject {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
-	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
-		if (templateId == Constant.templateId.blank) {
-			templateId = '';
-		};
-
-		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
+	setDefaultTemplateId (rootId: string, id: string, callBack?: (message: any) => void) {
+		id = (id == Constant.templateId.blank) ? '' : id;
+		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
 	defaultName (key: string) {
