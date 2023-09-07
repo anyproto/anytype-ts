@@ -180,7 +180,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			return;
 		};
 
-		const canOpen = this.props.canOpen && (item.id != Constant.typeId.template)
+		// Template type is disabled for opening
+		const canOpen = this.props.canOpen && (item.id != Constant.typeId.template);
 
 		if (canOpen) {
 			e.stopPropagation();
