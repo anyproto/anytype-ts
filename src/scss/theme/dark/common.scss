@@ -185,7 +185,7 @@ html.themeDark {
         .heading {
             .iconObject { background-color: $colorLineTertiary; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
-            .featured { color: $colorSecondary; }
+            .featured { color: $colorSecondary; background: $colorLinePrimary; }
             .bullet { background: $colorSecondary; }
         }
 

@@ -216,9 +216,10 @@ class Util {
 			"da-DK", "de-DE", "en-US",
 			"es-ES", "fr-FR", "hi-IN",
 			"id-ID", "it-IT", "nl-NL",
-			"no-NO", "pt-BR", "ro-RO",
-			"ru-RU", "tr-TR", "uk-UA",
-			"vi-VN", "zh-CN", "zh-TW"
+			"no-NO", "pl-PL", "pt-BR",
+			"ro-RO", "ru-RU", "tr-TR",
+			"uk-UA", "vi-VN", "zh-CN",
+			"zh-TW"
 		];
 	};
 

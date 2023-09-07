@@ -17,7 +17,6 @@
 
             .items { display: grid; grid-template-columns: repeat(2, 158px); grid-gap: 12px; }
             .items {
-                .previewObject { flex-shrink: 0; }
                 .previewObject {
                     .add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
                 }

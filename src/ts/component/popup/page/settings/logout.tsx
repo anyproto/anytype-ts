@@ -31,8 +31,6 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			<div
 				ref={node => this.node = node}
 			>
-				<Head {...this.props} returnTo="account" name={translate('commonBack')} />
-				
 				<Title text={translate('popupSettingsPhraseTitle')} />
 				<Label className="description" text={translate('popupSettingsPhraseText')} />
 				

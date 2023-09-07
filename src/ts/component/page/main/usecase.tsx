@@ -65,18 +65,12 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 	};
 
 	getItems () {
-		const { config } = commonStore;
-		const items = [
+		return _.shuffle([
 			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
 			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
 			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
-		];
-
-		if (config.experimental) {
-			items.push({ id: I.Usecase.Strategic, img: 'img/usecase/strategic.png' });
-		};
-
-		return _.shuffle(items);
+			{ id: I.Usecase.Strategic, img: 'img/usecase/strategic.png' }
+		]);
 	};
 
 	onClick (e: any, id: number) {
