@@ -260,8 +260,8 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const { ww, wh } = UtilCommon.getWindowDimensions();
-		const y = wh - obj.outerHeight() - BORDER * 2;
+		const { ww } = UtilCommon.getWindowDimensions();
+		const y = 16;
 
 		let sw = 0;
 		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
