@@ -1024,6 +1024,10 @@ class UtilCommon {
 		return Text[id] ? translate(id) : description;
 	};
 
+	randColor (): string {
+		return Constant.textColor[this.rand(0, Constant.textColor.length - 1)];
+	};
+
 };
 
 export default new UtilCommon();
