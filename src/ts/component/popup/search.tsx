@@ -14,6 +14,7 @@ interface State {
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 48;
 const LIMIT_HEIGHT = 12;
+const SYMBOLS = [ ':', '<=', '>=', '=', '<', '>' ];
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
@@ -362,16 +363,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
+		let limit = Constant.limit.menuRecords;
 		let filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
+		for (let item of this.parsedFilters) {
+			filters = filters.concat(item.filters || []);
+		};
 
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		for (let item of this.parsedFilters) {
-			filters = filters.concat(item.filters || []);
+		if (!filter && !this.parsedFilters.length) {
+			limit = 8;
 		};
 
 		UtilData.search({
@@ -379,7 +384,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: !filter ? 8 : Constant.limit.menuRecords,
+			limit,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
@@ -412,25 +417,70 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	parseFilter (): string {
+		const symbols = SYMBOLS.map(it => UtilCommon.regexEscape(it)).join('|');
+		const sr = new RegExp(symbols);
 		const filter = this.getFilter();
-		const match = filter.match(/([a-zA-Z0-9]+):([^\s]+)/gi) || [];
+		const reg = new RegExp(`([a-zA-Z0-9]+)(${symbols})([^\\s:<>=]+)`, 'gi');
+		const match = filter.match(reg) || [];
 		const filters = [];
 
 		let text = filter;
 
 		for (let item of match) {
-			const [ k, v ] = item.split(':');
+			const [ k, v ] = item.split(sr);
 			const reg = new RegExp(UtilCommon.regexEscape(v), 'ig');
 			const relation = dbStore.getRelationByKey(k);
+			const symbol = this.getConditionSymbol(item);
 
 			let value: any = v;
 			let condition: I.FilterCondition = null;
 			let relationKey = '';
 			let name = '';
 			let objects = [];
+			let string = '';
 
 			switch (k) {
+				default: {
+					if (!relation) {
+						break;
+					};
+
+					switch (symbol) {
+						default: condition = I.FilterCondition.Equal; break;
+						case '<': condition = I.FilterCondition.Less; break;
+						case '>': condition = I.FilterCondition.Greater; break;
+						case '>=': condition = I.FilterCondition.GreaterOrEqual; break;
+						case '<=': condition = I.FilterCondition.LessOrEqual; break;
+					};
+
+					let normalized = value;
+
+					switch (value) {
+						case 'today':
+							normalized = UtilCommon.time();
+							break;
+
+						case 'yesterday':
+							normalized = UtilCommon.time() - 86400;
+							break;
+
+						case 'tomorrow':
+							normalized = UtilCommon.time() + 86400;
+							break;
+					};
+
+					name = relation?.name;
+					string = value;
+
+					filters.push({ operator: I.FilterOperator.And, relationKey: k, condition, value: normalized });
+					break;
+				};
+
 				case 'type': {
+					if (!relation) {
+						break;
+					};
+
 					objects = dbStore.getTypes().filter(it => it.isInstalled && it.name.match(reg));
 					value = objects.map(it => it.id);
 
@@ -442,6 +492,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 					relationKey = k;
 					name = relation?.name;
+					string = objects.map(it => it.name).join(', ');
 
 					filters.push({ operator: I.FilterOperator.And, relationKey, condition, value });
 					break;
@@ -450,6 +501,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				case 'relation': {
 					objects = dbStore.getRelations().filter(it => it.isInstalled && it.name.match(reg));
 					name = 'Relation';
+					string = objects.map(it => it.name).join(', ');
 
 					for (const object of objects) {
 						filters.push({ operator: I.FilterOperator.And, relationKey: object.relationKey, condition: I.FilterCondition.NotEmpty, value: null });
@@ -458,8 +510,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 			};
 
-			const string = objects.map(it => it.name).join(', ');
-			const parsed = { relationKey, text: `${name}: ${string}`, color: UtilCommon.randColor(), filters };
+			const parsed = { relationKey, text: `${name} ${symbol} ${string}`, color: UtilCommon.randColor(), filters };
 			const idx = this.parsedFilters.findIndex(it => it.relationKey === relationKey);
 
 			if (idx >= 0) {
@@ -472,6 +523,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		return text;
+	};
+
+	getConditionSymbol (s: string) {
+		const reg = new RegExp(SYMBOLS.map(it => UtilCommon.regexEscape(it)).join('|'));
+		const match = s.match(reg);
+
+		let ret = '=';
+		if (match) {
+			ret = match[0];
+		};
+		if (ret == ':') {
+			ret = '=';
+		};
+		return ret;
 	};
 
 	getItems () {
