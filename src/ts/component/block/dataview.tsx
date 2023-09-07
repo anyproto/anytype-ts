@@ -1128,8 +1128,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const sources = this.getSources();
 
-		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]) && !!sources.length;
 		for (const type of types) {
 			if (skipTypes.includes(type)) {
 				allowed = false;
