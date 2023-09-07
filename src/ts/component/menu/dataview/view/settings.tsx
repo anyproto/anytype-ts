@@ -278,7 +278,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 
-		const relations = view.getVisibleRelations().map(it => UtilCommon.toUpperCamelCase(UtilCommon.shorten(it.relationKey, 16)));
+		const relations = view.getVisibleRelations().map((it) => {
+			const relation = dbStore.getRelationByKey(it.relationKey) || {};
+			return UtilCommon.shorten(relation.name || '', 16);
+		});
 
 		let relationCnt = relations.join(', ');
 		if (relations.length > 2) {
