@@ -510,6 +510,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 			};
 
+			if (!name) {
+				continue;
+			};
+
 			const parsed = { relationKey, text: `${name} ${symbol} ${string}`, color: UtilCommon.randColor(), filters };
 			const idx = this.parsedFilters.findIndex(it => it.relationKey === relationKey);
 
