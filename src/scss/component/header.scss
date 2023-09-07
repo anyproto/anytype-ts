@@ -93,13 +93,17 @@
 	.path:hover { border-color: $colorShapeSecondary; }
 
 	.headerBanner {
-		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
+		display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
 	}
 	.headerBanner {
-		.typeName { display: flex; gap: 0px 4px; }
-		.typeName {
-			.name { font-weight: 600; }
+		.content { display: flex; gap: 0px 4px; align-items: center; }
+		.content {
+			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
+			.typeName {
+				.name { font-weight: 600; }
+			}
 		}
+		.action { font-weight: 500; }
 	}
 }
 
