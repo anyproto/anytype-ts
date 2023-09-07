@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate, Action } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -30,7 +30,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (object.isArchived) {
 			center = (
 				<div className="headerBanner">
-					<Label text={translate('deletedBanner')} />
+					<div className="content">
+						<Label text={translate('deletedBanner')} />
+					</div>
+					<div className="action" onClick={e => Action.restore([ object.id ])}>{translate('deletedBannerRestore')}</div>
 				</div>
 			);
 		} else
@@ -38,14 +41,16 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			const type = dbStore.getType(object.targetObjectType);
 			center = (
 				<div className="headerBanner">
-					<Label text={translate('templateBannner')} />
-					{type ? (
-						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
-							{translate('commonOf')}
-							<IconObject size={18} object={type} />
-							<ObjectName object={type} />
-						</div>
-					) : ''}
+					<div className="content">
+						<Label text={translate('templateBannner')} />
+						{type ? (
+							<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
+								{translate('commonOf')}
+								<IconObject size={18} object={type} />
+								<ObjectName object={type} />
+							</div>
+						) : ''}
+					</div>
 				</div>
 			);
 		} else {
