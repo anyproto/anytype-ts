@@ -627,6 +627,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const view = this.getView();
 
+		if (id == Constant.templateId.blank) {
+			id = '';
+		};
+
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, callBack);
 	};
 
