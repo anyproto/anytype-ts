@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
+import { Icon, Tag, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -27,6 +27,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
+	parsedFilters = [];
 	n = -1;
 	top = 0;
 	offset = 0;
@@ -38,7 +39,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onClick = this.onClick.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onScroll = this.onScroll.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
@@ -125,12 +126,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{loading ? <Loader id="loader" /> : ''}
 				
 				<div className="head">
+					{this.parsedFilters.map((item: any, i: number) => (
+						<Tag {...item} key={i} className="isTag" />
+					))}
+
 					<Filter 
 						icon="search"
 						value={filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')} 
-						onKeyUp={this.onFilterChange}
+						onKeyUp={this.onFilterKeyUp}
 						onClear={this.onFilterClear}
 					/>
 				</div>
@@ -256,7 +261,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed.match(Key.up) ? -1 : 1);
+			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
@@ -316,13 +321,32 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		node.find('.item.active').removeClass('active');
 	};
 
-	onFilterChange () {
+	onFilterKeyUp (e: any) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.forceUpdate(), 500);
+
+		let ret = false;
+
+		keyboard.shortcut('backspace', e, () => {
+			const range = this.refFilter?.ref?.getRange();
+
+			if (range && !range.to) {
+				this.parsedFilters.pop();
+				this.reload();
+				ret = true;
+			};
+		});
+
+		if (!ret) {
+			this.timeout = window.setTimeout(() => {
+				this.refFilter.setValue(this.parseFilter());
+				this.reload();
+			}, 1000);
+		};
 	};
 
 	onFilterClear () {
-		this.forceUpdate();
+		this.parsedFilters = [];
+		this.load(true);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -334,16 +358,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
-		const skipTypes = [].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
-		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+		];
+
 		if (clear) {
 			this.setState({ loading: true });
+		};
+
+		for (let item of this.parsedFilters) {
+			filters = filters.concat(item.filters || []);
 		};
 
 		UtilData.search({
@@ -376,6 +404,76 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
+	reload () {
+		this.n = -1;
+		this.offset = 0;
+		this.top = 0;
+		this.load(true);
+	};
+
+	parseFilter (): string {
+		const filter = this.getFilter();
+		const match = filter.match(/([a-zA-Z0-9]+):([^\s]+)/gi) || [];
+		const filters = [];
+
+		let text = filter;
+
+		for (let item of match) {
+			const [ k, v ] = item.split(':');
+			const reg = new RegExp(UtilCommon.regexEscape(v), 'ig');
+			const relation = dbStore.getRelationByKey(k);
+
+			let value: any = v;
+			let condition: I.FilterCondition = null;
+			let relationKey = '';
+			let name = '';
+			let objects = [];
+
+			switch (k) {
+				case 'type': {
+					objects = dbStore.getTypes().filter(it => it.isInstalled && it.name.match(reg));
+					value = objects.map(it => it.id);
+
+					if (('object' == typeof(value)) && value.length) {
+						condition = I.FilterCondition.In;
+					} else {
+						condition = I.FilterCondition.Equal;
+					};
+
+					relationKey = k;
+					name = relation?.name;
+
+					filters.push({ operator: I.FilterOperator.And, relationKey, condition, value });
+					break;
+				};
+
+				case 'relation': {
+					objects = dbStore.getRelations().filter(it => it.isInstalled && it.name.match(reg));
+					name = 'Relation';
+
+					for (const object of objects) {
+						filters.push({ operator: I.FilterOperator.And, relationKey: object.relationKey, condition: I.FilterCondition.NotEmpty, value: null });
+					};
+					break;
+				};
+			};
+
+			const string = objects.map(it => it.name).join(', ');
+			const parsed = { relationKey, text: `${name}: ${string}`, color: UtilCommon.randColor(), filters };
+			const idx = this.parsedFilters.findIndex(it => it.relationKey === relationKey);
+
+			if (idx >= 0) {
+				this.parsedFilters[idx] = parsed;
+			} else {
+				this.parsedFilters.push(parsed);
+			};
+
+			text = text.replace(item, '');
+		};
+
+		return text;
+	};
+
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
@@ -386,7 +484,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		items = items.map(it => {
-			const type = dbStore.getType(it.type);
+			const type = dbStore.getTypeById(it.type);
 
 			return { 
 				...it,
@@ -408,10 +506,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const { config } = commonStore;
-		if (!config.debug.ho && it.isHidden) {
-			return false;
-		};
-		return true;
+		return config.debug.ho ? true : !it.isHidden;
 	};
 
 	onOver (e: any, item: any) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, keyboard } from 'Lib';
+import { I, UtilCommon, keyboard } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -39,6 +39,7 @@ class Input extends React.Component<Props, State> {
 	_isMounted = false;
 	node: any = null;
 	mask: any = null;
+	range: I.TextRange = null;
 
 	public static defaultProps = {
         type: 'text',
@@ -109,6 +110,7 @@ class Input extends React.Component<Props, State> {
 		this.setValue(this.props.value);
 		this.setState({ type: this.props.type });
 		this.initMask();
+
 		if (this.props.focusOnMount) {
 			this.focus();
 		}
@@ -179,9 +181,14 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any) {
+		const target = e.target;
+		const { selectionStart, selectionEnd } = target;
+
 		if (this.props.onSelect) {
 			this.props.onSelect(e, this.state.value);
 		};
+
+		this.range = { from: selectionStart, to: selectionEnd };
 	};
 
 	getInputElement() {
@@ -189,27 +196,15 @@ class Input extends React.Component<Props, State> {
 	}
 	
 	focus () {
-		window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			this.getInputElement().focus({ preventScroll: true }); 
-		});
+		this.callWithTimeout(() => this.getInputElement().focus({ preventScroll: true }));
 	};
 	
 	blur () {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				$(this.node).trigger('blurr');
-			};
-		});
+		this.callWithTimeout(() => $(this.node).trigger('blur'));
 	};
 	
 	select () {
-		if (this._isMounted) {
-			window.setTimeout(() => { this.getInputElement().select();	});
-		};
+		this.callWithTimeout(() => this.getInputElement().select());
 	};
 	
 	setValue (v: string) {
@@ -241,32 +236,36 @@ class Input extends React.Component<Props, State> {
 	};
 
 	setRange (range: I.TextRange) {
-		window.setTimeout(() => { 
-			if (!this._isMounted) {
-				return;
-			};
-
+		this.callWithTimeout(() => { 
 			const el = this.getInputElement();
 
 			el.focus({ preventScroll: true }); 
 			el.setSelectionRange(range.from, range.to); 
 		});
 	};
+
+	getRange (): I.TextRange {
+		return this.range;
+	};
 	
 	addClass (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass(v);
 		};
-
-		$(this.node).addClass(v);
 	};
 	
 	removeClass (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass(v);
 		};
+	};
 
-		$(this.node).removeClass(v);
+	callWithTimeout (callBack: () => void) {
+		window.setTimeout(() => {
+			if (this._isMounted) {
+				callBack(); 
+			};
+		});
 	};
 	
 };
