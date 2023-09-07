@@ -213,10 +213,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getRecords () {
-		const { getRecords } = this.props;
+		const { getRecords, isAllowedObject } = this.props;
 		const records = UtilCommon.objectCopy(getRecords());
 		
-		records.push('add-record');
+		if (isAllowedObject()) {
+			records.push('add-record');
+		};
 
 		return records;
 	};
