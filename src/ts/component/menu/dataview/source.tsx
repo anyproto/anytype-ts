@@ -116,8 +116,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					this.save([ item.id ]);
-					$(window).trigger(`sourceChange.${blockId}`);
+					this.save([ item.id ], () => $(window).trigger(`sourceChange.${blockId}`));
 
 					if (!value.length) {
 						analytics.event('SetSelectQuery', { type: 'relation' });
@@ -132,8 +131,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { data } = param;
 		const { blockId } = data;
 
-		this.save(this.getValue().filter(it => it != item.id));
-		$(window).trigger(`sourceChange.${blockId}`);
+		this.save(this.getValue().filter(it => it != item.id), () => $(window).trigger(`sourceChange.${blockId}`));
 	};
 
 	onOver (e: any, item: any) {
@@ -158,8 +156,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			data: {
 				filter: '',
 				onClick: (item: any) => {
-					this.save([ item.id ]);
-					$(window).trigger(`sourceChange.${blockId}`);
+					this.save([ item.id ], () => $(window).trigger(`sourceChange.${blockId}`));
 
 					analytics.event('SetSelectQuery', { type: 'type' });
 					close();
@@ -168,13 +165,16 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		}); 
 	};
 
-	save (value: string[]) {
+	save (value: string[], callBack?: () => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectId, blockId } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
 			$(window).trigger(`updateDataviewData.${blockId}`);
+			if (callBack) {
+				callBack();
+			};
 		});
 
 		this.forceUpdate();

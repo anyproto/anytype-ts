@@ -607,14 +607,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		const type = dbStore.getType(this.getTypeId());
 
-		console.log('HERE')
-
 		if (view && view.defaultTemplateId) {
-			console.log('VIEW')
 			return view.defaultTemplateId;
 		};
 		if (type && type.defaultTemplateId) {
-			console.log('TYPE')
 			return type.defaultTemplateId;
 		};
 		return Constant.templateId.blank;
@@ -766,7 +762,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onArchive: (item, callback) => {
 				if (item.isDefault) {
-					this.setDefaultTemplateForView(Constant.templateId.blank);
+					this.setDefaultTemplateForView(this.getDefaultTemplateId());
 				};
 
 				if (callback) {
