@@ -146,12 +146,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { getTemplateId } = data;
 		const templateId = getTemplateId();
 
-		if (templateId == '') {
+		if (!templateId) {
 			this.defaultTemplateName = translate('commonBlank');
 			return;
 		};
 
-		UtilObject.getById(getTemplateId(), (template) => {
+		UtilObject.getById(templateId, template => {
 			if (template.name && (this.defaultTemplateName != template.name)) {
 				this.defaultTemplateName = template.name;
 				this.forceUpdate();
