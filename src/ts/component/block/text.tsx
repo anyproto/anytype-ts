@@ -1429,16 +1429,31 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 
-	onMentionSelect (rootId: string, icon: string) {
-		UtilObject.setIcon(rootId, icon, '');
+	onMentionSelect (objectId: string, icon: string) {
+		const { rootId, block } = this.props;
+		const value = this.getValue();
+
+		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+			UtilObject.setIcon(objectId, icon, '');
+		});
 	};
 
-	onMentionUpload (rootId: string, hash: string) {
-		UtilObject.setIcon(rootId, '', hash);
+	onMentionUpload (objectId: string, hash: string) {
+		const { rootId, block } = this.props;
+		const value = this.getValue();
+
+		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+			UtilObject.setIcon(objectId, '', hash);
+		});
 	};
 
-	onMentionCheckbox (rootId: string, value: boolean) {
-		UtilObject.setDone(rootId, value);
+	onMentionCheckbox (objectId: string, done: boolean) {
+		const { rootId, block } = this.props;
+		const value = this.getValue();
+
+		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+			UtilObject.setDone(objectId, done);
+		});
 	};
 	
 });
