@@ -58,8 +58,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getTarget = this.getTarget.bind(this);
 		this.getTypeId = this.getTypeId.bind(this);
 		this.getDefaultTemplateId = this.getDefaultTemplateId.bind(this);
-		this.setDefaultTypeForView = this.setDefaultTypeForView.bind(this);
-		this.setDefaultTemplateForView = this.setDefaultTemplateForView.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -152,8 +150,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTypeId: this.getTypeId,
 			getTemplateId: this.getDefaultTemplateId,
 			getEmpty: this.getEmpty,
-			setDefaultType: this.setDefaultTypeForView,
-			setDefaultTemplate: this.setDefaultTemplateForView,
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
@@ -503,17 +499,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (types.length) {
 			type = types[0].id;
-		};
+		} else
 		if (relations.length) {
-			relations.forEach((it: any) => {
-				if (it.objectTypes.length && !type) {
-					const first = it.objectTypes[0];
+			for (const item of relations) {
+				if (item.objectTypes.length) {
+					const first = item.objectTypes[0];
 
 					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
 						type = first;
+						break;
 					};
 				};
-			});
+			};
 		};
 		if (!type && defaultTypeId && this.isAllowedDefaultType()) {
 			type = defaultTypeId;
@@ -521,7 +518,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!type) {
 			type = commonStore.type;
 		};
-
 		return type;
 	};
 
@@ -609,29 +605,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (view && view.defaultTemplateId) {
 			return view.defaultTemplateId;
-		};
+		} else
 		if (type && type.defaultTemplateId) {
 			return type.defaultTemplateId;
 		};
 		return Constant.templateId.blank;
-	};
-
-	setDefaultTypeForView (id: string, callBack?: (message: any) => void) {
-		const { rootId, block } = this.props;
-		const view = this.getView();
-
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id }, callBack);
-	};
-
-	setDefaultTemplateForView (id: string, callBack?: () => void) {
-		const { rootId, block } = this.props;
-		const view = this.getView();
-
-		if (id == Constant.templateId.blank) {
-			id = '';
-		};
-
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, callBack);
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
@@ -639,15 +617,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
-
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 
-		if (template && template.targetTypeId) {
-			details.type = template.targetTypeId;
-		};
+		if (template) {
+			if (template.targetObjectType) {
+				details.type = template.targetObjectType;
+			};
 
-		template = UtilData.checkBlankTemplate(template);
+			template = UtilData.checkBlankTemplate(template);
+		};
 
 		C.ObjectCreate(details, flags, template?.id, (message: any) => {
 			this.creating = false;
@@ -747,33 +726,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateMenu (e: any, dir: number) {
+		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
 		const route = this.isCollection() ? 'Collection' : 'Set';
+		const view = this.getView();
 
 		analytics.event('ClickNewOption', { route });
-
-		const menuActions: any = {
-			onSelect: (item: any) => {
-				if (item.id == Constant.templateId.new) {
-					this.onTemplateAdd(item.targetTypeId);
-					return;
-				};
-
-				this.recordCreate(e, item, dir);
-				menuStore.closeAll();
-
-				analytics.event('SelectTemplate', { route });
-			},
-			onArchive: (item, callback) => {
-				if (item.isDefault) {
-					this.setDefaultTemplateForView(Constant.templateId.blank);
-				};
-
-				if (callback) {
-					callback();
-				};
-			}
-		};
 
 		menuStore.open('dataviewTemplateList', {
 			...menuParam,
@@ -784,10 +742,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			data: {
 				withTypeSelect: this.isAllowedDefaultType(),
-				getTypeId: this.getTypeId,
-				getTemplateId: this.getDefaultTemplateId,
+				typeId: this.getTypeId(),
+				templateId: this.getDefaultTemplateId(),
 				route,
-				...menuActions
+				onSelect: (item: any) => {
+					if (item.id == Constant.templateId.new) {
+						this.onTemplateAdd(item.targetObjectType);
+					} else {
+						this.recordCreate(e, item, dir);
+
+						menuStore.closeAll();
+						analytics.event('SelectTemplate', { route });
+					};
+				}
 			}
 		});
 	};
@@ -1155,10 +1122,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId } = this.props;
-		const target = this.getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
-
-		return !types.length;
+		return !!Relation.getSetOfObjects(rootId, this.getTarget().id, Constant.typeId.relation).map(it => it.id).length;
 	};
 
 	isCollection (): boolean {
@@ -1287,20 +1251,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		selection.clear();
 	};
 
-	checkDefaultTemplate () {
+	checkDefaultTemplate (callBack?: (result: boolean) => void) {
+		const { rootId, block } = this.props;
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
 		const hasSources = this.isCollection() || this.getSources().length;
+		const view = this.getView();
+
+		UtilObject.getById(defaultTemplateId, (template) => {
+			const res = (template.targetObjectType == typeId) && !template.isArchived && !template.isDeleted;
+
+			if (callBack) {
+				callBack(res);
+			};
+		});
 
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			const templates = message.records || [];
-			const templateIds = [];
-			templates.map((it: any) => {
-				templateIds.push(it.id);
-			});
+			const templateIds = (message.records || []).map(it => it.id);
 
 			if (!hasSources || !templateIds.includes(defaultTemplateId)) {
-				this.setDefaultTemplateForView(Constant.templateId.blank);
+				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: '' });
 			};
 		});
 	};
