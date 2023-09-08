@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { I, UtilObject, translate, UtilData, } from 'Lib';
+import { I, UtilObject, translate, UtilData } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -9,6 +9,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	state = {
 		isLoading: false,
+		templateId: ''
 	};
 
 	n = -1;
@@ -37,7 +38,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate('') ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -100,8 +101,16 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, typeId, templateId, getView, hasSources } = data;
+		const view = getView();
+
 		this.rebind();
-		this.load(true);
+
+		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
+			this.setState({ templateId: (!hasSources || !res) ? '' : templateId }, () => this.load(true));
+		});
 	};
 
 	rebind () {
@@ -156,7 +165,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, route, typeId, templateId } = data;
+		const { onSetDefault, route, typeId } = data;
+		const { templateId } = this.state;
 		const node = $(`#item-${item.id}`)
 
 		e.preventDefault();
@@ -242,11 +252,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	isDefaultTemplate (id: string): boolean {
-		const { param } = this.props;
-		const { data } = param;
-		const { templateId } = data;
-
-		return id == templateId;
+		return id == this.state.templateId;
 	};
 };
 
