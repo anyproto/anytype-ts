@@ -129,7 +129,6 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
 				/>
 			);
 		} else {
