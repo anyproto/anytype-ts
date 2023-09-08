@@ -1258,14 +1258,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hasSources = this.isCollection() || this.getSources().length;
 		const view = this.getView();
 
-		UtilObject.getById(defaultTemplateId, (template) => {
-			const res = (template.targetObjectType == typeId) && !template.isArchived && !template.isDeleted;
-
-			if (callBack) {
-				callBack(res);
-			};
-		});
-
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
 			const templateIds = (message.records || []).map(it => it.id);
 
