@@ -494,6 +494,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			} else {
 				icon = (
 					<IconObject 
+						id={`mention-${block.id}-${i}`}
 						size={size} 
 						object={object} 
 						canEdit={!isArchived} 
