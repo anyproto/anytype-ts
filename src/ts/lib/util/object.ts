@@ -1,15 +1,4 @@
-import {
-	I,
-	C,
-	keyboard,
-	UtilCommon,
-	history as historyPopup,
-	Renderer,
-	UtilFile,
-	translate,
-	Storage,
-	UtilData
-} from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData } from 'Lib';
 import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
