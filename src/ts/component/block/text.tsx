@@ -479,18 +479,29 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
+			const name = item.find('name');
+
 			if (!smile.length) {
 				return;
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _empty_, layout, done, isDeleted } = object;
+			const { _empty_, layout, done, isDeleted, isArchived } = object;
 
 			let icon = null;
 			if (_empty_) {
 				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
-				icon = <IconObject size={size} object={object} />;
+				icon = (
+					<IconObject 
+						size={size} 
+						object={object} 
+						canEdit={!isArchived} 
+						onSelect={icon => this.onMentionSelect(object.id, icon)} 
+						onUpload={hash => this.onMentionUpload(object.id, hash)} 
+						onCheckbox={() => this.onMentionCheckbox(object.id, !done)}
+					/>
+				);
 			};
 
 			if (_empty_ || isDeleted) {
@@ -508,40 +519,39 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			});
 
 			this.textStyle(item);
-		});
-		
-		items.off('mouseenter.mention');
-		items.on('mouseenter.mention', e => {
-			const sr = UtilCommon.getSelectionRange();
-			if (sr && !sr.collapsed) {
-				return;
-			};
 
-			const element = $(e.currentTarget);
-			const range = String(element.attr('data-range') || '').split('-');
-			const param = String(element.attr('data-param') || '');
+			name.off('mouseenter.mention');
+			name.on('mouseenter.mention', e => {
+				const sr = UtilCommon.getSelectionRange();
+				if (sr && !sr.collapsed) {
+					return;
+				};
 
-			if (!param || element.hasClass('disabled')) {
-				return;
-			};
+				const range = String(item.attr('data-range') || '').split('-');
+				const param = String(item.attr('data-param') || '');
 
-			const object = detailStore.get(rootId, param, []);
+				if (!param || item.hasClass('disabled')) {
+					return;
+				};
 
-			element.off('click.mention').on('click.mention', e => {
-				e.preventDefault();
-				UtilObject.openEvent(e, object);
-			});
+				const object = detailStore.get(rootId, param, []);
 
-			Preview.previewShow({
-				target: object.id,
-				element,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks: this.marks,
-				noUnlink: true,
-				onChange: this.setMarks,
+				name.off('click.mention').on('click.mention', e => {
+					e.preventDefault();
+					UtilObject.openEvent(e, object);
+				});
+
+				Preview.previewShow({
+					target: object.id,
+					element: name,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					marks: this.marks,
+					noUnlink: true,
+					onChange: this.setMarks,
+				});
 			});
 		});
 	};
@@ -1417,6 +1427,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
 		};
+	};
+
+	onMentionSelect (rootId: string, icon: string) {
+		UtilObject.setIcon(rootId, icon, '');
+	};
+
+	onMentionUpload (rootId: string, hash: string) {
+		UtilObject.setIcon(rootId, '', hash);
+	};
+
+	onMentionCheckbox (rootId: string, value: boolean) {
+		UtilObject.setDone(rootId, value);
 	};
 	
 });
