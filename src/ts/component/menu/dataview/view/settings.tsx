@@ -80,13 +80,26 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
+		const { rootId, blockId, getTypeId, getTemplateId, getSources, isCollection, getView } = data;
+		const view = getView();
+		const hasSources = isCollection || getSources().length;
 
-		this.param = UtilCommon.objectCopy(data.view.get());
-		this.forceUpdate();
-		this.rebind();
-		this.getDefaultTemplateName();
+		const load = () => {
+			this.param = UtilCommon.objectCopy(data.view.get());
+			this.forceUpdate();
+			this.rebind();
+			this.getDefaultTemplateName();
 
-		window.setTimeout(() => this.resize(), 5);
+			window.setTimeout(() => this.resize(), 5);
+		};
+
+		UtilObject.checkDefaultTemplate(getTypeId(), getTemplateId(), (res) => {
+			if (!hasSources || !res) {
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: '' }, load);
+			} else {
+				load();
+			};
+		});
 	};
 
 	componentDidUpdate () {
@@ -260,7 +273,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources } = data;
+		const { rootId, blockId, readonly, getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources, getView } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
@@ -307,6 +320,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
 				data: {
 					typeId,
+					hasSources,
+					getView,
 					templateId: getTemplateId(),
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { I, UtilObject, translate, UtilData, } from 'Lib';
+import { I, UtilObject, translate, UtilData, C, } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -100,8 +100,20 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, typeId, templateId, getView, hasSources } = data;
+		const view = getView();
+
 		this.rebind();
-		this.load(true);
+
+		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
+			if (!hasSources || !res) {
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: '' }, () => this.load(true));
+			} else {
+				this.load(true);
+			};
+		});
 	};
 
 	rebind () {
