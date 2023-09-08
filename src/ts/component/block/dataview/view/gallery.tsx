@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, Relation, UtilData, UtilCommon } from 'Lib';
@@ -18,7 +17,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	width = 0;
 	columnCount = 0;
 	length = 0;
-	frame = 0;
+	timeout = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -197,12 +196,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	onResize ({ width }) {
 		this.width = width;
-		this.reset();
 
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-		this.frame = raf(() => this.forceUpdate());
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			this.reset();
+			this.forceUpdate();
+		}, 100);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
