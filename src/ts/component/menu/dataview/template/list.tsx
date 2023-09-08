@@ -9,6 +9,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	state = {
 		isLoading: false,
+		templateId: ''
 	};
 
 	n = -1;
@@ -37,7 +38,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate('') ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -108,11 +109,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		this.rebind();
 
 		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
-			if (!hasSources || !res) {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: '' }, () => this.load(true));
-			} else {
-				this.load(true);
-			};
+			this.setState({ templateId: (!hasSources || !res) ? '' : templateId }, () => this.load(true));
 		});
 	};
 
@@ -168,7 +165,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, route, typeId, templateId } = data;
+		const { onSetDefault, route, typeId } = data;
+		const { templateId } = this.state;
 		const node = $(`#item-${item.id}`)
 
 		e.preventDefault();
@@ -254,11 +252,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	isDefaultTemplate (id: string): boolean {
-		const { param } = this.props;
-		const { data } = param;
-		const { templateId } = data;
-
-		return id == templateId;
+		return id == this.state.templateId;
 	};
 };
 

@@ -7,6 +7,10 @@ import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
+
+	state = {
+		templateId: ''
+	};
 	
 	n = -1;
 	ref = null;
@@ -142,7 +146,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { getTemplateId } = data;
 		const templateId = getTemplateId();
 
-		if (templateId == Constant.templateId.blank) {
+		if (templateId == '') {
 			this.defaultTemplateName = translate('commonBlank');
 			return;
 		};
