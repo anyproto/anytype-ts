@@ -1424,7 +1424,7 @@
 
     "onboardingMainGraph": "Onboarding",
     "onboardingMainGraph11": "<b>Welcome to your Anytype Space.</b> Space is a graph of interconnected objects, providing a natural way to organize information.",
-    "onboardingMainGraph12": "To access your Homepage, click on its icon in the graph or the <span class=\"highlight\">Next</span> button.",
+    "onboardingMainGraph12": "To access your Homepage, click on the <span class=\"highlight\">Next</span> button.",
 
     "onboardingMainSet": "Set & Collection",
     "onboardingMainSet11": "<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.",

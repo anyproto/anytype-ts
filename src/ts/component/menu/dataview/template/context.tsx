@@ -79,7 +79,9 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'edit': {
-				UtilObject.openPopup(template);
+				UtilObject.openPopup(template, {
+					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
+				});
 
 				analytics.event('EditTemplate', { route });
 				break;
