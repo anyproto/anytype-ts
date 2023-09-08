@@ -26,8 +26,8 @@
 			.type { @include text-small; color: $colorDarkGrey; }
 		}
 
-		.sides { display: flex; height: 100%; }
-		.sides {
+		.content > .sides { display: flex; height: 100%; }
+		.content > .sides {
 			> .side { position: relative; height: 100%; }
 			> .side.left { 
 				width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 

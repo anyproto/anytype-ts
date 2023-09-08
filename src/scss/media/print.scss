@@ -71,6 +71,12 @@ html.printMedia {
 			}
 		}
 
+		.block.blockDataview {
+			.viewContent.viewGallery {
+				.card { box-shadow: 0px 0px; }
+			}
+		}
+
 		.block.blockLink.card {
 			.linkCard { box-shadow: 0px 0px; }
 		}
