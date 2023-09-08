@@ -599,7 +599,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getDefaultTemplateId (typeId?: string): string {
 		const view = this.getView();
-		const type = typeId || dbStore.getType(this.getTypeId());
+		const type = dbStore.getType(typeId || this.getTypeId());
 
 		if (view && view.defaultTemplateId) {
 			return view.defaultTemplateId;
