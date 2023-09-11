@@ -1,10 +1,12 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, M, UtilCommon, Relation, keyboard, UtilObject, translate } from 'Lib';
+import { Dataview, I, C, M, UtilCommon, Relation, keyboard, UtilObject, translate, Action } from 'Lib';
+import { SortableContainer } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -30,8 +32,15 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 	cache: any = null;
 
+	constructor (props: Props) {
+		super(props);
+		
+		this.onSortStart = this.onSortStart.bind(this)
+		this.onSortEnd = this.onSortEnd.bind(this);
+	};
+
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
+		const { parent, block, isCollection, isPreview } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -40,12 +49,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const { total } = dbStore.getMeta(subId, '');
 		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
-
-		let records = this.getRecords();
-		if (targetBlockId == Constant.widgetId.favorite) {
-			records = sortFavorite(records);
-		};
-
+		const records = this.getRecords();
 		const length = records.length;
 
 		if (!this.cache) {
@@ -75,35 +79,53 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						subId={subId} 
 						id={records[index]} 
 						style={style} 
+						index={index}
 					/>
 				</CellMeasurer>
 			);
 
-			content = (
-				<InfiniteLoader
-					rowCount={total}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => true}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={length}
-									rowHeight={this.getRowHeight()}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									scrollToAlignment="center"
-								/>
+			const List = SortableContainer(() => (
+				<div className="items">
+					<InfiniteLoader
+						rowCount={total}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => true}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<VList
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={length}
+										rowHeight={this.getRowHeight()}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										scrollToAlignment="center"
+									/>
+							)}
+							</AutoSizer>
 						)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+					</InfiniteLoader>
+				</div>
+			));
+
+			content = (
+				<List 
+					axis="y" 
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEnd}
+					useDragHandle={true}
+					helperClass="isDragging"
+					helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
+				/>
 			);
 		} else {
 			content = (
@@ -117,7 +139,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let viewSelect = null;
 
-		if (!isCollection(targetBlockId)) {
+		if (!isCollection(targetBlockId) && (views.length > 1)) {
 			if (isSelect) {
 				viewSelect = (
 					<Select 
@@ -161,11 +183,8 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 				ref={node => this.node = node}
 				className="innerWrap"
 			>
-				{viewSelect ? (
-					<div id="viewSelect">
-						{viewSelect}
-					</div>
-				) : ''}
+				{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
+
 				<div id="body" className="body">
 					{content}
 				</div>
@@ -306,6 +325,39 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		});
 	};
 
+	onSortStart () {
+		keyboard.disableSelection(true);
+	};
+
+	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+
+		keyboard.disableSelection(false);
+
+		if ((oldIndex == newIndex) || (targetBlockId != Constant.widgetId.favorite)) {
+			return;
+		};
+		
+		const { root } = blockStore;
+		const children = blockStore.getChildren(root, root, it => it.isLink());
+		const current = children[oldIndex];
+		const target = children[newIndex];
+
+		if (!current || !target) {
+			return;
+		};
+
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		const oidx = childrenIds.indexOf(current.id);
+		const nidx = childrenIds.indexOf(target.id);
+
+		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
+		Action.move(root, root, target.id, [ current.id ], position);
+	};
+
 	onChangeView = (viewId: string): void => {
 		const { parent } = this.props;
 
@@ -313,13 +365,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	getRecords () {
-		const { parent } = this.props;
-		const { viewId } = parent.content;
+		const { parent, block, sortFavorite } = this.props;
+		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
+		const views = dbStore.getViews(rootId, BLOCK_ID);
+		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
+		const ret = Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
 
-		return Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
+		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
 	resize () {

@@ -97,7 +97,9 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onAdd (e: any) {
-		const { getId, getSize } = this.props;
+		const { getId, getSize, param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
 		const value = this.getValue();
 
 		menuStore.open('searchObject', { 
@@ -137,7 +139,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, blockId } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
@@ -159,13 +161,16 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		}); 
 	};
 
-	save (value: string[]) {
+	save (value: string[], callBack?: () => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectId, blockId } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
 			$(window).trigger(`updateDataviewData.${blockId}`);
+			if (callBack) {
+				callBack();
+			};
 		});
 
 		this.forceUpdate();

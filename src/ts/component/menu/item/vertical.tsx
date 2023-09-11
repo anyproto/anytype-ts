@@ -14,6 +14,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			selectMenuParam, subComponent
 		} = this.props;
 		const cn = [ 'item' ];
+		const withArrow = arrow || subComponent;
 
 		let hasClick = true;
 
@@ -23,8 +24,8 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		if (color) {
 			cn.push(color + ' withColor');
 		};
-		if (arrow) {
-			cn.push('withChildren');
+		if (withArrow) {
+			cn.push('withArrow');
 		};
 		if (withDescription) {
 			cn.push('withDescription');
@@ -48,6 +49,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		};
 		if (isActive) {
 			cn.push('active');
+		};
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 		if (readonly) {
 			cn.push('isReadonly');
@@ -138,7 +142,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				style={style}
 			>
 				{content}
-				{arrow || subComponent ? <Icon className="arrow" /> : ''}
+				{withArrow ? <Icon className="arrow" /> : ''}
 				{checkbox ? <Icon className="chk" /> : ''}
 			</div>
 		);

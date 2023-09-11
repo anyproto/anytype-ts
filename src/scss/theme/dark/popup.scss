@@ -29,6 +29,9 @@
 			> .side.left {
 				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
 				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
+				.item {
+					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
+				}
 
 				.iconObject.withLetter { background-color: $colorLineTertiary; }
 			}

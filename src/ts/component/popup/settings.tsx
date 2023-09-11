@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Icon } from 'Component';
+import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, C, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
 import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -183,9 +183,20 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			>
 				{sections.length ? (
 					<div id="sideLeft" className="side left">
-						{sections.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
+						<div className="sections">
+							{sections.map((item: any, i: number) => (
+								<Section key={i} {...item} />
+							))}
+						</div>
+
+						<div className="section" onClick={e => this.onPage('logout')}>
+							<div className="items">
+								<div className="item">
+									<Icon className="logout" />
+									<Label text={translate('popupSettingsLogout')} />
+								</div>
+							</div>
+						</div>
 					</div>
 				) : ''}
 				<div id="sideRight" className={cnr.join(' ')}>
@@ -254,7 +265,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			];
 		} else {
 			return [
-				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle'), subPages: [ 'logout' ] } ] },
+				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 				{
 					name: translate('popupSettingsApplicationTitle'), children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },

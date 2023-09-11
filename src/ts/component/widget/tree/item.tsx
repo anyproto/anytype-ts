@@ -136,6 +136,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
+				route: 'Widget',
 				objectIds: [ id ],
 				subId,
 			},

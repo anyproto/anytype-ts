@@ -374,7 +374,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const { isLoading } = this.state;
-		const { rootId, dataset, isPopup } = this.props;
+		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const readonly = this.isReadonly();
@@ -417,7 +417,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
 		const { pageX, pageY } = e;
@@ -472,13 +471,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		this.hoverPosition = I.BlockPosition.None;
-		if (hovered && 
-			(pageX >= x) && 
-			(pageX <= x + Constant.size.blockMenu) && 
-			(pageY >= offset + BUTTON_OFFSET) && 
-			(pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)
-		) {
-			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+		let rectContainer = null;
+		if (hovered) {
+			rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+
+			if (
+				(pageX >= x) && 
+				(pageX <= x + Constant.size.blockMenu) && 
+				(pageY >= offset + BUTTON_OFFSET) && 
+				(pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)
+			) {
+				this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+			};
 		};
 
 		this.frameMove = raf(() => {
@@ -595,14 +600,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
-								C.BlockTextListSetMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+								C.BlockTextListSetMark(rootId, ids, { type: newType, param, range: { from: 0, to: 0 } }, () => {
 									analytics.event('ChangeTextStyle', { type: newType, count: ids.length });
 								});
 							}
 						}
 					});
 				} else {
-					C.BlockTextListSetMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } }, (message: any) => {
+					C.BlockTextListSetMark(rootId, ids, { type, param, range: { from: 0, to: 0 } }, () => {
 						analytics.event('ChangeTextStyle', { type, count: ids.length });
 					});
 				};
@@ -1847,6 +1852,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (param.type == I.BlockType.File) {
 				event.params.fileType = param.content.type;
+			};
+
+			if (param.type == I.BlockType.Dataview) {
+				event.id = param.content.isCollection ? 'Collection' : 'Set';
 			};
 
 			analytics.event('CreateBlock', event);

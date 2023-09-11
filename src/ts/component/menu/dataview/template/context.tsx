@@ -79,15 +79,15 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'edit': {
-				UtilObject.openPopup(template);
+				UtilObject.openPopup(template, {
+					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
+				});
 
 				analytics.event('EditTemplate', { route });
 				break;
 			};
 
 			case 'duplicate': {
-				analytics.event('DuplicateTemplate', { route });
-
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getType(typeId);
 					if (!type) {
@@ -105,32 +105,28 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 							return;
 						};
 
-						analytics.event('CreateTemplate', { objectType: typeId, route: 'menuDataviewTemplate' });
+						analytics.event('CreateTemplate', { objectType: typeId, route });
 
 						if (onDuplicate) {
 							onDuplicate(message.details);
 						};
 					});
-					break;
-				};
+				} else {
+					C.ObjectListDuplicate([ template.id ], (message: any) => {
+						if (!message.error.code && message.ids.length) {
+							if (onDuplicate) {
+								onDuplicate({ ...template, id: message.ids[0] });
+							};
 
-				C.ObjectListDuplicate([ template.id ], (message: any) => {
-					if (!message.error.code && message.ids.length) {
-						if (onDuplicate) {
-							onDuplicate({ ...template, id: message.ids[0] });
+							analytics.event('DuplicateObject', { count: 1, route, objectType: template.type });
 						};
-						analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
-					};
-				});
+					});
+				};
 				break;
 			};
 
 			case 'remove': {
-				Action.archive([ template.id ], () => {
-					if (onArchive) {
-						onArchive();
-					};
-				});
+				Action.archive([ template.id ], onArchive);
 				break;
 			};
 		};

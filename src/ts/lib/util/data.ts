@@ -446,10 +446,12 @@ class UtilData {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
 			sorts,
+			keys,
 			limit: Constant.limit.menuRecords,
 		}, callBack);
 	};
@@ -681,9 +683,11 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		keys.push(idField);
+		if (!keys.includes(idField)) {
+			keys.push(idField);
+		};
 
-		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -765,7 +769,18 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
+		if (!keys.includes(idField)) {
+			keys.push(idField);
+		};
+
+		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
+	};
+
+	sortMapper (it: any) {
+		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
+			it.includeTime = true;
+		};
+		return it;
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {

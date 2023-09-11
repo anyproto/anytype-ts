@@ -2,7 +2,9 @@ $(() => {
 	var param = getParam();
 	var closeButton = $('#close');
 	var versionButton = $('#version-button');
+	var copyIcon = versionButton.find('.copy');
 	var versionText = '';
+	var timeout = 0;
 
 	document.title = 'Anytype';
 
@@ -23,6 +25,11 @@ $(() => {
 
 		document.addEventListener('copy', handler, true);
 		document.execCommand('copy');
+
+		copyIcon.addClass('active');
+
+		clearTimeout(timeout);
+		setTimeout(() => { copyIcon.removeClass('active'); }, 2000);
 	});
 
 	$.ajax({

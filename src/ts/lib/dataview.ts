@@ -131,12 +131,7 @@ class Dataview {
 			if (relation) {
 				it.format = relation.format;
 			};
-			if (vr) {
-				it.includeTime = vr.includeTime;
-			};
-
-			// TODO: Hack until we implement proper logic on Middleware
-			if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
+			if (vr && vr.includeTime) {
 				it.includeTime = true;
 			};
 			return it;
@@ -258,6 +253,10 @@ class Dataview {
 
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
 		records = records || [];
+
+		if (!viewId || !records.length) {
+			return records;
+		};
 
 		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {

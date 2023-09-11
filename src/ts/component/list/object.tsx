@@ -196,7 +196,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		UtilData.searchSubscribe({
 			subId,
 			sorts: [
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true }
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 			],
 			keys: this.getKeys(),
 			sources: [ rootId ],
