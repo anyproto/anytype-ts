@@ -158,7 +158,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getIcons () {
 		return [
-			{ id: I.LinkIconSize.None, name: translate('menuBlockLinkSettingsSizeNone') },
+			{ id: I.LinkIconSize.None, name: translate('commonNone') },
 			{ id: I.LinkIconSize.Small, name: translate('menuBlockLinkSettingsSizeSmall') },
 			{ id: I.LinkIconSize.Medium, name: translate('menuBlockLinkSettingsSizeMedium') },
 		];
@@ -170,7 +170,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getDescriptions () {
 		return [
-			{ id: I.LinkDescription.None, name: translate('menuBlockLinkSettingsDescriptionNone') },
+			{ id: I.LinkDescription.None, name: translate('commonNone') },
 			{ id: I.LinkDescription.Added, name: translate('menuBlockLinkSettingsDescriptionRelationDescription') },
 			{ id: I.LinkDescription.Content, name: translate('menuBlockLinkSettingsDescriptionContentPreview') },
 		];
