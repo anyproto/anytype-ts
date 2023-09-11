@@ -216,13 +216,12 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { width, height } = getSize();
+		const { width } = getSize();
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
 			width,
-			offsetX: width,
-			offsetY: () => -height,
+			vertical: I.MenuDirection.Top,
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
