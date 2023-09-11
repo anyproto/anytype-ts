@@ -880,6 +880,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				objectIds: ids,
 				subId,
 				isCollection,
+				route: isCollection ? 'Collection' : 'Set',
 			}
 		});
 	};
