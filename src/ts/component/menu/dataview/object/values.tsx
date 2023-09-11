@@ -221,9 +221,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
 			width,
-			vertical: I.MenuDirection.Top,
 			passThrough: true,
-			noFlipY: true,
 			noAnimation: true,
 			className,
 			classNameWrap,
