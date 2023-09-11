@@ -27,7 +27,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n = -1;
+	n = 1;
 	offset = 0;
 	timeoutFilter = 0;
 
@@ -366,15 +366,16 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		const { getId, getSize, param } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const sources = this.getLibrarySources();
-		const className = [];
+		const className = [ param.className ];
 
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: 36,
+			classNameWrap,
 			vertical: I.MenuDirection.Top,
 			isSub: true,
 			noFlipY: true,

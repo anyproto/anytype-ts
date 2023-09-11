@@ -159,7 +159,7 @@ const Components: any = {
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
 
-	widget:				 MenuWidget,
+	widget:					 MenuWidget,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

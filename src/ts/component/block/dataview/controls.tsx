@@ -179,7 +179,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, setDefaultType, setDefaultTemplate, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd
+			getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
@@ -213,8 +213,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				getTarget,
 				getTypeId,
 				getTemplateId,
-				setDefaultType,
-				setDefaultTemplate,
 				isInline,
 				isCollection,
 				isAllowedDefaultType,

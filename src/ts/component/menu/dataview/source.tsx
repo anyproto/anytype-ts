@@ -116,7 +116,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					this.save([ item.id ], () => $(window).trigger(`sourceChange.${blockId}`));
+					this.save([ item.id ]);
 
 					if (!value.length) {
 						analytics.event('SetSelectQuery', { type: 'relation' });
@@ -127,11 +127,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onRemove (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId } = data;
-
-		this.save(this.getValue().filter(it => it != item.id), () => $(window).trigger(`sourceChange.${blockId}`));
+		this.save(this.getValue().filter(it => it != item.id));
 	};
 
 	onOver (e: any, item: any) {
@@ -156,7 +152,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			data: {
 				filter: '',
 				onClick: (item: any) => {
-					this.save([ item.id ], () => $(window).trigger(`sourceChange.${blockId}`));
+					this.save([ item.id ]);
 
 					analytics.event('SetSelectQuery', { type: 'type' });
 					close();

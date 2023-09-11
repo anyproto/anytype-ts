@@ -146,6 +146,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
+				route: 'Widget',
 				objectIds: [ id ],
 				subId,
 			},

@@ -40,8 +40,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 
-		let canDuplicate = true;
-		let canDelete = true;
+		let canDuplicate = false;
+		let canDelete = false;
 		let opts: any = null;
 		let deleteText = translate('commonDelete');
 		let deleteIcon = 'remove';
