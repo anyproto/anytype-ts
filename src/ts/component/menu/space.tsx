@@ -139,6 +139,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { space } = commonStore;
 		const subId = Constant.subId.space;
 		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+		const canAdd = items.length < Constant.limit.space;
 
 		items.sort((c1, c2) => {
 			const isSpace1 = c1.spaceId == space;
@@ -149,7 +150,9 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			return 0;
 		});
 
-		items.push({ id: 'add' });
+		if (canAdd) {
+			items.push({ id: 'add' });
+		};
 		return items;
 	};
 
