@@ -330,6 +330,9 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Space },
 				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
 			}
