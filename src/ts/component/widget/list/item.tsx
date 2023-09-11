@@ -5,15 +5,18 @@ import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { I, UtilCommon, UtilObject, keyboard, analytics, translate } from 'Lib';
+import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 import Constant from 'json/constant.json';
 
 type Props = {
 	block: I.Block;
 	subId: string;
 	id: string;
+	index?: number;
 	style?: any;
 	isEditing?: boolean;
 	isCompact?: boolean;
+	isPreview?: boolean;
 };
 
 const WidgetListItem = observer(class WidgetListItem extends React.Component<Props> {
@@ -30,28 +33,27 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	render () {
-		const { subId, id, block, style, isCompact, isEditing } = this.props;
+		const { subId, id, block, style, isCompact, isEditing, index, isPreview } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source, done } = object;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
+		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
+
+		const Handle = SortableHandle(() => (
+			<Icon className="dnd" />
+		));
 
 		let descr = null;
-		if (object.type == Constant.typeId.bookmark) {
-			descr = (
-				<div className="descr">
-					{UtilCommon.shortUrl(source)}
-				</div>
-			);
-		} else {
-			descr = <ObjectDescription object={object} />;
+		if (!isCompact) {
+			if (object.type == Constant.typeId.bookmark) {
+				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
+			} else {
+				descr = <ObjectDescription object={object} />;
+			};
 		};
-
-		if (isCompact) {
-			descr = null;
-		};
-
+		
 		let inner = (
 			<div className="inner">
 				<IconObject 
@@ -70,15 +72,25 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					}}
 				/>
 
-				<div className="info">
+				<div className="info" onMouseDown={e => this.onClick(e)}>
 					<ObjectName object={object} />
 					{descr}
 				</div>
+
 				<div className="buttons">
 					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
+
+		if (canDrag) {
+			inner = (
+				<React.Fragment>
+					<Handle />
+					{inner}
+				</React.Fragment>
+			);
+		};
 
 		if (canDrop) {
 			inner = (
@@ -95,18 +107,24 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			);
 		};
 
-		return (
+		const content = (
 			<div
 				ref={node => this.node = node}
-				className="item"
+				className={[ 'item', (canDrag ? 'canDrag' : '') ].join(' ')}
 				key={object.id}
-				onMouseDown={e => this.onClick(e)}
 				onContextMenu={e => this.onContext(e, false)}
 				style={style}
 			>
 				{inner}
 			</div>
 		);
+
+		if (canDrag) {
+			const Element = SortableElement(() => content);
+			return <Element index={index} />;
+		} else {
+			return content;
+		};
 	};
 
 	componentDidMount (): void {

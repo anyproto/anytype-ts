@@ -49,7 +49,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
-				<div className="over">
+				<div className="inner">
 					<div className="head" draggable={true} onDragStart={this.onDragStart}>
 						<Icon
 							className="toggle"

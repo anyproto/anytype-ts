@@ -387,15 +387,7 @@ class UtilObject {
 
 	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			const templateIds = (message.records || []).map(it => it.id);
-
-			let res = true;
-
-			if (!templateIds.includes(templateId)) {
-				res = false;
-			};
-
-			callBack(res);
+			callBack((message.records || []).map(it => it.id).includes(templateId));
 		});
 	};
 

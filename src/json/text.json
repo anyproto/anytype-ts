@@ -47,6 +47,7 @@
     "commonChange": "Change",
     "commonName": "Name",
     "commonNoObjects": "No objects",
+	"commonNone": "None",
     "commonHelp": "Help",
     "commonSelectAll": "Select all",
     "commonDeselectAll": "Deselect all",
@@ -1011,10 +1012,8 @@
 
     "menuBlockLinkSettingsStyleText": "Text",
     "menuBlockLinkSettingsStyleCard": "Card",
-    "menuBlockLinkSettingsSizeNone": "None",
     "menuBlockLinkSettingsSizeSmall": "Small",
     "menuBlockLinkSettingsSizeMedium": "Medium",
-    "menuBlockLinkSettingsDescriptionNone": "None",
     "menuBlockLinkSettingsDescriptionRelationDescription": "Relation description",
     "menuBlockLinkSettingsDescriptionContentPreview": "Content preview",
     "menuBlockLinkSettingsPreviewLayout": "Preview layout",
@@ -1509,7 +1508,6 @@
     "libRelationSmall": "Small",
     "libRelationMedium": "Medium",
     "libRelationLarge": "Large",
-    "libRelationNone": "None",
     "libRelationPageCover": "Page cover",
 
     "libMenuClearStyle": "Clear style",

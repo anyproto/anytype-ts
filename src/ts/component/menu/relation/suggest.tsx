@@ -180,7 +180,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		this.resize();
 		this.focus();
-		this.props.setActive();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -200,7 +200,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
