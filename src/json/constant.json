@@ -19,7 +19,7 @@
 	"limit": {
 		"menuRecords": 100,
 		"widgets": 20,
-		"space": 3
+		"space": 10
 	},
 
 	"default": {
