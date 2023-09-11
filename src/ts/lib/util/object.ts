@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData } from 'Lib';
 import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -383,6 +383,12 @@ class UtilObject {
 	isAllowedTemplate (typeId): boolean {
 		const type = dbStore.getType(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
+		UtilData.getTemplatesByTypeId(typeId, (message) => {
+			callBack((message.records || []).map(it => it.id).includes(templateId));
+		});
 	};
 
 };

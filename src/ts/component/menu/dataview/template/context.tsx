@@ -88,8 +88,6 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'duplicate': {
-				analytics.event('DuplicateTemplate', { route });
-
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getType(typeId);
 					if (!type) {
@@ -113,17 +111,17 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 							onDuplicate(message.details);
 						};
 					});
-					break;
-				};
+				} else {
+					C.ObjectListDuplicate([ template.id ], (message: any) => {
+						if (!message.error.code && message.ids.length) {
+							if (onDuplicate) {
+								onDuplicate({ ...template, id: message.ids[0] });
+							};
 
-				C.ObjectListDuplicate([ template.id ], (message: any) => {
-					if (!message.error.code && message.ids.length) {
-						if (onDuplicate) {
-							onDuplicate({ ...template, id: message.ids[0] });
+							analytics.event('DuplicateObject', { count: 1, route, objectType: template.type });
 						};
-						analytics.event('DuplicateObject', { count: 1, route });
-					};
-				});
+					});
+				};
 				break;
 			};
 

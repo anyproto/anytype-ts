@@ -40,7 +40,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
+		const { parent, block, isCollection, isPreview } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -49,12 +49,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const { total } = dbStore.getMeta(subId, '');
 		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
-
-		let records = this.getRecords();
-		if (targetBlockId == Constant.widgetId.favorite) {
-			records = sortFavorite(records);
-		};
-
+		const records = this.getRecords();
 		const length = records.length;
 
 		if (!this.cache) {
@@ -370,13 +365,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	getRecords () {
-		const { parent } = this.props;
-		const { viewId } = parent.content;
+		const { parent, block, sortFavorite } = this.props;
+		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
+		const views = dbStore.getViews(rootId, BLOCK_ID);
+		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
+		const ret = Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
 
-		return Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
+		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
 	resize () {
