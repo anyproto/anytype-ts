@@ -81,6 +81,8 @@
 			.inner { padding-left: 0px; }
 			.dropTarget { width: calc(100% - 20px); }
 		}
+
+		.item.isDragging { margin-top: -46px; margin-left: -12px; }
 	}
 };
 
