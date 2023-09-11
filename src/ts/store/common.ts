@@ -139,13 +139,13 @@ class CommonStore {
 		const typeId = String(this.typeId || Storage.get('defaultType') || '');
 
 		if (!typeId) {
-			return Constant.typeId.note;
+			return Constant.typeId.page;
 		};
 
 		const type = dbStore.getType(typeId);
 
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			return Constant.typeId.note;
+			return Constant.typeId.page;
 		};
 
 		return typeId;
