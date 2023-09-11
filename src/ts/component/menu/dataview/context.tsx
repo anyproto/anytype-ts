@@ -271,7 +271,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection, route } = data;
 		const win = $(window);
 		const count = objectIds.length;
 		const cb = () => {
@@ -299,13 +299,13 @@ class MenuContext extends React.Component<I.Menu> {
 						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
-					analytics.event('DuplicateObject', { count });
+					analytics.event('DuplicateObject', { count, route });
 
 					if (isCollection) {
 						C.ObjectCollectionAdd(targetId, message.ids, () => {
 							cb();
 
-							analytics.event('LinkToObject', { linkType: 'Collection' });
+							analytics.event('LinkToObject', { linkType: 'Collection', route });
 						});
 					} else {
 						cb();
@@ -328,7 +328,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'fav': {
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
-					analytics.event('AddToFavorites', { count });
+					analytics.event('AddToFavorites', { count, route });
 				});
 				break;
 			};
@@ -336,7 +336,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unfav': {
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
-					analytics.event('RemoveFromFavorites', { count });
+					analytics.event('RemoveFromFavorites', { count, route });
 				});
 				break;
 			};
@@ -344,7 +344,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
-					analytics.event('UnlinkFromCollection', { count });
+					analytics.event('UnlinkFromCollection', { count, route });
 				});
 				break;
 			};

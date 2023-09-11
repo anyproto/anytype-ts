@@ -76,44 +76,42 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					{!items.length ? (
-						<div className="item empty">
-							<div className="inner">{translate('menuDataviewFilterListEmpty')}</div>
-						</div>
-					) : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<VList
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT}
-											onScroll={this.onScroll}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
-				</div>
-			);
-		});
+		const List = SortableContainer(() => (
+			<div className="items">
+				{!items.length ? (
+					<div className="item empty">
+						<div className="inner">{translate('menuDataviewFilterListEmpty')}</div>
+					</div>
+				) : (
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => true}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<VList
+										ref={ref => this.refList = ref}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										onScroll={this.onScroll}
+										scrollToAlignment="center"
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				)}
+			</div>
+		));
 		
 		return (
 			<div 

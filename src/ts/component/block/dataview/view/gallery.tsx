@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InfiniteLoader, AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, Relation, UtilData, UtilCommon } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
@@ -17,6 +17,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	width = 0;
 	columnCount = 0;
 	length = 0;
+	timeout = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -195,8 +196,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	onResize ({ width }) {
 		this.width = width;
-		this.reset();
-		this.forceUpdate();
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			this.reset();
+			this.forceUpdate();
+		}, 40);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
@@ -213,10 +218,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getRecords () {
-		const { getRecords } = this.props;
+		const { getRecords, isAllowedObject } = this.props;
 		const records = UtilCommon.objectCopy(getRecords());
 		
-		records.push('add-record');
+		if (isAllowedObject()) {
+			records.push('add-record');
+		};
 
 		return records;
 	};
@@ -298,6 +305,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(id);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
+		const allowedTypes = [ Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ];
 
 		let object = null;
 		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
@@ -305,7 +313,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		} else {
 			for (const id of value) {
 				const file = detailStore.get(subId, id, []);
-				if (file._empty_) {
+				if (file._empty_ || !allowedTypes.includes(file.type)) {
 					continue;
 				};
 
@@ -318,7 +326,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		if (!object.coverId && !object.coverType && ![ Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].includes(object.type)) {
+		if (!object.coverId && !object.coverType && !allowedTypes.includes(object.type)) {
 			return null;
 		};
 

@@ -9,12 +9,6 @@ class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
-	obj: any = null;
-	dx = 0;
-	dy = 0;
-	width = 0;
-	height = 0;
-	frame = 0;
 
 	constructor (props: object) {
 		super(props);
@@ -25,7 +19,6 @@ class Navigation extends React.Component {
 		this.onGraph = this.onGraph.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onProfile = this.onProfile.bind(this);
-		this.onDragStart = this.onDragStart.bind(this);
 	};
 
 	render () {
@@ -144,101 +137,21 @@ class Navigation extends React.Component {
 		};
 
 		const node = $(this.node);
-		const coords = Storage.get('navigation') || {};
-		const { ww, wh } = UtilCommon.getWindowDimensions();
-		
-		this.height = node.outerHeight();
-		this.width = node.outerWidth();
+		const { ww } = UtilCommon.getWindowDimensions();
+		const width = node.outerWidth();
+		const sidebar = $('#sidebar');
+		const isRight = sidebar.hasClass('right');
 
-		coords.x = Number(coords.x) || 0;
-		coords.y = Number(coords.y) || 0;
-
-		if (!coords.x) {
-			const sidebar = $('#sidebar');
-			const isRight = sidebar.hasClass('right');
-
-			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
-				sw = sidebar.outerWidth();
-			};
-
-			coords.x = (ww - sw) / 2 - this.width / 2;
-
-			if (!isRight) {
-				coords.x += sw;
-			};
+		let sw = 0;
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			sw = sidebar.outerWidth();
 		};
 
-		if (!coords.y) {
-			coords.y = wh - 72;
+		let x = (ww - sw) / 2 - width / 2;
+		if (!isRight) {
+			x += sw;
 		};
-	
-		this.setStyle(coords.x, coords.y);
-	};
-
-	onDragStart (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const win = $(window);
-		const node = $(this.node);
-		const offset = node.offset();
-
-		this.dx = e.pageX - offset.left;
-		this.dy = e.pageY - offset.top;
-
-		keyboard.disableSelection(true);
-		keyboard.setDragging(true);
-
-		win.off('mousemove.navigation mouseup.navigation');
-		win.on('mousemove.navigation', e => this.onDragMove(e));
-		win.on('mouseup.navigation', e => this.onDragEnd());
-	};
-
-	onDragMove (e: any) {
-		const win = $(window);
-		const x = e.pageX - this.dx - win.scrollLeft();
-		const y = e.pageY - this.dy - win.scrollTop();
-		const coords = this.checkCoords(x, y);
-
-		this.setStyle(coords.x, coords.y);
-		//Storage.set('navigation', coords);
-	};
-
-	onDragEnd () {
-		keyboard.setDragging(false);
-		keyboard.disableSelection(false);
-
-		$(window).off('mousemove.navigation mouseup.navigation');
-	};
-
-	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
-
-		x = Number(x) || 0;
-		x = Math.floor(x);
-		x = Math.max(0, x);
-		x = Math.min(ww - this.width, x);
-
-		y = Number(y) || 0;
-		y = Math.floor(y);
-		y = Math.max(UtilCommon.sizeHeader(), y);
-		y = Math.min(wh - this.height, y);
-
-		return { x, y };
-	};
-
-	setStyle (x: number, y: number) {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
-			const node = $(this.node);
-			const coords = this.checkCoords(x, y);
-		
-			node.css({ left: coords.x, top: coords.y });
-		});
+		node.css({ left: x });
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

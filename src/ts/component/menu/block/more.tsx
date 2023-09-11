@@ -434,7 +434,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
-						analytics.event('DuplicateObject', { count: 1, route });
+						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
 					};
 				});
 				break;
@@ -547,6 +547,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'setDefault': {
 				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
+				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
 				analytics.event('ChangeDefaultTemplate', { route: 'Type' });
 				break;
 			};

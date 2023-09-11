@@ -159,7 +159,7 @@ const Components: any = {
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
 
-	widget:				 MenuWidget,
+	widget:					 MenuWidget,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -465,12 +465,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-			
+			const minY = UtilCommon.sizeHeader();
+
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
-			const minY = UtilCommon.sizeHeader();
 			let rect = null;
 
 			if (recalcRect) {

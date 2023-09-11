@@ -169,58 +169,80 @@
 	/* Callout */
 	
 	.block.blockText.textCallout { min-width: 130px; }
-	.block.blockText.textCallout > .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: $colorVeryLightGrey; }
-	.block.blockText.textCallout > .wrapContent > .selectable { position: static; }
-	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget { padding: 16px 16px 0px 16px; }
-	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex { gap: 0px 14px; }
-	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex {
-		.markers { display: none; }
-		.additional { flex-shrink: 0; }
-		.additional {
-			.iconObject { margin-top: 2px; }
+	.block.blockText.textCallout {
+		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: $colorVeryLightGrey; }
+		> .wrapContent {
+			> .selectable { position: static; }
+			> .selectable {
+				> .dropTarget { padding: 16px 16px 0px 16px; }
+				> .dropTarget {
+					> .flex { gap: 0px 14px; }
+					> .flex {
+						.markers { display: none; }
+						.additional { flex-shrink: 0; }
+						.additional {
+							.iconObject { margin-top: 2px; }
+						}
+					}
+				}
+			}
+
+			> .dropTarget.targetBot { display: block; height: 16px; position: static; }
+			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorAccent100 inset; }
+
+			> .children { padding-right: 16px; }
 		}
 	}
-	.block.blockText.textCallout > .wrapContent > .dropTarget.targetBot { display: block; height: 16px; position: static; }
-	.block.blockText.textCallout > .wrapContent > .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorAccent100 inset; }
-	.block.blockText.textCallout.last > .wrapContent { margin-bottom: 0px; }
+	.block.blockText.textCallout.last {
+		> .wrapContent { margin-bottom: 0px; }
+	}
 
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent { border-radius: 2px; background-color: $colorVeryLightGrey; }
-	.block.blockText.textCode > .wrapContent > .selectable { border-radius: 6px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget .placeholder { display: none !important; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex {
-		#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; }
-		#value * { background: none; }
+	.block.blockText.textCode {
+		> .wrapContent { border-radius: 2px; background-color: $colorVeryLightGrey; }
+		> .wrapContent {
+			> .selectable { border-radius: 6px; }
+			> .selectable {
+				> .dropTarget { padding: 24px 0px 0px 0px; }
+				> .dropTarget {
+					#value { padding: 16px; }
+					.placeholder { display: none !important; }
 
-		.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
-		.additional {
-			.select { border: 0px; color: $colorMediumGrey; border-radius: 0px; padding: 0px 20px 0px 0px; }
-			.select {
-				.item { @include text-common; }
-				.name { overflow: visible; }
-			}
-			.select:hover, .select.active { background: none; }
-			
-			.buttons { 
-				position: absolute; right: 16px; top: 0px; display: flex; flex-direction: row; gap: 0px 8px; opacity: 0; 
-				transition: $transitionAllCommon;
-			}
-			.buttons {
-				.btn { 
-					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; 
-					display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
-				}
-				.btn {
-					.icon { flex-shrink: 0; width: 20px; height: 20px; }
-					.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
-					.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+					> .flex { position: static; }
+					> .flex {
+						#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; }
+						#value * { background: none; }
 
-					.txt { line-height: 20px; vertical-align: top; }
+						.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
+						.additional {
+							.select { border: 0px; color: $colorMediumGrey; border-radius: 0px; padding: 0px 20px 0px 0px; }
+							.select {
+								.item { @include text-common; }
+								.name { overflow: visible; }
+							}
+							.select:hover, .select.active { background: none; }
+							
+							.buttons { 
+								position: absolute; right: 16px; top: 0px; display: flex; flex-direction: row; gap: 0px 8px; opacity: 0; 
+								transition: $transitionAllCommon;
+							}
+							.buttons {
+								.btn { 
+									padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; 
+									display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
+								}
+								.btn {
+									.icon { flex-shrink: 0; width: 20px; height: 20px; }
+									.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
+									.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+
+									.txt { line-height: 20px; vertical-align: top; }
+								}
+							}
+						}
+					}
 				}
 			}
 		}

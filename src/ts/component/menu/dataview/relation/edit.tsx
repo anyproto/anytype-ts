@@ -218,7 +218,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
 
-		let canDuplicate = true;
+		let canDuplicate = false;
 		if (relation) {
 			canDuplicate = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
 		};
