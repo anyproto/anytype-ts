@@ -71,6 +71,12 @@ html.printMedia {
 			}
 		}
 
+		.block.blockTable { width: 100% !important; margin: 0px !important; }
+		.block.blockTable {
+			.scrollWrap > .inner { width: 100% !important; }
+			.row { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; }
+		}
+
 		.block.blockDataview {
 			.viewContent.viewGallery {
 				.card { box-shadow: 0px 0px; }
