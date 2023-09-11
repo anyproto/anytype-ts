@@ -498,6 +498,11 @@ class Relation {
 		return require('lib/json/generated/systemRelations.json');
 	};
 
+	systemKeysWithoutUser () {
+		const skipKeys = [ 'tag', 'description' ];
+		return this.systemKeys().filter(it => !skipKeys.includes(it));
+	};
+
 	isSystem (relationKey: string) {
 		return this.systemKeys().includes(relationKey);
 	};
