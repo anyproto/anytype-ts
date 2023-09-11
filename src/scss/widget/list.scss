@@ -33,7 +33,10 @@
 
 	.body { display: flex; flex-direction: column; padding-bottom: 8px; }
 	.body {
-		.item { position: relative; }
+		.items { height: 100%; }
+
+		.item { position: relative; display: flex; flex-direction: row; align-items: center; }
+
 		.item:hover, .item.active {
 			.buttons { display: flex; }
 			.icon.more { opacity: 1; }
@@ -50,7 +53,14 @@
 		.item:hover::before { opacity: 1; }
 
 		.item { 
-			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; }
+			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; }
+
+			.icon.dnd { 
+				width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; 
+				flex-shrink: 0;
+			}
+
+			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
 			.dropTarget { border-radius: 6px; height: 100%; }
 			.iconObject { flex-shrink: 0; }
 			.iconObject.isTask { background: none; }
@@ -66,6 +76,13 @@
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			}
 		}
+
+		.item.canDrag {
+			.inner { padding-left: 0px; }
+			.dropTarget { width: calc(100% - 20px); }
+		}
+
+		.item.isDragging { margin-top: -46px; margin-left: -12px; }
 	}
 };
 

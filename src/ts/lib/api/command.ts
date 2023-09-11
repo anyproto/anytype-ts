@@ -2,6 +2,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -829,6 +830,10 @@ const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, 
 
 const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Update.Request();
+
+	if (undefined !== view.defaultTemplateId) {
+		view.defaultTemplateId = (view.defaultTemplateId == Constant.templateId.blank) ? '' : view.defaultTemplateId;
+	};
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);

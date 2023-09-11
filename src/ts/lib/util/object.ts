@@ -1,5 +1,5 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
-import { commonStore, blockStore, popupStore, dbStore, detailStore } from 'Store';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
+import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -253,12 +253,9 @@ class UtilObject {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
-	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
-		if (templateId == Constant.templateId.blank) {
-			templateId = '';
-		};
-
-		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
+	setDefaultTemplateId (rootId: string, id: string, callBack?: (message: any) => void) {
+		id = (id == Constant.templateId.blank) ? '' : id;
+		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
 	defaultName (key: string) {
@@ -386,6 +383,12 @@ class UtilObject {
 	isAllowedTemplate (typeId): boolean {
 		const type = dbStore.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
+		UtilData.getTemplatesByTypeId(typeId, (message) => {
+			callBack((message.records || []).map(it => it.id).includes(templateId));
+		});
 	};
 
 };

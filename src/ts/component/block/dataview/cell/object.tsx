@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore, detailStore, dbStore } from 'Store';
 import ItemObject from './item/object';
 
 interface State { 
@@ -175,10 +175,16 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, id: string) {
-		const { canOpen } = this.props;
 		const item = this.getItems().find(item => item.id == id);
+		if (!item) {
+			return;
+		};
 
-		if (canOpen && item) {
+		// Template type is disabled for opening
+		const templateType = dbStore.getTemplateType();
+		const canOpen = this.props.canOpen && (item.id != templateType.id);
+
+		if (canOpen) {
 			e.stopPropagation();
 			UtilObject.openPopup(item);
 		};

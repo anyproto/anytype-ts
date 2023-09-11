@@ -15,8 +15,19 @@
 		}
 		.content { height: 100%; }
 
-		.mainSides { display: flex; height: 100%; }
-		.mainSides {
+		.space {
+			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
+			border-radius: 8px; transition: $transitionAllCommon;
+		}
+		.space {
+			.iconObject { flex-shrink: 0; }
+			.txt { width: calc(100% - 40px); }
+			.name { @include text-common; font-weight: 600; }
+			.type { @include text-small; color: $colorDarkGrey; }
+		}
+
+		.content > .mainSides { display: flex; height: 100%; }
+		.content > .mainSides {
 			> .side { position: relative; height: 100%; }
 			> .side.left { 
 				width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 

@@ -307,7 +307,10 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
+		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => {
+			if (it.isInstalled && (it.relationKey == 'picture')) {
+				return true;
+			};
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
 		}).map(it => ({
 			id: it.relationKey, 
@@ -316,7 +319,7 @@ class Relation {
 		}));
 
 		return [
-			{ id: '', icon: '', name: translate('libRelationNone') },
+			{ id: '', icon: '', name: translate('commonNone') },
 			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
@@ -495,6 +498,11 @@ class Relation {
 
 	systemKeys () {
 		return require('lib/json/generated/systemRelations.json');
+	};
+
+	systemKeysWithoutUser () {
+		const skipKeys = [ 'tag', 'description' ];
+		return this.systemKeys().filter(it => !skipKeys.includes(it));
 	};
 
 	isSystem (relationKey: string) {

@@ -279,6 +279,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		menuStore.open('dataviewContext', {
 			...param,
 			data: {
+				route: 'Graph',
 				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),

@@ -253,6 +253,10 @@ class Dataview {
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
 		records = records || [];
 
+		if (!viewId || !records.length) {
+			return records;
+		};
+
 		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return records;

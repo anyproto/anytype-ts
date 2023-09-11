@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, UtilData, UtilObject, Action, UtilCommon, translate } from 'Lib';
+import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,7 +27,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n = -1;
+	n = 1;
 	offset = 0;
 	timeoutFilter = 0;
 
@@ -180,7 +180,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		this.resize();
 		this.focus();
-		this.props.setActive();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -200,7 +200,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -223,7 +223,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const filter = String(data.filter || '');
-		const skipKeys = data.skipKeys || [];
+		const skipKeys = (data.skipKeys || []).concat(Relation.systemKeysWithoutUser());
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
