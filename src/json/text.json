@@ -831,8 +831,8 @@
     "popupShortcutMainBasics9": "Search in object",
     "popupShortcutMainBasics10": "Close Anytype",
     "popupShortcutMainBasics11": "Show object edit history",
-    "popupShortcutMainBasics12": "In object link will open it in modal view",
-    "popupShortcutMainBasics13": "In object link will open it in new window",
+    "popupShortcutMainBasics12": "In Object link will open it in modal view",
+    "popupShortcutMainBasics13": "In Object link will open it in new window",
     "popupShortcutMainBasics14": "Shortcuts to launch shortcuts view",
     "popupShortcutMainBasics15": "Toggle sidebar",
     "popupShortcutMainBasics16": "Zoom in",
@@ -890,8 +890,8 @@
     "popupShortcutNavigationPage3": "Go up one line",
     "popupShortcutNavigationPage4": "Go to the start of the line",
     "popupShortcutNavigationPage5": "Go to the end of the line",
-    "popupShortcutNavigationPage6": "Go to the start of the object",
-    "popupShortcutNavigationPage7": "Go to the end of the object",
+    "popupShortcutNavigationPage6": "Go to the start of the Object",
+    "popupShortcutNavigationPage7": "Go to the end of the Object",
     "popupShortcutNavigationPage8": "Move selected block(s) around",
     
     "popupShortcutMarkdownWhileTyping": "While typing",
@@ -935,13 +935,13 @@
     "popupShortcutCommandLists4": "Toggle list",
 
     "popupShortcutCommandObjects": "Objects",
-    "popupShortcutCommandObjects1": "Create an object with a relative date. Also available: @three days ago, @last month, @2016-05-12",
+    "popupShortcutCommandObjects1": "Create an Object with a relative date. Also available: @three days ago, @last month, @2016-05-12",
     "popupShortcutCommandObjects2": "Object",
     "popupShortcutCommandObjects3": "File",
     "popupShortcutCommandObjects4": "Image",
     "popupShortcutCommandObjects5": "Video",
     "popupShortcutCommandObjects6": "Bookmark",
-    "popupShortcutCommandObjects7": "Link to object",
+    "popupShortcutCommandObjects7": "Link to Object",
 
     "popupShortcutCommandOther": "Other",
     "popupShortcutCommandOther1": "Line divider",
@@ -1066,7 +1066,7 @@
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
-    "menuDataviewObjectTypeEditName": "Object type name",
+    "menuDataviewObjectTypeEditName": "Object Type name",
     "menuDataviewObjectTypeEditLayout": "Layout",
     "menuDataviewObjectListFind": "Find an object",
 
@@ -1123,13 +1123,13 @@
     "menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
     "menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
 
-    "menuDataviewRelationListAddRelation": "Add relation",
+    "menuDataviewRelationListAddRelation": "Add Relation",
 
-    "menuDataviewSortNoSortsApplied": "No sorts applied to this view",
+    "menuDataviewSortNoSortsApplied": "No sorts applied to this View",
     "menuDataviewSortNewSort": "New sort",
 
     "menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
-    "menuDataviewSourceAddRelation": "Add a relation",
+    "menuDataviewSourceAddRelation": "Add a Relation",
 
     "menuDataviewViewEditCover": "Cover",
     "menuDataviewViewEditCardSize": "Card size",
@@ -1155,15 +1155,15 @@
 
     "menuDataviewTemplateSetDefaultForView": "Default for this view",
     "menuDataviewTemplateEdit": "Edit template",
-    "menuDataviewTemplateUnsupported": "This object type doesn't support templates",
+    "menuDataviewTemplateUnsupported": "This Object Type doesn't support Templates",
 
     "menuGraphSettingsTitles": "Titles",
     "menuGraphSettingsArrows": "Arrows",
     "menuGraphSettingsIcons": "Icons",
-    "menuGraphSettingsShowOnGraph": "Show on graph",
+    "menuGraphSettingsShowOnGraph": "Show on Graph",
     "menuGraphSettingsLinks": "Links",
     "menuGraphSettingsRelations": "Relations",
-    "menuGraphSettingsUnlinkedObjects": "Unlinked objects",
+    "menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
 
     "menuHelpWhatsNew": "What's New",
     "menuHelpShortcut": "Keyboard Shortcuts",
@@ -1182,7 +1182,7 @@
     "menuItemFilterTimeFromNow": "%d %s from now",
 
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a Relation...",
-    "menuRelationSuggestMyRelations": "My relations",
+    "menuRelationSuggestMyRelations": "My Relations",
     "menuRelationSuggestCreateRelation": "Create Relation %s",
 
     "menuThreadListLastSync": "Last sync",
@@ -1204,17 +1204,17 @@
     "menuThreadStatusLastEditsReceived": "Last edits received",
     "menuThreadStatusNoChanges": "No changes",
 
-    "menuTypeSuggestFilterTypes": "Filter types...",
-    "menuTypeSuggestMyTypes": "My types",
+    "menuTypeSuggestFilterTypes": "Filter Types...",
+    "menuTypeSuggestMyTypes": "My Types",
     "menuTypeSuggestCreateType": "Create type %s",
 
-    "menuWidgetAddWidget": "Add widget",
+    "menuWidgetAddWidget": "Add Widget",
     "menuWidgetChooseSource": "Choose a source",
     "menuWidgetWidgetType": "Widget type",
     "menuWidgetWidgetSource": "Widget Source",
-    "menuWidgetNumberOfObjects": "Number of objects",
-    "menuWidgetRemoveWidget": "Remove widget",
-    "menuWidgetEditWidgets": "Edit widgets",
+    "menuWidgetNumberOfObjects": "Number of Objects",
+    "menuWidgetRemoveWidget": "Remove Widget",
+    "menuWidgetEditWidgets": "Edit Widgets",
     "menuWidgetFavorites": "Favorites",
     "menuWidgetSets": "Sets",
     "menuWidgetCollections": "Collections",
@@ -1225,8 +1225,8 @@
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
 
-    "previewCopy": "Copy link",
-    "previewEdit": "Edit link",
+    "previewCopy": "Copy Link",
+    "previewEdit": "Edit Link",
 
     "previewObjectTemplateIsBundled": "Template is bundled",
 
@@ -1318,13 +1318,13 @@
     "layout20": "Database",
 
     "defaultNamePage": "Untitled",
-    "defaultNameSet": "New set",
-    "defaultNameCollection": "New collection",
+    "defaultNameSet": "New Set",
+    "defaultNameCollection": "New Collection",
     "defaultNameSpace": "Untitled space",
-    "defaultNameType": "New type",
-    "defaultNameRelation": "New relation",
-    "defaultNameBookmark": "Paste link",
-    "defaultNameView": "New view",
+    "defaultNameType": "New Type",
+    "defaultNameRelation": "New Relation",
+    "defaultNameBookmark": "Paste Link",
+    "defaultNameView": "New View",
 
     "placeholderBlock": "Type text or \/ for commands",
     "placeholderBlockDescription": "Add a description",
@@ -1363,13 +1363,13 @@
     "survey3Cancel": "No thanks",
 
     "widget0Name": "Link",
-    "widget0Description": "Compact version of the object",
+    "widget0Description": "Compact version of the Object",
     "widget1Name": "Tree",
-    "widget1Description": "Hierarchical structure of objects",
+    "widget1Description": "Hierarchical structure of Objects",
     "widget2Name": "List",
-    "widget2Description": "Widget with list view of set object",
+    "widget2Description": "Widget with list view of Set Object",
     "widget3Name": "Compact list",
-    "widget3Description": "Widget with list view of set object",
+    "widget3Description": "Widget with list view of Set Object",
     "widgetFavorite": "Favorites",
     "widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
@@ -1381,14 +1381,14 @@
     "widgetBin": "Bin",
     "widgetOptions": "Options",
     "widgetToggle": "Toggle",
-    "widgetEmptyLabel": "There are no objects here,<br/>create the first one",
+    "widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 
-    "spaceType0": "Personal space",
-    "phrasePlaceholder": "Please enter your Recovery phrase here",
-    "navigationCreateNew": "Create new object",
+    "spaceType0": "Personal Space",
+    "phrasePlaceholder": "Please enter your Recovery Phrase here",
+    "navigationCreateNew": "Create new Object",
 
-    "spaceLast": "Last opened object",
-    "spaceExisting": "Existing object",
+    "spaceLast": "Last opened Object",
+    "spaceExisting": "Existing Object",
 
     "quickOption0": "Exact date",
     "quickOption1": "Yesterday",
@@ -1456,12 +1456,12 @@
     "onboardingDashboard11": "<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.<br />We've included some materials to help you get started, but feel free to make adjustments as needed.",
     "onboardingDashboard12": "Let's take a few minutes to explore the features together.",
     "onboardingDashboard21": "<b>Sets, acting as filters for your objects</b>, are featured on your Homepage.",
-    "onboardingDashboard22": "Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.",
+    "onboardingDashboard22": "Sets make it easy to navigate and collect specific Objects, such as Notes, Links, Tasks, ideas, and more.",
     "onboardingDashboard23": "To access different Set Views, simply select them.",
     "onboardingDashboard31": "<b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with Relations and links.",
     "onboardingDashboard32": "To add an Object to a Set, click the <span class=\"highlight\">New</span> button and view its relation as properties in columns.",
     "onboardingDashboard41": "<b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.",
-    "onboardingDashboard42": "Change the widget appearance and see what looks best. Make your Favorites as a Tree Widget.",
+    "onboardingDashboard42": "Change the Widget appearance and see what looks best. Make your Favorites as a Tree Widget.",
     "onboardingDashboard51": "<b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.",
     "onboardingDashboard52": "If you have any questions, don't hesitate to press the <span class=\"highlight\">?</span> button.",
     "onboardingDashboard53": "To continue working on your project where you left off, you can import your data and make it your own.",
@@ -1482,7 +1482,7 @@
     "onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.",
 
     "onboardingInlineSet1Title": "This is Inline Set",
-    "onboardingInlineSet1Description": "Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.",
+    "onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
     "onboardingInlineSet2Title": "Views",
     "onboardingInlineSet2Description": "Adjust rules and views to suit the current context.",
 
@@ -1525,7 +1525,7 @@
 
     "utilLoadMoreText": "Show %s more %s",
     "utilDeletedBackToDashboard": "Back to dashboard",
-    "utilDeletedObjectNotExist": "This object doesn't exist",
+    "utilDeletedObjectNotExist": "This Object doesn't exist",
 
 	"delimiterComma": "Comma",
 	"delimiterSemicolon": "Semicolon",
