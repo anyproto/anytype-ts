@@ -77,7 +77,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				{isAllowed ? (
 					<div className="items">
-						<ItemBlank />
+            <ItemBlank />
 
 						{this.items.map((item: any, i: number) => (
 							<PreviewObject
@@ -252,7 +252,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	isDefaultTemplate (id: string): boolean {
-		return id == this.state.templateId;
+    return id == this.state.templateId;
 	};
 };
 

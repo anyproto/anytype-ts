@@ -1115,7 +1115,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const sources = this.getSources();
 
-		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+    let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (isAllowed && this.isCollection()) {
 			return true;
 		};
