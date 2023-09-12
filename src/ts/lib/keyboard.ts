@@ -125,8 +125,13 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, () => {
+		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, (pressed: string) => {
 			e.preventDefault();
+
+			if (pressed.match('.') && this.isFocused) {
+				return;
+			};
+
 			sidebar.toggleOpenClose();
 		});
 
