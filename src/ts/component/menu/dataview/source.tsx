@@ -197,7 +197,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				name: translate('commonObjectType'),
 				relationFormat: I.RelationType.Object,
 				layout: I.ObjectLayout.Relation,
-				value: 'All',
+				value: translate('commonNone'),
 			});
 		} else {
 			value.forEach(it => {
