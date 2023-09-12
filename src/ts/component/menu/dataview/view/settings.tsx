@@ -312,6 +312,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				};
 			} else {
 				this.getDefaultTemplateName();
+				menuStore.updateData(this.props.id, { templateId: item.id });
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
 		};
