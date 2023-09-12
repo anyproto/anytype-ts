@@ -31,7 +31,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { withTypeSelect, typeId } = data;
 
 		const type = dbStore.getType(typeId);
-		const itemBlank = { id: '', targetObjectType: typeId };
+		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
@@ -198,11 +198,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					route,
 					onArchive: this.reload,
 					onDuplicate: (object) => UtilObject.openPopup(object, {}),
-					onSetDefault: () => { 
-						if (onSetDefault) {
-							onSetDefault(item, this.reload);
-						};
-					},
+					onSetDefault: onSetDefault ? () => onSetDefault(item, this.reload) : null,
 				}
 			});
 		});
@@ -215,7 +211,6 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 		if (onSelect) {
 			onSelect(item, this.reload);
-			menuStore.updateData(this.props.id, { templateId: item.id });
 		};
 	};
 

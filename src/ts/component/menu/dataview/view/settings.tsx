@@ -311,9 +311,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					onTemplateAdd();
 				};
 			} else {
+				const templateId = item.id == Constant.templateId.blank ? '' : item.id;
+
 				this.getDefaultTemplateName();
-				menuStore.updateData(this.props.id, { templateId: item.id });
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
+				menuStore.updateData('dataviewTemplateList', { templateId });
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: templateId }, callBack);
 			};
 		};
 
