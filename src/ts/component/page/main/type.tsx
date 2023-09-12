@@ -531,7 +531,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							UtilObject.setDefaultTemplateId(rootId, '');
+							UtilObject.setDefaultTemplateId(rootId, Constant.templateId.blank);
 						};
 					}
 				}
