@@ -138,11 +138,11 @@ initTheme = (theme) => {
 		case 'dark':
 			hoverAlpha = 0.2;
 			Color = {
-				bg: '#1e1e1b',
-				link: '#484843',
-				arrow: '#929082',
-				node: '#b6b6b6',
-				text: '#929082',
+				bg: '#171717',
+				link: '#3f3f3f',
+				arrow: '#555',
+				node: '#9a9a9a',
+				text: '#8d8d8d',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',
 			};
