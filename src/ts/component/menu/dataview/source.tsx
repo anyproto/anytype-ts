@@ -209,7 +209,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 						value: it.name,
 					});
 				} else {
-					items.push({ ...it, itemId: it.id, value: 'All' });
+					items.push({ ...it, itemId: it.id, value: translate('commonAll') });
 				};
 			});
 		};
