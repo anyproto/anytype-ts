@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore, commonStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	isEditing: boolean;
@@ -147,7 +148,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	onTitleOver (e: any, item: any) {
 		const { rootId, block, loadData, isCollection } = this.props;
 		const { targetObjectId } = block.content;
-		const collectionType = dbStore.getCollectionType();
 
 		if (!item.arrow) {
 			menuStore.closeAll([ 'searchObject' ]);
@@ -181,7 +181,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};

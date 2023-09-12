@@ -784,13 +784,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateAdd (id?: string) {
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
-		const template = dbStore.getTemplateType();
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', template?.uniqueKey, commonStore.space, (message) => {
+		C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
 			if (message.error.code) {
 				return;
 			};

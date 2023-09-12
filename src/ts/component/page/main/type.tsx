@@ -304,13 +304,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onTemplateAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const templateType = dbStore.getTemplateType();
 		const details: any = { 
 			targetObjectType: rootId,
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', templateType?.uniqueKey, commonStore.space, (message) => {
+		C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
 			if (message.error.code) {
 				return;
 			};

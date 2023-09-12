@@ -89,14 +89,13 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 
 			case 'duplicate': {
 				if (template.id == Constant.templateId.blank) {
-					const templateType = dbStore.getTemplateType();
 					const type = dbStore.getTypeById(template.typeId);
 					const details: any = {
 						targetObjectType: template.typeId,
 						layout: type?.recommendedLayout,
 					};
 
-					C.ObjectCreate(details, [], '', templateType?.uniqueKey, commonStore.space, (message) => {
+					C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
 						if (message.error.code) {
 							return;
 						};

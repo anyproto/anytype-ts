@@ -597,7 +597,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
-				const collectionType = dbStore.getCollectionType();
 				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
 
 				const addParam: any = {
@@ -605,7 +604,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
