@@ -51,6 +51,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
+		this.hasSources = this.hasSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
@@ -482,6 +483,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
+	};
+
+	hasSources (): boolean {
+		if (this.isCollection()) {
+			return true;
+		};
+
+		return !!this.getSources().length;
 	};
 
 	getTarget () {
@@ -1128,9 +1137,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
-		const hasSources = this.isCollection() || !!this.getSources().length;
 
-		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]) && hasSources;
+		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]) && this.hasSources();
 
 		for (const type of types) {
 			if (skipTypes.includes(type)) {
@@ -1286,7 +1294,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	checkDefaultTemplate () {
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
-		const hasSources = this.isCollection() || this.getSources().length;
 
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
 			const templates = message.records || [];
@@ -1295,7 +1302,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateIds.push(it.id);
 			});
 
-			if (!hasSources || !templateIds.includes(defaultTemplateId)) {
+			if (!this.hasSources() || !templateIds.includes(defaultTemplateId)) {
 				this.setDefaultTemplateForView(Constant.templateId.blank);
 			};
 		});
