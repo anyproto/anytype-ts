@@ -297,11 +297,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			};
 
 			this.getDefaultTemplateName();
-			setDefaultTemplate(item.id);
-
-			if (callback) {
-				callback();
-			};
+			setDefaultTemplate(item.id, () => {
+				if (callback) {
+					callback();
+				};
+			});
 		};
 
 		const defaultSettings = [
