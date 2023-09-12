@@ -113,11 +113,11 @@ html.themeDark {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.blank { color: $colorTextPrimary; border-color: $colorShapeSecondary; }
-    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorShapeHighlightMedium; }
+    .button.blank { color: $colorTextPrimary; border-color: $colorShapePrimary; }
+    .button.blank:not(.disabled):hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
 
 	.button.red,
-    .button.red.blank { border-color: $colorShapeSecondary; background: none; color: $colorRed; }
+    .button.red.blank { border-color: $colorShapePrimary; background: none; color: $colorRed; }
     .button.red:hover,
     .button.red.blank:hover { border-color: #581f0c; background: #311107; }
 
@@ -358,7 +358,7 @@ html.themeDark {
 
 	/* Navigation */
 
-	.navigationPanel { background: rgba(141, 141, 141, 0.4); }
+	.navigationPanel { background: rgba(141, 141, 141, 0.2); }
 	.navigationPanel {
 		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
 	}
