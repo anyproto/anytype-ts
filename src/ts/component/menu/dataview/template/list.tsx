@@ -38,7 +38,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate('') ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -77,7 +77,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 				{isAllowed ? (
 					<div className="items">
-            <ItemBlank />
+            			<ItemBlank />
 
 						{this.items.map((item: any, i: number) => (
 							<PreviewObject
@@ -101,16 +101,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, typeId, templateId, getView, hasSources } = data;
-		const view = getView();
-
 		this.rebind();
-
-		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
-			this.setState({ templateId: (!hasSources || !res) ? '' : templateId }, () => this.load(true));
-		});
+		this.reload();
 	};
 
 	rebind () {
@@ -124,16 +116,22 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	reload () {
-		this.load(true);
+		const { param } = this.props;
+		const { data } = param;
+		const { typeId, templateId, hasSources } = data;
+
+		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
+			this.setState({ templateId: (!hasSources || !res) ? Constant.templateId.blank : templateId }, () => this.load(true));
+		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { typeId, templateId } = data;
+		const { typeId } = data;
 
 		if (clear) {
-			this.setState({ loading: true, templateId });
+			this.setState({ loading: true });
 		};
 
 		UtilData.getTemplatesByTypeId(typeId, (message) => {
@@ -247,7 +245,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	isDefaultTemplate (id: string): boolean {
-    return id == this.state.templateId;
+    	return id == this.state.templateId;
 	};
 };
 
