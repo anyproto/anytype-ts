@@ -18,7 +18,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	preventSaveOnClose = false;
 	param: any = {};
 	menuContext = null;
-	defaultTemplateName: string = '';
+	defaultTemplateName: string = translate('commonBlank');
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -92,7 +92,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.param = UtilCommon.objectCopy(data.view.get());
 			this.forceUpdate();
 			this.rebind();
-			this.getDefaultTemplateName();
+			this.updateDefaultTemplateName();
 
 			window.setTimeout(() => this.resize(), 5);
 		};
@@ -140,14 +140,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		$(window).off('keydown.menu');
 	};
 
-	getDefaultTemplateName () {
+	updateDefaultTemplateName () {
 		const { param } = this.props;
 		const { data } = param;
 		const { getTemplateId } = data;
 		const templateId = getTemplateId();
 
-		if (!templateId) {
-			this.defaultTemplateName = translate('commonBlank');
+		if (!templateId || templateId == Constant.templateId.blank) {
 			return;
 		};
 
@@ -311,7 +310,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					onTemplateAdd();
 				};
 			} else {
-				this.getDefaultTemplateName();
+				this.updateDefaultTemplateName();
 				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
