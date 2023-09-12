@@ -296,6 +296,7 @@ class UtilData {
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				ignoreHidden: false,
 				onSubscribe: () => {
 					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
