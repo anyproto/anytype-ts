@@ -124,8 +124,6 @@ export interface ViewComponent {
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;
-	setDefaultType?: (id: string, callBack?: () => void) => void;
-	setDefaultTemplate?: (id: string, callBack?: () => void) => void;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
 	onTemplateMenu?: (e: any, dur: number) => void;

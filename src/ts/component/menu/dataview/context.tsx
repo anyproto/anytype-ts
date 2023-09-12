@@ -84,11 +84,11 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
-		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -99,6 +99,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedArchive = true;
 		let allowedFav = true;
 		let allowedCopy = true;
+		let allowedType = true;
 
 		if (isCollection) {
 			div = { isDiv: true };
@@ -130,6 +131,9 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
 			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
+				allowedType = false;
+			};
 		});
 
 		if (favCnt == length) {
@@ -147,6 +151,7 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
+			changeType = null;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -155,6 +160,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
+		if (!allowedType)		 changeType = null;
 
 		let sections = [
 			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
@@ -271,7 +277,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection, route } = data;
 		const win = $(window);
 		const count = objectIds.length;
 		const cb = () => {
@@ -299,13 +305,13 @@ class MenuContext extends React.Component<I.Menu> {
 						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
-					analytics.event('DuplicateObject', { count });
+					analytics.event('DuplicateObject', { count, route });
 
 					if (isCollection) {
 						C.ObjectCollectionAdd(targetId, message.ids, () => {
 							cb();
 
-							analytics.event('LinkToObject', { linkType: 'Collection' });
+							analytics.event('LinkToObject', { linkType: 'Collection', route });
 						});
 					} else {
 						cb();
@@ -328,7 +334,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'fav': {
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
-					analytics.event('AddToFavorites', { count });
+					analytics.event('AddToFavorites', { count, route });
 				});
 				break;
 			};
@@ -336,7 +342,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unfav': {
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
-					analytics.event('RemoveFromFavorites', { count });
+					analytics.event('RemoveFromFavorites', { count, route });
 				});
 				break;
 			};
@@ -344,7 +350,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
-					analytics.event('UnlinkFromCollection', { count });
+					analytics.event('UnlinkFromCollection', { count, route });
 				});
 				break;
 			};

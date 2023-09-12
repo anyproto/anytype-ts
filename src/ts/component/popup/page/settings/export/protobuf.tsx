@@ -76,6 +76,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 
 	init () {
 		this.data = Storage.get('popupExport') || {};
+		this.data.json = (undefined === this.data.json) ? true : Boolean(this.data.json);
 	};
 
 	save () {

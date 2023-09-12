@@ -79,10 +79,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (!it) {
 				return false;
 			};
-			if ([ 'tag', 'description' ].includes(it.relationKey)) {
-				return true;
-			};
-			if (Relation.isSystem(it.relationKey)) {
+			if (Relation.systemKeysWithoutUser().includes(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;

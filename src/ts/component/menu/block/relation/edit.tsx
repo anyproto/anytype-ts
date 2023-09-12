@@ -289,6 +289,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
 			width: getSize().width,
+			vertical: I.MenuDirection.Center,
 			data: {
 				rootId,
 				blockId,

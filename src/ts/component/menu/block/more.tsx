@@ -434,7 +434,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
-						analytics.event('DuplicateObject', { count: 1, route });
+						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
 					};
 				});
 				break;
