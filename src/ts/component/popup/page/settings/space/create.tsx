@@ -172,7 +172,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	getUsecaseOptions () {
 		return [
-			{ id: I.Usecase.None }
+			{ id: I.Usecase.Empty }
 		].concat(_.shuffle([
 			{ id: I.Usecase.Personal },
 			{ id: I.Usecase.Notes },

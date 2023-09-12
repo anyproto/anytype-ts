@@ -53,7 +53,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 					</div>
 
 					<div className="buttons">
-						<Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.None)} />
+						<Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.Skip)} />
 					</div>
 				</Frame>
 			</div>

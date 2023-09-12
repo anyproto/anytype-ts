@@ -316,7 +316,7 @@ class UtilObject {
 
 	isTemplate (type: string) {
 		const templateType = dbStore.getTemplateType();
-		return type == templateType?.id;
+		return templateType ? type == templateType.id : false;
 	};
 
 	isTypeOrRelationLayout (layout: I.ObjectLayout) {
