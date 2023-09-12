@@ -2,7 +2,7 @@
 
 .mediaAudio { width: 100%; }
 .mediaAudio {
-    .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: $colorBlack; }
+    .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: $colorTextPrimary; }
     .controls {
 		.input-drag { 
 			.icon { cursor: default; }
@@ -27,8 +27,8 @@
         .input-drag { display: inline-block; vertical-align: top; height: 20px; }
         .input-drag {
             .icon { width: 6px; height: 6px; border: 0px; background: none;  }
-            .bullet { width: 6px; height: 6px; border-radius: 100%; background: $colorAccent125; }
-            .fill { background: $colorAccent125; }
+            .bullet { width: 6px; height: 6px; border-radius: 100%; background: $colorSystemAccent100; }
+            .fill { background: $colorSystemAccent100; }
             .back { background: $colorShapeHighlightMedium; }
         }
 

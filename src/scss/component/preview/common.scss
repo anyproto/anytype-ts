@@ -3,7 +3,7 @@
 .previewWrapper { position: absolute; left: 0px; top: 0px; width: 320px; z-index: 1000; display: none; opacity: 0; }
 .previewWrapper.anim { transition-duration: 0.3s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .previewWrapper {
-	.content { background: $colorWhite; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
+	.content { background: $colorBgPrimary; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
 	.loaderWrapper { height: 24px !important; margin: 16px auto; border: 0px !important; }
 	.polygon { position: absolute; left: 0px; width: 100%; }
 
@@ -13,7 +13,7 @@
 	}
 	.head {
 		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
-		.item:hover { color: $colorBlack; }
+		.item:hover { color: $colorTextPrimary; }
 		.item:last-child { margin: 0px; }
 	}
 
@@ -32,7 +32,7 @@
 }
 
 .previewGraph {
-	background: $colorWhite; height: auto; padding: 8px 12px; border: 1px solid $colorShapeSecondary; border-radius: 8px; width: 320px;
+	background: $colorBgPrimary; height: auto; padding: 8px 12px; border: 1px solid $colorShapeSecondary; border-radius: 8px; width: 320px;
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }
 

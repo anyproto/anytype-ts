@@ -6,8 +6,8 @@
 }
 
 @keyframes dots {
-	0% { background-color: $colorBlack; }
-	32% { background-color: $colorBlack; }
+	0% { background-color: $colorTextPrimary; }
+	32% { background-color: $colorTextPrimary; }
 	100% { background-color: rgba(0,0,0,0); }
 }
 

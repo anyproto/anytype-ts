@@ -7,7 +7,7 @@
 		.editableWrap { height: 100%; }
 
 		#input { 
-			@include text-common; border-radius: 4px; padding: 13px 14px; overflow: auto; height: 100%; width: 100%; background: $colorWhite; z-index: 1; white-space: normal; 
+			@include text-common; border-radius: 4px; padding: 13px 14px; overflow: auto; height: 100%; width: 100%; background: $colorBgPrimary; z-index: 1; white-space: normal; 
 			-webkit-user-modify: read-write-plaintext-only;
 		}
 		#placeholder { padding: 13px 14px; }

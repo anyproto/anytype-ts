@@ -21,7 +21,7 @@
                     .add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
                 }
                 .previewObject.isDefault {
-                    .border { border-color: $colorAccent100; border-width: 2px; }
+                    .border { border-color: $colorSystemAccent100; border-width: 2px; }
                 }
             }
 

@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
+.widget { background: $colorBgPrimary; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { 
@@ -40,7 +40,7 @@
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
-			height: 20px; width: 20px; border-radius: 50%; background-color: $colorWhite;
+			height: 20px; width: 20px; border-radius: 50%; background-color: $colorBgPrimary;
 			background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); 
 			background-repeat: no-repeat; background-position: center; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
 		}

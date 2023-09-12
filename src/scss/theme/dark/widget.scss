@@ -1,10 +1,10 @@
 .listWidget {
 	> .buttons {
-		.button, .button.edit { background-color: $colorBgIcon; color: $colorPrimary; }
+		.button, .button.edit { background-color: $colorShapeSecondary; color: $colorTextPrimary; }
 	}
 }
 
-.widget { background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
+.widget { background-color: $colorBgPrimary; color: $colorTextPrimary; border-color: $colorShapeSecondary !important;  }
 .widget {
 	.iconWrap:hover, .iconWrap.active { background-color: $colorShapeHighlightMedium; }
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
@@ -13,8 +13,8 @@
 
 	.head::before { background-color: $colorShapeHighlightMedium; }
 
-	.icon.remove .inner { background-color: $colorBgIcon; }
-	.icon.remove:hover .inner { background-color: $colorTertiary; }
+	.icon.remove .inner { background-color: $colorShapeSecondary; }
+	.icon.remove:hover .inner { background-color: $colorTextTertiary; }
 }
 
 .widget.active {
@@ -24,12 +24,12 @@
 }
 
 .widget.widgetSpace {
-	.iconObject:not(.withOption) { background-color: $colorLineTertiary; }
+	.iconObject:not(.withOption) { background-color: $colorShapeTertiary; }
 	.icon:hover { background-color: $colorShapeHighlightMedium; }
 }
 
 .widget.isPreview {
-	.head { border-color: $colorLineSecondary; }
+	.head { border-color: $colorShapeSecondary; }
 }
 
 .widget.widgetTree {
@@ -49,11 +49,11 @@
 }
 
 .widget.widgetList, .widget.widgetCompact {
-	#viewSelect { border-color: $colorLineSecondary; }
+	#viewSelect { border-color: $colorShapeSecondary; }
 	#viewSelect {
 		.viewList {
-			.viewItem { color: $colorSecondary; }
-			.viewItem:hover, .viewItem.active { color: $colorPrimary; }
+			.viewItem { color: $colorTextSecondary; }
+			.viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
 		}
 
 		.select {

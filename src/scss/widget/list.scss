@@ -18,7 +18,7 @@
 				vertical-align: top;
 			}
 			.viewItem:last-child { margin: 0px; }
-			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+			.viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
 		}
 
 		.select { border: none; margin-left: -6px; padding-right: 16px; }
