@@ -99,7 +99,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		UtilObject.checkDefaultTemplate(getTypeId(), getTemplateId(), (res) => {
 			if (!hasSources || !res) {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: '' }, load);
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
 			} else {
 				load();
 			};
@@ -312,6 +312,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				};
 			} else {
 				this.getDefaultTemplateName();
+				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
 		};
@@ -332,7 +333,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					onSetDefault: updateDefaultTemplate,
 					onTypeChange: (id, callBack: () => void) => {
 						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: '' }, callBack);
+							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank }, callBack);
 						};
 					}
 				}

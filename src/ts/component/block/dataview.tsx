@@ -684,7 +684,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		UtilObject.checkDefaultTemplate(details.type, templateId, (res) => {
 			if (!hasSources || !res) {
 				template = null;
-				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: '' }, create);
+				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
 			} else {
 				create();
 			};
