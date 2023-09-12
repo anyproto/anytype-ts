@@ -1052,16 +1052,7 @@
     "menuBlockRelationEditSelectRelationType": "Select Relation Type",
     "menuBlockRelationEditAddObjectType": "Add Object Type",
     "menuBlockRelationEditFilterObjectTypes": "Filter Object types...",
-    "menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your L
-	
-	
-	
-	
-	
-	
-	
-	
-	ibrary",
+    "menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
 
     "menuBlockRelationViewFeaturedRelations": "Featured Relations",
     "menuBlockRelationViewInThisObject": "In this Object",
