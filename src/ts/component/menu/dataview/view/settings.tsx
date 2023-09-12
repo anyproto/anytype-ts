@@ -309,10 +309,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
 					onTemplateAdd();
-        } else {
-          this.getDefaultTemplateName();
-          C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
-        };
+				};
+			} else {
+				this.getDefaultTemplateName();
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
+			};
 		};
 
 		const defaultSettings = [
