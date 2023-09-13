@@ -36,7 +36,6 @@ import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
-import HeaderBanner from './util/headerBanner';
 
 import Input from './form/input';
 import InputWithFile from './form/inputWithFile';
@@ -127,7 +126,6 @@ export {
 	DotIndicator,
 	Phrase,
 	EmptySearch,
-	HeaderBanner,
 	SelectionProvider,
 	Popup,
 	Frame,

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName, Label, HeaderBanner } from 'Component';
+import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, UtilObject, keyboard, sidebar, translate, Action } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
+import HeaderBanner from 'Component/page/head/banner';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
