@@ -287,9 +287,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onKeyUp () {
 		this.checkInput(!this.getValue());
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), 1000);
 	};
 
 	onSelect () {
