@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, Action } from 'Lib';
-import { dbStore, commonStore } from 'Store';
+import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplateContext extends React.Component<I.Menu> {
@@ -74,6 +74,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 					onSetDefault();
 				};
 
+				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
 				analytics.event('ChangeDefaultTemplate', { route });
 				break;
 			};

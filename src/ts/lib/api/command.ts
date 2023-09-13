@@ -831,10 +831,6 @@ const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, 
 const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Update.Request();
 
-	if (undefined !== view.defaultTemplateId) {
-		view.defaultTemplateId = (view.defaultTemplateId == Constant.templateId.blank) ? '' : view.defaultTemplateId;
-	};
-
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);

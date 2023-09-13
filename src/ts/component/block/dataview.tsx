@@ -689,7 +689,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		UtilObject.checkDefaultTemplate(details.type, templateId, (res) => {
 			if (!hasSources || !res) {
 				template = null;
-				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: '' }, create);
+				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
 			} else {
 				create();
 			};
@@ -1120,7 +1120,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const skipLayouts = UtilObject.getFileAndSystemLayouts();
 		const sources = this.getSources();
 
-		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+    let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (isAllowed && this.isCollection()) {
 			return true;
 		};
