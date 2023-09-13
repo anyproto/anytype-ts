@@ -231,3 +231,9 @@ export enum StoreTab {
 	Type = 'type',
 	Relation = 'relation',
 };
+
+export enum BannerType {
+	IsArchived		 = 0,
+	IsTemplate		 = 1,
+	TemplateSelect	 = 2,
+};

@@ -25,6 +25,7 @@ import {
 	ButtonComponent,
 	SpaceType,
 	FileSyncStatus,
+	BannerType,
 	StoreTab,
 	HomePredefinedId,
 	Usecase,
@@ -112,6 +113,7 @@ export {
 	ThreadAccount,
 	ThreadCafe,
 	FilesStatus,
+	BannerType,
 
 	Progress,
 	ProgressType,

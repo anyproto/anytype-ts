@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
+import { Icon, IconObject, Sync, ObjectName, Label, HeaderBanner } from 'Component';
 import { I, UtilObject, keyboard, sidebar, translate, Action } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -28,31 +28,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 
 		if (object.isArchived) {
-			center = (
-				<div className="headerBanner">
-					<div className="content">
-						<Label text={translate('deletedBanner')} />
-					</div>
-					<div className="action" onClick={e => Action.restore([ object.id ])}>{translate('deletedBannerRestore')}</div>
-				</div>
-			);
+			center = <HeaderBanner type={I.BannerType.IsArchived} object={object} />;
 		} else
 		if (UtilObject.isTemplate(object.type)) {
-			const type = dbStore.getTypeById(object.targetObjectType);
-			center = (
-				<div className="headerBanner">
-					<div className="content">
-						<Label text={translate('templateBannner')} />
-						{type ? (
-							<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
-								{translate('commonOf')}
-								<IconObject size={18} object={type} />
-								<ObjectName object={type} />
-							</div>
-						) : ''}
-					</div>
-				</div>
-			);
+			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
 		} else {
 			center = (
 				<div
