@@ -30,7 +30,7 @@ class BlockStore {
             updateStructure: action,
             delete: action
         });
-    }
+    };
 
     get profile (): string {
 		return this.profileId;
@@ -541,10 +541,14 @@ class BlockStore {
 
 	closeRecentWidgets () {
 		const { recentEdit, recentOpen } = Constant.widgetId;
-
 		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
+
 		if (blocks.length) {
-			blocks.forEach(it => Storage.setToggle('widget', it.parentId, true));
+			blocks.forEach(it => {
+				if (it.parentId) {
+					Storage.setToggle('widget', it.parentId, true);
+				};
+			});
 		};
 	};
 
