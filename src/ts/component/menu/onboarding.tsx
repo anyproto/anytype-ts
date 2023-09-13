@@ -253,6 +253,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 							});
 
 							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'MenuOnboarding' });
+							
+							close();
 						},
 					}
 				});
