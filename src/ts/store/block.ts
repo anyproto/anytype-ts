@@ -490,7 +490,7 @@ class BlockStore {
 		let change = false;
 		if (check) {
 			if (!this.checkBlockTypeExists(rootId)) {
-				header.childrenIds.push(Constant.blockId.type);
+				header.childrenIds.unshift(Constant.blockId.type);
 				change = true;
 			};
 		} else {
