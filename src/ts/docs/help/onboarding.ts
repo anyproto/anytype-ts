@@ -289,7 +289,11 @@ export default {
 				param: {
 					element: '#block-featuredRelations',
 					offsetY: 10,
-				}
+				},
+				noButton: true,
+                buttons: [
+                    { text: translate('blockFeaturedTypeMenuChangeType'), action: 'changeType' },
+                ],
 			},
 		],
 	}),

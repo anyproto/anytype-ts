@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { I, C, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
+import { menuStore, popupStore, detailStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -207,7 +207,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onButton (e: any, action: string) {
-		const { param, close } = this.props;
+		const { param, close, getId, getSize } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 
@@ -232,6 +232,33 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				UtilObject.openHome('route');
 				break;
 			};
+
+			case 'changeType':
+				menuStore.open('typeSuggest', {
+					element: `#${getId()}`,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					data: {
+						filter: '',
+						filters: [
+							{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						],
+						onClick: (item: any) => {
+							const rootId = keyboard.getRootId();
+
+							detailStore.update(rootId, { id: item.id, details: item }, false);
+
+							C.ObjectSetObjectType(rootId, item.id, () => {
+								UtilObject.openAuto({ id: rootId, layout: item.recommendedLayout });
+							});
+
+							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'MenuOnboarding' });
+							
+							close();
+						},
+					}
+				});
+				break;
 		};
 
 		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });
