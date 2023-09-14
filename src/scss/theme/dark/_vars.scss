@@ -1,17 +1,39 @@
 $themePath: '~img/theme/dark';
 
-$colorBlack: #171717;
+/* Text */
 
-$colorLinePrimary: #555;
-$colorLineSecondary: #3f3f3f;
-$colorLineTertiary: #2b2b2b;
+$colorTextPrimary: #dcdcdc;
+$colorTextSecondary: #8d8d8d;
+$colorTextTertiary: #505050;
+$colorTextInversion: #171717;
 
-$colorPrimary: #dcdcdc;
-$colorSecondary: #8d8d8d;
-$colorTertiary: #505050;
+/* Control */
+
+$colorControlAccent: #d4d4d4;
+$colorControlActive: #9a9a9a;
+$colorControlInactive: #464646;
+$colorControlOnBg: #fff;
+
+/* Shape */
+
+$colorShapePrimary: #555;
+$colorShapeSecondary: #3f3f3f;
+$colorShapeTertiary: #2b2b2b;
 
 $colorShapeHighlightMedium: rgba(238, 238, 238, 0.12);
+$colorShapeHighlightLight: rgba(238, 238, 238, 0.6);
 
-$colorBgLight: #252525;
-$colorBgIcon: #464646;
+/* Background */
+
+$colorBgPrimary: #171717;
+$colorBgSecondary: #252525;
+$colorBgTertiary: #464646;
 $colorBgLoader: rgba(0,0,0,0.7);
+
+/* System */
+
+$colorSystemAccent100: #ffb522;
+$colorSystemAccent50: #ffd15b;
+$colorSystemAccent25: #ffee94;
+$colorSystemSelection: rgba(24, 163, 241, 0.15);
+$colorSystemDropZone: rgba(255, 187, 44, 0.25);

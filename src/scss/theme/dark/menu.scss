@@ -5,7 +5,7 @@
 
     /* Common */
 
-    .menu { background: $colorBgLight; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+    .menu { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     .menu {
         .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph0.svg'); }
@@ -27,7 +27,7 @@
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 
         .icon.color {
-            .inner.textColor-default { background-color: $colorPrimary; }
+            .inner.textColor-default { background-color: $colorBgPrimary; }
             .inner.bgColor-default { background: transparent; }
         }
 
@@ -37,19 +37,19 @@
     /* Vertical */
 
     .menu.vertical {
-        .tabs { border-color: $colorLineSecondary; }
+        .tabs { border-color: $colorShapeSecondary; }
         .tabs {
-            .tab:hover, .tab.active { color: $colorPrimary; }
+            .tab:hover, .tab.active { color: $colorTextPrimary; }
         }
 
         .titleWrapper {
             .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
-            .title { color: $colorSecondary; }
+            .title { color: $colorTextSecondary; }
         }
 
-        .line { background: $colorLineSecondary; }
-        .section::after { background: $colorLineSecondary; }
-		.separator .inner { background: $colorLineSecondary; }
+        .line { background: $colorShapeSecondary; }
+        .section::after { background: $colorShapeSecondary; }
+		.separator .inner { background: $colorShapeSecondary; }
 
         .item { background: none; }
         .item.hover::before { background: $colorShapeHighlightMedium; }
@@ -59,20 +59,20 @@
 			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
         }
 
-        .loaderWrapper { background: $colorBgLight; }
+        .loaderWrapper { background: $colorBgSecondary; }
     }
 
     /* Horizontal */
 
     .menu.horizontal {
-        .section { border-color: $colorLineSecondary; }
+        .section { border-color: $colorShapeSecondary; }
     }
 
     /* MenuBlockAdd */
 
     .menu.menuBlockAdd {
         .item.isBig {
-            .iconObject { background: $colorLineTertiary; }
+            .iconObject { background: $colorShapeTertiary; }
 
             .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
             
@@ -88,15 +88,15 @@
 			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
         }
 
-        .sectionName::before { background-color: $colorLineSecondary; }
+        .sectionName::before { background-color: $colorShapeSecondary; }
     }
 
     /* MenuSmile */
 
     .menu.menuSmile {
-        .head, .foot { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head, .foot { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
         .head {
-            .btn:hover, .btn.active { color: $colorPrimary; }
+            .btn:hover, .btn.active { color: $colorTextPrimary; }
         }
 
 		.item.active { background: $colorShapeHighlightMedium; }
@@ -124,21 +124,21 @@
     /* MenuBlockCover */
 
     .menu.menuBlockCover {
-        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
         .head {
-            .btn:hover, .btn.active { color: $colorPrimary; }
+            .btn:hover, .btn.active { color: $colorTextPrimary; }
         }
     }
 
     /* MenuBlockRelationView */
 
     .menu.menuBlockRelationView {
-        .section > .name { color: $colorPrimary; }
+        .section > .name { color: $colorTextPrimary; }
 
 		.item {
 			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
 
-			.info { color: $colorSecondary; }
+			.info { color: $colorTextSecondary; }
         	.info.canEdit:hover { background: $colorShapeHighlightMedium; }
 
         	.cell.canEdit:hover { background: $colorShapeHighlightMedium; }
@@ -147,7 +147,7 @@
 		}
 
         .item.add:hover { 
-            .info { background: $colorShapeHighlightMedium; color: $colorPrimary; }
+            .info { background: $colorShapeHighlightMedium; color: $colorTextPrimary; }
 			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
         }
     }
@@ -155,21 +155,21 @@
     /* MenuBlockRelationEdit */
 
     .menu.menuBlockRelationEdit {
-        .input { border-color: $colorLinePrimary; }
+        .input { border-color: $colorShapePrimary; }
         .item:hover::before { background: $colorShapeHighlightMedium; }
     }
 
      /* MenuDataviewRelationEdit */
 
      .menu.menuDataviewRelationEdit {
-        .input { border-color: $colorLinePrimary; }
+        .input { border-color: $colorShapePrimary; }
         .item:hover::before { background: $colorShapeHighlightMedium; }
     }
 
     /* MenuDataviewText */
 
     .menu.menuDataviewText {
-        #input { background: $colorBlack; }
+        #input { background: $colorBgPrimary; }
     }
 
     /* MenuDataviewRelationList */
@@ -181,7 +181,7 @@
     /* MenuDataviewFileValues */
 
     .menu.menuDataviewFileValues {
-		.item { color: $colorPrimary; }
+		.item { color: $colorTextPrimary; }
         .item:hover::before { background: $colorShapeHighlightMedium; }
 		.item {
             .icon.more { background-color: $colorShapeHighlightMedium; }
@@ -200,7 +200,7 @@
 
     .menu.menuDataviewSort {
         .item {
-            .select.grey { color: $colorSecondary; }
+            .select.grey { color: $colorTextSecondary; }
         }
     }
 
@@ -214,14 +214,14 @@
 
     .menu.menuSearchObject.big {
         .item {
-            .iconObject { background: $colorLineTertiary; }
+            .iconObject { background: $colorShapeTertiary; }
         }
     }
 
     /* MenuThreadList */
 
     .menu.menuThreadList {
-        .item { border-color: $colorLineSecondary; }
+        .item { border-color: $colorShapeSecondary; }
         .item:hover::before { background: $colorShapeHighlightMedium; }
 
         .item {
@@ -244,8 +244,8 @@
     /* MenuButton */
 
 	.menu.menuButton {
-		.item { color: $colorSecondary; }
-		.item:hover { color: $colorPrimary; }
+		.item { color: $colorTextSecondary; }
+		.item:hover { color: $colorTextPrimary; }
 	}
 
     /* MenuDataviewCalendar */
@@ -261,7 +261,7 @@
     /* MenuBlockLatex */
 
     .menu.menuBlockLatex.isTemplate {
-        .item > .inner { border-color: $colorLinePrimary; }
+        .item > .inner { border-color: $colorShapePrimary; }
     }
 
     /* MenuBlockContext */
@@ -281,29 +281,29 @@
 
 	.menu.menuBlockLink {
 		.item {
-			.iconObject { background-color: $colorLineTertiary; }
+			.iconObject { background-color: $colorShapeTertiary; }
 		}
 
-		.item.add { color: $colorPrimary; }
+		.item.add { color: $colorTextPrimary; }
 	}
 
     /* MenuBlockLinkSettings */
 
     .menu.menuBlockLinkSettings {
         .section.card {
-            .item { color: $colorSecondary; }
+            .item { color: $colorTextSecondary; }
             .item {
                 .icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text0.svg'); }
 			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
             }
 
-            .item:hover { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+            .item:hover { color: $colorTextPrimary; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
             .item:hover {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
 			}
 
-            .item.active { color: $colorPrimary; background: $colorShapeHighlightMedium; }
+            .item.active { color: $colorTextPrimary; background: $colorShapeHighlightMedium; }
 			.item.active {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
@@ -311,8 +311,8 @@
         }
 
         .buttons {
-            .button.grey { box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; color: $colorSecondary; }
-            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; color: $colorPrimary; }
+            .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; color: $colorTextSecondary; }
+            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; color: $colorTextPrimary; }
         }
     }
 
@@ -320,8 +320,8 @@
 
 	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
-		a { color: $colorWhite; }
-		.highlight { background: $colorLineSecondary; color: $colorOrange; }
+		a { color: $colorBgPrimary; }
+		.highlight { background: $colorShapeSecondary; color: $colorOrange; }
 
         .bottom {
             .round {
@@ -329,8 +329,8 @@
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
             .steps {
-                .step:not(.active) { background: $colorLineSecondary; }
-                .step:not(.active):hover { background: $colorLinePrimary; }
+                .step:not(.active) { background: $colorShapeSecondary; }
+                .step:not(.active):hover { background: $colorShapePrimary; }
             }
             .category { color: #5c5a54; }
         }
@@ -340,7 +340,7 @@
 
 	.menu.menuSearchText {
 		.buttons {
-			.line { background: $colorLineSecondary; }
+			.line { background: $colorShapeSecondary; }
 		}
 	}
 
@@ -349,8 +349,8 @@
 	.menu.menuDataviewCreateBookmark {
 		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
 		.buttons {
-			.button { color: $colorSecondary; }
-			.button:hover { color: $colorPrimary; }
+			.button { color: $colorTextSecondary; }
+			.button:hover { color: $colorTextPrimary; }
 		}
 	}
 
@@ -358,7 +358,7 @@
 
     .menu.menuDataviewViewLayout {
         .layouts {
-            .layout { border-color: $colorLineSecondary; }
+            .layout { border-color: $colorShapeSecondary; }
             .layout {
                 .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg'); }
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
@@ -380,7 +380,7 @@
 
     .menu.menuDataviewTemplateList {
         .content {
-            .emptySearch { border-color: $colorLinePrimary; }
+            .emptySearch { border-color: $colorShapePrimary; }
         }
     }
 }

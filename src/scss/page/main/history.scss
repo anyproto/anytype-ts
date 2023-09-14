@@ -9,13 +9,13 @@
 	#footer.snapLeft { right: 254px; }
 	#footer.snapRight { left: 0px; }
 
-	.list { width: 254px; border-left: 1px solid $colorShapeSecondary; z-index: 20; position: relative; background: $colorWhite; overflow: auto; }
+	.list { width: 254px; border-left: 1px solid $colorShapeSecondary; z-index: 20; position: relative; background: $colorBgPrimary; overflow: auto; }
 	.list {
 		.section { padding: 11px 16px; }
 		.section {
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
-		.section.fix { position: fixed; right: 0px; top: 0px; background: $colorWhite; width: 253px; }
+		.section.fix { position: fixed; right: 0px; top: 0px; background: $colorBgPrimary; width: 253px; }
 
 		.wrap { position: relative; }
 

@@ -207,10 +207,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.width = width;
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.reset();
-			this.forceUpdate();
-		}, 40);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 10);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {

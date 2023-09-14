@@ -405,7 +405,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onTypeOver (e: any, item: any) {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block } = this.props;
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.featuredType);
@@ -413,12 +413,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-
-		let menuId = '';
 		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
-			className: 'big single',
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {
@@ -429,6 +426,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				rebind: this.menuContext.ref.rebind,
 			}
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'change':
@@ -541,7 +540,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
-				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId,

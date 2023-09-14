@@ -17,7 +17,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
-	timeout = 0;
 	ref = null;
 	range: I.TextRange = null;
 
@@ -29,7 +28,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
@@ -76,7 +74,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
 					onSelect={this.onSelect}
-					onCompositionStart={this.onCompositionStart}
 				/>
 				{icon}
 			</div>
@@ -100,7 +97,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	componentWillUnmount () {
 		this.save();
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 	};
 
 	onTitle () {
@@ -165,7 +161,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
-				window.setTimeout(() => { loadData(message.views[0].id, 0, true); }, 50);
+				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);
 			};
 
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
@@ -268,14 +264,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onBlur () {
 		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
 
 		this.save();
 		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
-	};
-
-	onCompositionStart () {
-		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
@@ -287,9 +278,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onKeyUp () {
 		this.checkInput(!this.getValue());
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), 1000);
 	};
 
 	onSelect () {

@@ -13,7 +13,7 @@
 		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn:hover, .btn.active { color: $colorBlack; }
+			.btn:hover, .btn.active { color: $colorTextPrimary; }
 			.btn:last-child { margin: 0px; }
 		}
 		
@@ -66,7 +66,7 @@
 				height: 336px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
 				justify-content: center; flex-direction: column; gap: 6px 0px;
 			}
-			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
+			.dropzone.isDraggingOver { background: $colorSystemDropZone; }
 
 			.dropzone {
 				.icon.coverUpload { 

@@ -22,7 +22,7 @@
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
 		}
 
-		.loadMore:hover { color: $colorBlack; }
+		.loadMore:hover { color: $colorTextPrimary; }
 		.loadMore:hover { 
 			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
 		}
@@ -36,10 +36,10 @@
 			.inner { width: 300px; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 			.descr { @include text-small; margin: 0px 0px 8px 0px; }
-			.button { color: $colorBlack; }
+			.button { color: $colorTextPrimary; }
 		}
 
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorBlack; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorTextPrimary; }
 		.dataviewHead {
 			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
 			.icon.source.active { opacity: 1; }
@@ -148,7 +148,7 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
-			.scrollWrap { background: #fff; }
+			.scrollWrap { background: $colorBgPrimary; }
 		}
 
 		.viewContent {
