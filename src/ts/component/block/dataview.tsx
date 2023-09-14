@@ -77,8 +77,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSelectEnd = this.onSelectEnd.bind(this);
 		this.onSelectToggle = this.onSelectToggle.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFilterClear = this.onFilterClear.bind(this);
 
+		this.getSearchIds = this.getSearchIds.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.multiSelectAction = this.multiSelectAction.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
@@ -164,6 +164,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
+			getSearchIds: this.getSearchIds,
 		};
 
 		if (loading) {
@@ -216,7 +217,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{...this.props} 
 						{...dataviewProps} 
 						onFilterChange={this.onFilterChange}
-						onFilterClear={this.onFilterClear}
 					/>
 					<Selection 
 						ref={ref => this.refSelect = ref} 
@@ -1268,9 +1268,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		}, Constant.delay.keyboard);
 	};
 
-	onFilterClear () {
-	};
-
 	setSelected (ids: string[]) {
 		if (this.refSelect) {
 			this.refSelect.setIds(ids);
@@ -1304,6 +1301,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		selection.clear();
+	};
+
+	getSearchIds () {
+		return this.searchIds;
 	};
 
 	resize () {

@@ -11,13 +11,13 @@ import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
-	onFilterClear?: () => void;
 };
 
 const Controls = observer(class Controls extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
+	refFilter = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -26,10 +26,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
+		this.onFilterShow = this.onFilterShow.bind(this);
+		this.onFilterHide = this.onFilterHide.bind(this);
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, onFilterClear } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -137,11 +139,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 					</div>
 
 					<div id="sideRight" className="side right">
-						<Filter 
+						<Filter
+							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search"
 							onChange={onFilterChange}
-							onClear={onFilterClear}
+							onClear={this.onFilterHide}
+							onIconClick={this.onFilterShow}
 						/>
 
 						{buttons.map((item: any, i: number) => (
@@ -350,6 +354,15 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 
 		keyboard.disableSelection(false);
+	};
+
+	onFilterShow () {
+		this.refFilter?.setActive(true);
+		this.refFilter?.focus();
+	};
+
+	onFilterHide () {
+		this.refFilter?.setActive(false);
 	};
 
 	resize () {

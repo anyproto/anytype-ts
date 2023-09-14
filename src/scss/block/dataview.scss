@@ -72,11 +72,17 @@
 				> .side.right {
 					.filter { color: $colorTextPrimary; padding: 0px; }
 					.filter {
-						.inner { gap: 0px 6px; }
+						.inner { gap: 0px 6px; height: 100%; }
 						.line { display: none; }
+						.filterInputWrap { display: none; }
+						.icon.clear { display: none; }
 
 						.icon:hover { background-color: unset; }
 						.icon.clear { width: 20px; height: 20px; }
+					}
+					.filter.isActive {
+						.filterInputWrap { display: block; }
+						.icon.clear { display: block; }
 					}
 
 					.buttonWrap { margin-left: 6px; display: flex; }

@@ -18,14 +18,23 @@ interface Props {
 	onKeyUp?(e: any, v: string): void;
 	onChange?(value: string): void;
 	onClear?(): void;
+	onIconClick?(e: any): void;
 };
 
-class Filter extends React.Component<Props> {
+interface State {
+	isActive: boolean;
+};
+
+class Filter extends React.Component<Props, State> {
 
 	public static defaultProps = {
 		className: '',
 		inputClassName: '',
 		placeholder: translate('commonFilterClick'),
+	};
+
+	state = {
+		isActive: false,
 	};
 	
 	node: any = null;
@@ -43,11 +52,16 @@ class Filter extends React.Component<Props> {
 	};
 	
 	render () {
-		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick } = this.props;
+		const { isActive } = this.state;
+		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
 		const cn = [ 'filter' ];
 
 		if (className) {
 			cn.push(className);
+		};
+
+		if (isActive) {
+			cn.push('isActive');
 		};
 
 		return (
@@ -58,7 +72,7 @@ class Filter extends React.Component<Props> {
 				onClick={onClick}
 			>
 				<div className="inner">
-					{icon ? <Icon className={icon} /> : ''}
+					{icon ? <Icon className={icon} onClick={onIconClick} /> : ''}
 
 					<div className="filterInputWrap">
 						<Input 
@@ -93,6 +107,7 @@ class Filter extends React.Component<Props> {
 
 	componentDidUpdate () {
 		this.checkButton();
+		this.resize();
 	};
 
 	focus () {
@@ -139,13 +154,23 @@ class Filter extends React.Component<Props> {
 	};
 
 	addFocusedClass () {
-		const node = $(this.node);
-		node.addClass('isFocused');
+		this.addClass('isFocused');
 	};
 
 	removeFocusedClass () {
-		const node = $(this.node);
-		node.removeClass('isFocused');
+		this.removeClass('isFocused');
+	};
+
+	addClass (c: string) {
+		$(this.node).addClass(c);
+	};
+
+	removeClass (c: string) {
+		$(this.node).removeClass(c);
+	};
+
+	setActive (v: boolean) {
+		this.setState({ isActive: v });
 	};
 
 	onClear (e: any) {
