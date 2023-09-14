@@ -4,6 +4,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { keyboard, translate, Storage } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props {
 	value: string;
@@ -182,7 +183,7 @@ class Phrase extends React.Component<Props, State> {
 		this.placeholderCheck();
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.updateValue(), 1000);
+		this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard);
 	};
 
 	updateValue () {

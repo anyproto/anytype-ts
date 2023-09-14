@@ -218,7 +218,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
-		}, 500);
+		}, Constant.delay.keyboard);
 	};
 
 	onFilterClear () {

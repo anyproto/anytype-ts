@@ -153,12 +153,13 @@
 			.info { padding-left: 52px; }
 		}
 
-		.item.withCaption { display: flex; align-items: center; justify-content: space-between; }
+		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }
 		.item.withCaption {
+			.iconObject { margin: 0px; }
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { margin-right: 6px; flex-grow: 1; }
+			.clickable { flex-grow: 1; gap: 0px 6px; width: calc(100% - 100px); }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}

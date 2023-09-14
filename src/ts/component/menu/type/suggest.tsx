@@ -343,7 +343,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.props.param.data.filter = this.refFilter.getValue();
-		}, 500);
+		}, Constant.delay.keyboard);
 	};
 
 	onMouseEnter (e: any, item: any) {

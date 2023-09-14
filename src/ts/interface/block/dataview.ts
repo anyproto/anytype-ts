@@ -109,6 +109,7 @@ export interface ViewComponent {
 	isInline?: boolean;
 	isCollection?: boolean;
 	className?: string;
+	refCells?: any;
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
@@ -140,7 +141,7 @@ export interface ViewComponent {
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
 	onSourceTypeSelect?(element: any): void;
-	refCells?: any;
+	getSearchIds?(): string[];
 };
 
 export interface ViewEmpty {

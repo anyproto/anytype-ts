@@ -321,7 +321,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.setState({ filter: v }); }, 500);
+		this.timeout = window.setTimeout(() => this.setState({ filter: v }), Constant.delay.keyboard);
 	};
 
 	getSections () {

@@ -199,7 +199,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onKeyUp () {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
 	};
 
 	onSelectText (e: any, item: any) {
