@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuOnboarding { width: 334px; background: #fff; color: $colorBlack; }
+	.menu.menuOnboarding { width: 334px; }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
@@ -15,7 +15,7 @@
 		}
 
 		.highlight { 
-			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorBlack; 
+			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorTextPrimary; 
 			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
 		}
 		a { color: $colorTextInversion; text-decoration: underline; }
@@ -31,7 +31,7 @@
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
-				background: $colorAccent100; transition: $transitionAllCommon;
+				background: $colorSystemAccent100; transition: $transitionAllCommon;
 			}
 			.round:hover { background: #F09C0E; }
 			.round {
@@ -58,7 +58,7 @@
 				}
 				.step:hover { background: $colorShapePrimary; }
 				.step.active,
-				.step.active:hover { background: $colorAccent100; cursor: default; }
+				.step.active:hover { background: $colorSystemAccent100; cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 

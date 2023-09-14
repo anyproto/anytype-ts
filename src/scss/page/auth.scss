@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 $colorPrimary: #d4d4d4;
-$colorSecondary: #8d8d8d;
-$colorTertiary: #505050;
+$colorTextSecondary: #8d8d8d;
+$colorTextTertiary: #505050;
 $colorError: #8a351a;
 
 $colorDark: #060606;
@@ -16,7 +16,7 @@ $colorErrorBackground: #240e07;
 $shadow: 0px 0px 0px 1px #252525 inset;
 
 html.bodyIndex, html.bodyAuth {
-	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
+	body { background: $colorDark !important; color: $colorTextSecondary; overflow: hidden; }
 	.navigationPanel { display: none !important; }
 }
 
@@ -26,7 +26,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		.button.disabled { color: $colorTertiary }
+		.button.disabled { color: $colorTextTertiary }
 
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
@@ -44,7 +44,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.menus {
 		.menu.menuAccountPath { background: $colorPopUp; box-shadow: $shadow; width: 460px; } 
 		.menu.menuAccountPath {
-			.label { color: $colorSecondary; }
+			.label { color: $colorTextSecondary; }
 			.label.path { color: $colorPrimary; }
 		}
 	}
@@ -54,7 +54,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; 
+		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorTextSecondary; box-shadow: $shadow !important; @include text-common; 
 		white-space: normal;
 	}
 	.tooltip {
@@ -64,7 +64,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: $colorAccent100; }
+		.loader { border-color: #555; border-left-color: $colorSystemAccent100; }
 	}
 }
 
@@ -92,7 +92,7 @@ html.bodyAuthDeleted {
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; }
-	.button.disabled { color: $colorTertiary }
+	.button.disabled { color: $colorTextTertiary }
 	
 	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
 	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
@@ -100,15 +100,15 @@ html.bodyAuthDeleted {
 	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
 	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
-	.small { color: $colorSecondary; }
+	.small { color: $colorTextSecondary; }
 	.small:hover { color: $colorPrimary; }
 
 	.error { color: $colorError; margin: 0.3em 0px; }
 	.withError { background: $colorErrorBackground; }
 
 	@keyframes dots {
-		0% { background-color: $colorWhite; }
-		32% { background-color: $colorWhite; }
+		0% { background-color: $colorBgPrimary; }
+		32% { background-color: $colorBgPrimary; }
 		100% { background-color: rgba(0,0,0,0); }
 	}
 
@@ -120,9 +120,9 @@ html.bodyAuthDeleted {
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 830px; }
 	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
-	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorSecondary; }
+	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorTextSecondary; }
 	.footer {
-		.label.disclaimer { color: $colorTertiary; }
+		.label.disclaimer { color: $colorTextTertiary; }
 	}
 
 	@media (max-width: 862px) {
@@ -153,7 +153,7 @@ html.bodyAuthDeleted {
 			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: $colorAccent100; }
+		.input.active { box-shadow: 0px 0px; border-color: $colorSystemAccent100; }
 	}
 }
 
@@ -174,7 +174,7 @@ html.bodyAuthDeleted {
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-description; color: $colorPrimary; }
-	.label { color: $colorSecondary; }
+	.label { color: $colorTextSecondary; }
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 	.bottom {
 		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
@@ -209,7 +209,7 @@ html.bodyAuthDeleted {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorSecondary; color: black; }
+	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorTextSecondary; color: black; }
 	.questionMark:hover { background-color: $colorPrimary; }
 
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
@@ -220,7 +220,7 @@ html.bodyAuthDeleted {
 	.inputWrapper {
 		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
-		.input::placeholder { color: $colorTertiary !important; }
+		.input::placeholder { color: $colorTextTertiary !important; }
 	}
 
 	.soulContent { position: relative; width: 100px; margin-top: 28px; }
@@ -230,7 +230,7 @@ html.bodyAuthDeleted {
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
 		
-		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
+		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorBgPrimary; }
 		.line.left { right: 50%; }
 		.line.right { left: 50%; }
 		.iconObject { margin: 0; }
@@ -238,7 +238,7 @@ html.bodyAuthDeleted {
 	}
 
 	.soulContent.soulCreating {
-		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 1.5s infinite; }
+		.iconObject { background: $colorBgPrimary; box-shadow: 0px 0px 0px 0px $colorBgPrimary; animation: pulse 1.5s infinite; }
 
 		@keyframes pulse {
 			0% { transform: scale(1); }
@@ -263,7 +263,7 @@ html.bodyAuthDeleted {
 
 	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid $colorSecondary; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid $colorTextSecondary; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
 	.button { width: 320px; }

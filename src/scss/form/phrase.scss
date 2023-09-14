@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-$colorTertiary: #505050;
+$colorTextTertiary: #505050;
 $colorInputOpaque: #17171799;
 $colorErrorBackground: #240e07;
 
@@ -27,7 +27,7 @@ $colorErrorBackground: #240e07;
 	.bg-lime { background: $colorLime !important; }
 	.bg-green { background: $colorGreen !important; }
 
-	.placeholder { color: $colorTertiary; top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	.placeholder { color: $colorTextTertiary; top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	#entry { 
 		display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; user-select: text; 
 		vertical-align: middle; margin-left: 10px; text-transform: lowercase;
