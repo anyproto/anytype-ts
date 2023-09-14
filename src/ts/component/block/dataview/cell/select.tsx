@@ -51,7 +51,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 
 		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
-		
+
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
 		};
@@ -107,6 +107,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
 					</span>
@@ -175,7 +176,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 			
 			if (v) {
-				window.setTimeout(() => { this.focus(); }, 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	}; 

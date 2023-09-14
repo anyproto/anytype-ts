@@ -11,7 +11,7 @@
 	}
 	.loaderWrapper {
 		.loader { 
-			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorWhite; border-left: 2px solid $colorBlack; 
+			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorBgPrimary; border-left: 2px solid $colorTextPrimary; 
 		}
 	}
 
@@ -33,8 +33,8 @@
 	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
 	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
 	
-	.author { @include text-small; color: $colorWhite; position: absolute; right: 16px; bottom: 16px; z-index: 3; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);  }
-	.author a { color: $colorWhite; }
+	.author { @include text-small; color: $colorBgPrimary; position: absolute; right: 16px; bottom: 16px; z-index: 3; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);  }
+	.author a { color: $colorBgPrimary; }
 
 	.elements {
 		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
@@ -61,7 +61,7 @@
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
 		
-		.btn.black { color: $colorWhite; background: rgba(0,0,0,0.5); line-height: 22px; }
+		.btn.black { color: $colorBgPrimary; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 
 		.btn.withIcon { padding: 0px 8px 0px 6px; line-height: 26px; }

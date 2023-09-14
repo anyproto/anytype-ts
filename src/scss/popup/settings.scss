@@ -83,7 +83,7 @@
 					width: 100%; margin: 0px 0px 14px 0px; position: sticky; top: 0px; left: 0px; z-index: 10; 
 				}
 				.head {
-					.inner { display: flex; flex-direction: row; align-items: center; background: $colorWhite; padding: 22px 0px; }
+					.inner { display: flex; flex-direction: row; align-items: center; background: $colorBgPrimary; padding: 22px 0px; }
 
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
@@ -167,7 +167,7 @@
 				}
 				.select:hover { background: $colorShapeHighlightMedium; }
 				.select {
-					.item { border-bottom: 0; color: $colorBlack; }
+					.item { border-bottom: 0; color: $colorTextPrimary; }
 					.icon.arrow { right: 3px !important; }
 				}
 			}
@@ -184,8 +184,8 @@
 					.iconWrapper { width: 108px; }
 					.title { @include text-header3; margin: 0; }
 					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorShapeSecondary; border-radius: 10px; }
-					.input:hover:not(.isReadonly) { border-color: $colorShapeSecondary; }
-					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorAccent100; padding: 5px 11px; }
+					.input:hover:not(.isReadonly) { border-color: $colorShapePrimary; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorSystemAccent100; padding: 5px 11px; }
 					.input.isReadonly { background-color: unset; }
 
 					.inputWrapper.withIcon { position: relative; }
@@ -427,17 +427,17 @@
 			}
 
 			.btn.dark {
-				.bg { background: $colorBlack; }
+				.bg { background: $colorControlAccent; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
 				.bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
 				.bg::before { left: 0px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; background: $colorBlack; border-radius: 0px 14px 14px 0px; }
+				.bg::after { right: 0px; background: $colorControlAccent; border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
-			.btn.active { color: $colorBlack; }
+			.btn.active { color: $colorTextPrimary; }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -455,7 +455,7 @@
 			}
 			.select:hover { background: $colorShapeHighlightMedium; }
 			.select {
-				.item { border-bottom: 0; color: $colorBlack; }
+				.item { border-bottom: 0; color: $colorTextPrimary; }
 				.icon.arrow { right: 3px !important; }
 			}
 		}
@@ -477,7 +477,7 @@
 				.item { width: auto; }
 			}
 
-			.item:hover { border-color: $colorBlack; }
+			.item:hover { border-color: $colorTextPrimary; }
 
 			.item {
 				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
@@ -503,7 +503,7 @@
 			.inputWrapper { 
 				.input { height: 36px; border: 1px solid $colorShapeSecondary; border-radius: 8px; }
 				.input:hover { border-color: $colorShapePrimary; }
-				.input:focus { border-color: $colorAccent100; }
+				.input:focus { border-color: $colorSystemAccent100; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }
@@ -520,7 +520,7 @@
 				.btn {
 					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }
 				}
-				.btn:hover { color: $colorBlack; }
+				.btn:hover { color: $colorTextPrimary; }
 				.btn:hover {
 					.icon.help { background-image: url('~img/icon/popup/settings/help1.svg'); }
 				}

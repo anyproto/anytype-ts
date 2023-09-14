@@ -4,7 +4,7 @@
 	.menu.menuButton { white-space: nowrap; height: 44px; line-height: 44px; padding: 0px 14px; }
 	.menu.menuButton {
 		.item { display: inline-block; @include text-common; margin-right: 16px; color: $colorMediumGrey; transition: $transitionAllCommon; }
-		.item:hover { color: $colorBlack; }
+		.item:hover { color: $colorTextPrimary; }
 		.item:last-child { margin: 0px; }
 	}	
 }

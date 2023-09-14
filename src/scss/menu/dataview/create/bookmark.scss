@@ -16,7 +16,7 @@
 				display: inline-block; vertical-align: top; transition: $transitionAllCommon; color: $colorMediumGrey;
 				background: none; border: 0px; padding: 0px; height: 100%; padding: 0px 16px; line-height: 44px;
 			}
-			.button:hover { color: $colorBlack; }
+			.button:hover { color: $colorTextPrimary; }
 		}
 	}
 }

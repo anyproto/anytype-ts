@@ -10,7 +10,7 @@
         min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionAllCommon; text-align: center;
         vertical-align: top; line-height: 20px;
     }
-    .pageItem:hover, .pageItem.active { color: $colorBlack; }
+    .pageItem:hover, .pageItem.active { color: $colorTextPrimary; }
 
     .pageItem.list { cursor: default; }
     .pageItem.list:hover { color: $colorMediumGrey; }

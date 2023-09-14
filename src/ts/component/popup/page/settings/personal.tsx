@@ -85,7 +85,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 				],
 				onClick: (item: any) => {
 					commonStore.typeSet(item.uniqueKey);
-					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey });
+					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
 				},
 			}
 		});
