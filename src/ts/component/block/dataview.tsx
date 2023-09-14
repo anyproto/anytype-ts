@@ -1251,21 +1251,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			UtilData.search({
-				filters: [],
-				sorts: [],
-				fullText: v,
-				keys: [ 'id' ],
-			}, (message: any) => {
-				this.searchIds = (message.records || []).map(it => it.id);
+			if (v) {
+				UtilData.search({
+					filters: [],
+					sorts: [],
+					fullText: v,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					this.searchIds = (message.records || []).map(it => it.id);
+					this.reloadData();
+				});
+			} else {
+				this.searchIds = null;
 				this.reloadData();
-			});
+			};
 		}, Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
-		this.searchIds = null;
-		this.reloadData();
 	};
 
 	setSelected (ids: string[]) {
