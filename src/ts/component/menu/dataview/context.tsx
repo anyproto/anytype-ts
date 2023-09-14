@@ -280,6 +280,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, onSelect, targetId, isCollection, route } = data;
 		const win = $(window);
 		const count = objectIds.length;
+		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);
@@ -287,11 +288,11 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		focus.clear(false);
-		
+
 		switch (item.id) {
 
 			case 'open': {
-				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
+				UtilObject.openPopup(first);
 				break;
 			};
 
@@ -301,8 +302,8 @@ class MenuContext extends React.Component<I.Menu> {
 						return;
 					};
 
-					if (count == 1) {
-						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
+					if (first) {
+						UtilObject.openPopup({ id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count, route });

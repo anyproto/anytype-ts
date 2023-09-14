@@ -91,9 +91,16 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	onLocationMove () {
-		const { account } = authStore;
 		const { setLoading } = this.props;
-		const accountPath = account.info.localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
+		const { account } = authStore;
+		const { info } = account;
+		const localStoragePath = String(info.localStoragePath || '');
+
+		if (!localStoragePath) {
+			return;
+		};
+
+		const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
 		const options = { 
 			defaultPath: accountPath,
 			properties: [ 'openDirectory' ],
