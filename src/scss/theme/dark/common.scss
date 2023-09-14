@@ -317,6 +317,7 @@ html.themeDark {
         }
 
 		.headerBanner { background: $colorLineTertiary; color: $colorPrimary; }
+        .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 	.header.isCommon.active {
 		.path { background-color: $colorShapeHighlightMedium; color: $colorPrimary; }

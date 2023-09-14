@@ -94,7 +94,7 @@
 	.path:hover { border-color: $colorShapeSecondary; }
 
 	.headerBanner {
-		display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
+		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
 	}
 	.headerBanner {
 		.content { display: flex; gap: 0px 4px; align-items: center; }
@@ -106,6 +106,9 @@
 		}
 		.action { font-weight: 500; }
 	}
+	.headerBanner.withMenu { padding-right: 24px; }
+	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
+	.headerBanner.withMenu.menuOpened:after { transform: rotateZ(180deg); }
 }
 
 .header.mainGraph {

@@ -20,11 +20,13 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
+		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType', 'internalFlags' ]);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
+		// const hasTemplates = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
+		const hasTemplates = true;
 
 		let center = null;
 
@@ -33,6 +35,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		} else
 		if (UtilObject.isTemplate(object.type)) {
 			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
+		} else
+		if (hasTemplates) {
+			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} />;
 		} else {
 			center = (
 				<div

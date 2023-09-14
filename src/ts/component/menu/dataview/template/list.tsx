@@ -28,7 +28,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { withTypeSelect, typeId } = data;
+		const { withTypeSelect, noAdd, typeId } = data;
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
@@ -89,10 +89,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 							/>
 						))}
 
-						<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
-							<div className="border" />
-							<Icon className="add" />
-						</div>
+						{!noAdd ? (
+							<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
+								<div className="border" />
+								<Icon className="add" />
+							</div>
+						) : ''}
 					</div>
 				) : <EmptySearch text={translate('menuDataviewTemplateUnsupported')} />}
 			</React.Fragment>
