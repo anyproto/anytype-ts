@@ -165,21 +165,19 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 
-		if (!allowedTemplateSelect) {
+		if (!allowedTemplateSelect || !object.type) {
 			return;
 		};
 
-		if (object.type) {
-			UtilData.getTemplatesByTypeId(object.type, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
+		UtilData.getTemplatesByTypeId(object.type, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
 
-				if (message.records.length != templatesCnt) {
-					this.setState({ templatesCnt: message.records.length });
-				};
-			});
-		};
+			if (message.records.length != templatesCnt) {
+				this.setState({ templatesCnt: message.records.length });
+			};
+		});
 	};
 });
 
