@@ -1,13 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Icon, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, UtilFile, analytics, C } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { I, Action, translate, UtilObject, UtilCommon, UtilFile, analytics, C, UtilData } from 'Lib';
+import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
 	type: I.BannerType;
 	object: any;
+	count?: number;
 };
 
 interface State {
@@ -30,7 +31,7 @@ class HeaderBanner extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { type, object } = this.props;
+		const { type, object, count } = this.props;
 		const { menuOpened } = this.state;
 		const cn = [ 'headerBanner', menuOpened ? 'menuOpened' : '' ];
 
@@ -64,7 +65,12 @@ class HeaderBanner extends React.Component<Props, State> {
 
 			case I.BannerType.TemplateSelect: {
 				cn.push('withMenu');
-				label = UtilCommon.sprintf(translate('selectTemplateBanner'), 2);
+
+				label = translate('selectTemplateBanner');
+				if (count) {
+					label = UtilCommon.sprintf(translate('selectTemplateBannerWithNumber'), count, UtilCommon.plural(count, translate('pluralTemplate')));
+				};
+
 				onClick = this.onTemplateMenu;
 				break;
 			};
@@ -113,7 +119,7 @@ class HeaderBanner extends React.Component<Props, State> {
 				offsetY: 10,
 				noAnimation: true,
 				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
-				vertical: I.MenuDirection.Top,
+				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				onClose: () => this.setState({ menuOpened: false }),
 				data: {
@@ -123,12 +129,12 @@ class HeaderBanner extends React.Component<Props, State> {
 					templateId: type.defaultTemplateId || Constant.templateId.blank,
 					onSelect: (item: any) => {
 						C.ObjectApplyTemplate(object.id, item.id);
+						menuStore.close('dataviewTemplateList');
 					}
 				}
 			});
 		};
 	};
-
 };
 
 export default HeaderBanner;

@@ -1,12 +1,20 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilObject, keyboard, sidebar, translate, Action } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, sidebar, translate, Action } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import HeaderBanner from 'Component/page/head/banner';
 import Constant from 'json/constant.json';
 
-const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
+interface State {
+	templatesCnt: number;
+};
+
+const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent, State> {
+
+	state = {
+		templatesCnt: 0
+	};
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
@@ -15,18 +23,19 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		this.onMore = this.onMore.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.updateTemplatesCnt = this.updateTemplatesCnt.bind(this);
 	};
 
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
+		const { templatesCnt } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType', 'internalFlags' ]);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
-		// const hasTemplates = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
-		const hasTemplates = true;
+		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 
 		let center = null;
 
@@ -36,8 +45,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (UtilObject.isTemplate(object.type)) {
 			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
 		} else
-		if (hasTemplates) {
-			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} />;
+		if (allowedTemplateSelect && templatesCnt) {
+			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt} />;
 		} else {
 			center = (
 				<div
@@ -84,10 +93,12 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 	componentDidMount () {
 		keyboard.setWindowTitle();
+		this.updateTemplatesCnt();
 	};
 
 	componentDidUpdate () {
 		keyboard.setWindowTitle();
+		this.updateTemplatesCnt();
 	};
 
 	onOpen () {
@@ -148,6 +159,28 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		});
 	};
 
+	updateTemplatesCnt () {
+		const { rootId } = this.props;
+		const { templatesCnt } = this.state;
+		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
+
+		if (!allowedTemplateSelect) {
+			return;
+		};
+
+		if (object.type) {
+			UtilData.getTemplatesByTypeId(object.type, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				if (message.records.length != templatesCnt) {
+					this.setState({ templatesCnt: message.records.length });
+				};
+			});
+		};
+	};
 });
 
 export default HeaderMainObject;
