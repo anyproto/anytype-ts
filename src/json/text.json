@@ -469,6 +469,7 @@
     "blockDataviewCreateNewCollection": "Create new collection",
     "blockDataviewCreateNewSet": "Create new set",
     "blockDataviewShowTemplates": "Show templates",
+	"blockDataviewSearch": "Search",
 
     "blockDataviewEmptyTargetSets": "sets",
     "blockDataviewEmptyTargetCollections": "collections",

@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import { I, keyboard, focus, translate, Action } from 'Lib';
+import Constant from 'json/constant.json';
 
 interface Props {
 	icon?: string;
@@ -248,7 +249,7 @@ class InputWithFile extends React.Component<Props, State> {
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
 			};
-		}, force ? 50 : 1000);
+		}, force ? 50 : Constant.delay.keyboard);
 	};
 	
 	onClickFile (e: any) {

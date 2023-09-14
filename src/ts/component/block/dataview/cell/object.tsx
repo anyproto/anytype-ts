@@ -340,7 +340,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });
-		}, 500);
+		}, Constant.delay.keyboard);
 
 		this.placeholderCheck();
 		this.resize();

@@ -70,13 +70,20 @@
 				> .side.left { flex-grow: 1; padding-left: 14px; }
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
 				> .side.right {
-					.button { margin-left: 6px; }
+					.filter { color: $colorTextPrimary; padding: 0px; }
+					.filter {
+						.inner { gap: 0px 6px; }
+						.line { display: none; }
 
-					.buttonNewWrapper { margin-left: 6px; display: flex; }
-					.buttonNewWrapper {
+						.icon:hover { background-color: unset; }
+						.icon.clear { width: 20px; height: 20px; }
+					}
+
+					.buttonWrap { margin-left: 6px; display: flex; }
+					.buttonWrap {
 						.button { margin-left: 0; }
 					}
-					.buttonNewWrapper.withSelect {
+					.buttonWrap.withSelect {
 						.button.addRecord { border-radius: 6px 0 0 6px; }
 						.button.select {
 							width: 24px; height: 28px; border: 0 solid; border-left: 1px solid rgba(255, 255, 255, .1); border-radius: 0 6px 6px 0;

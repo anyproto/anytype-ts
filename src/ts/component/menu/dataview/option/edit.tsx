@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { I, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
@@ -141,7 +142,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	onKeyUp (e: any, v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
 	};
 
 
