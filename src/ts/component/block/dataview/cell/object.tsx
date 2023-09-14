@@ -99,6 +99,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
 					</span>

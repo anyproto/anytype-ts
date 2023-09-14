@@ -11,7 +11,7 @@
 		.head {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin-right: 0px; }
-			.btn:hover { color: $colorBlack; }
+			.btn:hover { color: $colorTextPrimary; }
 		}
 		
 		.filter.withHead { padding-top: 8px; }

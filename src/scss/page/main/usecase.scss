@@ -12,7 +12,7 @@
 				position: relative; overflow: hidden; min-height: 236px; transition: $transitionAllCommon; 
 				border: 1px solid $colorShapePrimary; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
 			}
-			.item:hover { border-color: $colorBlack; }
+			.item:hover { border-color: $colorTextPrimary; }
 			.item {
 				.head { padding: 16px; }
 

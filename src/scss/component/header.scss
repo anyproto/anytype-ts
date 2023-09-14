@@ -26,8 +26,8 @@
 			font-weight: 700; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
-		.tab:hover { color: $colorBlack; }
-		.tab.active { color: $colorBlack; border-color: $colorBlack; }
+		.tab:hover { color: $colorTextPrimary; }
+		.tab.active { color: $colorTextPrimary; border-color: $colorTextPrimary; }
 	}
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
@@ -55,7 +55,7 @@
 	}
 }
 
-.header.mainHistory { height: 38px; width: calc(100% - 254px); background: $colorWhite; }
+.header.mainHistory { height: 38px; width: calc(100% - 254px); background: $colorBgPrimary; }
 .header.mainHistory {
 	.side.left, .side.right { width: unset; }
 
@@ -74,7 +74,7 @@
 	.item.orange { color: $colorOrange !important; font-weight: 500; }
 	
 	.item.grey:hover { color: $colorTextPrimary; }
-	.item.orange:hover { color: $colorAccent125 !important; }
+	.item.orange:hover { color: $colorSystemAccent100 !important; }
 
 	.item:hover {
 		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
@@ -82,7 +82,7 @@
 }
 .header.mainHistory.snapLeft { right: 254px; }
 
-.header.isCommon { background: $colorWhite; height: 38px; }
+.header.isCommon { background: $colorBgPrimary; height: 38px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
 	.path {
