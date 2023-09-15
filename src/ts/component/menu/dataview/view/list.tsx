@@ -242,7 +242,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const newView = {
 			name: '',
 			type: I.ViewType.Grid,
-			groupRelationKey: Relation.getGroupOption(rootId, blockId, '')?.id,
+			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
 			filters,
 			cardSize: I.CardSize.Medium,
 		};

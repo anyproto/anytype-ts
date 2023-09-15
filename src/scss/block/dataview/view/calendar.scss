@@ -2,20 +2,26 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewCalendar { 
-			display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); 
-			border-color: $colorShapeSecondary; border-style: solid; border-left-width: 1px; border-top-width: 1px;
-		}
+		.viewContent.viewCalendar { padding: 0px 0px 0px 14px; }
 		.viewContent.viewCalendar {
-			.day { 
-				height: 100px; display: table-cell; text-align: left; vertical-align: middle; position: relative;
-				border-color: $colorShapeSecondary; border-style: solid; border-right-width: 1px; border-bottom-width: 1px;
+			.table { 
+				display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); 
+				border-color: $colorShapeSecondary; border-style: solid; border-left-width: 1px; border-top-width: 1px;
 			}
-			.day.active { color: $colorSystemAccent100; }
-			.day.other { color: $colorMediumGrey; }
+
+			.day { 
+				height: 150px; display: table-cell; text-align: left; vertical-align: middle; position: relative; overflow: hidden;
+				border-color: $colorShapeSecondary; border-style: solid; border-right-width: 1px; border-bottom-width: 1px; padding: 6px;
+			}
+			.day.active .number { color: $colorSystemAccent100; }
+			.day.other .number { color: $colorMediumGrey; }
 
 			.day {
-				.number { @include text-small; position: absolute; left: 6px; top: 6px; }
+				.number { @include text-small; }
+				.item { display: flex; flex-direction: row; gap: 0px 6px; }
+				.item {
+					.name { @include text-overflow-nw; }
+				}
 			}
         }
     }

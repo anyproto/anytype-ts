@@ -1,11 +1,8 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { dbStore } from 'Store';
-import { Icon, LoadMore } from 'Component';
-import { I, translate, UtilCommon, UtilCalendar } from 'Lib';
-import Row from './list/row';
+import { I, UtilData, UtilCommon, UtilCalendar } from 'Lib';
+import Item from './calendar/item';
 
 const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
 
@@ -14,6 +11,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	constructor (props: I.ViewComponent) {
 		super (props);
+
+
 	};
 
 	render () {
@@ -32,30 +31,90 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 				className="wrap"
 			>
 				<div className={cn.join(' ')}>
-					{data.map((item, i) => {
-						const cn = [ 'day' ];
-						if (m != item.m) {
-							cn.push('other');
-						};
-						if ((d == item.d) && (m == item.m) && (y == item.y)) {
-							cn.push('active');
-						};
-						return (
-							<div key={i} className={cn.join(' ')}>
-								<div className="number">{item.d}</div>
-							</div>
-						);
-					})}
+					<div className="table">
+						{data.map((item, i) => {
+							const cn = [ 'day' ];
+							if (m != item.m) {
+								cn.push('other');
+							};
+							if ((d == item.d) && (m == item.m) && (y == item.y)) {
+								cn.push('active');
+							};
+							return (
+								<Item 
+									key={i}
+									{...this.props} 
+									{...item} 
+									className={cn.join(' ')}
+									getSubId={() => this.getSubId(item.d, item.m, item.y)}
+								/>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		const data = this.getData();
+		for (const item of data) {
+			this.load(item.d, item.m, item.y);
+		};
 	};
 
 	getData () {
 		return UtilCalendar.getData(UtilCommon.time());
 	};
 
-	loadData () {
+	getSubId (d: number, m: number, y: number) {
+		const { rootId, block } = this.props;
+		return [ rootId, block.id, y, m, d ].join('-');
+	};
+
+	load (d: number, m: number, y: number) {
+		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const object = getTarget();
+		const view = getView();
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		
+		if (!relation || !view) {
+			return;
+		};
+
+		const value = UtilCommon.timestamp(y, m, d);
+		const limit = 10;
+		const filters: I.Filter[] = [].concat(view.filters);
+		const sorts: I.Sort[] = [].concat(view.sorts);
+		const searchIds = getSearchIds();
+		const subId = this.getSubId(d, m, y);
+
+		filters.push({ 
+			operator: I.FilterOperator.And, 
+			relationKey: relation.relationKey, 
+			condition: I.FilterCondition.Equal, 
+			value, 
+			quickOption: I.FilterQuickOption.ExactDate,
+			format: relation.format,
+		});
+
+		if (searchIds) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
+
+		UtilData.searchSubscribe({
+			subId,
+			filters,
+			sorts,
+			keys: getKeys(view.id),
+			sources: object.setOf || [],
+			limit,
+			ignoreHidden: true,
+			ignoreDeleted: true,
+			collectionId: (isCollection ? object.id : ''),
+		}, () => {
+		});
+
 	};
 
 });

@@ -324,8 +324,20 @@ class Relation {
 		].concat(options);
 	};
 
-	public getGroupOptions (rootId: string, blockId: string) {
-		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType) {
+		let formats = [];
+
+		switch (type) {
+			default: {
+				formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+				break;
+			};
+
+			case I.ViewType.Calendar: {
+				formats = [ I.RelationType.Date ];
+				break;
+			};
+		};
 		
 		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
 			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
@@ -355,8 +367,8 @@ class Relation {
 		return options;
 	};
 
-	public getGroupOption (rootId: string, blockId: string, relationKey: string) {
-		const groupOptions = this.getGroupOptions(rootId, blockId);
+	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
+		const groupOptions = this.getGroupOptions(rootId, blockId, type);
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 

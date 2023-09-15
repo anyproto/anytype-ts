@@ -86,6 +86,7 @@ export interface Filter {
 	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
+	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
 	value: any;
 };

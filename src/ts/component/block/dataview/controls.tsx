@@ -257,7 +257,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			id: '',
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, '')?.id,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 		};
 

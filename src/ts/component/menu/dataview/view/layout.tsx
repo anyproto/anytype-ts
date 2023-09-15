@@ -178,7 +178,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.groupRelationKey)?.id;
+			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
@@ -217,8 +217,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			]);
 		};
 
-		if (type == I.ViewType.Board) {
-			const groupOption = Relation.getGroupOption(rootId, blockId, groupRelationKey);
+		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(type)) {
+			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: translate('menuDataviewViewEditGroupBy'), caption: (groupOption ? groupOption.name : translate('commonSelect')), arrow: true },
@@ -281,6 +281,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { rootId, blockId } = data;
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const { type, groupRelationKey } = this.param;
+		const view = data.view.get();
 
 		if (!item.arrow || !allowedView) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -316,8 +317,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId),
+					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, view.type),
 				});
 				break;
 			};
