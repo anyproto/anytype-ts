@@ -26,12 +26,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const m = Number(UtilCommon.date('n', value));
 		const y = Number(UtilCommon.date('Y', value));
 
-		const today = UtilCommon.time();
-		const tomorrow = today + 86400;
-
-
-		console.log(data);
-
 		return (
 			<div 
 				ref={node => this.node = node} 
@@ -59,6 +53,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	getData () {
 		return UtilCalendar.getData(UtilCommon.time());
+	};
+
+	loadData () {
 	};
 
 });
