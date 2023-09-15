@@ -113,7 +113,9 @@ class Dataview {
 			ignoreWorkspace: false,
 			sources: [],
 			clear: false,
-			collectionId: ''
+			collectionId: '',
+			filters: [],
+			sorts: [],
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
@@ -141,7 +143,8 @@ class Dataview {
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const sorts = UtilCommon.objectCopy(view.sorts);
+		const filters = UtilCommon.objectCopy(view.filters).concat(param.filters || []);
+		const sorts = UtilCommon.objectCopy(view.sorts).concat(param.sorts || []);
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -164,7 +167,7 @@ class Dataview {
 		UtilData.searchSubscribe({
 			...param,
 			subId,
-			filters: view.filters.map(mapper),
+			filters: filters.map(mapper),
 			sorts: sorts.map(mapper),
 			keys,
 			limit,

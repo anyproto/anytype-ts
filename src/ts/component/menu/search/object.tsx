@@ -508,7 +508,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (onFilterChange) {
 				onFilterChange(filter);
 			};
-		}, 500);
+		}, Constant.delay.keyboard);
 	};
 
 	getRowHeight (item: any) {

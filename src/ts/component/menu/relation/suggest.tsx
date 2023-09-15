@@ -334,7 +334,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.props.param.data.filter = this.refFilter.getValue();
-		}, 500);
+		}, Constant.delay.keyboard);
 	};
 
 	onMouseEnter (e: any, item: any) {
