@@ -10,12 +10,13 @@ import Constant from 'json/constant.json';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
+import Empty from './dataview/empty';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-import Empty from './dataview/empty';
+import ViewCalendar from './dataview/view/calendar';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -135,6 +136,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			
 			case I.ViewType.List:
 				ViewComponent = ViewList;
+				break;
+
+			case I.ViewType.Calendar:
+				ViewComponent = ViewCalendar;
 				break;
 		};
 

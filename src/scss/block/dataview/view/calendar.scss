@@ -1,0 +1,22 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockDataview {
+		.viewContent.viewCalendar { 
+			display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); 
+			border-color: $colorShapeSecondary; border-style: solid; border-left-width: 1px; border-top-width: 1px;
+		}
+		.viewContent.viewCalendar {
+			.day { 
+				height: 100px; display: table-cell; text-align: left; vertical-align: middle; position: relative;
+				border-color: $colorShapeSecondary; border-style: solid; border-right-width: 1px; border-bottom-width: 1px;
+			}
+			.day.active { color: $colorSystemAccent100; }
+			.day.other { color: $colorMediumGrey; }
+
+			.day {
+				.number { @include text-small; position: absolute; left: 6px; top: 6px; }
+			}
+        }
+    }
+}

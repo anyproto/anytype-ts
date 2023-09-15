@@ -24,6 +24,7 @@ export enum ViewType {
 	List	 = 1,
 	Gallery	 = 2,
 	Board	 = 3,
+	Calendar = 4,
 };
 
 export enum SortType { 
