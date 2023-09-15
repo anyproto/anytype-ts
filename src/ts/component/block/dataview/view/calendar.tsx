@@ -112,7 +112,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
-		}, () => {
 		});
 
 	};
