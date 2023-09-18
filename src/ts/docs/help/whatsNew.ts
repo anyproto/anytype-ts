@@ -25,7 +25,7 @@ export default [
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Create &amp; Edit Templates from Sets &amp; Collections`),
-	video(``, `c70`),
+	video(`./img/help/35/1-templates.mp4`, `c70`),
 	text(`Finally, template creation on-the-fly is here! From today's release onward, you no longer need to visit the Library to create and edit your templates. Using the ‘Show templates' button in any Set or Collection, you can open, edit, and create new templates for immediate use.`),
 
 	h3(`Updates to Notion Import`),
@@ -34,15 +34,15 @@ export default [
 	h2(`⚡ Quality-of-Life Improvements:`),
 
 	h3(`Read-only &amp; Restore-from-Bin Enabled for Deleted Objects`),
-	video(``, `c70`),
+	video(`./img/help/35/2-restore.mp4`, `c70`),
 	text(`You can now open the content of deleted objects in read-only mode. Once opened, you'll see a banner that allows you to restore the object, without needing to visit the Bin to do so. `),
 
 	h3(`Edit Object Icons in Mentioned &amp; Linked Objects`),
 	text(`It's now possible to edit the icons of Objects which are referenced via links or mentions in your editor, including checking or unchecking tasks.`),
 
 	h3(`Link to Website is Now First Option When Adding Links to Text Blocks`),
-	img(``, `c70`),
-	text(`To simplify the process of adding web links to text blocks, inputting a URL as a text block link will bring Link to Website to the top of the menu. Thanks, gdbb!`),
+	img(`./img/help/35/3-menu.png`, `c70`),
+	text(`To simplify the process of adding web links to text blocks, inputting a URL as a text block link will bring Link to Website to the top of the menu. Thanks, ${link(`https://community.anytype.io/t/change-the-layout-of-link-in-font-settings/9757`, `gdbb`)}!`),
 
 	h3(`Logout Button Added to Profile Settings Sidebar`),
 	text(`The profile logout button has been moved to your profile settings sidebar, which means it'll be visible no matter which page of your profile settings you're currently using.`),
@@ -51,7 +51,7 @@ export default [
 	text(`Strategic Writing has been added as a use case to the onboarding selection, focusing on collecting, developing, and thoughtfully presenting written ideas in Anytype.`),
 
 	h3(`Redesign of Set Control Menus`),
-	img(``, `c70`),
+	img(`./img/help/35/4-set.png`, `c70`),
 	text(`We've updated the design of the View settings menu with options for renaming the view and selecting the default template for the set. In addition, current settings can be previewed from the menu including layout, applied filters, and applied sorts.`),
 
 	h3(`Default Object Type Now Selectable in Collections &amp; Sets-by-Relation`),
@@ -80,12 +80,12 @@ export default [
 
 	h2(`🐛 Bug Fixes:`),
 
-	bullet(`Fixed: Search palette now correctly displays recently edited objects. Thanks, C.c!`),
-	bullet(`Fixed: Caret position no longer jumps when using the editor. Thanks, stujo7!`),
-	bullet(`Fixed: When selecting objects as relation value, sort is now applied according to descending values. Thanks, Hoador!`),
+	bullet(`Fixed: Search palette now correctly displays recently edited objects. Thanks, ${link(`https://community.anytype.io/t/search-palette-doesnt-show-most-recent-objects/9992`, `C.c`)}!`),
+	bullet(`Fixed: Caret position no longer jumps when using the editor. Thanks, ${link(`https://community.anytype.io/t/cursor-jumping-back-while-typing-still-a-problem/10562/3`, `stujo7`)}!`),
+	bullet(`Fixed: When selecting objects as relation value, sort is now applied according to descending values. Thanks, ${link(`https://community.anytype.io/t/inconsistent-sorting-on-macos-vs-ios/10716`, `Hoador`)}!`),
 	bullet(`Fixed: Several layout problems in print version`),
-	bullet(`Fixed: View controllers for Sets &amp; Collections now remain visible regardless of window size. Thanks, raph!`),
-	bullet(`Fixed: Note snippets are no longer parsing HTML from code blocks. Thanks, CodeMacLife!`),
+	bullet(`Fixed: View controllers for Sets &amp; Collections now remain visible regardless of window size. Thanks, ${link(`https://community.anytype.io/t/set-view-controllers-inaccessible-on-certain-screen-width/10301`, `raph`)}!`),
+	bullet(`Fixed: Note snippets are no longer parsing HTML from code blocks. Thanks, ${link(`https://community.anytype.io/t/10589`, `CodeMacLife`)}!`),
 	bullet(`Fixed: Copy and deleting relations before they are created is no longer enabled in Objects, Sets &amp; Collections`),
 
 	div(),
