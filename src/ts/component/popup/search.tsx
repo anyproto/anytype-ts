@@ -318,7 +318,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	onFilterChange () {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.forceUpdate(), 500);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
 	};
 
 	onFilterClear () {

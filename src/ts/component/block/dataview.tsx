@@ -42,6 +42,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isMultiSelecting = false;
 	selected: string[] = [];
 	menuContext = null;
+	timeoutFilter = 0;
+	searchIds = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -72,15 +74,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
+		this.onSelectEnd = this.onSelectEnd.bind(this);
+		this.onSelectToggle = this.onSelectToggle.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+
+		this.getSearchIds = this.getSearchIds.bind(this);
+		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
+		this.multiSelectAction = this.multiSelectAction.bind(this);
+		this.applyObjectOrder = this.applyObjectOrder.bind(this);
+
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
-		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
-		this.applyObjectOrder = this.applyObjectOrder.bind(this);
-		this.onSelectEnd = this.onSelectEnd.bind(this);
-		this.multiSelectAction = this.multiSelectAction.bind(this);
-		this.onSelectToggle = this.onSelectToggle.bind(this);
 	};
 
 	render () {
@@ -103,9 +109,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const cn = [ 'focusable', 'c' + block.id ];
 
 		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
-		let ViewComponent: any = null;
 		const className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
 		const head = null;
+
+		let ViewComponent: any = null;
 		let body = null;
 
 		if (isCollection) {
@@ -157,23 +164,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
+			getSearchIds: this.getSearchIds,
 		};
-
-		const controls = (
-			<React.Fragment>
-				<Controls 
-					ref={ref => this.refControls = ref} 
-					{...this.props} 
-					{...dataviewProps} 
-				/>
-				<Selection 
-					ref={ref => this.refSelect = ref} 
-					{...this.props} 
-					{...dataviewProps} 
-					multiSelectAction={this.multiSelectAction} 
-				/>
-			</React.Fragment>
-		);
 
 		if (loading) {
 			body = null;
@@ -219,7 +211,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			>
 				<div className="hoverArea">
 					{head}
-					{controls}
+
+					<Controls 
+						ref={ref => this.refControls = ref} 
+						{...this.props} 
+						{...dataviewProps} 
+						onFilterChange={this.onFilterChange}
+					/>
+					<Selection 
+						ref={ref => this.refSelect = ref} 
+						{...this.props} 
+						{...dataviewProps} 
+						multiSelectAction={this.multiSelectAction} 
+					/>
 				</div>
 				{body}
 			</div>
@@ -227,14 +231,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isInline } = this.props;
-		const view = this.getView();
+		const { rootId, isPopup, isInline } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (view) {
-			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
-			this.loadData(view.id, 0, true);
-		};
+		this.reloadData();
 
 		if (root.isObjectSet()) {
 			Onboarding.start('set', isPopup);
@@ -311,8 +311,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
@@ -357,6 +356,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
+			const filters = [];
+			if (this.searchIds) {
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+			};
+
 			Dataview.getData({
 				rootId, 
 				blockId: block.id, 
@@ -366,6 +370,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				limit: offset + this.getLimit(view.type), 
 				clear,
 				sources,
+				filters,
 				collectionId: (isCollection ? this.getObjectId() : ''),
 			}, (message: any) => {
 				if (clear) {
@@ -379,6 +384,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	reloadData () {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+
+		if (view) {
+			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
+			this.loadData(view.id, 0, true);
+		};
+	};
+
 	getObjectId (): string {
 		const { rootId, block, isInline } = this.props;
 		return isInline ? block.content.targetObjectId : rootId;
@@ -386,8 +401,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
-		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
 
+		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it && it.relationKey));
 
@@ -732,10 +747,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					}
 				},
 			});
-			return;
+		} else {
+			this.recordCreate(e, { id: defaultTemplateId }, dir, groupId);
 		};
-
-		this.recordCreate(e, { id: defaultTemplateId }, dir, groupId);
 	};
 
 	onTemplateMenu (e: any, dir: number) {
@@ -1115,7 +1129,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const sources = this.getSources();
 
-    let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (isAllowed && this.isCollection()) {
 			return true;
 		};
@@ -1234,6 +1248,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.selectionCheck();
 	};
 
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			if (v) {
+				UtilData.search({
+					filters: [],
+					sorts: [],
+					fullText: v,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					this.searchIds = (message.records || []).map(it => it.id);
+					this.reloadData();
+				});
+			} else {
+				this.searchIds = null;
+				this.reloadData();
+			};
+		}, Constant.delay.keyboard);
+	};
+
 	setSelected (ids: string[]) {
 		if (this.refSelect) {
 			this.refSelect.setIds(ids);
@@ -1267,6 +1301,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		selection.clear();
+	};
+
+	getSearchIds () {
+		return this.searchIds;
 	};
 
 	resize () {

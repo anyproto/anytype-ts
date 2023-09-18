@@ -135,7 +135,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, isCollection } = this.props;
+		const { id, block, isCollection, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -150,14 +150,15 @@ const Column = observer(class Column extends React.Component<Props> {
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
+		const searchIds = getSearchIds();
 
 		if (objectIds.length) {
 			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
 		};
 
-		let value = this.props.value;
 		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
 
+		let value = this.props.value;
 		switch (relation.format) {
 			default:
 				filter.condition = I.FilterCondition.Equal;
@@ -177,6 +178,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		filters.push(filter);
+		if (searchIds) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		if (clear) {
 			this.clear();

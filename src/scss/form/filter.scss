@@ -10,7 +10,6 @@
 	.icon { flex-shrink: 0; cursor: default; }
 	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; opacity: 0; }
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg') !important; }
-
 	.icon.search { width: 20px; height: 20px; background-size: 18px; background-image: url('~img/icon/search.svg'); }
 
 	.line { height: 1px; margin: 0px !important; background: $colorShapeSecondary; display: block; }
