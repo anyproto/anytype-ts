@@ -340,7 +340,7 @@
 			}
 		}
 
-		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
+		.side.right.tabSpaceStorageManager { padding: 0px !important; }
 		.side.right.tabSpaceStorageManager {
 			> .wrap { height: 100%; display: flex; flex-direction: column; }
 			> .wrap {
