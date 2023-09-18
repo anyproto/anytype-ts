@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
 import { I, UtilData, UtilCommon, UtilCalendar } from 'Lib';
 import Item from './calendar/item';
+import Constant from 'json/constant.json';
 
 const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
 
@@ -21,9 +22,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const data = this.getData();
 
 		const value = UtilCommon.time();
-		const d = Number(UtilCommon.date('j', value));
-		const m = Number(UtilCommon.date('n', value));
-		const y = Number(UtilCommon.date('Y', value));
+		const { d, m, y } = this.getDateParam(value);
+		const subId = this.getSubId(m, y);
 
 		return (
 			<div 
@@ -46,7 +46,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 									{...this.props} 
 									{...item} 
 									className={cn.join(' ')}
-									getSubId={() => this.getSubId(item.d, item.m, item.y)}
+									getSubId={() => subId}
+									getDateParam={this.getDateParam}
 								/>
 							);
 						})}
@@ -57,22 +58,27 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	componentDidMount(): void {
-		const data = this.getData();
-		for (const item of data) {
-			this.load(item.d, item.m, item.y);
-		};
+		this.load();
+	};
+
+	getDateParam (t: number) {
+		const d = Number(UtilCommon.date('j', t));
+		const m = Number(UtilCommon.date('n', t));
+		const y = Number(UtilCommon.date('Y', t));
+
+		return { d, m, y };
 	};
 
 	getData () {
 		return UtilCalendar.getData(UtilCommon.time());
 	};
 
-	getSubId (d: number, m: number, y: number) {
+	getSubId (m: number, y: number) {
 		const { rootId, block } = this.props;
-		return [ rootId, block.id, y, m, d ].join('-');
+		return [ rootId, block.id, y, m ].join('-');
 	};
 
-	load (d: number, m: number, y: number) {
+	load () {
 		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
@@ -82,18 +88,29 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const value = UtilCommon.timestamp(y, m, d);
+		const { d, m, y } = this.getDateParam(UtilCommon.time());
+		const start = UtilCommon.timestamp(y, m, 1);
+		const end = UtilCommon.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0));
 		const limit = 10;
 		const filters: I.Filter[] = [].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
-		const subId = this.getSubId(d, m, y);
+		const subId = this.getSubId(m, y);
 
 		filters.push({ 
 			operator: I.FilterOperator.And, 
 			relationKey: relation.relationKey, 
-			condition: I.FilterCondition.Equal, 
-			value, 
+			condition: I.FilterCondition.GreaterOrEqual, 
+			value: start, 
+			quickOption: I.FilterQuickOption.ExactDate,
+			format: relation.format,
+		});
+
+		filters.push({ 
+			operator: I.FilterOperator.And, 
+			relationKey: relation.relationKey, 
+			condition: I.FilterCondition.LessOrEqual, 
+			value: end, 
 			quickOption: I.FilterQuickOption.ExactDate,
 			format: relation.format,
 		});

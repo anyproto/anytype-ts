@@ -9,6 +9,7 @@ interface Props extends I.ViewComponent {
 	m: number;
 	y: number;
 	getSubId?: () => string;
+	getDateParam?: (t: number) => { d: number; m: number; y: number; };
 };
 
 const Item = observer(class Item extends React.Component<Props> {
@@ -16,11 +17,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, className, getSubId, getView, getLimit, d } = this.props;
-		const view = getView();
+		const { className, getSubId, getView, d } = this.props;
 		const subId = getSubId();
 		const items = this.getItems();
-		const { total } = dbStore.getMeta(subId, '');
 
 		return (
 			<div 
@@ -41,11 +40,14 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	getItems () {
-		const { getSubId, getView } = this.props;
+		const { getSubId, getView, getDateParam, d, m, y } = this.props;
 		const subId = getSubId();
 		const view = getView();
 
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ])).filter(it => {
+			const value = getDateParam(it[view.groupRelationKey]);
+			return [ value.d, value.m, value.y ].join('-') == [ d, m, y ].join('-');
+		});
 	};
 
 });
