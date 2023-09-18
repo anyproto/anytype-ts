@@ -44,6 +44,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	menuContext = null;
 	timeoutFilter = 0;
 	searchIds = null;
+	filter = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -1251,6 +1252,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
+			if (this.filter == v) {
+				return;
+			};
+
+			this.filter = v;
+
 			if (v) {
 				UtilData.search({
 					filters: [],
