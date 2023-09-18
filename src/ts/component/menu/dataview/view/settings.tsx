@@ -283,7 +283,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const typeId = getTypeId();
 		const objectType = dbStore.getType(typeId);
-		const defaultTypeName = objectType.name || '';
+		const defaultTypeName = objectType ? objectType.name : '';
 
 		const hasSources = (isCollection || getSources().length);
 		const allowedDefaultType = isAllowedDefaultType();
@@ -296,13 +296,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const relations = view.getVisibleRelations().map((it) => {
 			const relation = dbStore.getRelationByKey(it.relationKey) || {};
-			return UtilCommon.shorten(relation.name || '', 16);
-		});
+			return relation ? UtilCommon.shorten(relation.name || '', 16) : '';
+		}).filter(it => it);
 
-		let relationCnt = relations.join(', ');
+		const relationCnt = relations.slice(0, 2);
 		if (relations.length > 2) {
-			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
+			relationCnt.push(`+${relations.length - 2}`);
 		};
+
 
 		const updateDefaultTemplate = (item, callBack: () => void) => {
 			if (item.id == Constant.templateId.new) {
@@ -341,7 +342,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt }
+			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') }
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
