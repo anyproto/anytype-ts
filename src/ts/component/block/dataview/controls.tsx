@@ -144,7 +144,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search"
 							onChange={onFilterChange}
-							onClear={this.onFilterHide}
 							onIconClick={this.onFilterShow}
 						/>
 
@@ -384,6 +383,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	onFilterHide () {
 		this.refFilter?.setActive(false);
 		this.refFilter?.setValue('');
+		this.props.onFilterChange('');
 	};
 
 	resize () {
