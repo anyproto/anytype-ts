@@ -383,6 +383,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onFilterHide () {
 		this.refFilter?.setActive(false);
+		this.refFilter?.setValue('');
 	};
 
 	resize () {
