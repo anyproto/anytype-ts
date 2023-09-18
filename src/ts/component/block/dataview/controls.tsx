@@ -357,8 +357,30 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterShow () {
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
 		this.refFilter?.setActive(true);
 		this.refFilter?.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+			if (!$(e.target).parents(`.filter`).length) {
+				e.stopPropagation();
+
+				this.onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			e.stopPropagation();
+
+			keyboard.shortcut('escape', e, () => {
+				this.onFilterHide();
+				win.off('keydown.filter')
+			});
+		});
 	};
 
 	onFilterHide () {
