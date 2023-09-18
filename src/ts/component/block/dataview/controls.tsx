@@ -366,8 +366,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
 			if (!$(e.target).parents(`.filter`).length) {
-				e.stopPropagation();
-
 				this.onFilterHide();
 				container.off('mousedown.filter');
 			};
@@ -378,7 +376,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 			keyboard.shortcut('escape', e, () => {
 				this.onFilterHide();
-				win.off('keydown.filter')
+				win.off('keydown.filter');
 			});
 		});
 	};
