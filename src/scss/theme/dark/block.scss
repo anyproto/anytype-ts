@@ -125,7 +125,7 @@
 		.dataviewSelection {
 			.side.left { color: $colorTextPrimary; }
 			.side.right {
-				.element.black { color: $colorTextPrimary; }
+				.element { color: $colorTextPrimary; }
 				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
