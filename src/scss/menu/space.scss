@@ -35,7 +35,7 @@
 				background-repeat: no-repeat;
 			}
 
-			.item.space.hover {
+			.item.space.hover:not(.isActive) {
 				.iconWrap { transform: scale(1.06, 1.06); }
 			}
 			.item.space.isActive {
