@@ -7,6 +7,7 @@ import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
 import { menuStore, detailStore, dbStore } from 'Store';
 import ItemObject from './item/object';
+import Constant from 'json/constant.json';
 
 interface State { 
 	isEditing: boolean; 
