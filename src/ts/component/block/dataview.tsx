@@ -505,7 +505,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const view = this.getView();
-		const { defaultTypeId } = view;
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 
@@ -526,8 +525,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			};
 		};
-		if (!type && defaultTypeId && this.isAllowedDefaultType()) {
-			type = defaultTypeId;
+		if (!type && view && view.defaultTypeId && this.isAllowedDefaultType()) {
+			type = view.defaultTypeId;
 		};
 		if (!type) {
 			type = commonStore.type;
