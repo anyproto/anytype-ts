@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -22,21 +22,30 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { setHover } = this.props;
 		const items = this.getItems();
 		const profile = UtilObject.getProfile();
+		const { workspace } = blockStore;
 
-		const Item = (item) => (
-			<div 
-				id={`item-${item.id}`}
-				className="item" 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)} 
-				onMouseLeave={e => setHover()}
-			>
-				<div className="iconWrap">
-					<IconObject object={item} size={96} forceLetter={true} />
+		const Item = (item) => {
+			const cn = [ 'item', 'space' ];
+
+			if (item.id == workspace) {
+				cn.push('isActive');
+			};
+
+			return (
+				<div 
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)} 
+					onMouseLeave={e => setHover()}
+				>
+					<div className="iconWrap">
+						<IconObject object={item} size={96} forceLetter={true} />
+					</div>
+					<ObjectName object={item} />
 				</div>
-				<ObjectName object={item} />
-			</div>
-		);
+			);
+		};
 
 		const ItemAdd = (item: any) => (
 			<div 
@@ -45,9 +54,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				onClick={this.onAdd}
 				onMouseEnter={e => this.onMouseEnter(e, item)} 
 				onMouseLeave={e => setHover()}
-			>
-				<div className="iconWrap" />
-			</div>
+			/>
 		);
 
 		return (
