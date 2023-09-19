@@ -265,7 +265,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				raf(() => { this.onOptionsOpen(type, rowId, columnId, cellId); }); 
 			},
 			onClose: () => {
-				menuStore.clearTimeout();
 				menuStore.closeAll(Constant.menuIds.table);
 				this.onOptionsClose();
 			},
