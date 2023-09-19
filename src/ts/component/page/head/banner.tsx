@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Icon, Label, ObjectName } from 'Component';
 import { I, Action, translate, UtilObject, UtilCommon, UtilFile, analytics, C, UtilData } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -15,10 +15,14 @@ interface State {
 	menuOpened: boolean;
 };
 
+const TEMPLATE_WIDTH = 236;
+const PADDING = 16;
+
 class HeaderBanner extends React.Component<Props, State> {
 
 	_isMounted = false;
 	node: any = null;
+	menuContext: any = null;
 
 	state = {
 		menuOpened: false
@@ -106,9 +110,20 @@ class HeaderBanner extends React.Component<Props, State> {
 	};
 
 	onTemplateMenu () {
-		const { object } = this.props;
+		const { object, count } = this.props;
 		const { menuOpened } = this.state;
 		const type = dbStore.getTypeById(object.type);
+		const winSize = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+
+		let sw = 0;
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			sw = sidebar.outerWidth();
+		};
+
+		const areaWidth = winSize.ww - sw;
+		const maxRowLength = Math.floor(areaWidth / TEMPLATE_WIDTH);
+		const width = Math.min(count, maxRowLength) * TEMPLATE_WIDTH + PADDING * 2;
 
 		if (menuOpened) {
 			this.setState({ menuOpened: false });
@@ -117,15 +132,20 @@ class HeaderBanner extends React.Component<Props, State> {
 
 			menuStore.open('dataviewTemplateList', {
 				element: $(this.node),
-				offsetY: 10,
-				noAnimation: true,
+				className: 'objectCreate',
+				width,
 				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
+				onOpen: (context: any) => {
+					this.menuContext = context;
+					this.menuContext.ref.updateRowLength(maxRowLength);
+				},
 				onClose: () => this.setState({ menuOpened: false }),
 				data: {
 					withTypeSelect: false,
 					noAdd: true,
+					noTitle: true,
 					typeId: type.id,
 					templateId: type.defaultTemplateId || Constant.templateId.blank,
 					previewSize: I.PreviewSize.Medium,

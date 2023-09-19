@@ -31,4 +31,14 @@
             }
         }
     }
+    .menu.menuDataviewTemplateList.objectCreate { background-color: transparent; box-shadow: none; }
+    .menu.menuDataviewTemplateList.objectCreate {
+        .content { margin-top: -16px; }
+        .content {
+            .items { justify-content: space-around; align-content: flex-start; }
+            .items {
+                .previewObject { background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
+            }
+        }
+    }
 }

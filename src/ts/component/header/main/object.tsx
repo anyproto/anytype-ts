@@ -46,7 +46,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
 		} else
 		if (allowedTemplateSelect && templatesCnt) {
-			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt} />;
+			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt + 1} />;
 		} else {
 			center = (
 				<div

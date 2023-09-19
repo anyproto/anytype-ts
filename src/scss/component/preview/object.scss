@@ -155,8 +155,8 @@
 	}
 }
 
+/* PreviewObject.Small */
 .previewObject.small { width: 158px; height: 112px; }
-
 .previewObject.small {
 	.cover { height: 42px; }
 	.scroller { padding: 24px 16px; }
@@ -195,3 +195,6 @@
 		.name { padding-left: 20px; }
 	}
 }
+
+/* PreviewObject.Medium */
+.previewObject.medium { width: 224px; height: 158px; }

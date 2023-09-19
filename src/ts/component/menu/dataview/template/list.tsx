@@ -12,6 +12,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		templateId: ''
 	};
 
+	node: any = null;
 	n = -1;
 	items: any = [];
 	typeId: string = '';
@@ -23,12 +24,13 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
 		this.reload = this.reload.bind(this);
+		this.updateRowLength = this.updateRowLength.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { withTypeSelect, noAdd, typeId } = data;
+		const { withTypeSelect, noAdd, typeId, noTitle } = data;
 		const previewSizesCns = [ 'small', 'medium', 'large' ];
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const type = dbStore.getTypeById(typeId);
@@ -62,8 +64,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		);
 
 		return (
-			<React.Fragment>
-
+			<div ref={node => this.node = node}>
 				{withTypeSelect ? (
 					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
 						<div className="item">
@@ -74,7 +75,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					</div>
 				) : ''}
 
-				<Title text={translate('commonTemplates')} />
+				{!noTitle ? <Title text={translate('commonTemplates')} /> : ''}
 
 				{isAllowed ? (
 					<div className="items">
@@ -99,7 +100,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 						) : ''}
 					</div>
 				) : <EmptySearch text={translate('menuDataviewTemplateUnsupported')} />}
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -249,6 +250,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 
 	isDefaultTemplate (id: string): boolean {
     	return id == this.state.templateId;
+	};
+
+	updateRowLength (n: number) {
+		const node = $(this.node);
+		const items = node.find('.items');
+		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
 };
 
