@@ -16,7 +16,6 @@ const img = (src: string, c: string) => text(`<img src="${src}" class="${c}" />`
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
-	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	title(`Fresh Updates for September`),
