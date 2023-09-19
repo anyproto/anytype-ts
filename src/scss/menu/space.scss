@@ -23,7 +23,7 @@
 			.item.space {
 				.iconWrap { 
 					width: 100%; height: 104px; border: 4px solid rgba(255,255,255,0); border-radius: 16px; overflow: hidden; 
-					transition: $transitionCommon; transform-origin: 50% 100%;
+					transition: 0.2s $transitionAllCommon; transform-origin: 50% 100%;
 				}
 				.iconObject { border-radius: 0px; }
 				.name { @include text-overflow-nw; width: 100%; text-align: center; }
@@ -39,7 +39,7 @@
 				.iconWrap { transform: scale(1.06, 1.06); }
 			}
 			.item.space.isActive {
-				.iconWrap { border-color: #fff; box-shadow: 0px 0px 6px rgba(0,0,0,0.2); }
+				.iconWrap { border-color: #fff; box-shadow: 0px 0px 6px rgba(0,0,0,0.1); }
 			}
 			.item.add.hover, .item.add.active { 
 				border-color: rgba(255, 255, 255, 0.7); background-color: rgba(255, 255, 255, 0.3);
