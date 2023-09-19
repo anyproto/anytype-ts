@@ -128,6 +128,7 @@ class HeaderBanner extends React.Component<Props, State> {
 					noAdd: true,
 					typeId: type.id,
 					templateId: type.defaultTemplateId || Constant.templateId.blank,
+					previewSize: I.PreviewSize.Medium,
 					onSelect: (item: any) => {
 						C.ObjectApplyTemplate(object.id, item.id);
 						menuStore.close('dataviewTemplateList');

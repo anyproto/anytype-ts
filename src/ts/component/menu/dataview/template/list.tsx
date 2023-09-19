@@ -29,6 +29,8 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { withTypeSelect, noAdd, typeId } = data;
+		const previewSizesCns = [ 'small', 'medium', 'large' ];
+		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
@@ -37,7 +39,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', previewSizesCns[previewSize], 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -83,7 +85,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 								key={i}
 								className={this.isDefaultTemplate(item.id) ? 'isDefault' : ''}
 								rootId={item.id}
-								size={I.PreviewSize.Small}
+								size={previewSize}
 								onClick={e => this.onClick(e, item)}
 								onMore={e => this.onMore(e, item)}
 							/>
