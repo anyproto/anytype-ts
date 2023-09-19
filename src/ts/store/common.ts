@@ -286,7 +286,7 @@ class CommonStore {
 	typeSet (v: string) {
 		this.defaultTypeKey = String(v || '');
 
-		Storage.set('defaultType', this.defaultTypeKey);
+		Storage.set('defaultTypeKey', this.defaultTypeKey);
 	};
 
 	pinTimeSet (v: string) {
