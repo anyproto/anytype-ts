@@ -26,8 +26,8 @@ class Navigation extends React.Component {
 		const profile = UtilObject.getProfile();
 		const isWin = UtilCommon.isPlatformWindows();
 		const isLinux = UtilCommon.isPlatformLinux();
-		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + ←`;
-		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + →`;
+		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
+		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
 
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },

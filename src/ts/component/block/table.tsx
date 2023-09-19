@@ -254,7 +254,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const current: any = blockStore.getLeaf(rootId, cellId) || {};
 		const node = $(this.node);
-		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const options: any[] = this.getOptions(type, rowId, columnId, cellId);
 		
 		let blockIds = [];
@@ -266,10 +265,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				raf(() => { this.onOptionsOpen(type, rowId, columnId, cellId); }); 
 			},
 			onClose: () => {
-				menuStore.clearTimeout();
+				menuStore.closeAll(Constant.menuIds.table);
 				this.onOptionsClose();
 			},
-			subIds: subIds,
+			subIds: Constant.menuIds.table,
 		};
 
 		let element: any = null;
@@ -346,12 +345,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll(subIds);
+						menuStore.closeAll(Constant.menuIds.table);
 						return;
 					};
 
-					let menuSubContext = null;
-					let menuId = '';
 					const menuParam: any = {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
@@ -363,6 +360,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							rebind: menuContext.ref.rebind,
 						}
 					};
+
+					let menuSubContext = null;
+					let menuId = '';
 
 					switch (item.id) {
 						case 'sort': {
@@ -481,7 +481,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						};
 					};
 
-					menuStore.closeAll(subIds, () => {
+					menuStore.closeAll(Constant.menuIds.table, () => {
 						menuStore.open(menuId, menuParam);
 					});
 				},
@@ -509,6 +509,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let next: any = null;
 		let idx = -1;
 		let nextIdx = -1;
+
+		menuStore.closeAll(Constant.menuIds.table);
 
 		switch (item.id) {
 			case 'columnBefore':

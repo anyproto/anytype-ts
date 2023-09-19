@@ -64,7 +64,8 @@
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
-		"dataviewTemplate": [ "previewObject" ]
+		"dataviewTemplate": [ "previewObject" ],
+		"table":		 [ "select2", "blockColor", "blockBackground" ]
 	},
 
 	"popupPinIds": [ "search" ],
