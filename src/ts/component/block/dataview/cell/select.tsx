@@ -307,7 +307,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
-		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		if (content.length) {
+			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		};
 	};
 
 	onClear (e: any) {
