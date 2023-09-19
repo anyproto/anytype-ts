@@ -136,6 +136,11 @@
 	}
 }
 
+.cellContent.c-longText { white-space: pre; }
+.cell.isEditing.c-longText {
+	.cellContent { white-space: pre !important; }
+}
+
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-number, 
