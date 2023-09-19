@@ -19,6 +19,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 	
 	render () {
+		const { setHover } = this.props;
 		const items = this.getItems();
 		const profile = UtilObject.getProfile();
 
@@ -28,6 +29,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				className="item" 
 				onClick={e => this.onClick(e, item)}
 				onMouseEnter={e => this.onMouseEnter(e, item)} 
+				onMouseLeave={e => setHover()}
 			>
 				<div className="iconWrap">
 					<IconObject object={item} size={96} forceLetter={true} />
@@ -42,6 +44,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				className="item add" 
 				onClick={this.onAdd}
 				onMouseEnter={e => this.onMouseEnter(e, item)} 
+				onMouseLeave={e => setHover()}
 			>
 				<div className="iconWrap" />
 			</div>
