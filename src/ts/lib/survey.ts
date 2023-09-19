@@ -77,14 +77,14 @@ class Survey {
 		const time = UtilCommon.time();
 		const obj = Storage.getSurvey(I.SurveyType.Pmf);
 		const timeRegister = Number(Storage.get('timeRegister')) || 0;
-		const lastCompleted = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
-		const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
+		const lastCompleted = Number(obj.time || Storage.get('lastSurveyTime')) || 0;
+		const lastCanceled = Number(obj.time || Storage.get('lastSurveyCanceled')) || 0;
 		const week = 86400 * 7;
 		const month = 86400 * 30;
 
 		const registerTime = timeRegister <= time - week;
-		const completeTime = registerTime && (lastCompleted <= time - month);
-		const cancelTime = registerTime && (lastCanceled <= time - month);
+		const completeTime = obj.complete && registerTime && (lastCompleted <= time - month);
+		const cancelTime = obj.cancel && registerTime && (lastCanceled <= time - month);
 		const randSeed = 10000000;
 		const rand = UtilCommon.rand(0, randSeed);
 
