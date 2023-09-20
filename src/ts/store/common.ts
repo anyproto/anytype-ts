@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, set } from 'mobx';
+import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
 import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
@@ -109,6 +109,8 @@ class CommonStore {
 			workspaceSet: action,
 			spaceStorageSet: action,
 		});
+
+		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
     };
 
     get config(): any {
