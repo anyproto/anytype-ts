@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
-import { I, UtilData, UtilCommon, UtilCalendar } from 'Lib';
+import { I, UtilData, UtilCommon, UtilDate } from 'Lib';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
@@ -21,7 +21,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
 
-		const value = UtilCommon.time();
+		const value = UtilDate.now();
 		const { d, m, y } = this.getDateParam(value);
 		const subId = this.getSubId(m, y);
 
@@ -62,15 +62,15 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getDateParam (t: number) {
-		const d = Number(UtilCommon.date('j', t));
-		const m = Number(UtilCommon.date('n', t));
-		const y = Number(UtilCommon.date('Y', t));
+		const d = Number(UtilDate.date('j', t));
+		const m = Number(UtilDate.date('n', t));
+		const y = Number(UtilDate.date('Y', t));
 
 		return { d, m, y };
 	};
 
 	getData () {
-		return UtilCalendar.getData(UtilCommon.time());
+		return UtilDate.getCalendarMonth(UtilDate.now());
 	};
 
 	getSubId (m: number, y: number) {
@@ -88,9 +88,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const { d, m, y } = this.getDateParam(UtilCommon.time());
-		const start = UtilCommon.timestamp(y, m, 1);
-		const end = UtilCommon.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0));
+		const { d, m, y } = this.getDateParam(UtilDate.now());
+		const start = UtilDate.timestamp(y, m, 1);
+		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0));
 		const limit = 10;
 		const filters: I.Filter[] = [].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);

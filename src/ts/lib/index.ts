@@ -14,7 +14,7 @@ import UtilFile from './util/file';
 import UtilObject from './util/object';
 import UtilMenu from './util/menu';
 import UtilRouter from './util/router';
-import UtilCalendar from './util/calendar';
+import UtilDate from './util/date';
 
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
@@ -95,5 +95,5 @@ export {
 	UtilObject,
 	UtilMenu,
 	UtilRouter,
-	UtilCalendar,
+	UtilDate,
 };

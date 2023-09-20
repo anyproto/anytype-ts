@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -167,9 +167,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = UtilCommon.dayString(value);
-					const date = day ? day : UtilCommon.date(UtilData.dateFormat(viewRelation.dateFormat), value);
-					const time = UtilCommon.date(UtilData.timeFormat(viewRelation.timeFormat), value);
+					const day = UtilDate.dayString(value);
+					const date = day ? day : UtilDate.date(UtilData.dateFormat(viewRelation.dateFormat), value);
+					const time = UtilDate.date(UtilData.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -271,7 +271,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					format.push('H:i');
 				};
 
-				value = this.value !== null ? UtilCommon.date(format.join(' ').trim(), this.value) : '';
+				value = this.value !== null ? UtilDate.date(format.join(' ').trim(), this.value) : '';
 			} else
 			if (relation.format == I.RelationType.Number) {
 				value = Relation.formatValue(relation, this.value, true);
@@ -427,7 +427,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		v = String(v || '').replace(/_/g, '');
-		return v ? UtilCommon.parseDate(v, viewRelation.dateFormat) : null;
+		return v ? UtilDate.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onIconSelect (icon: string) {

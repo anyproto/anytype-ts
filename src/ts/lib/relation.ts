@@ -1,4 +1,4 @@
-import { I, UtilCommon, UtilFile, translate, Dataview } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -454,7 +454,7 @@ class Relation {
 	};
 
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
-		const time = UtilCommon.time();
+		const time = UtilDate.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {

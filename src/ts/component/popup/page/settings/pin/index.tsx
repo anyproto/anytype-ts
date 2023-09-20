@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
-import { I, UtilCommon, Storage, translate, analytics } from 'Lib';
+import { I, UtilDate, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -9,7 +9,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 	render () {
 		const pin = Storage.get('pin');
 		const pinTime = commonStore.pinTime / 1000;
-		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilCommon.duration(time) }));
+		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilDate.duration(time) }));
 
 		return (
 			<React.Fragment>
