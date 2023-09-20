@@ -216,19 +216,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
-			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
-				if (cnt) {
-					popupStore.open('template', {
-						data: {
-							typeId: item.id,
-							onSelect: (template: any) => this.onCreate(item.id, template),
-							route: 'Navigation'
-						}
-					});
-				} else {
-					this.onCreate(item.id, null);
-				};
-			});
+			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => this.onCreate(item.id, null));
 		};
 	};
 

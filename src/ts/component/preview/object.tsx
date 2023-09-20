@@ -92,8 +92,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		cn.push(cnPreviewSize);
 
 		if (isTask || isBookmark) {
-			size = 20;
-			iconSize = 18;
+			size = 16;
+			iconSize = 16;
 
 			if (previewSize == I.PreviewSize.Small) {
 				size = 14;

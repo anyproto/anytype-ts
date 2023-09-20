@@ -155,29 +155,34 @@
 	}
 }
 
-/* PreviewObject.Small */
+/* PreviewObject Common */
+.previewObject {
+	.heading {
+		.iconObject { margin-bottom: 2px; }
+	}
+	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorShapeSecondary; }
+	.description { display: none; }
+	.blocks {
+		.element:nth-child(n + 3) { display: none; }
+	}
+}
+
+/* PreviewObject Small */
 .previewObject.small { width: 158px; height: 112px; }
 .previewObject.small {
 	.cover { height: 42px; }
 	.scroller { padding: 24px 16px; }
 	.heading { margin-bottom: 6px; }
-	.heading {
-		.iconObject { margin-bottom: 2px; }
-	}
 	.blocks {
-		.element:nth-child(n + 3) { display: none; }
 		.element {
 			.inner {
-				.line { margin: 2px 0px; }
+				.line { margin: 0px 0px 4px 0px; height: 6px; }
 			}
 		}
 	}
 
-	.name { @include text-small; font-weight: 700; margin-bottom: 4px; }
-	.featured { width: 25px; height: 4px; overflow: hidden; color: transparent; background: $colorShapeSecondary; }
-	.description { display: none; }
+	.name { @include text-small; font-weight: 700; margin-bottom: 2px; }
 }
-
 .previewObject.small.withCover {
 	.scroller { padding-top: 48px; }
 }
@@ -185,9 +190,8 @@
 .previewObject.small.withIconAndCover {
 	.scroller { padding-top: 16px; }
 }
-
-.previewObject.isTask.small,
-.previewObject.isBookmark.small {
+.previewObject.small.isTask,
+.previewObject.small.isBookmark {
 	.heading {
 		.iconObject.isTask,
 		.iconObject.isBookmark { left: 0px; top: 2px; margin: 0px; }
@@ -196,5 +200,43 @@
 	}
 }
 
-/* PreviewObject.Medium */
+/* PreviewObject Medium */
 .previewObject.medium { width: 224px; height: 158px; }
+.previewObject.medium {
+	.cover { height: 72px; }
+	.scroller { padding: 32px 24px; }
+	.heading { margin-bottom: 8px; }
+	.heading {
+		.iconObject { margin-bottom: 6px; border-radius: 10px; }
+	}
+	.blocks {
+		.element {
+			.inner {
+				.line { margin: 0px 0px 6px 0px; height: 8px; }
+			}
+		}
+	}
+
+	.name { @include text-common; font-weight: 700; margin-bottom: 4px; }
+}
+.previewObject.medium.withCover {
+	.scroller { padding-top: 82px; }
+}
+.previewObject.medium.withIcon {
+	.scroller { padding-top: 26px; }
+}
+.previewObject.medium.withIconAndCover {
+	.scroller { padding-top: 42px; }
+	.heading {
+		.iconObject { margin-bottom: 2px; }
+	}
+}
+.previewObject.medium.isTask,
+.previewObject.medium.isBookmark {
+	.heading {
+		.iconObject.isTask,
+		.iconObject.isBookmark { left: 0px; top: 3px; margin: 0px; }
+
+		.name { padding-left: 24px; }
+	}
+}
