@@ -376,11 +376,18 @@
         }
     }
 
-    /* MenuDataviewCreateBookmark */
+    /* MenuDataviewTemplateList */
 
     .menu.menuDataviewTemplateList {
         .content {
             .emptySearch { border-color: $colorShapePrimary; }
+        }
+    }
+    .menu.menuDataviewTemplateList.objectCreate {
+        .content {
+            .items {
+                .previewObject { background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
+            }
         }
     }
 }

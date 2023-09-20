@@ -210,7 +210,8 @@ html.themeDark {
         }
     }
 
-	.previewObject.small {
+	.previewObject.small,
+    .previewObject.medium {
 		.heading {
 			  .featured { background: $colorShapeSecondary; }
 		}
