@@ -27,7 +27,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	render () {
-		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
+		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup } = this.props;
 		const { templatesCnt } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType', 'internalFlags' ]);
@@ -46,7 +46,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
 		} else
 		if (allowedTemplateSelect && templatesCnt) {
-			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt + 1} />;
+			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt + 1} isPopup={isPopup} />;
 		} else {
 			center = (
 				<div

@@ -9,6 +9,7 @@ interface Props {
 	type: I.BannerType;
 	object: any;
 	count?: number;
+	isPopup?: boolean;
 };
 
 interface State {
@@ -110,7 +111,7 @@ class HeaderBanner extends React.Component<Props, State> {
 	};
 
 	onTemplateMenu () {
-		const { object, count } = this.props;
+		const { object, count, isPopup } = this.props;
 		const { menuOpened } = this.state;
 		const type = dbStore.getTypeById(object.type);
 		const winSize = UtilCommon.getWindowDimensions();
@@ -133,6 +134,7 @@ class HeaderBanner extends React.Component<Props, State> {
 			menuStore.open('dataviewTemplateList', {
 				element: $(this.node),
 				className: 'objectCreate',
+				offsetY: isPopup ? 10 : 0,
 				width,
 				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 				vertical: I.MenuDirection.Bottom,
