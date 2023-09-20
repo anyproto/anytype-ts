@@ -45,6 +45,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	menuContext = null;
 	timeoutFilter = 0;
 	searchIds = null;
+	filter = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -509,12 +510,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const view = this.getView();
-		const { defaultTypeId } = view;
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 
 		let typeId = '';
-
 		if (types.length) {
 			typeId = types[0].id;
 		} else
@@ -530,9 +529,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			};
 		};
-
-		if (!typeId && defaultTypeId && this.isAllowedDefaultType()) {
-			typeId = defaultTypeId;
+		if (!typeId && view && view.defaultTypeId && this.isAllowedDefaultType()) {
+			typeId = view.defaultTypeId;
 		};
 		if (!typeId) {
 			typeId = commonStore.type;
@@ -1261,6 +1259,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
+			if (this.filter == v) {
+				return;
+			};
+
+			this.filter = v;
+
 			if (v) {
 				UtilData.search({
 					filters: [],

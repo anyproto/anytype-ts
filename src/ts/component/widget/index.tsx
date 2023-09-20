@@ -256,7 +256,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const node = $(this.node);
 		const element = `#widget-${block.id} #button-options`;
 
-		if (object._empty_) {
+		if (!object || object._empty_) {
 			return;
 		};
 
