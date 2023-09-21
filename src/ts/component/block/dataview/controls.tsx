@@ -359,15 +359,21 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterShow () {
+		if (!this.refFilter) {
+			return;
+		};
+
 		const { isPopup } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
 
-		this.refFilter?.setActive(true);
-		this.refFilter?.focus();
+		this.refFilter.setActive(true);
+		this.refFilter.focus();
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
-			if (!$(e.target).parents(`.filter`).length) {
+			const value = this.refFilter.getValue();
+
+			if (!value && !$(e.target).parents(`.filter`).length) {
 				this.onFilterHide();
 				container.off('mousedown.filter');
 			};
@@ -384,8 +390,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterHide () {
-		this.refFilter?.setActive(false);
-		this.refFilter?.setValue('');
+		if (!this.refFilter) {
+			return;
+		};
+
+		this.refFilter.setActive(false);
+		this.refFilter.setValue('');
 		this.props.onFilterChange('');
 	};
 
