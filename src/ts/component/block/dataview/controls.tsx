@@ -188,6 +188,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		container.off('mousedown.filter');
+		win.off('keydown.filter');
 	};
 
 	onButton (e: any, element: string, component: string) {
