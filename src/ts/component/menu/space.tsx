@@ -188,22 +188,11 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	beforePosition () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
-		const container = UtilCommon.getPageContainer(false);
-		const editor = container.find('#editorWrapper');
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 
-		let mw = 0;
-
-		if (editor.length) {
-			mw = editor.width();
-		} else {
-			const { ww } = UtilCommon.getWindowDimensions();
-			const sidebar = $('#sidebar');
-			const sw = sidebar.outerWidth();
-
-			mw = ww - sw;
-		};
-
-		obj.css({ maxWidth: mw });
+		obj.css({ maxWidth: ww - sw - 32 });
 	};
 	
 });
