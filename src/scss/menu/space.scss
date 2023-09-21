@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSpace { 
-		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 12px 8px 12px;
+		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 16px 8px 16px;
 		box-shadow: 0px 0px; min-width: 368px;
 	}
 
@@ -11,7 +11,7 @@
 
 		.head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
-			@include text-paragraph; font-weight: 500; padding: 0px 4px;
+			@include text-paragraph; font-weight: 500;
 		}
 		.head {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
@@ -19,7 +19,7 @@
 
 		.items { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; }
 		.items {
-			.item.space { display: flex; flex-direction: column; align-items: center; gap: 4px 0px; }
+			.item.space { display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
 			.item.space {
 				.iconWrap { 
 					width: 96px; height: 96px; border-radius: 16px; overflow: hidden; transition: 0.2s $transitionAllCommon; 
