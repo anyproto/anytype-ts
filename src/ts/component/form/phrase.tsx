@@ -183,7 +183,7 @@ class Phrase extends React.Component<Props, State> {
 		this.placeholderCheck();
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard * 2);
 	};
 
 	updateValue () {
