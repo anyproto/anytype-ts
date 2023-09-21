@@ -175,15 +175,21 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
+		window.clearTimeout(this.timeout);
+
+		let ret = false;
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 			this.updateValue();
+
+			ret = true;
 		});
 
 		this.placeholderCheck();
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard * 2);
+		if (!ret) {
+			this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard * 2);
+		};
 	};
 
 	updateValue () {
