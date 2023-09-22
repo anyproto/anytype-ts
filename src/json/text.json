@@ -234,6 +234,7 @@
 	"viewName1": "List",
 	"viewName2": "Gallery",
 	"viewName3": "Kanban",
+	"viewName4": "Calendar",
 
 	"progress0": "Copying files %s\/%s",
 	"progress1": "Import in progress",

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, UtilData, translate, UtilCommon } from 'Lib';
+import { I, UtilData, translate, UtilDate } from 'Lib';
 
 const MENU_ID = 'threadStatus';
 
@@ -40,7 +40,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 					<div className="description">
 						<div className="side left">{translate('menuThreadListLastSync')}</div>
 						<div className="side right">
-							{UtilCommon.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
+							{UtilDate.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
 						</div>
 					</div>
 				</div>

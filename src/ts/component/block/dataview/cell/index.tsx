@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -246,7 +246,7 @@ class Cell extends React.Component<Props> {
 
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
-					value: param.data.value || UtilCommon.time(),
+					value: param.data.value || UtilDate.now(),
 				});
 					
 				menuId = 'dataviewCalendar';

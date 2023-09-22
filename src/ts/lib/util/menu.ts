@@ -228,6 +228,7 @@ class UtilMenu {
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
+			{ id: I.ViewType.Calendar },
 		].map((it: any) => {
 			it.name = translate('viewName' + it.id);
 			return it;

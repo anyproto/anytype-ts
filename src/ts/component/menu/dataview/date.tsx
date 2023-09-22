@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, translate } from 'Lib';
+import { I, C, keyboard, UtilDate, UtilMenu, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
@@ -133,11 +133,11 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		switch (key) {
 			case 'dateFormat':
 				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: UtilCommon.date('M d, Y', UtilCommon.time()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: UtilCommon.date('d M, Y', UtilCommon.time()) },
-					{ id: I.DateFormat.Short, name: UtilCommon.date('d.m.Y', UtilCommon.time()) },
-					{ id: I.DateFormat.ShortUS, name: UtilCommon.date('m.d.Y', UtilCommon.time()) },
-					{ id: I.DateFormat.ISO, name: UtilCommon.date('Y-m-d', UtilCommon.time()) },
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: UtilDate.date('M d, Y', UtilDate.now()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: UtilDate.date('d M, Y', UtilDate.now()) },
+					{ id: I.DateFormat.Short, name: UtilDate.date('d.m.Y', UtilDate.now()) },
+					{ id: I.DateFormat.ShortUS, name: UtilDate.date('m.d.Y', UtilDate.now()) },
+					{ id: I.DateFormat.ISO, name: UtilDate.date('Y-m-d', UtilDate.now()) },
 				];
 				break;
 

@@ -256,7 +256,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.groupRelationKey)?.id;
+			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
