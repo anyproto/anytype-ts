@@ -189,7 +189,7 @@ class Dataview {
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'layout' ], true);
 		const isInline = !UtilObject.getSystemLayouts().includes(object.layout);
 
 		if (!isInline) {
