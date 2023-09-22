@@ -52,9 +52,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			cn.push('isEditing');
 		};
 
-		let icon = <div id="head-source-select" />;
+		let icon = null;
 		if (targetObjectId && !isCollection) {
 			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+		} else {
+			icon = <div id="head-source-select" />;
 		};
 
 		return (

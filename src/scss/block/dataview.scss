@@ -46,6 +46,9 @@
 
 			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 90px; }
+			.editableWrap {
+				.editable { height: 100%; }
+			}
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
