@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, UtilDate, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -431,6 +431,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const reg = new RegExp(UtilCommon.regexEscape(v), 'ig');
 			const relation = dbStore.getRelationByKey(k);
 			const symbol = this.getConditionSymbol(item);
+			const time = UtilDate.now();
 
 			let value: any = v;
 			let condition: I.FilterCondition = null;
@@ -457,15 +458,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 					switch (value) {
 						case 'today':
-							normalized = UtilCommon.time();
+							normalized = time;
 							break;
 
 						case 'yesterday':
-							normalized = UtilCommon.time() - 86400;
+							normalized = time - 86400;
 							break;
 
 						case 'tomorrow':
-							normalized = UtilCommon.time() + 86400;
+							normalized = time + 86400;
 							break;
 					};
 
