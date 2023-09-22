@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore, detailStore, dbStore } from 'Store';
 import ItemObject from './item/object';
 import Constant from 'json/constant.json';
 
@@ -48,8 +48,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
+
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
 
 		if (arrayLimit) {
@@ -182,7 +183,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		// Template type is disabled for opening
-		const canOpen = this.props.canOpen && (item.id != Constant.typeId.template);
+		const templateType = dbStore.getTemplateType();
+		const canOpen = this.props.canOpen && (item.id != templateType.id);
 
 		if (canOpen) {
 			e.stopPropagation();

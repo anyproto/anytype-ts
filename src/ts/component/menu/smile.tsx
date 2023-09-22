@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
 import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
 
@@ -398,7 +398,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			e.preventDefault();
 
 			this.refFilter.blur();
-			this.onArrowVertical(pressed.match(/arrowup/) ? -1 : 1);
+			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
@@ -408,7 +408,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 			e.preventDefault();
 			this.refFilter.blur();
-			this.onArrowHorizontal(pressed.match(/arrowleft/) ? -1 : 1);
+			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
 		});
 
 		keyboard.shortcut('enter', e, () => {
@@ -535,7 +535,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		close();
 
 		Action.openFile(Constant.extension.cover, paths => {
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code && onUpload) {
 					onUpload(message.hash);
 				};

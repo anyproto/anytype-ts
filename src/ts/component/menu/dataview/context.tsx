@@ -227,7 +227,7 @@ class MenuContext extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.ObjectListSetObjectType(objectIds, item.id);
+						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
 						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
 
 						close();
@@ -241,7 +241,6 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,

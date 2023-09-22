@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview } from 'Lib';
-import { dbStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplateContext extends React.Component<I.Menu> {
@@ -90,18 +90,13 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 
 			case 'duplicate': {
 				if (template.id == Constant.templateId.blank) {
-					const type = dbStore.getType(typeId);
-					if (!type) {
-						break;
-					};
-
+					const type = dbStore.getTypeById(template.typeId);
 					const details: any = {
-						type: Constant.typeId.template,
-						targetObjectType: typeId,
-						layout: type.recommendedLayout,
+						targetObjectType: template.typeId,
+						layout: type?.recommendedLayout,
 					};
 
-					C.ObjectCreate(details, [], '', (message) => {
+					C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
 						if (message.error.code) {
 							return;
 						};

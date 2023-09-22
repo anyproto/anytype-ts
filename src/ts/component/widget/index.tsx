@@ -358,7 +358,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { targetBlockId } = child.content;
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemAndFileTypes() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
 
 		let limit = this.getLimit(block.content);
@@ -383,12 +383,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case Constant.widgetId.set: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
 				break;
 			};
 
 			case Constant.widgetId.collection: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
 		};

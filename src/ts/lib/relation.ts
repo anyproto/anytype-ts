@@ -1,4 +1,4 @@
-import { I, UtilCommon, UtilFile, translate, Dataview } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -324,8 +324,20 @@ class Relation {
 		].concat(options);
 	};
 
-	public getGroupOptions (rootId: string, blockId: string) {
-		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType) {
+		let formats = [];
+
+		switch (type) {
+			default: {
+				formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+				break;
+			};
+
+			case I.ViewType.Calendar: {
+				formats = [ I.RelationType.Date ];
+				break;
+			};
+		};
 		
 		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
 			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
@@ -355,8 +367,8 @@ class Relation {
 		return options;
 	};
 
-	public getGroupOption (rootId: string, blockId: string, relationKey: string) {
-		const groupOptions = this.getGroupOptions(rootId, blockId);
+	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
+		const groupOptions = this.getGroupOptions(rootId, blockId, type);
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
@@ -413,7 +425,7 @@ class Relation {
 		return ret;
 	};
 
-	public getSetOfObjects (rootId: string, objectId: string, type: string) {
+	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
@@ -421,14 +433,16 @@ class Relation {
 		setOf.forEach((id: string) => {
 			let el = null;
 
-			switch (type) {
-				case Constant.typeId.type:
-					el = dbStore.getType(id);
+			switch (layout) {
+				case I.ObjectLayout.Type: {
+					el = dbStore.getTypeById(id);
 					break;
+				};
 
-				case Constant.typeId.relation:
+				case I.ObjectLayout.Relation: {
 					el = dbStore.getRelationById(id);
 					break;
+				};
 			};
 
 			if (el) {
@@ -440,7 +454,7 @@ class Relation {
 	};
 
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
-		const time = UtilCommon.time();
+		const time = UtilDate.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {

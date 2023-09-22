@@ -24,6 +24,7 @@ export enum ViewType {
 	List	 = 1,
 	Gallery	 = 2,
 	Board	 = 3,
+	Calendar = 4,
 };
 
 export enum SortType { 
@@ -85,6 +86,7 @@ export interface Filter {
 	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
+	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
 	value: any;
 };

@@ -4,7 +4,8 @@
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 22; }
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
-	.menuWrap.fromSidebar { z-index: 103; }
+	.menuWrap.fromSidebar,
+	.menuWrap.fromNavigation { z-index: 103; }
 
 	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {

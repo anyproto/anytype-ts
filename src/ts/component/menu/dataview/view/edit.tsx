@@ -216,6 +216,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const view = data.view.get();
 
 		if (readonly || !block) {
 			return;
@@ -229,7 +230,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		};
 
 		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.groupRelationKey)?.id;
+			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, view.type, this.param.groupRelationKey)?.id;
 		};
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
@@ -274,8 +275,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			]);
 		};
 
-		if (type == I.ViewType.Board) {
-			const groupOption = Relation.getGroupOption(rootId, blockId, groupRelationKey);
+		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(type)) {
+			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: translate('menuDataviewViewEditGroupBy'), caption: (groupOption ? groupOption.name : translate('commonSelect')), arrow: true },
@@ -348,13 +349,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { rootId, blockId } = data;
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const { type, groupRelationKey } = this.param;
+		const view = data.view.get();
 
 		if (!item.arrow || !allowedView) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
 			return;
 		};
 
-		let menuId = '';
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -371,6 +372,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			}
 		};
 
+		let menuId = '';
+
 		switch (item.id) {
 			case 'coverRelationKey': {
 				menuId = 'select';
@@ -383,8 +386,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId),
+					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, view.type),
 				});
 				break;
 			};

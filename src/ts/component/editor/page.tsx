@@ -508,7 +508,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId, isPopup } = this.props;
 
-		if (!isPopup && popupStore.isOpen('page')) {
+		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
@@ -1218,6 +1218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
+		const rect = UtilCommon.getSelectionRect();
 
 		if (!block) {
 			return;
@@ -1233,10 +1234,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (type == I.MarkType.Link) {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockLink', {
-					recalcRect: () => {
-						const rect = UtilCommon.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
-					},
+					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
 					data: {
@@ -1779,7 +1777,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 								analytics.event('CreateObject', {
 									route: 'Bookmark',
-									objectType: Constant.typeId.bookmark,
+									objectType: Constant.typeKey.bookmark,
 									layout: I.ObjectLayout.Bookmark,
 									template: '',
 								});

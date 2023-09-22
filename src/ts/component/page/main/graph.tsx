@@ -137,7 +137,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -355,10 +355,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									}
 								});
 
-								analytics.event('CreateObject', { 
-									objectType: commonStore.type, 
-									route: 'Graph',
-								});
+								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
 							});
 							break;
 						};

@@ -53,8 +53,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			content = <Loader id="loader" />;
 		} else {
 			const object = detailStore.get(rootId, rootId, []);
-			const isCollection = object.type === Constant.typeId.collection;
-
+			const isCollection = object.layout == I.ObjectLayout.Collection;
 			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
@@ -213,7 +212,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	onScroll () {
 		const { dataset, isPopup } = this.props;
 
-		if (!isPopup && popupStore.isOpen('page')) {
+		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
@@ -226,7 +225,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	onKeyDown (e: any): void {
 		const { dataset, isPopup } = this.props;
 
-		if (!isPopup && popupStore.isOpen('page')) {
+		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 

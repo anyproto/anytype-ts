@@ -3,8 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
-import { popupStore, detailStore, blockStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
@@ -214,8 +213,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (UtilObject.getSetTypes().includes(item.id)) {
-			this.onObjectTo(item.id);
+		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
+			this.onObjectTo(item.recommendedLayout);
 		} else {
 			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
 				if (cnt) {
@@ -233,10 +232,10 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 	};
 
-	onObjectTo (typeId: string) {
+	onObjectTo (layout: I.ObjectLayout) {
 		const { rootId, isPopup, setLoading } = this.props;
 
-		let layout: I.ObjectLayout = null;
+		let typeId = '';
 
 		const cb = () => {
 			if (isPopup) {
@@ -248,20 +247,21 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			analytics.event('SelectObjectType', {
 				objectType: typeId,
+				layout,
 			});
 		};
 
 		setLoading(true);
 
-		switch (typeId) {
-			case Constant.typeId.set: {
-				layout = I.ObjectLayout.Set;
+		switch (layout) {
+			case I.ObjectLayout.Set: {
+				typeId = dbStore.getSetType()?.id;
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
-			case Constant.typeId.collection: {
-				layout = I.ObjectLayout.Collection;
+			case I.ObjectLayout.Collection: {
+				typeId = dbStore.getCollectionType()?.id;
 				C.ObjectToCollection(rootId, cb);
 				break;
 			};
@@ -270,11 +270,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onCreate (typeId: any, template: any) {
 		const { rootId, isPopup } = this.props;
+		const type = dbStore.getTypeById(typeId);
 
 		if (template) {
 			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
 		} else {
-			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);
+			C.ObjectSetObjectType(rootId, type?.uniqueKey, this.onTemplate);
 		};
 
 		Onboarding.start('objectCreationFinish', isPopup);

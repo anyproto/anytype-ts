@@ -343,15 +343,21 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 	};
 };
 
-export const TemplateCreateFromObjectType = (response: Rpc.Template.CreateFromObjectType.Response) => {
+export const TemplateClone = (response: Rpc.Template.Clone.Response) => {
 	return {
 		id: response.getId(),
 	};
 };
 
-export const TemplateClone = (response: Rpc.Template.Clone.Response) => {
+export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
-		id: response.getId(),
+		objectId: response.getSpaceid(),
+	};
+};
+
+export const WorkspaceInfo = (response: Rpc.Workspace.Info.Response) => {
+	return {
+		info: Mapper.From.AccountInfo(response.getInfo()),
 	};
 };
 

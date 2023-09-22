@@ -89,9 +89,27 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceObjectAdd = (objectId: string, callBack?: (message: any) => void) => {
+const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Create.Request();
+
+	request.setDetails(Encode.encodeStruct(details));
+	request.setUsecase(useCase as number);
+
+	dispatcher.request(WorkspaceCreate.name, request, callBack);
+};
+
+const WorkspaceInfo = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Info.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(WorkspaceInfo.name, request, callBack);
+};
+
+const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Object.Add.Request();
 
+	request.setSpaceid(spaceId);
 	request.setObjectid(objectId);
 
 	dispatcher.request(WorkspaceObjectAdd.name, request, callBack);
@@ -180,13 +198,14 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
+const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
 
 	const request = new Rpc.File.Upload.Request();
 
+	request.setSpaceid(spaceId);
 	request.setUrl(url);
 	request.setLocalpath(path);
 	request.setType(type as number);
@@ -212,8 +231,11 @@ const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message:
 	dispatcher.request(FileListOffload.name, request, callBack);
 };
 
-const FileSpaceUsage = (callBack?: (message: any) => void) => {
+const FileSpaceUsage = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.File.SpaceUsage.Request();
+
+	request.setSpaceid(spaceId);
+
 	dispatcher.request(FileSpaceUsage.name, request, callBack);
 };
 
@@ -447,12 +469,12 @@ const BlockListMoveToExistingObject = (contextId: string, targetContextId: strin
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-const BlockListConvertToObjects = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
+const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-	request.setObjecttype(type);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };
@@ -514,7 +536,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -526,6 +548,8 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+	request.setObjecttypeuniquekey(typeKey);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
@@ -1107,57 +1131,64 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], 
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, callBack?: (message: any) => void) => {
+const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
+	request.setSpaceid(spaceId);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
 
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
+const ObjectCreateSet = (sources: string[], details: any, templateId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateSet.Request();
 
 	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-const ObjectCreateBookmark = (details: any, callBack?: (message: any) => void) => {
+const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
-const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
-const ObjectCreateRelation = (details: any, callBack?: (message: any) => void) => {
+const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
 
 	const request = new Rpc.Object.CreateRelation.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateRelation.name, request, callBack);
 };
 
-const ObjectCreateRelationOption = (details: any, callBack?: (message: any) => void) => {
+const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateRelation.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
 };
@@ -1251,41 +1282,45 @@ const ObjectImportList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
-const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
 
 	switch (type) {
-		case I.ImportType.Notion:
+		case I.ImportType.Notion: {
 			params = new Rpc.Object.Import.Request.NotionParams();
 			params.setApikey(options.apiKey);
 
 			request.setNotionparams(params);
 			break;
+		};
 
-		case I.ImportType.Markdown:
+		case I.ImportType.Markdown: {
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
 
 			request.setMarkdownparams(params);
 			break;
+		};
 
-		case I.ImportType.Html:
+		case I.ImportType.Html: {
 			params = new Rpc.Object.Import.Request.HtmlParams();
 			params.setPathList(options.paths);
 
 			request.setHtmlparams(params);
 			break;
+		};
 
-		case I.ImportType.Text:
+		case I.ImportType.Text: {
 			params = new Rpc.Object.Import.Request.TxtParams();
 			params.setPathList(options.paths);
 
 			request.setTxtparams(params);
 			break;
+		};
 
-		case I.ImportType.Csv:
+		case I.ImportType.Csv: {
 			params = new Rpc.Object.Import.Request.CsvParams();
 			params.setPathList(options.paths);
 			params.setMode(options.mode);
@@ -1295,17 +1330,20 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 
 			request.setCsvparams(params);
 			break;
+		};
 
-		case I.ImportType.Protobuf:
+		case I.ImportType.Protobuf: {
 			params = new Rpc.Object.Import.Request.PbParams();
 			params.setPathList(options.paths);
 			params.setNocollection(options.noCollection);
 
 			request.setPbparams(params);
 			break;
+		};
 
 	};
 
+	request.setSpaceid(spaceId);
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
 	request.setUpdateexistingobjects(existing);
 	request.setType(type as number);
@@ -1324,19 +1362,20 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
 
-const ObjectImportUseCase = (usecase: number, callBack?: (message: any) => void) => {
+const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportUseCase.Request();
 
+	request.setSpaceid(spaceId);
 	request.setUsecase(usecase);
 
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
+const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 
 	request.setContextid(contextId);
-	request.setObjecttypeurl(url);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectSetObjectType.name, request, callBack);
 };
@@ -1393,9 +1432,10 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
-const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
+const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.GroupsSubscribe.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setRelationkey(relationKey);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
@@ -1479,9 +1519,10 @@ const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-const ObjectGraph = (filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
+const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 
+	request.setSpaceid(spaceId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
     request.setLimit(limit);
 	request.setObjecttypefilterList(types);
@@ -1614,18 +1655,19 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListSetObjectType = (ids: string[], typeId: string, callBack?: (message: any) => void) => {
+const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetObjectType.Request();
 
 	request.setObjectidsList(ids);
-	request.setObjecttypeid(typeId);
+	request.setObjecttypeuniquekey(typeKey);
 
 	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
 };
 
-const ObjectListExport = (path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
+const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
+	request.setSpaceid(spaceId);
 	request.setPath(path);
 	request.setObjectidsList(objectIds);
 	request.setFormat(format as number);
@@ -1646,14 +1688,6 @@ const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) =
 	request.setContextid(contextId);
 
 	dispatcher.request(TemplateCreateFromObject.name, request, callBack);
-};
-
-const TemplateCreateFromObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.CreateFromObjectType.Request();
-
-	request.setObjecttype(objectTypeUrl);
-
-	dispatcher.request(TemplateCreateFromObjectType.name, request, callBack);
 };
 
 const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
@@ -1683,9 +1717,10 @@ const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) 
 	dispatcher.request(UnsplashSearch.name, request, callBack);
 };
 
-const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
+const UnsplashDownload = (spaceId: string, id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Unsplash.Download.Request();
 
+	request.setSpaceid(spaceId);
 	request.setPictureid(id);
 
 	dispatcher.request(UnsplashDownload.name, request, callBack);
@@ -1731,6 +1766,8 @@ export {
 	WalletCreateSession,
 	WalletCloseSession,
 
+	WorkspaceCreate,
+	WorkspaceInfo,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
 
@@ -1915,7 +1952,6 @@ export {
 	ObjectListExport,
 
 	TemplateCreateFromObject,
-	TemplateCreateFromObjectType,
 	TemplateClone,
 	TemplateExportAll,
 

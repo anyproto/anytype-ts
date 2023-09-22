@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
 import { I, Onboarding, UtilObject } from 'Lib';
 import { detailStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
 	

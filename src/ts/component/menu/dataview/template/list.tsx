@@ -29,8 +29,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { withTypeSelect, typeId } = data;
-
-		const type = dbStore.getType(typeId);
+		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
@@ -67,7 +66,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
 						<div className="item">
 							<IconObject object={type} size={18} />
-							<div className="name">{type?.name || translate('commonObjectType')}</div>
+							<div className="name">{type?.name || translate('commonObjectType')}</div>	
 						</div>
 						<Icon className="arrow black" />
 					</div>
@@ -226,7 +225,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item) => {
-					const type = dbStore.getType(item.id);
+					const type = dbStore.getTypeById(item.id);
 					if (!type) {
 						return;
 					};

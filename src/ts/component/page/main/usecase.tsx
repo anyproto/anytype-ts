@@ -2,7 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, translate, analytics, UtilCommon } from 'Lib';
+import { C, I, translate, analytics, UtilRouter } from 'Lib';
 import { blockStore, commonStore } from 'Store';
 
 interface State {
@@ -53,7 +53,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 					</div>
 
 					<div className="buttons">
-						<Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.None)} />
+						<Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.Skip)} />
 					</div>
 				</Frame>
 			</div>
@@ -84,13 +84,13 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
 		this.setState({ isLoading: true });
 
-		C.ObjectImportUseCase(id, (message: any) => {
+        C.ObjectImportUseCase(commonStore.space, id, (message: any) => {
 			analytics.event('SelectUsecase', { type: id, middleTime: message.middleTime });
 			blockStore.closeRecentWidgets();
 
 			this.setState({ isLoading: false });
-			UtilCommon.route('/main/graph', { animate: true });
-		});
+			UtilRouter.go('/main/graph', { animate: true });
+        });
 	};
 
 });

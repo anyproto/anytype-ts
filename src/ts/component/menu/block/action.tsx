@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore } from 'Store';
+import { detailStore, blockStore, menuStore, commonStore, dbStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -522,7 +522,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					skipIds,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					canAdd: true,
 					onSelect: () => { close(); }
@@ -605,19 +604,19 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 					]);
 				} else {
 					addParam.onClick = () => {
-						C.ObjectCreateSet([], {}, '', () => onCreate());
+						C.ObjectCreateSet([], {}, '', commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 					]);
 				};
@@ -758,26 +757,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		close();
 	};
 
-	moveToPage (type: string) {
-		const { param, dataset } = this.props;
+	moveToPage (typeId: string) {
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { selection } = dataset || {};
 		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
-		};
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type, () => {
-			analytics.event('CreateObject', {
-				route: 'TurnInto',
-				objectType: type,
-			});
-		});
+		UtilData.moveToPage(rootId, blockId, typeId, 'TurnInto', this.props);
 	};
 
 	setFocus (id: string) {

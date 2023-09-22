@@ -1,6 +1,7 @@
-import { I, C, keyboard, translate, UtilCommon, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
+import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -180,23 +181,38 @@ class UtilData {
 		};
 		return ids;
 	};
+
+	onInfo (info: I.AccountInfo) {
+		blockStore.rootSet(info.homeObjectId);
+		blockStore.profileSet(info.profileObjectId);
+		blockStore.widgetsSet(info.widgetsId);
+		blockStore.workspaceSet(info.workspaceObjectId);
+
+		commonStore.gatewaySet(info.gatewayUrl);
+		commonStore.spaceSet(info.accountSpaceId);
+
+		analytics.device(info.deviceId);
+		analytics.profile(info.analyticsId);
+
+		Sentry.setUser({ id: info.analyticsId });
+	};
 	
-	onAuth (account: I.Account, param?: any, callBack?: () => void) {
+	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
 		if (!account) {
 			console.error('[onAuth] No account defined');
 			return;
 		};
 
-		commonStore.infoSet(account.info);
+		this.onInfo(info);
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
 
 		const pin = Storage.get('pin');
-		const { profile, widgets, root } = blockStore;
+		const { profile, widgets } = blockStore;
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-		const routeParam = Object.assign({ replace: true}, (param || {}).routeParam || {});
+		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
 
 		if (!profile) {
 			console.error('[onAuth] No profile defined');
@@ -211,32 +227,24 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileSpaceUsage((message) => {
+		C.FileSpaceUsage(commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				commonStore.spaceStorageSet(message);
 			};
 		});
 
-		C.ObjectOpen(root, '', (message: any) => {
+		C.ObjectOpen(blockStore.rootId, '', (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
-				return;
-			};
-
-			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
-			if (object._empty_) {
-				console.error('Dashboard is empty');
 				return;
 			};
 
 			C.ObjectOpen(widgets, '', () => {
 				this.createsSubscriptions(() => {
-					commonStore.defaultTypeSet(commonStore.type);
-
 					if (pin && !keyboard.isPinChecked) {
-						UtilCommon.route('/auth/pin-check', routeParam);
+						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
 						if (redirect) {
-							UtilCommon.route(redirect, routeParam);
+							UtilRouter.go(redirect, routeParam);
 						} else {
 							UtilObject.openHome('route', routeParam);
 						};
@@ -261,6 +269,7 @@ class UtilData {
 						subId: Constant.subId.profile, 
 						ids: [ profile ], 
 						noDeps: true,
+						ignoreWorkspace: true,
 					});
 				};
 			});
@@ -276,46 +285,54 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 			},
 			{
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreDeleted: true,
-			},
-			{
-				subId: Constant.subId.relation,
-				keys: Constant.relationRelationKeys,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
+					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
+			},
+			{
+				subId: Constant.subId.relation,
+				keys: Constant.relationRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				onSubscribe: () => {
+					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+				},
 			},
 			{
 				subId: Constant.subId.option,
 				keys: Constant.optionRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
 			},
 			{
 				subId: Constant.subId.space,
-				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]),
+				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Space },
+				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
@@ -338,6 +355,10 @@ class UtilData {
 		for (const item of list) {
 			this.searchSubscribe(item, () => cb(item));
 		};
+	};
+
+	spaceRelationKeys () {
+		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {
@@ -381,66 +402,56 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
-		const { workspace, config } = commonStore;
+		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const page = dbStore.getType(Constant.typeId.page);
-		const note = dbStore.getType(Constant.typeId.note);
-		const set = dbStore.getType(Constant.typeId.set);
-		const task = dbStore.getType(Constant.typeId.task);
-		const bookmark = dbStore.getType(Constant.typeId.bookmark);
-		const collection = dbStore.getType(Constant.typeId.collection);
 
-		const skip = [ 
-			Constant.typeId.note, 
-			Constant.typeId.page, 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
-			Constant.typeId.task,
-			Constant.typeId.bookmark,
-		];
-	
 		let items: any[] = [];
 
 		if (!withDefault) {
+			const skipLayouts = [ 
+				I.ObjectLayout.Note,
+				I.ObjectLayout.Page,
+				I.ObjectLayout.Set,
+				I.ObjectLayout.Collection,
+				I.ObjectLayout.Task,
+				I.ObjectLayout.Bookmark,
+			];
+
 			items = items.concat(dbStore.getTypes().filter(it => {
-				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
-					return false;
-				};
-				return config.debug.ho ? true : !it.isHidden;
+				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 			}));
+			items.sort(this.sortByName);
 		};
 
-		if (withBookmark && bookmark) {
-			items.unshift(bookmark);
+		if (withBookmark) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.bookmark));
 		};
 
-		items.sort(this.sortByName);
-
-		if (withCollection && collection) {
-			items.unshift(collection);
+		if (withCollection) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.collection));
 		};
 
-		if (withSet && set) {
-			items.unshift(set);
+		if (withSet) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.set));
 		};
 
-		if (task) {
-			items.unshift(task);
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.page));
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.note));
+		
+		items = items.filter(it => it);
+
+		if (!config.debug.ho) {
+			items = items.filter(it => !it.isHidden);
 		};
 
-		if (page && note) {
-			if (commonStore.type == Constant.typeId.note) {
-				items = [ page, note ].concat(items);
-			} else {
-				items = [ note, page ].concat(items);
-			};
-		};
 		return items;
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
+		const templateType = dbStore.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
@@ -562,7 +573,8 @@ class UtilData {
 
 	// Check if there are at least 1 template for object types
 	checkTemplateCnt (ids: string[], callBack?: (cnt: number) => void) {
-		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 1, (message: any) => {
+		const templateType = dbStore.getTemplateType();
+		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, (message: any) => {
 			if (callBack) {
 				callBack(message.records.length);
 			};
@@ -575,7 +587,8 @@ class UtilData {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
+		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
+		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {
@@ -637,7 +650,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, workspace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -667,8 +680,8 @@ class UtilData {
 			return;
 		};
 
-		if (!ignoreWorkspace && workspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		if (!ignoreWorkspace && space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -734,7 +747,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, workspace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -753,8 +766,8 @@ class UtilData {
 		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		if (!ignoreWorkspace && workspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		if (!ignoreWorkspace && space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -788,7 +801,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 		const title = [];
 
 		if (name) {
@@ -804,19 +817,41 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { workspace } = commonStore;
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
-		const skipIds = [ '_anytype_profile' ];
-
-		return [
+		const templateType = dbStore.getTemplateType();
+		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
-			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
 		];
+
+		if (templateType) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
+		};
+
+		return filters;
 	};
+
+	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
+		const { dataset } = props;
+		const { selection } = dataset || {};
+		const type = dbStore.getTypeById(typeId);
+		
+		let ids = [];
+		if (selection) {
+			ids = selection.get(I.SelectType.Block);
+		};
+		if (!ids.length) {
+			ids = [ blockId ];
+		};
+
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
+			analytics.event('CreateObject', { route, objectType: typeId });
+		});
+	};
+
 };
 
 export default new UtilData();

@@ -79,15 +79,15 @@ html.themeDark {
 
     /* Components */
 
-	@keyframes dots {
-		0% { background-color: $colorBgPrimary; }
-		32% { background-color: $colorBgPrimary; }
-		100% { background-color: rgba(0,0,0,0); }
-	}
-
     .loaderWrapper {
+		@keyframes dots-dark {
+			0% { background-color: $colorBgPrimary; }
+			32% { background-color: $colorBgPrimary; }
+			100% { background-color: rgba(0,0,0,0); }
+		}
+
         .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
-		.dot { animation-name: dots; }
+		.dot { animation-name: dots-dark; }
     }
 
     .mediaAudio {

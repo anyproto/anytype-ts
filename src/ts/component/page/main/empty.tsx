@@ -14,7 +14,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 		const home = UtilObject.getSpaceDashboard();
 
 		return (
@@ -53,7 +53,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	onDashboard () {
-		UtilMenu.dashboardSelect('#empty-dashboard-select', true);
+		UtilMenu.dashboardSelect('.pageMainEmpty #empty-dashboard-select', true);
 	};
 
 });

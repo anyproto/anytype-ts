@@ -118,11 +118,12 @@ export enum EdgeType {
 };
 
 export enum Usecase {
-	None		 = 0,
-	Personal	 = 1,
-    Knowledge	 = 2,
-    Notes		 = 3,
-	Strategic 	 = 4,
+	Empty		 = 0,
+	Skip		 = 1,
+	Personal	 = 2,
+    Knowledge	 = 3,
+    Notes		 = 4,
+	Strategic 	 = 5,
 };
 
 export enum HomePredefinedId {

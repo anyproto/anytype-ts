@@ -1160,7 +1160,7 @@ class Dispatcher {
 			return;
 		};
 
-		const t0 = performance.now();
+		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;
@@ -1264,4 +1264,4 @@ class Dispatcher {
 
 };
 
- export const dispatcher = new Dispatcher();
+export const dispatcher = new Dispatcher();

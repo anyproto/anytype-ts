@@ -305,7 +305,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
 		const target = detailStore.get(widgets, targetBlockId);
-		const isCollection = target.type == Constant.typeId.collection;
+		const isCollection = target.layout == I.ObjectLayout.Collection;
 		const limit = getLimit(parent.content);
 
 		if (!setOf.length && !isCollection) {
