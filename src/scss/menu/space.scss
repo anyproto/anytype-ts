@@ -22,7 +22,7 @@
 			.item.space { display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
 			.item.space {
 				.iconWrap { 
-					width: 96px; height: 96px; border-radius: 16px; overflow: hidden; transition: 0.2s $transitionCommon; 
+					width: 96px; height: 96px; border-radius: 16px; overflow: hidden; transition: all 0.2s $easeInQuint; 
 					transform-origin: 50% 100%;
 				}
 				.iconObject { border-radius: 0px; }
