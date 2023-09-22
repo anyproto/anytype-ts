@@ -29,7 +29,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		if (!toast) {
 			return null;
 		};
-        
+
         const { count, action, text, value, object, target, origin, ids } = toast;
 
         let buttons = [];
