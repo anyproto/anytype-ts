@@ -262,7 +262,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     onFilterChange () {
         window.clearTimeout(this.timeout);
-        this.timeout = window.setTimeout(() => { this.getData(); }, 500);
+        this.timeout = window.setTimeout(() => this.getData(), Constant.delay.keyboard);
     };
 
     onFilterClear () {

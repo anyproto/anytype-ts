@@ -22,7 +22,7 @@
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorAccent125; }
+			.btn:hover { color: $colorSystemAccent100; }
 		}
 
 		.day { 
@@ -30,12 +30,12 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: $colorAccent25; color: $colorAccent125 !important; }
+		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
 
 		.day.th { color: $colorMediumGrey; cursor: default; }
 		.day.th:hover { background: none; font-weight: 400; color: $colorMediumGrey !important; }
 		
-		.day.active { color: $colorAccent125; }
+		.day.active { color: $colorSystemAccent100; }
 		.day.other { color: $colorMediumGrey; }
 		
 		.line { margin: 8px 16px 11px 16px; }

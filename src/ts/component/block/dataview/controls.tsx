@@ -2,29 +2,36 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { Icon, Button } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
+import { Icon, Button, Filter } from 'Component';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
 
-const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
+interface Props extends I.ViewComponent {
+	onFilterChange?: (v: string) => void; 
+};
+
+const Controls = observer(class Controls extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
+	refFilter = null;
 
-	constructor (props: I.ViewComponent) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
+		this.onFilterShow = this.onFilterShow.bind(this);
+		this.onFilterHide = this.onFilterHide.bind(this);
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -32,13 +39,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const filterCnt = filters.length;
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
-		const buttonWrapperCn = [ 'buttonNewWrapper' ];
+		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = this.props.isAllowedTemplate() && hasSources;
 
 		if (isAllowedTemplate) {
-			buttonWrapperCn.push('withSelect');
+			buttonWrapCn.push('withSelect');
 		};
 
 		if (className) {
@@ -132,11 +139,19 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					</div>
 
 					<div id="sideRight" className="side right">
+						<Filter
+							ref={ref => this.refFilter = ref}
+							placeholder={translate('blockDataviewSearch')} 
+							icon="search"
+							onChange={onFilterChange}
+							onIconClick={this.onFilterShow}
+						/>
+
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{isAllowedObject ? (
-							<div className={buttonWrapperCn.join(' ')}>
+							<div className={buttonWrapCn.join(' ')}>
 								<Button
 									id={`button-${block.id}-add-record`}
 									className="addRecord c28"
@@ -170,6 +185,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		container.off('mousedown.filter');
+		win.off('keydown.filter');
 	};
 
 	onButton (e: any, element: string, component: string) {
@@ -338,6 +360,47 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		});
 
 		keyboard.disableSelection(false);
+	};
+
+	onFilterShow () {
+		if (!this.refFilter) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		this.refFilter.setActive(true);
+		this.refFilter.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+			const value = this.refFilter.getValue();
+
+			if (!value && !$(e.target).parents(`.filter`).length) {
+				this.onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			e.stopPropagation();
+
+			keyboard.shortcut('escape', e, () => {
+				this.onFilterHide();
+				win.off('keydown.filter');
+			});
+		});
+	};
+
+	onFilterHide () {
+		if (!this.refFilter) {
+			return;
+		};
+
+		this.refFilter.setActive(false);
+		this.refFilter.setValue('');
+		this.props.onFilterChange('');
 	};
 
 	resize () {

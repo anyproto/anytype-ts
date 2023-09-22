@@ -152,7 +152,7 @@ class DetailStore {
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any): any {
-		object = this.mapCommon(object);
+		object = this.mapCommon(object || {});
 
 		if (object.layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;

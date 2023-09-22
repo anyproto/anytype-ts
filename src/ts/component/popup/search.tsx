@@ -341,7 +341,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.timeout = window.setTimeout(() => {
 				this.refFilter.setValue(this.parseFilter());
 				this.reload();
-			}, 1000);
+			}, Constant.delay.keyboard * 2);
 		};
 	};
 

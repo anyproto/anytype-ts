@@ -22,7 +22,7 @@
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
 		}
 
-		.loadMore:hover { color: $colorBlack; }
+		.loadMore:hover { color: $colorTextPrimary; }
 		.loadMore:hover { 
 			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
 		}
@@ -36,16 +36,19 @@
 			.inner { width: 300px; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 			.descr { @include text-small; margin: 0px 0px 8px 0px; }
-			.button { color: $colorBlack; }
+			.button { color: $colorTextPrimary; }
 		}
 
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorBlack; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorTextPrimary; }
 		.dataviewHead {
 			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 90px; }
+			.editableWrap {
+				.editable { height: 100%; }
+			}
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
@@ -70,13 +73,23 @@
 				> .side.left { flex-grow: 1; padding-left: 14px; }
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
 				> .side.right {
-					.button { margin-left: 6px; }
+					.filter { color: $colorTextPrimary; padding: 0px; }
+					.filter {
+						.inner { gap: 0px; height: 100%; }
+						.filterInputWrap { overflow: hidden; width: 0px; transition: width 0.2s $easeInQuint; }
+						.icon.clear, .line { display: none !important; }
+						.icon.search { background-image: url('~img/icon/dataview/button/search.svg'); }
+					}
+					.filter.isActive {
+						.icon:hover { background-color: unset; }
+						.filterInputWrap { width: 120px; }
+					}
 
-					.buttonNewWrapper { margin-left: 6px; display: flex; }
-					.buttonNewWrapper {
+					.buttonWrap { margin-left: 6px; display: flex; }
+					.buttonWrap {
 						.button { margin-left: 0; }
 					}
-					.buttonNewWrapper.withSelect {
+					.buttonWrap.withSelect {
 						.button.addRecord { border-radius: 6px 0 0 6px; }
 						.button.select {
 							width: 24px; height: 28px; border: 0 solid; border-left: 1px solid rgba(255, 255, 255, .1); border-radius: 0 6px 6px 0;
@@ -148,7 +161,7 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
-			.scrollWrap { background: #fff; }
+			.scrollWrap { background: $colorBgPrimary; }
 		}
 
 		.viewContent {

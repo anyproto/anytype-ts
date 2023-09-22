@@ -36,7 +36,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
 						<Input 
-							focusOnMount
+							focusOnMount={true}
 							ref={(ref: any) => { this.ref = ref; }} 
 							type="password"
 							placeholder={translate('popupSettingsImportNotionTokenPlaceholder')}

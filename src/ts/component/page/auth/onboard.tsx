@@ -107,7 +107,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return (
 				<div className="inputWrapper animation">
 					<Input
-						focusOnMount
+						focusOnMount={true}
 						type="text"
 						placeholder={translate('pageAuthOnboardEnterYourName')}
 						value={authStore.name}

@@ -46,10 +46,11 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
-		let value = this.getItems();
-		const length = value.length;
 		let content = null;
+		let value = this.getItems();
+
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
+		const length = value.length;
 
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
@@ -106,6 +107,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
 					</span>
@@ -174,7 +176,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 			
 			if (v) {
-				window.setTimeout(() => { this.focus(); }, 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	}; 
@@ -305,7 +307,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
-		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		if (content.length) {
+			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		};
 	};
 
 	onClear (e: any) {

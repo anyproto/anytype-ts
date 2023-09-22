@@ -165,6 +165,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.reset();
 	};
 
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
+
 	reset () {
 		const { isInline } = this.props;
 		if (isInline) {
@@ -182,6 +186,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	setColumnCount () {
 		const { getView } = this.props;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
+
 		const { margin } = Constant.size.dataview.gallery;
 
 		let size = 0;
@@ -198,10 +207,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.width = width;
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.reset();
-			this.forceUpdate();
-		}, 40);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 10);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {

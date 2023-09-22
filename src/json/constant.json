@@ -32,7 +32,8 @@
 		"menu": 160,
 		"popup": 310,
 		"toast": 2500,
-		"route": 250
+		"route": 250,
+		"keyboard": 500
 	},
 	
 	"extension": {
@@ -62,7 +63,8 @@
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
-		"dataviewTemplate": [ "previewObject" ]
+		"dataviewTemplate": [ "previewObject" ],
+		"table":		 [ "select2", "blockColor", "blockBackground" ]
 	},
 
 	"popupPinIds": [ "search" ],

@@ -71,14 +71,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			value = String(value || '');
 		};
 
-		if (isLongText) {
-			value = value.replace(/\n/g, !isEditing && isInline ? ' ' : '<br/>');
+		if (isLongText && !isEditing && isInline) {
+			value = value.replace(/\n/g, ' ');
 		};
 
 		if (isEditing) {
 			if (isLongText) {
 				EditorComponent = (item: any) => (
-					<span dangerouslySetInnerHTML={{ __html: value }} />
+					<span>{value}</span>
 				);
 			} else 
 			if (isDate) {

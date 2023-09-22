@@ -26,8 +26,8 @@ class Navigation extends React.Component {
 		const alt = keyboard.altSymbol();
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const isWin = UtilCommon.isPlatformWindows();
-		const cb = isWin ? `${alt} + ←` : `${cmd} + ←`;
-		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
+		const cb = isWin ? `${alt} + ←` : `${cmd} + [`;
+		const cf = isWin ? `${alt} + →` : `${cmd} + ]`;
 
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },

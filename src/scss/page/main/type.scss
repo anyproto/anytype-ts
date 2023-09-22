@@ -33,7 +33,7 @@
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
 			}
-			.btn:hover { color: $colorBlack; }
+			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}
@@ -65,7 +65,7 @@
 				.name { color: $colorDarkGrey; transition: $transitionAllCommon; }
 
 				.clickable:hover {
-					.name { color: $colorBlack; } 
+					.name { color: $colorTextPrimary; } 
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				}
 			}

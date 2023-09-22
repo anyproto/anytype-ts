@@ -4,11 +4,11 @@
 /* PageMainUsecase */
 
 .pageMainUsecase {
-    .frame { background: $colorBgLight; }
+    .frame { background: $colorBgSecondary; }
     .frame {
         .list {
-            .item { border-color: $colorLineSecondary; }
-            .item:hover { border-color: $colorLinePrimary; }
+            .item { border-color: $colorShapeSecondary; }
+            .item:hover { border-color: $colorShapePrimary; }
         }
         .loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); }
     }
@@ -17,24 +17,24 @@
 /* PageMainGraph */
 
 .pageMainGraph {
-    canvas { background: $colorBlack; }
-	#loader { background: $colorBlack !important; }
+    canvas { background: $colorBgPrimary; }
+	#loader { background: $colorBgPrimary !important; }
 
     .wrapper {
-        .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
+        .side.right { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
         .side.right {
-            .bottom { border-color: $colorLineSecondary; }
+            .bottom { border-color: $colorShapeSecondary; }
             .filter { background: none; }
         }
 
         .section {
-            .item { background: $colorBlack; }
+            .item { background: $colorBgPrimary; }
             .item:hover::before { background: $colorShapeHighlightMedium; }
         }
     }
 
     .footer {
-        .icon { background-color: $colorBgIcon; }
+        .icon { background-color: $colorShapeSecondary; }
     }
 }
 
@@ -43,20 +43,20 @@
 .pageMainStore {
     .body {
 		.tabs {
-			.tab { color: $colorSecondary; }
-			.tab:hover, .tab.active { color: $colorPrimary; }
+			.tab { color: $colorTextSecondary; }
+			.tab:hover, .tab.active { color: $colorTextPrimary; }
 		}
 
-		.emptySearch { border-color: $colorLinePrimary; }
+		.emptySearch { border-color: $colorShapePrimary; }
 
 		.mid {
-			.filter { border-color: $colorLinePrimary; }
+			.filter { border-color: $colorShapePrimary; }
 		}
 
         .items {
             .item {
-                .flex { border-color: $colorLineSecondary; } 
-				.flex:hover {  border-color: $colorLinePrimary; background-color: $colorShapeHighlightMedium; }
+                .flex { border-color: $colorShapeSecondary; } 
+				.flex:hover {  border-color: $colorShapePrimary; background-color: $colorShapeHighlightMedium; }
 
 				.buttons {
 					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
@@ -65,8 +65,8 @@
 					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
 					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
 
-					.button { color: $colorSecondary; }
-					.button:hover { color: $colorPrimary; }
+					.button { color: $colorTextSecondary; }
+					.button:hover { color: $colorTextPrimary; }
 				}
             }
         }
@@ -78,12 +78,12 @@
 .pageMainType {
     .wrapper {
         .section.template {
-			.btn { color: $colorSecondary; }
+			.btn { color: $colorTextSecondary; }
 			.btn {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
 
-			.btn:hover { color: $colorPrimary; }
+			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
 			}
@@ -96,7 +96,7 @@
 
         .section.relation {
             .item {
-                .name { color: $colorSecondary; }
+                .name { color: $colorTextSecondary; }
             }
             .item.canEdit, .item.add {
 				.clickable:hover { background: $colorShapeHighlightMedium; }
@@ -105,16 +105,16 @@
 			.item.add {
 				.clickable:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-					.name { color: $colorSecondary; }
+					.name { color: $colorTextSecondary; }
 				}
 			}
         }
 
-        table { border-color: $colorLineSecondary; }
+        table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
-            .cell { border-color: $colorLineSecondary; }
-            tbody { border-color: $colorLineSecondary; }
+            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+            .cell { border-color: $colorShapeSecondary; }
+            tbody { border-color: $colorShapeSecondary; }
         }
     }
 }
@@ -123,11 +123,11 @@
 
 .pageMainRelation {
     .wrapper {
-        table { border-color: $colorLineSecondary; }
+        table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
-            .cell { border-color: $colorLineSecondary; }
-            tbody { border-color: $colorLineSecondary; }
+            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+            .cell { border-color: $colorShapeSecondary; }
+            tbody { border-color: $colorShapeSecondary; }
         }
     }
 }
@@ -135,16 +135,16 @@
 /* PageMainNavigation */
 
 .pageMainNavigation {
-	.wrapper > #loader { background: $colorBlack; }
-    .selected { border-color: $colorLinePrimary; }
+	.wrapper > #loader { background: $colorBgPrimary; }
+    .selected { border-color: $colorShapePrimary; }
     .selected {
-        .descr { color: $colorSecondary; }
+        .descr { color: $colorTextSecondary; }
     }
 
     .items {
-        .item { border-color: $colorLinePrimary; }
+        .item { border-color: $colorShapePrimary; }
         .item {
-            .descr { color: $colorSecondary; }
+            .descr { color: $colorTextSecondary; }
         }
     }
 }
@@ -152,13 +152,13 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBlack; border-color: $colorLineSecondary; }
+    .list { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
     .list {
-        .section.fix { background: $colorBlack; }
+        .section.fix { background: $colorBgPrimary; }
 
         .item:hover, .item.active { background: $colorShapeHighlightMedium; }
         .item {
-            .name { color: $colorSecondary; }
+            .name { color: $colorTextSecondary; }
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
     }
@@ -176,7 +176,7 @@
 
 .pageMainEmpty {
     .wrapper {
-        .row { border-color: $colorLinePrimary; }
+        .row { border-color: $colorShapePrimary; }
     }
 }
 
@@ -188,7 +188,7 @@
 			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
 		}
 
-		.controls { border-color: $colorLinePrimary; }
+		.controls { border-color: $colorShapePrimary; }
 		.controls {
 			.side.left {
 				.element:hover { background-color: $colorShapeHighlightMedium; }
@@ -199,7 +199,7 @@
 			.items { height: 100%; }
 			.items {
 				.item {
-					.iconObject { background-color: $colorLineTertiary; }
+					.iconObject { background-color: $colorShapeTertiary; }
 				}
 			}
 		}
@@ -209,6 +209,6 @@
 /* PageMainUsecase */
 
 .pageMainUsecase {
-    .frame { background: $colorBlack; border: 0.5px solid #4C4B43; }
+    .frame { background: $colorBgPrimary; border: 0.5px solid #4C4B43; }
     .loaderWrapper { background-color: rgba(0,0,0,0.3); }
 }

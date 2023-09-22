@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, UtilCommon, keyboard } from 'Lib';
+import { I, keyboard } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -113,7 +113,7 @@ class Input extends React.Component<Props, State> {
 
 		if (this.props.focusOnMount) {
 			this.focus();
-		}
+		};
 	};
 	
 	componentWillUnmount () {

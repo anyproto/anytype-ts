@@ -18,7 +18,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	preventSaveOnClose = false;
 	param: any = {};
 	menuContext = null;
-	defaultTemplateName: string = '';
+	defaultTemplateName: string = translate('commonBlank');
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -92,14 +92,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.param = UtilCommon.objectCopy(data.view.get());
 			this.forceUpdate();
 			this.rebind();
-			this.getDefaultTemplateName();
+			this.updateDefaultTemplateName();
 
 			window.setTimeout(() => this.resize(), 5);
 		};
 
 		UtilObject.checkDefaultTemplate(getTypeId(), getTemplateId(), (res) => {
 			if (!hasSources || !res) {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: '' }, load);
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
 			} else {
 				load();
 			};
@@ -140,14 +140,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		$(window).off('keydown.menu');
 	};
 
-	getDefaultTemplateName () {
+	updateDefaultTemplateName () {
 		const { param } = this.props;
 		const { data } = param;
 		const { getTemplateId } = data;
 		const templateId = getTemplateId();
 
-		if (!templateId) {
-			this.defaultTemplateName = translate('commonBlank');
+		if (!templateId || templateId == Constant.templateId.blank) {
 			return;
 		};
 
@@ -284,7 +283,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const typeId = getTypeId();
 		const objectType = dbStore.getType(typeId);
-		const defaultTypeName = objectType.name || '';
+		const defaultTypeName = objectType ? objectType.name : '';
 
 		const hasSources = (isCollection || getSources().length);
 		const allowedDefaultType = isAllowedDefaultType();
@@ -297,13 +296,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const relations = view.getVisibleRelations().map((it) => {
 			const relation = dbStore.getRelationByKey(it.relationKey) || {};
-			return UtilCommon.shorten(relation.name || '', 16);
-		});
+			return relation ? UtilCommon.shorten(relation.name || '', 16) : '';
+		}).filter(it => it);
 
-		let relationCnt = relations.join(', ');
+		const relationCnt = relations.slice(0, 2);
 		if (relations.length > 2) {
-			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
+			relationCnt.push(`+${relations.length - 2}`);
 		};
+
 
 		const updateDefaultTemplate = (item, callBack: () => void) => {
 			if (item.id == Constant.templateId.new) {
@@ -311,7 +311,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					onTemplateAdd();
 				};
 			} else {
-				this.getDefaultTemplateName();
+				this.updateDefaultTemplateName();
+				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
 		};
@@ -332,7 +333,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					onSetDefault: updateDefaultTemplate,
 					onTypeChange: (id, callBack: () => void) => {
 						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: '' }, callBack);
+							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank }, callBack);
 						};
 					}
 				}
@@ -341,7 +342,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt }
+			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') }
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },

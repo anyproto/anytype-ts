@@ -409,7 +409,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	loadPage (id: string) {
 		const { loading } = this.state;
 
-		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(id as any)) {
+		if (!id || [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(id as any)) {
 			return;
 		};
 
