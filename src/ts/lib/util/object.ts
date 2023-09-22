@@ -197,6 +197,10 @@ class UtilObject {
 		if (details.type) {
 			const type = dbStore.getTypeById(details.type);
 			typeKey = type ? type.uniqueKey : '';
+
+			if (!templateId) {
+				templateId = type.defaultTemplateId || '';
+			};
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
