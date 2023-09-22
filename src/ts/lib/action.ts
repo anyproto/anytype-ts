@@ -337,7 +337,7 @@ class Action {
 
 				const { accountId } = message;
 
-				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, (message: any) => {
+				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
@@ -411,7 +411,7 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
 				if (!message.error.code) {
 					analytics.event('Import', { middleTime: message.middleTime, type });
 				};

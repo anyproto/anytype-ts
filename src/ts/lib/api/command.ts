@@ -1276,13 +1276,7 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectImportList = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(ObjectImportList.name, request, callBack);
-};
-
-const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1350,6 +1344,7 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 	request.setMode(mode as number);
 	request.setNoprogress(noProgress);
 	request.setIsmigration(isMigration);
+	request.setUpdateexistingobjects(updateExisting);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
@@ -1913,7 +1908,6 @@ export {
 	ObjectApplyTemplate,
 	ObjectBookmarkFetch,
 
-	ObjectImportList,
 	ObjectImport,
 	ObjectImportNotionValidateToken,
 
