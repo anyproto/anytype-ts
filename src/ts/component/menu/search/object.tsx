@@ -439,16 +439,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						const isCollection = target.type == Constant.typeId.collection;
 						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
 						const linkType = isCollection ? 'Collection' : 'Object';
-
-						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
+						const count = blockIds.length;
+						const cnt = (count > 1) ? `${count} ${UtilCommon.plural(count, translate('pluralObject'))}` : '';
+						
+						Preview.toastShow({ action, objectId: blockId, text: cnt, targetId: target.id });
 						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					if (target.type == Constant.typeId.collection) {
-						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
-					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
-					};
+					blockIds.forEach((itemId: any)=> {
+						if (target.type == Constant.typeId.collection) {
+							C.ObjectCollectionAdd(target.id, [ itemId ], cb);
+						} else {
+							C.BlockCreate(target.id, '', position, this.getBlockParam(itemId, object.type), cb);
+						};
+					});
 					break;
 			};
 		};

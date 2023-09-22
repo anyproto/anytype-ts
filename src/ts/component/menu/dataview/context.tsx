@@ -144,7 +144,6 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (length > 1) {
 			open = null;
-			linkTo = null;
 		};
 
 		if (archiveCnt == length) {
@@ -246,9 +245,9 @@ class MenuContext extends React.Component<I.Menu> {
 					],
 					rootId: itemId,
 					blockId: itemId,
-					blockIds: [ itemId ],
+					blockIds: objectIds,
 					type: I.NavigationType.LinkTo,
-					skipIds: [ itemId ],
+					skipIds: objectIds,
 					position: I.BlockPosition.Bottom,
 					canAdd: true,
 					onSelect: (el: any) => {

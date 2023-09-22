@@ -29,7 +29,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		if (!toast) {
 			return null;
 		};
-
+        
         const { count, action, text, value, object, target, origin, ids } = toast;
 
         let buttons = [];
@@ -92,7 +92,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 				};
 
 				textAction = translate(action == I.ToastAction.Collection ? 'toastAddedToCollection' : 'toastLinkedTo');
-				textObject = <Element {...object} />;
+                textObject = text.length ? text : <Element {...object} />;
 				textTarget = <Element {...target} />;
 
                 if (target.id != keyboard.getRootId()) {
