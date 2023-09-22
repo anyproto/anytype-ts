@@ -295,6 +295,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
 
+		if (keyboard.isFocused) {
+			return;
+		};
+
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
