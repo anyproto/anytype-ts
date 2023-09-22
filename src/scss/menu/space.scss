@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSpace { 
-		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 12px 8px 12px;
+		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 16px 8px 16px;
 		box-shadow: 0px 0px; min-width: 368px;
 	}
 
@@ -11,7 +11,7 @@
 
 		.head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
-			@include text-paragraph; font-weight: 500; padding: 0px 4px;
+			@include text-paragraph; font-weight: 500;
 		}
 		.head {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
@@ -19,27 +19,30 @@
 
 		.items { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; }
 		.items {
-			.item { width: 104px; display: flex; flex-direction: column; align-items: center; gap: 6px 0px; }
-			.item {
+			.item.space { display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
+			.item.space {
 				.iconWrap { 
-					width: 100%; height: 104px; border: 4px solid rgba(255,255,255,0); border-radius: 16px; overflow: hidden; 
-					transition: border $transitionCommon;
+					width: 96px; height: 96px; border-radius: 16px; overflow: hidden; transition: 0.2s $transitionCommon; 
+					transform-origin: 50% 100%;
 				}
 				.iconObject { border-radius: 0px; }
 				.name { @include text-overflow-nw; width: 100%; text-align: center; }
 			}
+
 			.item.add {
-				.iconWrap { 
-					border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.20); 
-					background: url('~img/icon/plus/space.svg') no-repeat; background-size: 20px; background-position: center;
-				}
+				border-radius: 16px; width: 96px; height: 96px; border: 1px solid rgba(255, 255, 255, 0.6); background-color: rgba(255, 255, 255, 0.2); 
+				background-image: url('~img/icon/plus/space.svg'); background-size: 20px; background-position: center;
+				background-repeat: no-repeat; margin: 0px 0px 26px 0px;
 			}
 
-			.item.hover, .item.active {
-				.iconWrap { border-color: #fff; }
+			.item.space.hover:not(.isActive) {
+				.iconWrap { transform: scale(1.06, 1.06); }
+			}
+			.item.space.isActive {
+				.iconWrap { box-shadow: 0px 0px 0px 4px #fff, 0px 0px 6px rgba(0,0,0,0.1); }
 			}
 			.item.add.hover, .item.add.active { 
-				.iconWrap { border-color: rgba(255, 255, 255, 0.7); }
+				border-color: rgba(255, 255, 255, 0.7); background-color: rgba(255, 255, 255, 0.3);
 			}
 		}
 	}

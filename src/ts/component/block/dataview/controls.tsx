@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject } from 'Lib';
-import { menuStore, dbStore, blockStore, commonStore } from 'Store';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
@@ -32,7 +32,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	render () {
 		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange } = this.props;
-		const { config } = commonStore;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -140,15 +139,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 					</div>
 
 					<div id="sideRight" className="side right">
-						{config.experimental ? (
-							<Filter
-								ref={ref => this.refFilter = ref}
-								placeholder={translate('blockDataviewSearch')} 
-								icon="search"
-								onChange={onFilterChange}
-								onIconClick={this.onFilterShow}
-							/>
-						) : ''}
+						<Filter
+							ref={ref => this.refFilter = ref}
+							placeholder={translate('blockDataviewSearch')} 
+							icon="search"
+							onChange={onFilterChange}
+							onIconClick={this.onFilterShow}
+						/>
 
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
@@ -188,6 +185,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		container.off('mousedown.filter');
+		win.off('keydown.filter');
 	};
 
 	onButton (e: any, element: string, component: string) {
@@ -359,15 +363,21 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterShow () {
+		if (!this.refFilter) {
+			return;
+		};
+
 		const { isPopup } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
 
-		this.refFilter?.setActive(true);
-		this.refFilter?.focus();
+		this.refFilter.setActive(true);
+		this.refFilter.focus();
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
-			if (!$(e.target).parents(`.filter`).length) {
+			const value = this.refFilter.getValue();
+
+			if (!value && !$(e.target).parents(`.filter`).length) {
 				this.onFilterHide();
 				container.off('mousedown.filter');
 			};
@@ -384,8 +394,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterHide () {
-		this.refFilter?.setActive(false);
-		this.refFilter?.setValue('');
+		if (!this.refFilter) {
+			return;
+		};
+
+		this.refFilter.setActive(false);
+		this.refFilter.setValue('');
 		this.props.onFilterChange('');
 	};
 

@@ -204,7 +204,6 @@ class Storage {
 			'graph',
 			'space',
 			'pin',
-			'defaultTypeKey',
 		];
 
 		keys.forEach(key => this.delete(key));

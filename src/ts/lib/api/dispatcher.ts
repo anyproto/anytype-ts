@@ -200,14 +200,12 @@ class Dispatcher {
 
 				case 'accountUpdate': {
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
-					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
-
-					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;	
 				};
 
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;
 				};
 

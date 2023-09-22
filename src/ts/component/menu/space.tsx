@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -19,22 +19,33 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 	
 	render () {
+		const { setHover } = this.props;
 		const items = this.getItems();
 		const profile = UtilObject.getProfile();
+		const { workspace } = blockStore;
 
-		const Item = (item) => (
-			<div 
-				id={`item-${item.id}`}
-				className="item" 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)} 
-			>
-				<div className="iconWrap">
-					<IconObject object={item} size={96} forceLetter={true} />
+		const Item = (item) => {
+			const cn = [ 'item', 'space' ];
+
+			if (item.id == workspace) {
+				cn.push('isActive');
+			};
+
+			return (
+				<div 
+					id={`item-${item.id}`}
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)} 
+					onMouseLeave={e => setHover()}
+				>
+					<div className="iconWrap">
+						<IconObject object={item} size={96} forceLetter={true} />
+					</div>
+					<ObjectName object={item} />
 				</div>
-				<ObjectName object={item} />
-			</div>
-		);
+			);
+		};
 
 		const ItemAdd = (item: any) => (
 			<div 
@@ -42,9 +53,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				className="item add" 
 				onClick={this.onAdd}
 				onMouseEnter={e => this.onMouseEnter(e, item)} 
-			>
-				<div className="iconWrap" />
-			</div>
+				onMouseLeave={e => setHover()}
+			/>
 		);
 
 		return (
@@ -55,7 +65,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				<div className="head">
 					<div className="side left">
 						<IconObject object={profile} size={40} />
-						<ObjectName object={profile} />
+						<ObjectName object={profile} onClick={this.onSettings} />
 					</div>
 					<div className="side left">
 						<Icon className="settings" onClick={this.onSettings} />
@@ -178,22 +188,11 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	beforePosition () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
-		const container = UtilCommon.getPageContainer(false);
-		const editor = container.find('#editorWrapper');
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 
-		let mw = 0;
-
-		if (editor.length) {
-			mw = editor.width();
-		} else {
-			const { ww } = UtilCommon.getWindowDimensions();
-			const sidebar = $('#sidebar');
-			const sw = sidebar.outerWidth();
-
-			mw = ww - sw;
-		};
-
-		obj.css({ maxWidth: mw });
+		obj.css({ maxWidth: ww - sw - 32 });
 	};
 	
 });
