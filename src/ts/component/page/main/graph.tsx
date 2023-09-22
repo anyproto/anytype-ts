@@ -264,6 +264,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	addNewNode (id: string, cb: (target: any) => void) {
 		UtilObject.getById(id, (object: any) => {
+			if (!this.refGraph) {
+				return;
+			};
+
 			const target = this.refGraph.nodeMapper(object);
 
 			this.data.nodes.push(target);
