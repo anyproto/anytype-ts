@@ -92,7 +92,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline } = this.props;
+		const { rootId, block, isPopup, isInline, readonly } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -112,7 +112,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
 		const className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
-		const head = null;
 
 		let ViewComponent: any = null;
 		let body = null;
@@ -145,7 +144,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const dataviewProps = {
-			readonly: false,
+			readonly,
 			isCollection,
 			isInline,
 			className: className.join(' '),
@@ -216,8 +215,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				onFocus={this.onFocus}
 			>
 				<div className="hoverArea">
-					{head}
-
 					<Controls 
 						ref={ref => this.refControls = ref} 
 						{...this.props} 
@@ -302,6 +299,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+
+		if (keyboard.isFocused) {
+			return;
+		};
 
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
