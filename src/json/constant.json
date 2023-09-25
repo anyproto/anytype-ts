@@ -65,7 +65,8 @@
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
-		"table":		 [ "select2", "blockColor", "blockBackground" ]
+		"table":		 [ "select2", "blockColor", "blockBackground" ],
+		"search":		 [ "searchObject", "select" ]
 	},
 
 	"popupPinIds": [ "search" ],
@@ -81,7 +82,7 @@
 	],
 
 	"relationRelationKeys": [
-		"id", "spaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
+		"id", "spaceId", "type", "layout", "name", "description", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
 		"relationMaxCount", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
 

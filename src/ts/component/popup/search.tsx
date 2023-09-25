@@ -2,10 +2,16 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Tag, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilDate, keyboard, Key, focus, translate, analytics } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { commonStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+
+interface FilterItem {
+	relation: any;
+	condition: I.FilterCondition;
+	value: any;
+};
 
 interface State {
 	loading: boolean;
@@ -28,7 +34,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
-	parsedFilters = [];
+	parsedFilters: FilterItem[] = [];
+	newFilter: FilterItem = null;
 	n = -1;
 	top = 0;
 	offset = 0;
@@ -50,6 +57,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { loading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
+		const parsedFilter = this.getParsedFilters();
 
 		const Item = (item: any) => {
 			let content = null;
@@ -119,6 +127,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			);
 		};
 
+		console.log(JSON.stringify(this.parsedFilters, null, 3));
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -127,12 +137,26 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{loading ? <Loader id="loader" /> : ''}
 				
 				<div className="head">
-					{this.parsedFilters.map((item: any, i: number) => (
-						<Tag {...item} key={i} className="isTag" />
-					))}
+					<Icon className="search" />
+
+					<div className="parsedFilters">
+						{this.parsedFilters.map((item: any, i: number) => {
+							const condition = this.getCondition(item.relation.format, item.condition);
+
+							return (
+								<div key={i} className="element">
+									<ObjectName object={item.relation} />
+									{condition ? (
+										<div className="condition">
+											{condition.name}
+										</div>
+									) : ''}
+								</div>
+							);
+						})}
+					</div>
 
 					<Filter 
-						icon="search"
 						value={filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')} 
@@ -255,6 +279,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const cmd = keyboard.cmdKey();
 		const k = keyboard.eventKey(e);
 
+		if (menuStore.isOpen()) {
+			return;
+		};
+
 		if ((k != Key.down) && (this.n == -1)) {
 			return;
 		};
@@ -368,7 +396,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
 		for (let item of this.parsedFilters) {
-			filters = filters.concat(item.filters || []);
+			//filters = filters.concat(item.filters || []);
 		};
 
 		if (clear) {
@@ -417,131 +445,100 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	parseFilter (): string {
-		const symbols = SYMBOLS.map(it => UtilCommon.regexEscape(it)).join('|');
-		const sr = new RegExp(symbols);
 		const filter = this.getFilter();
-		const reg = new RegExp(`([a-zA-Z0-9]+)(${symbols})([^\\s:<>=]+)`, 'gi');
-		const match = filter.match(reg) || [];
-		const filters = [];
 
-		let text = filter;
-
-		for (let item of match) {
-			const [ k, v ] = item.split(sr);
-			const reg = new RegExp(UtilCommon.regexEscape(v), 'ig');
-			const relation = dbStore.getRelationByKey(k);
-			const symbol = this.getConditionSymbol(item);
-			const time = UtilDate.now();
-
-			let value: any = v;
-			let condition: I.FilterCondition = null;
-			let relationKey = '';
-			let name = '';
-			let objects = [];
-			let string = '';
-
-			switch (k) {
-				default: {
-					if (!relation) {
-						break;
-					};
-
-					switch (symbol) {
-						default: condition = I.FilterCondition.Equal; break;
-						case '<': condition = I.FilterCondition.Less; break;
-						case '>': condition = I.FilterCondition.Greater; break;
-						case '>=': condition = I.FilterCondition.GreaterOrEqual; break;
-						case '<=': condition = I.FilterCondition.LessOrEqual; break;
-					};
-
-					let normalized = value;
-
-					switch (value) {
-						case 'today':
-							normalized = time;
-							break;
-
-						case 'yesterday':
-							normalized = time - 86400;
-							break;
-
-						case 'tomorrow':
-							normalized = time + 86400;
-							break;
-					};
-
-					name = relation?.name;
-					string = value;
-
-					filters.push({ operator: I.FilterOperator.And, relationKey: k, condition, value: normalized });
-					break;
-				};
-
-				case 'type': {
-					if (!relation) {
-						break;
-					};
-
-					objects = dbStore.getTypes().filter(it => it.isInstalled && it.name.match(reg));
-					value = objects.map(it => it.id);
-
-					if (('object' == typeof(value)) && value.length) {
-						condition = I.FilterCondition.In;
-					} else {
-						condition = I.FilterCondition.Equal;
-					};
-
-					relationKey = k;
-					name = relation?.name;
-					string = objects.map(it => it.name).join(', ');
-
-					filters.push({ operator: I.FilterOperator.And, relationKey, condition, value });
-					break;
-				};
-
-				case 'relation': {
-					objects = dbStore.getRelations().filter(it => it.isInstalled && it.name.match(reg));
-					name = 'Relation';
-					string = objects.map(it => it.name).join(', ');
-
-					for (const object of objects) {
-						filters.push({ operator: I.FilterOperator.And, relationKey: object.relationKey, condition: I.FilterCondition.NotEmpty, value: null });
-					};
-					break;
-				};
-			};
-
-			if (!name) {
-				continue;
-			};
-
-			const parsed = { relationKey, text: `${name} ${symbol} ${string}`, color: UtilCommon.randColor(), filters };
-			const idx = this.parsedFilters.findIndex(it => it.relationKey === relationKey);
-
-			if (idx >= 0) {
-				this.parsedFilters[idx] = parsed;
-			} else {
-				this.parsedFilters.push(parsed);
-			};
-
-			text = text.replace(item, '');
+		if (!filter.length) {
+			return;
 		};
 
-		return text;
+		const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+		const relations = dbStore.getRelations().filter(it => !it.isHidden && it.isInstalled && (it.name.match(filterReg) || it.description.match(filterReg)));
+
+		if (!this.newFilter) {
+			this.newFilter = {
+				relation: null,
+				condition: I.FilterCondition.None,
+				value: null,
+			};
+		};
+
+		if (!this.newFilter.relation && relations.length) {
+			this.menuOpen('searchObject', {
+				data: {
+					noFilter: true,
+					filter,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation }
+					],
+					sorts: [
+						{ relationKey: 'name', type: I.SortType.Asc }
+					],
+					onSelect: (item: any) => {
+						this.newFilter.relation = item;
+						this.refFilter.setValue('');
+						this.parsedFilters.push(this.newFilter);
+						this.forceUpdate();
+
+						const conditions = Relation.filterConditionsByType(item.format).filter(it => it.id != I.FilterCondition.None);
+
+						this.menuOpen('select', {
+							data: {
+								value: conditions[0].id,
+								options: conditions,
+								onSelect: (e: any, item: any) => {
+									this.newFilter.condition = item.id;
+									this.forceUpdate();
+								}
+							}
+						});
+					},
+				}
+			});
+		};
+		
+		return filter;
 	};
 
-	getConditionSymbol (s: string) {
-		const reg = new RegExp(SYMBOLS.map(it => UtilCommon.regexEscape(it)).join('|'));
-		const match = s.match(reg);
+	menuOpen (id: string, param: any) {
+		const { getId } = this.props;
+		
+		let menuParam: Partial<I.MenuParam> = {
+			className: 'single',
+			commonFilter: true,
+			element: `#${getId()} .filter`,
+			/*
+			recalcRect: () => { 
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			},
+			*/
+			data: {
+				noFilter: true,
+			},
+		};
 
-		let ret = '=';
-		if (match) {
-			ret = match[0];
+		menuParam = Object.assign(menuParam, param);
+		menuParam.data = Object.assign(menuParam.data, param.data);
+
+		if (id) {
+			if (!menuStore.isOpen(id)) {
+				menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
+			} else {
+				menuStore.update(id, menuParam);
+			};
 		};
-		if (ret == ':') {
-			ret = '=';
+	};
+
+	getParsedFilters () {
+		return this.parsedFilters.filter(it => it.relation);
+	};
+
+	getCondition (type: I.RelationType, condition: I.FilterCondition) {
+		if (condition == I.FilterCondition.None) {
+			return null;
 		};
-		return ret;
+
+		return Relation.filterConditionsByType(type).find(it => it.id == condition);
 	};
 
 	getItems () {

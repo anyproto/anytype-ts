@@ -10,22 +10,25 @@
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
-			border-bottom: 1px solid $colorShapeSecondary; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
-			flex-shrink: 0;
+			border-bottom: 1px solid $colorShapeSecondary; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; flex-shrink: 0;
 		}
 		.head {
-			.iconObject { margin-right: 6px; }
-			
-			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.icon.search { width: 18px; height: 18px; flex-shrink: 0; margin-right: 12px; background-image: url('~img/icon/popup/search/search.svg'); }
+
+			.parsedFilters { display: flex; flex-direction: row; align-items: center; margin-right: 12px; }
+			.parsedFilters {
+				.element { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+				.element {
+					.name { @include text-overflow-nw; }
+					.condition { color: $colorTextSecondary; }
+				}
+			}
+			.parsedFilters:empty { display: none; }
 
 			.filter { width: 100%; padding: 0px; }
 			.filter {
 				.inner { height: auto; }
-				.input { 
-					padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
-				}
-				.placeholder { @include text-paragraph; font-weight: 500; }
+				.input { padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); vertical-align: top; }
 				.line { display: none; }
 			}
 		}

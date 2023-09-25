@@ -726,7 +726,7 @@
 	"popupNavigationEmptyTo": "No links to this Object",
 	"popupNavigationEmptyFrom": "No links to other Objects",
 
-	"popupSearchPlaceholder": "Search for an object...",
+	"popupSearchPlaceholder": "What would you like to do?",
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",

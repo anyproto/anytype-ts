@@ -44,14 +44,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const subId = dbStore.getSubId(rootId, blockId);
 		const item = view.getFilter(itemId);
 		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
-		const relationOptions = this.getRelationOptions();
-		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
 			{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
 			{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 		];
-		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
-		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 		const items = this.getItems();
 
 		let value = null;

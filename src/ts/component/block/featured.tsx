@@ -414,6 +414,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const menuParam = {
+			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -464,14 +465,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			if (menuStore.isOpen(menuId)) {
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.featuredType, () => {
 				menuStore.open(menuId, menuParam);
-			} else {
-				menuStore.closeAll(Constant.menuIds.featuredType, () => {
-					menuStore.open(menuId, menuParam);
-				});
-			};
+			});
 		};
 	};
 
