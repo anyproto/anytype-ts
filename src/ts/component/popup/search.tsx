@@ -359,8 +359,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const range = this.refFilter?.ref?.getRange();
 
 			if (range && !range.to) {
+				this.newFilter = null;
 				this.parsedFilters.pop();
 				this.reload();
+
 				ret = true;
 			};
 		});
@@ -375,7 +377,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	onFilterClear () {
 		this.parsedFilters = [];
-		this.load(true);
+		this.newFilter = null;
+		this.reload();
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -479,15 +482,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						this.parsedFilters.push(this.newFilter);
 						this.forceUpdate();
 
-						const conditions = Relation.filterConditionsByType(item.format).filter(it => it.id != I.FilterCondition.None);
+						const filter = this.getFilter();
+						const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+						const conditions = Relation.filterConditionsByType(item.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
 
 						this.menuOpen('select', {
 							data: {
-								value: conditions[0].id,
+								value: conditions.length ? conditions[0].id : '',
 								options: conditions,
 								onSelect: (e: any, item: any) => {
 									this.newFilter.condition = item.id;
+									this.refFilter.setValue('');
 									this.forceUpdate();
+
+									
 								}
 							}
 						});
