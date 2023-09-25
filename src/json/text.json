@@ -1391,7 +1391,9 @@
 
 	"spaceType0": "Personal Space",
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
+
 	"navigationCreateNew": "Create new Object",
+	"navigationAccount": "Account",
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",

@@ -261,7 +261,6 @@ class Keyboard {
 			// Create relation
 			this.shortcut(`${cmd}+shift+r`, e, () => {
 				$('#button-header-relation').trigger('click');
-				window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 			});
 
 			// Store
