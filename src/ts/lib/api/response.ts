@@ -221,12 +221,14 @@ export const ObjectImportList = (response: Rpc.Object.ImportList.Response) => {
 
 export const ObjectUndo = (response: Rpc.Object.Undo.Response) => {
 	return {
+		blockId: response.getBlockid(),
 		range: Mapper.From.Range(response.getRange()),
 	};
 };
 
 export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
 	return {
+		blockId: response.getBlockid(),
 		range: Mapper.From.Range(response.getRange()),
 	};
 };
