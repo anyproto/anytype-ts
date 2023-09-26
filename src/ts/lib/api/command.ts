@@ -2,7 +2,6 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -225,6 +224,8 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 	dispatcher.request(NavigationGetObjectInfoWithLinks.name, request, callBack);
 };
 
+// ---------------------- BLOCK ---------------------- //
+
 const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 
@@ -244,6 +245,14 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	request.setTargetobjectid(targetObjectId);
 
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
+};
+
+const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.SetCarriage.Request();
+
+	request.setBlockid(blockId);
+
+	dispatcher.request(BlockSetCarriage.name, request, callBack);
 };
 
 // ---------------------- BLOCK WIDGET ---------------------- //
@@ -1754,7 +1763,7 @@ export {
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockListDelete,
+	BlockSetCarriage,
 	BlockMerge,
 	BlockSplit,
 	BlockUpload,
@@ -1772,6 +1781,7 @@ export {
 	BlockListSetFields,
 	BlockListSetAlign,
 	BlockListSetVerticalAlign,
+	BlockListDelete,
 
 	BlockTextSetText,
 	BlockTextSetChecked,

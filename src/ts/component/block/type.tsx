@@ -285,7 +285,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		});
 	};
 
-	onBlock (id: string) {
+	onBlock () {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 
@@ -304,11 +304,9 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (!first) {
-			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, (message: any) => { 
-				this.onBlock(message.blockId); 
-			});
+			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, () => this.onBlock());
 		} else {
-			this.onBlock(first.id);
+			this.onBlock();
 		};
 	};
 

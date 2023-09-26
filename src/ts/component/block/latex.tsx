@@ -154,9 +154,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 	};
 
 	onFocusBlock () {
-		const { block } = this.props;
-
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 		this.focus();
 	};
 
