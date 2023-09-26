@@ -168,13 +168,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor');
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor');
 			});
 		};
 

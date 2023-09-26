@@ -250,9 +250,9 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.SetCarriage.Request();
 
-	//request.setContextid(contextId);
+	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	//request.setRange(Mapper.To.Range(range));
+	request.setRange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockSetCarriage.name, request, callBack);
 };

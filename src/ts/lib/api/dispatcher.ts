@@ -21,7 +21,7 @@ const SORT_IDS = [
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
-const SKIP_IDS = [ 'BlockSetCarriage' ];
+const SKIP_IDS = [];
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {

@@ -634,13 +634,28 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		C.ObjectUndo(rootId, callBack);
+		C.ObjectUndo(rootId, (message: any) => {
+			if (message.blockId && message.range) {
+				focus.set(message.blockId, message.range);
+			};
 
+			if (callBack) {
+				callBack(message);
+			};
+		});
 		analytics.event('Undo', { route });
 	};
 
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		C.ObjectRedo(rootId, callBack);
+		C.ObjectRedo(rootId, (message: any) => {
+			if (message.blockId && message.range) {
+				focus.set(message.blockId, message.range);
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 
 		analytics.event('Redo', { route });
 	};
