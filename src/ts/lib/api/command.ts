@@ -301,7 +301,7 @@ const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string
 
 // ---------------------- BLOCK TEXT ---------------------- //
 
-const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
@@ -314,6 +314,7 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	request.setBlockid(blockId);
 	request.setText(text);
 	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks as any));
+	request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockTextSetText.name, request, callBack);
 };
