@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
-import { Input, InputWithLabel, MenuItemVertical } from 'Component';
-import { blockStore, dbStore, menuStore } from 'Store';
+import { InputWithLabel, MenuItemVertical } from 'Component';
+import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
@@ -18,7 +18,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	preventSaveOnClose = false;
 	param: any = {};
 	menuContext = null;
-	defaultTemplateName: string = translate('commonBlank');
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -92,7 +91,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.param = UtilCommon.objectCopy(data.view.get());
 			this.forceUpdate();
 			this.rebind();
-			this.updateDefaultTemplateName();
 
 			window.setTimeout(() => this.resize(), 5);
 		};
@@ -138,24 +136,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	updateDefaultTemplateName () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getTemplateId } = data;
-		const templateId = getTemplateId();
-
-		if (!templateId || templateId == Constant.templateId.blank) {
-			return;
-		};
-
-		UtilObject.getById(templateId, template => {
-			if (template.name && (this.defaultTemplateName != template.name)) {
-				this.defaultTemplateName = template.name;
-				this.forceUpdate();
-			};
-		});
 	};
 
 	setName () {
@@ -285,6 +265,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const objectType = dbStore.getTypeById(typeId);
 		const defaultTypeName = objectType ? objectType.name : '';
 
+		const templateId = getTemplateId();
+		const template = detailStore.get(rootId, templateId);
+
+		let templateName = translate('commonBlank');
+		if (templateId != Constant.templateId.blank) {
+			templateName = template.name
+		};
+
 		const hasSources = (isCollection || getSources().length);
 		const allowedDefaultType = isAllowedDefaultType();
 		const allowedDefaultSettings = hasSources && (allowedDefaultType || isAllowedTemplate());
@@ -304,14 +292,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt.push(`+${relations.length - 2}`);
 		};
 
-
 		const updateDefaultTemplate = (item, callBack: () => void) => {
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
 					onTemplateAdd();
 				};
 			} else {
-				this.updateDefaultTemplateName();
 				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
 			};
@@ -322,12 +308,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				id: 'defaultType',
 				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
 				subComponent: 'dataviewTemplateList',
-				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
+				caption: allowedDefaultType ? defaultTypeName : templateName,
 				data: {
 					typeId,
 					hasSources,
 					getView,
 					templateId: getTemplateId(),
+					defaultTemplate: template,
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,
 					onSetDefault: updateDefaultTemplate,
