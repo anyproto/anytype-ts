@@ -122,7 +122,12 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	reload () {
 		const { param } = this.props;
 		const { data } = param;
-		const { typeId, templateId, hasSources } = data;
+		const { typeId, templateId, hasSources, selectedTemplate } = data;
+
+		if (selectedTemplate) {
+			this.setState({ templateId: selectedTemplate }, () => this.load(true));
+			return;
+		};
 
 		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
 			this.setState({ templateId: (!hasSources || !res) ? Constant.templateId.blank : templateId }, () => this.load(true));
@@ -256,6 +261,10 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const items = node.find('.items');
 		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
+	};
+
+	updateTemplateId (id) {
+		this.setState({ templateId: id });
 	};
 };
 

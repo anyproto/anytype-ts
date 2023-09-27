@@ -14,6 +14,7 @@ interface Props {
 
 interface State {
 	menuOpened: boolean;
+	currentTemplateId: string;
 };
 
 const TEMPLATE_WIDTH = 236;
@@ -26,7 +27,8 @@ class HeaderBanner extends React.Component<Props, State> {
 	menuContext: any = null;
 
 	state = {
-		menuOpened: false
+		menuOpened: false,
+		currentTemplateId: ''
 	};
 
 	constructor (props: Props) {
@@ -112,10 +114,15 @@ class HeaderBanner extends React.Component<Props, State> {
 
 	onTemplateMenu () {
 		const { object, count, isPopup } = this.props;
-		const { menuOpened } = this.state;
+		const { menuOpened, currentTemplateId } = this.state;
 		const type = dbStore.getTypeById(object.type);
 		const winSize = UtilCommon.getWindowDimensions();
 		const sidebar = $('#sidebar');
+
+		let current = type.defaultTemplateId || Constant.templateId.blank;
+		if (currentTemplateId) {
+			current = currentTemplateId;
+		};
 
 		let sw = 0;
 		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
@@ -149,11 +156,13 @@ class HeaderBanner extends React.Component<Props, State> {
 					noAdd: true,
 					noTitle: true,
 					typeId: type.id,
-					templateId: type.defaultTemplateId || Constant.templateId.blank,
+					templateId: current,
+					selectedTemplate: current,
 					previewSize: I.PreviewSize.Medium,
 					onSelect: (item: any) => {
 						C.ObjectApplyTemplate(object.id, item.id);
-						menuStore.close('dataviewTemplateList');
+						this.setState({ currentTemplateId: item.id });
+						this.menuContext.ref.updateTemplateId(item.id);
 					}
 				}
 			});
