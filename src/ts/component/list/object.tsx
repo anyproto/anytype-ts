@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, Relation, UtilObject, translate } from 'Lib';
+import { I, C, UtilData, UtilFile, Relation, UtilObject, translate } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -94,11 +94,17 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							if (column.isObject) {
 								const object = detailStore.get(subId, value, []);
 								if (!object._empty_) {
+									let { name } = object;
+
+									if (UtilObject.isFileLayout(object.layout)) {
+										name = UtilFile.name(object);
+									};
+
 									onClick = (e: any) => UtilObject.openEvent(e, object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />
-											<ObjectName object={object} />
+											<ObjectName object={{ ...object, name }} />
 										</div>
 									);
 								};

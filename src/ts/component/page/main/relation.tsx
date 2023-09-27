@@ -62,12 +62,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<div className="blocks wrapper">
 					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
-					<div className="section set">
-						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
-						<div className="content">
-							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
+					{totalType ? (
+						<div className="section set">
+							<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
+							<div className="content">
+								<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
+							</div>
 						</div>
-					</div>
+					) : ''}
 
 					{object.isInstalled ? (
 						<div className="section set">
