@@ -262,7 +262,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const view = data.view.get();
 
 		const typeId = getTypeId();
-		const objectType = dbStore.getTypeById(typeId);
+		const objectType = detailStore.get(rootId, typeId);
 		const defaultTypeName = objectType ? objectType.name : '';
 
 		const templateId = getTemplateId();
