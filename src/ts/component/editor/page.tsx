@@ -101,7 +101,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={() => { this.focusTitle(); }} 
+					onLayoutSelect={() => this.focusTitle()} 
 				/>
 				
 				<div id={'editor-' + rootId} className="editor">
@@ -307,14 +307,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	focusTitle () {
 		const { rootId } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		
+
 		if (!block) {
 			return;
 		};
 
 		const length = block.getLength();
-		if (!length) {
-			focus.set(block.id, { from: length, to: length });
+		if (length) {
+			focus.clear(true);
+		} else {
+			focus.set(block.id, { from: 0, to: 0 });
 			focus.apply();
 		};
 	};

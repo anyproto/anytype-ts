@@ -32,10 +32,9 @@ class Focus {
 				to: Math.max(0, Number(range.to) || 0),
 			},
 		};
+		this.backup = UtilCommon.objectCopy(this.state);
 
 		C.BlockSetCarriage(keyboard.getRootId(), id, range);
-
-		this.backup = UtilCommon.objectCopy(this.state);
 		return this;
 	};
 
