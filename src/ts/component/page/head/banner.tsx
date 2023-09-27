@@ -14,6 +14,7 @@ interface Props {
 
 interface State {
 	menuOpened: boolean;
+	currentTypeId: string;
 	currentTemplateId: string;
 };
 
@@ -28,6 +29,7 @@ class HeaderBanner extends React.Component<Props, State> {
 
 	state = {
 		menuOpened: false,
+		currentTypeId: '',
 		currentTemplateId: ''
 	};
 
@@ -114,14 +116,16 @@ class HeaderBanner extends React.Component<Props, State> {
 
 	onTemplateMenu () {
 		const { object, count, isPopup } = this.props;
-		const { menuOpened, currentTemplateId } = this.state;
+		const { menuOpened, currentTypeId, currentTemplateId } = this.state;
 		const type = dbStore.getTypeById(object.type);
 		const winSize = UtilCommon.getWindowDimensions();
 		const sidebar = $('#sidebar');
 
 		let current = type.defaultTemplateId || Constant.templateId.blank;
-		if (currentTemplateId) {
+		if (currentTemplateId && type.id == currentTypeId) {
 			current = currentTemplateId;
+		} else {
+			this.setState({ currentTypeId: type.id, currentTemplateId: current });
 		};
 
 		let sw = 0;
