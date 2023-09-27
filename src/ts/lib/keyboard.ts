@@ -261,7 +261,6 @@ class Keyboard {
 			// Create relation
 			this.shortcut(`${cmd}+shift+r`, e, () => {
 				$('#button-header-relation').trigger('click');
-				window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 			});
 
 			// Store
@@ -310,14 +309,14 @@ class Keyboard {
 		const position = I.BlockPosition.Bottom;
 		const rootId = '';
 		const details: any = {};
-		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 		
 		if (!rootId) {
-			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
+			flags.push(I.ObjectFlag.DeleteEmpty);
 		};
 		
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			UtilObject.openPopup({ id: message.targetId });
+			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route: 'Navigation', objectType: commonStore.type });
 		});
 	};

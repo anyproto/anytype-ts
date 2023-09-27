@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, translate, keyboard, analytics, Relation } from 'Lib';
+import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 import { menuStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -190,7 +190,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							<Input 
 								key="filter-value-date-exact-input"
 								ref={ref => this.refValue = ref} 
-								value={item.value !== null ? UtilCommon.date('d.m.Y H:i:s', item.value) : ''} 
+								value={item.value !== null ? UtilDate.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
 								maskOptions={{ mask: '99.99.9999 99:99:99' }}
 								onFocus={(e: any) => { this.onFocusDate(e); }}
@@ -272,7 +272,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (this.refValue.setValue) {
 				if (isDate) {
 					if (item.quickOption == I.FilterQuickOption.ExactDate) {
-						this.refValue.setValue(item.value === null ? '' : UtilCommon.date('d.m.Y H:i:s', item.value));
+						this.refValue.setValue(item.value === null ? '' : UtilDate.date('d.m.Y H:i:s', item.value));
 					} else {
 						this.refValue.setValue(item.value);
 					};
@@ -502,7 +502,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onSubmitDate (e: any) {
 		e.preventDefault();
 
-		const value = UtilCommon.parseDate(this.refValue.getValue());
+		const value = UtilDate.parseDate(this.refValue.getValue());
 		
 		this.onChange('value', value);
 		this.onCalendar(value);
@@ -517,7 +517,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const value = item.value || UtilCommon.time();
+		const value = item.value || UtilDate.now();
 
 		menuStore.closeAll([ 'select' ], () => {
 			if (menuStore.isOpen('dataviewCalendar')) {

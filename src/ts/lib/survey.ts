@@ -1,4 +1,4 @@
-import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilData } from 'Lib';
+import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilData, UtilDate } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import Surveys from 'json/survey.json';
 
@@ -42,7 +42,7 @@ class Survey {
 				break;
 
 			case I.SurveyType.Pmf:
-				param.time = UtilCommon.time();
+				param.time = UtilDate.now();
 				break;
 		};
 
@@ -61,7 +61,7 @@ class Survey {
 
 			case I.SurveyType.Pmf:
 				param.cancel = true;
-				param.time = UtilCommon.time();
+				param.time = UtilDate.now();
 				break;
 		};
 
@@ -74,23 +74,27 @@ class Survey {
 	};
 
 	checkPmf () {
-		const time = UtilCommon.time();
+		const time = UtilDate.now();
 		const obj = Storage.getSurvey(I.SurveyType.Pmf);
 		const timeRegister = Number(Storage.get('timeRegister')) || 0;
-		const lastTime = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
-		const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
-		const registerTime = timeRegister <= time - 86400 * 7;
-		const cancelTime = registerTime && (lastCanceled <= time - 86400 * 30);
+		const lastCompleted = Number(obj.time || Storage.get('lastSurveyTime')) || 0;
+		const lastCanceled = Number(obj.time || Storage.get('lastSurveyCanceled')) || 0;
+		const week = 86400 * 7;
+		const month = 86400 * 30;
+
+		const registerTime = timeRegister <= time - week;
+		const completeTime = obj.complete && registerTime && (lastCompleted <= time - month);
+		const cancelTime = obj.cancel && registerTime && (lastCanceled <= time - month);
 		const randSeed = 10000000;
 		const rand = UtilCommon.rand(0, randSeed);
 
 		// Show this survey to 5% of users
-		if (rand > randSeed * 0.05) {
+		if ((rand > randSeed * 0.05) && !completeTime) {
 			Storage.setSurvey(I.SurveyType.Pmf, { time });
 			return;
 		};
 
-		if (!popupStore.isOpen() && (cancelTime || !lastTime)) {
+		if (!popupStore.isOpen() && (cancelTime || !lastCompleted)) {
 			this.show(I.SurveyType.Pmf);
 		};
 	};
@@ -98,7 +102,7 @@ class Survey {
 	checkRegister () {
 		const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const isComplete = this.isComplete(I.SurveyType.Register);
-		const surveyTime = timeRegister && ((UtilCommon.time() - 86400 * 7 - timeRegister) > 0);
+		const surveyTime = timeRegister && ((UtilDate.now() - 86400 * 7 - timeRegister) > 0);
 
 		if (!isComplete && surveyTime && !popupStore.isOpen()) {
 			this.show(I.SurveyType.Register);

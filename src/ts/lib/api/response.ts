@@ -211,14 +211,6 @@ export const ObjectListDuplicate = (response: Rpc.Object.ListDuplicate.Response)
 	};
 };
 
-export const ObjectImportList = (response: Rpc.Object.ImportList.Response) => {
-	return {
-		list: (response.getResponseList() || []).map(it => { 
-			return { type: it.getType() };
-		}),
-	};
-};
-
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),

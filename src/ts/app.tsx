@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -91,6 +91,7 @@ import 'scss/block/dataview/view/common.scss';
 import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/list.scss';
+import 'scss/block/dataview/view/calendar.scss';
 import 'scss/block/div.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/file.scss';
@@ -379,7 +380,7 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', UtilCommon.time());
+			Storage.set('lastSurveyTime', UtilDate.now());
 		};
 
 		Storage.delete('lastSurveyCanceled');

@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -223,15 +223,19 @@ class UtilMenu {
 	};
 
 	getViews () {
-		return [
+		const { config } = commonStore;
+		const ret = [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
-		].map((it: any) => {
-			it.name = translate('viewName' + it.id);
-			return it;
-		});
+		];
+
+		if (config.experimental) {
+			ret.push({ id: I.ViewType.Calendar });
+		};
+
+		return ret.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	getRelationTypes () {

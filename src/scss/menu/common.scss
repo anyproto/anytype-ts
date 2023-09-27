@@ -161,6 +161,7 @@
 
 			.clickable { flex-grow: 1; gap: 0px 6px; width: calc(100% - 100px); }
 			.clickable {
+				.icon { margin: 0px; }
 				.name { margin: 0px; width: 100%; }
 			}
 

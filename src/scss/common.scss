@@ -175,7 +175,7 @@ search.active { background: orange !important; }
 .isStatus.tagColor-lime { color: $colorLime !important; }
 
 .brokenMedia { 
-	@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorShapeSecondary; 
+	@include text-common; position: relative; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorShapeSecondary; 
 	color: $colorMediumGrey; height: 44px;
 }
 .brokenMedia {

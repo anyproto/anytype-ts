@@ -817,7 +817,8 @@ class UtilData {
 	};
 
 	graphFilters () {
-		return [
+		const templateType = dbStore.getTemplateType();
+		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
@@ -825,6 +826,12 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
 		];
+
+		if (templateType) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
+		};
+
+		return filters;
 	};
 
 	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {

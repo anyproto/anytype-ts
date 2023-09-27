@@ -234,6 +234,7 @@
 	"viewName1": "List",
 	"viewName2": "Gallery",
 	"viewName3": "Kanban",
+	"viewName4": "Calendar",
 
 	"progress0": "Copying files %s\/%s",
 	"progress1": "Import in progress",
@@ -317,14 +318,14 @@
 
 	"usecase0Title": "Empty",
 	"usecase0Label": "Just a blank canvas",
-	"usecase1Title": "Personal projects",
-	"usecase1Label": "Manage your personal projects and tasks with complete privacy",
-	"usecase2Title": "Bookshelf",
-	"usecase2Label": "Create your own base of knowledge with books, movies, recipes, and more",
-	"usecase3Title": "Diary and Quick notes",
-	"usecase3Label": "Keep your daily notes and self-reflections secure and private",
-	"usecase4Title": "Strategic Writing",
-	"usecase4Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
+	"usecase2Title": "Personal projects",
+	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
+	"usecase3Title": "Bookshelf",
+	"usecase3Label": "Create your own base of knowledge with books, movies, recipes, and more",
+	"usecase4Title": "Diary and Quick notes",
+	"usecase4Label": "Keep your daily notes and self-reflections secure and private",
+	"usecase5Title": "Strategic Writing",
+	"usecase5Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
 
 	"pageMainUsecaseTitle": "How would you like to start?",
 	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
@@ -661,6 +662,10 @@
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 
+	"popupSettingsSpaceCreateTitle": "Create a space",
+	"popupSettingsSpaceCreateUsecaseTitle": "How do you want to start?",
+	"popupSettingsSpaceCreateUsecaseLabel": "We can load some objects for you",
+
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -894,6 +899,7 @@
 	"popupShortcutNavigationPage6": "Go to the start of the Object",
 	"popupShortcutNavigationPage7": "Go to the end of the Object",
 	"popupShortcutNavigationPage8": "Move selected block(s) around",
+	"popupShortcutNavigationPage9": "Open relations view",
 	
 	"popupShortcutMarkdownWhileTyping": "While typing",
 	"popupShortcutMarkdownWhileTyping1": "Inline code",
@@ -1385,7 +1391,9 @@
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
+
 	"navigationCreateNew": "Create new Object",
+	"navigationAccount": "Account",
 
 	"spaceType0": "Personal Space",
 	"spaceLast": "Last opened Object",

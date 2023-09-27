@@ -10,12 +10,13 @@ import Constant from 'json/constant.json';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
+import Empty from './dataview/empty';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-import Empty from './dataview/empty';
+import ViewCalendar from './dataview/view/calendar';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -44,6 +45,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	menuContext = null;
 	timeoutFilter = 0;
 	searchIds = null;
+	filter = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -90,7 +92,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline } = this.props;
+		const { rootId, block, isPopup, isInline, readonly } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -110,7 +112,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
 		const className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
-		const head = null;
 
 		let ViewComponent: any = null;
 		let body = null;
@@ -136,10 +137,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case I.ViewType.List:
 				ViewComponent = ViewList;
 				break;
+
+			case I.ViewType.Calendar:
+				ViewComponent = ViewCalendar;
+				break;
 		};
 
 		const dataviewProps = {
-			readonly: false,
+			readonly,
 			isCollection,
 			isInline,
 			className: className.join(' '),
@@ -210,8 +215,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				onFocus={this.onFocus}
 			>
 				<div className="hoverArea">
-					{head}
-
 					<Controls 
 						ref={ref => this.refControls = ref} 
 						{...this.props} 
@@ -296,6 +299,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+
+		if (keyboard.isFocused) {
+			return;
+		};
 
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
@@ -504,12 +511,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const view = this.getView();
-		const { defaultTypeId } = view;
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 
 		let typeId = '';
-
 		if (types.length) {
 			typeId = types[0].id;
 		} else
@@ -525,9 +530,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			};
 		};
-
-		if (!typeId && defaultTypeId && this.isAllowedDefaultType()) {
-			typeId = defaultTypeId;
+		if (!typeId && view && view.defaultTypeId && this.isAllowedDefaultType()) {
+			typeId = view.defaultTypeId;
 		};
 		if (!typeId) {
 			typeId = commonStore.type;
@@ -1256,6 +1260,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
+			if (this.filter == v) {
+				return;
+			};
+
+			this.filter = v;
+
 			if (v) {
 				UtilData.search({
 					filters: [],

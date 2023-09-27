@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
@@ -144,7 +144,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search"
 							onChange={onFilterChange}
-							onClear={this.onFilterHide}
 							onIconClick={this.onFilterShow}
 						/>
 
@@ -186,6 +185,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		container.off('mousedown.filter');
+		win.off('keydown.filter');
 	};
 
 	onButton (e: any, element: string, component: string) {
@@ -257,7 +263,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			id: '',
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, '')?.id,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 		};
 
@@ -357,12 +363,44 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFilterShow () {
-		this.refFilter?.setActive(true);
-		this.refFilter?.focus();
+		if (!this.refFilter) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		this.refFilter.setActive(true);
+		this.refFilter.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+			const value = this.refFilter.getValue();
+
+			if (!value && !$(e.target).parents(`.filter`).length) {
+				this.onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			e.stopPropagation();
+
+			keyboard.shortcut('escape', e, () => {
+				this.onFilterHide();
+				win.off('keydown.filter');
+			});
+		});
 	};
 
 	onFilterHide () {
-		this.refFilter?.setActive(false);
+		if (!this.refFilter) {
+			return;
+		};
+
+		this.refFilter.setActive(false);
+		this.refFilter.setValue('');
+		this.props.onFilterChange('');
 	};
 
 	resize () {

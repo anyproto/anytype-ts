@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter } from 'Lib';
+import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter, UtilDate } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
@@ -408,7 +408,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.configSet(message.account.config, false);
 
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Storage.set('timeRegister', UtilCommon.time());
+					Storage.set('timeRegister', UtilDate.now());
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 
 					if (callBack) {

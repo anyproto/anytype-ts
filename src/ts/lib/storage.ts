@@ -192,7 +192,9 @@ class Storage {
 	};
 
 	setSurvey (type: I.SurveyType, param: any) {
-		this.set('survey', Object.assign(this.getSurvey(type), param));
+		const obj = this.get('survey') || {};
+		obj[type] = Object.assign(obj[type] || {}, param);
+		this.set('survey', obj, true);
 	};
 
 	logout () {
@@ -202,7 +204,6 @@ class Storage {
 			'graph',
 			'space',
 			'pin',
-			'defaultTypeKey',
 		];
 
 		keys.forEach(key => this.delete(key));

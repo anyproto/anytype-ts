@@ -11,15 +11,85 @@ const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string) => text(`<video src="${src}" controls class="full" />`);
+const video = (src: string, c: string) => text(`<video src="${src}" controls class=${c} />`);
 const img = (src: string, c: string) => text(`<img src="${src}" class="${c}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
-	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Anytype Goes Global 🌍`),
+	title(`Fresh Updates for September`),
+	text(`This month's release addresses a slew of bugs and polishes targeted at the editor, template, and import experiences, which we hope will bring greater ease to your workflows. Our next big release featuring multi-spaces is coming soon, so stay tuned for some big announcements in October!`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Create &amp; Edit Templates from Sets &amp; Collections`),
+	video(`./img/help/35/1-templates.mp4`, `c70`),
+	text(`Finally, template creation on-the-fly is here! From today's release onward, you no longer need to visit the Library to create and edit your templates. Using the ‘Show templates' button in any Set or Collection, you can open, edit, and create new templates for immediate use.`),
+
+	h3(`Updates to Notion Import`),
+	text(`Thanks to your feedback, we've fixed many bugs discovered during the import process. We've also updated the import instructions and error messages to make it more clear how to troubleshoot in case something goes wrong.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`Read-only &amp; Restore-from-Bin Enabled for Deleted Objects`),
+	video(`./img/help/35/2-restore.mp4`, `c70`),
+	text(`You can now open the content of deleted objects in read-only mode. Once opened, you'll see a banner that allows you to restore the object, without needing to visit the Bin to do so. `),
+
+	h3(`Edit Object Icons in Mentioned &amp; Linked Objects`),
+	text(`It's now possible to edit the icons of Objects which are referenced via links or mentions in your editor, including checking or unchecking tasks.`),
+
+	h3(`Link to Website is Now First Option When Adding Links to Text Blocks`),
+	img(`./img/help/35/3-menu.png`, `c70`),
+	text(`To simplify the process of adding web links to text blocks, inputting a URL as a text block link will bring Link to Website to the top of the menu. Thanks, ${link(`https://community.anytype.io/t/change-the-layout-of-link-in-font-settings/9757`, `gdbb`)}!`),
+
+	h3(`Logout Button Added to Profile Settings Sidebar`),
+	text(`The profile logout button has been moved to your profile settings sidebar, which means it'll be visible no matter which page of your profile settings you're currently using.`),
+
+	h3(`New Onboarding Use Case Added`),
+	text(`Strategic Writing has been added as a use case to the onboarding selection, focusing on collecting, developing, and thoughtfully presenting written ideas in Anytype.`),
+
+	h3(`Redesign of Set Control Menus`),
+	img(`./img/help/35/4-set.png`, `c70`),
+	text(`We've updated the design of the View settings menu with options for renaming the view and selecting the default template for the set. In addition, current settings can be previewed from the menu including layout, applied filters, and applied sorts.`),
+
+	h3(`Default Object Type Now Selectable in Collections &amp; Sets-by-Relation`),
+	text(`Previously, each new Object created in Collections &amp; Sets-by-Relation required Type selection before proceeding. To make Object creation speedier, you can now define the default Object type for each view in your Collection or Set-by-Relation. `),
+
+	h3(`Vietnamese, Brazilian Portuguese, and Polish added to Desktop Interface`),
+	text(`Thanks to the help of our community, our pool of interface languages has grown again! Say hello to Anytype Desktop in 🇻🇳Vietnamese, 🇧🇷Brazilian Portuguese, and 🇵🇱Polish.`),
+
+	h3(`Checkbox Design &amp; Hover State Unified in All Parts of App`),
+	text(`For greater visual consistency, the icon design for checked and unchecked Objects which use Layout: Action has been standardized across the app.`),
+
+	h3(`Sets Added Back to Type Select Menu when Using Plus Button`),
+	text(`Knowing how frequently our community uses Sets, we've restored Set as a fixed menu option when creating a new Object from the plus-button.`),
+
+	h3(`Added Ability to Copy Blocks from Version History`),
+	text(`In the case you want to use content from previous Object versions without restoring the version itself, you can now copy-paste blocks from previous versions to your current object.`),
+
+	h3(`Protobuf Import Renamed to Any-Block; Now Supports Export-Import of JSON Files`),
+	text(`In your Space Import and Export menus, the Protobuf option has been replaced with Any-Block, which also supports JSON files. This export option will become the foundation for sharing templates and use cases between Anytype community members—more news to come soon!`),
+
+	h3(`Removed View Selector for Widgets where Source has Single View`),
+	text(`For Sets &amp; Collections that have just a single view, their corresponding widget no longer shows a view selector menu.`),
+
+	h3(`Position of Toast Notifications Adjusted`),
+	text(`To remove conflicts with the navigation panel, toast notifications now appear at the top of your Anytype window.`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`Fixed: Search palette now correctly displays recently edited objects. Thanks, ${link(`https://community.anytype.io/t/search-palette-doesnt-show-most-recent-objects/9992`, `C.c`)}!`),
+	bullet(`Fixed: Caret position no longer jumps when using the editor. Thanks, ${link(`https://community.anytype.io/t/cursor-jumping-back-while-typing-still-a-problem/10562/3`, `stujo7`)}!`),
+	bullet(`Fixed: When selecting objects as relation value, sort is now applied according to descending values. Thanks, ${link(`https://community.anytype.io/t/inconsistent-sorting-on-macos-vs-ios/10716`, `Hoador`)}!`),
+	bullet(`Fixed: Several layout problems in print version`),
+	bullet(`Fixed: View controllers for Sets &amp; Collections now remain visible regardless of window size. Thanks, ${link(`https://community.anytype.io/t/set-view-controllers-inaccessible-on-certain-screen-width/10301`, `raph`)}!`),
+	bullet(`Fixed: Note snippets are no longer parsing HTML from code blocks. Thanks, ${link(`https://community.anytype.io/t/10589`, `CodeMacLife`)}!`),
+	bullet(`Fixed: Copy and deleting relations before they are created is no longer enabled in Objects, Sets &amp; Collections`),
+
+	div(),
+
+	h1(`Release 0.34.0 - Anytype Goes Global 🌍`),
 
 	text(`We're keeping fresh this summer with some sweeping updates which include our first push of localized interfaces and lots of polishing work on templates.`),
 	text(`Big thanks to everyone who's helped to make Anytype more wonderful this month by ${link(`https://crowdin.com/project/anytype-desktop`, `translating the interface to your native language`)}, ${link(`https://github.com/anyproto`, `making pull requests`)}, ${link(`https://community.anytype.io/c/bug-reports/7/none`, `reporting bugs`)}, and spreading the word. We see and appreciate you!`),
@@ -32,7 +102,7 @@ export default [
 	text(`Please note that all translations from the English language are community-contributed. If you notice any errors, you're free to submit your corrections ${link(`https://community.anytype.io/t/localization-launch/10269/13`, `using this platform`)}. Any updates will be shipped in the successive release.`),
 	text(`Don't see your language? Feel free to ${link(`https://github.com/orgs/anyproto/discussions/45`, `start contributing your own translations`)}!`),
 
-	h3(`Introduction of Blank Templates & Default Template Selection`),
+	h3(`Introduction of Blank Templates &amp; Default Template Selection`),
 
 	text(`If you ever wished you could bypass automatic template application when creating objects, a "blank" template has now been added to all types, with the exception of Type: Note. This blank template cannot be deleted or modified in any way.`),
 	img('./img/help/34/2.png', 'c70 screen'),
@@ -82,7 +152,7 @@ export default [
 
 	bullet(`<b>Redesigned onboarding &amp; login experience</b>`),
 
-	video(`./img/help/33/onboarding.mp4`),
+	video(`./img/help/33/onboarding.mp4`, `c70`),
 	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
 	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
 	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
@@ -118,7 +188,7 @@ export default [
 	text(`More than 300 bugs, polishes, and features were merged into this one update, so we won't detail each and every one of them. Instead, in this month's What's New edition, we'll be focusing on the main changes you'll notice once you've installed the new app, and describing each in greater detail.`),
 
 	h2(`Introduction of Private Spaces`),
-	video(`./img/help/32/1-spaces.mp4`),
+	video(`./img/help/32/1-spaces.mp4`, `c70`),
 	text(`Upon opening this version you'll notice a new addition to your account: that of ${hl(`Space`)}. Your space can be customized in terms of name, icon, and homepage, which you'll find by clicking on the settings wheel on the ${hl(`Space`)} button.`),
 	text(`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your space homepage. Clicking on the space widget in the top position of your sidebar will open your space settings. To return to your home page from anywhere in the app, you can use shortcut: ${hl(`${alt} + H`)}`),
 
@@ -126,17 +196,17 @@ export default [
 	text(`While it won't be visible from the interface, this release brings the integration of our new Anysync protocol, a work which has been years in the making. For us, arriving here means showing the world that a local-first, p2p synced protocol with an E2E encrypted product built on top, is possible. We hope you'll find the syncing of your accounts between devices a smoother experience than before, and rest easy knowing that your data is absolutely yours.`),
 
 	h2(`Introduction of Widgets`),
-	video(`./img/help/32/2-widgets.mp4`),
+	video(`./img/help/32/2-widgets.mp4`, `c70`),
 	text(`Over the past months, we've thought long and hard about how to improve the navigation experience towards a more flexible approach. Enter: widgets, modular units which can be added or removed from your sidebar. Widgets allow you to quickly navigate to your objects and visualize the other objects they are linked to.`),
 	text(`When creating widgets, keep in mind that a widget "source" can be any object which you've previously added to your graph, or a dynamic list of your "recent", "favorite", or "sets" objects - tabs which were available in the previous tab of your homescreen.`),
 	text(`Widgets of any kind can be displayed as a link; meanwhile, widgets pointing to singular objects created with the editor can be displayed with "tree" appearance. Widgets pointing to sets, collections, recents, or favorites, can be displayed as a simple or compact list with all target objects inside.`),
 
 	h2(`New navigation bar`),
-	video(`./img/help/32/3-navbar.mp4`),
+	video(`./img/help/32/3-navbar.mp4`, `c70`),
 	text(`Many commands which were previously dispersed throughout the interface have now been condensed into one navigation bar, which is your home base for managing and moving about your anytype. The navigation bar will remain visible no matter where you are in the app, putting your graph, global search, and profile settings within easier reach.`),
 
 	h2(`Collections`),
-	video(`./img/help/32/4-collections.mp4`),
+	video(`./img/help/32/4-collections.mp4`, `c70`),
 	text(`With this update you'll also discover Collections, which work less like a filter (Sets) and more like a folder. Any object in your graph can be manually added to a collection, either by using the + New buttons in the collection itself, or by selection ‘Link to' from the target object's 3-dots menu.`),
 	text(`Similarly with sets, you can visualize your collections based on four different views, and you can also sort & filter your collections based on object relations. Unlike sets however, adding an object to a given collection creates a new link in your graph.`),
 	text(`To get you started on your Collections journey, you'll now see the option to turn any set into a collection of objects, as well as the menu option to create a collection when you hit the ‘plus' button. `),
@@ -154,7 +224,7 @@ export default [
 	h2(`💎 Highlights of this Release`),
 
 	bullet(`<b>Inline Sets</b><br/>We've added a new block type - inline set. You can create an inline set using commands ${hl(`/inline`)} or ${hl(`/&lt;viewtype&gt;`)} to select gallery, grid, etc.<br/><br/>Once created, select an existing set as a source, or create a new one. Any changes you make to the inline set query, icon, or name will be synced with the source set. Meanwhile, views will not synced, but copied, which means you can tweak views to your current needs without worrying that your source set will be impacted.`),
-	video(`./img/help/31/1-inline-set.mp4`),
+	video(`./img/help/31/1-inline-set.mp4`, `c70`),
 
 	bullet(`<b>Library Redesign</b><br/>Your control panel for managing types &amp; relations got a facelift in 0.31.0. Descriptions have been removed and buttons have been updated for a lighter, cleaner look &amp; feel.`),
 	img(`./img/help/31/2-library.png`, 'full screen'),
@@ -168,7 +238,7 @@ export default [
 	img(`./img/help/31/3-graph.png`, 'full screen'),
 
 	bullet(`<b>Gallery view Playback</b><br/>Sets of audio & video files now permit playback from gallery view. Using Page cover in set by Video for example, will make cards playable as well.`),
-	video(`./img/help/31/5-set-playback.mp4`),
+	video(`./img/help/31/5-set-playback.mp4`, `c70`),
 
 	bullet(`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`),
 	img(`./img/help/31/4-profile.png`, 'half screen'),
@@ -199,11 +269,11 @@ export default [
 
 	h2(`💎 Highlights of this Release`),
 	bullet(`<b>Type &amp; Relation Deletion &amp; Modification</b><br/>We've heard you loud &amp; clear - starting with this update, it's now possible to remove &amp; modify both pre-installed and custom-made Types &amp; Relations from the Library. Any modifications will be reflected in Objects which have already used these Types &amp; Relations.`),
-	video('./img/help/type-deletion.mp4'),
+	video('./img/help/type-deletion.mp4', `c70`),
 	bullet(`<b>Introduction of Marketplace</b><br/>In case you're wondering where all of those pre-installed Types &amp; Relations have gone, they're now conveniently stored in the Marketplace for both existing &amp; new users to install to your account (and eventually add your own). Access the Marketplace from the new &quot;Marketplace&quot; tab in the Library.`),
 	img('./img/help/marketplace.png', 'full screen'),
 	bullet(`<b>Set by Relation</b><br/>Sets are no longer just limited to Types! You can now create Sets by filtering for Objects which share a certain Relation. Quick hack for anyone who wants an overview of all Objects in their account: Create a Set by Relation: Creation Date, and... ta-da!`),
-	video('./img/help/set-relation.mp4'),
+	video('./img/help/set-relation.mp4', `c70`),
 	bullet(`<b>Everything as an Object</b><br/>...seriously, everything. Types &amp; Relations are now their own Objects, meaning that it's possible to create Relations and Sets of Types and…Relations. While you may already start experimenting with these features in the Library by opening each Type/Relation individually, this update also unblocks other highly-requested features such as grouping and tuning relation values.`),
 
 	h2(`⚡ Quality-of-Life Improvements`),
@@ -262,7 +332,7 @@ export default [
 
 	h2(`⚡ Quality-of-Life Improvements`),
 	bullet(`Relations now updating automatically using drag &amp; drop between columns from Kanban view`),
-	video('./img/help/kanban-dnd.mp4'),
+	video('./img/help/kanban-dnd.mp4', `c70`),
 	bullet(`Selection frame when selecting block is now visible`),
 	img('./img/help/selection.png', 'full screen'),
 	bullet(`When scrolling content of page opened inside popups, menus positions are now correctly updated`),
@@ -274,7 +344,7 @@ export default [
 	bullet(`Updated toggle block design so toggles are default open when applying block style changes`),
 	bullet(`Added possibility to open new windows from search interface when pressing ${hl(`${cmd} + Enter`)}`),
 	bullet(`Simplified type-selection interface from + button Object creation flow to reduce friction in quick capture of thoughts &amp; ideas`),
-	video('./img/help/type-selection.mp4'),
+	video('./img/help/type-selection.mp4', `c70`),
 	bullet(`Export settings are now saved from one export to another`),
 	bullet(`In-app survey and logic was re-worked to reduce frequency and increase relevance towards new users, veteran users, and exiting users`),
 	bullet(`New windows now open by default with a slight position shift so your windows aren't stacked on top of each other`),
@@ -317,7 +387,7 @@ export default [
 	h2(`💎 Highlights of this Release`),
 
 	text(`Kanban: Task management just got way easier with Kanban views for Sets. In this first iteration, you can group your Objects according to Relations: Status, Tag, or Checkbox. Dragging Objects between columns will automatically update the Relations`),
-	video('./img/help/kanban.mp4'),
+	video('./img/help/kanban.mp4', `c70`),
 	text(`Multi-window display: By simply holding ${hl(`${cmd}`)} and clicking on any Object in your workspace, you can now open it in a new window. Even better, drag and drop blocks between windows for some seriously efficient workflows`),
 	img('./img/help/multi-window.png', 'full'),
 	text(`Spellcheck: Your dreams of typo-free note taking just came true. Choose your input language by heading to ${hl(`Settings > Personalization > Spellcheck language`)} and - depending on your typing accuracy - get ready to see some corrections`),
@@ -369,7 +439,7 @@ export default [
 
 	h2(`💎 Highlights of this Release`),
 	text(`Simple tables are here! As one of our most popular feature requests, we're so excited to introduce simple tables across all platforms. From the editor, simply type ${hl(`/table`)} and customize the number of cells, column widths, and background colors to your liking. You can use shortcut ${hl(`/table{x}-{y}`)} to create table with ${hl(`X`)} rows and ${hl(`Y`)} columns as well.`),
-	video('./img/help/table.mp4'),
+	video('./img/help/table.mp4', `c70`),
 	text(`Bookmarks as Objects: To help keep track of links you've bookmarked around the web, you can now create Sets with Type: Bookmark, so you can view and sort them all in one place. Say goodbye to lost links forever!`),
 	img('./img/help/bookmark.png', 'full'),
 	text(`New ${hl(`Getting Started`)} Objects (New Users only): Upon registration, new users will see an updated ${hl(`Get Started`)} page and ${hl(`Advanced`)} page, with concise explanations of core concepts and a set of bookmarked demo videos for typical use cases.`),
@@ -445,7 +515,7 @@ export default [
 	h2(`Ludicrous-mode for Relations`),
 	text(`Organizing, filtering, and focusing on certain objects just became faster with our new Relations menu.`),
 	text(`By clicking the column name in Grid View, you can now directly sort and filter your objects according to the chosen relation. Moreover, with the new menu you can create and insert relations anywhere within a Set, allowing for greater flexibility.`),
-	video('./img/help/relation-menu.mp4'),
+	video('./img/help/relation-menu.mp4', `c70`),
 	text(`We hope these improvements unlock many new and novel use-cases for Anytype, and help our power-users all the more powerful. 🦸`),
 
 	h2(`Other notable improvements`),
@@ -707,7 +777,7 @@ export default [
 
 	h2(`Sets creation`),
 	text(`You can now create a Set from the dashboard, using the bottom-left + button, or even in-line using the ${hl(`/`)} menu. From there, you can choose which type of object your new Set is for. For example, viewing your current projects, or building a reading list of books.`),
-	video('./img/help/set-creation.mp4'),
+	video('./img/help/set-creation.mp4', `c70`),
 
 	h2(`Darkmode`),
 	text(`Just in-time for winter, our long-awaited dark mode is here. This feature has graced our devices (and eyes) in recent years, and has really become a way of life for some. Night owls rejoice! To enable dark mode, simply open the Settings pane, navigate to other settings → theme → and choose Dark.`),

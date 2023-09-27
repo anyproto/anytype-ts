@@ -511,6 +511,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 
 			case 'turnCollection':
+				// Add Collection type to details since middleware adds details async
+				const collectionType = dbStore.getCollectionType();
+				if (collectionType) {
+					detailStore.update(rootId, { id: collectionType.id, details: collectionType }, true);
+				};
+
 				C.ObjectToCollection(rootId, (message: any) => {
 					if (message.error.code) {
 						return;

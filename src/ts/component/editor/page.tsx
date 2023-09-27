@@ -1382,7 +1382,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const element = blockStore.getMapElement(rootId, id);
 
-		return blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow());
+		return element ? blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
