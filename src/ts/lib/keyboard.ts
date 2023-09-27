@@ -637,6 +637,7 @@ class Keyboard {
 		C.ObjectUndo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
+				focus.apply();
 			};
 
 			if (callBack) {
@@ -650,6 +651,7 @@ class Keyboard {
 		C.ObjectRedo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
+				focus.apply();
 			};
 
 			if (callBack) {
