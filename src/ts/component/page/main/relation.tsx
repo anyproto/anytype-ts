@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, Action, UtilCommon, UtilObject, UtilData, translate, UtilDate } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
+import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 
@@ -51,8 +52,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 
 		const filtersType: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
+		];
+		const filtersObject: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 		];
 
 		return (
@@ -62,20 +67,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<div className="blocks wrapper">
 					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
-					{totalType ? (
-						<div className="section set">
-							<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
-							<div className="content">
-								<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
-							</div>
+					<div className="section set">
+						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
+						<div className="content">
+							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
 						</div>
-					) : ''}
+					</div>
 
 					{object.isInstalled ? (
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} />
+								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
 							</div>
 						</div>
 					) : ''}

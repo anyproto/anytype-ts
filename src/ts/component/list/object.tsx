@@ -216,6 +216,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			limit: LIMIT,
 			ignoreHidden: true,
 			ignoreDeleted: true,
+			ignoreWorkspace: true,
 		}, callBack);
 	};
 

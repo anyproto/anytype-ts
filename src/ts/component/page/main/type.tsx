@@ -71,6 +71,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdObject = this.getSubIdObject();
 		const totalObject = dbStore.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
+		const filtersObject: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+		];
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -201,7 +204,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} />
+								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} filters={filtersObject} />
 							</div>
 						</div>
 					) : ''}
@@ -265,15 +268,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	loadTemplates () {
-		const { space } = commonStore;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
 
 		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
-				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -533,6 +534,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getSpaceId () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, [ 'spaceId' ], true);
+
+		return object.spaceId;
 	};
 
 	getSubIdTemplate () {
