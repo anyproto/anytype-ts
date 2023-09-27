@@ -15,8 +15,11 @@ interface Column {
 };
 
 interface Props {
+	subId: string;
 	rootId: string;
 	columns: Column[];
+	sources?: string[];
+	filters?: I.Filter[];
 };
 
 const PREFIX = 'listObject';
@@ -24,9 +27,16 @@ const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props> {
 
+	public static defaultProps: Props = {
+		subId: '',
+		rootId: '',
+		columns: [],
+		sources: [],
+		filters: [],
+	};
+
 	render () {
-		const { rootId, columns } = this.props;
-		const subId = this.getSubId();
+		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
 
@@ -170,16 +180,12 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	componentWillUnmount(): void {
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		C.ObjectSearchUnsubscribe([ this.props.subId ]);
 	};
 
 	getItems () {
-		const subId = this.getSubId();
+		const { subId } = this.props;
 		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, this.getKeys()));
-	};
-
-	getSubId () {
-		return dbStore.getSubId(this.props.rootId, 'data');
 	};
 
 	getKeys () {
@@ -187,9 +193,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const { rootId } = this.props;
+		const { subId, sources, filters } = this.props;
 		const offset = (page - 1) * LIMIT;
-		const subId = this.getSubId();
 
 		dbStore.metaSet(subId, '', { offset });
 
@@ -199,7 +204,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 			],
 			keys: this.getKeys(),
-			sources: [ rootId ],
+			sources,
+			filters,
 			offset,
 			limit: LIMIT,
 			ignoreHidden: true,

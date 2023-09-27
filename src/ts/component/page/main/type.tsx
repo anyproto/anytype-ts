@@ -68,7 +68,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
-		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
+		const subIdObject = this.getSubIdObject();
+		const totalObject = dbStore.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 
 		if (!recommendedRelations.includes('rel-description')) {
@@ -89,7 +90,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => UtilDate.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: (v: any) => v ? UtilDate.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
 			},
 		];
 
@@ -164,47 +165,43 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="content"></div>
 					</div>
 
-					{allowedObject ? (
-						<React.Fragment>
-							{allowedLayout ? (
-								<div className="section layout">
-									<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
-									<div className="content">
-										{allowedDetails ? (
-											<Select 
-												id="recommendedLayout" 
-												value={object.recommendedLayout} 
-												options={UtilMenu.turnLayouts()} 
-												arrowClassName="light" 
-												onChange={this.onLayout} 
-											/>
-										) : (
-											<React.Fragment>
-												<Icon className={layout.icon} />
-												<div className="name">{layout.name}</div>
-											</React.Fragment>
-										)}
-									</div>
-								</div>
-							) : ''}
-
-							<div className="section relation">
-								<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
-								<div className="content">
-									{relations.map((item: any, i: number) => (
-										<ItemRelation key={i} {...item} />
-									))}
-									{allowedRelation ? <ItemAdd /> : ''}
-								</div>
+					{allowedLayout ? (
+						<div className="section layout">
+							<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
+							<div className="content">
+								{allowedDetails ? (
+									<Select 
+										id="recommendedLayout" 
+										value={object.recommendedLayout} 
+										options={UtilMenu.turnLayouts()} 
+										arrowClassName="light" 
+										onChange={this.onLayout} 
+									/>
+								) : (
+									<React.Fragment>
+										<Icon className={layout.icon} />
+										<div className="name">{layout.name}</div>
+									</React.Fragment>
+								)}
 							</div>
-						</React.Fragment>
+						</div>
 					) : ''}
+
+					<div className="section relation">
+						<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
+						<div className="content">
+							{relations.map((item: any, i: number) => (
+								<ItemRelation key={i} {...item} />
+							))}
+							{allowedRelation ? <ItemAdd /> : ''}
+						</div>
+					</div>
 
 					{object.isInstalled ? (
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject rootId={rootId} columns={columns} />
+								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} />
 							</div>
 						</div>
 					) : ''}
