@@ -199,7 +199,7 @@ class UtilObject {
 			typeKey = type ? type.uniqueKey : '';
 
 			if (!templateId) {
-				templateId = type.defaultTemplateId || '';
+				templateId = (type && type.defaultTemplateId) ? type.defaultTemplateId : Constant.templateId.blank;
 			};
 		};
 		
