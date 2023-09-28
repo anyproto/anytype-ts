@@ -640,9 +640,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const type = dbStore.getTypeById(this.getTypeId());
 		const hasSources = this.isCollection() || this.getSources().length;
 
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
+		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			if (template.targetObjectType) {
