@@ -159,9 +159,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
-			onCopy(e, pressed.match('x') ? true : false);
-		});
+		if (onCopy) {
+			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				onCopy(e, pressed.match('x') ? true : false);
+			});
+		};
 
 		if (focused || (!focused && keyboard.isFocused)) {
 			keyboard.shortcut(`${cmd}+d`, e, () => {

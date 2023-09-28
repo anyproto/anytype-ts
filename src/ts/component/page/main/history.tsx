@@ -35,6 +35,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		super(props);
 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 	};
 
 	render () {
@@ -125,6 +126,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 											block={block}
 											getWrapperWidth={this.getWrapperWidth}
 											readonly={true}
+											onCopy={this.onCopy}
 										/>
 									))}
 								</div>
@@ -200,21 +202,24 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onKeyDown (e: any) {
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => this.onCopy());
+	};
+
+	onCopy () {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const rootId = this.getRootId();
-		const cmd = keyboard.cmdKey();
 		const { focused } = focus.state;
 
-		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => {
-			let ids = selection.get(I.SelectType.Block, true);
-			if (!ids.length) {
-				ids = [ focused ];
-			};
-			ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
+		let ids = selection.get(I.SelectType.Block, true);
+		if (!ids.length) {
+			ids = [ focused ];
+		};
+		ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
 
-			Action.copyBlocks(rootId, ids, false);
-		});
+		Action.copyBlocks(rootId, ids, false);
 	};
 
 	onScrollLeft () {
