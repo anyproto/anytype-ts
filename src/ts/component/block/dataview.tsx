@@ -456,6 +456,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecord (recordId: string) {
 		const view = this.getView();
+		if (!view) {
+			return {};
+		};
+
 		const keys = this.getKeys(view.id);
 		const subId = this.getSubId();
 		const item = detailStore.get(subId, recordId, keys);
