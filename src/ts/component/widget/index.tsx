@@ -355,6 +355,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
+		const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const { targetBlockId } = child.content;
 		const sorts = [];
 		const filters: I.Filter[] = [
@@ -371,7 +372,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case Constant.widgetId.recentEdit: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: 0 });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: timeRegister + 60 });
 				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 				break;
 			};
