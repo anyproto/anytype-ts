@@ -637,8 +637,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const type = dbStore.getTypeById(this.getTypeId());
-		const hasSources = this.isCollection() || this.getSources().length;
+		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
 
 		flags.push(I.ObjectFlag.SelectTemplate);
 
@@ -651,6 +650,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
+		const defaultTemplate = detailStore.get(rootId, templateId);
 
 		const create = () => {
 			C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
@@ -703,14 +703,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		UtilObject.checkDefaultTemplate(details.type, templateId, (res) => {
-			if (!hasSources || !res) {
-				template = null;
-				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
-			} else {
-				create();
-			};
-		});
+		if (defaultTemplate.isArchived || defaultTemplate.isDeleted) {
+			template = null;
+			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
+		} else {
+			create();
+		};
 	};
 
 	onEmpty (e: any) {

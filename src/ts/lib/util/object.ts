@@ -388,12 +388,6 @@ class UtilObject {
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 
-	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
-		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			callBack((message.records || []).map(it => it.id).includes(templateId));
-		});
-	};
-
 };
 
 export default new UtilObject();

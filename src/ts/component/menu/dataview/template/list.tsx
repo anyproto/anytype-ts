@@ -4,12 +4,12 @@ import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
 import { I, UtilObject, translate, UtilData } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import { observer } from 'mobx-react';
 
-class MenuTemplateList extends React.Component<I.Menu> {
+const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
 	state = {
-		isLoading: false,
-		templateId: ''
+		loading: false
 	};
 
 	node: any = null;
@@ -30,9 +30,22 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { withTypeSelect, noAdd, typeId, noTitle } = data;
+		const { withTypeSelect, noAdd, noTitle, typeId, getView, selectedTemplate } = data;
 		const previewSizesCns = [ 'small', 'medium', 'large' ];
 		const previewSize = data.previewSize || I.PreviewSize.Small;
+
+		let { templateId } = data;
+
+		if (getView) {
+			const view = getView();
+
+			templateId = view.defaultTemplateId || Constant.templateId.blank;
+		};
+
+		if (selectedTemplate) {
+			templateId = selectedTemplate;
+		};
+
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
@@ -41,7 +54,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', previewSizesCns[previewSize], 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', previewSizesCns[previewSize], 'blank', (Constant.templateId.blank == templateId ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -84,7 +97,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 						{this.items.map((item: any, i: number) => (
 							<PreviewObject
 								key={i}
-								className={this.isDefaultTemplate(item.id) ? 'isDefault' : ''}
+								className={item.id == templateId ? 'isDefault' : ''}
 								rootId={item.id}
 								size={previewSize}
 								onClick={e => this.onClick(e, item)}
@@ -120,18 +133,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	};
 
 	reload () {
-		const { param } = this.props;
-		const { data } = param;
-		const { typeId, templateId, hasSources, selectedTemplate } = data;
-
-		if (selectedTemplate) {
-			this.setState({ templateId: selectedTemplate }, () => this.load(true));
-			return;
-		};
-
-		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
-			this.setState({ templateId: (!hasSources || !res) ? Constant.templateId.blank : templateId }, () => this.load(true));
-		});
+		this.load(true);
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -172,9 +174,20 @@ class MenuTemplateList extends React.Component<I.Menu> {
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, route, typeId } = data;
-		const { templateId } = this.state;
-		const node = $(`#item-${item.id}`)
+		const { onSetDefault, route, typeId, getView, selectedTemplate } = data;
+		const node = $(`#item-${item.id}`);
+
+		let { templateId } = data;
+
+		if (getView) {
+			const view = getView();
+
+			templateId = view.defaultTemplateId || Constant.templateId.blank;
+		};
+
+		if (selectedTemplate) {
+			templateId = selectedTemplate;
+		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -253,19 +266,11 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		});
 	};
 
-	isDefaultTemplate (id: string): boolean {
-    	return id == this.state.templateId;
-	};
-
 	updateRowLength (n: number) {
 		const node = $(this.node);
 		const items = node.find('.items');
 		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
-
-	updateTemplateId (id) {
-		this.setState({ templateId: id });
-	};
-};
+});
 
 export default MenuTemplateList;

@@ -165,8 +165,8 @@ class HeaderBanner extends React.Component<Props, State> {
 					previewSize: I.PreviewSize.Medium,
 					onSelect: (item: any) => {
 						C.ObjectApplyTemplate(object.id, item.id);
+						menuStore.updateData('dataviewTemplateList', { selectedTemplate: item.id });
 						this.setState({ currentTemplateId: item.id });
-						this.menuContext.ref.updateTemplateId(item.id);
 					}
 				}
 			});

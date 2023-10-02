@@ -7,10 +7,6 @@ import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
-
-	state = {
-		templateId: ''
-	};
 	
 	n = -1;
 	ref = null;
@@ -85,7 +81,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getTypeId, getTemplateId, getSources, isCollection, getView } = data;
 		const view = getView();
-		const hasSources = isCollection || getSources().length;
+		const defaultTemplate = detailStore.get(rootId, getTemplateId());
 
 		const load = () => {
 			this.param = UtilCommon.objectCopy(data.view.get());
@@ -95,13 +91,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			window.setTimeout(() => this.resize(), 5);
 		};
 
-		UtilObject.checkDefaultTemplate(getTypeId(), getTemplateId(), (res) => {
-			if (!hasSources || !res) {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
-			} else {
-				load();
-			};
-		});
+		if (defaultTemplate.isArchived || defaultTemplate.isDeleted) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
+		} else {
+			load();
+		};
 	};
 
 	componentDidUpdate () {
