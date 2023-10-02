@@ -264,7 +264,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		let templateName = translate('commonBlank');
 		if (templateId != Constant.templateId.blank) {
-			templateName = template.name
+			templateName = template.name;
 		};
 
 		const hasSources = (isCollection || getSources().length);
