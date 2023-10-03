@@ -23,18 +23,36 @@
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; -webkit-app-region: no-drag; }
 	.tabs {
 		.tab { 
-			font-weight: 700; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
+			font-weight: 700; color: $colorControlActive; transition: $transitionAllCommon; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorTextPrimary; }
 		.tab.active { color: $colorTextPrimary; border-color: $colorTextPrimary; }
 	}
 
+	.headerBanner {
+		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: $colorShapeTertiary;
+		-webkit-app-region: no-drag; 
+	}
+	.headerBanner {
+		.content { display: flex; gap: 0px 4px; align-items: center; }
+		.content {
+			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
+			.typeName {
+				.name { font-weight: 600; }
+			}
+		}
+		.action { font-weight: 500; }
+	}
+	.headerBanner.withMenu { padding-right: 24px; }
+	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
+	.headerBanner.withMenu.menuOpened:after { transform: rotateZ(180deg); }
+
 	.sync { -webkit-app-region: no-drag; }
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
+	.icon.big:hover, .icon.big.hover { background-color: $colorShapeTertiary; }
 
 	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
 	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
@@ -66,7 +84,7 @@
 	}
 
 	.item { 
-		color: $colorDarkGrey; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
+		color: $colorTextSecondary; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
 	}
 	.item {
@@ -92,23 +110,6 @@
 		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorShapeSecondary; }
-
-	.headerBanner {
-		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
-	}
-	.headerBanner {
-		.content { display: flex; gap: 0px 4px; align-items: center; }
-		.content {
-			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
-			.typeName {
-				.name { font-weight: 600; }
-			}
-		}
-		.action { font-weight: 500; }
-	}
-	.headerBanner.withMenu { padding-right: 24px; }
-	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
-	.headerBanner.withMenu.menuOpened:after { transform: rotateZ(180deg); }
 }
 
 .header.mainGraph {

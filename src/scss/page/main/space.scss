@@ -34,7 +34,7 @@
 		.section.template { width: 704px; margin: 0px auto 14px auto; }
 		.section.template {
 			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorTextSecondary; 
 				transition: $transitionAllCommon;
 			}
 			.btn {

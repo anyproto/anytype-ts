@@ -261,11 +261,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		const templateId = getTemplateId();
 		const template = detailStore.get(rootId, templateId);
-
-		let templateName = translate('commonBlank');
-		if (templateId != Constant.templateId.blank) {
-			templateName = template.name;
-		};
+		const templateName = (templateId == Constant.templateId.blank) ? translate('commonBlank') : template.name;
 
 		const hasSources = (isCollection || getSources().length);
 		const allowedDefaultType = isAllowedDefaultType();
@@ -286,14 +282,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt.push(`+${relations.length - 2}`);
 		};
 
-		const updateDefaultTemplate = (item, callBack: () => void) => {
+		const updateDefaultTemplate = (item) => {
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
 					onTemplateAdd();
 				};
 			} else {
-				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id });
 			};
 		};
 
@@ -312,9 +307,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,
 					onSetDefault: updateDefaultTemplate,
-					onTypeChange: (id, callBack: () => void) => {
+					onTypeChange: (id) => {
 						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank }, callBack);
+							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
 						};
 					}
 				}

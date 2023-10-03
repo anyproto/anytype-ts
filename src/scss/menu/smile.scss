@@ -7,7 +7,7 @@
 		.wrap { display: flex; flex-direction: column; }
 		.ReactVirtualized__List { padding: 0px; }
 
-		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; }
+		.head { color: $colorControlActive; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; }
 		.head {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin-right: 0px; }

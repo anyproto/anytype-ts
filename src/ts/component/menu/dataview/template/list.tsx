@@ -1,10 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { I, UtilObject, translate, UtilData } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { I, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
+import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
+
+const TEMPLATE_WIDTH = 236;
+const PADDING = 16;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
@@ -13,7 +16,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	node: any = null;
-	n = -1;
+	n = 0;
 	items: any = [];
 	typeId: string = '';
 
@@ -23,9 +26,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.onClick = this.onClick.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
-		this.reload = this.reload.bind(this);
 		this.getTemplateId = this.getTemplateId.bind(this);
 		this.updateRowLength = this.updateRowLength.bind(this);
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
@@ -35,6 +38,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const previewSizesCns = [ 'small', 'medium', 'large' ];
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
+		const items = this.getItems();
 
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
@@ -84,7 +88,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					<div className="items">
             			<ItemBlank />
 
-						{this.items.map((item: any, i: number) => (
+						{items.map((item: any, i: number) => (
 							<PreviewObject
 								key={i}
 								className={item.id == templateId ? 'isDefault' : ''}
@@ -109,7 +113,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	componentDidMount () {
 		this.rebind();
-		this.reload();
+		this.load();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();
 	};
 
 	rebind () {
@@ -122,63 +130,41 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		$(window).off('keydown.menu');
 	};
 
-	reload () {
-		this.load(true);
-	};
-
-	load (clear: boolean, callBack?: (message: any) => void) {
+	load () {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
+		const templateType = dbStore.getTemplateType();
 
-		if (clear) {
-			this.setState({ loading: true });
-		};
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
-		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || UtilObject.defaultName('Page'));
-				return it;
-			}));
-
-			if (clear) {
-				this.setState({ loading: false });
-			} else {
-				this.forceUpdate();
-			};
+		UtilData.searchSubscribe({
+			subId: this.getSubId(),
+			filters,
+			sorts,
+			keys,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		});
+	};
+
+	getSubId () {
+		return [ this.props.getId(), 'data' ].join('-');
 	};
 
 	getTemplateId () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, selectedTemplate } = data;
+		const { getView, templateId } = data;
 
-		let { templateId } = data;
-
-		if (getView) {
-			const view = getView();
-
-			templateId = view.defaultTemplateId || Constant.templateId.blank;
-		};
-
-		if (selectedTemplate) {
-			templateId = selectedTemplate;
-		};
-
-		return templateId;
+		return (getView ? getView().defaultTemplateId : templateId) || Constant.templateId.blank;
 	};
 
 	onMore (e: any, item: any) {
@@ -210,14 +196,14 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					node.removeClass('active');
 				},
 				data: {
+					rebind: this.rebind,
 					template: item,
 					isView: true,
 					typeId,
 					templateId,
 					route,
-					onArchive: this.reload,
 					onDuplicate: (object) => UtilObject.openPopup(object, {}),
-					onSetDefault: onSetDefault ? () => onSetDefault(item, this.reload) : null,
+					onSetDefault,
 				}
 			});
 		});
@@ -229,8 +215,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { onSelect } = data;
 
 		if (onSelect) {
-			onSelect(item, this.reload);
+			onSelect(item);
 		};
+
+		data.templateId = item.id;
 	};
 
 	onType () {
@@ -253,16 +241,20 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					};
 
 					window.setTimeout(() => {
-						menuStore.updateData(this.props.id, { typeId: item.id });
-						this.reload();
+						data.typeId = item.id;
 
 						if (onTypeChange) {
-							onTypeChange(item.id, this.reload);
+							onTypeChange(item.id);
 						};
 					}, type.isInstalled ? 0 : 50);
 				},
 			}
 		});
+	};
+
+	getItems () {
+		const subId = this.getSubId();
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 	};
 
 	updateRowLength (n: number) {
@@ -271,6 +263,26 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
+
+	resize () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { fromBanner } = data;
+
+		if (!fromBanner) {
+			return;
+		};
+
+		const sidebar = $('#sidebar');
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sw = commonStore.isSidebarFixed && sidebar.hasClass('active') ? sidebar.outerWidth() : 0;
+		const rows = Math.floor((ww - sw) / TEMPLATE_WIDTH);
+		const obj = $(`#${getId()}`);
+		const items = obj.find('.items');
+
+		items.css({ 'grid-template-columns': `repeat(${rows}, 1fr)` });
+	};
+
 });
 
 export default MenuTemplateList;

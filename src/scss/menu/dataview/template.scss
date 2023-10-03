@@ -31,9 +31,9 @@
             }
         }
     }
-    .menu.menuDataviewTemplateList.objectCreate { background-color: transparent; box-shadow: none; }
-    .menu.menuDataviewTemplateList.objectCreate {
-        .content { margin-top: -16px; }
+    .menu.menuDataviewTemplateList.fromBanner { background-color: transparent; box-shadow: none; }
+    .menu.menuDataviewTemplateList.fromBanner {
+		.content { overflow: visible; padding: 0px; }
         .content {
             .items { justify-content: space-around; align-content: flex-start; }
             .items {

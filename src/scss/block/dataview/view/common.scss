@@ -5,7 +5,7 @@
 
 		.viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
+			.cell.add { color: $colorControlActive; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; transition: $transitionAllCommon; }
 				.btn:hover { color: $colorTextPrimary; }
@@ -22,7 +22,7 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent { margin-bottom: 4px; @include text-small; color: $colorTextSecondary; }
 				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }

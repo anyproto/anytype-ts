@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			@include text-small; text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			@include text-small; text-align: left; color: $colorTextSecondary; font-weight: 400; line-height: 20px; position: relative; height: 38px;
 			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead {
@@ -61,7 +61,7 @@
 
 			.row { white-space: nowrap; box-shadow: 0px 1px $colorShapeSecondary inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.add { margin-top: -2px; }
-			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
+			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
 			.row:hover { background-color: $colorShapeHighlightLight; }
 
 			.row > .selectable,

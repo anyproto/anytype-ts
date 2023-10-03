@@ -191,15 +191,19 @@ class UtilObject {
 		let typeKey = '';
 
 		details = details || {};
+
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};
+
 		if (details.type) {
 			const type = dbStore.getTypeById(details.type);
-			typeKey = type ? type.uniqueKey : '';
+			if (type) {
+				typeKey = type.uniqueKey;
 
-			if (!templateId) {
-				templateId = (type && type.defaultTemplateId) ? type.defaultTemplateId : Constant.templateId.blank;
+				if (!templateId) {
+					templateId = type.defaultTemplateId || Constant.templateId.blank;
+				};
 			};
 		};
 		

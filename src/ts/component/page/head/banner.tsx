@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { IconObject, Icon, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, UtilFile, analytics, C, UtilData } from 'Lib';
-import { commonStore, dbStore, detailStore, menuStore } from 'Store';
+import { IconObject, Label, ObjectName } from 'Component';
+import { I, Action, translate, UtilObject, UtilCommon, C } from 'Lib';
+import { commonStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -12,26 +12,13 @@ interface Props {
 	isPopup?: boolean;
 };
 
-interface State {
-	menuOpened: boolean;
-	currentTypeId: string;
-	currentTemplateId: string;
-};
-
 const TEMPLATE_WIDTH = 236;
 const PADDING = 16;
 
-class HeaderBanner extends React.Component<Props, State> {
+class HeaderBanner extends React.Component<Props> {
 
-	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
-
-	state = {
-		menuOpened: false,
-		currentTypeId: '',
-		currentTemplateId: ''
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -41,7 +28,7 @@ class HeaderBanner extends React.Component<Props, State> {
 
 	render () {
 		const { type, object, count } = this.props;
-		const { menuOpened } = this.state;
+		const menuOpened = menuStore.isOpen('dataviewTemplateList');
 		const cn = [ 'headerBanner', menuOpened ? 'menuOpened' : '' ];
 
 		let label = '';
@@ -103,67 +90,30 @@ class HeaderBanner extends React.Component<Props, State> {
 		);
 	};
 
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	onTemplateMenu () {
-		const { object, count, isPopup } = this.props;
-		const { menuOpened, currentTypeId, currentTemplateId } = this.state;
+		const { object, isPopup } = this.props;
+		const menuOpened = menuStore.isOpen('dataviewTemplateList');
 		const type = dbStore.getTypeById(object.type);
-		const winSize = UtilCommon.getWindowDimensions();
-		const sidebar = $('#sidebar');
+		const templateId = type.defaultTemplateId || Constant.templateId.blank;
 
-		let current = type.defaultTemplateId || Constant.templateId.blank;
-		if (currentTemplateId && type.id == currentTypeId) {
-			current = currentTemplateId;
-		} else {
-			this.setState({ currentTypeId: type.id, currentTemplateId: current });
-		};
-
-		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
-			sw = sidebar.outerWidth();
-		};
-
-		const areaWidth = winSize.ww - sw;
-		const maxRowLength = Math.floor(areaWidth / TEMPLATE_WIDTH);
-		const width = Math.min(count, maxRowLength) * TEMPLATE_WIDTH + PADDING * 2;
-
-		if (menuOpened) {
-			this.setState({ menuOpened: false });
-		} else {
-			this.setState({ menuOpened: true });
-
+		if (!menuOpened) {
 			menuStore.open('dataviewTemplateList', {
 				element: $(this.node),
-				className: 'objectCreate',
+				className: 'fromBanner',
 				offsetY: isPopup ? 10 : 0,
-				width,
 				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
-				onOpen: (context: any) => {
-					this.menuContext = context;
-					this.menuContext.ref.updateRowLength(maxRowLength);
-				},
-				onClose: () => this.setState({ menuOpened: false }),
 				data: {
+					fromBanner: true,
 					withTypeSelect: false,
 					noAdd: true,
 					noTitle: true,
 					typeId: type.id,
-					templateId: current,
-					selectedTemplate: current,
+					templateId,
 					previewSize: I.PreviewSize.Medium,
 					onSelect: (item: any) => {
 						C.ObjectApplyTemplate(object.id, item.id);
-						menuStore.updateData('dataviewTemplateList', { selectedTemplate: item.id });
-						this.setState({ currentTemplateId: item.id });
 					}
 				}
 			});

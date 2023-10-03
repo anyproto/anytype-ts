@@ -339,43 +339,47 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				onMouseLeave={this.onMouseLeave}
 			>
 				{loading ? <Loader /> : (
-					<div onClick={onClick}>
-						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
+					<React.Fragment>
+						{onMore ? <div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}><Icon className="more" /></div> : ''}
 
-							{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+						<div onClick={onClick}>
+							<div className="scroller">
+								{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
 
-							<div className="heading">
-								<IconObject size={size} iconSize={iconSize} object={object} />
-								<div className="name">{name}</div>
-								<div className="description">{description}</div>
-								<div className="featured">
-									<ObjectType object={type} />
-									<div className="bullet" />
-									{author.name}
+								{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+
+								<div className="heading">
+									<IconObject size={size} iconSize={iconSize} object={object} />
+									<div className="name">{name}</div>
+									<div className="description">{description}</div>
+									<div className="featured">
+										<ObjectType object={type} />
+										<div className="bullet" />
+										{author.name}
+									</div>
+								</div>
+
+								<div className="blocks">
+									{childBlocks.map((child: any, i: number) => {
+										const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+										if (i == 0) {
+											cn.push('first');
+										};
+
+										if (i == childBlocks.length - 1) {
+											cn.push('last');
+										};
+
+										n++;
+										n = this.checkNumber(child, n);
+										return <Block key={child.id} className={cn.join(' ')} {...child} />;
+									})}
 								</div>
 							</div>
-
-							<div className="blocks">
-								{childBlocks.map((child: any, i: number) => {
-									const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
-
-									if (i == 0) {
-										cn.push('first');
-									};
-
-									if (i == childBlocks.length - 1) {
-										cn.push('last');
-									};
-
-									n++;
-									n = this.checkNumber(child, n);
-									return <Block key={child.id} className={cn.join(' ')} {...child} />;
-								})}
-							</div>
+							<div className="border" />
 						</div>
-						<div className="border" />
-					</div>
+					</React.Fragment>
 				)}
 			</div>
 		);

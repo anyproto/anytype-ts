@@ -6,8 +6,8 @@
 	.body { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 
 	.iconObject { flex-shrink: 0; border-radius: 4px; }
-	.iconObject:not(.withOption) { background-color: $colorVeryLightGrey; }
+	.iconObject:not(.withOption) { background-color: $colorShapeTertiary; }
 	.txt { width: calc(100% - 64px); }
 	.name { @include text-common; @include text-overflow-nw; font-weight: 500; }
-	.type { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
+	.type { @include text-small; color: $colorTextSecondary; @include text-overflow-nw; }
 }
