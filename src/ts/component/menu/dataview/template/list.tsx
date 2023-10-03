@@ -24,27 +24,17 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
 		this.reload = this.reload.bind(this);
+		this.getTemplateId = this.getTemplateId.bind(this);
 		this.updateRowLength = this.updateRowLength.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { withTypeSelect, noAdd, noTitle, typeId, getView, selectedTemplate } = data;
+		const { withTypeSelect, noAdd, noTitle, typeId } = data;
 		const previewSizesCns = [ 'small', 'medium', 'large' ];
 		const previewSize = data.previewSize || I.PreviewSize.Small;
-
-		let { templateId } = data;
-
-		if (getView) {
-			const view = getView();
-
-			templateId = view.defaultTemplateId || Constant.templateId.blank;
-		};
-
-		if (selectedTemplate) {
-			templateId = selectedTemplate;
-		};
+		const templateId = this.getTemplateId();
 
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
@@ -171,11 +161,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		});
 	};
 
-	onMore (e: any, item: any) {
+	getTemplateId () {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSetDefault, route, typeId, getView, selectedTemplate } = data;
-		const node = $(`#item-${item.id}`);
+		const { getView, selectedTemplate } = data;
 
 		let { templateId } = data;
 
@@ -188,6 +177,16 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		if (selectedTemplate) {
 			templateId = selectedTemplate;
 		};
+
+		return templateId;
+	};
+
+	onMore (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onSetDefault, route, typeId } = data;
+		const node = $(`#item-${item.id}`);
+		const templateId = this.getTemplateId();
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -269,6 +268,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	updateRowLength (n: number) {
 		const node = $(this.node);
 		const items = node.find('.items');
+
 		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
 });

@@ -107,9 +107,6 @@ class HeaderBanner extends React.Component<Props, State> {
 		this._isMounted = true;
 	};
 
-	componentDidUpdate () {
-	};
-
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
