@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, Action, UtilCommon, UtilObject, UtilData, translate, UtilDate } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
+import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 
@@ -38,14 +39,25 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const subId = dbStore.getSubId(rootId, 'data');
-		const { total } = dbStore.getMeta(subId, '');
-		const columns: any[] = [
+		const subIdType = dbStore.getSubId(rootId, 'type');
+		const totalType = dbStore.getMeta(subIdType, '').total;
+		const subIdObject = dbStore.getSubId(rootId, 'object');
+		const totalObject = dbStore.getMeta(subIdObject, '').total;
+		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: (v: any) => UtilDate.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
+		];
+
+		const filtersType: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+			{ operator: I.FilterOperator.And, relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
+		];
+		const filtersObject: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 		];
 
 		return (
@@ -55,11 +67,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<div className="blocks wrapper">
 					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
+					<div className="section set">
+						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
+						<div className="content">
+							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
+						</div>
+					</div>
+
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{total} {UtilCommon.plural(total, translate('pluralObject'))}</div>
+							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject rootId={rootId} columns={columns} />
+								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
 							</div>
 						</div>
 					) : ''}
