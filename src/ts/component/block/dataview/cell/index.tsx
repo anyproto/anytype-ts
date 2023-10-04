@@ -58,8 +58,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			check = true;
 		};
 
-		console.log(relation.relationKey, record[relation.relationKey]);
-
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
