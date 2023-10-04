@@ -164,7 +164,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { getView, templateId } = data;
 
-		return (getView ? getView().defaultTemplateId : templateId) || Constant.templateId.blank;
+		return (getView ? getView().defaultTemplateId || templateId : templateId) || Constant.templateId.blank;
 	};
 
 	onMore (e: any, item: any) {

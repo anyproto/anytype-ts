@@ -71,7 +71,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		switch (item.id) {
 			case 'default': {
 				if (onSetDefault) {
-					onSetDefault();
+					onSetDefault(template);
 				};
 
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
