@@ -390,4 +390,11 @@
             }
         }
     }
+    .menu.menuDataviewTemplateList.fromBanner {
+        .content {
+            .items {
+                .previewObject { background: $colorBgPrimary; }
+            }
+        }
+    }
 }

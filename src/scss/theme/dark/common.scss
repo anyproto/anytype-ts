@@ -181,7 +181,7 @@ html.themeDark {
         .border { border-color: $colorShapePrimary; }
         .loaderWrapper { border-color: $colorShapePrimary; }
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
-        .moreWrapper { background: $colorShapeSecondary; }
+        .moreWrapper { background: $colorShapeTertiary; }
         .heading {
             .iconObject { background-color: $colorShapeTertiary; box-shadow: 0px 0px 0px 1px $colorTextPrimary inset; }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
