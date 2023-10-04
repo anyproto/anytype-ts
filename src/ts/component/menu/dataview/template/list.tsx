@@ -242,6 +242,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 					window.setTimeout(() => {
 						data.typeId = item.id;
+						this.load();
 
 						if (onTypeChange) {
 							onTypeChange(item.id);
