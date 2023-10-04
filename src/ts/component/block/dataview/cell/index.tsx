@@ -170,11 +170,12 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
-			width = Math.max(cell.outerWidth(), maxWidth);
+			width = Math.max(width, maxWidth);
 		};
 
 		let closeIfOpen = true;
 		let menuId = '';
+
 		const setOn = () => {
 			cell.addClass('isEditing');
 
@@ -479,7 +480,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	canEdit () {
-		const { readonly, viewType, getRecord, recordId } = this.props;
+		const { readonly, getRecord, recordId } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
