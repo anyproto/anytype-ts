@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { I, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
+import { C, I, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
 import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
@@ -120,6 +120,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+	};
+
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
@@ -165,6 +169,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { getView, templateId } = data;
 
 		return (getView ? getView().defaultTemplateId || templateId : templateId) || Constant.templateId.blank;
+	};
+
+	getItems () {
+		const subId = this.getSubId();
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 	};
 
 	onMore (e: any, item: any) {
@@ -251,11 +260,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				},
 			}
 		});
-	};
-
-	getItems () {
-		const subId = this.getSubId();
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 	};
 
 	updateRowLength (n: number) {
