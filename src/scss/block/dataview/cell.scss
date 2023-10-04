@@ -136,9 +136,9 @@
 	}
 }
 
-.cellContent.c-longText { white-space: pre; }
+.cellContent.c-longText { white-space: pre-wrap; }
 .cell.isEditing.c-longText {
-	.cellContent { white-space: pre !important; }
+	.cellContent { white-space: pre-wrap !important; }
 }
 
 .cellContent.canEdit.c-shortText, 

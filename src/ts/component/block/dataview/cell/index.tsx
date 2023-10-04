@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
@@ -21,7 +22,7 @@ interface Props extends I.Cell {
 	maxWidth?: number;
 };
 
-class Cell extends React.Component<Props> {
+const Cell = observer(class Cell extends React.Component<Props> {
 
 	node: any = null;
 	public static defaultProps = {
@@ -56,6 +57,8 @@ class Cell extends React.Component<Props> {
 		if (relation.relationKey == 'name') {
 			check = true;
 		};
+
+		console.log(relation.relationKey, record[relation.relationKey]);
 
 		const cn = [ 
 			'cellContent', 
@@ -489,6 +492,6 @@ class Cell extends React.Component<Props> {
 		return true;
 	};
 	
-};
+});
 
 export default Cell;
