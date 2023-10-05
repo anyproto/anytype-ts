@@ -160,12 +160,17 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		};
 
 		const node = $(this.node);
+
+		node.css({ width: 0, height: 0, marginLeft: 0 });
+
 		const container = UtilCommon.getPageContainer(isPopup);
 		const cw = container.width();
+		const ch = container.height();
 		const mw = cw - PADDING * 2;
 		const margin = (cw - mw) / 2;
+		const { top } = node.offset();
 
-		node.css({ width: cw, marginLeft: -margin - 2 });
+		node.css({ width: cw, height: ch - top, marginLeft: -margin - 2 });
 	};
 
 });
