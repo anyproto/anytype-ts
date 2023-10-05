@@ -170,7 +170,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 
-		node.css({ width: cw, height: ch - top, marginLeft: -margin - 2 });
+		node.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
 	};
 
 });

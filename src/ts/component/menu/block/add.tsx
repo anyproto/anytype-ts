@@ -611,7 +611,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 							UtilObject.openPopup({ ...details, id: message.targetId });
 
-
 							analytics.event('CreateLink');
 							analytics.event('CreateObject', {
 								route: 'Powertool',

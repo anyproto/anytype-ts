@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, keyboard, UtilCommon } from 'Lib';
+import { I, C, keyboard, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -32,8 +32,9 @@ class Focus {
 				to: Math.max(0, Number(range.to) || 0),
 			},
 		};
-
 		this.backup = UtilCommon.objectCopy(this.state);
+
+		C.BlockSetCarriage(keyboard.getRootId(), id, range);
 		return this;
 	};
 
