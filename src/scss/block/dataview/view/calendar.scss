@@ -41,6 +41,7 @@
 				.number { @include text-paragraph; text-align: right; }
 				.item { display: flex; flex-direction: row; gap: 0px 4px; @include text-small; @include text-overflow-nw; margin: 0px 0px 2px 0px; }
 				.item {
+					.iconObject { flex-shrink: 0; }
 					.name { @include text-overflow-nw; }
 				}
 
