@@ -364,7 +364,9 @@
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
                 .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery0.svg'); }
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
+				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg'); }
             }
+
             .layout:hover { background-color: rgba(238, 238, 238, 0.06); }
             .layout.active { border: 2px solid $colorOrange; }
             .layout.active {
@@ -372,6 +374,7 @@
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
                 .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
+				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg'); }
             }
         }
     }

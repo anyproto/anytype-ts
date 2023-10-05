@@ -10,18 +10,20 @@
 			}
 
 			.day { 
-				height: 150px; display: table-cell; text-align: left; vertical-align: middle; position: relative; overflow: hidden;
-				border-color: $colorShapeSecondary; border-style: solid; border-right-width: 1px; border-bottom-width: 1px; padding: 6px;
+				height: 136px; display: table-cell; text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
+				border-right-width: 1px; border-bottom-width: 1px; padding: 6px 8px;
 			}
 			.day.active .number { color: $colorSystemAccent100; }
-			.day.other .number { color: $colorControlActive; }
+			.day.other .number { color: $colorTextSecondary; }
 
 			.day {
-				.number { @include text-small; }
-				.item { display: flex; flex-direction: row; gap: 0px 6px; }
+				.number { @include text-paragraph; text-align: right; }
+				.item { display: flex; flex-direction: row; gap: 0px 6px; @include text-small; @include text-overflow-nw; margin: 0px 0px 2px 0px; }
 				.item {
 					.name { @include text-overflow-nw; }
 				}
+
+				.item.more { display: block; color: $colorTextSecondary; }
 			}
         }
     }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -12,14 +12,26 @@ interface Props extends I.ViewComponent {
 	getDateParam?: (t: number) => { d: number; m: number; y: number; };
 };
 
+const LIMIT = 4;
+
 const Item = observer(class Item extends React.Component<Props> {
 
 	node: any = null;
 
 	render () {
-		const { className, getSubId, getView, d } = this.props;
-		const subId = getSubId();
-		const items = this.getItems();
+		const { className, d } = this.props;
+		const items = this.getItems()
+		const slice = items.slice(0, LIMIT);
+		const length = items.length;
+
+		let more = null;
+		if (length > LIMIT) {
+			more = (
+				<div className="item more">
+					+{length - LIMIT} {translate('commonMore')} {UtilCommon.plural(length, translate('pluralObject')).toLowerCase()}
+				</div>
+			);
+		};
 
 		return (
 			<div 
@@ -28,12 +40,14 @@ const Item = observer(class Item extends React.Component<Props> {
 			>
 				<div className="number">{d}</div>
 				<div className="items">
-					{items.map((item, i) => (
+					{slice.map((item, i) => (
 						<div key={i} className="item">
 							<IconObject object={item} />
 							<ObjectName object={item} />
 						</div>
 					))}
+
+					{more}
 				</div>
 			</div>
 		);

@@ -17,6 +17,7 @@ export enum ObjectLayout {
 	Audio		 = 15,
 	Video		 = 16,
 	Date		 = 17,
+	SpaceView	 = 18,
 	
 	Database	 = 20,
 
