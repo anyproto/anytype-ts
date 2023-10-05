@@ -14,7 +14,7 @@
 		.selectWrap { text-align: left; }
 		.selectWrap {
 			.select { 
-				border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+				border: 0px; color: $colorControlActive; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
 				display: none; margin-bottom: 8px;
 			}
 			.select {
@@ -26,7 +26,7 @@
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
 		#input { 
-			background: $colorVeryLightGrey; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
+			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
 			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
 		}
 

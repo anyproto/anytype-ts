@@ -16,11 +16,11 @@
 	> .buttons {
 		.button {
 			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: $colorBgPrimary; 
-			color: $colorDarkGrey; font-weight: 400; white-space: nowrap;
+			color: $colorTextSecondary; font-weight: 400; white-space: nowrap;
 		}
-		.button:hover { background-color: $colorVeryLightGrey; }
+		.button:hover { background-color: $colorShapeTertiary; }
 
-		.button.disabled { background: $colorVeryLightGrey; max-width: 80px; }
+		.button.disabled { background: $colorShapeTertiary; max-width: 80px; }
 		.button.edit { 
 			box-shadow: 0px 0px; background: $colorShapeHighlightMedium; border-radius: 6px; @include text-common; color: $colorTextPrimary; line-height: 26px; width: auto;
 			padding: 0px 10px;

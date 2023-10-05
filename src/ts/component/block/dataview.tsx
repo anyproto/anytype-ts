@@ -641,12 +641,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const type = dbStore.getTypeById(this.getTypeId());
-		const hasSources = this.isCollection() || this.getSources().length;
+		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
 
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
+		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			if (template.targetObjectType) {
@@ -657,65 +654,59 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
+		const currentTemplate = detailStore.get(rootId, templateId);
 
-		const create = () => {
-			C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
-				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				let records = this.getRecords(groupId);
-
-				const object = message.details;
-				const oldIndex = records.indexOf(message.objectId);
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				if (oldIndex < 0) {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-				} else {
-					records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
-				};
-
-				if (groupId) {
-					this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
-						dbStore.recordsSet(subId, '', records);
-					});
-				} else {
-					dbStore.recordsSet(subId, '', records);
-				};
-
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
-				if (object.layout == I.ObjectLayout.Note) {
-					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
-				};
-
-				analytics.event('CreateObject', {
-					route: (isCollection ? 'Collection' : 'Set'),
-					objectType: object.type,
-					layout: object.layout,
-				});
-			});
+		if (currentTemplate.isArchived || currentTemplate.isDeleted) {
+			template = null;
 		};
 
-		UtilObject.checkDefaultTemplate(details.type, templateId, (res) => {
-			if (!hasSources || !res) {
-				template = null;
-				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
-			} else {
-				create();
+		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
+			this.creating = false;
+
+			if (message.error.code) {
+				return;
 			};
+
+			let records = this.getRecords(groupId);
+
+			const object = message.details;
+			const oldIndex = records.indexOf(message.objectId);
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
+			if (oldIndex < 0) {
+				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			} else {
+				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+			};
+
+			if (groupId) {
+				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
+				});
+			} else {
+				dbStore.recordsSet(subId, '', records);
+			};
+
+			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const ref = this.refCells.get(id);
+
+			if (object.layout == I.ObjectLayout.Note) {
+				this.onCellClick(e, 'name', object.id);
+			} else
+			if (ref) {
+				window.setTimeout(() => { ref.onClick(e); }, 15);
+			};
+
+			analytics.event('CreateObject', {
+				route: (isCollection ? 'Collection' : 'Set'),
+				objectType: object.type,
+				layout: object.layout,
+			});
 		});
 	};
 

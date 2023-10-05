@@ -8,7 +8,7 @@
 
 		.head { padding: 0px 16px; }
 		.head {
-			.date { color: $colorMediumGrey; margin-bottom: 6px; }
+			.date { color: $colorControlActive; margin-bottom: 6px; }
 			.sides { display: flex; margin-bottom: 10px; }
 			.side { width: 50%; }
 			.side.right { text-align: right; }
@@ -32,11 +32,11 @@
 		.day:nth-child(7n + 7) { margin: 0px; }
 		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
 
-		.day.th { color: $colorMediumGrey; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorMediumGrey !important; }
+		.day.th { color: $colorControlActive; cursor: default; }
+		.day.th:hover { background: none; font-weight: 400; color: $colorControlActive !important; }
 		
 		.day.active { color: $colorSystemAccent100; }
-		.day.other { color: $colorMediumGrey; }
+		.day.other { color: $colorControlActive; }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		

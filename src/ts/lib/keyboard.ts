@@ -309,7 +309,7 @@ class Keyboard {
 		const position = I.BlockPosition.Bottom;
 		const rootId = '';
 		const details: any = {};
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 		
 		if (!rootId) {
 			flags.push(I.ObjectFlag.DeleteEmpty);

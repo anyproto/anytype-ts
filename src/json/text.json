@@ -1390,12 +1390,12 @@
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 
-	"spaceType0": "Personal Space",
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Account",
 
+	"spaceType0": "Personal Space",
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 
@@ -1418,6 +1418,8 @@
 
 	"deletedBanner": "This file is in the Bin and is shown in view mode",
 	"deletedBannerRestore": "Restore",
+	"selectTemplateBanner": "This type has templates",
+	"selectTemplateBannerWithNumber": "This type has %s %s",
 
 	"dispatcherImportSuccessTitle": "The import process is complete!",
 	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",

@@ -2,15 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
-import { Input, InputWithLabel, MenuItemVertical } from 'Component';
-import { blockStore, dbStore, menuStore } from 'Store';
+import { InputWithLabel, MenuItemVertical } from 'Component';
+import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
-
-	state = {
-		templateId: ''
-	};
 	
 	n = -1;
 	ref = null;
@@ -18,7 +14,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	preventSaveOnClose = false;
 	param: any = {};
 	menuContext = null;
-	defaultTemplateName: string = translate('commonBlank');
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -86,24 +81,21 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getTypeId, getTemplateId, getSources, isCollection, getView } = data;
 		const view = getView();
-		const hasSources = isCollection || getSources().length;
+		const defaultTemplate = detailStore.get(rootId, getTemplateId());
 
 		const load = () => {
 			this.param = UtilCommon.objectCopy(data.view.get());
 			this.forceUpdate();
 			this.rebind();
-			this.updateDefaultTemplateName();
 
 			window.setTimeout(() => this.resize(), 5);
 		};
 
-		UtilObject.checkDefaultTemplate(getTypeId(), getTemplateId(), (res) => {
-			if (!hasSources || !res) {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
-			} else {
-				load();
-			};
-		});
+		if (defaultTemplate.isArchived || defaultTemplate.isDeleted) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
+		} else {
+			load();
+		};
 	};
 
 	componentDidUpdate () {
@@ -138,24 +130,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	updateDefaultTemplateName () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getTemplateId } = data;
-		const templateId = getTemplateId();
-
-		if (!templateId || templateId == Constant.templateId.blank) {
-			return;
-		};
-
-		UtilObject.getById(templateId, template => {
-			if (template.name && (this.defaultTemplateName != template.name)) {
-				this.defaultTemplateName = template.name;
-				this.forceUpdate();
-			};
-		});
 	};
 
 	setName () {
@@ -282,8 +256,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const view = data.view.get();
 
 		const typeId = getTypeId();
-		const objectType = dbStore.getTypeById(typeId);
+		const objectType = detailStore.get(rootId, typeId);
 		const defaultTypeName = objectType ? objectType.name : '';
+
+		const templateId = getTemplateId();
+		const template = detailStore.get(rootId, templateId);
+		const templateName = (templateId == Constant.templateId.blank) ? translate('commonBlank') : template.name;
 
 		const hasSources = (isCollection || getSources().length);
 		const allowedDefaultType = isAllowedDefaultType();
@@ -304,16 +282,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt.push(`+${relations.length - 2}`);
 		};
 
-
-		const updateDefaultTemplate = (item, callBack: () => void) => {
+		const updateDefaultTemplate = (item) => {
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
 					onTemplateAdd();
 				};
 			} else {
-				this.updateDefaultTemplateName();
-				menuStore.updateData('dataviewTemplateList', { templateId: item.id });
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id }, callBack);
+				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id });
 			};
 		};
 
@@ -322,18 +297,22 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				id: 'defaultType',
 				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
 				subComponent: 'dataviewTemplateList',
-				caption: allowedDefaultType ? defaultTypeName : this.defaultTemplateName,
+				caption: allowedDefaultType ? defaultTypeName : templateName,
 				data: {
 					typeId,
 					hasSources,
 					getView,
 					templateId: getTemplateId(),
+					defaultTemplate: template,
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,
-					onSetDefault: updateDefaultTemplate,
-					onTypeChange: (id, callBack: () => void) => {
+					onSetDefault: (item) => {
+						updateDefaultTemplate(item);
+						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
+					},
+					onTypeChange: (id) => {
 						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank }, callBack);
+							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
 						};
 					}
 				}

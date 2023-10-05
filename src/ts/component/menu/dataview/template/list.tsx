@@ -1,18 +1,22 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { I, UtilObject, translate, UtilData } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { C, I, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
+import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
+import { observer } from 'mobx-react';
 
-class MenuTemplateList extends React.Component<I.Menu> {
+const TEMPLATE_WIDTH = 236;
+const PADDING = 16;
+
+const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
 	state = {
-		isLoading: false,
-		templateId: ''
+		loading: false
 	};
 
-	n = -1;
+	node: any = null;
+	n = 0;
 	items: any = [];
 	typeId: string = '';
 
@@ -22,13 +26,20 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		this.onClick = this.onClick.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
-		this.reload = this.reload.bind(this);
+		this.getTemplateId = this.getTemplateId.bind(this);
+		this.updateRowLength = this.updateRowLength.bind(this);
+		this.rebind = this.rebind.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { withTypeSelect, typeId } = data;
+		const { withTypeSelect, noAdd, noTitle, typeId } = data;
+		const previewSizesCns = [ 'small', 'medium', 'large' ];
+		const previewSize = data.previewSize || I.PreviewSize.Small;
+		const templateId = this.getTemplateId();
+		const items = this.getItems();
+
 		const type = dbStore.getTypeById(typeId);
 		const itemBlank = { id: Constant.templateId.blank, targetObjectType: typeId };
 		const itemAdd = { id: Constant.templateId.new, targetObjectType: typeId };
@@ -37,7 +48,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const ItemBlank = () => (
 			<div
 				id={`item-${Constant.templateId.blank}`}
-				className={[ 'previewObject', 'small', 'blank', (this.isDefaultTemplate(Constant.templateId.blank) ? 'isDefault' : '') ].join(' ')}
+				className={[ 'previewObject', previewSizesCns[previewSize], 'blank', (Constant.templateId.blank == templateId ? 'isDefault' : '') ].join(' ')}
 			>
 				<div
 					id={`item-more-${Constant.templateId.blank}`}
@@ -60,8 +71,7 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		);
 
 		return (
-			<React.Fragment>
-
+			<div ref={node => this.node = node}>
 				{withTypeSelect ? (
 					<div id="defaultType" className="select big defaultTypeSelect" onClick={this.onType}>
 						<div className="item">
@@ -72,36 +82,46 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					</div>
 				) : ''}
 
-				<Title text={translate('commonTemplates')} />
+				{!noTitle ? <Title text={translate('commonTemplates')} /> : ''}
 
 				{isAllowed ? (
 					<div className="items">
             			<ItemBlank />
 
-						{this.items.map((item: any, i: number) => (
+						{items.map((item: any, i: number) => (
 							<PreviewObject
 								key={i}
-								className={this.isDefaultTemplate(item.id) ? 'isDefault' : ''}
+								className={item.id == templateId ? 'isDefault' : ''}
 								rootId={item.id}
-								size={I.PreviewSize.Small}
+								size={previewSize}
 								onClick={e => this.onClick(e, item)}
 								onMore={e => this.onMore(e, item)}
 							/>
 						))}
 
-						<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
-							<div className="border" />
-							<Icon className="add" />
-						</div>
+						{!noAdd ? (
+							<div className="previewObject small" onClick={e => this.onClick(e, itemAdd)}>
+								<div className="border" />
+								<Icon className="add" />
+							</div>
+						) : ''}
 					</div>
 				) : <EmptySearch text={translate('menuDataviewTemplateUnsupported')} />}
-			</React.Fragment>
+			</div>
 		);
 	};
 
 	componentDidMount () {
 		this.rebind();
-		this.reload();
+		this.load();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
 	rebind () {
@@ -114,57 +134,54 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		$(window).off('keydown.menu');
 	};
 
-	reload () {
-		const { param } = this.props;
-		const { data } = param;
-		const { typeId, templateId, hasSources } = data;
-
-		UtilObject.checkDefaultTemplate(typeId, templateId, (res) => {
-			this.setState({ templateId: (!hasSources || !res) ? Constant.templateId.blank : templateId }, () => this.load(true));
-		});
-	};
-
-	load (clear: boolean, callBack?: (message: any) => void) {
+	load () {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
+		const templateType = dbStore.getTemplateType();
 
-		if (clear) {
-			this.setState({ loading: true });
-		};
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
-		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || UtilObject.defaultName('Page'));
-				return it;
-			}));
-
-			if (clear) {
-				this.setState({ loading: false });
-			} else {
-				this.forceUpdate();
-			};
+		UtilData.searchSubscribe({
+			subId: this.getSubId(),
+			filters,
+			sorts,
+			keys,
+			ignoreHidden: true,
+			ignoreDeleted: true,
 		});
+	};
+
+	getSubId () {
+		return [ this.props.getId(), 'data' ].join('-');
+	};
+
+	getTemplateId () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView, templateId } = data;
+
+		return (getView ? getView().defaultTemplateId || templateId : templateId) || Constant.templateId.blank;
+	};
+
+	getItems () {
+		const subId = this.getSubId();
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 	};
 
 	onMore (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId } = data;
-		const { templateId } = this.state;
-		const node = $(`#item-${item.id}`)
+		const node = $(`#item-${item.id}`);
+		const templateId = this.getTemplateId();
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -188,14 +205,14 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					node.removeClass('active');
 				},
 				data: {
+					rebind: this.rebind,
 					template: item,
 					isView: true,
 					typeId,
 					templateId,
 					route,
-					onArchive: this.reload,
 					onDuplicate: (object) => UtilObject.openPopup(object, {}),
-					onSetDefault: onSetDefault ? () => onSetDefault(item, this.reload) : null,
+					onSetDefault,
 				}
 			});
 		});
@@ -207,8 +224,10 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		const { onSelect } = data;
 
 		if (onSelect) {
-			onSelect(item, this.reload);
+			onSelect(item);
 		};
+
+		data.templateId = item.id;
 	};
 
 	onType () {
@@ -231,11 +250,11 @@ class MenuTemplateList extends React.Component<I.Menu> {
 					};
 
 					window.setTimeout(() => {
-						menuStore.updateData(this.props.id, { typeId: item.id });
-						this.reload();
+						data.typeId = item.id;
+						this.load();
 
 						if (onTypeChange) {
-							onTypeChange(item.id, this.reload);
+							onTypeChange(item.id);
 						};
 					}, type.isInstalled ? 0 : 50);
 				},
@@ -243,9 +262,32 @@ class MenuTemplateList extends React.Component<I.Menu> {
 		});
 	};
 
-	isDefaultTemplate (id: string): boolean {
-    	return id == this.state.templateId;
+	updateRowLength (n: number) {
+		const node = $(this.node);
+		const items = node.find('.items');
+
+		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
-};
+
+	resize () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { fromBanner } = data;
+
+		if (!fromBanner) {
+			return;
+		};
+
+		const sidebar = $('#sidebar');
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sw = commonStore.isSidebarFixed && sidebar.hasClass('active') ? sidebar.outerWidth() : 0;
+		const rows = Math.floor((ww - sw) / TEMPLATE_WIDTH);
+		const obj = $(`#${getId()}`);
+		const items = obj.find('.items');
+
+		items.css({ 'grid-template-columns': `repeat(${rows}, 1fr)` });
+	};
+
+});
 
 export default MenuTemplateList;

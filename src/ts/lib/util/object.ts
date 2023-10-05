@@ -191,12 +191,20 @@ class UtilObject {
 		let typeKey = '';
 
 		details = details || {};
+
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};
+
 		if (details.type) {
 			const type = dbStore.getTypeById(details.type);
-			typeKey = type ? type.uniqueKey : '';
+			if (type) {
+				typeKey = type.uniqueKey;
+
+				if (!templateId) {
+					templateId = type.defaultTemplateId || Constant.templateId.blank;
+				};
+			};
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
@@ -382,12 +390,6 @@ class UtilObject {
 	isAllowedTemplate (typeId): boolean {
 		const type = dbStore.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
-	};
-
-	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
-		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			callBack((message.records || []).map(it => it.id).includes(templateId));
-		});
 	};
 
 };

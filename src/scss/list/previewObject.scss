@@ -24,7 +24,7 @@
 
 		> .defaultLabel {
 			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
-			padding: 1px 4px; border-radius: 4px; background: $colorVeryLightGrey; color: $colorDarkGrey;
+			padding: 1px 4px; border-radius: 4px; background: $colorShapeTertiary; color: $colorTextSecondary;
 		}
 
 		.previewObject { width: 344px; height: 216px; }
@@ -37,7 +37,7 @@
 		> .defaultLabel { opacity: 0; }
 	}
 
-	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
+	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorTextSecondary; }
 	.item > .name {
 		.input { border: 0px; padding: 0px; height: 22px; }
 	}
