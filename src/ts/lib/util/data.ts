@@ -267,7 +267,8 @@ class UtilData {
 				if (profile) {
 					this.subscribeIds({
 						subId: Constant.subId.profile, 
-						ids: [ profile ], 
+						ids: [ profile ],
+						keys: Constant.defaultRelationKeys.concat([ 'identityProfileLink' ]),
 						noDeps: true,
 						ignoreWorkspace: true,
 					});
