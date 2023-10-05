@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { dbStore } from 'Store';
-import { I, UtilData, UtilCommon, UtilDate } from 'Lib';
+import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
+import { dbStore, blockStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
+
+const PADDING = 46;
 
 const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
 
@@ -12,8 +14,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	constructor (props: I.ViewComponent) {
 		super (props);
-
-
 	};
 
 	render () {
@@ -25,32 +25,52 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { d, m, y } = this.getDateParam(value);
 		const subId = this.getSubId(m, y);
 
+		const days = [];
+		for (let i = 1; i <= 7; ++i) {
+			days.push({ id: i, name: translate(`day${i}`) });
+		};
+
 		return (
 			<div 
 				ref={node => this.node = node} 
 				className="wrap"
 			>
 				<div className={cn.join(' ')}>
+					<div id="dateSelect" className="dateSelect">
+						<div className="month">August</div>
+						<div className="year">2023</div>
+					</div>
+
 					<div className="table">
-						{data.map((item, i) => {
-							const cn = [ 'day' ];
-							if (m != item.m) {
-								cn.push('other');
-							};
-							if ((d == item.d) && (m == item.m) && (y == item.y)) {
-								cn.push('active');
-							};
-							return (
-								<Item 
-									key={i}
-									{...this.props} 
-									{...item} 
-									className={cn.join(' ')}
-									getSubId={() => subId}
-									getDateParam={this.getDateParam}
-								/>
-							);
-						})}
+						<div className="head">
+							{days.map((item, i) => (
+								<div key={i} className="item th">
+									{item.name.substring(0, 2)}
+								</div>
+							))}
+						</div>
+
+						<div className="body">
+							{data.map((item, i) => {
+								const cn = [ 'day' ];
+								if (m != item.m) {
+									cn.push('other');
+								};
+								if ((d == item.d) && (m == item.m) && (y == item.y)) {
+									cn.push('active');
+								};
+								return (
+									<Item 
+										key={i}
+										{...this.props} 
+										{...item} 
+										className={cn.join(' ')}
+										getSubId={() => subId}
+										getDateParam={this.getDateParam}
+									/>
+								);
+							})}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -130,7 +150,22 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
+	};
 
+	resize () {
+		const { isPopup, isInline } = this.props;
+
+		if (isInline) {
+			return;
+		};
+
+		const node = $(this.node);
+		const container = UtilCommon.getPageContainer(isPopup);
+		const cw = container.width();
+		const mw = cw - PADDING * 2;
+		const margin = (cw - mw) / 2;
+
+		node.css({ width: cw, marginLeft: -margin - 2 });
 	};
 
 });

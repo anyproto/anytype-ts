@@ -42,7 +42,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				<div className="items">
 					{slice.map((item, i) => (
 						<div key={i} className="item">
-							<IconObject object={item} />
+							<IconObject object={item} size={16} />
 							<ObjectName object={item} />
 						</div>
 					))}

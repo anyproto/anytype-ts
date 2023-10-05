@@ -2,15 +2,32 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewCalendar { padding: 0px 0px 0px 14px; }
+		.viewContent.viewCalendar { position: relative; }
 		.viewContent.viewCalendar {
-			.table { 
-				display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); 
-				border-color: $colorShapeSecondary; border-style: solid; border-left-width: 1px; border-top-width: 1px;
+			.dateSelect { 
+				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 4px;
+				left: 8px; top: 28px;
+			}
+			.dateSelect {
+				.month { font-weight: 600; }
+			}
+
+			.table { border-color: $colorShapeSecondary; border-style: solid; border-width: 1px; border-left-width: 0px; border-right-width: 0px; }
+
+			.table {
+				.head, .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+				.body { overflow: auto; height: 500px; }
+
+				.head {
+					.item { 
+						@include text-small; padding: 2px 10px; border-color: $colorShapeSecondary; border-style: solid;
+						border-right-width: 1px; border-bottom-width: 1px; text-align: right;
+					}
+				}
 			}
 
 			.day { 
-				height: 136px; display: table-cell; text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
+				min-height: 136px; display: table-cell; text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
 				border-right-width: 1px; border-bottom-width: 1px; padding: 6px 8px;
 			}
 			.day.active .number { color: $colorSystemAccent100; }
@@ -18,7 +35,7 @@
 
 			.day {
 				.number { @include text-paragraph; text-align: right; }
-				.item { display: flex; flex-direction: row; gap: 0px 6px; @include text-small; @include text-overflow-nw; margin: 0px 0px 2px 0px; }
+				.item { display: flex; flex-direction: row; gap: 0px 4px; @include text-small; @include text-overflow-nw; margin: 0px 0px 2px 0px; }
 				.item {
 					.name { @include text-overflow-nw; }
 				}
