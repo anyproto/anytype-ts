@@ -54,4 +54,10 @@
 			}
         }
     }
+
+	.block.blockDataview.isInline {
+		.viewContent.viewCalendar {
+			.table { border-left-width: 1px; border-bottom-width: 0px; }
+		}
+	}
 }
