@@ -306,13 +306,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 					defaultTemplate: template,
 					withTypeSelect: allowedDefaultType,
 					onSelect: updateDefaultTemplate,
-					onSetDefault: (item) => {
-						updateDefaultTemplate(item);
-						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
-					},
+					onSetDefault: updateDefaultTemplate,
 					onTypeChange: (id) => {
 						if (id != getTypeId()) {
 							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+
+							analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
 						};
 					}
 				}
