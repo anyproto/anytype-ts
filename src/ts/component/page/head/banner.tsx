@@ -12,13 +12,9 @@ interface Props {
 	isPopup?: boolean;
 };
 
-const TEMPLATE_WIDTH = 236;
-const PADDING = 16;
-
 class HeaderBanner extends React.Component<Props> {
 
 	node: any = null;
-	menuContext: any = null;
 
 	constructor (props: Props) {
 		super(props);

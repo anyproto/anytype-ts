@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
-import { C, I, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
+import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
 import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
@@ -28,6 +28,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.onType = this.onType.bind(this);
 		this.getTemplateId = this.getTemplateId.bind(this);
 		this.updateRowLength = this.updateRowLength.bind(this);
+		this.setCurrent = this.setCurrent.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.rebind = this.rebind.bind(this);
 	};
 
@@ -126,12 +128,59 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+		$(window).on('keydown.templateList', e => this.onKeyDown(e));
 	};
 
 	unbind () {
-		$(window).off('keydown.menu');
+		$(window).off('keydown.templateList');
+	};
+
+	onKeyDown (e: any) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { typeId, onSelect } = data;
+		const items = this.getItems();
+
+		const setActive = () => {
+			let item = { id: Constant.templateId.blank, targetObjectType: typeId };
+
+			if (this.n > 0) {
+				item = items[this.n - 1];
+			};
+
+			if (onSelect) {
+				onSelect(item);
+			};
+
+			data.templateId = item.id;
+		};
+
+
+		keyboard.shortcut('arrowup, arrowleft', e, () => {
+			e.preventDefault();
+			e.key = 'arrowup';
+
+			this.n--;
+
+			if (this.n < 0) {
+				this.n = items.length;
+			};
+
+			setActive();
+		});
+
+		keyboard.shortcut('arrowdown, arrowright', e, () => {
+			e.preventDefault();
+			e.key = 'arrowdown';
+
+			this.n++;
+
+			if (this.n > items.length) {
+				this.n = 0;
+			};
+
+			setActive();
+		});
 	};
 
 	load () {
@@ -156,7 +205,24 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			keys,
 			ignoreHidden: true,
 			ignoreDeleted: true,
+		}, this.setCurrent);
+	};
+
+	setCurrent () {
+		const { param } = this.props;
+		const { data } = param;
+		const { templateId } = data;
+		const items = this.getItems();
+
+		this.n = 0;
+
+		items.forEach((el, idx) => {
+			if (templateId == el.id) {
+				this.n = idx + 1;
+			};
 		});
+
+		this.rebind();
 	};
 
 	getSubId () {
@@ -251,6 +317,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 					window.setTimeout(() => {
 						data.typeId = item.id;
+						data.templateId = type.defaultTemplateId || Constant.templateId.blank;
 						this.load();
 
 						if (onTypeChange) {
