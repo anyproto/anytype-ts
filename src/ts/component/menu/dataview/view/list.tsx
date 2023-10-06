@@ -184,7 +184,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.closeAll([ 'dataviewViewEdit' ]);
+		menuStore.closeAll([ 'select' ]);
 	};
 
 	rebind () {
@@ -218,7 +218,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget } = data;
+		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget, onViewSettings } = data;
 		const view = getView();
 		const sources = getSources();
 		const relations = UtilCommon.objectCopy(view.relations);
@@ -253,20 +253,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			};
 
 			const view = dbStore.getView(rootId, blockId, message.viewId);
-
-			menuStore.open('dataviewViewEdit', {
-				element: `#${getId()}`,
-				offsetX: getSize().width,
-				offsetY: -getSize().height,
-				data: {
-					...data,
-					readonly: !allowed,
-					view: observable.box(view),
-					onSave: () => {
-						loadData(view.id, 0);
-					},
-				},
-			});
+			onViewSettings(view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -281,18 +268,46 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const { rootId, blockId, onViewSettings, onViewCopy, onViewRemove } = data;
+		const element = `#${getId()} #item-${item.id}`;
 
-		menuStore.open('dataviewViewEdit', { 
-			element: `#${getId()}`,
+		const views = dbStore.getViews(rootId, blockId);
+
+		const options: any[] = [
+			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+		];
+
+		if (views.length > 1) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+		};
+
+		menuStore.open('select', {
+			element,
 			offsetX: getSize().width,
-			offsetY: -getSize().height,
+			offsetY: -$(element).outerHeight(),
 			data: {
-				...data,
-				readonly: !allowed,
-				view: observable.box(item),
-				onSave: () => { this.forceUpdate(); },
+				options,
+				onSelect: (e, option) => {
+					menuStore.close('select');
+
+					switch (option.id) {
+						case 'edit': {
+							onViewSettings(item);
+							break;
+						};
+
+						case 'copy': {
+							onViewCopy(item);
+							break;
+						};
+
+						case 'remove': {
+							onViewRemove(item);
+							break;
+						};
+					};
+				}
 			}
 		});
 	};
