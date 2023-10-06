@@ -19,7 +19,8 @@ const Item = observer(class Item extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { className, d } = this.props;
+		const { className, d, getView } = this.props;
+		const view = getView();
 		const items = this.getItems()
 		const slice = items.slice(0, LIMIT);
 		const length = items.length;
@@ -42,7 +43,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				<div className="items">
 					{slice.map((item, i) => (
 						<div key={i} className="item">
-							<IconObject object={item} size={16} />
+							{!view.hideIcon ? <IconObject object={item} size={16} /> : ''}
 							<ObjectName object={item} />
 						</div>
 					))}
