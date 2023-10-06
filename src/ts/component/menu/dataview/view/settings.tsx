@@ -79,23 +79,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getTypeId, getTemplateId, getSources, isCollection, getView } = data;
+		const { rootId, blockId, getTypeId, getTemplateId, getView } = data;
 		const view = getView();
 		const defaultTemplate = detailStore.get(rootId, getTemplateId());
 
-		const load = () => {
-			this.param = UtilCommon.objectCopy(data.view.get());
-			this.forceUpdate();
-			this.rebind();
+		this.param = UtilCommon.objectCopy(data.view.get());
+		this.forceUpdate();
+		this.rebind();
 
-			window.setTimeout(() => this.resize(), 5);
-		};
-
-		if (defaultTemplate.isArchived || defaultTemplate.isDeleted) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, load);
-		} else {
-			load();
-		};
+		window.setTimeout(() => this.resize(), 5);
 	};
 
 	componentDidUpdate () {
@@ -124,12 +116,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		$(window).on('keydown.viewSettings', e => this.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
-		$(window).off('keydown.menu');
+		$(window).off('keydown.viewSettings');
 	};
 
 	setName () {
@@ -155,7 +147,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		let ret = false;
 
 		keyboard.shortcut('enter', e, () => {
-			this.save();
+			this.save(true);
 			close();
 			ret = true;
 		});
@@ -196,6 +188,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	
 	onNameBlur () {
 		this.isFocused = false;
+		this.save(true);
 	};
 
 	onNameEnter () {

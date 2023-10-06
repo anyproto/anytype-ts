@@ -523,7 +523,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (close) {
-			menuStore.closeAll([ 'dataviewViewList', 'dataviewViewSettings' ]);
+			menuStore.closeAll([ 'dataviewViewList' ]);
 		};
 	};
 
