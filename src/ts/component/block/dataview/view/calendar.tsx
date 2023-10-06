@@ -1,16 +1,24 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { Select } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
-import { dbStore, blockStore } from 'Store';
+import { dbStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
+interface State {
+	value: number;
+};
+
 const PADDING = 46;
 
-const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
+const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent, State> {
 
 	node: any = null;
 	ref = null;
+	state = {
+		value: UtilDate.now(),
+	};
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -18,16 +26,27 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	render () {
 		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
 
-		const value = UtilDate.now();
 		const { d, m, y } = this.getDateParam(value);
 		const subId = this.getSubId(m, y);
 
 		const days = [];
+		const months = [];
+		const years = [];
+
 		for (let i = 1; i <= 7; ++i) {
 			days.push({ id: i, name: translate(`day${i}`) });
+		};
+
+		for (let i = 1; i <= 12; ++i) {
+			months.push({ id: i, name: translate('month' + i) });
+		};
+
+		for (let i = 0; i <= 3000; ++i) {
+			years.push({ id: i, name: i });
 		};
 
 		return (
@@ -37,8 +56,20 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			>
 				<div className={cn.join(' ')}>
 					<div id="dateSelect" className="dateSelect">
-						<div className="month">August</div>
-						<div className="year">2023</div>
+						<Select 
+							id="calendar-month" 
+							value={m} 
+							options={months} 
+							className="month" 
+							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+						<Select 
+							id="calendar-year" 
+							value={y} 
+							options={years} 
+							className="year" 
+							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
 					</div>
 
 					<div className="table">
@@ -90,7 +121,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getData () {
-		return UtilDate.getCalendarMonth(UtilDate.now());
+		return UtilDate.getCalendarMonth(this.state.value);
 	};
 
 	getSubId (m: number, y: number) {
@@ -100,6 +131,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	load () {
 		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
+		const { value } = this.state;
 		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -108,7 +140,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const { m, y } = this.getDateParam(UtilDate.now());
+		const { m, y } = this.getDateParam(value);
 		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
 		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
 		const limit = 10;
@@ -150,6 +182,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
+	};
+
+	setValue (value: number) {
+		this.setState({ value });
 	};
 
 	resize () {

@@ -268,6 +268,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const allowedDefaultSettings = hasSources && (allowedDefaultType || isAllowedTemplate());
 
 		const isBoard = type == I.ViewType.Board;
+		const isCalendar = type == I.ViewType.Calendar;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -321,7 +322,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') }
+			!isCalendar ? { id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') } : null,
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
@@ -346,7 +347,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);
 			return s;
-		});
+		}).filter(s => !!s.children.length);
 
 		return sections;
 	};

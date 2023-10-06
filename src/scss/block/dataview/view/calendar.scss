@@ -5,11 +5,16 @@
 		.viewContent.viewCalendar { position: relative; height: 100%; }
 		.viewContent.viewCalendar {
 			.dateSelect { 
-				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 4px;
+				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 6px;
 				left: 8px; top: 28px;
 			}
 			.dateSelect {
 				.month { font-weight: 600; }
+				.select { padding: 0px; border: 0px; }
+				.select {
+					.icon.arrow { display: none; }
+				}
+				.select:hover, .select.active { background: unset; }
 			}
 
 			.table { 

@@ -55,7 +55,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id="month"
 								value={String(m || '')} 
 								options={months} 
-								onChange={m => { this.setValue(UtilDate.timestamp(y, m, 1), false, false); }} 
+								onChange={m => this.setValue(UtilDate.timestamp(y, m, 1), false, false)} 
 								menuParam={{ 
 									classNameWrap, 
 									width: 192,
