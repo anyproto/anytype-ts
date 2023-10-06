@@ -25,12 +25,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { className } = this.props;
 		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
-
-		const { d, m, y } = this.getDateParam(value);
+		const { m, y } = this.getDateParam(value);
+		const today = this.getDateParam(UtilDate.now());
 		const subId = this.getSubId(m, y);
 
 		const days = [];
@@ -87,7 +87,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 								if (m != item.m) {
 									cn.push('other');
 								};
-								if ((d == item.d) && (m == item.m) && (y == item.y)) {
+								if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 									cn.push('active');
 								};
 								return (
