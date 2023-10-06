@@ -1080,6 +1080,7 @@
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
+	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open link",
 	"menuDataviewUrlActionGo8": "Mail to",

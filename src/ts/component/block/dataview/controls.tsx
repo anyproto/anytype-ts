@@ -18,6 +18,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	refFilter = null;
+	buttonNodeId = {};
 
 	constructor (props: Props) {
 		super(props);
@@ -73,11 +74,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			};
 
 			return (
-				<Icon 
+				<Icon
+					ref={() => this.buttonNodeId[item.id] = elementId}
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={e => this.onButton(e, `#${elementId}`, item.menu)}
+					onClick={() => this.onButton(`#${elementId}`, item.menu)}
 				/>
 			);
 		};
@@ -118,7 +120,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
-							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList'); }}
+							onClick={(e: any) => { this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList'); }}
 							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
@@ -194,7 +196,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		win.off('keydown.filter');
 	};
 
-	onButton (e: any, element: string, component: string) {
+	onViewSettings () {
+		this.onButton(`#${this.buttonNodeId['settings']}`, 'dataviewViewSettings');
+	};
+
+	onButton (element: string, component: string) {
 		if (!component) {
 			return;
 		};
@@ -283,7 +289,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			const sideLeft = node.find('#sideLeft');
 			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
 
-			this.onViewEdit(e, element, view);
+			this.onViewSet(view);
+			window.setTimeout(() => { this.onViewSettings() }, 50);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -311,28 +318,74 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const views = dbStore.getViews(rootId, block.id);
+		const object = getTarget();
+		const sources = getSources();
 		const view = dbStore.getView(rootId, block.id, item.id);
+
+		const options: any[] = [
+			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+		];
+
+		if (views.length > 1) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+		};
 
 		this.onViewSet(view);
 
 		window.setTimeout(() => {
-			menuStore.open('dataviewViewEdit', { 
+			menuStore.open('select', {
 				element,
+				offsetY: 4,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
 				data: {
-					rootId,
-					blockId: block.id,
-					readonly: !allowed,
-					view: observable.box(view),
-					isInline,
-					isCollection,
-					getTarget,
-					getView,
-					loadData,
-					getSources,
-					onSave: () => this.forceUpdate(),
+					options,
+					onSelect: (e, item) => {
+						switch (item.id) {
+							case 'edit': {
+								this.onViewSettings();
+								break;
+							};
+
+							case 'copy': {
+								C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
+									this.onViewSet({ id: message.viewId, type: view.type });
+									window.setTimeout(() => { this.onViewSettings() }, 50);
+
+									analytics.event('DuplicateView', {
+										type: view.type,
+										objectType: object.type,
+										embedType: analytics.embedType(isInline)
+									});
+								});
+								break;
+							};
+
+							case 'remove': {
+								const idx = views.findIndex(it => it.id == view.id);
+								const filtered = views.filter(it => it.id != view.id);
+
+								let next = idx >= 0 ? filtered[idx] : filtered[0];
+								if (!next) {
+									next = filtered[filtered.length - 1];
+								};
+
+								if (next) {
+									C.BlockDataviewViewDelete(rootId, block.id, view.id, () => {
+										this.onViewSet(next);
+
+										analytics.event('RemoveView', {
+											objectType: object.type,
+											embedType: analytics.embedType(isInline)
+										});
+									});
+								};
+								break;
+							};
+						};
+					}
 				}
 			});
 		}, 50);
