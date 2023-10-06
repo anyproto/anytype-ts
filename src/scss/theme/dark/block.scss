@@ -209,6 +209,16 @@
 			}
         }
 
+		.viewContent.viewCalendar {
+			.dateSelect { background-color: rgba(23,23,23,0.9); }
+			.table, .day { border-color: $colorShapeSecondary; }
+			.table {
+				.head {
+					.item { border-color: $colorShapeSecondary; }
+				}
+			}
+		}
+
 		.content {
 			.scrollWrap { background: $colorBgPrimary; }
 		}
