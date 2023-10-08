@@ -63,7 +63,18 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		console.log('ITEM: ', item)
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const targetId = '';
+		const position = I.BlockPosition.Bottom;
+		const details: any = { type: item.id };
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+
+		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+			UtilObject.openAuto({ id: message.targetId });
+			analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
+		});
 	};
 
 	onMouseEnter (e: any, item: any) {
