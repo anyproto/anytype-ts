@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
@@ -117,7 +118,26 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		keyboard.pageCreate();
+		// keyboard.pageCreate();
+		const element = '#button-navigation-plus';
+
+		if (menuStore.isOpen('quickCapture')) {
+			menuStore.close('quickCapture');
+			return;
+		};
+
+		$(element).addClass('active');
+		menuStore.open('quickCapture', {
+			element,
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			offsetY: -16,
+			onClose: () => {
+				$(element).removeClass('active');
+			}
+		});
 	};
 
 	onGraph () {
