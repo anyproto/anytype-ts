@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview, UtilData } from 'Lib';
+import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
@@ -17,10 +17,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		return (
-			<div className="quickCaptureWrapper">
-				AAAA
+			<div>
 				{items.map((item: any, i: number) => (
-					<div onClick={e => this.onClick(e, item)}>{item.name}</div>
+					<div key={i} onClick={e => this.onClick(e, item)}>{item.name}</div>
 				))}
 			</div>
 		);
@@ -41,10 +40,19 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = detailStore.get(rootId, rootId, []);
+		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
+		const itemIds = items.map(it => it.id);
+		const defaultType = dbStore.getTypeById(commonStore.type);
 
-		return [
+		if (!itemIds.includes(defaultType.id)) {
+			items.unshift(defaultType);
+		};
 
-		].filter(it => it);
+		return items;
 	};
 
 	onClick (e: any, item: any) {

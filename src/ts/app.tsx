@@ -188,7 +188,7 @@ import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/template.scss';
 
-import 'scss/menu/quick-capture.scss';
+import 'scss/menu/quickCapture.scss';
 
 import 'scss/media/print.scss';
 

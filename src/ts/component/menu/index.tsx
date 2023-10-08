@@ -78,7 +78,7 @@ import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
 
-import MenuQuickCapture from './quick-capture';
+import MenuQuickCapture from './quickCapture';
 
 interface State {
 	tab: string;
