@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { MenuItemVertical, IconObject, ObjectName } from 'Component';
+import { MenuItemVertical, IconObject, ObjectName, Icon } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview, UtilData } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -16,17 +16,36 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	render () {
 		const items = this.getItems();
 
+		const Item = (item: any) => {
+			if (item.id == 'search') {
+				return (
+					<div
+						className="item itemSearch"
+						onMouseEnter={() => this.n = item.idx}
+						onMouseLeave={() => this.n = -1}
+					>
+						<Icon className="search" />
+					</div>
+				);
+			};
+
+			return (
+				<div
+					className="item"
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={() => this.n = item.idx}
+					onMouseLeave={() => this.n = -1}
+				>
+					<IconObject object={item} />
+					<ObjectName object={item} />
+				</div>
+			);
+		};
+
 		return (
 			<div className="quickCapture">
 				{items.map((item: any, i: number) => (
-					<div
-						key={i}
-						className="quickCaptureItem"
-						onClick={e => this.onClick(e, item)}
-					>
-						<IconObject object={item} />
-						<ObjectName object={item} />
-					</div>
+					<Item key={i} idx={i} {...item} />
 				))}
 			</div>
 		);
@@ -59,6 +78,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			items.unshift(defaultType);
 		};
 
+		items.unshift({ id: 'search', icon: 'search', name: '' });
+
 		return items;
 	};
 
@@ -75,24 +96,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
 		});
-	};
-
-	onMouseEnter (e: any, item: any) {
-		this.onOver(e, item);
-	};
-
-	onOver (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onOver } = data;
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
-
-		if (onOver) {
-			onOver();
-		};
 	};
 
 };
