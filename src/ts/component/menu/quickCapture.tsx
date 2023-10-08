@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { MenuItemVertical } from 'Component';
+import { MenuItemVertical, IconObject, ObjectName } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview, UtilData } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -17,9 +17,16 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		return (
-			<div>
+			<div className="quickCapture">
 				{items.map((item: any, i: number) => (
-					<div key={i} onClick={e => this.onClick(e, item)}>{item.name}</div>
+					<div
+						key={i}
+						className="quickCaptureItem"
+						onClick={e => this.onClick(e, item)}
+					>
+						<IconObject object={item} />
+						<ObjectName object={item} />
+					</div>
 				))}
 			</div>
 		);
@@ -56,17 +63,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close } = this.props;
-
-		close();
-
-		switch (item.id) {
-			case 'default': {
-
-				break;
-			};
-
-		};
+		console.log('ITEM: ', item)
 	};
 
 	onMouseEnter (e: any, item: any) {

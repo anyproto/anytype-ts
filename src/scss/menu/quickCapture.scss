@@ -3,6 +3,13 @@
 .menus {
     .menu.menuQuickCapture { box-shadow: none; background: none; }
     .menu.menuQuickCapture {
-
+        .quickCapture { display: flex; gap: 0px 8px; }
+        .quickCapture {
+            .quickCaptureItem {
+                display: flex; flex-wrap: nowrap; height: 48px; align-items: center; justify-content: center; gap: 0px 8px; padding: 0 16px 0 14px;
+                background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px;
+                box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
+            }
+        }
     }
 }
