@@ -7,43 +7,39 @@ import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
 
-	n = 0;
+	node: any = null;
+	n = -1;
 
 	constructor (props: I.Menu) {
 		super(props);
+
+		this.onOut = this.onOut.bind(this);
 	};
 
 	render () {
 		const items = this.getItems();
 
 		const Item = (item: any) => {
-			if (item.id == 'search') {
-				return (
-					<div
-						className="item itemSearch"
-						onMouseEnter={() => this.n = item.idx}
-						onMouseLeave={() => this.n = -1}
-					>
-						<Icon className="search" />
-					</div>
-				);
-			};
-
 			return (
 				<div
+					id={`item-${item.id}`}
 					className="item"
-					onClick={e => this.onClick(e, item)}
-					onMouseEnter={() => this.n = item.idx}
-					onMouseLeave={() => this.n = -1}
+					onClick={() => this.onClick(item)}
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					onMouseLeave={this.onOut}
 				>
-					<IconObject object={item} />
-					<ObjectName object={item} />
+					{item.id == 'search' ? <Icon className="search" /> : (
+						<React.Fragment>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</React.Fragment>
+					)}
 				</div>
 			);
 		};
 
 		return (
-			<div className="quickCapture">
+			<div ref={node => this.node = node} className="quickCapture">
 				{items.map((item: any, i: number) => (
 					<Item key={i} idx={i} {...item} />
 				))}
@@ -55,14 +51,56 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		this.rebind();
 	};
 
+	componentWillUnmount () {
+		this.unbind();
+	};
+
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		const items = this.getItems();
+
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowleft', e, () => {
+			e.preventDefault();
+			e.key = 'arrowup';
+
+			this.n--;
+			if (this.n < 0) {
+				this.n = items.length - 1;
+			};
+
+			this.setHover(items[this.n]);
+		});
+
+		keyboard.shortcut('arrowdown, arrowright', e, () => {
+			e.preventDefault();
+			e.key = 'arrowup';
+
+			this.n++;
+			if (this.n > items.length - 1) {
+				this.n = 0;
+			};
+
+			this.setHover(items[this.n]);
+		});
+
+		keyboard.shortcut('enter, space', e, () => {
+			e.preventDefault();
+
+			if (items[this.n]) {
+				this.onClick(items[this.n]);
+			};
+		});
 	};
 
 	getItems () {
@@ -83,7 +121,12 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		return items;
 	};
 
-	onClick (e: any, item: any) {
+	onClick (item: any) {
+		if (item.id == 'search') {
+			this.onExpand();
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -96,6 +139,31 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
 		});
+	};
+
+	onExpand () {
+		
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setHover(item);
+		};
+	};
+
+	onOut () {
+		if (!keyboard.isMouseDisabled) {
+			this.setHover();
+		};
+	};
+
+	setHover (item?: any) {
+		const node = $(this.node);
+
+		node.find('.item.hover').removeClass('hover');
+		if (item) {
+			node.find('#item-' + item.id).addClass('hover');
+		};
 	};
 
 };
