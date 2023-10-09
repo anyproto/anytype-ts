@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
@@ -28,7 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onViewAdd = this.onViewAdd.bind(this);
 		this.onFilterShow = this.onFilterShow.bind(this);
 		this.onFilterHide = this.onFilterHide.bind(this);
-		this.onViewSettings = this.onViewSettings.bind(this);
+		this.onViewSwitch = this.onViewSwitch.bind(this);
 		this.onViewContext = this.onViewContext.bind(this);
 		this.onViewCopy = this.onViewCopy.bind(this);
 		this.onViewRemove = this.onViewRemove.bind(this);
@@ -198,9 +198,14 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		win.off('keydown.filter');
 	};
 
-	onViewSettings () {
+	onViewSwitch (view: any) {
 		const { block } = this.props;
-		this.onButton(`#button-${block.id}-settings`, 'dataviewViewSettings');
+
+		this.onViewSet(view);
+
+		window.setTimeout(() => {
+			$(`#button-${block.id}-settings`).trigger('click');
+		}, 50);
 	};
 
 	onViewCopy (view) {
@@ -209,8 +214,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sources = getSources();
 
 		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
-			this.onViewSet({ id: message.viewId, type: view.type });
-			window.setTimeout(() => { this.onViewSettings() }, 50);
+			this.onViewSwitch({ id: message.viewId, type: view.type });
 
 			analytics.event('DuplicateView', {
 				type: view.type,
@@ -293,10 +297,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				isAllowedDefaultType,
 				isAllowedTemplate,
 				onTemplateAdd,
-				onViewSettings: (view) => {
-					this.onViewSet(view);
-					window.setTimeout(() => { this.onViewSettings() }, 50);
-				},
+				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
 				view: observable.box(view)
@@ -342,8 +343,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			const sideLeft = node.find('#sideLeft');
 			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
 
-			this.onViewSet(view);
-			window.setTimeout(() => { this.onViewSettings() }, 50);
+			this.onViewSwitch(view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -367,54 +367,27 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewContext (e: any, element: string, item: any) {
+	onViewContext (e: any, element: string, view: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
-		const object = getTarget();
-		const view = dbStore.getView(rootId, block.id, item.id);
+		const { rootId, block } = this.props;
 
-		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
-		];
-
-		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
-		};
-
-		this.onViewSet(view);
-
-		window.setTimeout(() => {
-			menuStore.open('select', {
+		const contextParam = {
+			rootId,
+			blockId: block.id,
+			view,
+			onCopy: this.onViewCopy,
+			onRemove: this.onViewRemove,
+			menuParam: {
 				element,
 				offsetY: 4,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				data: {
-					options,
-					onSelect: (e, item) => {
-						switch (item.id) {
-							case 'edit': {
-								this.onViewSettings();
-								break;
-							};
+			}
+		};
 
-							case 'copy': {
-								this.onViewCopy(view);
-								break;
-							};
-
-							case 'remove': {
-								this.onViewRemove(view);
-								break;
-							};
-						};
-					}
-				}
-			});
-		}, 50);
+		this.onViewSet(view);
+		UtilMenu.viewContextMenu(contextParam);
 	};
 
 	onSortStart () {

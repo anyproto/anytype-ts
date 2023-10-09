@@ -6,8 +6,9 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -55,7 +56,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+					<Icon className="more" onClick={(e: any) => { this.onViewContext(e, item); }} />
 				</div>
 			</div>
 		));
@@ -216,9 +217,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	};
 
 	onAdd () {
-		const { param, getId, getSize } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget, onViewSettings } = data;
+		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget, onViewSwitch } = data;
 		const view = getView();
 		const sources = getSources();
 		const relations = UtilCommon.objectCopy(view.relations);
@@ -253,7 +254,11 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			};
 
 			const view = dbStore.getView(rootId, blockId, message.viewId);
-			onViewSettings(view);
+
+			close();
+			window.setTimeout(() => {
+				onViewSwitch(view);
+			}, Constant.delay.menu);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -263,53 +268,29 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		});
 	};
 
-	onEdit (e: any, item: any) {
+	onViewContext (e: any, view: any) {
 		e.stopPropagation();
 
-		const { param, getId, getSize } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onViewSettings, onViewCopy, onViewRemove } = data;
-		const element = `#${getId()} #item-${item.id}`;
+		const { rootId, blockId, onViewCopy, onViewRemove } = data;
+		const element = `#${getId()} #item-${view.id}`;
 
-		const views = dbStore.getViews(rootId, blockId);
-
-		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
-		];
-
-		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+		const contextParam = {
+			rootId,
+			blockId,
+			view,
+			onCopy: onViewCopy,
+			onRemove: onViewRemove,
+			close,
+			menuParam: {
+				element,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center
+			}
 		};
 
-		menuStore.open('select', {
-			element,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			data: {
-				options,
-				onSelect: (e, option) => {
-					menuStore.close('select');
-
-					switch (option.id) {
-						case 'edit': {
-							onViewSettings(item);
-							break;
-						};
-
-						case 'copy': {
-							onViewCopy(item);
-							break;
-						};
-
-						case 'remove': {
-							onViewRemove(item);
-							break;
-						};
-					};
-				}
-			}
-		});
+		UtilMenu.viewContextMenu(contextParam);
 	};
 
 	onClick (e: any, item: any) {
