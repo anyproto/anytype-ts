@@ -18,7 +18,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	refFilter = null;
-	buttonNodeId = {};
 
 	constructor (props: Props) {
 		super(props);
@@ -79,7 +78,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 			return (
 				<Icon
-					ref={() => this.buttonNodeId[item.id] = elementId}
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
@@ -201,7 +199,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewSettings () {
-		this.onButton(`#${this.buttonNodeId['settings']}`, 'dataviewViewSettings');
+		const { block } = this.props;
+		this.onButton(`#button-${block.id}-settings`, 'dataviewViewSettings');
 	};
 
 	onViewCopy (view) {

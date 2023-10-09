@@ -434,7 +434,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
-			return;
 		};
 
 		$(this.node).addClass('hover');
@@ -445,7 +444,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 		if (onMouseLeave) {
 			onMouseLeave(e);
-			return;
 		};
 
 		 $(this.node).removeClass('hover');

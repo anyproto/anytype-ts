@@ -17,7 +17,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	node: any = null;
 	n = 0;
-	items: any = [];
 	typeId: string = '';
 
 	constructor (props: I.Menu) {
@@ -73,37 +72,42 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			</div>
 		);
 
-		const Item = (item: any) => {
-			if (item.id == Constant.templateId.blank) {
-				return <ItemBlank {...item} />;
-			};
+		const ItemNew = (item: any) => (
+			<div
+				id={`item-${item.id}`}
+				className="previewObject small"
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.setHover(e, item)}
+				onMouseLeave={this.setHover}
+			>
+				<div className="border" />
+				<Icon className="add" />
+			</div>
+		);
 
+		const Item = (item: any) => {
+			let component = null;
+
+			if (item.id == Constant.templateId.blank) {
+				component = <ItemBlank {...item} />;
+			} else
 			if (item.id == Constant.templateId.new) {
-				return (
-					<div
-						id={`item-${item.id}`}
-						className="previewObject small"
+				component = <ItemNew {...item} />;
+			} else {
+				component = (
+					<PreviewObject
+						className={item.id == templateId ? 'isDefault' : ''}
+						rootId={item.id}
+						size={previewSize}
 						onClick={e => this.onClick(e, item)}
 						onMouseEnter={e => this.setHover(e, item)}
 						onMouseLeave={this.setHover}
-					>
-						<div className="border" />
-						<Icon className="add" />
-					</div>
+						onMore={e => this.onMore(e, item)}
+					/>
 				);
 			};
 
-			return (
-				<PreviewObject
-					className={item.id == templateId ? 'isDefault' : ''}
-					rootId={item.id}
-					size={previewSize}
-					onClick={e => this.onClick(e, item)}
-					onMouseEnter={e => this.setHover(e, item)}
-					onMouseLeave={this.setHover}
-					onMore={e => this.onMore(e, item)}
-				/>
-			);
+			return component;
 		};
 
 		return (
@@ -202,7 +206,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		node.find('.previewObject.hover').removeClass('hover');
 		if (item) {
 			this.n = items.findIndex(it => it.id == item.id);
-			node.find('#item-' + item.id).addClass('hover');
+			node.find(`#item-${item.id}`).addClass('hover');
 		};
 	};
 
@@ -300,7 +304,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					node.addClass('active');
 				},
 				onClose: () => {
-					this.rebind();
 					node.removeClass('active');
 				},
 				data: {
