@@ -67,3 +67,11 @@
 .iconObject.isHuman { border-radius: 100% !important; }
 
 .iconObject.withOption.isSpace { background: $colorControlAccent !important; }
+
+.iconObject.isSpace { border-radius: 2px !important; }
+.iconObject.isSpace.c64, 
+.iconObject.isSpace.c80, 
+.iconObject.isSpace.c96, 
+.iconObject.isSpace.c108, 
+.iconObject.isSpace.c112, 
+.iconObject.isSpace.c128 { border-radius: 4px !important; }
