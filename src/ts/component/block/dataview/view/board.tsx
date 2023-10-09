@@ -28,14 +28,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	constructor (props: I.ViewComponent) {
 		super(props);
-		
-		this.onView = this.onView.bind(this);
+
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 	};
 
 	render () {
-		const { rootId, block, getView, className } = this.props;
+		const { rootId, block, getView, className, onViewSettings } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -43,13 +42,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (!relation || !relation.isInstalled) {
 			return (
-				<Empty 
+				<Empty
 					{...this.props}
 					title={translate('blockDataviewBoardRelationDeletedTitle')}
 					description={translate('blockDataviewBoardRelationDeletedDescription')}
 					button={translate('blockDataviewBoardOpenViewMenu')}
 					className="withHead"
-					onClick={this.onView}
+					onClick={onViewSettings}
 				/>
 			);
 		};
@@ -559,33 +558,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				});
 			});
 		};
-	};
-
-	onView (e: any) {
-		e.stopPropagation();
-
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
-		const view = getView();
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-
-		menuStore.open('dataviewViewEdit', { 
-			element: `#dataviewEmpty-${block.id} .button`,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			data: {
-				rootId,
-				blockId: block.id,
-				readonly: !allowed,
-				view: observable.box(view),
-				isInline,
-				isCollection,
-				getView,
-				loadData,
-				getSources,
-				getTarget,
-				onSave: () => { this.forceUpdate(); },
-			}
-		});
 	};
 
 	resize () {

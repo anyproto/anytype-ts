@@ -169,6 +169,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
+			onViewSettings: () => {
+				if (this.refControls && this.refControls.onViewSettings) {
+					this.refControls.onViewSettings();
+				};
+			},
 			getSearchIds: this.getSearchIds,
 		};
 
@@ -538,7 +543,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			};
 		};
-		if (!typeId && view && view.defaultTypeId && this.isAllowedDefaultType()) {
+		if (view && view.defaultTypeId && this.isAllowedDefaultType()) {
 			typeId = view.defaultTypeId;
 		};
 		if (!typeId) {
