@@ -141,45 +141,54 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { typeId, onSelect } = data;
 		const items = this.getItems();
 
-		const setActive = () => {
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, () => {
+			e.preventDefault();
+
+			console.log('KEY: ', e.key)
+			console.log('E: ', e)
+
+			switch (e.type) {
+				case 'arrowup':
+				case 'arrowleft': {
+					e.key = 'arrowup';
+
+					this.n--;
+
+					console.log('UP')
+
+					if (this.n < 0) {
+						this.n = items.length;
+					};
+					break;
+				};
+
+				case 'arrowdown':
+				case 'arrowright': {
+					e.key = 'arrowdown';
+
+					this.n++;
+					console.log('DOWN')
+
+					if (this.n > items.length) {
+						this.n = 0;
+					};
+					break;
+				};
+			};
+
 			let item = { id: Constant.templateId.blank, targetObjectType: typeId };
 
 			if (this.n > 0) {
 				item = items[this.n - 1];
 			};
+			console.log('N: ', this.n)
+			console.log('ITEM: ', item)
 
 			if (onSelect) {
 				onSelect(item);
 			};
 
 			data.templateId = item.id;
-		};
-
-
-		keyboard.shortcut('arrowup, arrowleft', e, () => {
-			e.preventDefault();
-			e.key = 'arrowup';
-
-			this.n--;
-
-			if (this.n < 0) {
-				this.n = items.length;
-			};
-
-			setActive();
-		});
-
-		keyboard.shortcut('arrowdown, arrowright', e, () => {
-			e.preventDefault();
-			e.key = 'arrowdown';
-
-			this.n++;
-
-			if (this.n > items.length) {
-				this.n = 0;
-			};
-
-			setActive();
 		});
 	};
 
@@ -216,11 +225,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 		this.n = 0;
 
-		items.forEach((el, idx) => {
-			if (templateId == el.id) {
-				this.n = idx + 1;
-			};
-		});
+		const idx = items.findIndex(it => it.id == templateId);
+		this.n = Number(idx) + 1;
 
 		this.rebind();
 	};
