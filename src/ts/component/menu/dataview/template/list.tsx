@@ -17,7 +17,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	node: any = null;
 	n = 0;
-	items: any = [];
 	typeId: string = '';
 
 	constructor (props: I.Menu) {
@@ -300,7 +299,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					node.addClass('active');
 				},
 				onClose: () => {
-					this.rebind();
 					node.removeClass('active');
 				},
 				data: {

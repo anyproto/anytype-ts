@@ -79,9 +79,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getTypeId, getTemplateId, getView } = data;
-		const view = getView();
-		const defaultTemplate = detailStore.get(rootId, getTemplateId());
 
 		this.param = UtilCommon.objectCopy(data.view.get());
 		this.forceUpdate();
@@ -290,6 +287,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				subComponent: 'dataviewTemplateList',
 				caption: allowedDefaultType ? defaultTypeName : templateName,
 				data: {
+					rebind: this.rebind,
 					typeId,
 					hasSources,
 					getView,
@@ -387,9 +385,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				noAnimation: true,
 				onOpen: (context) => {
 					this.menuContext = context;
-				},
-				onClose: () => {
-					this.rebind();
 				}
 			};
 
