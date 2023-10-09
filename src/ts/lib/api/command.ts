@@ -2,7 +2,6 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -247,6 +246,8 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 	dispatcher.request(NavigationGetObjectInfoWithLinks.name, request, callBack);
 };
 
+// ---------------------- BLOCK ---------------------- //
+
 const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 
@@ -266,6 +267,16 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	request.setTargetobjectid(targetObjectId);
 
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
+};
+
+const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.SetCarriage.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRange(Mapper.To.Range(range));
+
+	dispatcher.request(BlockSetCarriage.name, request, callBack);
 };
 
 // ---------------------- BLOCK WIDGET ---------------------- //
@@ -312,7 +323,7 @@ const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string
 
 // ---------------------- BLOCK TEXT ---------------------- //
 
-const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
@@ -325,6 +336,7 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	request.setBlockid(blockId);
 	request.setText(text);
 	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks as any));
+	request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockTextSetText.name, request, callBack);
 };
@@ -1786,7 +1798,7 @@ export {
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockListDelete,
+	BlockSetCarriage,
 	BlockMerge,
 	BlockSplit,
 	BlockUpload,
@@ -1804,6 +1816,7 @@ export {
 	BlockListSetFields,
 	BlockListSetAlign,
 	BlockListSetVerticalAlign,
+	BlockListDelete,
 
 	BlockTextSetText,
 	BlockTextSetChecked,

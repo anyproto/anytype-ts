@@ -397,7 +397,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.refFilter.blur();
+			this.refFilter?.blur();
 			this.onArrowVertical(pressed == 'arrowup' ? -1 : 1);
 		});
 
@@ -407,7 +407,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 
 			e.preventDefault();
-			this.refFilter.blur();
+			this.refFilter?.blur();
 			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
 		});
 
