@@ -263,22 +263,22 @@ class UtilData {
 						callBack();
 					};
 				});
-
-				if (profile) {
-					this.subscribeIds({
-						subId: Constant.subId.profile, 
-						ids: [ profile ],
-						keys: Constant.defaultRelationKeys.concat([ 'identityProfileLink' ]),
-						noDeps: true,
-						ignoreWorkspace: true,
-					});
-				};
 			});
 		});
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
+		const { profile } = blockStore;
 		const list = [
+			{
+				subId: Constant.subId.profile,
+				keys: Constant.defaultRelationKeys.concat([ 'identityProfileLink' ]),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: profile },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+			},
 			{
 				subId: Constant.subId.deleted,
 				keys: [],
