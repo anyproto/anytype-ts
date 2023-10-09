@@ -62,8 +62,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							size={96}
 							object={space}
 							forceLetter={true}
-							canEdit={true}
-							noUpload={true}
+							canEdit={false}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}
 						/>

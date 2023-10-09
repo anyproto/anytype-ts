@@ -94,24 +94,27 @@
     /* MenuSmile */
 
     .menu.menuSmile {
-        .head, .foot { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
         .head {
             .btn:hover, .btn.active { color: $colorTextPrimary; }
         }
 
-		.item.active { background: $colorShapeHighlightMedium; }
+		.body.gallery {
+			.foot { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+			.item.active { background: $colorShapeHighlightMedium; }
 
-		.foot {
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
-			.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
-			.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
-			.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
-			.icon.foods.active { background-image: url('#{$themePath}/icon/emoji/foods1.svg'); }
-			.icon.activity.active { background-image: url('#{$themePath}/icon/emoji/activity1.svg'); }
-			.icon.places.active { background-image: url('#{$themePath}/icon/emoji/places1.svg'); }
-			.icon.objects.active { background-image: url('#{$themePath}/icon/emoji/objects1.svg'); }
-			.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
-			.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
+			.foot {
+				.icon:hover { background-color: $colorShapeHighlightMedium; }
+				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
+				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
+				.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
+				.icon.foods.active { background-image: url('#{$themePath}/icon/emoji/foods1.svg'); }
+				.icon.activity.active { background-image: url('#{$themePath}/icon/emoji/activity1.svg'); }
+				.icon.places.active { background-image: url('#{$themePath}/icon/emoji/places1.svg'); }
+				.icon.objects.active { background-image: url('#{$themePath}/icon/emoji/objects1.svg'); }
+				.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
+				.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
+			}
 		}
     }
 

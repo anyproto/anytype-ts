@@ -240,7 +240,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { storageGet } = this.props;
+		const { storageGet, param } = this.props;
+		const { data } = param;
+		const { noGallery } = data;
+
+		if (noGallery) {
+			this.onTab(Tab.Upload);
+		};
 
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
