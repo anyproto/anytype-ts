@@ -206,7 +206,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		node.find('.previewObject.hover').removeClass('hover');
 		if (item) {
 			this.n = items.findIndex(it => it.id == item.id);
-			node.find('#item-' + item.id).addClass('hover');
+			node.find(`#item-${item.id}`).addClass('hover');
 		};
 	};
 

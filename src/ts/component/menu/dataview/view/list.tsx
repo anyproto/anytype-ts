@@ -285,7 +285,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		menuStore.open('select', {
 			element,
 			offsetX: getSize().width,
-			offsetY: -$(element).outerHeight(),
+			vertical: I.MenuDirection.Center,
 			data: {
 				options,
 				onSelect: (e, option) => {
