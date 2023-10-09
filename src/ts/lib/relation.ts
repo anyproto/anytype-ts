@@ -262,8 +262,8 @@ class Relation {
 			};
 
 			case 'origin': {
-				value = Number(value) || I.ObjectOrigin.User;
-				return translate(`objectOrigin${value}`);
+				value = Number(value) || I.ObjectOrigin.None;
+				return (value == I.ObjectOrigin.None) ? null : translate(`objectOrigin${value}`);
 			};
 		};
 		return null;
