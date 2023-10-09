@@ -141,20 +141,15 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { typeId, onSelect } = data;
 		const items = this.getItems();
 
-		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, () => {
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (arrow) => {
 			e.preventDefault();
 
-			console.log('KEY: ', e.key)
-			console.log('E: ', e)
-
-			switch (e.type) {
+			switch (arrow) {
 				case 'arrowup':
 				case 'arrowleft': {
 					e.key = 'arrowup';
 
 					this.n--;
-
-					console.log('UP')
 
 					if (this.n < 0) {
 						this.n = items.length;
@@ -167,7 +162,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					e.key = 'arrowdown';
 
 					this.n++;
-					console.log('DOWN')
 
 					if (this.n > items.length) {
 						this.n = 0;
@@ -181,8 +175,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			if (this.n > 0) {
 				item = items[this.n - 1];
 			};
-			console.log('N: ', this.n)
-			console.log('ITEM: ', item)
 
 			if (onSelect) {
 				onSelect(item);
