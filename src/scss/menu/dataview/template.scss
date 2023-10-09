@@ -17,12 +17,16 @@
 
             .items { display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 12px; }
             .items {
-                .previewObject.hover { background-color: $colorShapeHighlightLight; }
+                .previewObject { position: relative; }
                 .previewObject {
                     .add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
                 }
                 .previewObject.isDefault {
                     .border { border-color: $colorSystemAccent100; border-width: 2px; }
+                }
+                .previewObject.hover:before {
+                    content: ''; position: absolute; left: 0; top: 0; z-index: 0; width: 100%; height: 100%;
+                    background-color: $colorShapeHighlightLight;
                 }
             }
 
