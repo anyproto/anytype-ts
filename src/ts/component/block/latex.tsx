@@ -154,9 +154,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 	};
 
 	onFocusBlock () {
-		const { block } = this.props;
-
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 		this.focus();
 	};
 
@@ -170,13 +168,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor');
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor');
 			});
 		};
 

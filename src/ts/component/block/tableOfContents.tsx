@@ -72,8 +72,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 	getTree () {

@@ -183,8 +183,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 	getUrl () {

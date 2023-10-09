@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -380,7 +380,7 @@ class UtilData {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockTextSetText(rootId, blockId, text, marks, (message: any) => {
+		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
