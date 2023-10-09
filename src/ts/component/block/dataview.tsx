@@ -539,7 +539,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			};
 		};
-		if (!typeId && view && view.defaultTypeId && this.isAllowedDefaultType()) {
+		if (view && view.defaultTypeId && this.isAllowedDefaultType()) {
 			typeId = view.defaultTypeId;
 		};
 		if (!typeId) {

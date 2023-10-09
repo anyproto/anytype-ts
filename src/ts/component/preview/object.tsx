@@ -12,6 +12,8 @@ interface Props {
 	className?: string;
 	onMore? (e: any): void;
 	onClick? (e: any): void;
+	onMouseEnter? (e: any): void;
+	onMouseLeave? (e: any): void;
 	position?: () => void;
 	setObject?: (object: any) => void;
 };
@@ -428,10 +430,24 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 
 	onMouseEnter (e: any) {
+		const { onMouseEnter } = this.props;
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
+			return;
+		};
+
 		$(this.node).addClass('hover');
 	};
 
 	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+
+		if (onMouseLeave) {
+			onMouseLeave(e);
+			return;
+		};
+
 		 $(this.node).removeClass('hover');
 	};
 

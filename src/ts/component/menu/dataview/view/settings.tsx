@@ -116,12 +116,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.viewSettings', e => this.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
-		$(window).off('keydown.viewSettings');
+		$(window).off('keydown.menu');
 	};
 
 	setName () {
@@ -278,7 +278,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const updateDefaultTemplate = (item) => {
 			if (item.id == Constant.templateId.new) {
 				if (onTemplateAdd) {
-					onTemplateAdd();
+					onTemplateAdd(item.targetObjectType);
 				};
 			} else {
 				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id });
@@ -389,6 +389,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				noAnimation: true,
 				onOpen: (context) => {
 					this.menuContext = context;
+				},
+				onClose: () => {
+					this.rebind();
 				}
 			};
 
