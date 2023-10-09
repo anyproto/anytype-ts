@@ -344,8 +344,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		menuStore.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
-			onClose: this.rebind,
 			data: {
+				rebind: this.rebind,
 				filter: '',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
