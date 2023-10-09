@@ -73,7 +73,7 @@
 
 		.body.upload { padding: 16px; }
 		.body.upload {
-			.loaderWrapper { height: 292px; }
+			.loaderWrapper { height: 292px; position: relative; background: none; }
 
 			.dropzone { 
 				height: 292px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
