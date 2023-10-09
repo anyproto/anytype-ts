@@ -10,6 +10,7 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
+			home.spaceId = commonStore.space;
 		};
 
 		if (!home) {
@@ -31,18 +32,20 @@ class UtilObject {
 
 	getSpaceDashboard () {
 		const space = this.getWorkspace();
-		if (!space.spaceDashboardId) {
+		const id = space.spaceDashboardId;
+
+		if (!id) {
 			return null;
 		};
 
 		let home = null;
-		if (space.spaceDashboardId == I.HomePredefinedId.Graph) {
+		if (id == I.HomePredefinedId.Graph) {
 			home = this.getGraph();
 		} else
-		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
+		if (id == I.HomePredefinedId.Last) {
 			home = this.getLastOpened();
 		} else {
-			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+			home = detailStore.get(Constant.subId.space, id);
 		};
 
 		if (!home || home._empty_ || home.isDeleted) {
@@ -67,7 +70,8 @@ class UtilObject {
 	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'), 
+			name: translate('spaceLast'),
+			spaceId: commonStore.space,
 		};
 	};
 

@@ -61,41 +61,42 @@ class UtilRouter {
 			return;
 		};
 
-		window.setTimeout(() => {
+		const onTimeout = () => {
 			Preview.hideAll();
 
-			if (animate) {
-				const fade = $('#globalFade');
-				
-				fade.show();
-				window.setTimeout(() => fade.addClass('show'), 15);
-
-				window.setTimeout(() => {
-					if (onFadeOut) {
-						onFadeOut();
-					};
-
-					UtilCommon.history[method](route); 
-					fade.removeClass('show');
-				}, Constant.delay.route);
-
-				window.setTimeout(() => {
-					if (onFadeIn) {
-						onFadeIn();
-					};
-
-					fade.hide();
-				}, Constant.delay.route * 2);
-			} else {
+			if (!animate) {
 				UtilCommon.history[method](route); 
+				return;
 			};
-		}, timeout);
+
+			const fade = $('#globalFade');
+				
+			fade.show();
+			window.setTimeout(() => fade.addClass('show'), 15);
+
+			window.setTimeout(() => {
+				if (onFadeOut) {
+					onFadeOut();
+				};
+
+				UtilCommon.history[method](route); 
+				fade.removeClass('show');
+			}, Constant.delay.route);
+
+			window.setTimeout(() => {
+				if (onFadeIn) {
+					onFadeIn();
+				};
+
+				fade.hide();
+			}, Constant.delay.route * 2);
+		};
+
+		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		const { space } = commonStore;
-
-		if (space == id) {
+		if (!id || (commonStore.space == id)) {
 			return;
 		};
 
