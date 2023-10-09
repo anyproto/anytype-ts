@@ -119,43 +119,17 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
-		const k = keyboard.eventKey(e);
 
 		let ret = false;
 
-		keyboard.shortcut('enter', e, () => {
-			this.save();
-			close();
-			ret = true;
+		keyboard.shortcut('space', e, () => {
+			if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
+				e.preventDefault();
+
+				this.onSwitch(e, item.id, !view[item.id]);
+				ret = true;
+			};
 		});
-
-		if (ret) {
-			return;
-		};
-
-		if (this.isFocused) {
-			if (k != Key.down) {
-				return;
-			} else {
-				this.ref.blur();
-				this.n = -1;
-			};
-		} else {
-			if ((k == Key.up) && !this.n) {
-				this.n = -1;
-				this.ref.focus();
-				return;
-			};
-
-			keyboard.shortcut('space', e, () => {
-				if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
-					e.preventDefault();
-
-					this.onSwitch(e, item.id, !view[item.id]);
-					ret = true;
-				};
-			});
-		};
 
 		if (ret) {
 			return;
@@ -167,8 +141,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, readonly } = data;
+		const { rootId, blockId, onSave, readonly, getView } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const view = getView();
 
 		if (readonly || !block) {
 			return;
@@ -181,6 +156,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
+		this.param.name = view.name;
+		
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
 				Dataview.groupUpdate(rootId, blockId, current.id, []);

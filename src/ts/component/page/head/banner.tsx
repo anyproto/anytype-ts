@@ -12,13 +12,9 @@ interface Props {
 	isPopup?: boolean;
 };
 
-const TEMPLATE_WIDTH = 236;
-const PADDING = 16;
-
 class HeaderBanner extends React.Component<Props> {
 
 	node: any = null;
-	menuContext: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -92,9 +88,10 @@ class HeaderBanner extends React.Component<Props> {
 
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
+		const { sourceObject } = object;
 		const menuOpened = menuStore.isOpen('dataviewTemplateList');
 		const type = dbStore.getTypeById(object.type);
-		const templateId = type.defaultTemplateId || Constant.templateId.blank;
+		const templateId = sourceObject || Constant.templateId.blank;
 
 		if (!menuOpened) {
 			menuStore.open('dataviewTemplateList', {
