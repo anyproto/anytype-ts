@@ -223,7 +223,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			>
 				{!noHead ? (
 					<div className="head">
-						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
+						{!noGallery ? <div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div> : ''}
 						{!noGallery ? <div className="btn" onClick={() => this.onTab(Tab.Gallery)}>{translate('menuSmileGallery')}</div> : ''}
 						{!noUpload ? <div className="btn" onClick={() => this.onTab(Tab.Upload)}>{translate('menuSmileUpload')}</div> : ''}
 						{!noRemove ? <div className="btn" onClick={this.onRemove}>{translate('commonRemove')}</div> : ''}
