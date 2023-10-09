@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
 	
 	n = -1;
-	ref = null;
+	refName = null;
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
@@ -56,7 +56,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			<div>
 				<div className="filter isName">
 					<InputWithLabel
-						ref={ref => this.ref = ref}
+						ref={ref => this.refName = ref}
 						value={name}
 						label={translate('menuDataviewViewName')}
 						readonly={readonly}
@@ -108,8 +108,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 	focus () {
 		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
+			if (this.refName) {
+				this.refName.focus();
 			};
 		}, 15);
 	};
@@ -134,7 +134,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				break;
 			};
 		};
-		this.ref.setValue(n);
+		this.refName.setValue(n);
 	};
 	
 	onKeyDown (e: any) {
@@ -160,13 +160,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			if (k != Key.down) {
 				return;
 			} else {
-				this.ref.blur();
+				this.refName.blur();
 				this.n = -1;
 			};
 		} else {
 			if ((k == Key.up) && !this.n) {
 				this.n = -1;
-				this.ref.focus();
+				this.refName.focus();
 				return;
 			};
 		};
@@ -236,8 +236,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				};
 			};
 		});
-
-		this.forceUpdate();
 	};
 
 	getSections () {
