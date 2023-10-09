@@ -128,11 +128,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.templateList', e => this.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 
 	unbind () {
-		$(window).off('keydown.templateList');
+		$(window).off('keydown.menu');
 	};
 
 	onKeyDown (e: any) {
@@ -147,8 +147,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			switch (arrow) {
 				case 'arrowup':
 				case 'arrowleft': {
-					e.key = 'arrowup';
-
 					this.n--;
 
 					if (this.n < 0) {
@@ -159,8 +157,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 				case 'arrowdown':
 				case 'arrowright': {
-					e.key = 'arrowdown';
-
 					this.n++;
 
 					if (this.n > items.length) {
@@ -266,6 +262,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					node.addClass('active');
 				},
 				onClose: () => {
+					this.rebind();
 					node.removeClass('active');
 				},
 				data: {
@@ -302,6 +299,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		menuStore.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
+			onClose: this.rebind,
 			data: {
 				filter: '',
 				filters: [
