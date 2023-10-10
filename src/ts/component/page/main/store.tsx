@@ -583,7 +583,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				break;
 		};
 
-		return sources.map(it => it.uniqueKey).filter(it => it);
+		return sources.map(it => it.sourceObject).filter(it => it);
 	};
 
 	onInstall (e: any, item: any) {
