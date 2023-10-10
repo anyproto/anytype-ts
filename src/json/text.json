@@ -969,6 +969,7 @@
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
+	"menuSmileGallery": "Gallery",
 	"menuSmileUpload": "Upload image",
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
+import { I, C, UtilCommon, UtilSmile, UtilMenu, UtilObject, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -10,6 +10,12 @@ import EmojiData from 'json/emoji.json';
 interface State {
 	filter: string;
 	page: number;
+	isLoading: boolean;
+};
+
+enum Tab {
+	Gallery	 = 0,
+	Upload	 = 1,
 };
 
 const LIMIT_RECENT = 18;
@@ -22,9 +28,11 @@ const ID_RECENT = 'recent';
 class MenuSmile extends React.Component<I.Menu, State> {
 
 	node: any = null;
+	_isMounted = false;
 	state = {
 		filter: '',
 		page: 0,
+		isLoading: false,
 	};
 
 	refFilter: any = null;
@@ -40,6 +48,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	row: number = -1;
 	n: number = 0;
 	active: any = null;
+	tab: Tab = Tab.Gallery;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -50,75 +59,163 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDragLeave = this.onDragLeave.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 		this.unbind = this.unbind.bind(this);
 		this.rebind = this.rebind.bind(this);
 	};
 	
 	render () {
-		const { filter } = this.state;
+		const { filter, isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead, noUpload, noRemove } = data;
-		const sections = this.getSections();
-		const items = this.getItems();
-		const groups = this.getGroups();
+		const { noHead, noGallery, noUpload, noRemove } = data;
 
-		if (!this.cache) {
-			return null;
-		};
+		let content = null;
 
-		const Item = (item: any) => {
-			const str = `:${item.itemId}::skin-${item.skin}:`;
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					onMouseLeave={() => this.onMouseLeave()} 
-					onMouseDown={e => this.onMouseDown(e, item.id, item.itemId, item.skin)}
-					onContextMenu={e => this.onSkin(e, item.id, item.itemId)}
-				>
+		switch (this.tab) {
+			case Tab.Gallery: {
+				if (!this.cache) {
+					break;
+				};
+
+				const sections = this.getSections();
+				const items = this.getItems();
+				const groups = this.getGroups();
+
+				const Item = (item: any) => {
+					const str = `:${item.itemId}::skin-${item.skin}:`;
+					return (
+						<div 
+							id={'item-' + item.id} 
+							className="item" 
+							onMouseEnter={e => this.onMouseEnter(e, item)}
+							onMouseLeave={() => this.onMouseLeave()} 
+							onMouseDown={e => this.onMouseDown(e, item.id, item.itemId, item.skin)}
+							onContextMenu={e => this.onSkin(e, item.id, item.itemId)}
+						>
+							<div 
+								className="iconObject c32" 
+								{...UtilCommon.dataProps({ code: str })}
+							>
+								<IconEmoji className="c32" size={28} icon={str} />
+							</div>
+						</div>
+					);
+				};
+				
+				const rowRenderer = (param: any) => {
+					const item = items[param.index];
+
+					return (
+						<CellMeasurer
+							key={param.key}
+							parent={param.parent}
+							cache={this.cache}
+							columnIndex={0}
+							rowIndex={param.index}
+						>
+							<div style={param.style}>
+								{item.isSection ? (
+									<div className="section">
+										{item.name ? <div className="name">{item.name}</div> : ''}
+									</div>
+								) : (
+									<div className="row">
+										{item.children.map((smile: any, i: number) => {
+											smile.position = { row: param.index, n: i };
+											return (
+												<Item key={i} id={smile.id} {...smile} />
+											);
+										})}
+									</div>
+								)}
+							</div>
+						</CellMeasurer>
+					);
+				};
+
+				content = (
+					<React.Fragment>
+						<Filter 
+							ref={ref => this.refFilter = ref}
+							value={filter}
+							className={!noHead ? 'withHead' : ''} 
+							onChange={(e: any) => { this.onKeyUp(e, false); }} 
+						/>
+						
+						<div className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => !!items[index]}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={ref => this.refList = ref}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={({ index }) => this.getRowHeight(items[index])}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												onScroll={this.onScroll}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+							{!sections.length ? (
+								<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
+							): ''}
+						</div>
+
+						{sections.length ? (
+							<div id="foot" className="foot">
+								{groups.map((group: any, i: number) => (
+									<Icon 
+										key={i} 
+										id={`item-${group.id}`}
+										className={group.id} 
+										tooltip={group.name} 
+										tooltipY={I.MenuDirection.Bottom} 
+										onClick={() => this.onGroup(group.id)} 
+									/>
+								))}
+							</div>
+						) : ''}
+					</React.Fragment>
+				);
+				break;
+			};
+
+			case Tab.Upload: {
+				content = (
 					<div 
-						className="iconObject c32" 
-						{...UtilCommon.dataProps({ code: str })}
+						className="dropzone" 
+						onDragOver={this.onDragOver} 
+						onDragLeave={this.onDragLeave} 
+						onDrop={this.onDrop}
+						onClick={this.onUpload}
 					>
-						<IconEmoji className="c32" size={28} icon={str} />
+						<Icon className="coverUpload" />
+						<Label text={translate('menuBlockCoverChoose')} />
 					</div>
-				</div>
-			);
+				);
+				break;
+			};
 		};
-		
-		const rowRenderer = (param: any) => {
-			const item = items[param.index];
 
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-				>
-					<div style={param.style}>
-						{item.isSection ? (
-							<div className="section">
-								{item.name ? <div className="name">{item.name}</div> : ''}
-							</div>
-						) : (
-							<div className="row">
-								{item.children.map((smile: any, i: number) => {
-									smile.position = { row: param.index, n: i };
-									return (
-										<Item key={i} id={smile.id} {...smile} />
-									);
-								})}
-							</div>
-						)}
-					</div>
-				</CellMeasurer>
-			);
+		if (isLoading) {
+			content = <Loader />;
 		};
-		
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -126,70 +223,30 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			>
 				{!noHead ? (
 					<div className="head">
-						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
-						{!noUpload ? <div className="btn" onClick={this.onUpload}>{translate('menuSmileUpload')}</div> : ''}
+						{!noGallery ? <div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div> : ''}
+						{!noGallery ? <div className="btn" onClick={() => this.onTab(Tab.Gallery)}>{translate('menuSmileGallery')}</div> : ''}
+						{!noUpload ? <div className="btn" onClick={() => this.onTab(Tab.Upload)}>{translate('menuSmileUpload')}</div> : ''}
 						{!noRemove ? <div className="btn" onClick={this.onRemove}>{translate('commonRemove')}</div> : ''}
 					</div>
 				) : ''}
 				
-				<Filter 
-					ref={ref => this.refFilter = ref}
-					value={filter}
-					className={!noHead ? 'withHead' : ''} 
-					onChange={(e: any) => { this.onKeyUp(e, false); }} 
-				/>
-				
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => !!items[index]}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										onScroll={this.onScroll}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-					{!sections.length ? (
-						<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
-					): ''}
+				<div className={[ 'body', Tab[this.tab].toLowerCase() ].join(' ')}>
+					{content}
 				</div>
-
-				{sections.length ? (
-					<div id="foot" className="foot">
-						{groups.map((group: any, i: number) => (
-							<Icon 
-								key={i} 
-								id={`item-${group.id}`}
-								className={group.id} 
-								tooltip={group.name} 
-								tooltipY={I.MenuDirection.Bottom} 
-								onClick={() => this.onGroup(group.id)} 
-							/>
-						))}
-					</div>
-				) : ''}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		const { storageGet } = this.props;
+		this._isMounted = true;
+
+		const { storageGet, param } = this.props;
+		const { data } = param;
+		const { noGallery } = data;
+
+		if (noGallery) {
+			this.onTab(Tab.Upload);
+		};
 
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
@@ -229,6 +286,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rebind } = data;
@@ -726,6 +785,62 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		foot.find('.active').removeClass('active');
 		foot.find(`#item-${id}`).addClass('active');
+	};
+
+	onDragOver (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const zone = node.find('.dropzone');
+
+		zone.addClass('isDraggingOver');
+	};
+	
+	onDragLeave (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const zone = node.find('.dropzone');
+
+		zone.removeClass('isDraggingOver');
+	};
+	
+	onDrop (e: any) {
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+			return;
+		};
+		
+		const { dataset, param, close } = this.props;
+		const { data } = param;
+		const { onUpload } = data;
+		const { preventCommonDrop } = dataset || {};
+		const file = e.dataTransfer.files[0].path;
+		const node = $(this.node);
+		const zone = node.find('.dropzone');
+		
+		zone.removeClass('isDraggingOver');
+		preventCommonDrop(true);
+		this.setState({ isLoading: true });
+		
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+			this.setState({ isLoading: false });
+			preventCommonDrop(false);
+			
+			if (!message.error.code) {
+				onUpload(message.hash);
+			};
+		
+			close();
+		});
+	};
+
+	onTab (tab: Tab) {
+		this.tab = tab;
+		this.forceUpdate();
 	};
 	
 };
