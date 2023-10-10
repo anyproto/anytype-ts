@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
-import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard } from 'Lib';
+import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard, Preview } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -39,6 +39,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
+		const { onSpaceTypeTooltip } = this.props;
 		const space = {
 			layout: I.ObjectLayout.Space,
 			name,
@@ -70,7 +71,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value=""
@@ -83,6 +83,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate('popupSettingsSpaceIndexSpaceTypePersonal')}
+							onMouseEnter={onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
 				</div>
