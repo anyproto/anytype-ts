@@ -316,6 +316,7 @@
 			.spaceHeader { margin: 0px 0px 16px 0px; }
 			.spaceHeader {
 				.headerContent .name { margin-bottom: 12px; }
+				.iconObject:hover:after { opacity: 0 !important; }
 			}
 
 			.sections { margin: 0px 0px 24px 0px; }
