@@ -184,9 +184,9 @@ class UtilData {
 
 	onInfo (info: I.AccountInfo) {
 		blockStore.rootSet(info.homeObjectId);
-		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);
 		blockStore.workspaceSet(info.workspaceObjectId);
+		blockStore.profileSet(info.profileObjectId);
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);

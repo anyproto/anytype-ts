@@ -420,12 +420,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountUpdate = () => {
-		const { profile, workspace } = blockStore;
+		const { workspace } = blockStore;
 		const { name } = authStore;
 
 		authStore.accountSet(this.account);
 
-		UtilObject.setName(profile, name, () => {
+		UtilObject.setName(UtilObject.getIdentityId(), name, () => {
 			UtilObject.setName(workspace, name);
 
 			window.setTimeout(() => {
