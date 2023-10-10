@@ -10,7 +10,9 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
-			home.spaceId = commonStore.space;
+			if (home && !home.spaceId) {
+				home.spaceId = commonStore.space;
+			};
 		};
 
 		if (!home) {
@@ -107,6 +109,10 @@ class UtilObject {
 		if (!action) {
 			return '';
 		};
+
+		console.log(object);
+		console.log(commonStore.space);
+		//return '';
 
 		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
 	};
