@@ -347,11 +347,12 @@ class Action {
 							return;
 						};
 
-						UtilData.onAuth(message.account, message.account.info, { routeParam: { animate: true } }, () => {
-							window.setTimeout(() => {
-								popupStore.open('migration', { data: { type: 'import' } });
-							}, Constant.delay.popup);
+						authStore.accountSet(message.account);
+						commonStore.configSet(message.account.config, false);
 
+						UtilData.onInfo(message.account.info);
+						UtilData.onAuth({ routeParam: { animate: true } }, () => {
+							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, Constant.delay.popup);
 							blockStore.closeRecentWidgets();
 						});
 					});

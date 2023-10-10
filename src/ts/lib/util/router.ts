@@ -97,7 +97,9 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		if (!id || (commonStore.space == id)) {
+		const { space } = commonStore;
+
+		if (!id || (space == id)) {
 			return;
 		};
 
@@ -111,7 +113,9 @@ class UtilRouter {
 					};
 
 					blockStore.clear(blockStore.widgets);
-					UtilData.onAuth(authStore.account, message.info, callBack);
+
+					UtilData.onInfo(message.info);
+					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
 				}
 			});
 		});

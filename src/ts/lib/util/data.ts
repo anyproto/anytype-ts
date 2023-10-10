@@ -198,16 +198,7 @@ class UtilData {
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
-	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
-		if (!account) {
-			console.error('[onAuth] No account defined');
-			return;
-		};
-
-		this.onInfo(info);
-		commonStore.configSet(account.config, false);
-		authStore.accountSet({ ...account, info });
-
+	onAuth (param?: any, callBack?: () => void) {
 		const pin = Storage.get('pin');
 		const { profile, widgets } = blockStore;
 		const { redirect } = commonStore;
