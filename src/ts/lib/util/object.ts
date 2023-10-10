@@ -10,7 +10,9 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
-			home.spaceId = commonStore.space;
+			if (home) {
+				home.spaceId = commonStore.space;
+			};
 		};
 
 		if (!home) {
