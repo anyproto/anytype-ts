@@ -105,6 +105,12 @@ class AuthStore {
 		};
     };
 
+	accountSetStatus (status: I.AccountStatus) {
+		if (this.accountItem) {
+			set(this.accountItem.status, status);
+		};
+	};
+
 	accountIsDeleted (): boolean {
 		return this.accountItem && this.accountItem.status && [ 
 			I.AccountStatusType.StartedDeletion,

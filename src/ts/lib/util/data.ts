@@ -206,7 +206,7 @@ class UtilData {
 
 		this.onInfo(info);
 		commonStore.configSet(account.config, false);
-		authStore.accountSet(account);
+		authStore.accountSet({ ...account, info });
 
 		const pin = Storage.get('pin');
 		const { profile, widgets } = blockStore;

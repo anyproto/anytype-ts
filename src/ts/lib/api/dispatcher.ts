@@ -199,7 +199,7 @@ class Dispatcher {
 				};
 
 				case 'accountUpdate': {
-					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					authStore.accountSetStatus(Mapper.From.AccountStatus(data.getStatus()));
 					break;	
 				};
 
