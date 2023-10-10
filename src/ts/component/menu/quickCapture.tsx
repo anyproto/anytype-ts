@@ -2,13 +2,14 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical, IconObject, ObjectName, Icon } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview, UtilData } from 'Lib';
-import { commonStore, dbStore, detailStore } from 'Store';
+import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
 
 	node: any = null;
 	n = -1;
+	isExpanded: boolean = false;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -17,7 +18,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	render () {
-		const items = this.getItems();
+		const items = this.getItems(this.isExpanded);
 
 		const Item = (item: any) => {
 			return (
@@ -39,7 +40,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 
 		return (
-			<div ref={node => this.node = node} className="quickCapture">
+			<div ref={node => this.node = node} className="content">
 				{items.map((item: any, i: number) => (
 					<Item key={i} idx={i} {...item} />
 				))}
@@ -66,27 +67,21 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e: any) {
-		const items = this.getItems();
+		const items = this.getItems(this.isExpanded);
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowleft', e, () => {
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed) => {
 			e.preventDefault();
-			e.key = 'arrowup';
+			
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
 
-			this.n--;
+			this.n += dir;
+
 			if (this.n < 0) {
 				this.n = items.length - 1;
 			};
 
-			this.setHover(items[this.n]);
-		});
-
-		keyboard.shortcut('arrowdown, arrowright', e, () => {
-			e.preventDefault();
-			e.key = 'arrowup';
-
-			this.n++;
 			if (this.n > items.length - 1) {
 				this.n = 0;
 			};
@@ -103,7 +98,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		});
 	};
 
-	getItems () {
+	getItems (expanded?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -142,7 +137,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onExpand () {
-		
+		this.isExpanded = true;
+		menuStore.update('quickCapture', { className: 'expanded' });
+		this.forceUpdate();
 	};
 
 	onOver (e: any, item: any) {
