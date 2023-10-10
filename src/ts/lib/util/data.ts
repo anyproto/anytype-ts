@@ -272,7 +272,6 @@ class UtilData {
 		const list = [
 			{
 				subId: Constant.subId.profile,
-				keys: Constant.defaultRelationKeys.concat([ 'identityProfileLink' ]),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
 				],

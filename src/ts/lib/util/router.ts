@@ -47,6 +47,7 @@ class UtilRouter {
 		const { replace, animate, onFadeOut, onFadeIn } = param;
 		const routeParam = this.getParam(route);
 		const method = replace ? 'replace' : 'push';
+		const { space, techSpace } = commonStore;
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
 		if (!timeout) {
@@ -56,7 +57,7 @@ class UtilRouter {
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && (routeParam.spaceId != Constant.storeSpaceId) && (routeParam.spaceId != commonStore.space)) {
+		if (routeParam.spaceId && ![ Constant.storeSpaceId, space, techSpace ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -101,7 +102,7 @@ class UtilRouter {
 		};
 
 		C.WorkspaceInfo(id, (message: any) => {
-			this.go('/main/blank', { 
+			this.go(`/main/blank`, { 
 				replace: true, 
 				animate: true,
 				onFadeOut: () => {
