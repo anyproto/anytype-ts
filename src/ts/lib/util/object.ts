@@ -1,5 +1,5 @@
 import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
-import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
+import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -56,8 +56,14 @@ class UtilObject {
 		return home;
 	};
 
+	getIdentityId () {
+		const { account } = authStore;
+		return account ? `_id_${account.id}` : '';
+	};
+
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
+		const id = this.getIdentityId();
+		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
 	};
 
 	getGraph () {

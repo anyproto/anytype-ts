@@ -190,6 +190,7 @@ class UtilData {
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
+		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.device(info.deviceId);
 		analytics.profile(info.analyticsId);
@@ -268,13 +269,12 @@ class UtilData {
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
-		const { account } = authStore;
 		const list = [
 			{
 				subId: Constant.subId.profile,
 				keys: Constant.defaultRelationKeys.concat([ 'identityProfileLink' ]),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: account.id },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -651,7 +651,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -681,8 +681,8 @@ class UtilData {
 			return;
 		};
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -748,7 +748,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -767,8 +767,8 @@ class UtilData {
 		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
