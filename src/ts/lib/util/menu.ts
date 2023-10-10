@@ -1,5 +1,6 @@
+import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
+import { blockStore, menuStore, detailStore, commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -236,6 +237,41 @@ class UtilMenu {
 		};
 
 		return ret.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+	};
+
+	viewContextMenu (param: any) {
+		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
+		const views = dbStore.getViews(rootId, blockId);
+
+		const options: any[] = [
+			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+		];
+
+		if (views.length > 1) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+		};
+
+		menuStore.open('select', {
+			...menuParam,
+			data: {
+				options,
+				onSelect: (e, option) => {
+					menuStore.closeAll([ 'select' ]);
+					if (close) {
+						close();
+					};
+
+					window.setTimeout(() => {
+						switch (option.id) {
+							case 'edit': $(`#button-${blockId}-settings`).trigger('click'); break;
+							case 'copy': onCopy(view); break;
+							case 'remove': onRemove(view); break;
+						};
+					}, Constant.delay.menu);
+				}
+			}
+		});
 	};
 
 	getRelationTypes () {
