@@ -433,8 +433,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	resize () {
-		const win = $(window);
-		win.trigger('resize.menuDataviewObjectList');
+		$(window).trigger('resize.menuDataviewObjectList');
 	};
 
 });

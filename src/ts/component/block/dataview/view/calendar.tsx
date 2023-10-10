@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
-import { dbStore } from 'Store';
+import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
@@ -83,7 +83,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 						<div className="body">
 							{data.map((item, i) => {
-								const cn = [ 'day' ];
+								const cn = [];
 								if (m != item.m) {
 									cn.push('other');
 								};
@@ -195,6 +195,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
+		const win = $(window);
 		const node = $(this.node);
 
 		node.css({ width: 0, height: 0, marginLeft: 0 });
@@ -205,8 +206,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const mw = cw - PADDING * 2;
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
+		const day = node.find('.day').first();
 
 		node.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
+		win.trigger('resize.menuDataviewCalendarDay');
+
+		if (day.length) {
+			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
+		};
 	};
 
 });

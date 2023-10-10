@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
 import Colors from 'json/colors.json';
 
 interface Props {
@@ -25,6 +24,7 @@ interface Props {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
 	forceLetter?: boolean;
+	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
@@ -438,6 +438,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage, layout } = object;
+		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.Space);
 		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
 
 		menuStore.open('smile', { 
@@ -445,6 +446,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetX,
 			offsetY,
 			data: {
+				noGallery,
 				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
