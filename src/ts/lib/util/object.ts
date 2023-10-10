@@ -10,7 +10,7 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
-			if (home) {
+			if (home && !home.spaceId) {
 				home.spaceId = commonStore.space;
 			};
 		};
@@ -79,7 +79,6 @@ class UtilObject {
 		return { 
 			id: I.HomePredefinedId.Last,
 			name: translate('spaceLast'),
-			spaceId: commonStore.space,
 		};
 	};
 
@@ -111,12 +110,21 @@ class UtilObject {
 			return '';
 		};
 
-		const action = this.actionByLayout(object.layout);
+		let { id, spaceId, layout, identityProfileLink } = object;
+
+		const { account } = authStore;
+		const action = this.actionByLayout(layout);
+
 		if (!action) {
 			return '';
 		};
 
-		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
+		if (identityProfileLink) {
+			id = identityProfileLink;
+			spaceId = account.info.accountSpaceId;
+		};
+
+		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
 
 	openEvent (e: any, object: any, param?: any) {

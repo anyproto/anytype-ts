@@ -1237,7 +1237,7 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.set('lastOpened', { id: object.id, layout: object.layout });
+			Storage.set('lastOpened', { id: object.id, layout: object.layout, spaceId: object.spaceId });
 		};
 
 		if (callBack) {
