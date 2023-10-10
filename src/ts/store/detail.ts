@@ -52,6 +52,10 @@ class DetailStore {
 
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
+		if (!item.details) {
+			return;
+		};
+
 		let map = this.map.get(rootId);
 		let createMap = false;
 		let createList = false;
@@ -92,9 +96,12 @@ class DetailStore {
 			map.set(item.id, list);
 		};
 
-		// Update relationKeyMap in dbStore to keep consistency
-		if (item.details && (item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
-			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
+		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
+		if (item.details.layout == I.ObjectLayout.Relation) {
+			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
+		};
+		if (item.details.layout == I.ObjectLayout.Type) {
+			dbStore.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
 		};
 
 		if (createMap) {
@@ -166,36 +173,29 @@ class DetailStore {
 			object.name = translate('commonDeletedObject');
 		};
 
-		switch (object.type) {
-			case Constant.typeId.type:
-			case Constant.storeTypeId.type: {
-				object = this.mapObjectType(object);
+		switch (object.layout) {
+			case I.ObjectLayout.Type: {
+				object = this.mapType(object);
 				break;
 			};
 
-			case Constant.typeId.relation:
-			case Constant.storeTypeId.relation: {
+			case I.ObjectLayout.Relation: {
 				object = this.mapRelation(object);
 				break;
 			};
 
-			case Constant.typeId.option: {
+			case I.ObjectLayout.Option: {
 				object = this.mapOption(object);
 				break;
 			};
 
-			case Constant.typeId.set: {
+			case I.ObjectLayout.Set: {
 				object = this.mapSet(object);
 				break;
 			};
 
-			case Constant.typeId.space: {
+			case I.ObjectLayout.Space: {
 				object = this.mapSpace(object);
-				break;
-			};
-
-			case Constant.typeId.template: {
-				object = this.mapTemplate(object);
 				break;
 			};
 		};
@@ -208,6 +208,7 @@ class DetailStore {
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
+		object.origin = Number(object.origin) || I.ObjectOrigin.User;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
@@ -223,11 +224,12 @@ class DetailStore {
 		return object;
 	};
 
-	private mapObjectType (object: any) {
+	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
+		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 
 		if (object.isDeleted) {
@@ -244,7 +246,7 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonly);
 		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
-		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {
@@ -274,15 +276,9 @@ class DetailStore {
 
 	private mapSpace (object: any) {
 		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Personal;
+		object.spaceId = Relation.getStringValue(object.spaceId);
 
 		delete(object.spaceAccessibility);
-
-		return object;
-	};
-
-	private mapTemplate (object: any) {
-		object.targetObjectType = Relation.getStringValue(object.targetObjectType);
-		object.templateIsBundled = Boolean(object.templateIsBundled);
 
 		return object;
 	};

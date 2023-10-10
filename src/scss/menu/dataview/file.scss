@@ -10,13 +10,13 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
-		.label { color: $colorMediumGrey; @include text-common; padding: 0px 16px; }
+		.label { color: $colorControlActive; @include text-common; padding: 0px 16px; }
 	}
 
 	.menu.menuDataviewFileValues {
 		.content { padding-bottom: 0px; }
 
-		.item { display: flex; color: $colorDarkGrey; }
+		.item { display: flex; color: $colorTextSecondary; }
 		.item {
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }

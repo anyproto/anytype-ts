@@ -39,12 +39,13 @@
 				border: 1px solid $colorShapeSecondary; border-radius: 8px;
 			}
 			.layout {
-				.label { @include text-small; color: $colorDarkGrey; }
+				.label { @include text-small; color: $colorTextSecondary; }
 				.icon.view { width: 56px; height: 56px; }
 				.icon.view.c0 { background-image: url('~img/icon/dataview/layout/grid0.svg'); }
 				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list0.svg'); }
 				.icon.view.c2 { background-image: url('~img/icon/dataview/layout/gallery0.svg'); }
 				.icon.view.c3 { background-image: url('~img/icon/dataview/layout/kanban0.svg'); }
+				.icon.view.c4 { background-image: url('~img/icon/dataview/layout/calendar0.svg'); }
 			}
 
 			.layout:hover { background-color: $colorShapeHighlightLight; }
@@ -56,6 +57,7 @@
 				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list1.svg'); }
 				.icon.view.c2 { background-image: url('~img/icon/dataview/layout/gallery1.svg'); }
 				.icon.view.c3 { background-image: url('~img/icon/dataview/layout/kanban1.svg'); }
+				.icon.view.c4 { background-image: url('~img/icon/dataview/layout/calendar1.svg'); }
 			}
 		}
 	}

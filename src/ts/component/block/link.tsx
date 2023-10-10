@@ -35,7 +35,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = dbStore.getType(object.type);
+		const type = dbStore.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -240,8 +240,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 	
 	onClick (e: any) {

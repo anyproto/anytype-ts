@@ -46,8 +46,8 @@
 	.empty { vertical-align: top; display: none; }
 
 	.more { 
-		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
-		@include text-small; color: $colorDarkGrey;
+		background: $colorShapeTertiary; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
+		@include text-small; color: $colorTextSecondary;
 	}
 }
 
@@ -136,9 +136,9 @@
 	}
 }
 
-.cellContent.c-longText { white-space: pre; }
+.cellContent.c-longText { white-space: pre-wrap; }
 .cell.isEditing.c-longText {
-	.cellContent { white-space: pre !important; }
+	.cellContent { white-space: pre-wrap !important; }
 }
 
 .cellContent.canEdit.c-shortText, 

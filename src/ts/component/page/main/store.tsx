@@ -354,7 +354,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onCreateType (e: any) {
-		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				this.onClick(e, message.details);
 				analytics.event('CreateType');
@@ -445,9 +445,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'createdDate' },
@@ -457,11 +457,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
 
 			case View.Library:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 				break;
 		};
 
@@ -497,24 +497,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
-	getTabType () {
-		let type = '';
-		switch (this.view) {
-			case View.Marketplace:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.storeTypeId.type; break;
-					case I.StoreTab.Relation:	 type = Constant.storeTypeId.relation; break;
-				};
-				break;
+	getTabLayout (): I.ObjectLayout {
+		let layout = null;
 
-			case View.Library:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.typeId.type; break;
-					case I.StoreTab.Relation:	 type = Constant.typeId.relation; break;
-				};
-				break;
+		switch (this.tab) {
+			case I.StoreTab.Type:		 layout = I.ObjectLayout.Type; break;
+			case I.StoreTab.Relation:	 layout = I.ObjectLayout.Relation; break;
 		};
-		return type;
+
+		return layout;
 	};
 
 	getItems () {

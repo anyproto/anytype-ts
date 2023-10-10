@@ -215,7 +215,7 @@ class Action {
 	};
 
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(object.id, (message: any) => {
+		C.WorkspaceObjectAdd(commonStore.space, object.id, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -228,16 +228,18 @@ class Action {
 			let toast = '';
 			let subId = '';
 
-			switch (object.type) {
-				case Constant.storeTypeId.type:
+			switch (object.layout) {
+				case I.ObjectLayout.Type: {
 					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
 					break;
+				};
 
-				case Constant.storeTypeId.relation:
+				case I.ObjectLayout.Relation: {
 					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
 					break;
+				};
 			};
 
 			if (showToast) {
@@ -254,18 +256,20 @@ class Action {
 		let text = '';
 		let toast = '';
 		
-		switch (object.type) {
-			case Constant.typeId.type:
+		switch (object.layout) {
+			case I.ObjectLayout.Type: {
 				title = translate('libActionUninstallTypeTitle');
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
 				break;
+			};
 
-			case Constant.typeId.relation:
+			case I.ObjectLayout.Relation: {
 				title = translate('libActionUninstallRelationTitle');
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
 				break;
+			};
 		};
 
 		popupStore.open('confirm', {
@@ -294,7 +298,7 @@ class Action {
 		});
 	};
 
-	delete (ids: string[], callBack?: () => void): void {
+	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
 		analytics.event('ShowDeletionWarning');
@@ -306,10 +310,18 @@ class Action {
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
-					callBack();
-					analytics.event('RemoveCompletely', { count });
+					
+					if (callBack) {
+						callBack();
+					};
+
+					analytics.event('RemoveCompletely', { count, route });
 				},
-				onCancel: () => callBack(),
+				onCancel: () => {
+					if (callBack) {
+						callBack();
+					};
+				},
 			},
 		});
 	};
@@ -325,7 +337,7 @@ class Action {
 
 				const { accountId } = message;
 
-				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, (message: any) => {
+				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
@@ -335,7 +347,7 @@ class Action {
 							return;
 						};
 
-						UtilData.onAuth(message.account, { routeParam: { animate: true } }, () => {
+						UtilData.onAuth(message.account, message.account.info, { routeParam: { animate: true } }, () => {
 							window.setTimeout(() => {
 								popupStore.open('migration', { data: { type: 'import' } });
 							}, Constant.delay.popup);
@@ -399,7 +411,7 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
 				if (!message.error.code) {
 					analytics.event('Import', { middleTime: message.middleTime, type });
 				};
@@ -419,7 +431,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
+			C.ObjectListExport(commonStore.space, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

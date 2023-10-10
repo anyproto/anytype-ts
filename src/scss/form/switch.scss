@@ -15,7 +15,7 @@
 	.inner { width: 20px; height: 20px; }
 }
 
-.switch.active { background: $colorDarkGrey; }
+.switch.active { background: $colorTextSecondary; }
 .switch.green.active { background: $colorLime; }
 .switch.orange.active { background: $colorSystemAccent50; }
 .switch.isReadonly { cursor: default; }

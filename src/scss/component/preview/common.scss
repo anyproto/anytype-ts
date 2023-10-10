@@ -8,7 +8,7 @@
 	.polygon { position: absolute; left: 0px; width: 100%; }
 
 	.head { 
-		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500;
+		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorControlActive; font-weight: 500;
 		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorShapeSecondary; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
@@ -44,5 +44,5 @@
 	}
     .name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; width: calc(100% - 22px); }
     .descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
-    .featured { @include text-very-small; color: $colorMediumGrey; }
+    .featured { @include text-very-small; color: $colorControlActive; }
 }

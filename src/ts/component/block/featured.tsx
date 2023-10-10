@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, translate, Onboarding, history as historyPopup, keyboard } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { ObjectType, Cell } from 'Component';
+import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {
@@ -54,11 +54,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const bullet = <div className="bullet" />;
 		const typeName = (
 			<div className="name">
-				{type && !type.isDeleted && !type._empty_ ? UtilCommon.shorten(type.name, 32) : (
-					<span className="textColor-red">
-						{translate('commonDeletedType')}
-					</span>
-				)}
+				<ObjectType object={type} />
 			</div>
 		);
 
@@ -90,8 +86,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
-		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
-		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
 
 		const setOfString = [];
 		const tl = types.length;
@@ -261,8 +257,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const setOf = Relation.getArrayValue(object.setOf);
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, rootId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, I.ObjectLayout.Relation);
 
 		if (!setOf.length) {
 			this.onSource();
@@ -286,8 +282,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 	onKeyDown (e: any) {
@@ -365,7 +360,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
 		};
 
-		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
+		if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
 			options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
 		};
 
@@ -443,7 +438,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					],
 					onClick: (item: any) => {
 						detailStore.update(rootId, { id: item.id, details: item }, false);
-						C.ObjectSetObjectType(rootId, item.id, () => {
+
+						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
 						});
 
@@ -457,7 +453,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
@@ -485,7 +481,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, isPopup } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
-		const type = dbStore.getType(object.type);
+		const type = dbStore.getTypeById(object.type);
 
 		this.menuContext.close();
 
@@ -506,7 +502,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					details.iconEmoji = type.iconEmoji;
 				};
 
-				C.ObjectCreateSet([ object.type ], details, '', (message: any) => {
+				C.ObjectCreateSet([ object.type ], details, '', commonStore.space, (message: any) => {
 					if (!message.error.code) {
 						UtilObject.openPopup(message.details);
 					};
@@ -514,6 +510,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 
 			case 'turnCollection':
+				// Add Collection type to details since middleware adds details async
+				const collectionType = dbStore.getCollectionType();
+				if (collectionType) {
+					detailStore.update(rootId, { id: collectionType.id, details: collectionType }, true);
+				};
+
 				C.ObjectToCollection(rootId, (message: any) => {
 					if (message.error.code) {
 						return;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate, UtilRouter } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -15,6 +15,7 @@ import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
+import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -41,6 +42,7 @@ const Components = {
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
+	'main/blank':			 PageMainBlank,		
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
@@ -137,8 +139,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
+		const spaceId = String(match?.params?.spaceId || '');
 
-		return { page, action, id };
+		return { page, action, id, spaceId };
 	};
 
 	getRootId () {
@@ -152,7 +155,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-		const { page, action } = this.getMatchParams();
+		const param = this.getMatchParams();
+		const { page, action, spaceId } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
@@ -171,17 +175,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			UtilCommon.route('/', routeParam);
+			UtilRouter.go('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilCommon.route('/auth/pin-check', routeParam);
+			UtilRouter.go('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilCommon.route('/auth/deleted', routeParam);
+			UtilRouter.go('/auth/deleted', routeParam);
 			return;
 		};
 

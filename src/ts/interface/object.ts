@@ -17,6 +17,7 @@ export enum ObjectLayout {
 	Audio		 = 15,
 	Video		 = 16,
 	Date		 = 17,
+	SpaceView	 = 18,
 	
 	Database	 = 20,
 
@@ -54,13 +55,19 @@ export enum RelationScope {
 	Library				 = 4,
 };
 
-export enum OptionScope {
-    Local	 = 0,
-	Relation = 1,
-};
-
 export enum ObjectFlag {
 	DeleteEmpty		 = 0,
 	SelectType		 = 1,
     SelectTemplate	 = 2,
+};
+
+export enum ObjectOrigin {
+	User			 = 0,
+	Clipboard		 = 1,
+	DragAndDrop		 = 2,
+	Import			 = 3,
+	Webclipper		 = 4,
+	SharingExtension = 5,
+	Usecase			 = 6,
+	Builtin			 = 7,
 };

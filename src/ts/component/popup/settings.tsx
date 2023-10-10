@@ -2,9 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, C, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
-import { popupStore, detailStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate } from 'Lib';
+import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -29,6 +28,7 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
@@ -64,6 +64,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceInvite:		 PageSpaceInvite,
 	spaceTeam:		 	 PageSpaceTeam,
@@ -98,7 +99,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { page } = data;
 		const { loading } = this.state;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const profile = UtilObject.getProfile();
 		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
@@ -140,7 +141,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				const isOnline = true;
 				const status = isOnline ? 'online' : 'offline';
 
-				icon = <IconObject object={profile} size={40} iconSize={40} forceLetter={true} />;
+				icon = <IconObject object={profile} size={36} iconSize={36} forceLetter={true} />;
 				name = profile.name;
 				cn.push('itemAccount');
 				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>
@@ -179,7 +180,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="sides"
+				className="mainSides"
 			>
 				{sections.length ? (
 					<div id="sideLeft" className="side left">
@@ -255,10 +256,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							id: 'spaceIndex',
 							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
-								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'spaceInvite', 'spaceCreate', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
 								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv',
 								'exportIndex', 'exportProtobuf', 'exportMarkdown'
-							]
+							],
+							noHeader: [ 'spaceCreate' ],
 						},
 					]
 				},
@@ -368,7 +370,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const items = this.getItems();
 
 		for (const item of items) {
-			if ((item.subPages || []).includes(page)) {
+			if ((item.subPages || []).includes(page) && !(item.noHeader || []).includes(page)) {
 				return true;
 			};
 		};

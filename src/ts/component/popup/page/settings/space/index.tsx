@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics } from 'Lib';
+import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
-	dashboardId = '';
 
 	constructor (props: any) {
 		super(props);
@@ -24,7 +23,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { onPage } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
 
@@ -49,7 +48,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="sides">
 						<div className="side left">
 							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-							<Label text={UtilCommon.date(UtilData.dateFormat(I.DateFormat.Short), space.createdDate)} />
+							<Label text={UtilDate.date(UtilData.dateFormat(I.DateFormat.Short), space.createdDate)} />
 						</div>
 					</div>
 				</div>
@@ -59,7 +58,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return (
 			<React.Fragment>
 
-				<div className="spaceSettingsIndexHeader">
+				<div className="spaceHeader">
 					<div className="iconWrapper">
 						<IconObject
 							id="spaceIcon"
@@ -120,11 +119,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text={translate(`commonHomepage`)} />
-										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
+										<Title text={translate('commonHomepage')} />
+										<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
 									</div>
+
 									<div className="side right">
-										<div id="dashboard" className="select" onClick={this.onDashboard}>
+										<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 											<div className="item">
 												<div className="name">{home ? home.name : translate('commonSelect')}</div>
 											</div>
@@ -231,22 +231,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
 	};
 
-	onSelect (icon: string) {
-		UtilObject.setIcon(commonStore.workspace, icon, '');
-	};
-
-	onUpload (hash: string) {
-		UtilObject.setIcon(commonStore.workspace, '', hash);
-	};
-
 	onDashboard () {
-		UtilMenu.dashboardSelect(`#${this.props.getId()} #dashboard`);
+		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
 
 	onExtend () {
 		const { account } = authStore;
 		const { bytesLimit } = commonStore.spaceStorage;
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = detailStore.get(Constant.subId.space, commonStore.space);
 		const limit = String(UtilFile.size(bytesLimit)).replace(' ', '');
 
 		if (!account || !space || !bytesLimit) {
@@ -264,7 +256,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		UtilObject.setName(commonStore.workspace, this.checkName(v));
+		UtilObject.setName(blockStore.workspace, this.checkName(v));
+	};
+
+	onSelect (icon: string) {
+		UtilObject.setIcon(blockStore.workspace, icon, '');
+	};
+
+	onUpload (hash: string) {
+		UtilObject.setIcon(blockStore.workspace, '', hash);
 	};
 
 	onSpaceTypeTooltip (e) {
@@ -279,7 +279,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ((v == UtilObject.defaultName('Space')) || (v == UtilObject.defaultName('Page'))) {
+		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
 			v = '';
 		};
 		return v;

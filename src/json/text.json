@@ -1,6 +1,7 @@
 {
 	"commonError": "Error",
 	"commonOr": "or",
+	"commonMore": "more",
 	"commonOf": "of",
 	"commonTo": "to",
 	"commonOk": "Ok",
@@ -234,6 +235,7 @@
 	"viewName1": "List",
 	"viewName2": "Gallery",
 	"viewName3": "Kanban",
+	"viewName4": "Calendar",
 
 	"progress0": "Copying files %s\/%s",
 	"progress1": "Import in progress",
@@ -317,14 +319,14 @@
 
 	"usecase0Title": "Empty",
 	"usecase0Label": "Just a blank canvas",
-	"usecase1Title": "Personal projects",
-	"usecase1Label": "Manage your personal projects and tasks with complete privacy",
-	"usecase2Title": "Bookshelf",
-	"usecase2Label": "Create your own base of knowledge with books, movies, recipes, and more",
-	"usecase3Title": "Diary and Quick notes",
-	"usecase3Label": "Keep your daily notes and self-reflections secure and private",
-	"usecase4Title": "Strategic Writing",
-	"usecase4Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
+	"usecase2Title": "Personal projects",
+	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
+	"usecase3Title": "Bookshelf",
+	"usecase3Label": "Create your own base of knowledge with books, movies, recipes, and more",
+	"usecase4Title": "Diary and Quick notes",
+	"usecase4Label": "Keep your daily notes and self-reflections secure and private",
+	"usecase5Title": "Strategic Writing",
+	"usecase5Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
 
 	"pageMainUsecaseTitle": "How would you like to start?",
 	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
@@ -661,6 +663,10 @@
 	"popupSettingsSpaceIndexCreatedByTitle": "Created by",
 	"popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 
+	"popupSettingsSpaceCreateTitle": "Create a space",
+	"popupSettingsSpaceCreateUsecaseTitle": "How do you want to start?",
+	"popupSettingsSpaceCreateUsecaseLabel": "We can load some objects for you",
+
 	"popupSettingsSpaceStorageManagerTitle": "Synced files",
 	"popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 
@@ -894,6 +900,7 @@
 	"popupShortcutNavigationPage6": "Go to the start of the Object",
 	"popupShortcutNavigationPage7": "Go to the end of the Object",
 	"popupShortcutNavigationPage8": "Move selected block(s) around",
+	"popupShortcutNavigationPage9": "Open relations view",
 	
 	"popupShortcutMarkdownWhileTyping": "While typing",
 	"popupShortcutMarkdownWhileTyping1": "Inline code",
@@ -962,6 +969,7 @@
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
+	"menuSmileGallery": "Gallery",
 	"menuSmileUpload": "Upload image",
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
@@ -1073,6 +1081,7 @@
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
+	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open link",
 	"menuDataviewUrlActionGo8": "Mail to",
@@ -1384,10 +1393,12 @@
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 
-	"spaceType0": "Personal Space",
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
-	"navigationCreateNew": "Create new Object",
 
+	"navigationCreateNew": "Create new Object",
+	"navigationAccount": "Account",
+
+	"spaceType0": "Personal Space",
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 
@@ -1410,6 +1421,8 @@
 
 	"deletedBanner": "This file is in the Bin and is shown in view mode",
 	"deletedBannerRestore": "Restore",
+	"selectTemplateBanner": "This type has templates",
+	"selectTemplateBannerWithNumber": "This type has %s %s",
 
 	"dispatcherImportSuccessTitle": "The import process is complete!",
 	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
@@ -1546,5 +1559,15 @@
 	"errorAccountRecover107": "Failed to stop running node",
 	"errorAccountRecover108": "Another process is running",
 	"errorAccountRecover109": "Account has been deleted",
-	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns."
+	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
+
+	"objectOrigin0": "User",
+	"objectOrigin1": "Clipboard",
+	"objectOrigin2": "Drag'n'Drop",
+	"objectOrigin3": "Import",
+	"objectOrigin4": "Webclipper",
+	"objectOrigin5": "Sharing Extension",
+	"objectOrigin6": "Usecase",
+	"objectOrigin7": "Built-in"
+
 }

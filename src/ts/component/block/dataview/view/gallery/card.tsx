@@ -188,7 +188,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	mediaCover (item: any) {
-		const { coverType, coverId, coverX, coverY, coverScale } = item;
+		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
 		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 		
 		let mc = null;
@@ -206,20 +206,20 @@ const Card = observer(class Card extends React.Component<Props> {
 				/>
 			);
 		} else {
-			switch (item.type) {
-				case Constant.typeId.image: {
+			switch (layout) {
+				case I.ObjectLayout.Image: {
 					cn.push('coverImage');
 					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
 					break;
 				};
 
-				case Constant.typeId.audio: {
+				case I.ObjectLayout.Audio: {
 					cn.push('coverAudio');
 					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
 					break;
 				};
 
-				case Constant.typeId.video: {
+				case I.ObjectLayout.Video: {
 					cn.push('coverVideo');
 					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
 					break;

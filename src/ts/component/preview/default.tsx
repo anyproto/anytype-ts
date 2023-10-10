@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ObjectName, ObjectDescription, IconObject, Loader } from 'Component';
+import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
 import { dbStore } from 'Store';
-import { translate, UtilCommon, UtilObject } from 'Lib';
+import { UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -35,14 +35,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const { loading } = this.state;
 		const cn = [ 'previewDefault', className ];
 		const object = this.props.object || this.state.object || {};
-
-		let typeObj = null;
-		if (object) {
-			const type = dbStore.getType(object.type);
-			if (type) {
-				typeObj = !type.isDeleted ? UtilCommon.shorten(type.name, 32) : <span className="textColor-red">{translate('commonDeletedType')}</span>;
-			};
-		};
+		const type = dbStore.getTypeById(object.type);
 
 		return (
 			<div className={cn.join(' ')}>
@@ -53,7 +46,9 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 							<ObjectName object={object} />
 						</div>
 						<ObjectDescription object={object} />
-						<div className="featured">{typeObj}</div>
+						<div className="featured">
+							<ObjectType object={type} />
+						</div>
 					</React.Fragment>
 				)}
 			</div>

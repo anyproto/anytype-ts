@@ -42,7 +42,7 @@
 	}
 	
 	.btn { 
-		background: $colorBgPrimary; font-weight: 500; font-size: 14px; color: $colorMediumGrey; display: inline-block; 
+		background: $colorBgPrimary; font-weight: 500; font-size: 14px; color: $colorControlActive; display: inline-block; 
 		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px; display: flex; 
 		flex-direction: row; align-items: center;
 	}

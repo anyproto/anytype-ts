@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding, UtilObject } from 'Lib';
+import { I, Onboarding, UtilObject, analytics } from 'Lib';
 import { detailStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
 	
@@ -57,6 +56,8 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 				Onboarding.start(key, isPopup);
 			};
 		};
+
+		analytics.event('ScreenObject', { objectType: object.type });
 	};
 
 	getRootId () {

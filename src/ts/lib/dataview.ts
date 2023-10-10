@@ -178,20 +178,6 @@ class Dataview {
 		}, callBack);
 	};
 
-	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
-		const view = dbStore.getView(rootId, blockId, viewId);
-		if (!view) {
-			return [];
-		};
-
-		const tabs: I.MenuTab[] = [
-			{ id: 'relation', name: translate('libDataviewRelations'), component: 'dataviewRelationList' },
-			view.isBoard() ? { id: 'group', name: translate('libDataviewGroups'), component: 'dataviewGroupList' } : null,
-			{ id: 'view', name: translate('libDataviewView'), component: 'dataviewViewEdit' },
-		];
-		return tabs.filter(it => it);
-	};
-
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
 		const views = dbStore.getViews(rootId, blockId);
 		if (!views.length) {
@@ -203,12 +189,11 @@ class Dataview {
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-		const { type } = object;
-		const isInline = !UtilObject.getSetTypes().includes(type);
+		const object = detailStore.get(rootId, rootId, [ 'layout' ], true);
+		const isInline = !UtilObject.getSystemLayouts().includes(object.layout);
 
 		if (!isInline) {
-			return type == Constant.typeId.collection;
+			return object.layout == I.ObjectLayout.Collection;
 		};
 
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -217,9 +202,9 @@ class Dataview {
 		};
 
 		const { targetObjectId, isCollection } = block.content;
-		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
+		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
-		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
+		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {

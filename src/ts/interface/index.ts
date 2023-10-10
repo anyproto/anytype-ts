@@ -25,6 +25,7 @@ import {
 	ButtonComponent,
 	SpaceType,
 	FileSyncStatus,
+	BannerType,
 	StoreTab,
 	HomePredefinedId,
 	Usecase,
@@ -34,7 +35,7 @@ import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup, PopupSettings } from './popup';
 import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
+import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
@@ -112,6 +113,7 @@ export {
 	ThreadAccount,
 	ThreadCafe,
 	FilesStatus,
+	BannerType,
 
 	Progress,
 	ProgressType,
@@ -143,7 +145,7 @@ export {
 	ObjectFlag,
 	RelationType, 
 	RelationScope,
-	OptionScope,
+	ObjectOrigin,
 
 	RestrictionObject, 
 	RestrictionDataview,

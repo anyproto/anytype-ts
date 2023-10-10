@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Cover, Icon } from 'Component';
+import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, UtilData, Action, translate, UtilCommon } from 'Lib';
+import { I, C, UtilData, UtilCommon, Action, translate } from 'Lib';
 import Constant from 'json/constant.json';
 import $ from 'jquery';
 
@@ -12,6 +12,8 @@ interface Props {
 	className?: string;
 	onMore? (e: any): void;
 	onClick? (e: any): void;
+	onMouseEnter? (e: any): void;
+	onMouseLeave? (e: any): void;
 	position?: () => void;
 	setObject?: (object: any) => void;
 };
@@ -92,8 +94,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		cn.push(cnPreviewSize);
 
 		if (isTask || isBookmark) {
-			size = 20;
-			iconSize = 18;
+			size = 16;
+			iconSize = 16;
 
 			if (previewSize == I.PreviewSize.Small) {
 				size = 14;
@@ -353,11 +355,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 									<div className="name">{name}</div>
 									<div className="description">{description}</div>
 									<div className="featured">
-										{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
-											<span className="textColor-red">
-												{translate('commonDeletedType')}
-											</span>
-										)}
+										<ObjectType object={type} />
 										<div className="bullet" />
 										{author.name}
 									</div>
@@ -432,10 +430,22 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 
 	onMouseEnter (e: any) {
+		const { onMouseEnter } = this.props;
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+
 		$(this.node).addClass('hover');
 	};
 
 	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+
+		if (onMouseLeave) {
+			onMouseLeave(e);
+		};
+
 		 $(this.node).removeClass('hover');
 	};
 

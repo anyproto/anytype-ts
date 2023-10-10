@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-import { dbStore, menuStore, blockStore, detailStore } from 'Store';
+import { dbStore, menuStore, blockStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
@@ -69,7 +69,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
-			const type = dbStore.getType(typeId);
+			const type = dbStore.getTypeById(typeId);
 			const typeProps: any = { 
 				name: translate('menuBlockRelationEditSelectObjectType'),
 				caption: (length > 1 ? '+' + (length - 1) : ''),
@@ -296,13 +296,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
-				types: [ Constant.typeId.type ],
+				types: [ dbStore.getTypeType()?.id ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
-				valueMapper: it => dbStore.getType(it.id),
+				valueMapper: it => dbStore.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.forceUpdate();
@@ -450,7 +450,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, blockId, addCommand, onChange, ref } = data;
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
-		C.ObjectCreateRelation(item, (message: any) => {
+		C.ObjectCreateRelation(item, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

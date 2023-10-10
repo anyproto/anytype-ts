@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, UtilCommon, UtilDate, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface State {
 	value: number;
@@ -23,11 +22,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value } = data;
 		const items = this.getData();
 
-		const d = Number(UtilCommon.date('j', value));
-		const m = Number(UtilCommon.date('n', value));
-		const y = Number(UtilCommon.date('Y', value));
+		const d = Number(UtilDate.date('j', value));
+		const m = Number(UtilDate.date('n', value));
+		const y = Number(UtilDate.date('Y', value));
 
-		const today = UtilCommon.time();
+		const today = UtilDate.now();
 		const tomorrow = today + 86400;
 
 		const days = [];
@@ -56,7 +55,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id="month"
 								value={String(m || '')} 
 								options={months} 
-								onChange={m => { this.setValue(UtilCommon.timestamp(y, m, 1), false, false); }} 
+								onChange={m => { this.setValue(UtilDate.timestamp(y, m, 1), false, false); }} 
 								menuParam={{ 
 									classNameWrap, 
 									width: 192,
@@ -69,7 +68,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
-								onChange={y => this.setValue(UtilCommon.timestamp(y, m, 1), false, false)} 
+								onChange={y => this.setValue(UtilDate.timestamp(y, m, 1), false, false)} 
 								menuParam={{ 
 									classNameWrap, 
 									className: 'center',
@@ -103,7 +102,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								className={cn.join(' ')} 
 								onClick={(e: any) => { 
 									e.stopPropagation();
-									this.setValue(UtilCommon.timestamp(item.y, item.m, item.d), true, true); 
+									this.setValue(UtilDate.timestamp(item.y, item.m, item.d), true, true); 
 								}}
 							>
 								{item.d}
@@ -113,8 +112,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				</div>
 				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(UtilCommon.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(UtilCommon.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
@@ -125,8 +124,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 
-		const m = Number(UtilCommon.date('n', value));
-		const y = Number(UtilCommon.date('Y', value));
+		const m = Number(UtilDate.date('n', value));
+		const y = Number(UtilDate.date('Y', value));
 
 		this.refMonth.setValue(m);
 		this.refYear.setValue(y);
@@ -155,45 +154,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 		
-		const m = Number(UtilCommon.date('n', value));
-		const y = Number(UtilCommon.date('Y', value));
-		const md = Constant.monthDays;
-		
-		// February
-		if (y % 4 === 0) {
-			md[2] = 29;
-		};
-		
-		const wdf = Number(UtilCommon.date('N', UtilCommon.timestamp(y, m, 1)));
-		const wdl = Number(UtilCommon.date('N', UtilCommon.timestamp(y, m, md[m])));
-		let pm = m - 1;
-		let nm = m + 1;
-		let py = y;
-		let ny = y;
-
-		if (pm < 1) {
-			pm = 12;
-			py = y - 1;
-		};
-
-		if (nm > 12) {
-			nm = 1;
-			ny = y + 1;
-		};
-
-		const days = [];
-		for (let i = 1; i <= wdf; ++i) {
-			days.push({ d: md[pm] - (wdf - i), m: pm, y: py });
-		};
-		for (let i = 1; i <= md[m]; ++i) {
-			days.push({ y: y, m: m, d: i });
-		};
-
-		for (let i = 1; i < 7 - wdl; ++i) {
-			days.push({ d: i, m: nm, y: ny });
-		};
-
-		return days;
+		return UtilDate.getCalendarMonth(value);
 	};
 	
 });

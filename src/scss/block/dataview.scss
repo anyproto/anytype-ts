@@ -15,7 +15,7 @@
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 
-			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
+			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorTextSecondary;
 			transition: $transitionAllCommon;
 		}
 		.loadMore {
@@ -28,7 +28,7 @@
 		}
 
 		.dataviewEmpty { 
-			color: $colorDarkGrey; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
+			color: $colorTextSecondary; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
 			text-align: center; padding: 16px 0px; height: 300px;
 		}
 		.dataviewEmpty.withHead { border-top: 0px; }
@@ -61,7 +61,7 @@
 			.editableWrap.isEmpty { min-width: 160px; }
 		}
 
-		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
+		.dataviewControls { font-weight: 500; color: $colorControlActive; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorShapeSecondary; position: absolute; bottom: 0px; }
 
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
@@ -115,7 +115,7 @@
 
 			.viewItem { 
 				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
-				max-width: 300px; color: $colorMediumGrey;
+				max-width: 300px; color: $colorControlActive;
 			}
 			.viewItem { 
 				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }

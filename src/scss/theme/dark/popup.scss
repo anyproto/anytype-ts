@@ -24,7 +24,7 @@
 
     .popup.popupSettings {
 		
-		.sides {
+		.mainSides {
 			> .side.left { background: $colorBgSecondary; }
 			> .side.left {
 				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
@@ -49,6 +49,9 @@
 				.select { border-color: $colorShapePrimary; }
 
 				.select { color: $colorTextSecondary; }
+				.select {
+					.item { color: $colorTextPrimary; }
+				}
 				.select:hover { background-color: $colorShapeHighlightMedium; }
 
 				.actionItems,
@@ -61,19 +64,43 @@
 			}
 		}
 
-		.side.right.tabSpaceIndex {
-			.spaceSettingsIndexHeader .headerContent .spaceType { background-color: $colorShapeHighlightMedium; }
-			.sections .section .sectionContent { border-color: $colorShapeSecondary; }
-
-			.sections .section .sectionContent {
-				.item { border-color: $colorShapeSecondary; }
-				.item {
-					.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+		.side.right.tabSpaceIndex,
+		.side.right.tabSpaceCreate {
+			.sections {
+				.spaceHeader {
+					.headerContent {
+						.spaceType { background-color: $colorShapeHighlightMedium; }
+					}	
 				}
-				.item.red {
-					.progressBar .fill { background: $colorRed; }
+
+				.section {
+					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent {
+						.item { border-color: $colorShapeSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+					}
 				}
 			}
+			.sections {
+				.section {
+					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent {
+						.item { border-color: $colorShapeSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+						.item.red {
+							.progressBar .fill { background: $colorRed; }
+						}
+					}
+				}
+			}
+		}
+
+		.side.right.tabSpaceCreate {
+			.loaderWrapper { background-color: $colorBgLoader; }
 		}
 
 		.side.right.tabDataManagement {
@@ -81,7 +108,7 @@
 		}
 
         .side.right.tabPhrase {
-            .qrWrap { background: $colorMediumGrey; }
+            .qrWrap { background: $colorControlActive; }
         }
 
 		.side.right.tabAccount {
@@ -94,12 +121,6 @@
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
 		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
-
-		.side.right.tabPersonal,
-		.side.right.tabImportCsv,
-		.side.right.tabPinIndex {
-			.select .item { color: $colorTextPrimary; }
-		}
 
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {

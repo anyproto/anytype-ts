@@ -53,7 +53,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 
 			let content = null;
 			if (item.id == 'add') {

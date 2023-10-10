@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, UtilObject, translate } from 'Lib';
-import { commonStore, popupStore } from 'Store';
+import { popupStore, blockStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -15,7 +15,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	render (): React.ReactNode {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 
 		return (
 			<div className="body" onClick={this.onOpenSettings}>
@@ -44,11 +44,11 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onSelect (icon: string) {
-		UtilObject.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(blockStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		UtilObject.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(blockStore.workspace, '', hash);
 	};
 
 });

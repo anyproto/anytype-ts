@@ -256,7 +256,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed.match(Key.up) ? -1 : 1);
+			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
@@ -334,9 +334,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
-		const skipTypes = [].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -386,7 +385,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		items = items.map(it => {
-			const type = dbStore.getType(it.type);
+			const type = dbStore.getTypeById(it.type);
 
 			return { 
 				...it,

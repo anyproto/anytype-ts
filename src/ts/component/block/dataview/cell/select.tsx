@@ -46,8 +46,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		let content = null;
 		let value = this.getItems();
+		let content = null;
 
 		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;

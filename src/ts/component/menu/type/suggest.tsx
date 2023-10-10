@@ -227,12 +227,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { skipIds } = data;
 		const filter = String(data.filter || '');
 		const sorts = [
-			{ relationKey: 'workspaceId', type: I.SortType.Desc },
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
 			filters = filters.concat(data.filters);
@@ -283,12 +283,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getSections () {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.workspaceId == workspace));
+		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
@@ -296,7 +296,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		if (filter) {
-			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
@@ -399,8 +399,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
 				if (data.filters) {
@@ -414,9 +414,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
-					onSelect: (item: any) => {
-						this.onClick(e, detailStore.mapper(item));
-					},
+					onSelect: item => this.onClick(e, item),
+					dataMapper: it => detailStore.mapper(it),
 				});
 				break;
 			};
@@ -443,12 +442,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			close(); 
 
 			if (onClick) {
-				onClick(item);
+				onClick(detailStore.mapper(item));
 			};
 		};
 
 		if (item.id == 'add') {
-			C.ObjectCreateObjectType({ name: filter }, [], (message: any) => {
+			C.ObjectCreateObjectType({ name: filter }, [], commonStore.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
@@ -468,7 +467,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return dbStore.getTypes().filter(it => (it.workspaceId == commonStore.workspace)).map(it => it.sourceObject).filter(it => it);
+		return dbStore.getTypes().filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

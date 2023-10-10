@@ -23,14 +23,14 @@
 			.iconObject { flex-shrink: 0; }
 			.txt { width: calc(100% - 40px); }
 			.name { @include text-common; font-weight: 600; }
-			.type { @include text-small; color: $colorDarkGrey; }
+			.type { @include text-small; color: $colorTextSecondary; }
 		}
 
-		.content > .sides { display: flex; height: 100%; }
-		.content > .sides {
+		.content > .mainSides { display: flex; height: 100%; }
+		.content > .mainSides {
 			> .side { position: relative; height: 100%; }
 			> .side.left { 
-				width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 
+				width: 30%; background: $colorShapeTertiary; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; 
 				display: flex; flex-direction: column; justify-content: space-between;
 			}
 			> .side.left {
@@ -40,7 +40,7 @@
 				.section.account { margin-bottom: 8px; }
 				.section:last-child { margin: 0px; }
 				.section {
-					> .name { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; padding: 0px 8px; }
+					> .name { @include text-small; color: $colorTextSecondary; margin: 0px 0px 4px 0px; padding: 0px 8px; }
 				}
 
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
@@ -60,16 +60,16 @@
 					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
-				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
+				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
 				.item.itemAccount {
 					.name { @include text-common; font-weight: 600; }
-					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
+					.onlineStatus { @include text-small; color: $colorTextSecondary; font-weight: 400; text-transform: capitalize; display: flex; gap: 0px 6px; align-items: center; }
 					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
 					.onlineStatus.online:before { background: $colorLime; }
 					.onlineStatus.offline:before { background: $colorRed; }
 				}
 
-				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
+				.select { transition: none; border: 0px; color: $colorControlActive; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
 				}
@@ -88,8 +88,8 @@
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
-						border-radius: 6px; margin-left: -5px;
+						color: $colorTextSecondary; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
+						border-radius: 6px; margin-left: -6px;
 					}
 					.element:hover { background: $colorShapeHighlightMedium; }
 				}
@@ -111,7 +111,7 @@
 
 				.error { margin: 8px 0px 0px 0px; }
 
-				.label.small, .label.section, .label.grey { color: $colorDarkGrey; }
+				.label.small, .label.section, .label.grey { color: $colorTextSecondary; }
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
@@ -123,7 +123,7 @@
 					.input { @include text-header2; padding: 0px; }
 				}
 
-				.iconWrapper { position: relative; margin: 0px 0px 12px 0px; display: inline-block; }
+				.iconWrapper { position: relative; }
 				.iconWrapper {
 					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: $colorBgLoader; }
 
@@ -150,7 +150,7 @@
 					}
 				}
 
-				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 16px 12px; line-height: unset; }
+				.phraseWrapper { border-radius: 12px; background-color: $colorShapeTertiary; padding: 16px 12px; line-height: unset; }
 				.phraseWrapper {
 					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
 					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
@@ -158,7 +158,17 @@
 
 					.icon { width: 28px; height: 28px; background-size: 20px; margin: 0px; top: 12px; right: 12px; border-radius: 6px; z-index: 1; }
 					.icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
-					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: $colorVeryLightGrey; }
+					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: $colorShapeTertiary; }
+				}
+
+				.select {
+					background: none; border: solid 1px $colorShapeSecondary; font-weight: 400; text-decoration: none;
+					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+				}
+				.select:hover { background: $colorShapeHighlightMedium; }
+				.select {
+					.item { border-bottom: 0; color: $colorTextPrimary; }
+					.icon.arrow { right: 3px !important; }
 				}
 			}
 		}
@@ -171,17 +181,16 @@
 				.section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
 
 				.section {
-					.iconWrapper { margin-bottom: 0; }
+					.iconWrapper { width: 108px; }
 					.title { @include text-header3; margin: 0; }
 					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorShapeSecondary; border-radius: 10px; }
 					.input:hover:not(.isReadonly) { border-color: $colorShapePrimary; }
 					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorSystemAccent100; padding: 5px 11px; }
-
 					.input.isReadonly { background-color: unset; }
 
 					.inputWrapper.withIcon { position: relative; }
 					.inputWrapper.withIcon {
-						.input { @include text-small; color: $colorDarkGrey; }
+						.input { @include text-small; color: $colorTextSecondary; }
 						.icon.copy {
 							width: 20px; height: 20px; z-index: -1; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
 							opacity: 0; transition: $transitionAllCommon;
@@ -194,10 +203,10 @@
 			}
 		}
 
-		.side.right.tabSpaceIndex {
-			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
-			.spaceSettingsIndexHeader {
-				.iconWrapper { margin-bottom: 0; }
+		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
+			.spaceHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceHeader {
+				.iconWrapper { width: 96px; }
 
 				.headerContent { margin-left: 24px; width: 100%; }
 				.headerContent {
@@ -209,7 +218,7 @@
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
 						background: $colorShapeHighlightLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
-						@include text-small; color: $colorDarkGrey; transition: $transitionAllCommon;
+						@include text-small; color: $colorTextSecondary; transition: $transitionAllCommon;
 					}
 					.spaceType:hover { background-color: $colorShapeHighlightMedium; }
 				}
@@ -221,7 +230,7 @@
 
 				.section {
 					.title { @include text-header3; margin-bottom: 12px; }
-					.label { @include text-small; color: $colorDarkGrey; }
+					.label { @include text-small; color: $colorTextSecondary; }
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorShapeSecondary; overflow: hidden; }
 					.sectionContent {
@@ -229,11 +238,11 @@
 						> .item:last-child { border-bottom: 0; }
 
 						> .item {
-							.sides { display: flex; justify-content: space-between; }
+							.sides { display: flex; justify-content: space-between; gap: 0px 16px; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
-								.left { margin-right: 16px; }
-								.right { flex-shrink: 0; }
+								.side.left { flex-grow: 1; }
+								.side.right { flex-shrink: 0; }
 							}
 
 							.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
@@ -302,10 +311,23 @@
 			}
 		}
 
+		.side.right.tabSpaceCreate {
+			.title { margin: 0px 0px 26px 0px; }
+			.spaceHeader { margin: 0px 0px 24px 0px; }
+			.sections { margin: 0px 0px 24px 0px; }
+			.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
+
+			.select {
+				.item {
+					.descr { display: none; }
+				}
+			}
+		}
+
 		.side.right.tabPhrase {
 			.inputs { margin: 0px 0px 54px 0px; }
 
-			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
+			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorShapeTertiary; overflow: hidden; }
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
@@ -318,18 +340,23 @@
 			}
 
 			.storageUsage {
-				.space { margin-bottom: 0px; padding: 0; }
-				.space {
-					.txt .type.red { color: $colorRed; }
+				.side.left {
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; border-radius: 8px; transition: $transitionAllCommon;
+				}
+				.side.left {
+					.iconObject { flex-shrink: 0; }
+					.txt { width: calc(100% - 40px); }
+					.name { @include text-common; }
+					.type { @include text-small; color: $colorTextSecondary; }
 				}
 			}
 
 			.accountLocation {
-				.locationDescription { @include text-small; color: $colorDarkGrey; }
-				.locationLabel { color: $colorDarkGrey; }
+				.locationDescription { @include text-small; color: $colorTextSecondary; }
+				.locationLabel { color: $colorTextSecondary; }
 			}
 
-			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
+			.iconObject { background-color: $colorShapeTertiary; border-radius: 4px; }
 		}
 
 		.side.right.tabPinIndex {
@@ -353,12 +380,14 @@
 
 				.items {
 					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
+
 					.item { gap: 0px 12px; margin-bottom: 0px; }
 					.item {
+						.objectClickArea { width: calc(100% - 24px); }
 						.checkbox { margin-right: 6px; }
 						.iconObject { flex-shrink: 0; }
 						.name { @include text-overflow-nw; @include text-common; width: 100%; }
-						.label { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; margin-bottom: 0px; }
+						.label { @include text-overflow-nw; @include text-small; width: 100%; color: $colorTextSecondary; margin-bottom: 0px; }
 					}
 				}
 			}
@@ -383,7 +412,7 @@
 			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
-			.btn { text-align: center; @include text-small; color: $colorDarkGrey; }
+			.btn { text-align: center; @include text-small; color: $colorTextSecondary; }
 			.btn {
 				.bg { 
 					width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; 
@@ -466,7 +495,7 @@
 		.side.right.tabImportNotion, 
 		.side.right.tabImportNotionHelp {
 			.icon.logo { background-image: url('~img/icon/import/notion.svg'); }
-			a { font-weight: bold; text-decoration: none; color: $colorMediumGrey; }
+			a { font-weight: bold; text-decoration: none; color: $colorControlActive; }
 		}
 
 		.side.right.tabImportNotion {
@@ -485,7 +514,7 @@
 				.title { @include text-paragraph; font-weight: 700; padding: 0px; }
 
 				.btn { 
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorDarkGrey; 
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorTextSecondary; 
 					transition: $transitionAllCommon;
 				}
 				.btn {
@@ -520,7 +549,7 @@
 					li { margin-bottom: 0px; list-style-type: disc; }
 				}
 				li:last-child { margin: 0px; }
-				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorVeryLightGrey; border-radius: 6px; }
+				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorShapeTertiary; border-radius: 6px; }
 			}
 		}
 
@@ -564,5 +593,11 @@
 		}
 	}
 
-	.popupSettings.isSpace .innerWrap { width: 684px; height: 700px; }
+	.popupSettings.isSpace {
+		.innerWrap { width: 684px; height: 700px; }
+	}
+
+	.popupSettings.isSpaceCreate {
+		.innerWrap { width: 684px; height: 406px; }
+	}
 }

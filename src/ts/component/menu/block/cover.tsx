@@ -15,7 +15,7 @@ enum Tab {
 
 interface State {
 	filter: string;
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const LIMIT = 36;
@@ -26,7 +26,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	node: any = null;
 	state = {
 		filter: '',
-		loading: false,
+		isLoading: false,
 	};
 	items: any[] = [];
 	filter = '';
@@ -46,7 +46,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	render () {
-		const { filter, loading } = this.state;
+		const { filter, isLoading } = this.state;
 		const tabs: any[] = [
 			{ id: Tab.Gallery, name: translate('menuBlockCoverGallery') },
 			{ id: Tab.Unsplash, name: translate('menuBlockCoverUnsplash') },
@@ -121,7 +121,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			};
 		};
 
-		if (loading) {
+		if (isLoading) {
 			content = <Loader />;
 		};
 
@@ -189,17 +189,17 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		this.items = [];
 
 		if (![ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
-			this.setState({ loading: false });
+			this.setState({ isLoading: false });
 			return;
 		};
 
 		switch (this.tab) {
 			case Tab.Unsplash: {
-				this.setState({ loading: true });
+				this.setState({ isLoading: true });
 
 				C.UnsplashSearch(filter, LIMIT, (message: any) => {
 					if (message.error.code) {
-						this.setState({ loading: false });
+						this.setState({ isLoading: false });
 						return;
 					};
 
@@ -212,14 +212,14 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						});
 					});
 
-					this.setState({ loading: false });
+					this.setState({ isLoading: false });
 				});
 				break;
 			};
 
 			case Tab.Library: {
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.image },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
 					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
 					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 500 },
 				];
@@ -227,7 +227,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 				];
 
-				this.setState({ loading: true });
+				this.setState({ isLoading: true });
 
 				UtilData.search({
 					filters,
@@ -236,7 +236,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					limit: 300,
 				}, (message: any) => {
 					if (message.error.code) {
-						this.setState({ loading: false });
+						this.setState({ isLoading: false });
 						return;
 					};
 
@@ -250,7 +250,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						});
 					});
 
-					this.setState({ loading: false });
+					this.setState({ isLoading: false });
 				});
 				break;
 			};
@@ -275,7 +275,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -304,7 +304,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.UnsplashDownload(item.id, (message: any) => {
+			C.UnsplashDownload(commonStore.space, item.id, (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.hash);
 				};
@@ -384,10 +384,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		
 		zone.removeClass('isDraggingOver');
 		preventCommonDrop(true);
-		this.setState({ loading: true });
+		this.setState({ isLoading: true });
 		
-		C.FileUpload('', file, I.FileType.Image, (message: any) => {
-			this.setState({ loading: false });
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+			this.setState({ isLoading: false });
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
@@ -408,20 +408,20 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			return;
 		};
 
-		this.setState({ loading: true });
+		this.setState({ isLoading: true });
 
 		UtilCommon.saveClipboardFiles(files, {}, (data: any) => {
 			if (!data.files.length) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
-			C.FileUpload('', data.files[0].path, I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
 				};
 
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				close();
 			});
 		});

@@ -1,5 +1,6 @@
+import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { commonStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore, commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -53,12 +54,12 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
+		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
-		let i = 0;
-		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
+		let i = 0;
 		for (const type of items) {
 			ret.push({ 
 				id: 'object' + i++, 
@@ -87,14 +88,8 @@ class UtilMenu {
 	};
 
 	getTurnPage () {
-		const { config } = commonStore;
 		const ret = [];
-	
-		let types = UtilData.getObjectTypesForNewObject(); 
-		if (!config.debug.ho) {
-			types = types.filter(it => !it.isHidden);
-		};
-		types.sort(UtilData.sortByName);
+		const types = UtilData.getObjectTypesForNewObject(); 
 
 		let i = 0;
 		for (const type of types) {
@@ -229,14 +224,53 @@ class UtilMenu {
 	};
 
 	getViews () {
-		return [
+		const { config } = commonStore;
+		const ret = [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
-		].map((it: any) => {
-			it.name = translate('viewName' + it.id);
-			return it;
+		];
+
+		if (config.experimental) {
+			ret.push({ id: I.ViewType.Calendar });
+		};
+
+		return ret.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+	};
+
+	viewContextMenu (param: any) {
+		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
+		const views = dbStore.getViews(rootId, blockId);
+
+		const options: any[] = [
+			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+		];
+
+		if (views.length > 1) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+		};
+
+		menuStore.open('select', {
+			...menuParam,
+			data: {
+				options,
+				onSelect: (e, option) => {
+					menuStore.closeAll([ 'select' ]);
+					if (close) {
+						close();
+					};
+
+					window.setTimeout(() => {
+						switch (option.id) {
+							case 'edit': $(`#button-${blockId}-settings`).trigger('click'); break;
+							case 'copy': onCopy(view); break;
+							case 'remove': onRemove(view); break;
+						};
+					}, Constant.delay.menu);
+				}
+			}
 		});
 	};
 
@@ -367,8 +401,7 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { workspace } = commonStore;
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const { workspace } = blockStore;
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
 				if (message.error.code) {
@@ -423,7 +456,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 									],
 									canAdd: true,
 									onSelect: (el: any) => onSelect(el, true),

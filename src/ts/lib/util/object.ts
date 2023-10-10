@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
 import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -10,6 +10,7 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
+			home.spaceId = commonStore.space;
 		};
 
 		if (!home) {
@@ -22,24 +23,29 @@ class UtilObject {
 		};
 	};
 
-	getSpace () {
-		return detailStore.get(Constant.subId.space, commonStore.workspace);
+	getWorkspace () {
+		const subId = Constant.subId.space;
+		const records = dbStore.getRecords(subId, '').map(it => detailStore.get(subId, it)).filter(it => it.spaceId == commonStore.space);
+
+		return records.length ? records[0] : { _empty_: true };
 	};
 
 	getSpaceDashboard () {
-		const space = this.getSpace();
-		if (!space.spaceDashboardId) {
+		const space = this.getWorkspace();
+		const id = space.spaceDashboardId;
+
+		if (!id) {
 			return null;
 		};
 
 		let home = null;
-		if (space.spaceDashboardId == I.HomePredefinedId.Graph) {
-			home = this.graph();
+		if (id == I.HomePredefinedId.Graph) {
+			home = this.getGraph();
 		} else
-		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
-			home = this.lastOpened();
+		if (id == I.HomePredefinedId.Last) {
+			home = this.getLastOpened();
 		} else {
-			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+			home = detailStore.get(Constant.subId.space, id);
 		};
 
 		if (!home || home._empty_ || home.isDeleted) {
@@ -48,7 +54,11 @@ class UtilObject {
 		return home;
 	};
 
-	graph () {
+	getProfile () {
+		return detailStore.get(Constant.subId.profile, blockStore.profile);
+	};
+
+	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
 			name: translate('commonGraph'), 
@@ -57,10 +67,11 @@ class UtilObject {
 		};
 	};
 
-	lastOpened () {
+	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'), 
+			name: translate('spaceLast'),
+			spaceId: commonStore.space,
 		};
 	};
 
@@ -97,7 +108,7 @@ class UtilObject {
 			return '';
 		};
 
-		return [ 'main', action, object.id ].join('/');
+		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
 	};
 
 	openEvent (e: any, object: any, param?: any) {
@@ -108,7 +119,7 @@ class UtilObject {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || popupStore.isOpen('page')) {
+		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
 		if ((e.metaKey || e.ctrlKey)) {
@@ -119,7 +130,14 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
-		popupStore.isOpen('page') ? this.openPopup(object, param) : this.openRoute(object, param);
+
+		// Prevent opening object in popup from different space
+		if (object.spaceId != commonStore.space) {
+			this.openRoute(object, param);
+			return;
+		};
+
+		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
 	openRoute (object: any, param?: any) {
@@ -129,7 +147,7 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilCommon.route('/' + route, param || {});
+		UtilRouter.go('/' + route, param || {});
 	};
 
 	openWindow (object: any) {
@@ -143,7 +161,13 @@ class UtilObject {
 		if (!object) {
 			return;
 		};
-	
+
+		// Prevent opening object in popup from different space
+		if (object.spaceId && (object.spaceId != commonStore.space)) {
+			this.openRoute(object, param);
+			return;
+		};
+
 		const action = this.actionByLayout(object.layout);
 
 		param = param || {};
@@ -168,13 +192,26 @@ class UtilObject {
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
+		let typeKey = '';
+
 		details = details || {};
 
 		if (!templateId) {
 			details.type = details.type || commonStore.type;
 		};
+
+		if (details.type) {
+			const type = dbStore.getTypeById(details.type);
+			if (type) {
+				typeKey = type.uniqueKey;
+
+				if (!templateId) {
+					templateId = type.defaultTemplateId || Constant.templateId.blank;
+				};
+			};
+		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -237,10 +274,10 @@ class UtilObject {
 	};
 
 	name (object: any) {
-		const { isDeleted, type, layout, snippet } = object;
+		const { isDeleted, layout, snippet } = object;
 
 		let name = '';
-		if (!isDeleted && this.isFileType(type)) {
+		if (!isDeleted && this.isFileLayout(layout)) {
 			name = UtilFile.name(object);
 		} else
 		if (layout == I.ObjectLayout.Note) {
@@ -271,70 +308,38 @@ class UtilObject {
 			};
 
 			if (callBack) {
-				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-				callBack(records);
+				callBack(message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_));
 			};
 		});
 	};
 
-	isFileType (type: string) {
-		return this.getFileTypes().includes(type);
+	isFileLayout (layout: I.ObjectLayout) {
+		return this.getFileLayouts().includes(layout);
 	};
 
-	isSystemType (type: string) {
-		return this.getSystemTypes().includes(type);
+	isSystemLayout (layout: I.ObjectLayout) {
+		return this.getSystemLayouts().includes(layout);
 	};
 
-	isSetType (type: string) {
-		return this.getSetTypes().includes(type);
-	};
-
-	isStoreType (type: string) {
-		return this.getStoreTypes().includes(type);
+	isSetLayout (layout: I.ObjectLayout) {
+		return this.getSetLayouts().includes(layout);
 	};
 
 	isTemplate (type: string) {
-		return type == Constant.typeId.template;
+		const templateType = dbStore.getTemplateType();
+		return templateType ? type == templateType.id : false;
 	};
 
-	getSystemAndFileTypes () {
-		return this.getSystemTypes().concat(this.getFileTypes());
+	isTypeOrRelationLayout (layout: I.ObjectLayout) {
+		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
-	getFileTypes () {
-		return [
-			Constant.typeId.file, 
-			Constant.typeId.image, 
-			Constant.typeId.audio, 
-			Constant.typeId.video,
-		];
+	isTypeLayout (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Type;
 	};
 
-	getSystemTypes () {
-		return [
-			Constant.typeId.type,
-			Constant.typeId.template,
-			Constant.typeId.relation,
-			Constant.typeId.option,
-			Constant.typeId.dashboard,
-			Constant.typeId.date,
-			Constant.typeId.space,
-		].concat(this.getStoreTypes());
-	};
-
-	getStoreTypes () {
-		return [
-			Constant.storeTypeId.type,
-			Constant.storeTypeId.relation,
-			Constant.storeTypeId.template,
-		];
-	};
-
-	getSetTypes () {
-		return [ 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
-		];
+	isRelationLayout (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Relation;
 	};
 
 	getPageLayouts () {
@@ -347,6 +352,13 @@ class UtilObject {
 		];
 	};
 
+	getSetLayouts () {
+		return [ 
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+		];
+	};
+
 	getLayoutsWithoutTemplates () {
 		return [
 			I.ObjectLayout.Note,
@@ -354,7 +366,7 @@ class UtilObject {
 			I.ObjectLayout.Collection,
 			I.ObjectLayout.Bookmark,
 		].concat(this.getFileAndSystemLayouts());
-	}
+	};
 
 	getFileAndSystemLayouts () {
 		return this.getFileLayouts().concat(this.getSystemLayouts());
@@ -366,7 +378,7 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
-			I.ObjectLayout.Date,
+			I.ObjectLayout.Space,
 		];
 	};
 
@@ -380,14 +392,8 @@ class UtilObject {
 	};
 
 	isAllowedTemplate (typeId): boolean {
-		const type = dbStore.getType(typeId);
+		const type = dbStore.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
-	};
-
-	checkDefaultTemplate (typeId: string, templateId: string, callBack: (res) => void) {
-		UtilData.getTemplatesByTypeId(typeId, (message) => {
-			callBack((message.records || []).map(it => it.id).includes(templateId));
-		});
 	};
 
 };

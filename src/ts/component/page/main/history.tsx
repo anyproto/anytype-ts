@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -88,7 +88,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						onClick={e => this.loadVersion(item.id)}
 					>
 						{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
-						<div className="date">{UtilCommon.date('d F, H:i', item.time)}</div>
+						<div className="date">{UtilDate.date('d F, H:i', item.time)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 
@@ -425,7 +425,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	monthId (time: number) {
-		return UtilCommon.date('F Y', time);
+		return UtilDate.date('F Y', time);
 	};
 
 	resize () {

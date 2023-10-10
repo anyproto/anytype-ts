@@ -58,7 +58,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
@@ -291,10 +291,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds, filter } = data;
-		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeId.date);
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -361,7 +360,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			const type = dbStore.getType(commonStore.type);
+			const type = dbStore.getTypeById(commonStore.type);
 
 			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {

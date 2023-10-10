@@ -119,43 +119,17 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
-		const k = keyboard.eventKey(e);
 
 		let ret = false;
 
-		keyboard.shortcut('enter', e, () => {
-			this.save();
-			close();
-			ret = true;
+		keyboard.shortcut('space', e, () => {
+			if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
+				e.preventDefault();
+
+				this.onSwitch(e, item.id, !view[item.id]);
+				ret = true;
+			};
 		});
-
-		if (ret) {
-			return;
-		};
-
-		if (this.isFocused) {
-			if (k != Key.down) {
-				return;
-			} else {
-				this.ref.blur();
-				this.n = -1;
-			};
-		} else {
-			if ((k == Key.up) && !this.n) {
-				this.n = -1;
-				this.ref.focus();
-				return;
-			};
-
-			keyboard.shortcut('space', e, () => {
-				if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
-					e.preventDefault();
-
-					this.onSwitch(e, item.id, !view[item.id]);
-					ret = true;
-				};
-			});
-		};
 
 		if (ret) {
 			return;
@@ -167,8 +141,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, readonly } = data;
+		const { rootId, blockId, onSave, readonly, getView } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const view = getView();
 
 		if (readonly || !block) {
 			return;
@@ -178,9 +153,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.groupRelationKey)?.id;
+			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
+		this.param.name = view.name;
+		
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
 				Dataview.groupUpdate(rootId, blockId, current.id, []);
@@ -217,8 +194,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			]);
 		};
 
-		if (type == I.ViewType.Board) {
-			const groupOption = Relation.getGroupOption(rootId, blockId, groupRelationKey);
+		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(type)) {
+			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
 
 			settings = settings.concat([
 				{ id: 'groupRelationKey', name: translate('menuDataviewViewEditGroupBy'), caption: (groupOption ? groupOption.name : translate('commonSelect')), arrow: true },
@@ -281,6 +258,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { rootId, blockId } = data;
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const { type, groupRelationKey } = this.param;
+		const view = data.view.get();
 
 		if (!item.arrow || !allowedView) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -316,8 +294,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'groupRelationKey': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: Relation.getGroupOption(rootId, blockId, groupRelationKey)?.id,
-					options: Relation.getGroupOptions(rootId, blockId),
+					value: Relation.getGroupOption(rootId, blockId, view.type, groupRelationKey)?.id,
+					options: Relation.getGroupOptions(rootId, blockId, view.type),
 				});
 				break;
 			};

@@ -10,12 +10,13 @@ import Constant from 'json/constant.json';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
+import Empty from './dataview/empty';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-import Empty from './dataview/empty';
+import ViewCalendar from './dataview/view/calendar';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -136,6 +137,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case I.ViewType.List:
 				ViewComponent = ViewList;
 				break;
+
+			case I.ViewType.Calendar:
+				ViewComponent = ViewCalendar;
+				break;
 		};
 
 		const dataviewProps = {
@@ -164,6 +169,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
+			onViewSettings: () => {
+				if (this.refControls && this.refControls.onViewSettings) {
+					this.refControls.onViewSettings();
+				};
+			},
 			getSearchIds: this.getSearchIds,
 		};
 
@@ -493,8 +503,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId } = this.props;
 		const target = this.getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.relation).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
@@ -510,39 +520,38 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const view = this.getView();
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 
-		let type = '';
-
+		let typeId = '';
 		if (types.length) {
-			type = types[0].id;
+			typeId = types[0].id;
 		} else
 		if (relations.length) {
 			for (const item of relations) {
 				if (item.objectTypes.length) {
-					const first = item.objectTypes[0];
+					const first = dbStore.getTypeById(item.objectTypes[0]);
 
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
-						type = first;
+					if (first && !UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
+						typeId = first.id;
 						break;
 					};
 				};
 			};
 		};
-		if (!type && view && view.defaultTypeId && this.isAllowedDefaultType()) {
-			type = view.defaultTypeId;
+		if (view && view.defaultTypeId && this.isAllowedDefaultType()) {
+			typeId = view.defaultTypeId;
 		};
-		if (!type) {
-			type = commonStore.type;
+		if (!typeId) {
+			typeId = commonStore.type;
 		};
-		return type;
+		return typeId;
 	};
 
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id);
 		const view = this.getView();
 		const conditions = [
 			I.FilterCondition.Equal,
@@ -551,9 +560,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		];
-		const details: any = {
-			type: this.getTypeId(),
-		};
+		const details: any = {};
 
 		let group = null;
 
@@ -619,7 +626,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getDefaultTemplateId (typeId?: string): string {
 		const view = this.getView();
-		const type = dbStore.getType(typeId || this.getTypeId());
+		const type = dbStore.getTypeById(typeId || this.getTypeId());
 
 		if (view && view.defaultTemplateId) {
 			return view.defaultTemplateId;
@@ -636,9 +643,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const hasSources = this.isCollection() || this.getSources().length;
+		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
+
+		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			if (template.targetObjectType) {
@@ -649,65 +659,59 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
+		const currentTemplate = detailStore.get(rootId, templateId);
 
-		const create = () => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
-				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				let records = this.getRecords(groupId);
-
-				const object = message.details;
-				const oldIndex = records.indexOf(message.objectId);
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				if (oldIndex < 0) {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-				} else {
-					records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
-				};
-
-				if (groupId) {
-					this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
-						dbStore.recordsSet(subId, '', records);
-					});
-				} else {
-					dbStore.recordsSet(subId, '', records);
-				};
-
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
-				if (object.type == Constant.typeId.note) {
-					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
-				};
-
-				analytics.event('CreateObject', {
-					route: (isCollection ? 'Collection' : 'Set'),
-					objectType: object.type,
-					layout: object.layout,
-				});
-			});
+		if (currentTemplate.isArchived || currentTemplate.isDeleted) {
+			template = null;
 		};
 
-		UtilObject.checkDefaultTemplate(details.type, templateId, (res) => {
-			if (!hasSources || !res) {
-				template = null;
-				C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: Constant.templateId.blank }, create);
-			} else {
-				create();
+		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
+			this.creating = false;
+
+			if (message.error.code) {
+				return;
 			};
+
+			let records = this.getRecords(groupId);
+
+			const object = message.details;
+			const oldIndex = records.indexOf(message.objectId);
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
+			if (oldIndex < 0) {
+				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			} else {
+				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+			};
+
+			if (groupId) {
+				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
+				});
+			} else {
+				dbStore.recordsSet(subId, '', records);
+			};
+
+			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const ref = this.refCells.get(id);
+
+			if (object.layout == I.ObjectLayout.Note) {
+				this.onCellClick(e, 'name', object.id);
+			} else
+			if (ref) {
+				window.setTimeout(() => { ref.onClick(e); }, 15);
+			};
+
+			analytics.event('CreateObject', {
+				route: (isCollection ? 'Collection' : 'Set'),
+				objectType: object.type,
+				layout: object.layout,
+			});
 		});
 	};
 
@@ -737,7 +741,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		if (details.type == Constant.typeId.bookmark) {
+		if (details.layout == I.ObjectLayout.Bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -797,14 +801,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onTemplateAdd (id?: string) {
 		const typeId = id || this.getTypeId();
-		const type = dbStore.getType(typeId);
+		const type = dbStore.getTypeById(typeId);
 		const details: any = {
-			type: Constant.typeId.template,
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', (message) => {
+		C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -908,28 +911,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
+		const collectionType = dbStore.getCollectionType();
 		const addParam: any = {};
 
 		let filters: I.Filter[] = [];
 		
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', message => onSelect(message.details, true));
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', message => onSelect(message.details, true));
+				C.ObjectCreateSet([], {}, '', commonStore.space, message => onSelect(message.details, true));
 			};
 		};
 
@@ -1130,8 +1134,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
+		const skipLayouts = UtilObject.getFileAndSystemLayouts();
 		const sources = this.getSources();
 
 		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
@@ -1141,7 +1145,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		isAllowed = isAllowed && !!sources.length;
 		for (const type of types) {
-			if (skipTypes.includes(type)) {
+			if (skipLayouts.includes(type.recommendedLayout)) {
 				isAllowed = false;
 				break;
 			};
@@ -1159,7 +1163,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId } = this.props;
-		return !!Relation.getSetOfObjects(rootId, this.getTarget().id, Constant.typeId.relation).map(it => it.id).length;
+		return !!Relation.getSetOfObjects(rootId, this.getTarget().id, I.ObjectLayout.Relation).map(it => it.id).length;
 	};
 
 	isCollection (): boolean {

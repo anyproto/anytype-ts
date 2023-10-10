@@ -366,7 +366,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/edit':		 'ScreenObject',
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
@@ -414,7 +413,7 @@ class Analytics {
 	};
 
 	typeMapper (id: string) {
-		const type = dbStore.getType(id);
+		const type = dbStore.getTypeById(id);
 		return type ? (type.sourceObject ? type.sourceObject : 'custom') : '';
 	};
 
