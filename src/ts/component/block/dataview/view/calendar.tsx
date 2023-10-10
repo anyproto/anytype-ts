@@ -173,6 +173,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const day = node.find('.day').first();
 
 		node.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
+		win.trigger('resize.menuDataviewCalendarDay');
 
 		if (day.length) {
 			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
