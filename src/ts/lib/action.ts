@@ -225,6 +225,8 @@ class Action {
 			};
 
 			const { details } = message;
+			const eventParam: any = {};
+
 			let toast = '';
 			let subId = '';
 
@@ -232,12 +234,16 @@ class Action {
 				case I.ObjectLayout.Type: {
 					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
+
+					eventParam.objectType = object.type;
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
 					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
+
+					eventParam.relationKey = object.relationKey;
 					break;
 				};
 			};
@@ -247,7 +253,7 @@ class Action {
 			};
 
 			detailStore.update(subId, { id: details.id, details }, false);
-			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
+			analytics.event('ObjectInstall', eventParam);
 		});
 	};
 
