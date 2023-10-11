@@ -225,7 +225,7 @@ class Action {
 			};
 
 			const { details } = message;
-			const eventParam: any = {};
+			const eventParam: any = { layout: object.layout };
 
 			let toast = '';
 			let subId = '';
@@ -235,7 +235,7 @@ class Action {
 					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
 
-					eventParam.objectType = object.type;
+					eventParam.objectType = object.id;
 					break;
 				};
 
@@ -258,6 +258,8 @@ class Action {
 	};
 
 	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+		const eventParam: any = { layout: object.layout };
+
 		let title = '';
 		let text = '';
 		let toast = '';
@@ -267,6 +269,8 @@ class Action {
 				title = translate('libActionUninstallTypeTitle');
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
+
+				eventParam.objectType = object.id;
 				break;
 			};
 
@@ -274,6 +278,8 @@ class Action {
 				title = translate('libActionUninstallRelationTitle');
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
+
+				eventParam.relationKey = object.relationKey;
 				break;
 			};
 		};
@@ -297,7 +303,7 @@ class Action {
 						if (showToast) {
 							Preview.toastShow({ text: toast });
 						};
-						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
+						analytics.event('ObjectUninstall', eventParam);
 					});
 				},
 			},

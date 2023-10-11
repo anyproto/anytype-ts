@@ -124,11 +124,6 @@ class UtilObject {
 			spaceId = account.info.accountSpaceId;
 		};
 
-		console.log(object);
-		console.log(commonStore.space);
-
-		console.log('id', id, 'spaceId', spaceId);
-
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
 
