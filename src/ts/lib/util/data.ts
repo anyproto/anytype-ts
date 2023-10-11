@@ -359,7 +359,7 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'targetSpaceId', 'spaceAccessibility', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {

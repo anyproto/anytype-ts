@@ -277,6 +277,8 @@ class DetailStore {
 	private mapSpace (object: any) {
 		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Personal;
 		object.spaceId = Relation.getStringValue(object.spaceId);
+		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
+		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 
 		delete(object.spaceAccessibility);
 
