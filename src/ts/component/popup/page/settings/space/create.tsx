@@ -107,6 +107,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											menuParam={{
 												width: 360,
 												horizontal: I.MenuDirection.Center,
+												className: 'withFullDescripion',
+												data: { noVirtualisation: true, noScroll: true }
 											}}
 										/>
 									</div>
@@ -172,18 +174,24 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getUsecaseOptions () {
-		return [
-			{ id: I.Usecase.Empty }
-		].concat(_.shuffle([
-			{ id: I.Usecase.Personal },
-			{ id: I.Usecase.Notes },
-			{ id: I.Usecase.Knowledge },
-			{ id: I.Usecase.Strategic },
-        ])).map(it => ({
+		let ret: any = [ 
+			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
+		];
+
+		ret = ret.concat(_.shuffle([
+			{ id: I.Usecase.Personal, icon: 'postbox', },
+			{ id: I.Usecase.Notes, icon: 'memo' },
+			{ id: I.Usecase.Knowledge, icon: 'books' },
+			{ id: I.Usecase.Strategic, icon: 'bulb' },
+        ]));
+
+		return ret.map((it: any) => ({
 			...it,
 			name: translate(`usecase${it.id}Title`),
 			description: translate(`usecase${it.id}Label`),
 			withDescription: true,
+			iconSize: 40,
+			object: { iconEmoji: `:${it.icon}:` }
 		}));
 	};
 

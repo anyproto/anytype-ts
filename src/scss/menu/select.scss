@@ -37,4 +37,17 @@
 	.menu.menuSelect.center {
 		.item { text-align: center; }
 	}
+
+	.menu.menuSelect.withFullDescripion {
+		.content { overflow: auto; }
+		.item.withDescription { height: auto; }
+		.item.withDescription {
+			.descr { overflow: visible; white-space: normal; height: auto; }
+		}
+	}
+
+	.menu.menuSelect.noScroll {
+		.content { overflow: hidden; max-height: unset; }
+	}
+
 }

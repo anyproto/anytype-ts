@@ -115,8 +115,6 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { padding-left: 10px; }
-
 				.name { width: 100%; }
 				.name {
 					.label { margin: 0px 0px 6px 0px; }
@@ -163,11 +161,14 @@
 
 				.select {
 					background: none; border: solid 1px $colorShapeSecondary; font-weight: 400; text-decoration: none;
-					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px; padding-left: 10px;
 				}
 				.select:hover { background: $colorShapeHighlightMedium; }
 				.select {
 					.item { border-bottom: 0; color: $colorTextPrimary; }
+					.item {
+						.name { line-height: 20px; }
+					}
 					.icon.arrow { right: 3px !important; }
 				}
 			}
