@@ -6,19 +6,13 @@ import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
-interface State {
-	value: number;
-};
-
 const PADDING = 46;
 
-const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent, State> {
+const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	ref = null;
-	state = {
-		value: UtilDate.now(),
-	};
+	value = UtilDate.now();
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -26,10 +20,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	render () {
 		const { className } = this.props;
-		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
-		const { m, y } = this.getDateParam(value);
+		const { m, y } = this.getDateParam(this.value);
 		const today = this.getDateParam(UtilDate.now());
 		const subId = this.getSubId(m, y);
 
@@ -121,7 +114,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getData () {
-		return UtilDate.getCalendarMonth(this.state.value);
+		return UtilDate.getCalendarMonth(this.value);
 	};
 
 	getSubId (m: number, y: number) {
@@ -131,7 +124,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	load () {
 		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
-		const { value } = this.state;
 		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -140,7 +132,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const { m, y } = this.getDateParam(value);
+		const { m, y } = this.getDateParam(this.value);
 		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
 		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
 		const limit = 10;
@@ -185,7 +177,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	setValue (value: number) {
-		this.setState({ value });
+		this.value = value;
+		this.forceUpdate();
+		this.load();
 	};
 
 	resize () {

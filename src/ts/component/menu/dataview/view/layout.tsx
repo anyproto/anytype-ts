@@ -152,7 +152,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const current = data.view.get();
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
+		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(this.param.type) && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
