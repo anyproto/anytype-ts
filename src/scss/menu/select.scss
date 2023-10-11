@@ -39,9 +39,11 @@
 	}
 
 	.menu.menuSelect.withFullDescripion {
-		.content { overflow: auto; }
+		.content { overflow: auto; padding: 8px 0px; }
+
 		.item.withDescription { height: auto; }
 		.item.withDescription {
+			.iconObject { background-color: $colorShapeHighlightMedium; }
 			.descr { overflow: visible; white-space: normal; height: auto; }
 		}
 	}

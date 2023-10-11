@@ -167,6 +167,7 @@
 				.select {
 					.item { border-bottom: 0; color: $colorTextPrimary; }
 					.item {
+						.iconObject { display: none; }
 						.name { line-height: 20px; }
 					}
 					.icon.arrow { right: 3px !important; }
