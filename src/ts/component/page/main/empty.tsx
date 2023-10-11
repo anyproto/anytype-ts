@@ -14,7 +14,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilObject.getWorkspace();
+		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 
 		return (

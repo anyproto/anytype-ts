@@ -25,15 +25,12 @@ class UtilObject {
 		};
 	};
 
-	getWorkspace () {
-		const subId = Constant.subId.space;
-		const records = dbStore.getRecords(subId, '').map(it => detailStore.get(subId, it)).filter(it => it.spaceId == commonStore.space);
-
-		return records.length ? records[0] : { _empty_: true };
+	getSpaceview () {
+		return detailStore.get(Constant.subId.space, blockStore.spaceview);
 	};
 
 	getSpaceDashboard () {
-		const space = this.getWorkspace();
+		const space = this.getSpaceview();
 		const id = space.spaceDashboardId;
 
 		if (!id) {
@@ -380,7 +377,6 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
-			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
 		];
 	};

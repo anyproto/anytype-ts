@@ -43,7 +43,6 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Set, 
 	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
-	I.ObjectLayout.Space,
 ];
 
 const IconSize = {

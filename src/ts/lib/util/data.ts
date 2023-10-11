@@ -802,7 +802,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getWorkspace();
+		const space = UtilObject.getSpaceview();
 		const title = [];
 
 		if (name) {
