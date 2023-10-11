@@ -178,6 +178,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Space);
 	};
 
+	isObjectSpaceView (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.SpaceView);
+	};
+
 	isObjectFileKind (): boolean { 
 		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
 	};

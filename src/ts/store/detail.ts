@@ -194,7 +194,8 @@ class DetailStore {
 				break;
 			};
 
-			case I.ObjectLayout.Space: {
+			case I.ObjectLayout.Space:
+			case I.ObjectLayout.SpaceView: {
 				object = this.mapSpace(object);
 				break;
 			};

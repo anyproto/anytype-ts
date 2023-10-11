@@ -433,7 +433,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage, layout } = object;
-		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.Space);
+		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.SpaceView);
 		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
 
 		menuStore.open('smile', { 

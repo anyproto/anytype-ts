@@ -110,10 +110,6 @@ class UtilObject {
 			return '';
 		};
 
-		console.log(object);
-		console.log(commonStore.space);
-		//return '';
-
 		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
 	};
 
@@ -385,6 +381,7 @@ class UtilObject {
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
+			I.ObjectLayout.SpaceView,
 		];
 	};
 

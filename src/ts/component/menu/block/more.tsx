@@ -161,7 +161,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		// Restrictions
 
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
+		const allowedSearch = !block.isObjectSet() && !block.isObjectSpaceView();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedFav = !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -171,7 +171,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedInstall = !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedTemplate = !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
+		const hasShortMenu = (
+			block.isObjectType() || 
+			block.isObjectRelation() || 
+			block.isObjectFileKind() || 
+			block.isObjectSet() || 
+			block.isObjectCollection() || 
+			block.isObjectSpaceView()
+		);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;

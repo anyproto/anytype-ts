@@ -21,7 +21,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 			<div className="body" onClick={this.onOpenSettings}>
 				<IconObject 
 					id="widget-space-icon" 
-					object={{ ...space, layout: I.ObjectLayout.Space }} 
+					object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
 					forceLetter={true} 
 					size={36}
 					canEdit={true} 

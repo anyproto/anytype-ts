@@ -146,7 +146,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="line right" />
 
 					<div className="space">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
+						<IconObject object={{ iconOption, layout: I.ObjectLayout.SpaceView }} size={64} />
 						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>

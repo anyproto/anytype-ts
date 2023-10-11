@@ -97,12 +97,12 @@ const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-const WorkspaceInfo = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Info.Request();
+const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
 
-	dispatcher.request(WorkspaceInfo.name, request, callBack);
+	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
 
 const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
@@ -1774,7 +1774,7 @@ export {
 	WalletCloseSession,
 
 	WorkspaceCreate,
-	WorkspaceInfo,
+	WorkspaceOpen,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
 
