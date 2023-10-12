@@ -100,7 +100,11 @@ class UtilRouter {
 			return;
 		};
 
-		C.WorkspaceInfo(id, (message: any) => {
+		C.WorkspaceOpen(id, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,

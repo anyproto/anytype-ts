@@ -10,6 +10,7 @@ class AccountInfo implements I.AccountInfo {
 	localStoragePath = '';
 	accountSpaceId = '';
 	workspaceObjectId = '';
+	spaceViewId = '';
 	widgetsId = '';
 	analyticsId = '';
 	networkId = '';
@@ -22,6 +23,7 @@ class AccountInfo implements I.AccountInfo {
 		this.localStoragePath = String(props.localStoragePath || '');
 		this.accountSpaceId = String(props.accountSpaceId || '');
 		this.workspaceObjectId = String(props.workspaceObjectId || '');
+		this.spaceViewId = String(props.spaceViewId || '');
 		this.widgetsId = String(props.widgetsId || '');
 		this.analyticsId = String(props.analyticsId || '');
 		this.networkId = String(props.networkId || '');
@@ -34,6 +36,7 @@ class AccountInfo implements I.AccountInfo {
 			localStoragePath: observable,
 			accountSpaceId: observable,
 			workspaceObjectId: observable,
+			spaceViewId: observable,
 			widgetsId: observable,
 			analyticsId: observable,
 			networkId: observable,

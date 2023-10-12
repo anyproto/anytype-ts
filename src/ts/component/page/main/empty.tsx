@@ -14,7 +14,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilObject.getWorkspace();
+		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 
 		return (
@@ -22,7 +22,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="wrapper"
 			>
-				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.Space} {...this.props} />
+				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.SpaceView} {...this.props} />
 
 				<div className="wrapper">
 					<IconObject object={space} size={112} forceLetter={true} />

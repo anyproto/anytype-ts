@@ -170,7 +170,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			UtilRouter.switchSpace(item.spaceId);
+			UtilRouter.switchSpace(item.targetSpaceId);
 			this.props.close();
 		};
 	};

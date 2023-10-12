@@ -40,7 +40,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
 		const space = {
-			layout: I.ObjectLayout.Space,
+			layout: I.ObjectLayout.SpaceView,
 			name,
 			iconOption,
 			iconEmoji,
