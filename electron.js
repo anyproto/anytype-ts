@@ -94,7 +94,7 @@ function waitForLibraryAndCreateWindows () {
 // MacOs 12.2 (M1): doesn't fire on manual theme switch
 nativeTheme.on('updated', () => {
 	MenuManager.updateTrayIcon();
-	WindowManager.updateTheme();
+	WindowManager.sendToAll('native-theme', Util.isDarkTheme());
 });
 
 function createWindow () {
