@@ -645,7 +645,6 @@
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
-	"popupSettingsSpaceIndexSpaceTypePersonal": "Personal Space",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
@@ -1398,7 +1397,7 @@
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Account",
 
-	"spaceType0": "Personal Space",
+	"spaceType0": "Private Space",
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 

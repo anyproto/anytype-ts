@@ -47,7 +47,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="sides">
 						<div className="side left">
 							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-							<Label text={UtilDate.date(UtilData.dateFormat(I.DateFormat.Short), space.createdDate)} />
+							<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
 						</div>
 					</div>
 				</div>
@@ -84,7 +84,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 						<Label
 							className="spaceType"
-							text={translate('popupSettingsSpaceIndexSpaceTypePersonal')}
+							text={translate(`spaceType${space.spaceType}`)}
 							onMouseEnter={this.onSpaceTypeTooltip}
 							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
