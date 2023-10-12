@@ -58,7 +58,7 @@ export const Mapper = {
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 				techSpaceId: obj.getTechspaceid(),
-				workspaceObjectId: obj.getWorkspaceobjectid(),
+				spaceViewId: obj.getSpaceviewid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
 				networkId: obj.getNetworkid(),

@@ -97,12 +97,12 @@ const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-const WorkspaceInfo = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Info.Request();
+const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
 
-	dispatcher.request(WorkspaceInfo.name, request, callBack);
+	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
 
 const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
@@ -120,6 +120,15 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 	request.setObjectidsList(objectIds);
 
 	dispatcher.request(WorkspaceObjectListRemove.name, request, callBack);
+};
+
+const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.SetInfo.Request();
+
+	request.setSpaceid(spaceId);
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
 
 // ---------------------- ACCOUNT ---------------------- //
@@ -1538,15 +1547,6 @@ const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: stri
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
 
-const ObjectWorkspaceSetDashboard = (contextId: string, objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.WorkspaceSetDashboard.Request();
-
-	request.setContextid(contextId);
-    request.setObjectid(objectId);
-
-	dispatcher.request(ObjectWorkspaceSetDashboard.name, request, callBack);
-};
-
 const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 
@@ -1774,9 +1774,10 @@ export {
 	WalletCloseSession,
 
 	WorkspaceCreate,
-	WorkspaceInfo,
+	WorkspaceOpen,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
+	WorkspaceSetInfo,
 
 	AccountCreate,
 	AccountRecover,
@@ -1932,8 +1933,6 @@ export {
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,
-
-	ObjectWorkspaceSetDashboard,
 
 	RelationListRemoveOption,
 

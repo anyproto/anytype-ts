@@ -361,7 +361,7 @@ export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	};
 };
 
-export const WorkspaceInfo = (response: Rpc.Workspace.Info.Response) => {
+export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
 	return {
 		info: Mapper.From.AccountInfo(response.getInfo()),
 	};

@@ -20,7 +20,7 @@ export interface AccountInfo {
 	localStoragePath: string;
 	accountSpaceId: string;
 	techSpaceId: string;
-	workspaceObjectId: string;
+	spaceViewId: string;
 	widgetsId: string;
 	analyticsId: string;
 	networkId: string;

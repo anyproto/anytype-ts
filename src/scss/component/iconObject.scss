@@ -66,12 +66,11 @@
 
 .iconObject.isHuman { border-radius: 100% !important; background-color: unset; }
 
-.iconObject.withOption.isSpace { background: $colorControlAccent !important; }
-
-.iconObject.isSpace { border-radius: 2px !important; }
-.iconObject.isSpace.c64, 
-.iconObject.isSpace.c80, 
-.iconObject.isSpace.c96, 
-.iconObject.isSpace.c108, 
-.iconObject.isSpace.c112, 
-.iconObject.isSpace.c128 { border-radius: 4px !important; }
+.iconObject.isSpaceView { border-radius: 2px !important; }
+.iconObject.isSpaceView.c64, 
+.iconObject.isSpaceView.c80, 
+.iconObject.isSpaceView.c96, 
+.iconObject.isSpaceView.c108, 
+.iconObject.isSpaceView.c112, 
+.iconObject.isSpaceView.c128 { border-radius: 4px !important; }
+.iconObject.withOption.isSpaceView { background: $colorControlAccent !important; }
