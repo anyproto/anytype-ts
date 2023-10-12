@@ -139,7 +139,6 @@ import 'scss/popup/prompt.scss';
 import 'scss/popup/search.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
-import 'scss/popup/template.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
 

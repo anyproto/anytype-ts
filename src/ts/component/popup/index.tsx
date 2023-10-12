@@ -14,7 +14,6 @@ import PopupPreview from './preview';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
-import PopupTemplate from './template';
 import PopupExport from './export';
 import PopupMigration from './migration';
 import PopupPin from './pin';
@@ -48,7 +47,6 @@ class Popup extends React.Component<I.Popup> {
 			preview:	 PopupPreview,
 			shortcut:	 PopupShortcut,
 			page:		 PopupPage,
-			template:	 PopupTemplate,
 			export:		 PopupExport,
 			migration:	 PopupMigration,
 			pin:		 PopupPin,
