@@ -917,6 +917,7 @@ class Keyboard {
 
 			this.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+			Renderer.send('pin-check');
 		}, pinTime);
 	};
 

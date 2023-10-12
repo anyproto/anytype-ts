@@ -422,6 +422,13 @@ class App extends React.Component<object, State> {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
 		});
+
+		Renderer.on('pin-check', () => {
+			keyboard.setPinChecked(false);
+			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+		});
+
+		Renderer.on('logout', () => authStore.logout(false));
 	};
 
 	onInit (e: any, data: any) {
