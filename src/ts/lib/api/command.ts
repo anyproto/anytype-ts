@@ -122,6 +122,15 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 	dispatcher.request(WorkspaceObjectListRemove.name, request, callBack);
 };
 
+const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.SetInfo.Request();
+
+	request.setSpaceid(spaceId);
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
+};
+
 // ---------------------- ACCOUNT ---------------------- //
 
 const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
@@ -1538,15 +1547,6 @@ const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: stri
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
 
-const ObjectWorkspaceSetDashboard = (contextId: string, objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.WorkspaceSetDashboard.Request();
-
-	request.setContextid(contextId);
-    request.setObjectid(objectId);
-
-	dispatcher.request(ObjectWorkspaceSetDashboard.name, request, callBack);
-};
-
 const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 
@@ -1777,6 +1777,7 @@ export {
 	WorkspaceOpen,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
+	WorkspaceSetInfo,
 
 	AccountCreate,
 	AccountRecover,
@@ -1932,8 +1933,6 @@ export {
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,
-
-	ObjectWorkspaceSetDashboard,
 
 	RelationListRemoveOption,
 

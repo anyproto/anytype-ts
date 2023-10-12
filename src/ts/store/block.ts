@@ -9,7 +9,6 @@ class BlockStore {
     public profileId = '';
 	public widgetsId = '';
 	public rootId = '';
-	public workspaceId = '';
 	public spaceviewId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
@@ -21,10 +20,8 @@ class BlockStore {
             profileId: observable,
             profile: computed,
 			root: computed,
-			workspace: computed,
             profileSet: action,
             widgetsSet: action,
-			workspaceSet: action,
             set: action,
             clear: action,
             clearAll: action,
@@ -48,10 +45,6 @@ class BlockStore {
 		return String(this.rootId || '');
 	};
 
-	get workspace (): string {
-		return String(this.workspaceId || '');
-	};
-
 	get spaceview (): string {
 		return String(this.spaceviewId || '');
 	};
@@ -66,10 +59,6 @@ class BlockStore {
 
 	rootSet (id: string) {
 		this.rootId = String(id || '');
-	};
-
-	workspaceSet (id: string) {
-		this.workspaceId = String(id || '');
 	};
 
 	spaceviewSet (id: string) {

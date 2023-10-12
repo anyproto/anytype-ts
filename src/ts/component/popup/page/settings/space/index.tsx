@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore, blockStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -14,7 +14,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		super(props);
 
 		this.onDashboard = this.onDashboard.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 	};
@@ -67,7 +66,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							forceLetter={true}
 							canEdit={true}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
 							onUpload={this.onUpload}
 						/>
 					</div>
@@ -256,15 +254,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		UtilObject.setName(blockStore.workspace, this.checkName(v));
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(blockStore.workspace, icon, '');
+		C.WorkspaceSetInfo(commonStore.space, { name: this.checkName(v) });
 	};
 
 	onUpload (hash: string) {
-		UtilObject.setIcon(blockStore.workspace, '', hash);
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
 	};
 
 	onSpaceTypeTooltip (e) {

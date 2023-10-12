@@ -186,7 +186,6 @@ class UtilData {
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);
-		blockStore.workspaceSet(info.workspaceObjectId);
 		blockStore.spaceviewSet(info.spaceViewId);
 
 		commonStore.gatewaySet(info.gatewayUrl);

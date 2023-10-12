@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilObject, translate } from 'Lib';
-import { popupStore, blockStore } from 'Store';
+import { I, C, UtilObject, translate } from 'Lib';
+import { popupStore, commonStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -10,7 +10,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		super(props);
 
 		this.onOpenSettings = this.onOpenSettings.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 	};
 
@@ -25,7 +24,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					forceLetter={true} 
 					size={36}
 					canEdit={true} 
-					onSelect={this.onSelect} 
 					onUpload={this.onUpload}
 					menuParam={{ className: 'fixed' }}
 				/>
@@ -43,12 +41,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
 	};
 
-	onSelect (icon: string) {
-		UtilObject.setIcon(blockStore.workspace, icon, '');
-	};
-
 	onUpload (hash: string) {
-		UtilObject.setIcon(blockStore.workspace, '', hash);
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
 	};
 
 });

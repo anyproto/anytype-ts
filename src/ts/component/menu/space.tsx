@@ -22,12 +22,12 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { setHover } = this.props;
 		const items = this.getItems();
 		const profile = UtilObject.getProfile();
-		const { workspace } = blockStore;
+		const { spaceview } = blockStore;
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
 
-			if (item.id == workspace) {
+			if (item.id == spaceview) {
 				cn.push('isActive');
 			};
 

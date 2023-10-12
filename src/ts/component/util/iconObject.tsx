@@ -43,6 +43,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Set, 
 	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
+	I.ObjectLayout.SpaceView,
 ];
 
 const IconSize = {
@@ -481,7 +482,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = size;
 		};
 
-		if ((layout == I.ObjectLayout.Set) && iconImage) {
+		if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
 			s = size;
 		};
 

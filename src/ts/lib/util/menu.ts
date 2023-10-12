@@ -401,14 +401,16 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { workspace } = blockStore;
+		const { space } = commonStore;
+		const { spaceview } = blockStore;
+
 		const onSelect = (object: any, update: boolean) => {
-			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
+			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
+				detailStore.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
