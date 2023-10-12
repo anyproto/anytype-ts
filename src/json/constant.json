@@ -288,6 +288,7 @@
 		"makefile":		 "Makefile",
 		"matlab":		 "MATLAB",
 		"nginx":		 "Nginx",
+		"nix": "Nix",
 		"objc":			 "Objective-C",
 		"ocaml":		 "OCaml",
 		"pascal":		 "Pascal",
