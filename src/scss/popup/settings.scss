@@ -62,7 +62,8 @@
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
 				.item.itemAccount {
-					.name { @include text-common; font-weight: 600; }
+					.iconObject { flex-shrink: 0; }
+					.name { @include text-common; @include text-overflow-nw; font-weight: 600; }
 					.onlineStatus { @include text-small; color: $colorTextSecondary; font-weight: 400; text-transform: capitalize; display: flex; gap: 0px 6px; align-items: center; }
 					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
 					.onlineStatus.online:before { background: $colorLime; }
