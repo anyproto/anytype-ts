@@ -297,6 +297,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
 		if (skipIds && skipIds.length) {

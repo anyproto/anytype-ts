@@ -305,6 +305,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
 		};
 
 		if (skipIds && skipIds.length) {
