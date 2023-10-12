@@ -224,19 +224,13 @@ class UtilMenu {
 	};
 
 	getViews () {
-		const { config } = commonStore;
-		const ret = [
+		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
-		];
-
-		if (config.experimental) {
-			ret.push({ id: I.ViewType.Calendar });
-		};
-
-		return ret.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			{ id: I.ViewType.Calendar },
+		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
