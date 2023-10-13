@@ -363,7 +363,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		if (item.itemId == 'add') {
 			const type = dbStore.getTypeById(commonStore.type);
 
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};
