@@ -2,9 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
+import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
+
+const ROUTE = 'MenuObject';
 
 class MenuBlockMore extends React.Component<I.Menu> {
 	
@@ -277,12 +279,12 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const object = detailStore.get(rootId, rootId);
 
 		if (!block) {
 			return;
 		};
 		
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -299,6 +301,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			},
 		};
 
+		let menuId = '';
 		switch (item.id) {
 			case 'turnObject': {
 				menuId = 'typeSuggest';
@@ -309,6 +312,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
+						analytics.event('CreateObject', { route: ROUTE, objectType: object.type });
+
 						close();
 
 						if (onMenuSelect) {
@@ -387,7 +392,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { blockId, rootId, onSelect, isPopup } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId);
-		const route = 'MenuObject';
 		
 		if (!block || item.arrow) {
 			return;
@@ -417,7 +421,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		switch (item.id) {
 				
 			case 'print': {
-				keyboard.onPrint(route);
+				keyboard.onPrint(ROUTE);
 				break;
 			};
 
@@ -428,7 +432,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 			
 			case 'search': {
-				keyboard.onSearchMenu('', route);
+				keyboard.onSearchMenu('', ROUTE);
 				break;
 			};
 
@@ -439,7 +443,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
-						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
+						analytics.event('DuplicateObject', { count: 1, route: ROUTE, objectType: object.type });
 					};
 				});
 				break;
@@ -461,17 +465,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageRemove': {
-				Action.delete([ object.id ], route, () => onBack());
+				Action.delete([ object.id ], ROUTE, () => onBack());
 				break;
 			};
 
 			case 'pageLock': {
-				keyboard.onLock(rootId, true, route);
+				keyboard.onLock(rootId, true, ROUTE);
 				break;
 			};
 
 			case 'pageUnlock': {
-				keyboard.onLock(rootId, false, route);
+				keyboard.onLock(rootId, false, ROUTE);
 				break;
 			};
 
@@ -480,7 +484,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					UtilObject.openAuto({ id: message.targetId, layout: object.layout });
 
 					analytics.event('CreateObject', {
-						route,
+						route: ROUTE,
 						objectType: object.targetObjectType,
 						layout: object.layout,
 					});
@@ -490,13 +494,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageLink': {
 				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
-				analytics.event('CopyLink', { route });
+				analytics.event('CopyLink', { ROUTE });
 				break;
 			};
 
 			case 'pageReload': {
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
-					analytics.event('ReloadSourceData', { route });
+					analytics.event('ReloadSourceData', { ROUTE });
 				});
 				break;
 			};
@@ -515,14 +519,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'fav': {
 				C.ObjectSetIsFavorite(rootId, true, () => {
-					analytics.event('AddToFavorites', { count: 1, route });
+					analytics.event('AddToFavorites', { count: 1, route: ROUTE });
 				});
 				break;
 			};
 
 			case 'unfav': {
 				C.ObjectSetIsFavorite(rootId, false, () => {
-					analytics.event('RemoveFromFavorites', { count: 1, route });
+					analytics.event('RemoveFromFavorites', { count: 1, route: ROUTE });
 				});
 				break;
 			};
@@ -540,7 +544,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					Preview.toastShow({ text: translate('toastTemplateCreate') });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
-					analytics.event('CreateTemplate', { objectType: object.type, route });
+					analytics.event('CreateTemplate', { objectType: object.type, route: ROUTE });
 				});
 				break;
 			};
@@ -548,7 +552,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'setDefault': {
 				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
-				analytics.event('ChangeDefaultTemplate', { route: 'Type' });
+				analytics.event('ChangeDefaultTemplate', { route: ROUTE });
 				break;
 			};
 		};

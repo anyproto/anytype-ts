@@ -89,32 +89,39 @@ class HeaderBanner extends React.Component<Props> {
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
-		const menuOpened = menuStore.isOpen('dataviewTemplateList');
 		const type = dbStore.getTypeById(object.type);
 		const templateId = sourceObject || Constant.templateId.blank;
 
-		if (!menuOpened) {
-			menuStore.open('dataviewTemplateList', {
-				element: $(this.node),
-				className: 'fromBanner',
-				offsetY: isPopup ? 10 : 0,
-				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				data: {
-					fromBanner: true,
-					withTypeSelect: false,
-					noAdd: true,
-					noTitle: true,
-					typeId: type.id,
-					templateId,
-					previewSize: I.PreviewSize.Medium,
-					onSelect: (item: any) => {
-						C.ObjectApplyTemplate(object.id, item.id);
-					}
-				}
-			});
+		if (menuStore.isOpen('dataviewTemplateList')) {
+			return;
 		};
+
+		let menuContext = null;
+
+		menuStore.open('dataviewTemplateList', {
+			element: $(this.node),
+			className: 'fromBanner',
+			offsetY: isPopup ? 10 : 0,
+			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			onOpen: (context) => {
+				menuContext = context;
+			},
+			data: {
+				fromBanner: true,
+				withTypeSelect: false,
+				noAdd: true,
+				noTitle: true,
+				typeId: type.id,
+				templateId,
+				previewSize: I.PreviewSize.Medium,
+				onSelect: (item: any) => {
+					C.ObjectApplyTemplate(object.id, item.id);
+					menuContext.close();
+				},
+			},
+		});
 	};
 };
 

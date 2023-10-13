@@ -199,7 +199,7 @@ export enum SliceOperation {
 };
 
 export enum SpaceType {
-	Personal	 = 0,
+	Private	 = 0,
 };
 
 export interface Dataset {

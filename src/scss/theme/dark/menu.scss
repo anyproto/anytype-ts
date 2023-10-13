@@ -403,4 +403,16 @@
             }
         }
     }
+
+	/* MenuSpace */
+
+	.menu.menuSpace { 
+		.head {
+			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }
+		}
+
+		.items {
+			.item.add { background-color: rgba(255, 255, 255, 0.1); background-image: url('#{$themePath}/icon/plus/space.svg'); }
+		}
+	}
 }
