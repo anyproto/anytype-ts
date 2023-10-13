@@ -67,7 +67,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 						<IconObject object={profile} size={48} />
 						<ObjectName object={profile} onClick={this.onSettings} />
 					</div>
-					<div className="side left">
+					<div className="side right">
 						<Icon className="settings" onClick={this.onSettings} />
 					</div>
 				</div>
