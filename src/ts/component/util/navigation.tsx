@@ -117,7 +117,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		keyboard.pageCreate();
+		keyboard.pageCreate('Navigation');
 	};
 
 	onGraph () {

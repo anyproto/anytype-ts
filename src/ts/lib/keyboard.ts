@@ -248,7 +248,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.pageCreate();
+				this.pageCreate('Shortcut');
 			});
 
 			// Settings
@@ -298,7 +298,7 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate () {
+	pageCreate (route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -317,7 +317,7 @@ class Keyboard {
 		
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			UtilObject.openAuto({ id: message.targetId });
-			analytics.event('CreateObject', { route: 'Navigation', objectType: commonStore.type });
+			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};
 
@@ -507,7 +507,7 @@ class Keyboard {
 			};
 
 			case 'create': {
-				this.pageCreate();
+				this.pageCreate('MenuSystem');
 				break;
 			};
 

@@ -440,7 +440,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else {
 			switch (item.id) {
 				case 'add': {
-					keyboard.pageCreate();
+					keyboard.pageCreate('Search');
 					break;
 				};
 
