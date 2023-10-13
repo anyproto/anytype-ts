@@ -427,7 +427,7 @@ class App extends React.Component<object, State> {
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 		});
 
-		Renderer.on('logout', () => authStore.logout(false));
+		Renderer.on('logout', () => authStore.logout(false, false));
 	};
 
 	onInit (e: any, data: any) {

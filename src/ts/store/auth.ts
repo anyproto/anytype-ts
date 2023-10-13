@@ -150,13 +150,17 @@ class AuthStore {
 		this.phraseSet('');
 	};
 
-	logout (removeData: boolean) {
-		C.WalletCloseSession(this.token, () => {
-			this.tokenSet('');
-			C.AccountStop(removeData);
-		});
+	logout (mainWindow: boolean, removeData: boolean) {
+		if (mainWindow) {
+			C.WalletCloseSession(this.token, () => {
+				this.tokenSet('');
+				C.AccountStop(removeData);
+			});
 
-		analytics.event('LogOut');
+			analytics.event('LogOut');
+			Renderer.send('logout');
+		};
+
 		analytics.profile('');
 		analytics.removeContext();
 
