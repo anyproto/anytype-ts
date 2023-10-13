@@ -186,9 +186,7 @@ class Keyboard {
 
 			// Spaces
 			this.shortcut('ctrl+tab', e, () => {
-				if (!menuStore.isOpen('space')) {
-					this.onSpaceMenu();
-				};
+				this.onSpaceMenu(true);
 			});
 
 			// Lock/Unlock
@@ -758,7 +756,11 @@ class Keyboard {
 		});
 	};
 
-	onSpaceMenu () {
+	onSpaceMenu (shortcut: boolean) {
+		if (menuStore.isOpen('space')) {
+			return;
+		};
+
 		menuStore.open('space', {
 			element: '#navigationPanel',
 			className: 'fixed',
@@ -767,6 +769,11 @@ class Keyboard {
 			horizontal: I.MenuDirection.Center,
 			vertical: I.MenuDirection.Top,
 			offsetY: -12,
+			onOpen: (context) => {
+				if (shortcut) {
+					context.ref.onArrow(1);
+				};
+			},
 		});
 	};
 
