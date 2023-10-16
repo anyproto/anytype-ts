@@ -412,6 +412,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
+		const isTask = layout == I.ObjectLayout.Task;
+		const isEmoji = LAYOUT_EMOJI.includes(layout);
 
 		if (onClick) {
 			onClick(e);
@@ -421,13 +423,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			return;
 		};
 
-		if (layout == I.ObjectLayout.Task) {
+		if (isTask || isEmoji) {
+			e.preventDefault();
 			e.stopPropagation();
-			onCheckbox(e);
 		};
 
-		if (LAYOUT_EMOJI.includes(layout)) {
-			e.stopPropagation();
+		if (isTask) {
+			onCheckbox(e);
+		} else
+		if (isEmoji) {
 			this.onEmoji(e);
 		};
 	};
