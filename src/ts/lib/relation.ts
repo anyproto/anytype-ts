@@ -406,7 +406,7 @@ class Relation {
 		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
-	private isEmpty (v: any) {
+	public isEmpty (v: any) {
 		return (v === null) || (v === undefined) || (v === '');
 	};
 
