@@ -31,6 +31,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				cn.push('isActive');
 			};
 
+			console.log(item);
+
 			return (
 				<div 
 					id={`item-${item.id}`}
