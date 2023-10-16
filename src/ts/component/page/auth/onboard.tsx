@@ -137,7 +137,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				// https://legacy.reactjs.org/docs/reconciliation.html
 				<section className={cn.join(' ')}>
 					<div className="account">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={64} />
+						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human, name: authStore.name }} size={64} />
 						<span className="accountName">
 							{authStore.name}
 						</span>
