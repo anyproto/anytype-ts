@@ -12,7 +12,6 @@
 	.moreWrapper {
 		.icon { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); }
 	}
-	.moreWrapper:hover { background-color: $colorShapeHighlightMedium; }
 
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
 	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid $colorShapeSecondary; border-radius: 8px; z-index: 1; }

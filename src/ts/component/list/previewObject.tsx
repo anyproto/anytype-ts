@@ -37,9 +37,22 @@ class ListObjectPreview extends React.Component<Props> {
 		const items = this.getItems();
 
 		const ItemAdd = () => (
-			<div id="item-add-wrapper" className="item add" onClick={onAdd}>
+			<div id="item-add" className="item add" onClick={onAdd}>
 				<Icon className="plus" />
 				<div className="hoverArea" />
+			</div>
+		);
+
+		const ItemBlank = (item: any) => (
+			<div className="previewObject blank" onClick={onBlank}>
+				{onMenu ? <div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}><Icon className="more" /></div> : ''}
+
+				<div className="scroller">
+					<div className="heading">
+						<div className="name">Blank</div>
+					</div>
+				</div>
+				<div className="border" />
 			</div>
 		);
 
@@ -50,7 +63,6 @@ class ListObjectPreview extends React.Component<Props> {
 
 			const cn = [ 'item' ];
 
-			let icon = null;
 			let label = null;
 			let content = null;
 
@@ -63,16 +75,7 @@ class ListObjectPreview extends React.Component<Props> {
 			};
 
 			if (item.id == blankId) {
-				content = (
-					<div className="previewObject blank" onClick={onBlank}>
-						<div className="scroller">
-							<div className="heading">
-								<div className="name">Blank</div>
-							</div>
-						</div>
-						<div className="border" />
-					</div>
-				);
+				content = <ItemBlank {...item} />;
 			} else {
 				content = (
 					<PreviewObject
@@ -86,9 +89,8 @@ class ListObjectPreview extends React.Component<Props> {
 			};
 
 			return (
-				<div id={`item-${item.id}-wrapper`} className={cn.join(' ')}>
+				<div id={`item-${item.id}`} className={cn.join(' ')}>
 					{label}
-					{icon}
 
 					<div
 						className="hoverArea"
@@ -182,8 +184,8 @@ class ListObjectPreview extends React.Component<Props> {
 
 		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
-		node.find(`#item-${item.id}-wrapper`).addClass('hover');
-		node.find(`#item-${item.id}-wrapper .hoverArea`).addClass('hover');
+		node.find(`#item-${item.id}`).addClass('hover');
+		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
 	onKeyUp (e: any) {

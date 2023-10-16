@@ -25,7 +25,7 @@
 
 	.item.withMenu:hover,
 	.item.withMenu.active {
-		> .icon.more { opacity: 1; }
+		.moreWrapper { opacity: 1; }
 		> .defaultLabel { opacity: 0; }
 	}
 
