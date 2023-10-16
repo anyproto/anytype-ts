@@ -37,7 +37,7 @@ class ListObjectPreview extends React.Component<Props> {
 		const items = this.getItems();
 
 		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={onAdd}>
+			<div id="item-add-wrapper" className="item add" onClick={onAdd}>
 				<Icon className="plus" />
 				<div className="hoverArea" />
 			</div>
@@ -56,7 +56,6 @@ class ListObjectPreview extends React.Component<Props> {
 
 			if (onMenu) {
 				cn.push('withMenu');
-				icon = <Icon className="more" onClick={e => onMenu(e, item)} />;
 			};
 
 			if (defaultId == item.id) {
@@ -81,12 +80,13 @@ class ListObjectPreview extends React.Component<Props> {
 						size={I.PreviewSize.Large}
 						rootId={item.id}
 						onClick={e => this.onClick(e, item)}
+						onMore={e => onMenu(e, item)}
 					/>
 				);
 			};
 
 			return (
-				<div id={`item-${item.id}`} className={cn.join(' ')}>
+				<div id={`item-${item.id}-wrapper`} className={cn.join(' ')}>
 					{label}
 					{icon}
 
@@ -182,8 +182,8 @@ class ListObjectPreview extends React.Component<Props> {
 
 		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
-		node.find(`#item-${item.id}`).addClass('hover');
-		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
+		node.find(`#item-${item.id}-wrapper`).addClass('hover');
+		node.find(`#item-${item.id}-wrapper .hoverArea`).addClass('hover');
 	};
 
 	onKeyUp (e: any) {
