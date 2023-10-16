@@ -17,7 +17,7 @@
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; width: calc(100% - 36px); }
 			.side.left {
 				.iconObject { flex-shrink: 0; }
-				.name { @include text-overflow-nw; width: 100%; }
+				.name { @include text-overflow-nw; width: 100%; max-width: 300px; }
 			}
 			.side.right { width: 20px; flex-shrink: 0; }
 			.icon.settings { background-image: url('~img/icon/menu/space/settings.svg'); }
