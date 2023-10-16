@@ -10,7 +10,7 @@
 		align-items: center; justify-content: center; background: $colorShapeTertiary; opacity: 0; transition: $transitionAllCommon;
 	}
 	.moreWrapper {
-		.icon { width: 20px; height: 20px; }
+		.icon { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); }
 	}
 
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
@@ -119,6 +119,9 @@
 		.element.withBullet > .inner > .line { width: calc(100% - 20px); }
 		.element.withBullet.odd > .inner > .line { width: calc(50% - 10px); }
 	}
+}
+.previewObject.isBundled {
+	.moreWrapper { display: none; }
 }
 
 .previewObject:hover,

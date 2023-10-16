@@ -43,6 +43,19 @@ class ListObjectPreview extends React.Component<Props> {
 			</div>
 		);
 
+		const ItemBlank = (item: any) => (
+			<div className="previewObject blank" onClick={onBlank}>
+				{onMenu ? <div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}><Icon className="more" /></div> : ''}
+
+				<div className="scroller">
+					<div className="heading">
+						<div className="name">Blank</div>
+					</div>
+				</div>
+				<div className="border" />
+			</div>
+		);
+
 		const Item = (item: any) => {
 			if (item.id == 'add') {
 				return <ItemAdd />;
@@ -50,13 +63,11 @@ class ListObjectPreview extends React.Component<Props> {
 
 			const cn = [ 'item' ];
 
-			let icon = null;
 			let label = null;
 			let content = null;
 
 			if (onMenu) {
 				cn.push('withMenu');
-				icon = <Icon className="more" onClick={e => onMenu(e, item)} />;
 			};
 
 			if (defaultId == item.id) {
@@ -64,16 +75,7 @@ class ListObjectPreview extends React.Component<Props> {
 			};
 
 			if (item.id == blankId) {
-				content = (
-					<div className="previewObject blank" onClick={onBlank}>
-						<div className="scroller">
-							<div className="heading">
-								<div className="name">Blank</div>
-							</div>
-						</div>
-						<div className="border" />
-					</div>
-				);
+				content = <ItemBlank {...item} />;
 			} else {
 				content = (
 					<PreviewObject
@@ -81,6 +83,7 @@ class ListObjectPreview extends React.Component<Props> {
 						size={I.PreviewSize.Large}
 						rootId={item.id}
 						onClick={e => this.onClick(e, item)}
+						onMore={e => onMenu(e, item)}
 					/>
 				);
 			};
@@ -88,7 +91,6 @@ class ListObjectPreview extends React.Component<Props> {
 			return (
 				<div id={`item-${item.id}`} className={cn.join(' ')}>
 					{label}
-					{icon}
 
 					<div
 						className="hoverArea"

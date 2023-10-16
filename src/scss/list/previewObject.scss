@@ -14,14 +14,6 @@
 		}
 		.hoverArea.hover:before, .hoverArea:hover:before { display: block; }
 
-		> .icon.more { opacity: 0; }
-		> .icon.more {
-			width: 28px; height: 28px; background-size: 20px; position: absolute; right: 8px; top: 8px;
-			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg');
-		}
-		> .icon.more:hover,
-		> .icon.more.hover { background-color: $colorShapeHighlightMedium; }
-
 		> .defaultLabel {
 			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
 			padding: 1px 4px; border-radius: 4px; background: $colorShapeTertiary; color: $colorTextSecondary;
@@ -33,7 +25,7 @@
 
 	.item.withMenu:hover,
 	.item.withMenu.active {
-		> .icon.more { opacity: 1; }
+		.moreWrapper { opacity: 1; }
 		> .defaultLabel { opacity: 0; }
 	}
 
