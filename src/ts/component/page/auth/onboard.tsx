@@ -23,6 +23,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refNext = null;
 	account: I.Account = null;
 	isDelayed = false;
+	isCreating = false;
 
 	state: State = {
 		stage: Stage.Void,
@@ -379,9 +380,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
+		if (this.isCreating) {
+			return;
+		};
+
+		this.isCreating = true;
+
 		C.WalletCreate(authStore.walletPath, (message) => {
 			if (message.error.code) {
 				this.showErrorAndExit(message);
+				this.isCreating = false;
 				return;
 			};
 
@@ -390,6 +398,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			UtilData.createSession((message) => {
 				if (message.error.code) {
 					this.showErrorAndExit(message);
+					this.isCreating = false;
 					return;
 				};
 
@@ -399,10 +408,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				C.AccountCreate('', '', accountPath, iconOption, (message) => {
 					if (message.error.code) {
 						this.showErrorAndExit(message);
+						this.isCreating = false;
 						return;
 					};
 
 					this.account = message.account;
+					this.isCreating = false;
 
 					UtilData.onInfo(message.account.info);
 					commonStore.configSet(message.account.config, false);
