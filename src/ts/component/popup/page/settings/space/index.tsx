@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore, blockStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -14,7 +14,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		super(props);
 
 		this.onDashboard = this.onDashboard.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 	};
@@ -23,7 +22,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { onPage } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
-		const space = UtilObject.getWorkspace();
+		const space = UtilObject.getSpaceview();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
 
@@ -48,7 +47,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="sides">
 						<div className="side left">
 							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-							<Label text={UtilDate.date(UtilData.dateFormat(I.DateFormat.Short), space.createdDate)} />
+							<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
 						</div>
 					</div>
 				</div>
@@ -67,7 +66,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							forceLetter={true}
 							canEdit={true}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
 							onUpload={this.onUpload}
 						/>
 					</div>
@@ -86,7 +84,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 						<Label
 							className="spaceType"
-							text={translate('popupSettingsSpaceIndexSpaceTypePersonal')}
+							text={translate(`spaceType${space.spaceType}`)}
 							onMouseEnter={this.onSpaceTypeTooltip}
 							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
@@ -256,15 +254,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		UtilObject.setName(blockStore.workspace, this.checkName(v));
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(blockStore.workspace, icon, '');
+		C.WorkspaceSetInfo(commonStore.space, { name: this.checkName(v) });
 	};
 
 	onUpload (hash: string) {
-		UtilObject.setIcon(blockStore.workspace, '', hash);
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
 	};
 
 	onSpaceTypeTooltip (e) {

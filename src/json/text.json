@@ -645,7 +645,6 @@
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
-	"popupSettingsSpaceIndexSpaceTypePersonal": "Personal Space",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
@@ -715,8 +714,6 @@
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
-	"popupTemplateTitle": "Choose a template",
-	"popupTemplateText": "Type %s has %s %s, use ←→ to switch and ENTER to choose",
 
 	"popupNavigationOpen": "Open",
 	"popupNavigationMove": "Move to",
@@ -969,6 +966,7 @@
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
+	"menuSmileGallery": "Gallery",
 	"menuSmileUpload": "Upload image",
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
@@ -1080,6 +1078,7 @@
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
+	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open link",
 	"menuDataviewUrlActionGo8": "Mail to",
@@ -1396,7 +1395,7 @@
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Account",
 
-	"spaceType0": "Personal Space",
+	"spaceType0": "Private Space",
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 

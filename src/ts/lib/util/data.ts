@@ -186,7 +186,7 @@ class UtilData {
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);
-		blockStore.workspaceSet(info.workspaceObjectId);
+		blockStore.spaceviewSet(info.spaceViewId);
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
@@ -329,7 +329,7 @@ class UtilData {
 				subId: Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Space },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -358,7 +358,7 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'targetSpaceId', 'spaceAccessibility', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {
@@ -801,7 +801,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getWorkspace();
+		const space = UtilObject.getSpaceview();
 		const title = [];
 
 		if (name) {

@@ -22,12 +22,12 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { setHover } = this.props;
 		const items = this.getItems();
 		const profile = UtilObject.getProfile();
-		const { workspace } = blockStore;
+		const { spaceview } = blockStore;
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
 
-			if (item.id == workspace) {
+			if (item.id == spaceview) {
 				cn.push('isActive');
 			};
 
@@ -64,7 +64,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			>
 				<div className="head">
 					<div className="side left">
-						<IconObject object={profile} size={40} />
+						<IconObject object={profile} size={48} />
 						<ObjectName object={profile} onClick={this.onSettings} />
 					</div>
 					<div className="side left">
@@ -170,7 +170,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			UtilRouter.switchSpace(item.spaceId);
+			UtilRouter.switchSpace(item.targetSpaceId);
 			this.props.close();
 		};
 	};

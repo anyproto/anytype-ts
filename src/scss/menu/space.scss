@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSpace { 
-		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 16px 16px 8px 16px;
+		border-radius: 16px; background: rgba(37, 37, 37, 0.15) !important; backdrop-filter: blur(12.5px); padding: 24px 24px 16px 24px;
 		box-shadow: 0px 0px; min-width: 368px;
 	}
 
@@ -11,10 +11,11 @@
 
 		.head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
-			@include text-paragraph; font-weight: 500;
+			@include text-paragraph; font-weight: 600;
 		}
 		.head {
-			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; }
+			.icon.settings { background-image: url('~img/icon/menu/space/settings.svg'); }
 		}
 
 		.items { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; }
@@ -23,7 +24,7 @@
 			.item.space { display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
 			.item.space {
 				.iconWrap { 
-					width: 96px; height: 96px; border-radius: 16px; overflow: hidden; transition: all 0.2s $easeInQuint; 
+					width: 96px; height: 96px; border-radius: 4px; overflow: hidden; transition: all 0.2s $easeInQuint; 
 					transform-origin: 50% 100%;
 				}
 				.iconObject { border-radius: 0px; }
@@ -31,9 +32,9 @@
 			}
 
 			.item.add {
-				border-radius: 16px; height: 96px; border: 1px solid rgba(255, 255, 255, 0.6); background-color: rgba(255, 255, 255, 0.2); 
+				border-radius: 4px; height: 96px; background-color: rgba(255, 255, 255, 0.3); 
 				background-image: url('~img/icon/plus/space.svg'); background-size: 20px; background-position: center;
-				background-repeat: no-repeat; margin: 0px 0px 26px 0px;
+				background-repeat: no-repeat; margin: 0px 0px 26px 0px; transition: all 0.2s $easeInQuint; transform-origin: 50% 100%;
 			}
 
 			.item.space.hover:not(.isActive) {
@@ -42,9 +43,7 @@
 			.item.space.isActive {
 				.iconWrap { box-shadow: 0px 0px 0px 4px #fff, 0px 0px 6px rgba(0,0,0,0.1); }
 			}
-			.item.add.hover, .item.add.active { 
-				border-color: rgba(255, 255, 255, 0.7); background-color: rgba(255, 255, 255, 0.3);
-			}
+			.item.add.hover { transform: scale(1.06, 1.06); }
 		}
 	}
 }

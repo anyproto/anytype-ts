@@ -93,7 +93,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? UtilDate.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: (v: any) => v ? UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
 			},
 		];
 

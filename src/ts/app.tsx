@@ -139,7 +139,6 @@ import 'scss/popup/prompt.scss';
 import 'scss/popup/search.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
-import 'scss/popup/template.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
 
@@ -424,6 +423,13 @@ class App extends React.Component<object, State> {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
 		});
+
+		Renderer.on('pin-check', () => {
+			keyboard.setPinChecked(false);
+			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+		});
+
+		Renderer.on('logout', () => authStore.logout(false));
 	};
 
 	onInit (e: any, data: any) {

@@ -12,13 +12,9 @@ interface Props {
 	isPopup?: boolean;
 };
 
-const TEMPLATE_WIDTH = 236;
-const PADDING = 16;
-
 class HeaderBanner extends React.Component<Props> {
 
 	node: any = null;
-	menuContext: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -92,32 +88,40 @@ class HeaderBanner extends React.Component<Props> {
 
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
-		const menuOpened = menuStore.isOpen('dataviewTemplateList');
+		const { sourceObject } = object;
 		const type = dbStore.getTypeById(object.type);
-		const templateId = type.defaultTemplateId || Constant.templateId.blank;
+		const templateId = sourceObject || Constant.templateId.blank;
 
-		if (!menuOpened) {
-			menuStore.open('dataviewTemplateList', {
-				element: $(this.node),
-				className: 'fromBanner',
-				offsetY: isPopup ? 10 : 0,
-				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				data: {
-					fromBanner: true,
-					withTypeSelect: false,
-					noAdd: true,
-					noTitle: true,
-					typeId: type.id,
-					templateId,
-					previewSize: I.PreviewSize.Medium,
-					onSelect: (item: any) => {
-						C.ObjectApplyTemplate(object.id, item.id);
-					}
-				}
-			});
+		if (menuStore.isOpen('dataviewTemplateList')) {
+			return;
 		};
+
+		let menuContext = null;
+
+		menuStore.open('dataviewTemplateList', {
+			element: $(this.node),
+			className: 'fromBanner',
+			offsetY: isPopup ? 10 : 0,
+			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			onOpen: (context) => {
+				menuContext = context;
+			},
+			data: {
+				fromBanner: true,
+				withTypeSelect: false,
+				noAdd: true,
+				noTitle: true,
+				typeId: type.id,
+				templateId,
+				previewSize: I.PreviewSize.Medium,
+				onSelect: (item: any) => {
+					C.ObjectApplyTemplate(object.id, item.id);
+					menuContext.close();
+				},
+			},
+		});
 	};
 };
 

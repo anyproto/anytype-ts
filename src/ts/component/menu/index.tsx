@@ -64,10 +64,10 @@ import MenuDataviewFilterList from './dataview/filter/list';
 import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
-import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewViewSettings from './dataview/view/settings';
 import MenuDataviewViewLayout from './dataview/view/layout';
 import MenuDataviewCalendar from './dataview/calendar';
+import MenuDataviewCalendarDay from './dataview/calendar/day';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewDate from './dataview/date';
@@ -149,10 +149,10 @@ const Components: any = {
 	dataviewFilterValues:	 MenuDataviewFilterValues,
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
-	dataviewViewEdit:		 MenuDataviewViewEdit,
 	dataviewViewSettings:	 MenuDataviewViewSettings,
 	dataviewViewLayout:	 	 MenuDataviewViewLayout,
 	dataviewCalendar:		 MenuDataviewCalendar,
+	dataviewCalendarDay:	 MenuDataviewCalendarDay,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,

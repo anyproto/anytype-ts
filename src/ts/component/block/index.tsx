@@ -181,7 +181,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpaceView() || root.isObjectCollection());
 				if (canSelect) {
 					cn.push('isInline');
 				};

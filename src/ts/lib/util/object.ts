@@ -10,6 +10,9 @@ class UtilObject {
 		let home = this.getSpaceDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
+			if (home && !home.spaceId) {
+				home.spaceId = commonStore.space;
+			};
 		};
 
 		if (!home) {
@@ -22,27 +25,26 @@ class UtilObject {
 		};
 	};
 
-	getWorkspace () {
-		const subId = Constant.subId.space;
-		const records = dbStore.getRecords(subId, '').map(it => detailStore.get(subId, it)).filter(it => it.spaceId == commonStore.space);
-
-		return records.length ? records[0] : { _empty_: true };
+	getSpaceview () {
+		return detailStore.get(Constant.subId.space, blockStore.spaceview);
 	};
 
 	getSpaceDashboard () {
-		const space = this.getWorkspace();
-		if (!space.spaceDashboardId) {
+		const space = this.getSpaceview();
+		const id = space.spaceDashboardId;
+
+		if (!id) {
 			return null;
 		};
 
 		let home = null;
-		if (space.spaceDashboardId == I.HomePredefinedId.Graph) {
+		if (id == I.HomePredefinedId.Graph) {
 			home = this.getGraph();
 		} else
-		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
+		if (id == I.HomePredefinedId.Last) {
 			home = this.getLastOpened();
 		} else {
-			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+			home = detailStore.get(Constant.subId.space, id);
 		};
 
 		if (!home || home._empty_ || home.isDeleted) {
@@ -67,7 +69,8 @@ class UtilObject {
 	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'), 
+			name: translate('spaceLast'),
+			spaceId: commonStore.space,
 		};
 	};
 
@@ -374,7 +377,7 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
-			I.ObjectLayout.Space,
+			I.ObjectLayout.SpaceView,
 		];
 	};
 

@@ -168,7 +168,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					value = Number(value) || 0;
 
 					const day = UtilDate.dayString(value);
-					const date = day ? day : UtilDate.date(UtilData.dateFormat(viewRelation.dateFormat), value);
+					const date = day ? day : UtilDate.date(UtilDate.dateFormat(viewRelation.dateFormat), value);
 					const time = UtilDate.date(UtilData.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;

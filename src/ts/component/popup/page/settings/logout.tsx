@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Preview, UtilRouter } from 'Lib';
+import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Head from './head';
 
 interface State {
 	entropy: string;
@@ -85,6 +84,8 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			onFadeIn: () => {
 				authStore.logout(false);
 				setPinConfirmed(false);
+
+				Renderer.send('logout');
 			},
 		});
 	};
