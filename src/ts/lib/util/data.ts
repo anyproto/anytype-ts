@@ -562,16 +562,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there are at least 1 template for object types
-	checkTemplateCnt (ids: string[], callBack?: (cnt: number) => void) {
-		const templateType = dbStore.getTemplateType();
-		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, (message: any) => {
-			if (callBack) {
-				callBack(message.records.length);
-			};
-		});
-	};
-
 	checkBlankTemplate (template: any) {
 		return template && (template.id != Constant.templateId.blank) ? template : null;
 	};
