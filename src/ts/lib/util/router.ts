@@ -1,5 +1,5 @@
-import { C, UtilCommon, UtilData, Preview } from 'Lib';
-import { commonStore, blockStore, authStore, menuStore, popupStore } from 'Store';
+import { C, UtilCommon, UtilData, Preview, analytics } from 'Lib';
+import { commonStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilRouter {
@@ -120,6 +120,8 @@ class UtilRouter {
 
 					UtilData.onInfo(message.info);
 					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+
+					analytics.event('SwitchSpace');
 				}
 			});
 		});

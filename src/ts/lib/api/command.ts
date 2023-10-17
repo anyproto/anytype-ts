@@ -88,11 +88,11 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: any) => void) => {
+const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
-	request.setUsecase(useCase as number);
+	request.setUsecase(usecase as number);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
