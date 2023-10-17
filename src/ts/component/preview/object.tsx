@@ -335,7 +335,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		return (
 			<div
 				ref={node => this.node = node}
-				id={`item-${rootId}`}
 				className={cn.join(' ')}
 				onMouseEnter={this.onMouseEnter}
 				onMouseLeave={this.onMouseLeave}
