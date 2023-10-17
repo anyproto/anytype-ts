@@ -357,9 +357,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const container = UtilCommon.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
+		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - UtilCommon.sizeHeader() - 16,
+			height: container.height() - UtilCommon.sizeHeader() - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 
