@@ -451,6 +451,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'createdDate' },
+			{ type: I.SortType.Asc, relationKey: 'name' },
 		];
 
 		let keys: string[] = Constant.defaultRelationKeys;

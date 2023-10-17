@@ -774,6 +774,9 @@ class Keyboard {
 					context.ref.onArrow(1);
 				};
 			},
+			data: {
+				shortcut,
+			}
 		});
 	};
 

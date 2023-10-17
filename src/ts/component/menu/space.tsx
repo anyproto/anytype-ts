@@ -9,6 +9,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	node: any = null;
 	n = 0;
+	timeout = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -85,10 +86,18 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	componentDidMount (): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { shortcut } = data;
 		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.isActive);
 		this.rebind();
+
+		if (shortcut) {
+			this.onArrow(1);
+			this.setTimeout();
+		};
 	};
 
 	componentDidUpdate (): void {
@@ -97,6 +106,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	componentWillUnmount (): void {
 		this.unbind();
+		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {
@@ -109,11 +119,21 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		$(window).off('keydown.menu');
 	};
 
+	setTimeout () {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.onClick(null, this.getItems()[this.n]), 1000);
+	};
+
 	onKeyDown (e: any) {
 		let ret = false;
 
 		keyboard.shortcut('arrowleft, arrowright, ctrl+tab', e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowleft' ? -1 : 1);
+
+			if (pressed == 'ctrl+tab') {
+				this.setTimeout();
+			};
+
 			ret = true;
 		});
 
