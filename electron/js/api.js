@@ -33,6 +33,14 @@ class Api {
 		win.route = '';
 	};
 
+	logout (win) {
+		WindowManager.sendToAll('logout');
+	};
+
+	pinCheck (win) {
+		WindowManager.sendToAll('pin-check');
+	};
+
 	setConfig (win, config) {
 		ConfigManager.set(config, (err) => Util.send(win, 'config', ConfigManager.config));
 	};

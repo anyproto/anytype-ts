@@ -23,9 +23,6 @@ $colorControlOnBg: #fff;
 
 /* Background */
 
-$colorVeryLightGrey: #f2f2f2;
-$colorMediumGrey: #b6b6b6;
-$colorDarkGrey: #949494;
 $colorBgPrimary: #fff;
 $colorBgLoader: rgba(255,255,255,0.7);
 
@@ -58,7 +55,7 @@ $transitionAllCommon: all $transitionCommon;
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @mixin text-9 { font-size: 9px; line-height: 12px; letter-spacing: 0.14px; }
-@mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: $colorMediumGrey; }
+@mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: $colorControlActive; }
 @mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0px; }
 @mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; }
 @mixin text-paragraph { font-size: 16px; line-height: 24px; letter-spacing: -0.2px; }

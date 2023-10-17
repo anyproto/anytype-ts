@@ -39,13 +39,13 @@
 .iconObject.c42 { width: 42px; height: 42px; }
 .iconObject.c44 { width: 44px; height: 44px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; overflow: hidden; }
-.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c108 { display: block; width: 108px; height: 108px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
-.iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c108 { display: block; width: 108px; height: 108px; border-radius: 20px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: $colorShapeTertiary; }
+.iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: $colorShapeTertiary; }
 
 .iconObject.c56, .iconObject.c80, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
@@ -55,10 +55,10 @@
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 
-.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: $colorVeryLightGrey; }
+.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: $colorShapeTertiary; }
 .iconObject.c40.withLetter, .iconObject.c48.withLetter { border-radius: 8px; }
 
-.iconObject.withLetter { background-color: $colorVeryLightGrey; }
+.iconObject.withLetter { background-color: $colorShapeTertiary; }
 
 .iconObject.withImage { border-radius: 4px !important; background-color: unset !important; }
 .iconObject.withImage.c96 { border-radius: 6px !important; }
@@ -66,4 +66,4 @@
 
 .iconObject.isHuman { border-radius: 100% !important; }
 
-.iconObject.withOption.isSpace { background: $colorControlAccent !important; }
+.iconObject.withOption.isSpaceView { background: $colorControlAccent !important; }

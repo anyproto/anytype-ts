@@ -101,7 +101,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={() => { this.focusTitle(); }} 
+					onLayoutSelect={() => this.focusTitle()} 
 				/>
 				
 				<div id={'editor-' + rootId} className="editor">
@@ -307,14 +307,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	focusTitle () {
 		const { rootId } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		
+
 		if (!block) {
 			return;
 		};
 
 		const length = block.getLength();
-		if (!length) {
-			focus.set(block.id, { from: length, to: length });
+		if (length) {
+			focus.clear(true);
+		} else {
+			focus.set(block.id, { from: 0, to: 0 });
 			focus.apply();
 		};
 	};
@@ -547,7 +549,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+z`, e, () => {
 			if (!readonly) {
 				e.preventDefault();
-				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor');
 			};
 		});
 
@@ -555,7 +557,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 			if (readonly) {
 				e.preventDefault();
-				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor');
 			};
 		});
 
@@ -761,13 +763,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor');
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor');
 			});
 
 			// Search
@@ -1382,7 +1384,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const element = blockStore.getMapElement(rootId, id);
 
-		return blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow());
+		return element ? blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {

@@ -260,6 +260,11 @@ class Relation {
 				value = Number(value) || I.ObjectLayout.Page;
 				return I.ObjectLayout[value];
 			};
+
+			case 'origin': {
+				value = Number(value) || I.ObjectOrigin.User;
+				return translate(`objectOrigin${value}`);
+			};
 		};
 		return null;
 	};

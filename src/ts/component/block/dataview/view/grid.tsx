@@ -188,57 +188,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.resizeColumns('', 0);
 	};
 
-	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		
-		if (!element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-		const wrap = node.find('#scrollWrap');
-		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const container = UtilCommon.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
-		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
-		const cw = container.width();
-		const rh = this.getRowHeight();
-
-		if (isInline) {
-			if (parent) {
-				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = $('#editorWrapper');
-					const ww = wrapper.width();
-					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
-					const margin = (cw - ww) / 2;
-					const offset = 8;
-
-					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
-					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
-				} else {
-					const parentObj = $(`#block-${parent.id}`);
-					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
-
-					wrap.css({ width: Math.max(vw, width) });
-				};
-			};
-		} else {
-			const mw = cw - PADDING * 2;
-			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
-			const margin = (cw - mw) / 2;
-			const pr = width > mw ? PADDING : 0;
-
-			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-			wrap.css({ width: vw, paddingRight: pr });
-		};
-
-		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
-		this.resizeColumns('', 0);
-	};
-
 	resizeColumns (relationKey: string, width: number) {
 		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
@@ -408,6 +357,57 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
+	};
+
+	resize () {
+		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		
+		if (!element) {
+			return;
+		};
+
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const wrap = node.find('#scrollWrap');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const container = UtilCommon.getPageContainer(isPopup);
+		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
+		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+		const cw = container.width();
+		const rh = this.getRowHeight();
+
+		if (isInline) {
+			if (parent) {
+				if (parent.isPage() || parent.isLayoutDiv()) {
+					const wrapper = $('#editorWrapper');
+					const ww = wrapper.width();
+					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+					const margin = (cw - ww) / 2;
+					const offset = 8;
+
+					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
+					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
+				} else {
+					const parentObj = $(`#block-${parent.id}`);
+					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+
+					wrap.css({ width: Math.max(vw, width) });
+				};
+			};
+		} else {
+			const mw = cw - PADDING * 2;
+			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
+			const margin = (cw - mw) / 2;
+			const pr = width > mw ? PADDING : 0;
+
+			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+			wrap.css({ width: vw, paddingRight: pr });
+		};
+
+		grid.css({ height: length * rh + 4, maxHeight: length * rh + 4 });
+		this.resizeColumns('', 0);
 	};
 	
 });

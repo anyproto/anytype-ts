@@ -34,7 +34,7 @@
 					vertical-align: top; @include text-overflow-nw;  
 				}
 				.size {
-					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorControlActive; margin: 0px 8px;
 					display: inline-block; vertical-align: top;
 				}
 			}
@@ -90,7 +90,7 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorVeryLightGrey; }
+	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorShapeTertiary; }
 	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
 
 	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }

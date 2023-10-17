@@ -1,5 +1,6 @@
+import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
+import { blockStore, menuStore, detailStore, commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -223,19 +224,48 @@ class UtilMenu {
 	};
 
 	getViews () {
-		const { config } = commonStore;
-		const ret = [
+		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
+			{ id: I.ViewType.Calendar },
+		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+	};
+
+	viewContextMenu (param: any) {
+		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
+		const views = dbStore.getViews(rootId, blockId);
+
+		const options: any[] = [
+			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
 		];
 
-		if (config.experimental) {
-			ret.push({ id: I.ViewType.Calendar });
+		if (views.length > 1) {
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
 		};
 
-		return ret.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+		menuStore.open('select', {
+			...menuParam,
+			data: {
+				options,
+				onSelect: (e, option) => {
+					menuStore.closeAll([ 'select' ]);
+					if (close) {
+						close();
+					};
+
+					window.setTimeout(() => {
+						switch (option.id) {
+							case 'edit': $(`#button-${blockId}-settings`).trigger('click'); break;
+							case 'copy': onCopy(view); break;
+							case 'remove': onRemove(view); break;
+						};
+					}, Constant.delay.menu);
+				}
+			}
+		});
 	};
 
 	getRelationTypes () {
@@ -365,14 +395,16 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { workspace } = blockStore;
+		const { space } = commonStore;
+		const { spaceview } = blockStore;
+
 		const onSelect = (object: any, update: boolean) => {
-			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
+			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
+				detailStore.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);

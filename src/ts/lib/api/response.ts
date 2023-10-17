@@ -211,6 +211,20 @@ export const ObjectListDuplicate = (response: Rpc.Object.ListDuplicate.Response)
 	};
 };
 
+export const ObjectUndo = (response: Rpc.Object.Undo.Response) => {
+	return {
+		blockId: response.getBlockid(),
+		range: Mapper.From.Range(response.getRange()),
+	};
+};
+
+export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
+	return {
+		blockId: response.getBlockid(),
+		range: Mapper.From.Range(response.getRange()),
+	};
+};
+
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
@@ -347,7 +361,7 @@ export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	};
 };
 
-export const WorkspaceInfo = (response: Rpc.Workspace.Info.Response) => {
+export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
 	return {
 		info: Mapper.From.AccountInfo(response.getInfo()),
 	};

@@ -2,7 +2,6 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -98,12 +97,12 @@ const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-const WorkspaceInfo = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Info.Request();
+const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
 
-	dispatcher.request(WorkspaceInfo.name, request, callBack);
+	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
 
 const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
@@ -121,6 +120,15 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 	request.setObjectidsList(objectIds);
 
 	dispatcher.request(WorkspaceObjectListRemove.name, request, callBack);
+};
+
+const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.SetInfo.Request();
+
+	request.setSpaceid(spaceId);
+	request.setDetails(Encode.encodeStruct(details));
+
+	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
 
 // ---------------------- ACCOUNT ---------------------- //
@@ -247,6 +255,8 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 	dispatcher.request(NavigationGetObjectInfoWithLinks.name, request, callBack);
 };
 
+// ---------------------- BLOCK ---------------------- //
+
 const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 
@@ -266,6 +276,16 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	request.setTargetobjectid(targetObjectId);
 
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
+};
+
+const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.SetCarriage.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setRange(Mapper.To.Range(range));
+
+	dispatcher.request(BlockSetCarriage.name, request, callBack);
 };
 
 // ---------------------- BLOCK WIDGET ---------------------- //
@@ -312,7 +332,7 @@ const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string
 
 // ---------------------- BLOCK TEXT ---------------------- //
 
-const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
+const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
@@ -325,6 +345,7 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	request.setBlockid(blockId);
 	request.setText(text);
 	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks as any));
+	request.setSelectedtextrange(Mapper.To.Range(range));
 
 	dispatcher.request(BlockTextSetText.name, request, callBack);
 };
@@ -1225,7 +1246,7 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.set('lastOpened', { id: object.id, layout: object.layout });
+			Storage.set('lastOpened', { id: object.id, layout: object.layout, spaceId: object.spaceId });
 		};
 
 		if (callBack) {
@@ -1526,15 +1547,6 @@ const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: stri
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
 
-const ObjectWorkspaceSetDashboard = (contextId: string, objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.WorkspaceSetDashboard.Request();
-
-	request.setContextid(contextId);
-    request.setObjectid(objectId);
-
-	dispatcher.request(ObjectWorkspaceSetDashboard.name, request, callBack);
-};
-
 const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 
@@ -1762,9 +1774,10 @@ export {
 	WalletCloseSession,
 
 	WorkspaceCreate,
-	WorkspaceInfo,
+	WorkspaceOpen,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
+	WorkspaceSetInfo,
 
 	AccountCreate,
 	AccountRecover,
@@ -1786,7 +1799,7 @@ export {
 
 	NavigationGetObjectInfoWithLinks,
 
-	BlockListDelete,
+	BlockSetCarriage,
 	BlockMerge,
 	BlockSplit,
 	BlockUpload,
@@ -1804,6 +1817,7 @@ export {
 	BlockListSetFields,
 	BlockListSetAlign,
 	BlockListSetVerticalAlign,
+	BlockListDelete,
 
 	BlockTextSetText,
 	BlockTextSetChecked,
@@ -1919,8 +1933,6 @@ export {
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,
-
-	ObjectWorkspaceSetDashboard,
 
 	RelationListRemoveOption,
 

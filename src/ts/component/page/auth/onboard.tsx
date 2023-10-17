@@ -146,7 +146,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="line right" />
 
 					<div className="space">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
+						<IconObject object={{ iconOption, layout: I.ObjectLayout.SpaceView }} size={64} />
 						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>
@@ -420,13 +420,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountUpdate = () => {
-		const { profile, workspace } = blockStore;
+		const { profile } = blockStore;
 		const { name } = authStore;
 
 		authStore.accountSet(this.account);
 
 		UtilObject.setName(profile, name, () => {
-			UtilObject.setName(workspace, name);
+			C.WorkspaceSetInfo(this.account.info.accountSpaceId, { name });
 
 			window.setTimeout(() => {
 				commonStore.redirectSet('/main/usecase');

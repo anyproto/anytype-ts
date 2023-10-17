@@ -603,36 +603,18 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = type.recommendedLayout;
 					};
 
-					const create = (template: any) => {
-						UtilObject.create(rootId, blockId, details, position, template?.id, UtilData.defaultLinkSettings(), [], (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							UtilObject.openPopup({ ...details, id: message.targetId });
-
-
-							analytics.event('CreateLink');
-							analytics.event('CreateObject', {
-								route: 'Powertool',
-								objectType: item.objectTypeId,
-								layout: template?.layout,
-							});
-						});
-					};
-
-					UtilData.checkTemplateCnt([ item.objectTypeId ], (cnt: number) => {
-						if (cnt) {
-							popupStore.open('template', {
-								data: { 
-									typeId: item.objectTypeId,
-									onSelect: create,
-									route: 'Powertool',
-								},
-							});
-						} else {
-							create('');
+					UtilObject.create(rootId, blockId, details, position, '', UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], (message: any) => {
+						if (message.error.code) {
+							return;
 						};
+
+						UtilObject.openPopup({ ...details, id: message.targetId });
+
+						analytics.event('CreateLink');
+						analytics.event('CreateObject', {
+							route: 'Powertool',
+							objectType: item.objectTypeId,
+						});
 					});
 				} else {
 					keyboard.setFocus(false);

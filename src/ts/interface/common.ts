@@ -199,7 +199,7 @@ export enum SliceOperation {
 };
 
 export enum SpaceType {
-	Personal	 = 0,
+	Private	 = 0,
 };
 
 export interface Dataset {
@@ -230,4 +230,10 @@ export enum FileSyncStatus {
 export enum StoreTab {
 	Type = 'type',
 	Relation = 'relation',
+};
+
+export enum BannerType {
+	IsArchived		 = 0,
+	IsTemplate		 = 1,
+	TemplateSelect	 = 2,
 };

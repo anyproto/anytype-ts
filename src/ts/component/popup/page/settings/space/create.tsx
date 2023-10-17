@@ -40,7 +40,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
 		const space = {
-			layout: I.ObjectLayout.Space,
+			layout: I.ObjectLayout.SpaceView,
 			name,
 			iconOption,
 			iconEmoji,
@@ -62,8 +62,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							size={96}
 							object={space}
 							forceLetter={true}
-							canEdit={true}
-							noUpload={true}
+							canEdit={false}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}
 						/>
@@ -83,7 +82,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 						<Label
 							className="spaceType"
-							text={translate('popupSettingsSpaceIndexSpaceTypePersonal')}
+							text={translate(`spaceType${I.SpaceType.Private}`)}
 						/>
 					</div>
 				</div>

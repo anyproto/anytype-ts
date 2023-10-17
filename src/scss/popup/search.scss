@@ -37,7 +37,7 @@
 		.items {
 			.pad { height: 12px; }
 
-			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: $colorDarkGrey; }
+			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: $colorTextSecondary; }
 
 			.item { 
 				position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap; display: flex; gap: 0px 10px; 
@@ -53,7 +53,7 @@
 					@include text-overflow-nw; font-weight: 500; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 1; 
 					width: calc(66% - 30px); 
 				}
-				.caption { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; width: 33%; flex-grow: 0; text-align: right; }
+				.caption { @include text-small; @include text-overflow-nw; color: $colorTextSecondary; flex-shrink: 0; width: 33%; flex-grow: 0; text-align: right; }
 				.caption {
 					.label { 
 						padding: 0px 2px; border-radius: 4px; background: $colorShapeHighlightMedium; display: inline-block; vertical-align: middle; min-width: 18px; 

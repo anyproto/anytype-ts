@@ -203,16 +203,11 @@ class WindowManager {
 		};
 	};
 
-	updateTheme () {
-		this.list.forEach(it => {
-			Util.send(it, 'native-theme', Util.isDarkTheme());
-		});
-	};
-
 	getWindowPosition (param, displayWidth, displayHeight) {
+		const currentWindow = BrowserWindow.getFocusedWindow();
+
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
-		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
 			const [xPos, yPos] = currentWindow.getPosition();
@@ -230,6 +225,13 @@ class WindowManager {
 		};
 
 		return { x, y };
+	};
+
+	sendToAll () {
+		const args = [ ...arguments ];
+		this.list.forEach(it => {
+			Util.send.apply(this, [ it ].concat(args));
+		});
 	};
 
 };

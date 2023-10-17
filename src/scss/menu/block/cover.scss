@@ -8,7 +8,7 @@
 		.wrap { display: flex; flex-direction: column; }
 
 		.head { 
-			border-bottom: 1px solid $colorShapeSecondary; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
+			border-bottom: 1px solid $colorShapeSecondary; padding: 11px 16px; font-weight: 500; color: $colorControlActive; 
 			flex-shrink: 0;
 		}
 		.head {
@@ -38,7 +38,7 @@
 			.item { padding: 0px; width: 100%; position: relative; }
 			.item {
 				.cover { height: 48px; position: relative; border-radius: 2px; }
-				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorDarkGrey; }
+				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorTextSecondary; }
 			}
 			.item:hover {
 				.name { text-decoration: underline; }
@@ -74,7 +74,7 @@
 					display: block; 
 				}
 				.label {
-					span { color: $colorDarkGrey; }
+					span { color: $colorTextSecondary; }
 				}
 			}
 		}

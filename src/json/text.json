@@ -1,6 +1,7 @@
 {
 	"commonError": "Error",
 	"commonOr": "or",
+	"commonMore": "more",
 	"commonOf": "of",
 	"commonTo": "to",
 	"commonOk": "Ok",
@@ -644,7 +645,6 @@
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
-	"popupSettingsSpaceIndexSpaceTypePersonal": "Personal Space",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
@@ -714,8 +714,6 @@
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
-	"popupTemplateTitle": "Choose a template",
-	"popupTemplateText": "Type %s has %s %s, use ←→ to switch and ENTER to choose",
 
 	"popupNavigationOpen": "Open",
 	"popupNavigationMove": "Move to",
@@ -968,6 +966,7 @@
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
+	"menuSmileGallery": "Gallery",
 	"menuSmileUpload": "Upload image",
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
@@ -1079,6 +1078,7 @@
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
+	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open link",
 	"menuDataviewUrlActionGo8": "Mail to",
@@ -1390,12 +1390,12 @@
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 
-	"spaceType0": "Personal Space",
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Account",
 
+	"spaceType0": "Private Space",
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 
@@ -1418,6 +1418,8 @@
 
 	"deletedBanner": "This file is in the Bin and is shown in view mode",
 	"deletedBannerRestore": "Restore",
+	"selectTemplateBanner": "This type has templates",
+	"selectTemplateBannerWithNumber": "This type has %s %s",
 
 	"dispatcherImportSuccessTitle": "The import process is complete!",
 	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
@@ -1554,5 +1556,15 @@
 	"errorAccountRecover107": "Failed to stop running node",
 	"errorAccountRecover108": "Another process is running",
 	"errorAccountRecover109": "Account has been deleted",
-	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns."
+	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
+
+	"objectOrigin0": "User",
+	"objectOrigin1": "Clipboard",
+	"objectOrigin2": "Drag'n'Drop",
+	"objectOrigin3": "Import",
+	"objectOrigin4": "Webclipper",
+	"objectOrigin5": "Sharing Extension",
+	"objectOrigin6": "Usecase",
+	"objectOrigin7": "Built-in"
+
 }

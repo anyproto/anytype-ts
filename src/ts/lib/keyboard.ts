@@ -309,7 +309,7 @@ class Keyboard {
 		const position = I.BlockPosition.Bottom;
 		const rootId = '';
 		const details: any = {};
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 		
 		if (!rootId) {
 			flags.push(I.ObjectFlag.DeleteEmpty);
@@ -641,13 +641,30 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		C.ObjectUndo(rootId, callBack);
+		C.ObjectUndo(rootId, (message: any) => {
+			if (message.blockId && message.range) {
+				focus.set(message.blockId, message.range);
+				focus.apply();
+			};
 
+			if (callBack) {
+				callBack(message);
+			};
+		});
 		analytics.event('Undo', { route });
 	};
 
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		C.ObjectRedo(rootId, callBack);
+		C.ObjectRedo(rootId, (message: any) => {
+			if (message.blockId && message.range) {
+				focus.set(message.blockId, message.range);
+				focus.apply();
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 
 		analytics.event('Redo', { route });
 	};
@@ -900,6 +917,7 @@ class Keyboard {
 
 			this.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+			Renderer.send('pin-check');
 		}, pinTime);
 	};
 

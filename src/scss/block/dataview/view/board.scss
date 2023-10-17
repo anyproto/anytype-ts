@@ -14,7 +14,7 @@
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 
-                .head { cursor: grab; color: $colorDarkGrey; width: 100%; position: relative; padding: 8px 16px 0px 16px; }
+                .head { cursor: grab; color: $colorTextSecondary; width: 100%; position: relative; padding: 8px 16px 0px 16px; }
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
@@ -119,7 +119,7 @@
 
             .card.add { 
 				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionAllCommon; 
-				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorBgPrimary;
+				border: 1px solid $colorShapeTertiary; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorBgPrimary;
 			}
 			.card.add.first { margin: 0px; }
             .card.add {

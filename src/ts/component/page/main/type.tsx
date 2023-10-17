@@ -68,8 +68,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
-		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
+		const subIdObject = this.getSubIdObject();
+		const totalObject = dbStore.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
+		const filtersObject: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+		];
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -89,7 +93,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => UtilDate.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: (v: any) => v ? UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
 			},
 		];
 
@@ -164,47 +168,43 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="content"></div>
 					</div>
 
-					{allowedObject ? (
-						<React.Fragment>
-							{allowedLayout ? (
-								<div className="section layout">
-									<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
-									<div className="content">
-										{allowedDetails ? (
-											<Select 
-												id="recommendedLayout" 
-												value={object.recommendedLayout} 
-												options={UtilMenu.turnLayouts()} 
-												arrowClassName="light" 
-												onChange={this.onLayout} 
-											/>
-										) : (
-											<React.Fragment>
-												<Icon className={layout.icon} />
-												<div className="name">{layout.name}</div>
-											</React.Fragment>
-										)}
-									</div>
-								</div>
-							) : ''}
-
-							<div className="section relation">
-								<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
-								<div className="content">
-									{relations.map((item: any, i: number) => (
-										<ItemRelation key={i} {...item} />
-									))}
-									{allowedRelation ? <ItemAdd /> : ''}
-								</div>
+					{allowedLayout ? (
+						<div className="section layout">
+							<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
+							<div className="content">
+								{allowedDetails ? (
+									<Select 
+										id="recommendedLayout" 
+										value={object.recommendedLayout} 
+										options={UtilMenu.turnLayouts()} 
+										arrowClassName="light" 
+										onChange={this.onLayout} 
+									/>
+								) : (
+									<React.Fragment>
+										<Icon className={layout.icon} />
+										<div className="name">{layout.name}</div>
+									</React.Fragment>
+								)}
 							</div>
-						</React.Fragment>
+						</div>
 					) : ''}
+
+					<div className="section relation">
+						<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
+						<div className="content">
+							{relations.map((item: any, i: number) => (
+								<ItemRelation key={i} {...item} />
+							))}
+							{allowedRelation ? <ItemAdd /> : ''}
+						</div>
+					</div>
 
 					{object.isInstalled ? (
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject rootId={rootId} columns={columns} />
+								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} filters={filtersObject} />
 							</div>
 						</div>
 					) : ''}
@@ -268,15 +268,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	loadTemplates () {
-		const { space } = commonStore;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
 
 		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
-				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -536,6 +534,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getSpaceId () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, [ 'spaceId' ], true);
+
+		return object.spaceId;
 	};
 
 	getSubIdTemplate () {

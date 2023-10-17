@@ -12,7 +12,7 @@
 			vertical-align: top; @include text-overflow-nw; margin: 0px 8px 0px 4px;
 		}
 		.size {
-			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey;
+			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorControlActive;
 			display: inline-block; vertical-align: top; flex-shrink: 0;
 		}
 

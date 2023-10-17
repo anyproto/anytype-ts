@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
@@ -174,7 +175,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			node.find('#item-' + item.id).addClass('hover');
 		};
 
-		this.isFocused = item ? true : false;
+		this.isFocused = !!item;
 	};
 
 	onMenu (e: any) {
@@ -216,19 +217,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
-			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
-				if (cnt) {
-					popupStore.open('template', { 
-						data: { 
-							typeId: item.id, 
-							onSelect: (template: any) => this.onCreate(item.id, template),
-							route: 'Navigation'
-						} 
-					});
-				} else {
-					this.onCreate(item.id, null);
-				};
-			});
+			this.onCreate(item.id);
 		};
 	};
 
@@ -245,10 +234,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			keyboard.disableClose(true);
 			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
 
-			analytics.event('SelectObjectType', {
-				objectType: typeId,
-				layout,
-			});
+			analytics.event('SelectObjectType', { objectType: typeId, layout });
 		};
 
 		setLoading(true);
@@ -268,15 +254,14 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 	};
 
-	onCreate (typeId: any, template: any) {
+	onCreate (typeId: any) {
 		const { rootId, isPopup } = this.props;
 		const type = dbStore.getTypeById(typeId);
+		const template = type.defaultTemplateId || Constant.templateId.blank;
 
-		if (template) {
-			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
-		} else {
-			C.ObjectSetObjectType(rootId, type?.uniqueKey, this.onTemplate);
-		};
+		C.ObjectSetObjectType(rootId, type?.uniqueKey, () => {
+			C.ObjectApplyTemplate(rootId, template, this.onTemplate);
+		});
 
 		Onboarding.start('objectCreationFinish', isPopup);
 
@@ -286,7 +271,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		});
 	};
 
-	onBlock (id: string) {
+	onBlock () {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 
@@ -305,11 +290,9 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (!first) {
-			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, (message: any) => { 
-				this.onBlock(message.blockId); 
-			});
+			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, () => this.onBlock());
 		} else {
-			this.onBlock(first.id);
+			this.onBlock();
 		};
 	};
 
