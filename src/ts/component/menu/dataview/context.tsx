@@ -84,11 +84,11 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
-		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -99,6 +99,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedArchive = true;
 		let allowedFav = true;
 		let allowedCopy = true;
+		let allowedType = true;
 
 		if (isCollection) {
 			div = { isDiv: true };
@@ -130,6 +131,9 @@ class MenuContext extends React.Component<I.Menu> {
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
 			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
+				allowedType = false;
+			};
 		});
 
 		if (favCnt == length) {
@@ -147,6 +151,7 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
+			changeType = null;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -155,6 +160,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
+		if (!allowedType)		 changeType = null;
 
 		let sections = [
 			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
@@ -221,7 +227,7 @@ class MenuContext extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.ObjectListSetObjectType(objectIds, item.id);
+						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
 						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
 
 						close();
@@ -235,7 +241,6 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -274,6 +279,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, onSelect, targetId, isCollection, route } = data;
 		const win = $(window);
 		const count = objectIds.length;
+		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);
@@ -281,11 +287,11 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		focus.clear(false);
-		
+
 		switch (item.id) {
 
 			case 'open': {
-				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
+				UtilObject.openPopup(first);
 				break;
 			};
 
@@ -295,8 +301,8 @@ class MenuContext extends React.Component<I.Menu> {
 						return;
 					};
 
-					if (count == 1) {
-						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
+					if (first) {
+						UtilObject.openPopup({ id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count, route });

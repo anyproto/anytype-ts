@@ -6,7 +6,7 @@
 }
 .switch {
 	.inner { 
-		width: 12px; height: 12px; border-radius: 100%; background: $colorWhite; position: absolute; left: 2px; top: 2px;
+		width: 12px; height: 12px; border-radius: 100%; background: $colorBgPrimary; position: absolute; left: 2px; top: 2px;
 		transition: $transitionAllCommon; box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.1);
 	}	
 }
@@ -15,9 +15,9 @@
 	.inner { width: 20px; height: 20px; }
 }
 
-.switch.active { background: $colorDarkGrey; }
+.switch.active { background: $colorTextSecondary; }
 .switch.green.active { background: $colorLime; }
-.switch.orange.active { background: $colorAccent50; }
+.switch.orange.active { background: $colorSystemAccent50; }
 .switch.isReadonly { cursor: default; }
 
 .switch.active {

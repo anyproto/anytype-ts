@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import { I, C, focus, UtilObject, Action } from 'Lib';
-import { menuStore, blockStore, detailStore } from 'Store';
-import ControlButtons from './controlButtons';
+import { menuStore, blockStore, detailStore, commonStore } from 'Store';
+import ControlButtons  from './controlButtons';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -136,7 +136,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId } = this.props;
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (message.hash) {
 					UtilObject.setIcon(rootId, '', message.hash);
 				};
@@ -223,7 +223,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		preventCommonDrop(true);
 		this.onUploadStart();
 		
-		C.FileUpload('', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

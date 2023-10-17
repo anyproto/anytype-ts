@@ -120,8 +120,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 	
 	onChangeUrl (e: any, url: string) {

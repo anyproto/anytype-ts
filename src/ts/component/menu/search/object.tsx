@@ -64,7 +64,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
@@ -298,7 +298,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);
@@ -314,7 +314,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.relation ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Relation ] });
 		};
 
 		if (clear) {
@@ -431,12 +431,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
+					const isCollection = target.layout == I.ObjectLayout.Collection;
 					const cb = (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						const isCollection = target.type == Constant.typeId.collection;
 						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
 						const linkType = isCollection ? 'Collection' : 'Object';
 
@@ -444,10 +444,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					if (target.type == Constant.typeId.collection) {
+					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
+						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.layout), cb);
 					};
 					break;
 			};
@@ -468,11 +468,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	getBlockParam (id: string, type: string) {
+	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		switch (type) {
-			case Constant.typeId.bookmark: {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
 				param.type = I.BlockType.Bookmark;
 				param.content = {
 					state: I.BookmarkState.Done,
@@ -508,7 +508,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (onFilterChange) {
 				onFilterChange(filter);
 			};
-		}, 500);
+		}, Constant.delay.keyboard);
 	};
 
 	getRowHeight (item: any) {

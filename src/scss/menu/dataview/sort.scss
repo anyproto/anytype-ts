@@ -13,7 +13,8 @@
 			
 			.select { border: 0px; padding: 0px; display: block; }
 			.select:hover, .select.isFocused { background: none; }
-			.select.grey { color: $colorMediumGrey; }
+			.select.grey { color: $colorControlActive; }
+
 			.select {
 				.icon.relation { display: none; }
 				.icon.arrow { display: none; }

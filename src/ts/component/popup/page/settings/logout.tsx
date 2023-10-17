@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Title, Label, Textarea, Button, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
+import { Title, Label, Button, Phrase } from 'Component';
+import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
-import Head from './head';
 
 interface State {
 	entropy: string;
@@ -80,12 +78,16 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onLogout () {
 		const { setPinConfirmed } = this.props;
 
-		UtilCommon.route('/', { replace: true, animate: true });
+		UtilRouter.go('/', { 
+			replace: true, 
+			animate: true,
+			onFadeIn: () => {
+				authStore.logout(false);
+				setPinConfirmed(false);
 
-		window.setTimeout(() => {
-			authStore.logout(false);
-			setPinConfirmed(false);
-		}, Constant.delay.route * 2);
+				Renderer.send('logout');
+			},
+		});
 	};
 
 });

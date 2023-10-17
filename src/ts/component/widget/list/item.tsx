@@ -47,7 +47,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		let descr = null;
 		if (!isCompact) {
-			if (object.type == Constant.typeId.bookmark) {
+			if (object.layout == I.ObjectLayout.Bookmark) {
 				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;

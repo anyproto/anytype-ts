@@ -18,7 +18,8 @@
 
 	"limit": {
 		"menuRecords": 100,
-		"widgets": 20
+		"widgets": 20,
+		"space": 10
 	},
 
 	"default": {
@@ -32,7 +33,8 @@
 		"menu": 160,
 		"popup": 310,
 		"toast": 2500,
-		"route": 250
+		"route": 250,
+		"keyboard": 500
 	},
 	
 	"fileExtension": {
@@ -62,30 +64,32 @@
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
-		"dataviewTemplate": [ "previewObject" ]
+		"dataviewTemplate": [ "previewObject" ],
+		"table":		 [ "select2", "blockColor", "blockBackground" ]
 	},
 
 	"popupPinIds": [ "search" ],
 
 	"defaultRelationKeys": [ 
-		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
+		"id", "spaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
 		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId"
 	],
 
 	"sidebarRelationKeys": [
-		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
 	],
 
 	"relationRelationKeys": [
-		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
+		"id", "spaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
 		"relationMaxCount", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "defaultTemplateId" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
 
 	"pageCoverRelationKey": "pageCover",
 
@@ -105,7 +109,7 @@
 		"files": "files"
 	},
 
-	"typeId": {
+	"typeKey": {
 		"page": "ot-page",
 		"set": "ot-set",
 		"space": "ot-space",
@@ -123,12 +127,6 @@
 		"collection": "ot-collection",
 		"dashboard": "ot-dashboard",
 		"date": "ot-date"
-	},
-
-	"storeTypeId": {
-		"relation": "_otrelation",
-		"type": "_otobjectType",
-		"template": "_ottemplate"
 	},
 
 	"storeSpaceId": "_anytype_marketplace",
@@ -290,6 +288,7 @@
 		"makefile":		 "Makefile",
 		"matlab":		 "MATLAB",
 		"nginx":		 "Nginx",
+		"nix": "Nix",
 		"objc":			 "Objective-C",
 		"ocaml":		 "OCaml",
 		"pascal":		 "Pascal",

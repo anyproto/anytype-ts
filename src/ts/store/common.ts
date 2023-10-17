@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, set } from 'mobx';
+import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
 import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
@@ -36,14 +36,14 @@ class CommonStore {
     public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
-	public typeId = '';
+	public defaultType = '';
 	public pinTimeId = 0;
 	public isFullScreen = false;
 	public autoSidebarValue = false;
 	public isSidebarFixedValue = false;
 	public redirect = '';
 	public languages: string[] = [];
-	public workspaceId = '';
+	public spaceId = '';
 	public notionToken = '';
 
 	public previewObj: I.Preview = { 
@@ -81,11 +81,11 @@ class CommonStore {
 			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
-			typeId: observable,
+			defaultType: observable,
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
-			workspaceId: observable,
+			spaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -94,7 +94,7 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
-			workspace: computed,
+			space: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -106,9 +106,11 @@ class CommonStore {
 			toastClear: action,
 			themeSet: action,
 			nativeThemeSet: action,
-			workspaceSet: action,
+			spaceSet: action,
 			spaceStorageSet: action,
 		});
+
+		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
     };
 
     get config(): any {
@@ -137,19 +139,14 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const typeId = String(this.typeId || Storage.get('defaultType') || '');
+		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.page);
 
-		if (!typeId) {
-			return Constant.typeId.page;
-		};
-
-		const type = dbStore.getType(typeId);
-
+		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			return Constant.typeId.page;
+			type = dbStore.getTypeByKey(Constant.typeKey.page);
 		};
 
-		return typeId;
+		return type ? type.id : '';
 	};
 
 	get fullscreen(): boolean {
@@ -176,8 +173,8 @@ class CommonStore {
 		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
-	get workspace(): string {
-		return String(this.workspaceId || '');
+	get space(): string {
+		return String(this.spaceId || '');
 	};
 
 	get graph(): Graph {
@@ -277,8 +274,8 @@ class CommonStore {
 		};
 	};
 
-	workspaceSet (id: string) {
-		this.workspaceId = String(id || '');
+	spaceSet (id: string) {
+		this.spaceId = String(id || '');
 	};
 
 	previewClear () {
@@ -289,10 +286,10 @@ class CommonStore {
 		this.toastObj = null;
 	};
 
-	defaultTypeSet (v: string) {
-		this.typeId = String(v || '');
+	typeSet (v: string) {
+		this.defaultType = String(v || '');
 
-		Storage.set('defaultType', this.typeId);
+		Storage.set('defaultType', this.defaultType);
 	};
 
 	pinTimeSet (v: string) {
@@ -364,21 +361,6 @@ class CommonStore {
 
 	languagesSet (v: string[]) {
 		this.languages = v;
-	};
-
-	infoSet (info: I.AccountInfo) {
-		console.log('[commonStore.infoSet]', info);
-
-		blockStore.rootSet(info.homeObjectId);
-		blockStore.profileSet(info.profileObjectId);
-		blockStore.widgetsSet(info.widgetsId);
-
-		this.gatewaySet(info.gatewayUrl);
-		this.workspaceSet(info.accountSpaceId);
-
-		analytics.device(info.deviceId);
-		analytics.profile(info.analyticsId);
-		Sentry.setUser({ id: info.analyticsId });
 	};
 
 	configSet (config: any, force: boolean) {

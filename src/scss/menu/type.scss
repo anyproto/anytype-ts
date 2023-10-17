@@ -10,6 +10,6 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
-		.label { color: $colorMediumGrey; @include text-common; padding: 0px 16px; }
+		.label { color: $colorControlActive; @include text-common; padding: 0px 16px; }
 	}
 }

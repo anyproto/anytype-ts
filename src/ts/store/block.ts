@@ -9,6 +9,7 @@ class BlockStore {
     public profileId = '';
 	public widgetsId = '';
 	public rootId = '';
+	public spaceviewId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
@@ -30,18 +31,22 @@ class BlockStore {
             updateStructure: action,
             delete: action
         });
-    }
+    };
 
     get profile (): string {
-		return this.profileId;
+		return String(this.profileId || '');
 	};
 
 	get widgets (): string {
-		return this.widgetsId;
+		return String(this.widgetsId || '');
 	};
 
 	get root (): string {
-		return this.rootId;
+		return String(this.rootId || '');
+	};
+
+	get spaceview (): string {
+		return String(this.spaceviewId || '');
 	};
 
 	profileSet (id: string) {
@@ -54,6 +59,10 @@ class BlockStore {
 
 	rootSet (id: string) {
 		this.rootId = String(id || '');
+	};
+
+	spaceviewSet (id: string) {
+		this.spaceviewId = String(id || '');
 	};
 	
     set (rootId: string, blocks: I.Block[]) {
@@ -490,7 +499,7 @@ class BlockStore {
 		let change = false;
 		if (check) {
 			if (!this.checkBlockTypeExists(rootId)) {
-				header.childrenIds.push(Constant.blockId.type);
+				header.childrenIds.unshift(Constant.blockId.type);
 				change = true;
 			};
 		} else {
@@ -541,10 +550,14 @@ class BlockStore {
 
 	closeRecentWidgets () {
 		const { recentEdit, recentOpen } = Constant.widgetId;
-
 		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
+
 		if (blocks.length) {
-			blocks.forEach(it => Storage.setToggle('widget', it.parentId, true));
+			blocks.forEach(it => {
+				if (it.parentId) {
+					Storage.setToggle('widget', it.parentId, true);
+				};
+			});
 		};
 	};
 

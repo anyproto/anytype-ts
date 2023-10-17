@@ -205,14 +205,17 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onKeyDown (e: any) {
-		let ret = false;
 		const items = this.getItems();
 		const item = items[this.n];
+
+		let ret = false;
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();
 
-			this.onSwitch(e, item, !item.isVisible);
+			if (item) {
+				this.onSwitch(e, item, !item.isVisible);
+			};
 			ret = true;
 		});
 

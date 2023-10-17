@@ -5,17 +5,17 @@
     /* Common */
 
     .popup {
-        .innerWrap { background: $colorBlack; border: 0.5px solid #4C4B43; }
+        .innerWrap { background: $colorBgPrimary; border: 0.5px solid #4C4B43; }
 
-        #loader { background: $colorBlack; }
+        #loader { background: $colorBgPrimary; }
     }
 
     /* PopupSearch */
 
     .popup.popupSearch {
-        .head { border-color: $colorLineSecondary; }
+        .head { border-color: $colorShapeSecondary; }
         .item {
-            .descr { color: $colorSecondary; }
+            .descr { color: $colorTextSecondary; }
         }
         .item.active { background-color: $colorShapeHighlightMedium; }
     }
@@ -24,8 +24,8 @@
 
     .popup.popupSettings {
 		
-		.sides {
-			> .side.left { background: $colorBgLight; }
+		.mainSides {
+			> .side.left { background: $colorBgSecondary; }
 			> .side.left {
 				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
 				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
@@ -33,47 +33,74 @@
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
 				}
 
-				.iconObject.withLetter { background-color: $colorLineTertiary; }
+				.iconObject.withLetter { background-color: $colorShapeTertiary; }
 			}
 
 			> .side.right {
 				.head {
-					.inner { background: $colorBlack; }
+					.inner { background: $colorBgPrimary; }
 					.element:hover { background-color: $colorShapeHighlightMedium; }
 				}
 
-				.label.section, .label.small, .label.grey { color: $colorSecondary; }
-				.row { border-color: $colorLineSecondary; }
+				.label.section, .label.small, .label.grey { color: $colorTextSecondary; }
+				.row { border-color: $colorShapeSecondary; }
 
 				.input,
-				.select { border-color: $colorLinePrimary; }
+				.select { border-color: $colorShapePrimary; }
 
-				.select { color: $colorSecondary; }
+				.select { color: $colorTextSecondary; }
+				.select {
+					.item { color: $colorTextPrimary; }
+				}
 				.select:hover { background-color: $colorShapeHighlightMedium; }
 
 				.actionItems,
-				.actionItems > .item { border-color: $colorLineSecondary; }
+				.actionItems > .item { border-color: $colorShapeSecondary; }
 
-				.phraseWrapper { background-color: $colorLineTertiary; }
+				.phraseWrapper { background-color: $colorShapeTertiary; }
 				.phraseWrapper {
-					.icon.see { background-color: $colorLineTertiary; }
+					.icon.see { background-color: $colorShapeTertiary; }
 				}
 			}
 		}
 
-		.side.right.tabSpaceIndex {
-			.spaceSettingsIndexHeader .headerContent .spaceType { background-color: $colorShapeHighlightMedium; }
-			.sections .section .sectionContent { border-color: $colorLineSecondary; }
-
-			.sections .section .sectionContent {
-				.item { border-color: $colorLineSecondary; }
-				.item {
-					.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+		.side.right.tabSpaceIndex,
+		.side.right.tabSpaceCreate {
+			.sections {
+				.spaceHeader {
+					.headerContent {
+						.spaceType { background-color: $colorShapeHighlightMedium; }
+					}	
 				}
-				.item.red {
-					.progressBar .fill { background: $colorRed; }
+
+				.section {
+					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent {
+						.item { border-color: $colorShapeSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+					}
 				}
 			}
+			.sections {
+				.section {
+					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent {
+						.item { border-color: $colorShapeSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+						.item.red {
+							.progressBar .fill { background: $colorRed; }
+						}
+					}
+				}
+			}
+		}
+
+		.side.right.tabSpaceCreate {
+			.loaderWrapper { background-color: $colorBgLoader; }
 		}
 
 		.side.right.tabDataManagement {
@@ -81,40 +108,34 @@
 		}
 
         .side.right.tabPhrase {
-            .qrWrap { background: $colorMediumGrey; }
+            .qrWrap { background: $colorControlActive; }
         }
 
 		.side.right.tabAccount {
 			.sections .section {
-				.input { border-color: $colorLineSecondary; }
-				.input:hover { border-color: $colorLinePrimary; }
-				.input:focus:not(.isReadonly) { border-color: $colorAccent100; }
+				.input { border-color: $colorShapeSecondary; }
+				.input:hover { border-color: $colorShapePrimary; }
+				.input:focus:not(.isReadonly) { border-color: $colorSystemAccent100; }
 			}
 		}
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
 		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
 
-		.side.right.tabPersonal,
-		.side.right.tabImportCsv,
-		.side.right.tabPinIndex {
-			.select .item { color: $colorPrimary; }
-		}
-
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
-            .item { border-color: $colorLineSecondary; }
-            .item:hover, .item.active { border-color: $colorLinePrimary; }
+            .item { border-color: $colorShapeSecondary; }
+            .item:hover, .item.active { border-color: $colorShapePrimary; }
             .item.notion .icon { background-image: url('#{$themePath}/icon/import/notion.svg'); }
             .item.roam .icon { background-image: url('#{$themePath}/icon/import/roam.svg'); }
         }
 
 		.side.right.tabImportNotion {
-			.btn { color: $colorSecondary; }
+			.btn { color: $colorTextSecondary; }
 			.btn {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
 			}
-			.btn:hover { color: $colorPrimary; }
+			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
 			}
@@ -126,30 +147,30 @@
 		}
 
 		.side.right.tabImportNotionHelp {
-			.list img { border-color: $colorLinePrimary; }
+			.list img { border-color: $colorShapePrimary; }
 		}
 
 		.side.right.tabAppearance {
-			.btn { color: $colorSecondary; }
+			.btn { color: $colorTextSecondary; }
 
 			.btn.light { 
-				.bg { background-color: $colorWhite; }
+				.bg { background-color: #fff; }
 			}
 
 			.btn.dark {
-				.bg { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
+				.bg { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
 				.bg::before, .bg::after {
 					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
 				}
-				.bg::before { left: 0px; background: $colorWhite; border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px $colorLinePrimary; border-radius: 0px 14px 14px 0px; }
+				.bg::before { left: 0px; background: #fff; border-radius: 14px 0px 0px 14px; }
+				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
-			.btn.active { color: $colorPrimary; }
+			.btn.active { color: $colorTextPrimary; }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -159,7 +180,7 @@
 		}
 
 		.side.right.tabDelete {
-			.check { border-color: $colorLinePrimary; }
+			.check { border-color: $colorShapePrimary; }
 		}
     }
     
@@ -167,36 +188,36 @@
 
     .popup.popupShortcut {
         .head {
-            .tabs { color: $colorSecondary; }
+            .tabs { color: $colorTextSecondary; }
             .tabs {
-                .item:hover, .item.active { color: $colorPrimary; }
+                .item:hover, .item.active { color: $colorTextPrimary; }
             }
         }
 
         .body {
             .section {
-                .name { border-color: $colorLineSecondary; }
+                .name { border-color: $colorShapeSecondary; }
                 .items {
-                    .item { border-color: $colorLineSecondary; }
+                    .item { border-color: $colorShapeSecondary; }
                     .item {
-                        .key { color: $colorSecondary; }
+                        .key { color: $colorTextSecondary; }
                     }
                 }
             }
-            .section > .descr { border-color: $colorLineSecondary; }
+            .section > .descr { border-color: $colorShapeSecondary; }
         }
     }
 
 	/* PopupPreview */
 
 	.popup.popupPreview {
-		#loader { background: $colorBlack; }
+		#loader { background: $colorBgPrimary; }
 	}
 
     /* PopupHelp */
 
     .popup.popupHelp {
-		.head { color: $colorSecondary; }
+		.head { color: $colorTextSecondary; }
 		.head {
 			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
@@ -208,19 +229,19 @@
     /* PopupPrompt */
 
     .popup.popupPrompt {
-        .input { background: $colorBlack; border-color: $colorLinePrimary; }
+        .input { background: $colorBgPrimary; border-color: $colorShapePrimary; }
     }
 
     /* PopupExport */
 
     .popup.popupExport {
-        .row { border-color: $colorLinePrimary; }
+        .row { border-color: $colorShapePrimary; }
     }
 
 	/* PopupMigration */
 
 	.popup.popupMigration {
-		.qrWrap { background-color: $colorBgLight; }
+		.qrWrap { background-color: $colorBgSecondary; }
 	}
 
 }

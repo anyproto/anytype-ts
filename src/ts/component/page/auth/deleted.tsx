@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, C, Action, Survey, UtilObject, analytics, translate } from 'Lib';
+import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilObject, analytics, translate, UtilDate } from 'Lib';
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -36,7 +36,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		};
 
 		const { error } = this.state;
-		const duration = Math.max(0, account.status.date - UtilCommon.time());
+		const duration = Math.max(0, account.status.date - UtilDate.now());
 		const days = Math.max(1, Math.floor(duration / 86400));
 		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
 
@@ -118,7 +118,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
-					UtilCommon.route('/', { replace: true });
+					UtilRouter.go('/', { replace: true });
 				},
 			},
 		});
@@ -144,8 +144,11 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	onLogout () {
-		UtilCommon.route('/', { replace: true, animate: true });
-		window.setTimeout(() => authStore.logout(false), Constant.delay.route * 2);
+		UtilRouter.go('/', { 
+			replace: true, 
+			animate: true,
+			onFadeIn: () => authStore.logout(false),
+		});
 	};
 	
 });

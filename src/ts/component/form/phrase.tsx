@@ -4,6 +4,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { keyboard, translate, Storage } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props {
 	value: string;
@@ -174,15 +175,21 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
+		window.clearTimeout(this.timeout);
+
+		let ret = false;
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 			this.updateValue();
+
+			ret = true;
 		});
 
 		this.placeholderCheck();
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.updateValue(), 1000);
+		if (!ret) {
+			this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard * 2);
+		};
 	};
 
 	updateValue () {

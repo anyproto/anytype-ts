@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			@include text-small; text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			@include text-small; text-align: left; color: $colorTextSecondary; font-weight: 400; line-height: 20px; position: relative; height: 38px;
 			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead {
@@ -61,7 +61,7 @@
 
 			.row { white-space: nowrap; box-shadow: 0px 1px $colorShapeSecondary inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.add { margin-top: -2px; }
-			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
+			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
 			.row:hover { background-color: $colorShapeHighlightLight; }
 
 			.row > .selectable,
@@ -99,8 +99,8 @@
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
 				.cellContent.isName { padding: 0px 14px !important; }
 				.cellContent.isName {
-					.iconObject { margin: 14px 4px 14px 0px; }
-					.input-text { height: 47px; width: calc(100% - 26px) !important; }
+					.iconObject { margin: 14px 8px 14px 0px; }
+					.input-text { height: 48px; width: calc(100% - 30px) !important; }
 					.name { width: 100%; }
 				}
 			}
@@ -133,7 +133,7 @@
 
 			.dropTarget.isOver { box-shadow: 0px 0px; }
 			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: $colorAccent100; width: 100%; height: 2px; border-radius: 2px; left: 0px; z-index: 1;
+				content: ""; position: absolute; background: $colorSystemAccent100; width: 100%; height: 2px; border-radius: 2px; left: 0px; z-index: 1;
 			}
 			.dropTarget.isOver.top::before { top: -1px; }
 			.dropTarget.isOver.bottom::before { bottom: -1px; }

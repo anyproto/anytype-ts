@@ -107,6 +107,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
 					</span>
@@ -175,7 +176,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 			
 			if (v) {
-				window.setTimeout(() => { this.focus(); }, 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	}; 
@@ -306,7 +307,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
-		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		if (content.length) {
+			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		};
 	};
 
 	onClear (e: any) {

@@ -4,6 +4,9 @@ import { I, UtilObject, translate } from 'Lib';
 interface Props {
 	object: any;
 	className?: string;
+	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
 };
 
 class Name extends React.Component<Props> {
@@ -13,7 +16,7 @@ class Name extends React.Component<Props> {
 	};
 
 	render () {
-		const { className } = this.props;
+		const { className, onMouseEnter, onMouseLeave, onClick } = this.props;
 		const object = this.props.object || {};
 		const { layout, snippet, isDeleted } = object;
 	
@@ -28,7 +31,12 @@ class Name extends React.Component<Props> {
 		};
 		
 		return (
-			<div className={className}>
+			<div 
+				className={className} 
+				onClick={onClick}
+				onMouseEnter={onMouseEnter} 
+				onMouseLeave={onMouseLeave}
+			>
 				<span>{name}</span>
 			</div>
 		);

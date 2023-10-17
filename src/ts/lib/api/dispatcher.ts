@@ -201,14 +201,12 @@ class Dispatcher {
 
 				case 'accountUpdate': {
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
-					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
-
-					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;	
 				};
 
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;
 				};
 
@@ -1163,7 +1161,7 @@ class Dispatcher {
 			return;
 		};
 
-		const t0 = performance.now();
+		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;
@@ -1267,4 +1265,4 @@ class Dispatcher {
 
 };
 
- export const dispatcher = new Dispatcher();
+export const dispatcher = new Dispatcher();

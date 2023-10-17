@@ -10,7 +10,7 @@
 	.icon.edit { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		background: $colorWhite; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
+		background: $colorBgPrimary; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
 	}
 	.cellContent {
 		.name { display: inline-block; }
@@ -46,8 +46,8 @@
 	.empty { vertical-align: top; display: none; }
 
 	.more { 
-		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
-		@include text-small; color: $colorDarkGrey;
+		background: $colorShapeTertiary; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
+		@include text-small; color: $colorTextSecondary;
 	}
 }
 
@@ -106,7 +106,7 @@
 	.itemWrap { display: inline-block; }
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
-	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorBlack; }
+	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorTextPrimary; }
 	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
 }
 
@@ -134,6 +134,11 @@
 			.icon.objectRemove:hover { opacity: 0.8; }
 		}
 	}
+}
+
+.cellContent.c-longText { white-space: pre-wrap; }
+.cell.isEditing.c-longText {
+	.cellContent { white-space: pre-wrap !important; }
 }
 
 .cellContent.canEdit.c-shortText, 

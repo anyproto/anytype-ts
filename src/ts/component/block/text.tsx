@@ -5,7 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -17,7 +17,7 @@ interface Props extends I.BlockComponent {
 const langs = [
 	'clike', 'c', 'cpp', 'csharp', 'abap', 'arduino', 'bash', 'basic', 'clojure', 'coffeescript', 'dart', 'diff', 'docker', 'elixir',
 	'elm', 'erlang', 'flow', 'fortran', 'fsharp', 'gherkin', 'graphql', 'groovy', 'go', 'haskell', 'json', 'latex', 'less', 'lisp',
-	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
+	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
 	'wolfram',
@@ -344,7 +344,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
-				const routeParam = UtilCommon.getRoute(route);
+				const routeParam = UtilRouter.getParam(route);
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
@@ -368,7 +368,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
 				if (isInside) {
-					UtilCommon.route(route, {});
+					UtilRouter.go(route, {});
 				} else {
 					Renderer.send('urlOpen', target);
 				};
@@ -910,6 +910,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				if (!ret && range) {
 					const d = range.from - filter.from;
+
 					if (d >= 0) {
 						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
 						commonStore.filterSetText(part);

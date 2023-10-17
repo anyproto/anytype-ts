@@ -8,7 +8,7 @@
 
 		.head { padding: 0px 16px; }
 		.head {
-			.date { color: $colorMediumGrey; margin-bottom: 6px; }
+			.date { color: $colorControlActive; margin-bottom: 6px; }
 			.sides { display: flex; margin-bottom: 10px; }
 			.side { width: 50%; }
 			.side.right { text-align: right; }
@@ -22,7 +22,7 @@
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorAccent125; }
+			.btn:hover { color: $colorSystemAccent100; }
 		}
 
 		.day { 
@@ -30,13 +30,13 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: $colorAccent25; color: $colorAccent125 !important; }
+		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
 
-		.day.th { color: $colorMediumGrey; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorMediumGrey !important; }
+		.day.th { color: $colorControlActive; cursor: default; }
+		.day.th:hover { background: none; font-weight: 400; color: $colorControlActive !important; }
 		
-		.day.active { color: $colorAccent125; }
-		.day.other { color: $colorMediumGrey; }
+		.day.active { color: $colorSystemAccent100; }
+		.day.other { color: $colorControlActive; }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		
@@ -48,6 +48,25 @@
 		.select { border: 0px; padding: 0px; height: 24px; vertical-align: top; @include text-paragraph; font-weight: 500; padding: 2px 20px 2px 4px; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/select/big.svg'); }
+		}
+	}
+
+	.menu.menuDataviewCalendarDay {
+		.content { padding: 8px 4px; }
+
+		.number { @include text-paragraph; text-align: right; position: relative; z-index: 1; padding: 0px 8px; }
+		.day.active .number { color: $colorSystemAccent100; }
+		.day.other .number { color: $colorTextSecondary; }
+
+		.items {
+			.item { 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-overflow-nw; margin: 0px 0px 2px 0px; 
+				padding: 0px 8px; border-radius: 4px;
+			}
+			.item {
+				.iconObject { flex-shrink: 0; }
+				.name { @include text-overflow-nw; @include text-small; }
+			}
 		}
 	}
 }

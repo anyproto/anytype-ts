@@ -1,9 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
-import { commonStore, detailStore, blockStore, popupStore } from 'Store';
+import { commonStore, menuStore } from 'Store';
 import { I, UtilObject, keyboard, Storage, UtilCommon, Preview, translate } from 'Lib';
-import Constant from 'json/constant.json';
 
 class Navigation extends React.Component {
 
@@ -24,10 +23,11 @@ class Navigation extends React.Component {
 	render () {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const profile = UtilObject.getProfile();
 		const isWin = UtilCommon.isPlatformWindows();
-		const cb = isWin ? `${alt} + ←` : `${cmd} + ←`;
-		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
+		const isLinux = UtilCommon.isPlatformLinux();
+		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
+		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
 
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
@@ -68,9 +68,10 @@ class Navigation extends React.Component {
 					<div className="line" />
 
 					<div 
+						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('commonSettings'))}
+						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<IconObject object={profile} />
@@ -128,7 +129,7 @@ class Navigation extends React.Component {
 	};
 
 	onProfile () {
-		popupStore.open('settings', {});
+		keyboard.onSpaceMenu();
 	};
 
 	resize () {
@@ -136,6 +137,7 @@ class Navigation extends React.Component {
 			return;
 		};
 
+		const win = $(window);
 		const node = $(this.node);
 		const { ww } = UtilCommon.getWindowDimensions();
 		const width = node.outerWidth();
@@ -152,6 +154,7 @@ class Navigation extends React.Component {
 			x += sw;
 		};
 		node.css({ left: x });
+		win.trigger('resize.menuSpace');
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore, detailStore, commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -17,7 +17,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
-	timeout = 0;
 	ref = null;
 	range: I.TextRange = null;
 
@@ -29,7 +28,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onFullscreen = this.onFullscreen.bind(this);
@@ -54,9 +52,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			cn.push('isEditing');
 		};
 
-		let icon = <div id="head-source-select" />;
+		let icon = null;
 		if (targetObjectId && !isCollection) {
 			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+		} else {
+			icon = <div id="head-source-select" />;
 		};
 
 		return (
@@ -76,7 +76,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
 					onSelect={this.onSelect}
-					onCompositionStart={this.onCompositionStart}
 				/>
 				{icon}
 			</div>
@@ -100,7 +99,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	componentWillUnmount () {
 		this.save();
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 	};
 
 	onTitle () {
@@ -165,7 +163,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
-				window.setTimeout(() => { loadData(message.views[0].id, 0, true); }, 50);
+				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);
 			};
 
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
@@ -176,24 +174,24 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => {
+				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message, true);
@@ -268,14 +266,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onBlur () {
 		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
 
 		this.save();
 		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
-	};
-
-	onCompositionStart () {
-		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
@@ -287,9 +280,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onKeyUp () {
 		this.checkInput(!this.getValue());
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), 1000);
 	};
 
 	onSelect () {

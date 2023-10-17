@@ -62,6 +62,7 @@
 
 		.icon.clock { background-image: url('~img/icon/menu/action/clock0.svg'); }
 		.icon.settings { background-image: url('~img/icon/menu/action/settings0.svg'); }
+		.icon.viewSettings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 		.icon.expand { background-image: url('~img/icon/menu/action/expand0.svg'); }
 		.icon.source { background-image: url('~img/icon/menu/action/source0.svg'); }
 		.icon.editText { background-image: url('~img/icon/menu/action/editText0.svg'); }
@@ -125,12 +126,12 @@
 		.icon.color {
 			.inner { 
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
-				background: $colorBlack; 
+				background: $colorTextPrimary; 
 			}
-			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; background: $colorWhite; }
+			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; background: $colorBgPrimary; }
 			
-			.inner.textColor-black { background: $colorBlack; }
-			.inner.textColor-grey { background: $colorMediumGrey; }
+			.inner.textColor-black { background: $colorTextPrimary; }
+			.inner.textColor-grey { background: $colorControlActive; }
 			.inner.textColor-yellow { background: $colorYellow; }
 			.inner.textColor-orange { background: $colorOrange; }
 			.inner.textColor-red { background: $colorRed; }

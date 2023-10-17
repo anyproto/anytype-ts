@@ -1,7 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -21,7 +22,7 @@ interface Props extends I.Cell {
 	maxWidth?: number;
 };
 
-class Cell extends React.Component<Props> {
+const Cell = observer(class Cell extends React.Component<Props> {
 
 	node: any = null;
 	public static defaultProps = {
@@ -167,11 +168,12 @@ class Cell extends React.Component<Props> {
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
-			width = Math.max(cell.outerWidth(), maxWidth);
+			width = Math.max(width, maxWidth);
 		};
 
 		let closeIfOpen = true;
 		let menuId = '';
+
 		const setOn = () => {
 			cell.addClass('isEditing');
 
@@ -246,7 +248,7 @@ class Cell extends React.Component<Props> {
 
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
-					value: param.data.value || UtilCommon.time(),
+					value: param.data.value || UtilDate.now(),
 				});
 					
 				menuId = 'dataviewCalendar';
@@ -476,7 +478,7 @@ class Cell extends React.Component<Props> {
 	};
 
 	canEdit () {
-		const { readonly, viewType, getRecord, recordId } = this.props;
+		const { readonly, getRecord, recordId } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
@@ -489,6 +491,6 @@ class Cell extends React.Component<Props> {
 		return true;
 	};
 	
-};
+});
 
 export default Cell;

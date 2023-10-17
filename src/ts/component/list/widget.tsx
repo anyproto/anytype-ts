@@ -112,7 +112,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			content = (
 				<React.Fragment>
 					<Widget 
-						block={new M.Block({ type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
+						block={new M.Block({ id: 'widget-space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
 						disableContextMenu={true} 
 						onDragStart={this.onDragStart}
 						onDragOver={this.onDragOver}

@@ -11,8 +11,8 @@ import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
-	I, C, UtilCommon, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey
+	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -115,7 +115,6 @@ import 'scss/popup/prompt.scss';
 import 'scss/popup/search.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
-import 'scss/popup/template.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
 
@@ -311,7 +310,7 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', UtilCommon.time());
+			Storage.set('lastSurveyTime', UtilDate.now());
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -320,7 +319,7 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route, {}));
+		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -353,6 +352,13 @@ class App extends React.Component<object, State> {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
 		});
+
+		Renderer.on('pin-check', () => {
+			keyboard.setPinChecked(false);
+			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+		});
+
+		Renderer.on('logout', () => authStore.logout(false));
 	};
 
 	onInit (e: any, data: any) {
@@ -400,7 +406,7 @@ class App extends React.Component<object, State> {
 					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
-					UtilData.onAuth(account, {}, cb);
+					UtilData.onAuth(account, account.info, {}, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -442,7 +448,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			UtilCommon.route('/auth/setup/init', { replace: true });
+			UtilRouter.go('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
 		};

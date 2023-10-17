@@ -5,6 +5,7 @@ import raf from 'raf';
 import { Dimmer, Icon, Button, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 import MenuAccountPath from './account/path';
 
@@ -48,6 +49,8 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
+import MenuWidget from './widget';
+import MenuSpace from './space';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -61,10 +64,10 @@ import MenuDataviewFilterList from './dataview/filter/list';
 import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
-import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewViewSettings from './dataview/view/settings';
 import MenuDataviewViewLayout from './dataview/view/layout';
 import MenuDataviewCalendar from './dataview/calendar';
+import MenuDataviewCalendarDay from './dataview/calendar/day';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewDate from './dataview/date';
@@ -75,10 +78,6 @@ import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
 
-
-import MenuWidget from './widget';
-
-import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
@@ -132,6 +131,8 @@ const Components: any = {
 	typeSuggest:			 MenuTypeSuggest,
 
 	graphSettings:			 MenuGraphSettings,
+	widget:					 MenuWidget,
+	space:					 MenuSpace,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -147,10 +148,10 @@ const Components: any = {
 	dataviewFilterValues:	 MenuDataviewFilterValues,
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
-	dataviewViewEdit:		 MenuDataviewViewEdit,
 	dataviewViewSettings:	 MenuDataviewViewSettings,
 	dataviewViewLayout:	 	 MenuDataviewViewLayout,
 	dataviewCalendar:		 MenuDataviewCalendar,
+	dataviewCalendarDay:	 MenuDataviewCalendarDay,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
 	dataviewSource:			 MenuDataviewSource,
@@ -158,8 +159,6 @@ const Components: any = {
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
-
-	widget:					 MenuWidget,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -446,6 +445,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+
+		if (this.ref && this.ref.beforePosition) {
+			this.ref.beforePosition();
+		};
 
 		raf(() => {
 			if (!this._isMounted) {

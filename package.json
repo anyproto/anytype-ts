@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.34.5-alpha",
+	"version": "0.35.2",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -61,7 +61,7 @@
 		"@typescript-eslint/parser": "^5.46.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^22.0.0",
+		"electron": "^25.0.0",
 		"electron-builder": "^24.6.3",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",

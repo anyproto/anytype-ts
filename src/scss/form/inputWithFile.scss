@@ -1,21 +1,21 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	padding: 11px 13px; border-radius: 4px; border: solid 1px $colorShapeSecondary; color: $colorMediumGrey; @include text-common; 
+	padding: 11px 13px; border-radius: 4px; border: solid 1px $colorShapeSecondary; color: $colorControlActive; @include text-common; 
 	transition: background 0.05s ease-in-out, border $transitionCommon; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
 }
 .inputWithFile:hover { border-color: $colorShapePrimary; }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 0.05em solid $colorMediumGrey; display: inline-block; line-height: 1; transition: $transitionAllCommon; }
-	.fileWrap:hover .border { color: $colorBlack; }
+	.fileWrap .border { border-bottom: 0.05em solid $colorControlActive; display: inline-block; line-height: 1; transition: $transitionAllCommon; }
+	.fileWrap:hover .border { color: $colorTextPrimary; }
 
-	.input::placeholder { color: $colorMediumGrey; }
+	.input::placeholder { color: $colorControlActive; }
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }
-	#url { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: $colorBlack; }
+	#url { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: $colorTextPrimary; }
 
 	.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
 	.icon.image { background-image: url('~img/icon/menu/action/block/image0.svg'); }
@@ -29,7 +29,7 @@
 .inputWithFile.isReadonly {
 	.urlToggle { cursor: default; }
 	.border { border: 0px; cursor: default; }
-	.fileWrap:hover .border { color: $colorMediumGrey; }
+	.fileWrap:hover .border { color: $colorControlActive; }
 }
 
 .inputWithFile.isSmall {

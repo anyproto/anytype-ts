@@ -35,7 +35,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = dbStore.getType(object.type);
+		const type = dbStore.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -136,7 +136,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
 								{icon}
-								<ObjectName object={object} />
+								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
 								{archive}
 							</div>
 
@@ -182,8 +182,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -242,8 +240,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 	
 	onClick (e: any) {
@@ -288,10 +285,14 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	onMouseEnter (e: React.MouseEvent) {
-		const { rootId, block } = this.props;
-		const { targetBlockId } = block.content;
+		if (!this._isMounted) {
+			return;
+		};
 
-		if (!targetBlockId) {
+		const { rootId, block } = this.props;
+		const { targetBlockId, cardStyle } = block.content;
+
+		if (!targetBlockId || (cardStyle != I.LinkCardStyle.Text)) {
 			return;
 		};
 
@@ -300,8 +301,11 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
+		const node = $(this.node);
+		const element = node.find('.cardName .name');
+
 		Preview.previewShow({ 
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 }, 
+			element, 
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
@@ -310,6 +314,13 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	onMouseLeave () {
+		const { block } = this.props;
+		const { targetBlockId, cardStyle } = block.content;
+
+		if (!targetBlockId || (cardStyle != I.LinkCardStyle.Text)) {
+			return;
+		};
+
 		Preview.previewHide(true);
 	};
 

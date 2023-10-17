@@ -13,7 +13,7 @@ export enum ProgressState {
 	Done	 = 2,
 	Canceled = 3,
 	Error	 = 4,
-}
+};
 
 export interface Progress {
 	id?: string;

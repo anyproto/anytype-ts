@@ -8,7 +8,7 @@
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
 		.item {
-			.grey { color: $colorMediumGrey; }
+			.grey { color: $colorControlActive; }
 			.iconObject { margin-right: 10px; }
 
 			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
@@ -25,8 +25,8 @@
 				.icon.arrow { display: none; }
 			}
 
-			.condition { color: $colorDarkGrey; margin-right: 4px; }
-			.value { color: $colorDarkGrey; white-space: nowrap; overflow: hidden; line-height: 22px; }
+			.condition { color: $colorTextSecondary; margin-right: 4px; }
+			.value { color: $colorTextSecondary; white-space: nowrap; overflow: hidden; line-height: 22px; }
 
 			.tagItem { margin: 2px 4px 0px 0px; vertical-align: top; }
 

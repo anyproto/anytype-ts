@@ -41,7 +41,7 @@
 		.sections { display: flex; flex-direction: column; height: 100%; }
 
 		.section { padding: 0px; }
-		.section > .name { @include text-common; padding: 7px 32px; position: relative; color: $colorBlack; margin: 0px; }
+		.section > .name { @include text-common; padding: 7px 32px; position: relative; color: $colorTextPrimary; margin: 0px; }
 		.section:last-child::after { display: none; }
 		.section::after { margin: 16px 32px; }
 
@@ -66,7 +66,7 @@
 				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid $colorShapeSecondary; border-radius: 12px; 
 			}
 			.icon.dnd:hover { 
-				background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorAccent100; box-shadow: 0px 0px 0px 1px $colorAccent100;
+				background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
 			}
 
 			.icon.fav {
@@ -77,7 +77,7 @@
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
-				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center; position: relative;
+				flex-shrink: 0; padding: 6px; color: $colorTextSecondary; display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
 			.info.canEdit:hover { background: $colorShapeHighlightLight; }
 
@@ -167,7 +167,7 @@
 			.info { width: 100%; transition: $transitionAllCommon; }
 		}
 		.item.add:hover { 
-            .info { color: $colorBlack; } 
+            .info { color: $colorTextPrimary; } 
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
         }
 	}

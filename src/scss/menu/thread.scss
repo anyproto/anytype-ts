@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuThreadList,
 	.menu.menuThreadStatus {
-		.description { color: $colorMediumGrey; display: flex; flex-direction: row; align-items: center; }
+		.description { color: $colorControlActive; display: flex; flex-direction: row; align-items: center; }
 		
 		.item { line-height: 22px; }
 
@@ -13,7 +13,7 @@
 		.icon { margin-right: 9px; }
 
 		.red { color: $colorRed; }
-		.orange { color: $colorAccent100; }
+		.orange { color: $colorSystemAccent100; }
 		.green { color: $colorGreen; }
 	}
 

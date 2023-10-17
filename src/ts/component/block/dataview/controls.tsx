@@ -2,29 +2,40 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { Icon, Button } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
+import { Icon, Button, Filter } from 'Component';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
 
-const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
+interface Props extends I.ViewComponent {
+	onFilterChange?: (v: string) => void; 
+};
+
+const Controls = observer(class Controls extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
+	refFilter = null;
 
-	constructor (props: I.ViewComponent) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
+		this.onFilterShow = this.onFilterShow.bind(this);
+		this.onFilterHide = this.onFilterHide.bind(this);
+		this.onViewSwitch = this.onViewSwitch.bind(this);
+		this.onViewContext = this.onViewContext.bind(this);
+		this.onViewCopy = this.onViewCopy.bind(this);
+		this.onViewRemove = this.onViewRemove.bind(this);
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -32,13 +43,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const filterCnt = filters.length;
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
-		const buttonWrapperCn = [ 'buttonNewWrapper' ];
+		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = this.props.isAllowedTemplate() && hasSources;
 
 		if (isAllowedTemplate) {
-			buttonWrapperCn.push('withSelect');
+			buttonWrapCn.push('withSelect');
 		};
 
 		if (className) {
@@ -66,11 +77,11 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			};
 
 			return (
-				<Icon 
+				<Icon
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={e => this.onButton(e, `#${elementId}`, item.menu)}
+					onClick={() => this.onButton(`#${elementId}`, item.menu)}
 				/>
 			);
 		};
@@ -82,7 +93,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
 					onClick={() => this.onViewSet(item)} 
-					onContextMenu={e => this.onViewEdit(e, `#views #${elementId}`, item)}
+					onContextMenu={e => this.onViewContext(e, `#views #${elementId}`, item)}
 				>
 					{item.name || UtilObject.defaultName('Page')}
 				</div>
@@ -111,8 +122,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
-							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList'); }}
-							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
+							onClick={(e: any) => { this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList'); }}
+							onContextMenu={(e: any) => { this.onViewContext(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow dark" />
@@ -132,11 +143,19 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					</div>
 
 					<div id="sideRight" className="side right">
+						<Filter
+							ref={ref => this.refFilter = ref}
+							placeholder={translate('blockDataviewSearch')} 
+							icon="search"
+							onChange={onFilterChange}
+							onIconClick={this.onFilterShow}
+						/>
+
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{isAllowedObject ? (
-							<div className={buttonWrapperCn.join(' ')}>
+							<div className={buttonWrapCn.join(' ')}>
 								<Button
 									id={`button-${block.id}-add-record`}
 									className="addRecord c28"
@@ -170,9 +189,69 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		container.off('mousedown.filter');
+		win.off('keydown.filter');
 	};
 
-	onButton (e: any, element: string, component: string) {
+	onViewSwitch (view: any) {
+		const { block } = this.props;
+
+		this.onViewSet(view);
+
+		window.setTimeout(() => {
+			$(`#button-${block.id}-settings`).trigger('click');
+		}, 50);
+	};
+
+	onViewCopy (view) {
+		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
+		const object = getTarget();
+		const sources = getSources();
+
+		C.BlockDataviewViewCreate(rootId, block.id, { ...view, name: view.name }, sources, (message: any) => {
+			this.onViewSwitch({ id: message.viewId, type: view.type });
+
+			analytics.event('DuplicateView', {
+				type: view.type,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
+		});
+	};
+
+	onViewRemove (view) {
+		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
+		const views = dbStore.getViews(rootId, block.id);
+		const object = getTarget();
+		const idx = views.findIndex(it => it.id == view.id);
+		const filtered = views.filter(it => it.id != view.id);
+		const current = getView();
+
+		let next = idx >= 0 ? filtered[idx] : filtered[0];
+		if (!next) {
+			next = filtered[filtered.length - 1];
+		};
+
+		if (next) {
+			C.BlockDataviewViewDelete(rootId, block.id, view.id, () => {
+				if (view.id == current.id) {
+					this.onViewSet(next);
+				};
+
+				analytics.event('RemoveView', {
+					objectType: object.type,
+					embedType: analytics.embedType(isInline)
+				});
+			});
+		};
+	};
+
+	onButton (element: string, component: string) {
 		if (!component) {
 			return;
 		};
@@ -218,6 +297,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				isAllowedDefaultType,
 				isAllowedTemplate,
 				onTemplateAdd,
+				onViewSwitch: this.onViewSwitch,
+				onViewCopy: this.onViewCopy,
+				onViewRemove: this.onViewRemove,
 				view: observable.box(view)
 			},
 		};
@@ -241,7 +323,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			id: '',
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
-			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, '')?.id,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
 		};
 
@@ -261,7 +343,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			const sideLeft = node.find('#sideLeft');
 			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
 
-			this.onViewEdit(e, element, view);
+			this.onViewSwitch(view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -285,35 +367,27 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		});
 	};
 
-	onViewEdit (e: any, element: string, item: any) {
+	onViewContext (e: any, element: string, view: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const view = dbStore.getView(rootId, block.id, item.id);
+		const { rootId, block } = this.props;
 
-		this.onViewSet(view);
-
-		window.setTimeout(() => {
-			menuStore.open('dataviewViewEdit', { 
+		const contextParam = {
+			rootId,
+			blockId: block.id,
+			view,
+			onCopy: this.onViewCopy,
+			onRemove: this.onViewRemove,
+			menuParam: {
 				element,
+				offsetY: 4,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				data: {
-					rootId,
-					blockId: block.id,
-					readonly: !allowed,
-					view: observable.box(view),
-					isInline,
-					isCollection,
-					getTarget,
-					getView,
-					loadData,
-					getSources,
-					onSave: () => this.forceUpdate(),
-				}
-			});
-		}, 50);
+			}
+		};
+
+		this.onViewSet(view);
+		UtilMenu.viewContextMenu(contextParam);
 	};
 
 	onSortStart () {
@@ -338,6 +412,47 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		});
 
 		keyboard.disableSelection(false);
+	};
+
+	onFilterShow () {
+		if (!this.refFilter) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const container = UtilCommon.getPageContainer(isPopup);
+		const win = $(window);
+
+		this.refFilter.setActive(true);
+		this.refFilter.focus();
+
+		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+			const value = this.refFilter.getValue();
+
+			if (!value && !$(e.target).parents(`.filter`).length) {
+				this.onFilterHide();
+				container.off('mousedown.filter');
+			};
+		});
+
+		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+			e.stopPropagation();
+
+			keyboard.shortcut('escape', e, () => {
+				this.onFilterHide();
+				win.off('keydown.filter');
+			});
+		});
+	};
+
+	onFilterHide () {
+		if (!this.refFilter) {
+			return;
+		};
+
+		this.refFilter.setActive(false);
+		this.refFilter.setValue('');
+		this.props.onFilterChange('');
 	};
 
 	resize () {
@@ -380,7 +495,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		};
 
 		if (close) {
-			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
+			menuStore.closeAll([ 'dataviewViewList' ]);
 		};
 	};
 

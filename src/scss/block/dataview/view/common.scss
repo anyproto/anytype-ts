@@ -5,10 +5,10 @@
 
 		.viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
+			.cell.add { color: $colorControlActive; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; transition: $transitionAllCommon; }
-				.btn:hover { color: $colorBlack; }
+				.btn:hover { color: $colorTextPrimary; }
 				.btn:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				}
@@ -22,16 +22,16 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent { margin-bottom: 4px; @include text-small; color: $colorTextSecondary; }
 				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
-				.cellContent.c-description { color: $colorBlack; }
+				.cellContent.c-description { color: $colorTextPrimary; }
 				.cellContent {
 					.more { margin-top: 1px; vertical-align: top; height: 18px; }
 				}
 
-				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; position: relative; }
+				.cellContent.isName { @include text-paragraph; color: $colorTextPrimary; display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
 					.name {
@@ -76,7 +76,7 @@
 			.row:hover {
 				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 				.icon.dnd:hover {
-					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorAccent100; box-shadow: 0px 0px 0px 1px $colorAccent100;
+					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
 				}
 			}
 		}

@@ -27,13 +27,13 @@
 
 		.section.template {
 			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorTextSecondary; 
 				transition: $transitionAllCommon;
 			}
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
 			}
-			.btn:hover { color: $colorBlack; }
+			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}
@@ -52,7 +52,7 @@
 				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionAllCommon; border-radius: 4px; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorDarkGrey; }
+				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorTextSecondary; }
 			}
 			.item.canEdit {
 				.clickable { }
@@ -62,10 +62,10 @@
 			.item.add { line-height: 20px; }
 			.item.add {
 				.icon { transition: $transitionAllCommon; }
-				.name { color: $colorDarkGrey; transition: $transitionAllCommon; }
+				.name { color: $colorTextSecondary; transition: $transitionAllCommon; }
 
 				.clickable:hover {
-					.name { color: $colorBlack; } 
+					.name { color: $colorTextPrimary; } 
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				}
 			}
@@ -73,7 +73,7 @@
 
 		.section.layout {
 			.title { margin-bottom: 10px; }
-			.content { line-height: 20px; color: $colorDarkGrey; }
+			.content { line-height: 20px; color: $colorTextSecondary; }
 			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
 			.select:hover, .select.isFocused { background: $colorShapeHighlightLight; }
 

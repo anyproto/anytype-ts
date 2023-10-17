@@ -66,24 +66,24 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, index } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
 			return null;
 		};
 
+		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cd: string[] = [ 'wrapContent' ];
+		const setRef = ref => this.ref = ref;
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
-		const cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
-		const empty = null;
-		const setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
@@ -181,7 +181,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpaceView() || root.isObjectCollection());
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -363,7 +363,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div className={cd.join(' ')}>
 					{targetTop}
 					{object}
-					{empty}
 					{additional ? <div className="additional">{additional}</div> : ''}
 
 					{renderChildren ? (

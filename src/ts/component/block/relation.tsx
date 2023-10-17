@@ -118,8 +118,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	};
 
 	onFocus () {
-		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 	onMenu (e: any) {
@@ -168,13 +167,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	};
 
 	onCellClick (e: any) {
-		const { block } = this.props;
-
 		if (this.refCell) {
 			this.refCell.onClick(e);
 		};
 
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(this.props.block.id, { from: 0, to: 0 });
 	};
 
 });

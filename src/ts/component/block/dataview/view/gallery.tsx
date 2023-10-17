@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
@@ -165,6 +165,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.reset();
 	};
 
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
+
 	reset () {
 		const { isInline } = this.props;
 		if (isInline) {
@@ -182,6 +186,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	setColumnCount () {
 		const { getView } = this.props;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
+
 		const { margin } = Constant.size.dataview.gallery;
 
 		let size = 0;
@@ -198,10 +207,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.width = width;
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.reset();
-			this.forceUpdate();
-		}, 40);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 10);
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
@@ -305,7 +311,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(id);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const allowedTypes = [ Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ];
+		const allowedLayouts = UtilObject.getFileLayouts();
 
 		let object = null;
 		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
@@ -313,7 +319,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		} else {
 			for (const id of value) {
 				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !allowedTypes.includes(file.type)) {
+				if (file._empty_ || !allowedLayouts.includes(file.type)) {
 					continue;
 				};
 
@@ -326,7 +332,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		if (!object.coverId && !object.coverType && !allowedTypes.includes(object.type)) {
+		if (!object.coverId && !object.coverType && !allowedLayouts.includes(object.type)) {
 			return null;
 		};
 

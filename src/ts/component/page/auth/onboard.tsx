@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject } from 'Lib';
+import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter, UtilDate } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
@@ -146,7 +146,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="line right" />
 
 					<div className="space">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
+						<IconObject object={{ iconOption, layout: I.ObjectLayout.SpaceView }} size={64} />
 						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>
@@ -351,7 +351,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage, animationStage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilCommon.route('/', { replace: true });
+			UtilRouter.go('/', { replace: true });
 			return;
 		};
 
@@ -404,11 +404,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					this.account = message.account;
 
-					commonStore.infoSet(message.account.info);
+					UtilData.onInfo(message.account.info);
 					commonStore.configSet(message.account.config, false);
 
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Storage.set('timeRegister', UtilCommon.time());
+					Storage.set('timeRegister', UtilDate.now());
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 
 					if (callBack) {
@@ -421,24 +421,23 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	accountUpdate = () => {
 		const { profile } = blockStore;
-		const { workspace } = commonStore;
 		const { name } = authStore;
 
 		authStore.accountSet(this.account);
 
 		UtilObject.setName(profile, name, () => {
-			UtilObject.setName(workspace, name);
+			C.WorkspaceSetInfo(this.account.info.accountSpaceId, { name });
 
 			window.setTimeout(() => {
 				commonStore.redirectSet('/main/usecase');
-				UtilData.onAuth(this.account, { routeParam: { replace: true, animate: true } });
+				UtilData.onAuth(this.account, this.account.info, { routeParam: { replace: true, animate: true } });
 			}, 2000);
 		});
 	};
 
 	/** Shows an error message and reroutes to the index page after a delay */
 	showErrorAndExit = (message) => {
-		this.setState({ error: message.error.description }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
+		this.setState({ error: message.error.description }, () => window.setTimeout(() => UtilRouter.go('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */

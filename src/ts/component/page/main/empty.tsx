@@ -14,7 +14,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 
 		return (
@@ -22,7 +22,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="wrapper"
 			>
-				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.Space} {...this.props} />
+				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.SpaceView} {...this.props} />
 
 				<div className="wrapper">
 					<IconObject object={space} size={96} forceLetter={true} />
@@ -53,7 +53,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	onDashboard () {
-		UtilMenu.dashboardSelect('#empty-dashboard-select', true);
+		UtilMenu.dashboardSelect('.pageMainEmpty #empty-dashboard-select', true);
 	};
 
 });

@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
 import Colors from 'json/colors.json';
 
 interface Props {
@@ -25,6 +24,8 @@ interface Props {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
 	forceLetter?: boolean;
+	noGallery?: boolean;
+	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
@@ -42,7 +43,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Set, 
 	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
-	I.ObjectLayout.Space,
+	I.ObjectLayout.SpaceView,
 ];
 
 const IconSize = {
@@ -432,13 +433,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage, layout } = object;
-		const noUpload = layout == I.ObjectLayout.Type;
+		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.SpaceView);
+		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
 			offsetX,
 			offsetY,
 			data: {
+				noGallery,
 				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
@@ -479,7 +482,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = size;
 		};
 
-		if ((layout == I.ObjectLayout.Set) && iconImage) {
+		if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
 			s = size;
 		};
 

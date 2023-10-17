@@ -7,16 +7,12 @@ import { C, I, UtilCommon, analytics, translate, Action } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	isPopup?: boolean;
-};
-
-const PageMainArchive = observer(class PageMainArchive extends React.Component<Props, {}> {
+const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 
 	refManager: any = null;
 	rowLength = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onRestore = this.onRestore.bind(this);
@@ -82,29 +78,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 	};
 
 	onRemove () {
-		if (!this.refManager) {
-			return;
-		};
-
-		const selected = this.refManager.selected || [];
-		const count = selected.length;
-
-		analytics.event('ShowDeletionWarning', { route: 'Bin' });
-
-		popupStore.open('confirm', {
-			data: {
-				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('commonDeletionWarningText'),
-				textConfirm: translate('commonDelete'),
-				onConfirm: () => { 
-					C.ObjectListDelete(selected);
-					this.selectionClear();
-
-					analytics.event('RemoveCompletely', { count, route: 'Bin' });
-				},
-				onCancel: () => this.selectionClear(),
-			},
-		});
+		Action.delete(this.refManager?.selected || [], 'Bin', () => this.selectionClear());
 	};
 
 	selectionClear () {

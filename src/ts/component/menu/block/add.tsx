@@ -271,7 +271,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
+		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
 		const relations = dbStore.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
@@ -381,11 +381,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			className: param.className,
 			data: {
 				rebind: this.rebind,
-				rootId: rootId,
+				rootId,
 				skipIds: [ rootId ],
-				blockId: blockId,
+				blockId,
 				blockIds: [ blockId ],
-				position: position,
+				position,
 				onSelect: () => {
 					$(`#block-${blockId} .value`).text(text);
 
@@ -408,7 +408,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					type: I.NavigationType.Move, 
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 				});
 				break;
@@ -597,44 +596,25 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					});
 				} else 
 				if (item.isObject) {
+					const type = dbStore.getTypeById(item.objectTypeId);
 					const details: any = { type: item.objectTypeId };
 
-					if (item.objectTypeId == Constant.typeId.set) {
-						details.layout = I.ObjectLayout.Set;
+					if (UtilObject.isSetLayout(type.recommendedLayout)) {
+						details.layout = type.recommendedLayout;
 					};
 
-					if (item.objectTypeId == Constant.typeId.collection) {
-						details.layout = I.ObjectLayout.Collection;
-					};
-
-					const create = (template: any) => {
-						UtilObject.create(rootId, blockId, details, position, template?.id, UtilData.defaultLinkSettings(), [], (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							UtilObject.openPopup({ ...details, id: message.targetId });
-
-							analytics.event('CreateObject', {
-								route: 'Powertool',
-								objectType: item.objectTypeId,
-								layout: template?.layout,
-							});
-						});
-					};
-
-					UtilData.checkTemplateCnt([ item.objectTypeId ], (cnt: number) => {
-						if (cnt) {
-							popupStore.open('template', {
-								data: { 
-									typeId: item.objectTypeId,
-									onSelect: create,
-									route: 'Powertool',
-								},
-							});
-						} else {
-							create('');
+					UtilObject.create(rootId, blockId, details, position, '', UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], (message: any) => {
+						if (message.error.code) {
+							return;
 						};
+
+						UtilObject.openPopup({ ...details, id: message.targetId });
+
+						analytics.event('CreateLink');
+						analytics.event('CreateObject', {
+							route: 'Powertool',
+							objectType: item.objectTypeId,
+						});
 					});
 				} else {
 					keyboard.setFocus(false);
@@ -671,21 +651,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
-	moveToPage (type: string) {
-		const { param, dataset } = this.props;
+	moveToPage (typeId: string) {
+		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, } = data;
-		const { selection } = dataset || {};
+		const { blockId, rootId } = data;
 		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
-		};
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type);
+		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
 	};
 
 	resize () {

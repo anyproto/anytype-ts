@@ -182,7 +182,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	
 	onUpload (e: any) {
 		Action.openFile([], paths => {
-			C.FileUpload('', paths[0], I.FileType.None, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.hash);
 				};

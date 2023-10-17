@@ -203,7 +203,7 @@ class Input extends React.Component<Props, State> {
 	blur () {
 		window.setTimeout(() => {
 			if (this._isMounted) {
-				$(this.node).trigger('blurr');
+				$(this.node).trigger('blur');
 			};
 		});
 	};

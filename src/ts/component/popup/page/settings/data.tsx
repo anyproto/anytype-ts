@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
-import { analytics, C, UtilObject, UtilFile, I, translate, UtilCommon, Renderer } from 'Lib';
+import { Title, Label, IconObject, ObjectName, Button } from 'Component';
+import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { authStore, commonStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+import { authStore, commonStore, popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -25,7 +23,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         const { localUsage } = commonStore.spaceStorage;
         const { walletPath, accountPath } = authStore;
         const { config } = commonStore;
-
         const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
         const canMove = config.experimental;
 
@@ -36,21 +33,22 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
                 <div className="actionItems">
                     <div className="item storageUsage">
-                        <div className="space">
+                        <div className="side left">
                             <IconObject object={localStorage} size={44} />
+
                             <div className="txt">
                                 <ObjectName object={localStorage} />
                                 <div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
                             </div>
                         </div>
-                        <Button color="blank" className="c28" text={translate('popupSettingsDataManagementOffloadFiles')} onClick={this.onOffload} />
+						<div className="side right">
+							<Button color="blank" className="c28" text={translate('popupSettingsDataManagementOffloadFiles')} onClick={this.onOffload} />
+						</div>
                     </div>
 
                     {canMove ? (
                         <div id="row-location" className="item accountLocation" onClick={this.onLocationMove}>
-                            <div>
-                                <Label text={translate('popupSettingsAccountMoveTitle')} />
-                            </div>
+                            <Label text={translate('popupSettingsAccountMoveTitle')} />
                             <Label className="locationLabel" text={walletPath == accountPath ? 'Default' : 'Custom'} />
                         </div>
                     ) : ''}
@@ -102,9 +100,16 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     };
 
     onLocationMove () {
-        const { account } = authStore;
         const { setLoading } = this.props;
-        const accountPath = account.info.localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
+		const { account } = authStore;
+		const { info } = account;
+		const localStoragePath = String(info.localStoragePath || '');
+
+		if (!localStoragePath) {
+			return;
+		};
+
+        const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
         const options = {
             defaultPath: accountPath,
             properties: [ 'openDirectory' ],
@@ -121,7 +126,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 if (message.error.code) {
                     this.setState({ error: message.error.description });
                 } else {
-                    UtilCommon.route('/auth/setup/init', {});
+                    UtilRouter.go('/auth/setup/init', {});
                 };
                 setLoading(false);
             });

@@ -1,16 +1,21 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, M, UtilCommon, Dataview } from 'ts/lib';
-import { detailStore } from 'ts/store';
-
+import { detailStore, commonStore } from 'ts/store';
 import Constant from 'json/constant.json';
+
+enum KeyMapType {
+	Relation = 'relation',
+	Type = 'type',
+};
 
 class DbStore {
 
-	public relationMap: Map<string, any[]> = observable(new Map());
-	public relationKeyMap: any = {};
-	public viewMap: Map<string, I.View[]> = observable.map(new Map());
-	public recordMap: Map<string, string[]> = observable.map(new Map());
-	public metaMap: Map<string, any> = observable.map(new Map());
+    public relationMap: Map<string, any[]> = observable(new Map());
+	public relationKeyMap: Map<string, Map<string, string>> = new Map();
+	public typeKeyMap: Map<string, Map<string, string>> = new Map();
+    public viewMap: Map<string, I.View[]> = observable.map(new Map());
+    public recordMap: Map<string, string[]> = observable.map(new Map());
+    public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 
 	constructor() {
@@ -43,7 +48,55 @@ class DbStore {
 		this.metaMap.clear();
 	};
 
-	relationsSet (rootId: string, blockId: string, list: any[]) {
+	keyMapGet (type: string, spaceId: string) {
+		const key = `${type}KeyMap`;
+
+		let map = this[key].get(spaceId);
+		if (!map) {
+			map = new Map();
+			this[key].set(spaceId, map);
+		};
+
+		return map;
+	}; 
+
+	relationKeyMapSet (spaceId: string, key: string, id: string) {
+		if (spaceId && key && id) {
+			this.keyMapGet(KeyMapType.Relation, spaceId).set(key, id);
+		};
+	};
+
+	relationKeyMapGet (key: string): string {
+		let map = this.keyMapGet(KeyMapType.Relation, commonStore.space);
+		let ret = map.get(key);
+
+		if (!ret) {
+			map = this.keyMapGet(KeyMapType.Relation, Constant.storeSpaceId);
+			ret = map.get(key);
+		};
+
+		return ret;
+	};
+
+	typeKeyMapSet (spaceId: string, key: string, id: string) {
+		if (spaceId && key && id) {
+			this.keyMapGet(KeyMapType.Type, spaceId).set(key, id);
+		};
+	};
+
+	typeKeyMapGet (key: string): string {
+		let map = this.keyMapGet(KeyMapType.Type, commonStore.space);
+		let ret = map.get(key);
+
+		if (!ret) {
+			map = this.keyMapGet(KeyMapType.Type, Constant.storeSpaceId);
+			ret = map.get(key);
+		};
+
+		return ret;
+	};
+
+    relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
@@ -205,13 +258,38 @@ class DbStore {
 		this.groupsRemove(rootId, blockId, this.getGroups(rootId, blockId).map(it => it.id));
 	};
 
-	getType (id: string) {
+	getTypeById (id: string) {
 		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
 		return object._empty_ ? null : object;
 	};
 
+	getTypeByKey (key: string): any {
+		const id = this.typeKeyMapGet(key);
+		return id ? this.getTypeById(id) : null;
+	};
+
+	getTemplateType () {
+		return this.getTypeByKey(Constant.typeKey.template);
+	};
+
+	getCollectionType () {
+		return this.getTypeByKey(Constant.typeKey.collection);
+	};
+
+	getSetType () {
+		return this.getTypeByKey(Constant.typeKey.set);
+	};
+
+	getSpaceType () {
+		return this.getTypeByKey(Constant.typeKey.space);
+	};
+
+	getTypeType () {
+		return this.getTypeByKey(Constant.typeKey.type);
+	};
+
 	getTypes () {
-		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
+		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -228,8 +306,8 @@ class DbStore {
 		return this.getObjectRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
-	getRelationByKey (relationKey: string): any {
-		const id = relationKey ? this.relationKeyMap[relationKey] : '';
+    getRelationByKey (relationKey: string): any {
+		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;
 	};
 

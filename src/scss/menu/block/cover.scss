@@ -8,12 +8,12 @@
 		.wrap { display: flex; flex-direction: column; }
 
 		.head { 
-			border-bottom: 1px solid $colorShapeSecondary; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; 
+			border-bottom: 1px solid $colorShapeSecondary; padding: 11px 16px; font-weight: 500; color: $colorControlActive; 
 			flex-shrink: 0;
 		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn:hover, .btn.active { color: $colorBlack; }
+			.btn:hover, .btn.active { color: $colorTextPrimary; }
 			.btn:last-child { margin: 0px; }
 		}
 		
@@ -38,7 +38,7 @@
 			.item { padding: 0px; width: 100%; position: relative; }
 			.item {
 				.cover { height: 48px; position: relative; border-radius: 2px; }
-				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorDarkGrey; }
+				.name { @include text-small; @include text-overflow-nw; max-width: 100%; margin-top: 2px; color: $colorTextSecondary; }
 			}
 			.item:hover {
 				.name { text-decoration: underline; }
@@ -66,7 +66,7 @@
 				height: 336px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
 				justify-content: center; flex-direction: column; gap: 6px 0px;
 			}
-			.dropzone.isDraggingOver { background: rgba(255,187,44,0.3); }
+			.dropzone.isDraggingOver { background: $colorSystemDropZone; }
 
 			.dropzone {
 				.icon.coverUpload { 
@@ -74,7 +74,7 @@
 					display: block; 
 				}
 				.label {
-					span { color: $colorDarkGrey; }
+					span { color: $colorTextSecondary; }
 				}
 			}
 		}

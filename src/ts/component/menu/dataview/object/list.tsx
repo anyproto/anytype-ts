@@ -57,7 +57,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const name = <ObjectName object={item} />;
 
 			let content = null;
@@ -258,9 +258,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		];
 
 		if (types && types.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
+			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
 		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
 		};
 
 		if (clear) {

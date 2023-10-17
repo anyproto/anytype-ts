@@ -14,11 +14,11 @@
 			.inner { padding: 0px 16px; white-space: nowrap; }
 
 			.viewItem { 
-				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
+				@include text-common; font-weight: 500; color: $colorControlActive; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
 				vertical-align: top;
 			}
 			.viewItem:last-child { margin: 0px; }
-			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+			.viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
 		}
 
 		.select { border: none; margin-left: -6px; padding-right: 16px; }
@@ -66,7 +66,7 @@
 			.iconObject.isTask { background: none; }
 
 			.name { @include text-overflow-nw; }
-			.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
+			.descr { @include text-small; color: $colorTextSecondary; @include text-overflow-nw; }
 
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
@@ -101,7 +101,7 @@
 		.item {
 			.info { width: 100%; }
 			.inner { padding: 8px; gap: 0px 12px; }
-			.iconObject { background: $colorVeryLightGrey; border-radius: 10px; }
+			.iconObject { background: $colorShapeTertiary; border-radius: 10px; }
 		}
 		.item:hover, .item.active {
 			.info { width: calc(100% - 36px); }
