@@ -267,7 +267,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onMore (e: any, template: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId } = data;
 		const item = UtilCommon.objectCopy(template);
@@ -289,7 +289,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
 			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
-				element: `#item-${item.id} #item-more-${item.id}`,
+				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				subIds: Constant.menuIds.dataviewTemplate,

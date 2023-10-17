@@ -796,6 +796,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
 					};
 				},
+				onSetDefault: (item) => {
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+				},
 				onSelect: (item: any) => {
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);

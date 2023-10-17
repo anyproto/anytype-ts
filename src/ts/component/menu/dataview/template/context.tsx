@@ -57,7 +57,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			!isDefault && onSetDefault ? ({ id: 'default', name: isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault') }) : null,
 			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
 			{ id: 'duplicate', name: translate('commonDuplicate') },
-			!isBlank ? ({ id: 'remove', name: translate('commonDelete') }) : null,
+			!isBlank ? ({ id: 'remove', name: translate('commonDelete'), color: 'red' }) : null,
 		].filter(it => it);
 	};
 

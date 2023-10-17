@@ -1,10 +1,6 @@
 @import "~scss/_vars";
 
 .menus {
-    .menu.menuDataviewTemplateContext {
-        #item-remove { color: $colorRed; }
-    }
-
     .menu.menuDataviewTemplateList { width: 360px; }
     .menu.menuDataviewTemplateList {
         .titleWrapper + .content { padding-top: 8px; }
