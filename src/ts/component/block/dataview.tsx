@@ -86,7 +86,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 
 		this.isAllowedObject = this.isAllowedObject.bind(this);
-		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 	};
@@ -165,7 +164,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
 			isAllowedObject: this.isAllowedObject,
-			isAllowedTemplate: this.isAllowedTemplate,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
@@ -770,6 +768,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuParam = this.getMenuParam(e, dir);
 		const route = this.isCollection() ? 'Collection' : 'Set';
 		const hasSources = this.isCollection() || this.getSources().length;
+		const view = this.getView();
+		const isCollection = this.isCollection();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -789,11 +789,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				typeId: this.getTypeId(),
 				templateId: this.getDefaultTemplateId(),
 				route,
+				onTypeChange: (id) => {
+					if (id != this.getTypeId()) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+
+						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
+					};
+				},
+				onSetDefault: (item) => {
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+				},
 				onSelect: (item: any) => {
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
+
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 
 						menuStore.closeAll();
 						analytics.event('SelectTemplate', { route });
@@ -804,6 +816,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateAdd (id?: string) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
 		const details: any = {
@@ -816,10 +830,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
+			const object = message.details;
+
+			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
+
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
-
-			UtilObject.openPopup(message.details);
+			UtilObject.openPopup(object);
 		});
 	};
 
@@ -1155,10 +1172,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return isAllowed;
-	};
-
-	isAllowedTemplate (): boolean {
-		return UtilObject.isAllowedTemplate(this.getTypeId());
 	};
 
 	isAllowedDefaultType (): boolean {

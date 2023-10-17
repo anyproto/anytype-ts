@@ -1,13 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Title, EmptySearch, PreviewObject, IconObject } from 'Component';
+import { Icon, Title, PreviewObject, IconObject } from 'Component';
 import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
 import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
 
 const TEMPLATE_WIDTH = 236;
-const PADDING = 16;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
@@ -41,9 +40,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
-
 		const type = dbStore.getTypeById(typeId);
-		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => (
 			<div
@@ -124,13 +121,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 				{!noTitle ? <Title text={translate('commonTemplates')} /> : ''}
 
-				{isAllowed ? (
-					<div className="items">
-						{items.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
-					</div>
-				) : <EmptySearch text={translate('menuDataviewTemplateUnsupported')} />}
+				<div className="items">
+					{items.map((item: any, i: number) => (
+						<Item key={i} {...item} />
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -159,9 +154,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onKeyDown (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onSelect } = data;
 		const items = this.getItems();
 
 		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (arrow) => {
@@ -260,13 +252,14 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noAdd } = data;
+		const { noAdd, typeId } = data;
 		const subId = this.getSubId();
 		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		items.unshift({ id: Constant.templateId.blank });
 
-		if (!noAdd) {
+		if (!noAdd && isAllowed) {
 			items.push({ id: Constant.templateId.new });
 		};
 
@@ -274,7 +267,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onMore (e: any, template: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId } = data;
 		const item = UtilCommon.objectCopy(template);
@@ -296,7 +289,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
 			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
-				element: `#item-${item.id} #item-more-${item.id}`,
+				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				subIds: Constant.menuIds.dataviewTemplate,
@@ -351,7 +344,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 				],
 				onClick: (item) => {
 					const type = dbStore.getTypeById(item.id);

@@ -375,10 +375,8 @@ class UtilObject {
 	getLayoutsWithoutTemplates () {
 		return [
 			I.ObjectLayout.Note,
-			I.ObjectLayout.Set,
-			I.ObjectLayout.Collection,
 			I.ObjectLayout.Bookmark,
-		].concat(this.getFileAndSystemLayouts());
+		].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts () {
