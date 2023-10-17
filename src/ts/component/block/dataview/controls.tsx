@@ -122,8 +122,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
-							onClick={(e: any) => { this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList'); }}
-							onContextMenu={(e: any) => { this.onViewContext(e, `#block-${block.id} #view-selector`, view); }}
+							onClick={() => this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList')}
+							onContextMenu={(e: any) => this.onViewContext(e, `#block-${block.id} #view-selector`, view)}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow dark" />
@@ -209,7 +209,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewCopy (view) {
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
+		const { rootId, block, getSources, isInline, getTarget } = this.props;
 		const object = getTarget();
 		const sources = getSources();
 
@@ -225,7 +225,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewRemove (view) {
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
+		const { rootId, block, getView, isInline, getTarget } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const object = getTarget();
 		const idx = views.findIndex(it => it.id == view.id);
@@ -258,7 +258,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd
+			getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd,
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
@@ -338,11 +338,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			};
 
 			this.resize();
-
-			const node = $(this.node);
-			const sideLeft = node.find('#sideLeft');
-			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
-
 			this.onViewSwitch(view);
 
 			analytics.event('AddView', {

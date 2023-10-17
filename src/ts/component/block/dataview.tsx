@@ -770,6 +770,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuParam = this.getMenuParam(e, dir);
 		const route = this.isCollection() ? 'Collection' : 'Set';
 		const hasSources = this.isCollection() || this.getSources().length;
+		const view = this.getView();
+		const isCollection = this.isCollection();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -789,11 +791,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				typeId: this.getTypeId(),
 				templateId: this.getDefaultTemplateId(),
 				route,
+				onTypeChange: (id) => {
+					if (id != this.getTypeId()) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+
+						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
+					};
+				},
 				onSelect: (item: any) => {
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
+
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 
 						menuStore.closeAll();
 						analytics.event('SelectTemplate', { route });
@@ -804,6 +815,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateAdd (id?: string) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
 		const details: any = {
@@ -816,10 +829,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
+			const object = message.details;
+
+			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
+
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
-
-			UtilObject.openPopup(message.details);
+			UtilObject.openPopup(object);
 		});
 	};
 
