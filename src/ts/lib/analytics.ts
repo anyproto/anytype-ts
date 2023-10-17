@@ -384,7 +384,6 @@ class Analytics {
 	popupMapper (params: any): string {
 		const { id } = params;
 		const map = {
-			settings: 'ScreenSettings',
 			search: 'ScreenSearch',
 		};
 
