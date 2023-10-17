@@ -5,7 +5,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
-import { UtilCommon, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -199,8 +199,13 @@ class Dispatcher {
 				};
 
 				case 'accountUpdate': {
-					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					authStore.accountSetStatus(Mapper.From.AccountStatus(data.getStatus()));
 					break;	
+				};
+
+				case 'accountDetails': {
+					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.decodeStruct(data.getDetails()) }, false);
+					break;
 				};
 
 				case 'accountConfigUpdate': {

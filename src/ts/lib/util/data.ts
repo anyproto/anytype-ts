@@ -184,12 +184,13 @@ class UtilData {
 
 	onInfo (info: I.AccountInfo) {
 		blockStore.rootSet(info.homeObjectId);
-		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);
+		blockStore.profileSet(info.profileObjectId);
 		blockStore.spaceviewSet(info.spaceViewId);
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
+		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.device(info.deviceId);
 		analytics.profile(info.analyticsId);
@@ -197,16 +198,7 @@ class UtilData {
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
-	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
-		if (!account) {
-			console.error('[onAuth] No account defined');
-			return;
-		};
-
-		this.onInfo(info);
-		commonStore.configSet(account.config, false);
-		authStore.accountSet(account);
-
+	onAuth (param?: any, callBack?: () => void) {
 		const pin = Storage.get('pin');
 		const { profile, widgets } = blockStore;
 		const { redirect } = commonStore;
@@ -263,21 +255,20 @@ class UtilData {
 						callBack();
 					};
 				});
-
-				if (profile) {
-					this.subscribeIds({
-						subId: Constant.subId.profile, 
-						ids: [ profile ], 
-						noDeps: true,
-						ignoreWorkspace: true,
-					});
-				};
 			});
 		});
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
 		const list = [
+			{
+				subId: Constant.subId.profile,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+			},
 			{
 				subId: Constant.subId.deleted,
 				keys: [],
@@ -571,16 +562,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there are at least 1 template for object types
-	checkTemplateCnt (ids: string[], callBack?: (cnt: number) => void) {
-		const templateType = dbStore.getTemplateType();
-		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, (message: any) => {
-			if (callBack) {
-				callBack(message.records.length);
-			};
-		});
-	};
-
 	checkBlankTemplate (template: any) {
 		return template && (template.id != Constant.templateId.blank) ? template : null;
 	};
@@ -650,7 +631,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -680,8 +661,8 @@ class UtilData {
 			return;
 		};
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -747,7 +728,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -766,8 +747,8 @@ class UtilData {
 		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {

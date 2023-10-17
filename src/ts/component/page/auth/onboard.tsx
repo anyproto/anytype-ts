@@ -23,6 +23,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refNext = null;
 	account: I.Account = null;
 	isDelayed = false;
+	isCreating = false;
 
 	state: State = {
 		stage: Stage.Void,
@@ -136,7 +137,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				// https://legacy.reactjs.org/docs/reconciliation.html
 				<section className={cn.join(' ')}>
 					<div className="account">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={64} />
+						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human, name: authStore.name }} size={64} />
 						<span className="accountName">
 							{authStore.name}
 						</span>
@@ -379,9 +380,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
+		if (this.isCreating) {
+			return;
+		};
+
+		this.isCreating = true;
+
 		C.WalletCreate(authStore.walletPath, (message) => {
 			if (message.error.code) {
 				this.showErrorAndExit(message);
+				this.isCreating = false;
 				return;
 			};
 
@@ -390,6 +398,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			UtilData.createSession((message) => {
 				if (message.error.code) {
 					this.showErrorAndExit(message);
+					this.isCreating = false;
 					return;
 				};
 
@@ -399,10 +408,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				C.AccountCreate('', '', accountPath, iconOption, (message) => {
 					if (message.error.code) {
 						this.showErrorAndExit(message);
+						this.isCreating = false;
 						return;
 					};
 
 					this.account = message.account;
+					this.isCreating = false;
 
 					UtilData.onInfo(message.account.info);
 					commonStore.configSet(message.account.config, false);
@@ -429,8 +440,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			C.WorkspaceSetInfo(this.account.info.accountSpaceId, { name });
 
 			window.setTimeout(() => {
+				authStore.accountSet(this.account);
 				commonStore.redirectSet('/main/usecase');
-				UtilData.onAuth(this.account, this.account.info, { routeParam: { replace: true, animate: true } });
+				commonStore.configSet(this.account.config, false);
+
+				UtilData.onInfo(this.account.info);
+				UtilData.onAuth({ routeParam: { replace: true, animate: true } });
 			}, 2000);
 		});
 	};

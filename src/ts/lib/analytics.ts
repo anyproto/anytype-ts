@@ -148,6 +148,8 @@ class Analytics {
 				break;
 			};
 
+			case 'ObjectInstall':
+			case 'ObjectUninstall':
 			case 'SelectGraphNode':
 			case 'CreateObject': {
 				data.layout = I.ObjectLayout[data.layout];
@@ -412,14 +414,30 @@ class Analytics {
 		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
-	typeMapper (id: string) {
-		const type = dbStore.getTypeById(id);
-		return type ? (type.sourceObject ? type.sourceObject : 'custom') : '';
+	typeMapper (id: string): string {
+		const object = dbStore.getTypeById(id);
+		if (!object) {
+			return '';
+		};
+
+		if (!object.isInstalled) {
+			return object.id;
+		} else {
+			return object.sourceObject ? object.sourceObject : 'custom';
+		};
 	};
 
 	relationMapper (key: string) {
-		const relation = dbStore.getRelationByKey(key);
-		return relation ? (relation.sourceObject ? relation.sourceObject : 'custom') : '';
+		const object = dbStore.getRelationByKey(key);
+		if (!object) {
+			return '';
+		};
+
+		if (!object.isInstalled) {
+			return object.id;
+		} else {
+			return object.sourceObject ? object.sourceObject : 'custom';
+		};
 	};
 
 	embedType (isInline: boolean): string {

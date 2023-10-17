@@ -19,7 +19,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const { onPage } = this.props;
+		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
 		const space = UtilObject.getSpaceview();
@@ -85,7 +85,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate(`spaceType${space.spaceType}`)}
-							onMouseEnter={this.onSpaceTypeTooltip}
+							onMouseEnter={onSpaceTypeTooltip}
 							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
@@ -259,17 +259,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onUpload (hash: string) {
 		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
-	};
-
-	onSpaceTypeTooltip (e) {
-		Preview.tooltipShow({
-			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
-			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
-			className: 'big',
-			element: $(e.currentTarget),
-			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Left
-		});
 	};
 
 	checkName (v: string): string {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
-import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard } from 'Lib';
+import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard, Preview } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -39,6 +39,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
+		const { onSpaceTypeTooltip } = this.props;
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
 			name,
@@ -70,7 +71,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value=""
@@ -83,6 +83,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate(`spaceType${I.SpaceType.Private}`)}
+							onMouseEnter={onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
 				</div>
@@ -105,6 +107,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											menuParam={{
 												width: 360,
 												horizontal: I.MenuDirection.Center,
+												className: 'withFullDescripion',
+												data: { noVirtualisation: true, noScroll: true }
 											}}
 										/>
 									</div>
@@ -170,18 +174,24 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getUsecaseOptions () {
-		return [
-			{ id: I.Usecase.Empty }
-		].concat(_.shuffle([
-			{ id: I.Usecase.Personal },
-			{ id: I.Usecase.Notes },
-			{ id: I.Usecase.Knowledge },
-			{ id: I.Usecase.Strategic },
-        ])).map(it => ({
+		let ret: any = [ 
+			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
+		];
+
+		ret = ret.concat(_.shuffle([
+			{ id: I.Usecase.Personal, icon: 'postbox', },
+			{ id: I.Usecase.Notes, icon: 'memo' },
+			{ id: I.Usecase.Knowledge, icon: 'books' },
+			{ id: I.Usecase.Strategic, icon: 'bulb' },
+        ]));
+
+		return ret.map((it: any) => ({
 			...it,
 			name: translate(`usecase${it.id}Title`),
 			description: translate(`usecase${it.id}Label`),
 			withDescription: true,
+			iconSize: 40,
+			object: { iconEmoji: `:${it.icon}:` }
 		}));
 	};
 

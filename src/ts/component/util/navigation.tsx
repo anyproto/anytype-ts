@@ -117,7 +117,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		keyboard.pageCreate();
+		keyboard.pageCreate('Navigation');
 	};
 
 	onGraph () {
@@ -129,7 +129,11 @@ class Navigation extends React.Component {
 	};
 
 	onProfile () {
-		keyboard.onSpaceMenu();
+		if (menuStore.isOpen('space')) {
+			menuStore.close('space');
+		} else {
+			keyboard.onSpaceMenu(false);
+		};
 	};
 
 	resize () {

@@ -152,7 +152,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const current = data.view.get();
 		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
+		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(this.param.type) && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
 		};
 
@@ -177,10 +177,13 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { data } = param;
 		const { rootId, blockId, readonly, isInline } = data;
 		const { type, coverRelationKey, cardSize, coverFit, groupRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
+		const isGallery = type == I.ViewType.Gallery;
+		const isBoard = type == I.ViewType.Board;
+		const isCalendar = type == I.ViewType.Calendar;
 
 		let settings: any[] = [];
 
-		if (type == I.ViewType.Gallery) {
+		if (isGallery) {
 			const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 			const sizeOption = Relation.getSizeOptions().find(it => it.id == cardSize);
 
@@ -194,16 +197,25 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			]);
 		};
 
-		if ([ I.ViewType.Board, I.ViewType.Calendar ].includes(type)) {
+		if (isBoard || isCalendar) {
 			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
 
-			settings = settings.concat([
-				{ id: 'groupRelationKey', name: translate('menuDataviewViewEditGroupBy'), caption: (groupOption ? groupOption.name : translate('commonSelect')), arrow: true },
-				{ 
-					id: 'groupBackgroundColors', name: translate('menuDataviewViewEditColorColumns'), withSwitch: true, switchValue: groupBackgroundColors,
-					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
-				},
-			]);
+			settings.push({ 
+				id: 'groupRelationKey', 
+				name: translate('menuDataviewViewEditGroupBy'), 
+				caption: (groupOption ? groupOption.name : translate('commonSelect')), 
+				arrow: true,
+			});
+		};
+
+		if (isBoard) {
+			settings.push({ 
+				id: 'groupBackgroundColors', 
+				name: translate('menuDataviewViewEditColorColumns'), 
+				withSwitch: true, 
+				switchValue: groupBackgroundColors,
+				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
+			});
 		};
 
 		settings.push({
@@ -211,19 +223,19 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
 
-		if (isInline || (type == I.ViewType.Board)) {
+		if (isInline || isBoard) {
 			const options = Relation.getPageLimitOptions(type);
 			settings.push({ id: 'pageLimit', name: translate('menuDataviewViewEditPageLimit'), caption: (pageLimit || options[0].id), arrow: true });
 		};
 
-		let sections: any[] = [
+		let sections: any[] = [ 
 			{ id: 'settings', name: '', children: settings }
 		];
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);
 			return s;
-		});
+		}).filter(s => !!s.children.length);
 
 		return sections;
 	};

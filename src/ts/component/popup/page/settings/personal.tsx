@@ -42,7 +42,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="spellcheck"
 							value={config.languages}
 							options={spellingLanguages}
-							onChange={v => Renderer.send('setLanguage', v)}
+							onChange={v => {
+								Renderer.send('setLanguage', v);
+								analytics.event('AddSpellcheckLanguage');
+							}}
 							arrowClassName="black"
 							isMultiple={true}
 							noFilter={false}
@@ -57,7 +60,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="interfaceLang"
 							value={commonStore.interfaceLang}
 							options={interfaceLanguages}
-							onChange={v => Renderer.send('changeInterfaceLang', v)}
+							onChange={v => {
+								Renderer.send('changeInterfaceLang', v);
+								analytics.event('SwitchInterfaceLanguage');
+							}}
 							arrowClassName="black"
 							menuParam={{ 
 								horizontal: I.MenuDirection.Right, 

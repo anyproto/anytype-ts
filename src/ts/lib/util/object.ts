@@ -1,5 +1,5 @@
 import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
-import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
+import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -53,8 +53,14 @@ class UtilObject {
 		return home;
 	};
 
+	getIdentityId () {
+		const { account } = authStore;
+		return account ? `_id_${account.id}` : '';
+	};
+
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
+		const id = this.getIdentityId();
+		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
 	};
 
 	getGraph () {
@@ -70,7 +76,6 @@ class UtilObject {
 		return { 
 			id: I.HomePredefinedId.Last,
 			name: translate('spaceLast'),
-			spaceId: commonStore.space,
 		};
 	};
 
@@ -102,12 +107,21 @@ class UtilObject {
 			return '';
 		};
 
-		const action = this.actionByLayout(object.layout);
+		let { id, spaceId, layout, identityProfileLink } = object;
+
+		const { account } = authStore;
+		const action = this.actionByLayout(layout);
+
 		if (!action) {
 			return '';
 		};
 
-		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
+		if (identityProfileLink) {
+			id = identityProfileLink;
+			spaceId = account.info.accountSpaceId;
+		};
+
+		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
 
 	openEvent (e: any, object: any, param?: any) {

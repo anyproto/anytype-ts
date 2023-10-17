@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilObject, analytics, translate, UtilDate } from 'Lib';
+import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilObject, analytics, translate, UtilDate, Renderer } from 'Lib';
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -117,7 +117,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				text: translate('authDeleteRemovePopupText'),
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
-					authStore.logout(true);
+					authStore.logout(true, true);
 					UtilRouter.go('/', { replace: true });
 				},
 			},
@@ -137,7 +137,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
 	onCancel () {
 		C.AccountDelete(true, (message) => {
-			authStore.accountSet({ status: message.status });
+			authStore.accountSetStatus(message.status);	
 			UtilObject.openHome('route');
 			analytics.event('CancelDeletion');
 		});
@@ -147,7 +147,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => authStore.logout(false),
+			onFadeIn: () => authStore.logout(true, false),
 		});
 	};
 	

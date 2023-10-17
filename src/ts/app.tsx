@@ -401,8 +401,9 @@ class App extends React.Component<object, State> {
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
-		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
-		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
+		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
+		Renderer.on('logout', () => authStore.logout(false, false));
 		Renderer.on('shutdownStart', () => {
 			this.setState({ loading: true });
 
@@ -426,8 +427,6 @@ class App extends React.Component<object, State> {
 			keyboard.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 		});
-
-		Renderer.on('logout', () => authStore.logout(false));
 	};
 
 	onInit (e: any, data: any) {
@@ -472,10 +471,13 @@ class App extends React.Component<object, State> {
 				authStore.phraseSet(phrase);
 
 				UtilData.createSession(() => {
-					commonStore.redirectSet(route || redirect || '');
+					authStore.accountSet(account);
 					keyboard.setPinChecked(isPinChecked);
+					commonStore.redirectSet(route || redirect || '');
+					commonStore.configSet(account.config, false);
 
-					UtilData.onAuth(account, account.info, {}, cb);
+					UtilData.onInfo(account.info);
+					UtilData.onAuth({}, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {

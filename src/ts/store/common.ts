@@ -44,6 +44,7 @@ class CommonStore {
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
+	public techSpaceId = '';
 	public notionToken = '';
 
 	public previewObj: I.Preview = { 
@@ -86,6 +87,7 @@ class CommonStore {
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
 			spaceId: observable,
+			techSpaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -95,6 +97,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			space: computed,
+			techSpace: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -107,6 +110,7 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
+			techSpaceSet: action,
 			spaceStorageSet: action,
 		});
 
@@ -174,6 +178,10 @@ class CommonStore {
 
 	get space(): string {
 		return String(this.spaceId || '');
+	};
+
+	get techSpace(): string {
+		return String(this.techSpaceId || '');
 	};
 
 	get graph(): Graph {
@@ -275,6 +283,10 @@ class CommonStore {
 
 	spaceSet (id: string) {
 		this.spaceId = String(id || '');
+	};
+
+	techSpaceSet (id: string) {
+		this.techSpaceId = String(id || '');
 	};
 
 	previewClear () {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { Select } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
@@ -11,6 +12,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	node: any = null;
 	ref = null;
+	value = UtilDate.now();
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -20,14 +22,24 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { className } = this.props;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
-
-		const value = UtilDate.now();
-		const { d, m, y } = this.getDateParam(value);
+		const { m, y } = this.getDateParam(this.value);
+		const today = this.getDateParam(UtilDate.now());
 		const subId = this.getSubId(m, y);
 
 		const days = [];
+		const months = [];
+		const years = [];
+
 		for (let i = 1; i <= 7; ++i) {
 			days.push({ id: i, name: translate(`day${i}`) });
+		};
+
+		for (let i = 1; i <= 12; ++i) {
+			months.push({ id: i, name: translate('month' + i) });
+		};
+
+		for (let i = 0; i <= 3000; ++i) {
+			years.push({ id: i, name: i });
 		};
 
 		return (
@@ -37,8 +49,20 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			>
 				<div className={cn.join(' ')}>
 					<div id="dateSelect" className="dateSelect">
-						<div className="month">August</div>
-						<div className="year">2023</div>
+						<Select 
+							id="calendar-month" 
+							value={m} 
+							options={months} 
+							className="month" 
+							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+						<Select 
+							id="calendar-year" 
+							value={y} 
+							options={years} 
+							className="year" 
+							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
 					</div>
 
 					<div className="table">
@@ -56,7 +80,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 								if (m != item.m) {
 									cn.push('other');
 								};
-								if ((d == item.d) && (m == item.m) && (y == item.y)) {
+								if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 									cn.push('active');
 								};
 								return (
@@ -90,7 +114,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getData () {
-		return UtilDate.getCalendarMonth(UtilDate.now());
+		return UtilDate.getCalendarMonth(this.value);
 	};
 
 	getSubId (m: number, y: number) {
@@ -108,7 +132,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const { m, y } = this.getDateParam(UtilDate.now());
+		const { m, y } = this.getDateParam(this.value);
 		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
 		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
 		const limit = 10;
@@ -150,6 +174,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		});
+	};
+
+	setValue (value: number) {
+		this.value = value;
+		this.forceUpdate();
+		this.load();
 	};
 
 	resize () {

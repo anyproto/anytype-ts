@@ -225,6 +225,8 @@ class Action {
 			};
 
 			const { details } = message;
+			const eventParam: any = { layout: object.layout };
+
 			let toast = '';
 			let subId = '';
 
@@ -232,12 +234,16 @@ class Action {
 				case I.ObjectLayout.Type: {
 					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
+
+					eventParam.objectType = object.id;
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
 					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
+
+					eventParam.relationKey = object.relationKey;
 					break;
 				};
 			};
@@ -247,11 +253,13 @@ class Action {
 			};
 
 			detailStore.update(subId, { id: details.id, details }, false);
-			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
+			analytics.event('ObjectInstall', eventParam);
 		});
 	};
 
 	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+		const eventParam: any = { layout: object.layout };
+
 		let title = '';
 		let text = '';
 		let toast = '';
@@ -261,6 +269,8 @@ class Action {
 				title = translate('libActionUninstallTypeTitle');
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
+
+				eventParam.objectType = object.id;
 				break;
 			};
 
@@ -268,6 +278,8 @@ class Action {
 				title = translate('libActionUninstallRelationTitle');
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
+
+				eventParam.relationKey = object.relationKey;
 				break;
 			};
 		};
@@ -291,7 +303,7 @@ class Action {
 						if (showToast) {
 							Preview.toastShow({ text: toast });
 						};
-						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
+						analytics.event('ObjectUninstall', eventParam);
 					});
 				},
 			},
@@ -347,11 +359,12 @@ class Action {
 							return;
 						};
 
-						UtilData.onAuth(message.account, message.account.info, { routeParam: { animate: true } }, () => {
-							window.setTimeout(() => {
-								popupStore.open('migration', { data: { type: 'import' } });
-							}, Constant.delay.popup);
+						authStore.accountSet(message.account);
+						commonStore.configSet(message.account.config, false);
 
+						UtilData.onInfo(message.account.info);
+						UtilData.onAuth({ routeParam: { animate: true } }, () => {
+							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, Constant.delay.popup);
 							blockStore.closeRecentWidgets();
 						});
 					});

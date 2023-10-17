@@ -208,7 +208,7 @@ class DetailStore {
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
-		object.origin = Number(object.origin) || I.ObjectOrigin.User;
+		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;

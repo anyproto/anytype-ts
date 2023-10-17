@@ -1279,7 +1279,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 			};
 
-			if (isDelete && (range.to == length)) {
+			if (isDelete && (range.from == range.to) && (range.to == length)) {
 				ids.length ? this.blockRemove(block) : this.blockMerge(block, 1, length);
 			};
 		};

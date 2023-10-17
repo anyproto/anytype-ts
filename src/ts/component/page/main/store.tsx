@@ -509,7 +509,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getItems () {
-		const { profile } = blockStore;
+		const identity = UtilObject.getIdentityId();
 		const { loading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 		const limit = this.getLimit();
@@ -518,8 +518,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			const cr1 = c1.creator;
 			const cr2 = c2.creator;
 
-			if ((cr1 == profile) && (cr2 != profile)) return -1;
-			if ((cr1 != profile) && (cr2 == profile)) return 1;
+			if ((cr1 == identity) && (cr2 != identity)) return -1;
+			if ((cr1 != identity) && (cr2 == identity)) return 1;
 			return 0;
 		});
 

@@ -305,6 +305,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
 		};
 
 		if (skipIds && skipIds.length) {
@@ -458,7 +459,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
 					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
 					close();
 				});

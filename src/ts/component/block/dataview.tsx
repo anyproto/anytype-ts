@@ -340,6 +340,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
+		if ([ I.ViewType.Calendar ].includes(view.type)) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const subId = this.getSubId();
 		const keys = this.getKeys(viewId);

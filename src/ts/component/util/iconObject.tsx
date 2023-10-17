@@ -227,12 +227,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
-				if (iconOption) {
-					cn.push('withOption withImage');
-
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={this.userGradientSvg(0.35)} className={icn.join(' ')} />;
-				} else
 				if (forceLetter) {
 					onLetter();
 				};
@@ -244,10 +238,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else 
-				if (iconOption) {
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={this.userGradientSvg(0.5)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
@@ -322,6 +312,21 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+				break;
+			};
+
+			case I.ObjectLayout.SpaceView: {
+				if (iconImage) {
+					cn.push('withImage');
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				} else 
+				if (iconOption) {
+					cn.push('withOption withImage');
+
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.gradientSvg(0.35)} className={icn.join(' ')} />;
+				}
 				break;
 			};
 
@@ -407,6 +412,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
+		const isTask = layout == I.ObjectLayout.Task;
+		const isEmoji = LAYOUT_EMOJI.includes(layout);
 
 		if (onClick) {
 			onClick(e);
@@ -416,13 +423,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			return;
 		};
 
-		if (layout == I.ObjectLayout.Task) {
+		if (isTask || isEmoji) {
+			e.preventDefault();
 			e.stopPropagation();
-			onCheckbox(e);
 		};
 
-		if (LAYOUT_EMOJI.includes(layout)) {
-			e.stopPropagation();
+		if (isTask) {
+			onCheckbox(e);
+		} else
+		if (isEmoji) {
 			this.onEmoji(e);
 		};
 	};
@@ -542,7 +551,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	userGradientSvg (radius: number): string {
+	gradientSvg (radius: number): string {
 		const object = this.getObject();
 		const iconSize = this.iconSize();
 		const option = Colors.gradientIcons.options[object.iconOption - 1] as any;

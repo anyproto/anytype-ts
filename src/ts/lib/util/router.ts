@@ -47,6 +47,7 @@ class UtilRouter {
 		const { replace, animate, onFadeOut, onFadeIn } = param;
 		const routeParam = this.getParam(route);
 		const method = replace ? 'replace' : 'push';
+		const { space, techSpace } = commonStore;
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
 		if (!timeout) {
@@ -56,7 +57,7 @@ class UtilRouter {
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && (routeParam.spaceId != Constant.storeSpaceId) && (routeParam.spaceId != commonStore.space)) {
+		if (routeParam.spaceId && ![ Constant.storeSpaceId, space, techSpace ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -96,7 +97,9 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		if (!id || (commonStore.space == id)) {
+		const { space } = commonStore;
+
+		if (!id || (space == id)) {
 			return;
 		};
 
@@ -114,7 +117,9 @@ class UtilRouter {
 					};
 
 					blockStore.clear(blockStore.widgets);
-					UtilData.onAuth(authStore.account, message.info, callBack);
+
+					UtilData.onInfo(message.info);
+					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
 				}
 			});
 		});

@@ -11,10 +11,15 @@
 
 		.head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
-			@include text-paragraph; font-weight: 600;
+			@include text-paragraph; font-weight: 600; gap: 0px 16px;
 		}
 		.head {
-			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; }
+			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; width: calc(100% - 36px); }
+			.side.left {
+				.iconObject { flex-shrink: 0; }
+				.name { @include text-overflow-nw; width: 100%; max-width: 300px; }
+			}
+			.side.right { width: 20px; flex-shrink: 0; }
 			.icon.settings { background-image: url('~img/icon/menu/space/settings.svg'); }
 		}
 
