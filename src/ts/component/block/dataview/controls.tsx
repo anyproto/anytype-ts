@@ -35,7 +35,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId } = this.props;
+		const target = getTarget();
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -46,7 +47,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = this.props.isAllowedTemplate() && hasSources;
+		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -258,7 +259,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd,
+			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd,
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
@@ -295,7 +296,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				isInline,
 				isCollection,
 				isAllowedDefaultType,
-				isAllowedTemplate,
 				onTemplateAdd,
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,

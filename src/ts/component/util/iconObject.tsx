@@ -40,11 +40,9 @@ interface Props {
 
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
-	I.ObjectLayout.Set, 
-	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
-];
+].concat(UtilObject.getSetLayouts());
 
 const IconSize = {
 	14: 14,

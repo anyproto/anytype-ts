@@ -402,11 +402,9 @@ class UtilData {
 			const skipLayouts = [ 
 				I.ObjectLayout.Note,
 				I.ObjectLayout.Page,
-				I.ObjectLayout.Set,
-				I.ObjectLayout.Collection,
 				I.ObjectLayout.Task,
 				I.ObjectLayout.Bookmark,
-			];
+			].concat(UtilObject.getSetLayouts());
 
 			items = items.concat(dbStore.getTypes().filter(it => {
 				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);

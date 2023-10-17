@@ -86,7 +86,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 
 		this.isAllowedObject = this.isAllowedObject.bind(this);
-		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 	};
@@ -165,7 +164,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
 			isAllowedObject: this.isAllowedObject,
-			isAllowedTemplate: this.isAllowedTemplate,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
@@ -1171,10 +1169,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return isAllowed;
-	};
-
-	isAllowedTemplate (): boolean {
-		return UtilObject.isAllowedTemplate(this.getTypeId());
 	};
 
 	isAllowedDefaultType (): boolean {
