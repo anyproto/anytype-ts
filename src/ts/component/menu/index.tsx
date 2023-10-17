@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Dimmer, Icon, Button, Title } from 'Component';
+import { Dimmer, Icon, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';

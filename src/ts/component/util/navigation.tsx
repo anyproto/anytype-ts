@@ -129,7 +129,11 @@ class Navigation extends React.Component {
 	};
 
 	onProfile () {
-		keyboard.onSpaceMenu(false);
+		if (menuStore.isOpen('space')) {
+			menuStore.close('space');
+		} else {
+			keyboard.onSpaceMenu(false);
+		};
 	};
 
 	resize () {
