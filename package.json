@@ -60,7 +60,7 @@
 		"css-loader": "^3.6.0",
 		"electron": "^25.0.0",
 		"electron-builder": "^24.6.3",
-		"electron-notarize": "^0.2.1",
+		"electron-notarize": "^1.2.2",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
