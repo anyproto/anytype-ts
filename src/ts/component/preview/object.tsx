@@ -460,7 +460,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.ObjectShow(rootId, 'preview', () => {
+		C.ObjectShow(rootId, 'preview', commonStore.space, () => {
 			if (!this._isMounted) {
 				return;
 			};

@@ -220,7 +220,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(this.id, '', (message: any) => {
+		C.ObjectOpen(this.id, '', commonStore.space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};

@@ -1232,11 +1232,12 @@ const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message
 	dispatcher.request(ObjectBookmarkFetch.name, request, callBack);
 };
 
-const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
@@ -1255,11 +1256,12 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	});
 };
 
-const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Show.Request();
 
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
@@ -1273,10 +1275,11 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 };
 
 
-const ObjectClose = (objectId: string, callBack?: (message: any) => void) => {
+const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
 	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectClose.name, request, callBack);
 };

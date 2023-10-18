@@ -142,6 +142,7 @@ export interface Block {
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 	isObjectBookmark?(): boolean;
+	isObjectDate?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
