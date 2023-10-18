@@ -112,7 +112,7 @@ class Header extends React.Component<Props> {
 		}, param);
 
 		if (!isPopup) {
-			menuParam.fixedY = element.offset().top + element.height() - st;
+			menuParam.fixedY = element.offset().top + element.height() - st + 4;
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
