@@ -235,16 +235,16 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const count = ids.length;
 		const rootId = this.getRootId();
 
-		if (!keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, () => {
-				e.preventDefault();
-
-				const subId = dbStore.getSubId(rootId, Constant.blockId.dataview);
-				const records = dbStore.getRecords(subId, '');
-
-				selection.set(I.SelectType.Record, records);
-			});
+		if (keyboard.isFocused) {
+			return;
 		};
+
+		keyboard.shortcut(`${cmd}+a`, e, () => {
+			e.preventDefault();
+
+			const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+			selection.set(I.SelectType.Record, records);
+		});
 
 		if (count) {
 			keyboard.shortcut('backspace, delete', e, () => {
