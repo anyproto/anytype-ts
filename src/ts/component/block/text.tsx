@@ -679,7 +679,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		];
 
 		if (isInsideTable) {
-			saveKeys.push({ key: `arrowup, arrowdown`, preventDefault: false });
+			if (!range.to) {
+				saveKeys.push({ key: `arrowleft, arrowup`, preventDefault: false });
+			};
+
+			if (range.to == value.length) {
+				saveKeys.push({ key: `arrowright, arrowdown`, preventDefault: false });
+			};
 		};
 
 		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
