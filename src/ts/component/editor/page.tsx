@@ -1628,8 +1628,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (!ids.length) {
 			ids = [ focused ];
+		} else {
+			ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
 		};
-		ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
 
 		Action.copyBlocks(rootId, ids, isCut);
 	};
