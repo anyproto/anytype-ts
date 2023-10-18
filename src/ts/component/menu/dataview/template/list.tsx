@@ -41,6 +41,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
 		const type = dbStore.getTypeById(typeId);
+		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => (
 			<div
@@ -49,13 +50,15 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				onMouseEnter={e => this.setHover(e, item)}
 				onMouseLeave={this.setHover}
 			>
-				<div
-					id={`item-more-${item.id}`}
-					className="moreWrapper"
-					onClick={e => this.onMore(e, item)}
-				>
-					<Icon className="more" />
-				</div>
+				{isAllowed ? (
+					<div
+						id={`item-more-${item.id}`}
+						className="moreWrapper"
+						onClick={e => this.onMore(e, item)}
+					>
+						<Icon className="more" />
+					</div>
+				) : ''}
 
 				<div onClick={e => this.onClick(e, item)}>
 					<div className="scroller">
