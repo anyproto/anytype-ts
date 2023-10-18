@@ -347,9 +347,9 @@ class Action {
 					return;
 				};
 
-				const { accountId } = message;
+				const { accountId, spaceId } = message;
 
-				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
+				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
