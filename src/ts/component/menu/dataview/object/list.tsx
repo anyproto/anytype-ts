@@ -327,7 +327,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item) {
+		if (!item || !relation) {
 			close();
 			return;
 		};
@@ -335,6 +335,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (cellRef) {
 			cellRef.clear();
 		};
+
+		const objectTypes = Relation.getArrayValue(relation.objectTypes);
 
 		const cb = (id: string) => {
 			if (!id) {
@@ -356,16 +358,24 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (item.id == 'add') {
 			const details: any = { name: filter };
-			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 			
-			if (typeId) {
-				const type = dbStore.getTypeById(typeId);
-				if (type && !UtilObject.isFileLayout(type.recommendedLayout)) {
-					details.type = typeId;
-				} else {
-					flags.push(I.ObjectFlag.SelectType);
+			let type = null;
+
+			if (objectTypes.length) {
+				const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => {
+					return it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout);
+				});
+
+				if (allowedTypes.length) {
+					type = allowedTypes[0];
 				};
+			};
+
+			if (type) {
+				details.type = type.id;
+			} else {
+				flags.push(I.ObjectFlag.SelectType);
 			};
 
 			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {

@@ -29,6 +29,7 @@ export const AccountDelete = (response: Rpc.Account.Delete.Response) => {
 export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFromLegacyExport.Response) => {
 	return {
 		accountId: response.getAccountid(),
+		spaceId: response.getPersonalspaceid(),
 	};
 };
 

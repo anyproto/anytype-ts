@@ -330,6 +330,10 @@ class UtilObject {
 		return this.getFileLayouts().includes(layout);
 	};
 
+	isFileOrSystemLayout (layout: I.ObjectLayout) {
+		return this.getFileAndSystemLayouts().includes(layout);
+	};
+
 	isSystemLayout (layout: I.ObjectLayout) {
 		return this.getSystemLayouts().includes(layout);
 	};
