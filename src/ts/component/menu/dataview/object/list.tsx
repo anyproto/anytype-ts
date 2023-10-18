@@ -360,7 +360,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.SelectType ];
 			
 			if (typeId) {
-				details.type = typeId;
+				const type = dbStore.getTypeById(typeId);
+				if (type && !UtilObject.isFileLayout(type.recommendedLayout)) {
+					details.type = typeId;
+				};
 			};
 
 			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
