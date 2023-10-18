@@ -174,10 +174,6 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Collection);
 	};
 
-	isObjectSpaceView (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.SpaceView);
-	};
-
 	isObjectDate (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Date);
 	};
