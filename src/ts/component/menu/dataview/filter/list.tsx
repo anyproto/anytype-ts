@@ -142,7 +142,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">New filter</div>
+							<div className="name">{translate("menuDataviewFilterNewFilter")}</div>
 						</div>
 					</div>
 				) : ''}
