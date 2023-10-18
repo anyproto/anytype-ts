@@ -641,7 +641,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onKeyDown (e: any) {
 		e.persist();
 
-		const { onKeyDown, rootId, block } = this.props;
+		const { onKeyDown, rootId, block, isInsideTable } = this.props;
 		const { id } = block;
 
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
@@ -677,6 +677,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
+
+		if (isInsideTable) {
+			saveKeys.push({ key: `arrowup, arrowdown`, preventDefault: false });
+		};
+
 		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
 		const twineClose = {
 			'[': ']',
