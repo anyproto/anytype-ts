@@ -357,12 +357,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const details: any = { name: filter };
 			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
+			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.SelectType ];
 			
 			if (typeId) {
 				details.type = typeId;
-			} else {
-				flags.push(I.ObjectFlag.SelectType);
 			};
 
 			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
