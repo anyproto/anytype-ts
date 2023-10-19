@@ -32,11 +32,11 @@
 					}
 				}
 
-				.body { overflow: overlay; flex-grow: 1; }
+				.body { overflow: overlay; flex-grow: 1; grid-auto-rows: minmax(136px, auto); }
 			}
 
 			.day { 
-				height: 136px; display: table-cell; text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
+				text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
 				border-right-width: 1px; border-bottom-width: 1px; padding: 6px 8px; position: relative;
 			}
 			.day.active .number { color: $colorSystemAccent100; }
