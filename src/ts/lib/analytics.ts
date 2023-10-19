@@ -275,6 +275,7 @@ class Analytics {
 			};
 
 			case 'SelectUsecase': {
+				data.type = Number(data.type) || 0;
 				data.type = I.Usecase[data.type];
 				break;
 			};
@@ -353,6 +354,7 @@ class Analytics {
 		};
 
 		if (undefined !== converted.usecase) {
+			converted.usecase = Number(converted.usecase) || 0;
 			converted.usecase = I.Usecase[converted.usecase];
 		};
 

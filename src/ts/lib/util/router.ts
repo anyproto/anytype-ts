@@ -129,6 +129,7 @@ class UtilRouter {
 						commonStore.redirectSet(route);
 					};
 
+					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
 
 					UtilData.onInfo(message.info);
