@@ -366,9 +366,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => {
 					return it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout);
 				});
+				const l = allowedTypes.length;
 
-				if (allowedTypes.length) {
+				if (l) {
 					type = allowedTypes[0];
+
+					if (l > 1) {
+						flags.push(I.ObjectFlag.SelectType);
+					};
 				};
 			};
 
