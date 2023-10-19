@@ -2,6 +2,14 @@ import { C, UtilCommon, UtilData, Preview, analytics } from 'Lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
+type RouteParam = { 
+	replace: boolean;
+	animate: boolean;
+	onFadeOut: () => void;
+	onFadeIn?: () => void;
+	onRouteChange?: () => void;
+};
+
 class UtilRouter {
 
 	getParam (path: string): any {
@@ -39,12 +47,12 @@ class UtilRouter {
 		return route.join('/');
 	};
 
-	go (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
+	go (route: string, param: Partial<RouteParam>) {
 		if (!route) {
 			return;
 		};
 
-		const { replace, animate, onFadeOut, onFadeIn } = param;
+		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const method = replace ? 'replace' : 'push';
 		const { space, techSpace } = commonStore;
@@ -80,7 +88,12 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				UtilCommon.history[method](route); 
+				UtilCommon.history[method](route);
+
+				if (onRouteChange) {
+					onRouteChange();
+				};
+
 				fade.removeClass('show');
 			}, Constant.delay.route);
 
@@ -111,7 +124,7 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				onFadeOut: () => {
+				onRouteChange: () => {
 					if (route) {
 						commonStore.redirectSet(route);
 					};
