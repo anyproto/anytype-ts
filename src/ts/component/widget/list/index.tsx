@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore, dbStore, detailStore, commonStore } from 'Store';
 import { Dataview, I, C, M, UtilCommon, Relation, keyboard, UtilObject, translate, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -202,7 +202,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		} else {
 			this.setState({ isLoading: true });
 
-			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
+			C.ObjectShow(targetBlockId, this.getTraceId(), commonStore.space, () => {
 				this.setState({ isLoading: false });
 
 				const view = Dataview.getView(this.getRootId(), BLOCK_ID, viewId);

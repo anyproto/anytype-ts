@@ -133,7 +133,6 @@ export interface Block {
 	isObjectTask?(): boolean;
 	isObjectNote?(): boolean;
 	isObjectSet?(): boolean;
-	isObjectSpaceView?(): boolean;
 	isObjectFileKind?(): boolean;
 	isObjectFile?(): boolean;
 	isObjectImage?(): boolean;
@@ -142,6 +141,7 @@ export interface Block {
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 	isObjectBookmark?(): boolean;
+	isObjectDate?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;

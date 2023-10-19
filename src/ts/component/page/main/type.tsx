@@ -239,7 +239,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.id = rootId;
 		this.setState({ isLoading: true });
 
-		C.ObjectOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', commonStore.space, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });

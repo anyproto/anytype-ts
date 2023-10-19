@@ -85,6 +85,7 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
+			case I.ObjectLayout.Date:
 			case I.ObjectLayout.Set:
 			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;

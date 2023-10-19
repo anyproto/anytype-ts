@@ -189,6 +189,7 @@ class DetailStore {
 				break;
 			};
 
+			case I.ObjectLayout.Date:
 			case I.ObjectLayout.Set: {
 				object = this.mapSet(object);
 				break;

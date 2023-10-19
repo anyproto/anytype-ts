@@ -359,9 +359,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', { offset, viewId });
 
-		if ([ I.ViewType.Board ].includes(view.type)) {
+		if (view.type == I.ViewType.Board) {
 			if (this.refView && this.refView.loadGroupList) {
 				this.refView.loadGroupList();
+			} else {
+				this.viewId = '';
+			};
+		} else 
+		if (view.type == I.ViewType.Calendar) {
+			if (this.refView && this.refView.load) {
+				this.refView.load();
 			} else {
 				this.viewId = '';
 			};

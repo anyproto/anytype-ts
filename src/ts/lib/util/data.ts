@@ -201,7 +201,7 @@ class UtilData {
 	onAuth (param?: any, callBack?: () => void) {
 		const pin = Storage.get('pin');
 		const { profile, widgets } = blockStore;
-		const { redirect } = commonStore;
+		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
@@ -219,18 +219,18 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileSpaceUsage(commonStore.space, (message: any) => {
+		C.FileSpaceUsage(space, (message: any) => {
 			if (!message.error.code) {
 				commonStore.spaceStorageSet(message);
 			};
 		});
 
-		C.ObjectOpen(blockStore.rootId, '', (message: any) => {
+		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', () => {
+			C.ObjectOpen(widgets, '', space, () => {
 				this.createsSubscriptions(() => {
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -765,7 +765,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, callBack);
 	};
 
 	sortMapper (it: any) {

@@ -112,7 +112,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.loading = true;
 		this.forceUpdate();
 		
-		C.ObjectOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', commonStore.space, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });

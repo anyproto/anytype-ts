@@ -6,6 +6,7 @@ class Action {
 
 	pageClose (rootId: string, close: boolean) {
 		const { profile } = blockStore;
+		const { space } = commonStore;
 
 		if (rootId == profile) {
 			return;
@@ -25,7 +26,7 @@ class Action {
 		};
 
 		if (close) {
-			C.ObjectClose(rootId, onClose);
+			C.ObjectClose(rootId, space, onClose);
 		} else {
 			onClose();
 		};
