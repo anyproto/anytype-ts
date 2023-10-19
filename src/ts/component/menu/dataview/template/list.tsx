@@ -6,7 +6,7 @@ import { dbStore, menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
 
-const TEMPLATE_WIDTH = 236;
+const TEMPLATE_WIDTH = 230;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
 
@@ -25,7 +25,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.onMore = this.onMore.bind(this);
 		this.onType = this.onType.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
-		this.setHover = this.setHover.bind(this);
 		this.getTemplateId = this.getTemplateId.bind(this);
 		this.updateRowLength = this.updateRowLength.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -33,81 +32,80 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { data } = param;
 		const { withTypeSelect, noTitle, typeId } = data;
-		const previewSizesCns = [ 'small', 'medium', 'large' ];
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
 		const type = dbStore.getTypeById(typeId);
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
-		const ItemBlank = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className={[ 'previewObject', previewSizesCns[previewSize], 'blank', (item.id == templateId ? 'isDefault' : '') ].join(' ')}
-				onMouseEnter={e => this.setHover(e, item)}
-				onMouseLeave={this.setHover}
-			>
-				{isAllowed ? (
-					<div
-						id={`item-more-${item.id}`}
-						className="moreWrapper"
-						onClick={e => this.onMore(e, item)}
-					>
-						<Icon className="more" />
-					</div>
-				) : ''}
+		const ItemBlank = (item: any) => {
+			const cn = [ 'previewObject', 'blank', I.PreviewSize[previewSize].toLowerCase() ];
 
-				<div onClick={e => this.onClick(e, item)}>
-					<div className="scroller">
-						<div className="heading">
-							<div className="name">{translate('commonBlank')}</div>
-							<div className="featured" />
+			if (item.id == templateId) {
+				cn.push('isDefault');
+			};
+
+			return (
+				<div className={cn.join(' ')}>
+					{isAllowed ? (
+						<div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => this.onMore(e, item)}>
+							<Icon className="more" />
 						</div>
-					</div>
-					<div className="border" />
-				</div>
-			</div>
-		);
+					) : ''}
 
-		const ItemNew = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className="previewObject small"
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.setHover(e, item)}
-				onMouseLeave={this.setHover}
-			>
+					<div onClick={e => this.onClick(e, item)}>
+						<div className="scroller">
+							<div className="heading">
+								<div className="name">{translate('commonBlank')}</div>
+								<div className="featured" />
+							</div>
+						</div>
+						<div className="border" />
+					</div>
+				</div>
+			);
+		};
+
+		const ItemAdd = () => (
+			<div className="previewObject small">
 				<div className="border" />
 				<Icon className="add" />
 			</div>
 		);
 
 		const Item = (item: any) => {
-			let component = null;
+			let content = null;
 
 			if (item.id == Constant.templateId.blank) {
-				component = <ItemBlank {...item} />;
+				content = <ItemBlank {...item} />;
 			} else
 			if (item.id == Constant.templateId.new) {
-				component = <ItemNew {...item} />;
+				content = <ItemAdd {...item} />;
 			} else {
-				component = (
+				content = (
 					<PreviewObject
 						className={item.id == templateId ? 'isDefault' : ''}
 						rootId={item.id}
 						size={previewSize}
-						onClick={e => this.onClick(e, item)}
-						onMouseEnter={e => this.setHover(e, item)}
-						onMouseLeave={this.setHover}
 						onMore={e => this.onMore(e, item)}
 					/>
 				);
 			};
 
-			return component;
+			return (
+				<div 
+					id={`item-${item.id}`} 
+					className="item"
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={() => setHover(item)}
+					onMouseLeave={() => setHover(null)}
+				>
+					{content}
+				</div>
+			);
 		};
 
 		return (
@@ -139,7 +137,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	componentDidUpdate (): void {
-		this.resize();
+		this.beforePosition();
 		this.setCurrent();
 	};
 
@@ -157,52 +155,28 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onKeyDown (e: any) {
+		const { setHover } = this.props;
 		const items = this.getItems();
 
-		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (arrow) => {
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed: string) => {
 			e.preventDefault();
 
-			switch (arrow) {
-				case 'arrowup':
-				case 'arrowleft': {
-					this.n--;
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
 
-					if (this.n < 0) {
-						this.n = items.length - 1;
-					};
-					break;
-				};
+			this.n += dir;
 
-				case 'arrowdown':
-				case 'arrowright': {
-					this.n++;
-
-					if (this.n > items.length - 1) {
-						this.n = 0;
-					};
-					break;
-				};
+			if (this.n < 0) {
+				this.n = items.length - 1;
 			};
 
-			this.setHover(e, items[this.n]);
+			if (this.n > items.length - 1) {
+				this.n = 0;
+			};
+
+			setHover(items[this.n], true);
 		});
 
-		keyboard.shortcut('enter', e, () => {
-			const item = items[this.n];
-
-			this.onClick(e, item);
-		});
-	};
-
-	setHover (e: any, item?: any) {
-		const items = this.getItems();
-		const node = $(this.node);
-
-		node.find('.previewObject.hover').removeClass('hover');
-		if (item) {
-			this.n = items.findIndex(it => it.id == item.id);
-			node.find(`#item-${item.id}`).addClass('hover');
-		};
+		keyboard.shortcut('enter', e, () => this.onClick(e, items[this.n]));
 	};
 
 	setCurrent () {
@@ -376,7 +350,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		items.css({ 'grid-template-columns': `repeat(${n}, 1fr)` });
 	};
 
-	resize () {
+	beforePosition () {
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { fromBanner } = data;
@@ -385,14 +359,22 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			return;
 		};
 
-		const sidebar = $('#sidebar');
-		const { ww } = UtilCommon.getWindowDimensions();
-		const sw = commonStore.isSidebarFixed && sidebar.hasClass('active') ? sidebar.outerWidth() : 0;
-		const rows = Math.floor((ww - sw) / TEMPLATE_WIDTH);
 		const obj = $(`#${getId()}`);
 		const items = obj.find('.items');
+		const isPopup = keyboard.isPopup();
+		const container = UtilCommon.getPageContainer(isPopup);
+		
+		let ww = container.width();
+		if (!isPopup) {
+			const sidebar = $('#sidebar');
+			const sw = commonStore.isSidebarFixed && sidebar.hasClass('active') ? sidebar.outerWidth() : 0;
 
-		items.css({ 'grid-template-columns': `repeat(${rows}, 1fr)` });
+			ww = ww - sw;
+		};
+
+		const columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));
+
+		items.css({ 'grid-template-columns': `repeat(${columns}, 1fr)` });
 	};
 
 });
