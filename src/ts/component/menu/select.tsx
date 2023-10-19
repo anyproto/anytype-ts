@@ -87,18 +87,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			return content;
 		};
 
-		const rowRenderer = (param: any) => (
-			<CellMeasurer
-				key={param.key}
-				parent={param.parent}
-				cache={this.cache}
-				columnIndex={0}
-				rowIndex={param.index}
-			>
-				<Item {...items[param.index]} index={param.index} style={param.style} />
-			</CellMeasurer>
-		);
-
 		let content = null;
 		if (noVirtualisation) {
 			content = (
@@ -109,6 +97,18 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				</React.Fragment>
 			);
 		} else {
+			const rowRenderer = (param: any) => (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+				>
+					<Item {...items[param.index]} index={param.index} style={param.style} />
+				</CellMeasurer>
+			);
+
 			content = (
 				<InfiniteLoader
 					rowCount={items.length}

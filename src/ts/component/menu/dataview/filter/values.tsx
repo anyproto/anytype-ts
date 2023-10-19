@@ -229,7 +229,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			<div>
 				<div className="section">
 					{items.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
+						<MenuItemVertical key={i} {...item} onMouseEnter={e => this.onOver(e, item)} />
 					))}
 				</div>
 
@@ -352,11 +352,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
+		const { getId, getSize, setActive } = this.props;
 
-		const { getId, getSize } = this.props;
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+		};
 
 		let options = [];
 		let key = item.id;
@@ -388,6 +388,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			data: {
 				noFilter: true,
 				noScroll: true,
+				noVirtualisation: true,
 				rebind: this.rebind,
 				value: item[key],
 				options,
