@@ -51,7 +51,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
 					>
-						{isLoading ? <Loader type="loader" /> : ''}
+						{isLoading ? <Loader /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 						{arrow ? <div className="arrow" /> : ''}
