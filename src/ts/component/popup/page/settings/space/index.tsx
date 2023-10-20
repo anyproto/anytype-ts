@@ -270,9 +270,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDelete () {
-		const space = UtilObject.getSpaceview();
-
-		Action.removeSpace(space.targetSpaceId, 'Settings');
+		Action.removeSpace(commonStore.space, 'Settings');
 	};
 
 	checkName (v: string): string {
