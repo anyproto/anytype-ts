@@ -133,11 +133,12 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	componentDidMount () {
 		this.rebind();
+		this.props.position();
 		this.load();
 	};
 
 	componentDidUpdate (): void {
-		this.beforePosition();
+		this.props.position();
 		this.setCurrent();
 	};
 
