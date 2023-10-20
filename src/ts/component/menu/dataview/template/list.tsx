@@ -356,6 +356,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const obj = $(`#${getId()}`);
 		const list = obj.find('.items');
 		const items = this.getItems();
+		const length = items.length;
 		const isPopup = keyboard.isPopup();
 		const container = UtilCommon.getPageContainer(isPopup);
 		
@@ -367,7 +368,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			ww = ww - sw;
 		};
 
-		const columns = Math.max(items.length || 1, Math.floor(ww / TEMPLATE_WIDTH));
+		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));
+
+		if (columns > length) {
+			columns = length;
+		};
 
 		list.css({ 'grid-template-columns': `repeat(${columns}, 1fr)` });
 	};
