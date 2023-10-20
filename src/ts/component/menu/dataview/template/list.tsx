@@ -323,21 +323,15 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 				],
-				onClick: (item) => {
-					const type = dbStore.getTypeById(item.id);
-					if (!type) {
-						return;
+				onClick: (type) => {
+					data.typeId = type.id;
+					data.templateId = type.defaultTemplateId || Constant.templateId.blank;
+
+					this.load();
+
+					if (onTypeChange) {
+						onTypeChange(type.id);
 					};
-
-					window.setTimeout(() => {
-						data.typeId = item.id;
-						data.templateId = type.defaultTemplateId || Constant.templateId.blank;
-						this.load();
-
-						if (onTypeChange) {
-							onTypeChange(item.id);
-						};
-					}, type.isInstalled ? 0 : 50);
 				},
 			}
 		});

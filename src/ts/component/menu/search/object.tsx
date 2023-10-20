@@ -245,10 +245,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, label, canAdd, addParam } = data;
+		const length = this.items.length;
 
 		let items = [].concat(this.items);
-		const length = items.length;
-
+		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};

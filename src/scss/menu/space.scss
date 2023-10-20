@@ -42,7 +42,7 @@
 				background-repeat: no-repeat; margin: 0px 0px 26px 0px; transition: all 0.2s $easeInQuint; transform-origin: 50% 100%;
 			}
 
-			.item.space.hover:not(.isActive) {
+			.item.space.hover {
 				.iconWrap { transform: scale(1.06, 1.06); }
 			}
 			.item.space.isActive {
