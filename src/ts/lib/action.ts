@@ -543,7 +543,7 @@ class Action {
 			data: {
 				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
 				text: translate('spaceDeleteWarningText'),
-				textConfirm: translate('commonRemove'),
+				textConfirm: translate('commonDelete'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
