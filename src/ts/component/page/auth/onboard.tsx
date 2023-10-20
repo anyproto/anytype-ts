@@ -419,7 +419,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.configSet(message.account.config, false);
 
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Storage.set('timeRegister', UtilDate.now());
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 
 					if (callBack) {

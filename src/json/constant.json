@@ -72,7 +72,7 @@
 
 	"defaultRelationKeys": [ 
 		"id", "spaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
-		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId", "identityProfileLink"
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId", "identityProfileLink", "createdDate"
 	],
 
 	"sidebarRelationKeys": [

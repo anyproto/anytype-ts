@@ -355,9 +355,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const { targetBlockId } = child.content;
-		const sorts = [];
+		const space = UtilObject.getSpaceview();
+ 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
@@ -371,7 +371,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case Constant.widgetId.recentEdit: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: timeRegister + 60 });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 60 });
 				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 				break;
 			};

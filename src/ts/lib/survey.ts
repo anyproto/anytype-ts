@@ -73,10 +73,15 @@ class Survey {
 		return Storage.getSurvey(type).complete;
 	};
 
+	getTimeRegister (): number {
+		const profile = UtilObject.getProfile();
+		return Number(profile?.createdDate) || 0;
+	};
+
 	checkPmf () {
 		const time = UtilDate.now();
 		const obj = Storage.getSurvey(I.SurveyType.Pmf);
-		const timeRegister = Number(Storage.get('timeRegister')) || 0;
+		const timeRegister = this.getTimeRegister();
 		const lastCompleted = Number(obj.time || Storage.get('lastSurveyTime')) || 0;
 		const lastCanceled = Number(obj.time || Storage.get('lastSurveyCanceled')) || 0;
 		const week = 86400 * 7;
@@ -100,7 +105,7 @@ class Survey {
 	};
 
 	checkRegister () {
-		const timeRegister = Number(Storage.get('timeRegister')) || 0;
+		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(I.SurveyType.Register);
 		const surveyTime = timeRegister && ((UtilDate.now() - 86400 * 7 - timeRegister) > 0);
 
@@ -118,7 +123,7 @@ class Survey {
 	};
 
 	checkObject () {
-		const timeRegister = Number(Storage.get('timeRegister')) || 0;
+		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(I.SurveyType.Object);
 
 		if (isComplete || !timeRegister) {
