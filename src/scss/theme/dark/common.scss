@@ -87,7 +87,7 @@ html.themeDark {
 		}
 
         .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
-		.dot { animation-name: dots-dark; }
+		.dot { animation-name: dots-dark; border-color: $colorControlAccent; }
     }
 
     .mediaAudio {
