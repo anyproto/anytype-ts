@@ -114,17 +114,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onKeyDown (e: any) {
+		const cmd = keyboard.cmdKey();
 		const length = this.ids.length;
-		if (!length) {
-			return;
-		};
 
-		keyboard.shortcut('escape', e, () => {
-			this.ids = [];
-			this.refGraph?.send('onSetSelected', { ids: [] });
+		keyboard.shortcut(`${cmd}+f`, e, () => {
+			$('#button-header-search').trigger('click');
 		});
 
-		if (this.ids.length) {
+		if (length) {
+			keyboard.shortcut('escape', e, () => {
+				this.ids = [];
+				this.refGraph?.send('onSetSelected', { ids: [] });
+			});
+
 			keyboard.shortcut('backspace, delete', e, () => {
 				Action.archive(this.ids, () => {
 					this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
