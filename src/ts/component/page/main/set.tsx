@@ -229,6 +229,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
+		const node = $(this.node);
 		const { selection } = dataset || {};
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
@@ -238,6 +239,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (keyboard.isFocused) {
 			return;
 		};
+
+
+		keyboard.shortcut(`${cmd}+f`, e, () => {
+			e.preventDefault();
+
+			node.find('#dataviewControls .filter .icon.search').trigger('click');
+		});
 
 		keyboard.shortcut(`${cmd}+a`, e, () => {
 			e.preventDefault();
