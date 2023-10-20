@@ -347,7 +347,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 								UtilObject.openPopup({ id: message.targetId }, {
 									onClose: () => {
 										this.addNewNode(message.targetId, target => {
