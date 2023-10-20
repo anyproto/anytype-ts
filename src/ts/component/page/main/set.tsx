@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore } from 'Store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
@@ -240,7 +240,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
-
 		keyboard.shortcut(`${cmd}+f`, e, () => {
 			e.preventDefault();
 
@@ -254,7 +253,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			selection.set(I.SelectType.Record, records);
 		});
 
-		if (count) {
+		if (count && !menuStore.isOpen()) {
 			keyboard.shortcut('backspace, delete', e, () => {
 				e.preventDefault();
 				Action.archive(ids);
