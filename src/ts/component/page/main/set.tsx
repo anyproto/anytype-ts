@@ -129,8 +129,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		this.unbind();
 
-		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
-		container.on('scroll.set' + namespace, e => this.onScroll());
+		win.on(`keydown.set${namespace}`, e => this.onKeyDown(e));
+		container.on(`scroll.set${namespace}`, () => this.onScroll());
 	};
 
 	checkDeleted () {
@@ -229,16 +229,16 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
+		if (keyboard.isFocused) {
+			return;
+		};
+
 		const node = $(this.node);
 		const { selection } = dataset || {};
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const count = ids.length;
 		const rootId = this.getRootId();
-
-		if (keyboard.isFocused) {
-			return;
-		};
 
 		keyboard.shortcut(`${cmd}+f`, e, () => {
 			e.preventDefault();
