@@ -769,11 +769,6 @@ class Keyboard {
 			horizontal: I.MenuDirection.Center,
 			vertical: I.MenuDirection.Top,
 			offsetY: -12,
-			onOpen: (context) => {
-				if (shortcut) {
-					context.ref.onArrow(1);
-				};
-			},
 			data: {
 				shortcut,
 			}
