@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -521,6 +521,51 @@ class Action {
 		});
 
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
+	};
+
+	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
+		const { account } = authStore;
+		const space = UtilObject.getSpaceview();
+		const deleted = UtilObject.getSpaceviewBySpaceId(id);
+
+		if (!deleted) {
+			return;
+		};
+
+		if (space.id == deleted.id) {
+			UtilRouter.switchSpace(account.info.accountSpaceId, '', () => this.removeSpace(id, route, callBack));
+			return;
+		};
+
+		analytics.event('ClickDeleteSpace', { route });
+
+		popupStore.open('confirm', {
+			data: {
+				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
+				text: translate('spaceDeleteWarningText'),
+				textConfirm: translate('commonRemove'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
+
+					C.SpaceDelete(id, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						if (callBack) {
+							callBack(message);
+						};
+
+						Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
+						analytics.event('DeleteSpace', { type: deleted.spaceType });
+					});
+				},
+				onCancel: () => {
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
+				}
+			},
+		});
 	};
 
 };

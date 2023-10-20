@@ -29,6 +29,14 @@ class UtilObject {
 		return detailStore.get(Constant.subId.space, blockStore.spaceview);
 	};
 
+	getSpaceviewBySpaceId (id: string) {
+		const subId = Constant.subId.space;
+
+		console.log('getSpaceviewBySpaceId', id);
+
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
+	};
+
 	getSpaceDashboard () {
 		const space = this.getSpaceview();
 		const id = space.spaceDashboardId;

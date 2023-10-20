@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, translate, Action } from 'Lib';
+import { authStore, dbStore, detailStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -39,6 +39,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)} 
 					onMouseLeave={e => setHover()}
+					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
 						<IconObject object={item} size={96} forceLetter={true} />
@@ -146,6 +147,36 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+	};
+
+	onContextMenu (e: any, item: any) {
+		const { param } = this.props;
+		const { classNameWrap } = param;
+		const { account } = authStore;
+
+		if (item.targetSpaceId == account.info.accountSpaceId) {
+			return;
+		};
+
+		menuStore.open('select', {
+			classNameWrap,
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				options: [
+					{ id: 'remove', icon: 'remove', name: translate('commonDelete') }
+				],
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'remove':
+							Action.removeSpace(item.targetSpaceId, 'Navigation');
+							break;
+					};
+				},
+			},
+		});
 	};
 
 	onArrow (dir: number) {

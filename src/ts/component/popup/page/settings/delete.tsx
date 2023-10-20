@@ -48,7 +48,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			return;
 		};
 
-		C.AccountDelete(false, (message: any) => {
+		C.AccountDelete((message: any) => {
 			if (message.error.code) {
 				return;
 			};
