@@ -92,7 +92,7 @@ html.bodyAuthDeleted {
 	.iconObject { margin-bottom: 12px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
-	.button { width: 192px; }
+	.button { width: 192px; @include text-common; }
 	.button.disabled { color: $colorTextTertiary }
 	
 	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
@@ -118,14 +118,16 @@ html.bodyAuthDeleted {
 }
 
 .pageIndexIndex, .pageAuthSelect {
-	.frame { width: 830px; }
-	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
-	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorTextSecondary; }
+	.frame { width: 464px; }
+	.title { font-size: 58px; line-height: 55px; letter-spacing: -3.77px; font-weight: 300; margin-bottom: 5px; color: $colorPrimary; }
+	.title.grey { font-family: 'Riccione'; font-size: 64px; line-height: 55px; letter-spacing: -1.74px; font-weight: 300; margin-bottom: 22px; color: #6b6b6b; }
+	.label { @include text-paragraph; margin: 0px auto 22px auto; color: $colorTextSecondary; }
+
 	.footer {
 		.label.disclaimer { color: $colorTextTertiary; }
 	}
 
-	@media (max-width: 862px) {
+	@media (max-width: 464px) {
 		.frame { width: calc(100% - 32px); }
 	}
 }
