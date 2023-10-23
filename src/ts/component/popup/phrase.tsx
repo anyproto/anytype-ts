@@ -7,29 +7,29 @@ class PopupPhrase extends React.Component<I.Popup> {
 	render () {
 		return (
 			<div>
-				<Title text="What is Recovery Phrase?" />
+				<Title text={translate('popupPhraseTitle1')} />
 				<div className="rows">
 					<div className="row">
 						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':game_die:' }} />
-						<Label text="Recovery Phrase is 12 random words from which your account is magically generated on this device." />
+						<Label text={translate('popupPhraseLabel1')} />
+					</div>
+					<div className="row">
+						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':old_key:' }} />
+						<Label text={translate('popupPhraseLabel2')} />
 					</div>
 					<div className="row">
 						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':point_up:' }} />
-						<Label text="Who knows combination of these words – owns the account. Now, you are the only person in the world who can access it." />
-					</div>
-					<div className="row">
-						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':point_up:' }} />
-						<Label text="That is why it is essential to keep Recovery Phrase secure! You own - you responsible! " />
+						<Label text={translate('popupPhraseLabel3')} />
 					</div>
 				</div>
 
-				<Title text="How to save my phrase?" />
+				<Title className="c2" text={translate('popupPhraseTitle2')} />
 				<div className="columns">
 					<div className="column">
-						<li>The easiest way to store your Recovery Phrase is to save it in your password manager.</li>
+						<li>{translate('popupPhraseLabel4')}</li>
 					</div>
 					<div className="column">
-						<li>The most secure way is to write it down on paper and keep it offline, in a safe and secure place.</li>
+						<li>{translate('popupPhraseLabel5')}</li>
 					</div>
 				</div>
 

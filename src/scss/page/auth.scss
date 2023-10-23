@@ -164,6 +164,7 @@ html.bodyAuthDeleted {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-header3; color: $colorPrimary; }
 	.label { @include text-paragraph; color: $colorTextSecondary; }
+
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 	.bottom {
 		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
@@ -204,6 +205,7 @@ html.bodyAuthDeleted {
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
+		.icon.copy { display: block; }
 	}
 
 	.inputWrapper {

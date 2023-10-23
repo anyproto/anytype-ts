@@ -953,6 +953,14 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
+	"popupPhraseTitle1": "What is Recovery Phrase?",
+	"popupPhraseTitle2": "How to save my phrase?",
+	"popupPhraseLabel1": "Recovery Phrase is 12 random words from which your account is magically generated on this device.",
+	"popupPhraseLabel2": "Who knows combination of these words – owns the account. Now, you are the only person in the world who can access it.",
+	"popupPhraseLabel3": "That is why it is essential to keep Recovery Phrase secure! You own - you responsible!",
+	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
+	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 

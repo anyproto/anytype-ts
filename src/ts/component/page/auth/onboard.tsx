@@ -31,10 +31,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onShowPhrase = this.onShowPhrase.bind(this);
 		this.onNext = this.onNext.bind(this);
 		this.onBack = this.onBack.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 		this.onAccountPath = this.onAccountPath.bind(this);
+		this.onShowPhrase = this.onShowPhrase.bind(this);
 	};
 
 	render () {
@@ -76,10 +77,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				content = (
 					<div className="animation" onClick={this.onCopy}>
 						<Phrase
-							ref={(ref) => (this.refPhrase = ref)}
+							ref={ref => this.refPhrase = ref}
 							value={authStore.phrase}
 							readonly={true}
 							isHidden={!phraseVisible}
+							onCopy={this.onCopy}
 						/>
 					</div>
 				);
@@ -111,8 +113,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>
 					<DotIndicator className="animation" index={stage} count={2} />
-					<Title className="animation" text={`authOnboard${Stage[stage]}Title`} />
-					<Label id="label" className="animation" text={`authOnboard${Stage[stage]}Label`} />
+					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
+					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
 					{content}
 
@@ -218,12 +220,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	onShowPhrase () {
-		const { stage } = this.state;
+		const { stage, phraseVisible } = this.state;
 
-		this.refPhrase.onToggle();
-		this.setState({ phraseVisible: true });
+		if (phraseVisible) {
+			this.onNext();
+		} else {
+			this.refPhrase.onToggle();
+			this.setState({ phraseVisible: true });
 
-		analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
+			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
+		};
 	};
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
