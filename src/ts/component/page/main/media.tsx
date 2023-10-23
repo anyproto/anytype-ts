@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, UtilCommon, Action, Renderer, UtilObject, translate } from 'Lib';
-import { blockStore, detailStore, commonStore } from 'Store';
+import { I, M, C, UtilCommon, Action, Renderer, UtilObject, translate, UtilRouter } from 'Lib';
+import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
 interface State {
@@ -182,7 +182,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		this.loading = true;
 		this.forceUpdate();
 
-		C.ObjectOpen(rootId, '', commonStore.space, (message: any) => {
+		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });

@@ -1,4 +1,4 @@
-import { C, UtilCommon, UtilData, Preview, analytics } from 'Lib';
+import { C, UtilCommon, UtilData, Preview, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -139,6 +139,10 @@ class UtilRouter {
 				}
 			});
 		});
+	};
+
+	getRouteSpaceId () {
+		return keyboard.getMatch()?.params?.spaceId || commonStore.space;
 	};
 
 };
