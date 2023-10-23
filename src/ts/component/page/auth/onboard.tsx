@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, Preview, keyboard, UtilObject, UtilRouter } from 'Lib';
-import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
+import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer } from 'Lib';
+import { authStore, commonStore, popupStore, menuStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
+import Constant from 'json/constant.json';
 
 type State = {
 	stage: Stage;
-	phraseCopied: boolean;
+	phraseVisible: boolean;
+	error: string;
 };
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
@@ -22,11 +24,21 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	state: State = {
 		stage: Stage.Void,
-		phraseCopied: false,
+		phraseVisible: false,
+		error: '',
+	};
+
+	constructor (props: I.PageComponent) {
+		super(props);
+
+		this.onShowPhrase = this.onShowPhrase.bind(this);
+		this.onNext = this.onNext.bind(this);
+		this.onBack = this.onBack.bind(this);
+		this.onAccountPath = this.onAccountPath.bind(this);
 	};
 
 	render () {
-		const { stage, phraseCopied } = this.state;
+		const { stage, phraseVisible, error } = this.state;
 		const { config } = commonStore;
 		const cnb = [ 'animation' ];
 
@@ -34,14 +46,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			cnb.push('disabled');
 		};
 
-		let text = this.getText('Submit');
 		let content = null;
 		let footer = null;
+		let buttons = null;
+		let more = null;
 
 		switch (stage) {
 			case Stage.Void: {
-				text = translate('commonNext');
-
 				content = (
 					<div className="inputWrapper animation">
 						<Input
@@ -54,13 +65,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						/>
 					</div>
 				);
+
+				buttons = <Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />;
 				break;
 			};
 
 			case Stage.Phrase: {
-				if (phraseCopied) {
-					text = translate('authOnboardGoApp');
-				};
+				const text = phraseVisible ? translate('authOnboardGoApp') : translate('authOnboardPhraseSubmit');
 
 				content = (
 					<div className="animation" onClick={this.onCopy}>
@@ -68,10 +79,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 							ref={(ref) => (this.refPhrase = ref)}
 							value={authStore.phrase}
 							readonly={true}
-							isHidden={!phraseCopied}
+							isHidden={!phraseVisible}
 						/>
 					</div>
 				);
+
+				buttons = (
+					<React.Fragment>
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
+						<Button color="blank" className="animation" text={translate('commonSkip')} onClick={this.onNext} />
+					</React.Fragment>
+				);
+
+				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
 
 				if (config.experimental) {
 					footer = (
@@ -91,15 +111,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>
 					<DotIndicator className="animation" index={stage} count={2} />
-					<Title className="animation" text={this.getText('Title')} />
-					<Label id="label" className="animation" text={this.getText('Label')} />
+					<Title className="animation" text={`authOnboard${Stage[stage]}Title`} />
+					<Label id="label" className="animation" text={`authOnboard${Stage[stage]}Label`} />
 
 					{content}
 
-					<div className="buttons">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onNext} />
-					</div>
+					<Error text={error} />
+
+					<div className="buttons">{buttons}</div>
+
+					{more}
 				</Frame>
+
+				{footer}
 
 				<CanvasWorkerBridge state={Stage.Void} />
 			</div>
@@ -142,23 +166,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.unbind();
 		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
-		tooltipPhrase.off('mouseenter mouseleave');
-		tooltipPhrase.on('mouseenter', () => this.onPhraseTooltip());
-		tooltipPhrase.on('mouseleave', () => Preview.tooltipHide());
+		tooltipPhrase.off('click').on('click', () => this.onPhraseTooltip());
 	};
 
-	getText = (name: string) => {
-		const { stage } = this.state;
-
-		return translate(`authOnboard${Stage[stage]}${name}`);
-	};
-
-	onKeyDown = (e) => {
+	onKeyDown (e) {
 		keyboard.shortcut('enter', e, this.onNext);
 	};
 
 	/** Guard to prevent illegal state change */
-	canMoveForward = (): boolean => {
+	canMoveForward (): boolean {
 		const { stage } = this.state;
 
 		if (this.isDelayed) {
@@ -173,52 +189,45 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Guard to prevent illegal state change */
-	canMoveBack = (): boolean => {
+	canMoveBack (): boolean {
 		return this.state.stage <= Stage.Phrase;
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
-	onNext = () => {
+	onNext () {
 		if (!this.canMoveForward()) {
 			return;
 		};
 
-		const { stage, phraseCopied } = this.state;
-
-		if (stage == Stage.Phrase && !phraseCopied) {
-			this.refPhrase.onToggle();
-			this.setState({ phraseCopied: true });
-			this.onCopy();
-
-			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
-			return;
-		};
+		const { stage } = this.state;
 
 		if (stage == Stage.Void) {
 			this.refNext.setLoading(true);
+
+			this.accountCreate(() => {
+				Animation.from(() => {
+					window.setTimeout(() => {
+						this.refNext.setLoading(false);
+						this.setState({ stage: stage + 1 });
+					}, 100);
+				});
+			});
+		} else {
+			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
 		};
+	};
 
-		const incrementOnboarding = (cb?) => {
-			this.setState({ stage: stage + 1 }, cb);
-		};
+	onShowPhrase () {
+		const { stage } = this.state;
 
-		Animation.from(() => {
-			this.refNext.setLoading(false);
+		this.refPhrase.onToggle();
+		this.setState({ phraseVisible: true });
 
-			if (stage == Stage.Void) {
-				this.accountUpdate(() => incrementOnboarding());
-				return;
-			};
-
-			if (stage == Stage.Phrase) {
-				UtilObject.openHome('route', { replace: true, animate: true });
-				return;
-			};
-		});
+		analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
 	};
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
-	onBack = () => {
+	onBack () {
 		if (!this.canMoveBack()) {
 			return;
 		};
@@ -233,42 +242,70 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.setState({ stage: stage - 1 });
 	};
 
-	accountUpdate = (callBack: () => void) => {
-		const { name } = authStore;
+	accountCreate (callBack?: () => void) {
+		this.refNext.setLoading(true);
 
-		UtilObject.setName(blockStore.profile, name, () => {
-			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
+		const { name, walletPath } = authStore;
+
+		C.WalletCreate(walletPath, (message) => {
+			if (message.error.code) {
+				this.setError(message.error.description);
+				return;
+			};
+
+			authStore.phraseSet(message.mnemonic);
+
+			UtilData.createSession((message) => {
+				if (message.error.code) {
+					this.setError(message.error.description);
+					return;
+				};
+
+				const { accountPath, phrase } = authStore;
+
+				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), (message) => {
+					if (message.error.code) {
+						this.setError(message.error.description);
+						return;
+					};
+
+					authStore.accountSet(message.account);
+					commonStore.configSet(message.account.config, false);
+					UtilData.onInfo(message.account.info);
+
+					C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
+
+					Renderer.send('keytarSet', message.account.id, phrase);
+					analytics.event('CreateAccount', { middleTime: message.middleTime });
+				});
+			});
 		});
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
-	onCopy = () => {
+	onCopy () {
 		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
-	onPhraseTooltip = () => {
-		const node = $(this.node);
-		const element = node.find('#tooltipPhrase');
-
-		Preview.tooltipShow({
-			delay: 150,
-			text: translate('authOnboardPhraseTooltip'),
-			element,
-			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Center,
-		});
+	onPhraseTooltip () {
+		popupStore.open('phrase', {});
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath = () => {
+	onAccountPath () {
 		menuStore.open('accountPath', {
 			element: '#accountPath',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			offsetY: -20,
 		});
+	};
+
+	setError (error: string) {
+		this.refNext.setLoading(false);
+		this.setState({ error });
 	};
 
 });

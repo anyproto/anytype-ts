@@ -21,24 +21,9 @@ html.bodyIndex, html.bodyAuth {
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: $colorPopUp; width: 542px; box-shadow: $shadow; }
-	#popupConfirm-innerWrap h1 { color: $colorPrimary; }
-	#popupConfirm-innerWrap {
-		.content { text-align: left; }
-
-		.button.disabled { color: $colorTextTertiary }
-
+	#popupPhrase-innerWrap {
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
-		
-		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
-		.button.blank:hover { background: $colorButtonBlankHover; }
-
-		h1 { font-size: 18px; margin-bottom: 16px; }
-		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
-		p { margin-bottom: 8px; }
-		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
-		ul.last { margin: 0px; }
 	}
 
 	.menus {
@@ -90,10 +75,11 @@ html.bodyAuthDeleted {
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
+	.moreInfo { @include text-small; color: $colorTextTertiary; margin: 16px auto 0px auto; width: 192px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; @include text-common; }
-	.button.disabled { color: $colorTextTertiary }
+	.button.disabled { color: $colorTextTertiary; }
 	
 	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
 	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }

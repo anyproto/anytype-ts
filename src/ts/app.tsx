@@ -141,6 +141,7 @@ import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
+import 'scss/popup/phrase.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/button.scss';

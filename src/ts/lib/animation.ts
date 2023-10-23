@@ -163,7 +163,10 @@ class Animation {
 	};
 
 	getDuration () {
-		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * 1000;
+		const blockLength = Math.max(0, $('.animation').length - 1);
+		const wordLength = Math.max(0, $('.animationWord').length - 1);
+
+		return (blockLength * Duration.Normal + wordLength * Duration.Word * WORD_DELAY_COEF) * 1000;
 	};
 
 };
