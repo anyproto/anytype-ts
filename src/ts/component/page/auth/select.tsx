@@ -19,7 +19,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 				<Frame>
 					<Title className="animation" text={translate('authSelectTitle')} />
 					<Title className="grey animation" text={translate('authSelectLabel1')} />
-					<Label className="animation" text={translate('authSelectLabel2')} />
+					<Label className="descr animation" text={translate('authSelectLabel2')} />
 
 					<div className="buttons">
 						<div className="animation">
