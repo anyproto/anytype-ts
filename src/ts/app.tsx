@@ -687,7 +687,7 @@ class App extends React.Component<object, State> {
 							};
 
 							case 'disable-spellcheck': {
-								Renderer.send('setLanguage', []);
+								Renderer.send('setSpellingLang', []);
 								break;
 							};
 						};

@@ -64,7 +64,7 @@ class WindowManager {
 
 		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 
-		Api.setLanguage(win, languages);
+		Api.setSpellingLang(win, languages);
 		Api.setZoom(win, zoom);
 
 		return win;
@@ -232,6 +232,10 @@ class WindowManager {
 		this.list.forEach(it => {
 			Util.send.apply(this, [ it ].concat(args));
 		});
+	};
+
+	reloadAll () {
+		this.list.forEach(it => it.webContents.reload());
 	};
 
 };
