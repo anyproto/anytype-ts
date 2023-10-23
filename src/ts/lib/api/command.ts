@@ -131,6 +131,16 @@ const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any
 	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
 
+// ---------------------- SPACE ---------------------- //
+
+const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.Delete.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceDelete.name, request, callBack);
+};
+
 // ---------------------- ACCOUNT ---------------------- //
 
 const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
@@ -167,12 +177,16 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.request(AccountStop.name, request, callBack);
 };
 
-const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Delete.Request();
-
-	request.setRevert(revert);
+const AccountDelete = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
 
 	dispatcher.request(AccountDelete.name, request, callBack);
+};
+
+const AccountRevertDeletion = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+
+	dispatcher.request(AccountRevertDeletion.name, request, callBack);
 };
 
 const AccountMove = (path: string, callBack?: (message: any) => void) => {
@@ -1782,12 +1796,15 @@ export {
 	WorkspaceObjectListRemove,
 	WorkspaceSetInfo,
 
+	SpaceDelete,
+
 	AccountCreate,
 	AccountRecover,
 	AccountRecoverFromLegacyExport,
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
+	AccountRevertDeletion,
 	AccountMove,
 
 	DebugTree,

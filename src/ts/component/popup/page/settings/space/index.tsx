@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -16,6 +16,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onDashboard = this.onDashboard.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
+		this.onDelete = this.onDelete.bind(this);
 	};
 
 	render () {
@@ -31,6 +32,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const limitUsage = String(UtilFile.size(bytesLimit));
 		const isRed = (percentageUsed >= 90) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
+		const canDelete = space.targetSpaceId != account.info.accountSpaceId;
 
 		let extend = null;
 		let createdDate = null;
@@ -219,6 +221,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							{createdDate}
 						</div>
 					</div>
+
+					{canDelete ? (
+						<div className="buttons">
+							<Button text={translate('commonDelete')} color="red c36" onClick={this.onDelete} />
+						</div>
+					) : ''}
 				</div>
 
 			</React.Fragment>
@@ -259,6 +267,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onUpload (hash: string) {
 		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	};
+
+	onDelete () {
+		Action.removeSpace(commonStore.space, 'Settings');
 	};
 
 	checkName (v: string): string {

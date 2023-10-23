@@ -321,6 +321,7 @@ class UtilData {
 				keys: this.spaceRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceAccountStatus', condition: I.FilterCondition.NotEqual, value: I.SpaceStatus.SpaceDeleted },
 				],
 				sorts: [
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -349,7 +350,7 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'targetSpaceId', 'spaceAccessibility', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccountStatus', 'spaceAccessibility', 'targetSpaceId', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {
