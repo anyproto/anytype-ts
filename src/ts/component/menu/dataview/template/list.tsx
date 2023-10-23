@@ -56,15 +56,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 						</div>
 					) : ''}
 
-					<div onClick={e => this.onClick(e, item)}>
-						<div className="scroller">
-							<div className="heading">
-								<div className="name">{translate('commonBlank')}</div>
-								<div className="featured" />
-							</div>
+					<div className="scroller">
+						<div className="heading">
+							<div className="name">{translate('commonBlank')}</div>
+							<div className="featured" />
 						</div>
-						<div className="border" />
 					</div>
+					<div className="border" />
 				</div>
 			);
 		};
@@ -301,12 +299,12 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			item.targetObjectType = typeId;
 		};
 
-		if (onSelect) {
-			onSelect(item);
-		};
-
 		if (item.id != Constant.templateId.new) {
 			data.templateId = item.id;
+		};
+
+		if (onSelect) {
+			onSelect(item);
 		};
 	};
 

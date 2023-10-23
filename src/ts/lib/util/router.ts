@@ -148,7 +148,7 @@ class UtilRouter {
 	};
 
 	getRouteSpaceId () {
-		return keyboard.getMatch()?.params?.spaceId || commonStore.space;
+		return commonStore.space;
 	};
 
 };

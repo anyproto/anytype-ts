@@ -654,8 +654,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			}, 200);
 		};
 
-		console.log(id, item);
-		
 		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;
