@@ -47,7 +47,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<Input
 							focusOnMount
 							type="text"
-							placeholder={translate('pageAuthOnboardEnterYourName')}
+							placeholder={translate('defaultNamePage')}
 							value={authStore.name}
 							onKeyUp={(e, v) => authStore.nameSet(v)}
 							maxLength={255}
