@@ -4,10 +4,8 @@ import { I } from 'Lib';
 
 const Duration = {
 	Normal: 0.2,
-	Word: 0.1,
+	Word: 0.01,
 };
-
-const WORD_DELAY_COEF = 0.1;
 
 class Animation {
 
@@ -55,11 +53,11 @@ class Animation {
 
 	finish (callBack?: () => void) {
 		window.setTimeout(() => {
+			this.isAnimating = false;
+
 			if (callBack) {
 				callBack();
 			};
-
-			this.isAnimating = false;
 		}, this.getDuration());
 	};
 
@@ -129,7 +127,7 @@ class Animation {
 						el.append(' ');
 
 						this.applyCss(w, css, Duration.Word, delay);
-						delay += Duration.Word * WORD_DELAY_COEF;
+						delay += Duration.Word;
 					};
 
 					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
@@ -163,10 +161,10 @@ class Animation {
 	};
 
 	getDuration () {
-		const blockLength = Math.max(0, $('.animation').length - 1);
-		const wordLength = Math.max(0, $('.animationWord').length - 1);
+		const blockLength = $('.animation').length;
+		const wordLength = $('.animationWord').length;
 
-		return (blockLength * Duration.Normal + wordLength * Duration.Word * WORD_DELAY_COEF) * 1000;
+		return (blockLength * Duration.Normal + wordLength * Duration.Word) * 1000;
 	};
 
 };

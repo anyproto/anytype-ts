@@ -105,9 +105,10 @@ html.bodyAuthDeleted {
 
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 464px; }
-	.title { font-size: 58px; line-height: 55px; letter-spacing: -3.77px; font-weight: 300; margin-bottom: 5px; color: $colorPrimary; }
-	.title.grey { font-family: 'Riccione'; font-size: 64px; line-height: 55px; letter-spacing: -1.74px; font-weight: 300; margin-bottom: 22px; color: #6b6b6b; }
-	
+	.logo { 
+		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
+		background-size: contain;
+	}
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: $colorTextSecondary; width: 384px; }
 
 	.footer {

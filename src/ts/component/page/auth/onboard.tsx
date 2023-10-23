@@ -118,7 +118,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					{content}
 
-					<Error text={error} />
+					<Error className="animation" text={error} />
 
 					<div className="buttons">{buttons}</div>
 
@@ -242,10 +242,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Void) {
 			Animation.from(() => UtilRouter.go('/', { replace: true }));
-			return;
+		} else {
+			this.setState({ stage: stage - 1 });
 		};
-
-		this.setState({ stage: stage - 1 });
 	};
 
 	accountCreate (callBack?: () => void) {
