@@ -568,6 +568,16 @@ class Action {
 		});
 	};
 
+	setInterfaceLang (id: string) {
+		Renderer.send('setInterfaceLang', id);
+		analytics.event('SwitchInterfaceLanguage', { type: id });
+	};
+
+	setSpellingLang (id: string) {
+		Renderer.send('setSpellingLang', id);
+		analytics.event('AddSpellcheckLanguage', { type: id });
+	};
+
 };
 
 export default new Action();

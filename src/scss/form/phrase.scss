@@ -41,6 +41,7 @@ $colorErrorBackground: #240e07;
 	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
 	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
 	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
+	.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); display: none; }
 }
 .phraseWrapper.isReadonly {
 	#entry { display: none; }

@@ -57,7 +57,7 @@ export const linesAnimationDuration = 1;
 
 export const staggerDuration = 0.15; // Set the stagger duration (in seconds)
 
-export const bgColor = '#070707';
+export const bgColor = '#060606';
 
 export const timeToShow = 1;
 

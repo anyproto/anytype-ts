@@ -141,6 +141,7 @@ import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
+import 'scss/popup/phrase.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/button.scss';
@@ -363,7 +364,7 @@ class App extends React.Component<object, State> {
 	};
 
 	init () {
-		UtilCommon.init(history);
+		UtilRouter.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
@@ -686,7 +687,7 @@ class App extends React.Component<object, State> {
 							};
 
 							case 'disable-spellcheck': {
-								Renderer.send('setLanguage', []);
+								Renderer.send('setSpellingLang', []);
 								break;
 							};
 						};

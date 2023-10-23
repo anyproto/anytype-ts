@@ -45,10 +45,14 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<div className="animation">
 							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} isHidden={true} />
 						</div>
-						<div className="buttons animation">
-							<Button id="submit" type="input" text={translate('authLoginSubmit')} />
+						<div className="buttons">
+							<div className="animation">
+								<Button id="submit" type="input" text={translate('authLoginSubmit')} />
+							</div>
 
-							<div className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</div>
+							<div className="animation">
+								<div className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</div>
+							</div>
 						</div>
 					</form>
 				</Frame>

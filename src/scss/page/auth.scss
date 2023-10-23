@@ -21,24 +21,9 @@ html.bodyIndex, html.bodyAuth {
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: $colorPopUp; width: 542px; box-shadow: $shadow; }
-	#popupConfirm-innerWrap h1 { color: $colorPrimary; }
-	#popupConfirm-innerWrap {
-		.content { text-align: left; }
-
-		.button.disabled { color: $colorTextTertiary }
-
+	#popupPhrase-innerWrap {
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
-		
-		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
-		.button.blank:hover { background: $colorButtonBlankHover; }
-
-		h1 { font-size: 18px; margin-bottom: 16px; }
-		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
-		p { margin-bottom: 8px; }
-		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
-		ul.last { margin: 0px; }
 	}
 
 	.menus {
@@ -90,10 +75,11 @@ html.bodyAuthDeleted {
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
+	.moreInfo { @include text-small; color: $colorTextTertiary; margin: 16px auto 0px auto; width: 192px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
-	.button { width: 192px; }
-	.button.disabled { color: $colorTextTertiary }
+	.button { width: 192px; @include text-common; }
+	.button.disabled { color: $colorTextTertiary; }
 	
 	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
 	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
@@ -118,14 +104,18 @@ html.bodyAuthDeleted {
 }
 
 .pageIndexIndex, .pageAuthSelect {
-	.frame { width: 830px; }
-	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
-	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorTextSecondary; }
+	.frame { width: 464px; }
+	.logo { 
+		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
+		background-size: contain; margin: 0px 0px 22px 0px;
+	}
+	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: $colorTextSecondary; width: 384px; }
+
 	.footer {
 		.label.disclaimer { color: $colorTextTertiary; }
 	}
 
-	@media (max-width: 862px) {
+	@media (max-width: 464px) {
 		.frame { width: calc(100% - 32px); }
 	}
 }
@@ -173,8 +163,9 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { @include text-description; color: $colorPrimary; }
-	.label { color: $colorTextSecondary; }
+	.title { @include text-header3; color: $colorPrimary; }
+	.label { @include text-paragraph; color: $colorTextSecondary; }
+
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 	.bottom {
 		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
@@ -209,48 +200,19 @@ html.bodyAuthDeleted {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorTextSecondary; color: black; }
-	.questionMark:hover { background-color: $colorPrimary; }
+	.tooltipLink { color: $colorPrimary; }
+	.tooltipLink:hover { text-decoration: underline; }
 
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
+		.icon.copy { display: block; }
 	}
 
 	.inputWrapper {
 		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
 		.input::placeholder { color: $colorTextTertiary !important; }
-	}
-
-	.soulContent { position: relative; width: 100px; margin-top: 28px; }
-	.soulContent {
-		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
-		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
-		.account { z-index: 2; }
-		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
-		
-		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorBgPrimary; }
-		.line.left { right: 50%; }
-		.line.right { left: 50%; }
-		.iconObject { margin: 0; }
-		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 120px; color: $colorPrimary; }
-	}
-
-	.soulContent.soulCreating {
-		.iconObject { background: $colorBgPrimary; box-shadow: 0px 0px 0px 0px $colorBgPrimary; animation: pulse 1.5s infinite; }
-
-		@keyframes pulse {
-			0% { transform: scale(1); }
-			70% { transform: scale(1.1); }
-			100% { transform: scale(1); }
-		}
-	}
-
-	.soulContent.spaceCreating {
-		.account { transform: translateX(-70px); }
-		.space { transform: translateX(70px); opacity: 1; }
-		.line { width: 70px; }
 	}
 }
 

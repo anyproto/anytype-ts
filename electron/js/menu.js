@@ -316,7 +316,7 @@ class MenuManager {
 		for (const key of Util.enabledLangs()) {
 			langMenu.push({
 				label: Locale[key], type: 'checkbox', checked: key == lang,
-				click: () => Api.changeInterfaceLang(this.win, key)
+				click: () => Util.send(this.win, 'commandGlobal', 'interfaceLang', key)
 			});
 		};
 
