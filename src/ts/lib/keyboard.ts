@@ -579,6 +579,11 @@ class Keyboard {
 				break;
 			};
 
+			case 'interfaceLang': {
+				Action.setInterfaceLang(arg);
+				break;
+			};
+
 		};
 	};
 

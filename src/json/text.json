@@ -109,6 +109,7 @@
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
 	"commonTemplates": "Templates",
+	"commonSkip": "Skip",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -266,10 +267,9 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectTitle": "the everything app",
-	"authSelectLabel": "For those who celebrate trust &amp; autonomy. Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "Login",
-	"authSelectSignup": "Join",
+	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
+	"authSelectLogin": "I already have one",
+	"authSelectSignup": "Generate new account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSelfHost": "Self-host",
@@ -297,26 +297,16 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardSubmit": "Next",
-	"authOnboardGoAhead": "Go ahead",
-	"authOnboardMoreInfo": "More info",
+	"authOnboardGoApp": "Go to the app",
 	"authOnboardAccountDataLocation": "Account data location",
-	"authOnboardVoidTitle": "This is the Void",
-	"authOnboardVoidLabel": "It is an encrypted location for everything you create. Everything is stored on your device, and backed up to the distributed network.",
-	"authOnboardPhraseTitle": "End-to-end Encryption",
-	"authOnboardPhraseLabel": "Your data is encrypted by the Key below - your secret Recovery phrase. Store it securely. This is the only way to login and access your Void. <span id='questionMarkPhrase' class='questionMark'>?<\/span>",
-	"authOnboardPhraseTooltip": "<b>How do I protect my recovery phrase?<\/b><ul><li>If you have system password storage, this will be done automatically when you create your account.<\/li><li>You can keep a copy inside your password manager, if you use one.<\/li><li>Writing it down and keeping it in a safe, secure place is another good option.<\/li><\/ul>",
-	"authOnboardPhraseMoreInfoPopupContent": "<b>No passwords here: Anytype uses a recovery phrase to protect your account and encrypt your data<\/b><ul><li>The phrase is a randomly generated 12-word mnemonic from your device (not our servers).<\/li><li>No one can access your account without your recovery phrase.<\/li><li>This phrase ensures that you are the sole owner of your data.<\/li><\/ul><b>Think of it like a key: If you lose your recovery phrase, there is no way to get it back<\/b><ul><li>To protect your privacy, Anytype is not able to store, access, reset, or change your recovery phrase, ie: only you hold the key.<\/li><li>Anytype will never reach out to ask for your recovery phrase.<\/li><li>Sharing the phrase is equivalent to sharing ownership of your account.<\/li><li>The ordering of the words in your recovery phrase matters.<\/li><\/ul>",
-	"authOnboardPhraseSubmit": "Show and copy",
-	"authOnboardOfflineTitle": "Offline-first application",
-	"authOnboardOfflineLabel": "Your data is kept locally on your device. A connection to the Internet is needed only to synchronize your data across devices or back it up to the distributed network",
-	"authOnboardOfflineSubmit": "Establish Connection",
-	"authOnboardSoulTitle": "Anytype Identity",
-	"authOnboardSoulLabel": "Great! As a last step, let's create your Identity <span id='questionMarkAccount' class='questionMark'>?<\/span> and enter your name. Don't worry \u2013 you can always change the name later.",
-	"authOnboardAccountTooltip": "Anytype uses asymmetric keys to verify data ownership. Your data, created in the system, is signed with your private key and can be authenticated by others using your public key, which acts as your identity.",
-	"authOnboardSoulSubmit": "Go to the app",
-	"authOnboardSoulCreatingTitle": "Creating your Identity...",
-	"authOnboardSpaceCreatingTitle": "Setting up your Personal space...",
+	"authOnboardMoreInfo": "You can find Recovery Phrase later in Anytype settings",
+
+	"authOnboardVoidTitle": "Set your name",
+	"authOnboardVoidLabel": "This is how you will appear in the app",
+
+	"authOnboardPhraseTitle": "Save your Recovery Phrase",
+	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Show Recovery Phrase",
 
 	"usecase0Title": "Empty",
 	"usecase0Label": "Just a blank canvas",
@@ -331,7 +321,6 @@
 
 	"pageMainUsecaseTitle": "How would you like to start?",
 	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
-	"pageMainUsecaseSkip": "Skip",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
@@ -367,7 +356,6 @@
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
 
 	"pageAuthOnboardAccountDataLocation": "Account Data Location",
-	"pageAuthOnboardEnterYourName": "Enter your name",
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
@@ -962,6 +950,14 @@
 	"popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
+
+	"popupPhraseTitle1": "What is Recovery Phrase?",
+	"popupPhraseTitle2": "How to save my phrase?",
+	"popupPhraseLabel1": "Recovery Phrase is 12 random words from which your account is magically generated on this device.",
+	"popupPhraseLabel2": "Who knows combination of these words – owns the account. Now, you are the only person in the world who can access it.",
+	"popupPhraseLabel3": "That is why it is essential to keep Recovery Phrase secure! You own - you responsible!",
+	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
+	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",

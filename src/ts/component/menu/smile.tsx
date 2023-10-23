@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, UtilCommon, UtilSmile, UtilMenu, UtilObject, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -378,6 +378,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
+
 		const ret: any[] = [];
 		const length = sections.reduce((res: number, section: any) => { 
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
@@ -652,7 +653,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.onSkin(e, n, id);
 			}, 200);
 		};
-		
+
 		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;

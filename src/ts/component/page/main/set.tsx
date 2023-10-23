@@ -229,10 +229,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
-		if (keyboard.isFocused) {
-			return;
-		};
-
 		const node = $(this.node);
 		const { selection } = dataset || {};
 		const cmd = keyboard.cmdKey();
@@ -246,19 +242,21 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			node.find('#dataviewControls .filter .icon.search').trigger('click');
 		});
 
-		keyboard.shortcut(`${cmd}+a`, e, () => {
-			e.preventDefault();
-
-			const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
-			selection.set(I.SelectType.Record, records);
-		});
-
-		if (count && !menuStore.isOpen()) {
-			keyboard.shortcut('backspace, delete', e, () => {
+		if (!keyboard.isFocused) {
+			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
-				Action.archive(ids);
-				selection.clear();
+
+				const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+				selection.set(I.SelectType.Record, records);
 			});
+
+			if (count && !menuStore.isOpen()) {
+				keyboard.shortcut('backspace, delete', e, () => {
+					e.preventDefault();
+					Action.archive(ids);
+					selection.clear();
+				});
+			};
 		};
 	};
 

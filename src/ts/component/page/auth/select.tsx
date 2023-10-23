@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Header, Footer } from 'Component';
+import { Frame, Title, Label, Button, Header, Footer, Error } from 'Component';
 import { I, UtilRouter, translate, Animation, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -17,8 +17,8 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 			<div>
 				<Header {...this.props} className="animation" component="authIndex" />
 				<Frame>
-					<Title className="animation" text={translate('authSelectTitle')} />
-					<Label className="animation" text={translate('authSelectLabel')} />
+					<div className="logo animation" />
+					<Label className="descr animation" text={translate('authSelectLabel')} />
 
 					<div className="buttons">
 						<div className="animation">
@@ -50,7 +50,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	onRegister () {
 		Animation.from(() => UtilRouter.go('/auth/onboard', {}));
 	};
-	
+
 });
 
 export default PageAuthSelect;

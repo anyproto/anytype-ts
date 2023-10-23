@@ -17,6 +17,7 @@ import PopupPage from './page';
 import PopupExport from './export';
 import PopupMigration from './migration';
 import PopupPin from './pin';
+import PopupPhrase from './phrase';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -50,6 +51,7 @@ class Popup extends React.Component<I.Popup> {
 			export:		 PopupExport,
 			migration:	 PopupMigration,
 			pin:		 PopupPin,
+			phrase:		 PopupPhrase,
 		};
 		
 		const popupId = this.getId();
