@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer } from 'Lib';
-import { authStore, commonStore, popupStore, menuStore } from 'Store';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject } from 'Lib';
+import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
 import Constant from 'json/constant.json';
@@ -41,7 +41,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	render () {
 		const { stage, phraseVisible, error } = this.state;
 		const { config } = commonStore;
-		const cnb = [ 'animation' ];
+		const cnb = [];
 
 		if (!this.canMoveForward()) {
 			cnb.push('disabled');
@@ -67,7 +67,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					</div>
 				);
 
-				buttons = <Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />;
+				buttons = (
+					<div className="animation">
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />
+					</div>
+				);
 				break;
 			};
 
@@ -88,8 +92,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				buttons = (
 					<React.Fragment>
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
-						<Button color="blank" className="animation" text={translate('commonSkip')} onClick={this.onNext} />
+						<div className="animation">
+							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
+						</div>
+						<div className="animation">
+							<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
+						</div>
 					</React.Fragment>
 				);
 
@@ -202,18 +210,22 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		const { stage } = this.state;
+		const { account } = authStore;
+		const next = () => {
+			Animation.from(() => {
+				this.refNext.setLoading(false);
+				this.setState({ stage: stage + 1 });
+			});
+		};
 
 		if (stage == Stage.Void) {
 			this.refNext.setLoading(true);
 
-			this.accountCreate(() => {
-				Animation.from(() => {
-					window.setTimeout(() => {
-						this.refNext.setLoading(false);
-						this.setState({ stage: stage + 1 });
-					}, 100);
-				});
-			});
+			if (account) {
+				this.accountUpdate(() => next());
+			} else {
+				this.accountCreate(() => next());
+			};
 		} else {
 			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
 		};
@@ -284,6 +296,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 				});
 			});
+		});
+	};
+
+	accountUpdate = (callBack?: () => void): void => {
+		const { name } = authStore;
+
+		UtilObject.setName(blockStore.profile, name, () => {
+			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
 		});
 	};
 
