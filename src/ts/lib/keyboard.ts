@@ -351,7 +351,7 @@ class Keyboard {
 				});
 			};
 		} else {
-			const history = UtilCommon.history;
+			const history = UtilRouter.history;
 
 			let prev = history.entries[history.index - 1];
 
@@ -392,7 +392,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			UtilCommon.history.goForward();
+			UtilRouter.history.goForward();
 		};
 
 		menuStore.closeAll();
@@ -402,7 +402,7 @@ class Keyboard {
 	checkBack (): boolean {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
-		const history = UtilCommon.history;
+		const history = UtilRouter.history;
 
 		if (!history) {
 			return;
@@ -437,7 +437,7 @@ class Keyboard {
 
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
-		const history = UtilCommon.history;
+		const history = UtilRouter.history;
 
 		if (!history) {
 			return;

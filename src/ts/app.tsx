@@ -363,7 +363,7 @@ class App extends React.Component<object, State> {
 	};
 
 	init () {
-		UtilCommon.init(history);
+		UtilRouter.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();

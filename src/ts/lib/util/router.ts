@@ -1,4 +1,4 @@
-import { C, UtilCommon, UtilData, Preview, analytics } from 'Lib';
+import { C, UtilCommon, UtilData, Preview, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -11,6 +11,12 @@ type RouteParam = {
 };
 
 class UtilRouter {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 
 	getParam (path: string): any {
 		const route = path.split('/');
@@ -74,7 +80,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (!animate) {
-				UtilCommon.history[method](route); 
+				this.history[method](route); 
 				return;
 			};
 
@@ -88,7 +94,7 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				UtilCommon.history[method](route);
+				this.history[method](route);
 
 				if (onRouteChange) {
 					onRouteChange();
@@ -139,6 +145,10 @@ class UtilRouter {
 				}
 			});
 		});
+	};
+
+	getRouteSpaceId () {
+		return keyboard.getMatch()?.params?.spaceId || commonStore.space;
 	};
 
 };
