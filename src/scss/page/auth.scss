@@ -21,6 +21,10 @@ html.bodyIndex, html.bodyAuth {
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
+	.popup { 
+		.innerWrap { background: $colorPopUp; box-shadow: $shadow; }
+	}
+
 	#popupPhrase-innerWrap {
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
