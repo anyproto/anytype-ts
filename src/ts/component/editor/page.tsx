@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { I, C, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -220,7 +220,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(this.id, '', commonStore.space, (message: any) => {
+		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};

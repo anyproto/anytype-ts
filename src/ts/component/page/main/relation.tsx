@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilData, translate, UtilDate } from 'Lib';
+import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 
@@ -112,7 +111,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.loading = true;
 		this.forceUpdate();
 		
-		C.ObjectOpen(rootId, '', commonStore.space, (message: any) => {
+		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });

@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'Store';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, UtilRouter } from 'Lib';
+import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
@@ -161,7 +161,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(rootId, '', commonStore.space, (message: any) => {
+		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
