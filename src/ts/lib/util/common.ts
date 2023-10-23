@@ -7,12 +7,6 @@ import Text from 'json/text.json';
 
 class UtilCommon {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-
 	sprintf (...args: any[]) {
 		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		const a = args;

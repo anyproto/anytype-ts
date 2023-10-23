@@ -12,6 +12,12 @@ type RouteParam = {
 
 class UtilRouter {
 
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
+
 	getParam (path: string): any {
 		const route = path.split('/');
 		if (!route.length) {
@@ -74,7 +80,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (!animate) {
-				UtilCommon.history[method](route); 
+				this.history[method](route); 
 				return;
 			};
 
@@ -88,7 +94,7 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				UtilCommon.history[method](route);
+				this.history[method](route);
 
 				if (onRouteChange) {
 					onRouteChange();
