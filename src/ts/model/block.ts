@@ -122,6 +122,10 @@ class Block implements I.Block {
 		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType() && !this.isTableRow();
 	};
 
+	canBecomeWidget (): boolean {
+		return this.isLink() || this.isBookmark() || this.isFile() || this.isText();
+	};
+
 	isSystem () {
 		return this.isPage() || this.isLayout();
 	};
@@ -440,6 +444,9 @@ class Block implements I.Block {
 
 	getTargetObjectId () {
 		switch (this.type) {
+			case I.BlockType.File: {
+				return this.content.hash;
+			};
 			case I.BlockType.Link: {
 				return this.content.targetBlockId;
 			};
@@ -447,7 +454,6 @@ class Block implements I.Block {
 				return this.content.targetObjectId;
 			};
 		};
-
 	};
 
 };

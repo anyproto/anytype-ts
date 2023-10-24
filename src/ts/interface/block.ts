@@ -120,6 +120,7 @@ export interface Block {
 	canTurnList?(): boolean;
 	canTurnObject?(): boolean;
 	canCreateBlock?(): boolean;
+	canBecomeWidget?(): boolean;
 
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
