@@ -169,6 +169,11 @@ class DetailStore {
 			object.name = object.snippet;
 		};
 
+		if (object.id == UtilObject.getIdentityId()) {
+			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
+			object.type = type ? type.id : object.type;
+		};
+
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');
 		};
