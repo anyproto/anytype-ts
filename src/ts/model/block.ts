@@ -123,7 +123,7 @@ class Block implements I.Block {
 	};
 
 	canBecomeWidget (): boolean {
-		return this.isLink() || this.isBookmark() || this.isFile();
+		return this.isLink() || this.isBookmark() || this.isFile() || this.isText();
 	};
 
 	isSystem () {

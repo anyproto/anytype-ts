@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -304,6 +304,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const { rootId, dropType, withAlt } = data;
 		const ids = data.ids || [];
+
+		if (!ids.length) {
+			return;
+		};
+
 		const contextId = rootId;
 
 		let targetContextId = keyboard.getRootId();
@@ -443,9 +448,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			case I.DropType.Widget: {
 
-				const layout = I.WidgetLayout.Tree;
-				const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
-
+				let layout = I.WidgetLayout.Tree;
+				let limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
 				let create = false;
 				let objectId = '';
 
@@ -453,13 +457,39 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				switch (dropType) {
 					case I.DropType.Block: {
 						const blocks = blockStore.getBlocks(contextId, it => ids.includes(it.id) && it.canBecomeWidget());
-
 						if (!blocks.length) {
 							break;
 						};
 
-						objectId = blocks[0].getTargetObjectId();
-						create = true;
+						const block = blocks[0];
+						if (block.isFile() || block.isBookmark()) {
+							layout = I.WidgetLayout.Link;
+							limit = 0;
+						};
+
+						if (block.isText()) {
+							const marks = block.content.marks.filter(it => [ I.MarkType.Object, I.MarkType.Mention ].includes(it.type));
+							if (!marks.length) {
+								break;
+							};
+
+							objectId = marks[0].param;
+						} else {
+							objectId = block.getTargetObjectId();
+						};
+
+						if (objectId) {
+							const object = detailStore.get(contextId, objectId);
+
+							console.log(object);
+
+							if (UtilObject.isFileLayout(object.layout)) {
+								layout = I.WidgetLayout.Link;
+								limit = 0;
+							};
+
+							create = true;
+						};
 						break;
 					};
 
@@ -478,7 +508,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						},
 					};
 
-					C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, I.WidgetLayout.Tree, limit, () => {
+					C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
 						analytics.event('AddWidget', { type: layout });
 					});
 				};
