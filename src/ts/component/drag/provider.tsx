@@ -570,6 +570,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const dropType = String(data.droptype) || '';
 		const rootId = String(data.rootid) || '';
 		const ids = data.ids || [];
+
 		let x = 0;
 		let y = 0;
 		let width = 0;
@@ -712,6 +713,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 					this.setPosition(I.BlockPosition.Bottom);
 				};
 			};
+
+			console.log(this.position);
 		};
 
 		if (this.frame) {
