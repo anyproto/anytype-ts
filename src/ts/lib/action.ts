@@ -532,11 +532,6 @@ class Action {
 			return;
 		};
 
-		if (space.id == deleted.id) {
-			UtilRouter.switchSpace(account.info.accountSpaceId, '', () => this.removeSpace(id, route, callBack));
-			return;
-		};
-
 		analytics.event('ClickDeleteSpace', { route });
 
 		popupStore.open('confirm', {
@@ -548,18 +543,26 @@ class Action {
 				onConfirm: () => {
 					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
 
-					C.SpaceDelete(id, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
+					const cb = () => {
+						C.SpaceDelete(id, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
 
-						if (callBack) {
-							callBack(message);
-						};
+							if (callBack) {
+								callBack(message);
+							};
 
-						Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-						analytics.event('DeleteSpace', { type: deleted.spaceType });
-					});
+							Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
+							analytics.event('DeleteSpace', { type: deleted.spaceType });
+						});
+					};
+
+					if (space.id == deleted.id) {
+						UtilRouter.switchSpace(account.info.accountSpaceId, '', cb);
+					} else {
+						cb();
+					};
 				},
 				onCancel: () => {
 					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
