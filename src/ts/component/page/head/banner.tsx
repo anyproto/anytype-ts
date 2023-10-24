@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import { I, Action, translate, UtilObject, UtilCommon, C } from 'Lib';
-import { commonStore, dbStore, menuStore } from 'Store';
+import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -24,8 +24,7 @@ class HeaderBanner extends React.Component<Props> {
 
 	render () {
 		const { type, object, count } = this.props;
-		const menuOpened = menuStore.isOpen('dataviewTemplateList');
-		const cn = [ 'headerBanner', menuOpened ? 'menuOpened' : '' ];
+		const cn = [ 'headerBanner' ];
 
 		let label = '';
 		let target = null;
@@ -91,6 +90,7 @@ class HeaderBanner extends React.Component<Props> {
 		const { sourceObject } = object;
 		const type = dbStore.getTypeById(object.type);
 		const templateId = sourceObject || Constant.templateId.blank;
+		const node = $(this.node);
 
 		if (menuStore.isOpen('dataviewTemplateList')) {
 			return;
@@ -99,7 +99,7 @@ class HeaderBanner extends React.Component<Props> {
 		let menuContext = null;
 
 		menuStore.open('dataviewTemplateList', {
-			element: $(this.node),
+			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
@@ -107,6 +107,10 @@ class HeaderBanner extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
+				node.addClass('active');
+			},
+			onClose: () => {
+				node.removeClass('active');
 			},
 			data: {
 				fromBanner: true,
