@@ -245,6 +245,8 @@
 					}
 				}
 			}
+
+			.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 2px; }
 		}
 	}
 	.block.blockText.textCode:hover > .wrapContent > .selectable > .dropTarget > .flex {
@@ -253,7 +255,6 @@
 	.block.blockText.textCode.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {
 		.additional .buttons { display: none; }
 	}
-	.block.blockText.textCode.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: pre; overflow-x: auto; }
 
 	/* DropTarget */
 
