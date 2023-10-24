@@ -480,9 +480,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 						if (objectId) {
 							const object = detailStore.get(contextId, objectId);
-
-							console.log(object);
-
+							
 							if (UtilObject.isFileLayout(object.layout)) {
 								layout = I.WidgetLayout.Link;
 								limit = 0;
