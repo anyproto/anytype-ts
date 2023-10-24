@@ -288,6 +288,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					authStore.accountSet(message.account);
 					commonStore.configSet(message.account.config, false);
+					commonStore.isSidebarFixedSet(true);
+
 					UtilData.onInfo(message.account.info);
 
 					C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
