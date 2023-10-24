@@ -706,15 +706,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			if (this.hoverData.dropType == I.DropType.Widget) {
 				this.recalcPositionY(ey, y, height);
 
+				if (![ I.BlockType.Text, I.BlockType.File, I.BlockType.Bookmark, I.BlockType.Link ].includes(type)) {
+					this.setPosition(I.BlockPosition.None);
+				} else
 				if (isTargetTop) {
 					this.setPosition(I.BlockPosition.Top);
-				};
+				} else
 				if (isTargetBot) {
 					this.setPosition(I.BlockPosition.Bottom);
 				};
 			};
-
-			console.log(this.position);
 		};
 
 		if (this.frame) {
