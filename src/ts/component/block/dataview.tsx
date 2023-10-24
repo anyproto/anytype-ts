@@ -769,10 +769,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateMenu (e: any, dir: number) {
 		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
-		const route = this.isCollection() ? 'Collection' : 'Set';
-		const hasSources = this.isCollection() || this.getSources().length;
-		const view = this.getView();
 		const isCollection = this.isCollection();
+		const route = isCollection ? 'Collection' : 'Set';
+		const hasSources = isCollection || this.getSources().length;
+		const view = this.getView();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -796,7 +796,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					if (id != this.getTypeId()) {
 						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
 
-						analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
+						analytics.event('DefaultTypeChange', { route });
 					};
 				},
 				onSetDefault: (item) => {
@@ -811,7 +811,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 
 						menuStore.closeAll();
-						analytics.event('SelectTemplate', { route });
+						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
 			}
@@ -823,6 +823,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
+		const route = this.isCollection() ? 'Collection' : 'Set';
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
@@ -838,7 +839,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
+			analytics.event('CreateTemplate', { objectType: typeId, route });
+			analytics.event('ChangeDefaultTemplate', { route });
 			UtilObject.openPopup(object);
 		});
 	};

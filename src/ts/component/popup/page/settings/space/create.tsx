@@ -169,6 +169,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 			if (!message.error.code) {
 				analytics.event('CreateSpace', { usecase });
+				analytics.event('SelectUsecase', { type: usecase });
 
 				UtilRouter.switchSpace(message.objectId, '', () => close());
 			} else {
@@ -208,9 +209,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onSelectUsecase (id: string) {
 		const usecase = Number(id) || 0;
-
 		this.setState({ usecase });
-		analytics.event('SelectUsecase', { type: id });
 	};
 
 });

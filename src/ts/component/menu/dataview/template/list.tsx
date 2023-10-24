@@ -358,17 +358,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
 		const container = UtilCommon.getPageContainer(isPopup);
-		
-		let ww = container.width();
-		if (!isPopup) {
-			const sidebar = $('#sidebar');
-			const sw = commonStore.isSidebarFixed && sidebar.hasClass('active') ? sidebar.outerWidth() : 0;
-
-			ww = ww - sw;
-		};
+		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));
-
 		if (columns > length) {
 			columns = length;
 		};

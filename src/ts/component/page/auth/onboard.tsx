@@ -264,6 +264,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const { name, walletPath } = authStore;
 
+		if (!name) {
+			analytics.event('ScreenOnboardingSkipName');
+		};
+
 		C.WalletCreate(walletPath, (message) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
@@ -303,6 +307,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	accountUpdate = (callBack?: () => void): void => {
 		const { name } = authStore;
+
+		if (!name) {
+			analytics.event('ScreenOnboardingSkipName');
+		};
 
 		UtilObject.setName(blockStore.profile, name, () => {
 			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
