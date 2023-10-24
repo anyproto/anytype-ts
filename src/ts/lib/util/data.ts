@@ -766,7 +766,15 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, callBack);
+		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
+			if (message.records) {
+				message.records = message.records.map(it => detailStore.mapper(it));
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	sortMapper (it: any) {
