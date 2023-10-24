@@ -16,5 +16,7 @@
 		.columns { display: flex; flex-direction: row; gap: 0px 14px; margin: 0px 0px 16px 0px; }
 
 		.button { width: 100%; }
+
+		li:before { content: ""; margin-left: -0.5rem; }
 	}
 }
