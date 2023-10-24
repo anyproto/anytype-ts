@@ -210,7 +210,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		const { stage } = this.state;
-		const { account } = authStore;
+		const { account, name } = authStore;
 		const next = () => {
 			Animation.from(() => {
 				this.refNext.setLoading(false);
@@ -228,6 +228,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			};
 		} else {
 			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
+
+			if (!name) {
+				analytics.event('ScreenOnboardingSkipName');
+			};
 		};
 	};
 
@@ -263,10 +267,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.refNext.setLoading(true);
 
 		const { name, walletPath } = authStore;
-
-		if (!name) {
-			analytics.event('ScreenOnboardingSkipName');
-		};
 
 		C.WalletCreate(walletPath, (message) => {
 			if (message.error.code) {
@@ -307,10 +307,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	accountUpdate = (callBack?: () => void): void => {
 		const { name } = authStore;
-
-		if (!name) {
-			analytics.event('ScreenOnboardingSkipName');
-		};
 
 		UtilObject.setName(blockStore.profile, name, () => {
 			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
