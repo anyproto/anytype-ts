@@ -13,6 +13,7 @@ export enum DropType {
 	Menu	 = 'menu',
 	Relation = 'relation',
 	Record	 = 'record',
+	Widget	 = 'widget',
 };
 
 export enum SelectType {

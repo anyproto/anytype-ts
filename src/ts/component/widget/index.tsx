@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName } from 'Component';
+import { Icon, ObjectName, DropTarget } from 'Component';
 import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -141,6 +141,28 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		};
 
+		const targetTop = (
+			<DropTarget 
+				{...this.props} 
+				isTargetTop={true} 
+				rootId={blockStore.widgets} 
+				id={block.id} 
+				dropType={I.DropType.Widget} 
+				canDropMiddle={false} 
+			/>
+		);
+
+		const targetBot = (
+			<DropTarget 
+				{...this.props} 
+				isTargetBottom={true} 
+				rootId={blockStore.widgets} 
+				id={block.id} 
+				dropType={I.DropType.Widget} 
+				canDropMiddle={false} 
+			/>
+		);
+
 		return (
 			<div
 				ref={node => this.node = node}
@@ -160,6 +182,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				</div>
 
 				<div className="dimmer" />
+
+				{targetTop}
+				{targetBot}
 			</div>
 		);
 	};

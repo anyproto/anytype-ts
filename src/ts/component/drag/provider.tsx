@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu } from 'Lib';
 import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -305,6 +305,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const { rootId, dropType, withAlt } = data;
 		const ids = data.ids || [];
 		const contextId = rootId;
+
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
@@ -328,7 +329,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const processAddRecord = () => {
 			UtilObject.getById(targetContextId, (object) => {
-				
 				// Add to collection
 				if (object.layout == I.ObjectLayout.Collection) {
 					C.ObjectCollectionAdd(targetContextId, ids);
@@ -440,6 +440,44 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 				break;
 			};
+
+			case I.DropType.Widget: {
+
+				// Source type
+				switch (dropType) {
+					case I.DropType.Block: {
+						const blocks = blockStore.getBlocks(contextId, it => ids.includes(it.id) && it.isLink());
+
+						if (!blocks.length) {
+							break;
+						};
+
+						const block = blocks[0];
+
+						const newBlock = { 
+							type: I.BlockType.Link,
+							content: { 
+								targetBlockId: block.content.targetBlockId, 
+							},
+						};
+						const layout = I.WidgetLayout.Tree;
+						const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+
+						console.log(newBlock, layout, limit);
+
+						C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, I.WidgetLayout.Tree, limit, () => {
+						});
+
+						break;
+					};
+
+					case I.DropType.Record: {
+						break;
+					};
+				};
+				break;
+			};
+
 		};
 
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
@@ -627,6 +665,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			if ((dropType == I.DropType.Record) && (this.hoverData.dropType == I.DropType.Record) && !canDropMiddle) {
 				isReversed ? this.recalcPositionX(ex, x, width) : this.recalcPositionY(ey, y, height);
 			};
+
+			if (this.hoverData.dropType == I.DropType.Widget) {
+				this.recalcPositionY(ey, y, height);
+
+				if (isTargetTop) {
+					this.setPosition(I.BlockPosition.Top);
+				};
+				if (isTargetBot) {
+					this.setPosition(I.BlockPosition.Bottom);
+				};
+			};
 		};
 
 		if (this.frame) {
@@ -668,6 +717,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	checkParentIds (ids: string[], id: string): boolean {
 		const parentIds: string[] = [];
+
 		this.getParentIds(id, parentIds);
 
 		for (const dropId of ids) {
