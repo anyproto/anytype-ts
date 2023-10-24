@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu } from 'Lib';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
 import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -443,6 +443,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			case I.DropType.Widget: {
 
+				const layout = I.WidgetLayout.Tree;
+				const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+
+				let create = false;
+				let objectId = '';
+
 				// Source type
 				switch (dropType) {
 					case I.DropType.Block: {
@@ -452,29 +458,31 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 							break;
 						};
 
-						const block = blocks[0];
-
-						const newBlock = { 
-							type: I.BlockType.Link,
-							content: { 
-								targetBlockId: block.content.targetBlockId, 
-							},
-						};
-						const layout = I.WidgetLayout.Tree;
-						const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
-
-						console.log(newBlock, layout, limit);
-
-						C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, I.WidgetLayout.Tree, limit, () => {
-						});
-
+						objectId = blocks[0].content.targetBlockId;
+						create = true;
 						break;
 					};
 
 					case I.DropType.Record: {
+						objectId = ids[0];
+						create = true;
 						break;
 					};
 				};
+
+				if (create) {
+					const newBlock = { 
+						type: I.BlockType.Link,
+						content: { 
+							targetBlockId: objectId, 
+						},
+					};
+
+					C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, I.WidgetLayout.Tree, limit, () => {
+						analytics.event('AddWidget', { type: layout });
+					});
+				};
+
 				break;
 			};
 

@@ -83,6 +83,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let content = null;
 		let back = null;
 		let buttons = null;
+		let targetTop = null;
+		let targetBot = null;
 
 		if (isPreview) {
 			back = (
@@ -119,6 +121,28 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{buttons}
 				</div>
 			);
+
+			targetTop = (
+				<DropTarget 
+					{...this.props} 
+					isTargetTop={true} 
+					rootId={blockStore.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+				/>
+			);
+
+			targetBot = (
+				<DropTarget 
+					{...this.props} 
+					isTargetBottom={true} 
+					rootId={blockStore.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+				/>
+			);
 		};
 
 		switch (layout) {
@@ -140,28 +164,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 		};
-
-		const targetTop = (
-			<DropTarget 
-				{...this.props} 
-				isTargetTop={true} 
-				rootId={blockStore.widgets} 
-				id={block.id} 
-				dropType={I.DropType.Widget} 
-				canDropMiddle={false} 
-			/>
-		);
-
-		const targetBot = (
-			<DropTarget 
-				{...this.props} 
-				isTargetBottom={true} 
-				rootId={blockStore.widgets} 
-				id={block.id} 
-				dropType={I.DropType.Widget} 
-				canDropMiddle={false} 
-			/>
-		);
 
 		return (
 			<div
