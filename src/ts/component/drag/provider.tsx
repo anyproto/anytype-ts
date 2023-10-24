@@ -452,13 +452,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				// Source type
 				switch (dropType) {
 					case I.DropType.Block: {
-						const blocks = blockStore.getBlocks(contextId, it => ids.includes(it.id) && it.isLink());
+						const blocks = blockStore.getBlocks(contextId, it => ids.includes(it.id) && it.canBecomeWidget());
 
 						if (!blocks.length) {
 							break;
 						};
 
-						objectId = blocks[0].content.targetBlockId;
+						objectId = blocks[0].getTargetObjectId();
 						create = true;
 						break;
 					};
