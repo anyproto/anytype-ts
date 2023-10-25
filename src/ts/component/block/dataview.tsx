@@ -658,10 +658,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (template) {
 			template = UtilData.checkBlankTemplate(template);
-			templateId = template.id;
 
-			if (template.targetObjectType) {
-				typeId = template.targetObjectType;
+			if (template) {
+				templateId = template.id;
+
+				if (template.targetObjectType) {
+					typeId = template.targetObjectType;
+				};
 			};
 		};
 
