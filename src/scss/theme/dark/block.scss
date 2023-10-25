@@ -90,6 +90,8 @@
 		.dateSelect {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); border-radius: 4px; }
 			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+
+			.btn:hover { background-color: $colorShapeHighlightMedium; }
 		}
 
 		.dataviewEmpty { border-color: $colorShapeSecondary; }

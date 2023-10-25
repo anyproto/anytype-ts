@@ -46,24 +46,30 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		return (
 			<div ref={node => this.node = node}>
 				<div id="dateSelect" className="dateSelect">
-					<Select 
-						ref={ref => this.refMonth = ref}
-						id="calendar-month" 
-						value={m} 
-						options={months} 
-						className="month" 
-						onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
-					/>
-					<Select 
-						ref={ref => this.refYear = ref}
-						id="calendar-year" 
-						value={y} 
-						options={years} 
-						className="year" 
-						onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
-					/>
-					<div className="arrows">
+					<div className="side left">
+						<Select 
+							ref={ref => this.refMonth = ref}
+							id="calendar-month" 
+							value={m} 
+							options={months} 
+							className="month" 
+							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+						<Select 
+							ref={ref => this.refYear = ref}
+							id="calendar-year" 
+							value={y} 
+							options={years} 
+							className="year" 
+							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+					</div>
+
+					<div className="side right">
 						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
+						<div className="btn" onClick={() => this.setValue(UtilDate.timestamp(today.y, today.m, today.d))}>
+							{translate('menuCalendarToday')}
+						</div>
 						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
 					</div>
 				</div>
