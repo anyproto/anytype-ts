@@ -22,7 +22,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
-		const { accountSpaceId } = authStore;
+		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
