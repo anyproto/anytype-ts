@@ -63,8 +63,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuDebugSpace'), click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
-					{ label: Util.translate('electronMenuDebugObject'), click: () => { this.winShow(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
+					{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
 					{ 
 						label: Util.translate('electronMenuDebugProcess'), 
 						click: () => {
