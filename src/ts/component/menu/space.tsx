@@ -9,7 +9,6 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	node: any = null;
 	n = 0;
-	timeout = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -97,7 +96,6 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		if (shortcut) {
 			this.onArrow(1);
-			this.setTimeout();
 		};
 	};
 
@@ -107,22 +105,20 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	componentWillUnmount (): void {
 		this.unbind();
-		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		win.on('keydown.menu', e => this.onKeyDown(e));
+		win.on('keyup.menu', e => this.onKeyUp(e));
+
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
-		$(window).off('keydown.menu');
-	};
-
-	setTimeout () {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.onClick(null, this.getItems()[this.n]), 1000);
+		$(window).off('keydown.menu keyup.menu');
 	};
 
 	onKeyDown (e: any) {
@@ -130,16 +126,17 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		keyboard.shortcut('arrowleft, arrowright, ctrl+tab', e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowleft' ? -1 : 1);
-
-			if (pressed == 'ctrl+tab') {
-				this.setTimeout();
-			};
-
 			ret = true;
 		});
 
 		if (!ret) {
 			this.props.onKeyDown(e);
+		};
+	};
+
+	onKeyUp (e: any) {
+		if (e.key.toLowerCase() == 'control') {
+			this.onClick(e, this.getItems()[this.n]);
 		};
 	};
 
