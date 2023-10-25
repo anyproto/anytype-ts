@@ -643,12 +643,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
@@ -656,10 +655,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
-			if (template.targetObjectType) {
-				details.type = template.targetObjectType;
-			};
-
 			template = UtilData.checkBlankTemplate(template);
 		};
 
