@@ -232,7 +232,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	};
 
 	onDragStart (e: React.DragEvent, blockId: string): void {
-		e.preventDefault();
 		e.stopPropagation();
 
 		const { dataset } = this.props;
@@ -296,7 +295,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			return;
 		};
 
-		e.preventDefault();
 		e.stopPropagation();
 
 		const { dataset } = this.props;
