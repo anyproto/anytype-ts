@@ -43,7 +43,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			>
 				{item.id == 'search' ? <Icon className="search" /> : (
 					<React.Fragment>
-						<IconObject object={item} />
+						{item.id == 'add' ? <Icon className="add" /> : <IconObject object={item} />}
 						<ObjectName object={item} />
 					</React.Fragment>
 				)}
@@ -83,8 +83,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						onChange={this.onFilterChange}
 					/>
 					<div className="itemsWrapper">
-						{items.map((item: any, i: number) => (
-							<Section key={i} idx={i} {...item} />
+						{items.map((section: any, i: number) => (
+							<Section key={i} idx={i} {...section} />
 						))}
 					</div>
 				</React.Fragment>
@@ -210,6 +210,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 			if (clear) {
 				this.setState({ loading: false });
+				this.props.position();
 			} else {
 				this.forceUpdate();
 			};
@@ -293,6 +294,12 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		this.isExpanded = true;
 		menuStore.update('quickCapture', { className: 'expanded' });
 		this.forceUpdate();
+
+		window.setTimeout(() => {
+			if (this.refFilter) {
+				this.refFilter.focus();
+			}
+		}, 50);
 	};
 
 	onOver (e: any, item: any) {

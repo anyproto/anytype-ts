@@ -18,6 +18,9 @@
                 background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
                 box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
             }
+            .item {
+                .icon { margin-right: 0; }
+            }
             .item:hover:before, .item.hover:before { content: ''; position: absolute; z-index: 0; width: 100%; height: 100%; background: $colorShapeHighlightLight; }
         }
     }
@@ -25,7 +28,13 @@
     .menu.menuQuickCapture.expanded { width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: $colorBgPrimary; padding: 0px; border-radius: 12px; }
     .menu.menuQuickCapture.expanded {
         .wrap {
-            .items { padding: 0px 16px 16px; flex-wrap: wrap; gap: 8px; }
+            .itemsWrapper { padding: 0px 16px 16px; display: flex; flex-direction: column; gap: 20px 0px; }
+            .itemsWrapper {
+                .row {
+                    > .name { @include text-small; color: $colorTextSecondary; margin-bottom: 8px; }
+                }
+            }
+            .items { flex-wrap: wrap; gap: 8px; }
             .item { box-shadow: none; }
         }
     }
