@@ -129,6 +129,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
+		authStore.logout(true, false);
 		Animation.from(() => UtilRouter.go('/auth/select', { replace: true }));
 	};
 
