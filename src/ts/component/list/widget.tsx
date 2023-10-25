@@ -33,16 +33,16 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
-		this.addWidget = this.addWidget.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.setPreview = this.setPreview.bind(this);
-		this.setEditing = this.setEditing.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
+		this.addWidget = this.addWidget.bind(this);
+		this.setEditing = this.setEditing.bind(this);
+		this.setPreview = this.setPreview.bind(this);
 	};
 
 	render(): React.ReactNode {
@@ -196,6 +196,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
+				onClick={this.onEdit}
 			>
 				{content}
 			</div>
@@ -231,6 +232,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	};
 
 	onDragStart (e: React.DragEvent, blockId: string): void {
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { dataset } = this.props;
@@ -294,6 +296,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			return;
 		};
 
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { dataset } = this.props;
