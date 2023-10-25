@@ -650,22 +650,36 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
+		
+		let typeId = '';
+		let templateId = '';
 
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
 			template = UtilData.checkBlankTemplate(template);
+			templateId = template.id;
+
+			if (template.targetObjectType) {
+				typeId = template.targetObjectType;
+			};
 		};
 
-		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
-		const currentTemplate = detailStore.get(rootId, templateId);
-
-		if (currentTemplate.isArchived || currentTemplate.isDeleted) {
-			template = null;
+		if (!typeId) {
+			typeId = this.getTypeId();
+		};
+		if (!templateId) {
+			templateId = this.getDefaultTemplateId(typeId);
 		};
 
-		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
+		const type = dbStore.getTypeById(typeId);
+		const templateObject = detailStore.get(rootId, templateId);
+
+		if (templateObject.isArchived || templateObject.isDeleted) {
+			templateId = '';
+		};
+
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, commonStore.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
