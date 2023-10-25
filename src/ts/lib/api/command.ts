@@ -1770,16 +1770,31 @@ const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message:
 	dispatcher.request(DebugExportLocalstore.name, request, callBack);
 };
 
-const DebugSpaceSummary = (callBack?: (message: any) => void) => {
+const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.SpaceSummary.Request();
 
+	request.setSpaceid(spaceId);
+
 	dispatcher.request(DebugSpaceSummary.name, request, callBack);
+};
+
+const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.StackGoroutines.Request();
+
+	request.setPath(path);
+
+	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
 export {
 	MetricsSetParameters,
 	LinkPreview,
 	ProcessCancel,
+
+	DebugTree,
+	DebugExportLocalstore,
+	DebugSpaceSummary,
+	DebugStackGoroutines,
 
 	AppGetVersion,
 	AppShutdown,
@@ -1806,10 +1821,6 @@ export {
 	AccountDelete,
 	AccountRevertDeletion,
 	AccountMove,
-
-	DebugTree,
-	DebugExportLocalstore,
-	DebugSpaceSummary,
 
 	FileUpload,
 	FileDownload,

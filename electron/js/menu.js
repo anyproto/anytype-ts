@@ -65,13 +65,7 @@ class MenuManager {
 
 					{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
 					{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
-					{ 
-						label: Util.translate('electronMenuDebugProcess'), 
-						click: () => {
-							Api.exit(this.win, 'SIGUSR1', true);
-							shell.openPath(path.join(Util.dataPath(), Api.account.id, 'logs'));
-						}
-					},
+					{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
 
 					Separator,
 

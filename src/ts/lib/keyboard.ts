@@ -555,7 +555,7 @@ class Keyboard {
 			};
 
 			case 'debugSpace': {
-				C.DebugSpaceSummary((message: any) => {
+				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
 						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
 
@@ -567,6 +567,15 @@ class Keyboard {
 
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugProcess': {
+				C.DebugStackGoroutines(logPath, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('pathOpen', logPath);
 					};
