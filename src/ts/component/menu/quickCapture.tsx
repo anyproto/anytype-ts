@@ -1,58 +1,111 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { MenuItemVertical, IconObject, ObjectName, Icon } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview, UtilData } from 'Lib';
+import { IconObject, ObjectName, Icon, Filter } from 'Component';
+import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
 import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
 
-	node: any = null;
+	state = {
+		loading: false,
+	};
+
 	n = -1;
+	node: any = null;
+	_isMounted = false;
+
+	filter = '';
+	refFilter: any = null;
+	timeoutFilter = 0;
+	items: any[] = [];
+	offset = 0;
+
 	isExpanded: boolean = false;
 
 	constructor (props: I.Menu) {
 		super(props);
 
 		this.onOut = this.onOut.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
-		const items = this.getItems(this.isExpanded);
+		const items = this.getItems();
 
-		const Item = (item: any) => {
-			return (
-				<div
-					id={`item-${item.id}`}
-					className="item"
-					onClick={() => this.onClick(item)}
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
-					onMouseLeave={this.onOut}
-				>
-					{item.id == 'search' ? <Icon className="search" /> : (
-						<React.Fragment>
-							<IconObject object={item} />
-							<ObjectName object={item} />
-						</React.Fragment>
-					)}
+		const Item = (item: any) => (
+			<div
+				id={`item-${item.id}`}
+				className="item"
+				onClick={() => this.onClick(item)}
+				onMouseEnter={(e: any) => { this.onOver(e, item); }}
+				onMouseLeave={this.onOut}
+			>
+				{item.id == 'search' ? <Icon className="search" /> : (
+					<React.Fragment>
+						<IconObject object={item} />
+						<ObjectName object={item} />
+					</React.Fragment>
+				)}
+			</div>
+		);
+
+		const Section = (section: any) => (
+			<div className="row">
+				<div className="name">{section.name}</div>
+				<div className="items">
+					{section.children.map((item: any, i: number) => (
+						<Item key={i} idx={i} {...item} />
+					))}
 				</div>
+			</div>
+		);
+
+		let content = null;
+
+		if (!this.isExpanded) {
+			content = (
+				<div className="items">
+					{items.map((item: any, i: number) => (
+						<Item key={i} idx={i} {...item} />
+					))}
+				</div>
+			);
+		} else {
+			content = (
+				<React.Fragment>
+					<Filter
+						ref={ref => this.refFilter = ref}
+						icon="search"
+						onIconClick={() => this.refFilter.focus()}
+						placeholder={translate('menuQuickCaptureSearchObjectTypes')}
+						value={this.filter}
+						onChange={this.onFilterChange}
+					/>
+					<div className="itemsWrapper">
+						{items.map((item: any, i: number) => (
+							<Section key={i} idx={i} {...item} />
+						))}
+					</div>
+				</React.Fragment>
 			);
 		};
 
 		return (
-			<div ref={node => this.node = node} className="content">
-				{items.map((item: any, i: number) => (
-					<Item key={i} idx={i} {...item} />
-				))}
+			<div ref={node => this.node = node} className="wrap">
+				{content}
 			</div>
 		);
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
 		this.rebind();
+		this.load(true);
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
 		this.unbind();
 	};
 
@@ -66,8 +119,18 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		$(window).off('keydown.menu');
 	};
 
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.filter = this.refFilter.getValue();
+			this.n = -1;
+			this.offset = 0;
+			this.load(true);
+		}, Constant.delay.keyboard);
+	};
+
 	onKeyDown (e: any) {
-		const items = this.getItems(this.isExpanded);
+		const items = this.getItems();
 
 		keyboard.disableMouse(true);
 
@@ -89,7 +152,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			this.setHover(items[this.n]);
 		});
 
-		keyboard.shortcut('enter, space', e, () => {
+		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			if (items[this.n]) {
@@ -98,11 +161,101 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		});
 	};
 
-	getItems (expanded?: boolean) {
+	load (clear: boolean, callBack?: (message: any) => void) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const filter = String(this.filter || '');
+		const sorts = [
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+		];
+
+		if (clear) {
+			this.setState({ loading: true });
+		};
+
+		UtilData.search({
+			filters,
+			sorts,
+			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+			fullText: filter,
+			offset: this.offset,
+			limit: Constant.limit.menuRecords,
+			ignoreWorkspace: true,
+		}, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			if (clear) {
+				this.items = [];
+			};
+
+			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+
+			if (clear) {
+				this.setState({ loading: false });
+			} else {
+				this.forceUpdate();
+			};
+		});
+	};
+
+	getSections () {
+		const { space } = commonStore;
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const library = items.filter(it => (it.spaceId == space));
+		const librarySources = library.map(it => it.sourceObject);
+		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
+
+		let sections: any[] = [
+			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => (!groupKeys.includes(it.uniqueKey))) },
+			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: library.filter(it => (groupKeys.includes(it.uniqueKey))) },
+		];
+
+		if (this.filter) {
+			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+
+			sections = sections.concat([
+				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store }
+			]);
+
+			sections[0].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) })
+		};
+
+		sections = sections.filter((section: any) => {
+			section.children = section.children.filter(it => it);
+			return section.children.length > 0;
+		});
+
+		return sections;
+	};
+
+	getItems () {
+		if (this.isExpanded) {
+			return this.getSections();
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = detailStore.get(rootId, rootId, []);
+
 		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
 		const itemIds = items.map(it => it.id);
 		const defaultType = dbStore.getTypeById(commonStore.type);
