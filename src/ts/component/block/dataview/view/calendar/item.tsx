@@ -37,6 +37,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		const length = items.length;
 		const cn = [ 'day' ];
 
+		console.log(items, slice);
+
 		if (className) {
 			cn.push(className);
 		};
@@ -128,7 +130,6 @@ const Item = observer(class Item extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
-				noFlipY: true,
 				noFlipX: true,
 				data: {
 					...this.props,

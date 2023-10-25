@@ -163,7 +163,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { m, y } = this.getDateParam(this.value);
 		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
 		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
-		const limit = 10;
 		const filters: I.Filter[] = [].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
@@ -197,7 +196,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			sorts,
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
-			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
