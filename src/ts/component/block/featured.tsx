@@ -498,7 +498,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				const details: any = {};
 
 				if (type) {
-					details.name = type.name + ' set';
+					details.name = type.name;
 					details.iconEmoji = type.iconEmoji;
 				};
 

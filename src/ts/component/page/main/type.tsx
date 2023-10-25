@@ -404,7 +404,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const details = { 
-			name: object.name + ' set', 
+			name: object.name, 
 			iconEmoji: object.iconEmoji,
 		};
 
