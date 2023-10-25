@@ -311,7 +311,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(id);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const allowedLayouts = UtilObject.getFileLayouts();
+		const fileLayouts = UtilObject.getFileLayouts();
 
 		let object = null;
 		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
@@ -319,7 +319,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		} else {
 			for (const id of value) {
 				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !allowedLayouts.includes(file.type)) {
+				if (file._empty_ || !fileLayouts.includes(file.layout)) {
 					continue;
 				};
 
@@ -332,7 +332,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		if (!object.coverId && !object.coverType && !allowedLayouts.includes(object.type)) {
+		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
 			return null;
 		};
 
