@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Select } from 'Component';
+import { Select, Icon } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
@@ -11,7 +11,8 @@ const PADDING = 46;
 const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
 
 	node: any = null;
-	ref = null;
+	refMonth = null;
+	refYear = null;
 	value = UtilDate.now();
 
 	constructor (props: I.ViewComponent) {
@@ -43,61 +44,66 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node} 
-				className="wrap"
-			>
-				<div className={cn.join(' ')}>
-					<div id="dateSelect" className="dateSelect">
-						<Select 
-							id="calendar-month" 
-							value={m} 
-							options={months} 
-							className="month" 
-							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
-						/>
-						<Select 
-							id="calendar-year" 
-							value={y} 
-							options={years} 
-							className="year" 
-							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
-						/>
+			<div ref={node => this.node = node}>
+				<div id="dateSelect" className="dateSelect">
+					<Select 
+						ref={ref => this.refMonth = ref}
+						id="calendar-month" 
+						value={m} 
+						options={months} 
+						className="month" 
+						onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+					/>
+					<Select 
+						ref={ref => this.refYear = ref}
+						id="calendar-year" 
+						value={y} 
+						options={years} 
+						className="year" 
+						onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+					/>
+					<div className="arrows">
+						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
+						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
 					</div>
+				</div>
 
-					<div className="table">
-						<div className="head">
-							{days.map((item, i) => (
-								<div key={i} className="item th">
-									{item.name.substring(0, 2)}
-								</div>
-							))}
-						</div>
+				<div className="wrap">
+					<div className={cn.join(' ')}>
+						<div className="table">
+							<div className="head">
+								{days.map((item, i) => (
+									<div key={i} className="item th">
+										{item.name.substring(0, 2)}
+									</div>
+								))}
+							</div>
 
-						<div className="body">
-							{data.map((item, i) => {
-								const cn = [];
-								if (m != item.m) {
-									cn.push('other');
-								};
-								if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
-									cn.push('active');
-								};
-								if (i < 7) {
-									cn.push('first');
-								};
+							<div className="body">
+								{data.map((item, i) => {
+									const cn = [];
+									if (m != item.m) {
+										cn.push('other');
+									};
+									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
+										cn.push('active');
+									};
+									if (i < 7) {
+										cn.push('first');
+									};
 
-								return (
-									<Item 
-										key={i}
-										{...this.props} 
-										{...item} 
-										className={cn.join(' ')}
-										getSubId={() => subId}
-										getDateParam={this.getDateParam}
-									/>
-								);
-							})}
+									return (
+										<Item 
+											key={i}
+											{...this.props} 
+											{...item} 
+											className={cn.join(' ')}
+											getSubId={() => subId}
+											getDateParam={this.getDateParam}
+										/>
+									);
+								})}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -106,7 +112,19 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	componentDidMount(): void {
+		this.init();
 		this.load();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const { m, y } = this.getDateParam(this.value);
+
+		this.refMonth?.setValue(m);
+		this.refYear?.setValue(y);
 	};
 
 	getDateParam (t: number) {
@@ -180,6 +198,22 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		});
 	};
 
+	onArrow (dir: number) {
+		let { m, y } = this.getDateParam(this.value);
+
+		m += dir;
+		if (m < 0) {
+			m = 12;
+			y--;
+		};
+		if (m > 12) {
+			m = 1;
+			y++;
+		};
+
+		this.setValue(UtilDate.timestamp(y, m, 1))
+	};
+
 	setValue (value: number) {
 		this.value = value;
 		this.forceUpdate();
@@ -195,8 +229,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		const win = $(window);
 		const node = $(this.node);
+		const wrap = node.find('.wrap');
 
-		node.css({ width: 0, height: 0, marginLeft: 0 });
+		wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
 		const container = UtilCommon.getPageContainer(isPopup);
 		const cw = container.width();
@@ -206,7 +241,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { top } = node.offset();
 		const day = node.find('.day').first();
 
-		node.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
+		wrap.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
 		win.trigger('resize.menuDataviewCalendarDay');
 
 		if (day.length) {

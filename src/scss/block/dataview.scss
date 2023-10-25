@@ -27,6 +27,21 @@
 			.icon { background-image: url('~img/arrow/loadMore1.svg'); }
 		}
 
+		.dateSelect { padding: 2px 14px; @include text-paragraph; display: flex; flex-direction: row; gap: 0px 4px; margin: 0px 0px 12px 0px; }
+		.dateSelect {
+			.select { padding: 0px; border: 0px; }
+			.select {
+				.icon.arrow { display: none; }
+			}
+			.select:hover, .select.active { background: unset; }
+
+			.arrows { display: flex; flex-direction: row; }
+			.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/dateSelect.svg'); border-radius: 4px; }
+			.icon.arrow.left { transform: rotateZ(180deg); }
+
+			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+		}
+
 		.dataviewEmpty { 
 			color: $colorTextSecondary; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
 			text-align: center; padding: 16px 0px; height: 300px;

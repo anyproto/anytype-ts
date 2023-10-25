@@ -4,22 +4,8 @@
 	.block.blockDataview {
 		.viewContent.viewCalendar { position: relative; height: 100%; }
 		.viewContent.viewCalendar {
-			.dateSelect { 
-				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 6px;
-				left: 8px; top: 30px; z-index: 10;
-			}
-			.dateSelect {
-				.month { font-weight: 600; }
-				.select { padding: 0px; border: 0px; }
-				.select {
-					.icon.arrow { display: none; }
-				}
-				.select:hover, .select.active { background: unset; }
-			}
-
 			.table { 
-				border-color: $colorShapeSecondary; border-style: solid; border-width: 1px; border-left-width: 0px; border-right-width: 0px; 
-				display: flex; flex-flow: column; height: 100%;
+				border-color: $colorShapeSecondary; border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
 			}
 
 			.table {

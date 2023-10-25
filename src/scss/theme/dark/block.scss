@@ -87,6 +87,11 @@
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
+		.dateSelect {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); border-radius: 4px; }
+			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+		}
+
 		.dataviewEmpty { border-color: $colorShapeSecondary; }
 		.dataviewEmpty {
 			.button { color: $colorTextPrimary; }
@@ -210,7 +215,6 @@
         }
 
 		.viewContent.viewCalendar {
-			.dateSelect { background-color: rgba(23,23,23,0.9); }
 			.table, .day { border-color: $colorShapeSecondary; }
 			.table {
 				.head {
