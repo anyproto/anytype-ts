@@ -329,6 +329,12 @@ class Analytics {
 				break;
 			};
 
+			case 'DeleteSpace': {
+				data.type = Number(data.type) || 0;
+				data.type = I.SpaceType[data.type];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
