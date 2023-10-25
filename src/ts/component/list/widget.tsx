@@ -196,7 +196,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
-				onClick={this.onEdit}
+				onClick={isEditing ? this.onEdit : null}
 			>
 				{content}
 			</div>
