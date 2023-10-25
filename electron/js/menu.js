@@ -64,7 +64,7 @@ class MenuManager {
 					Separator,
 
 					{ label: Util.translate('electronMenuDebugSpace'), click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
-					{ label: Util.translate('electronMenuDebugObject'), click: () => { this.win.this.winShow(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ label: Util.translate('electronMenuDebugObject'), click: () => { this.winShow(); Util.send(this.win, 'command', 'debugTree'); } },
 					{ 
 						label: Util.translate('electronMenuDebugProcess'), 
 						click: () => {
@@ -289,14 +289,14 @@ class MenuManager {
 		// Force on top and focus because in some case Electron fail with this.winShow()
 		this.tray.on('double-click', () => {
 			this.win.setAlwaysOnTop(true);
-			this.win.this.winShow();
+			this.winShow();
 			this.win.setAlwaysOnTop(false);
 		});
 	};
 
 	winShow () {
 		if (this.win) {
-			this.win.this.winShow();
+			this.win.show();
 		};
 	};
 
