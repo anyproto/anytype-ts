@@ -524,7 +524,7 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const { account } = authStore;
+		const { accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const deleted = UtilObject.getSpaceviewBySpaceId(id);
 
@@ -559,7 +559,7 @@ class Action {
 					};
 
 					if (space.id == deleted.id) {
-						UtilRouter.switchSpace(account.info.accountSpaceId, '', cb);
+						UtilRouter.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};

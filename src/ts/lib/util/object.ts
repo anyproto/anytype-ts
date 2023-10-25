@@ -115,7 +115,7 @@ class UtilObject {
 
 		let { id, spaceId, layout, identityProfileLink } = object;
 
-		const { account } = authStore;
+		const { accountSpaceId } = authStore;
 		const action = this.actionByLayout(layout);
 
 		if (!action) {
@@ -124,7 +124,7 @@ class UtilObject {
 
 		if (identityProfileLink) {
 			id = identityProfileLink;
-			spaceId = account.info.accountSpaceId;
+			spaceId = accountSpaceId;
 		};
 
 		return UtilRouter.build({ page: 'main', action, id, spaceId });

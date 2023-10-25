@@ -149,9 +149,9 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const { account } = authStore;
+		const { accountSpaceId } = authStore;
 
-		if (item.targetSpaceId == account.info.accountSpaceId) {
+		if (item.targetSpaceId == accountSpaceId) {
 			return;
 		};
 

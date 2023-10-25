@@ -22,7 +22,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
-		const { account } = authStore;
+		const { accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
@@ -32,7 +32,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const limitUsage = String(UtilFile.size(bytesLimit));
 		const isRed = (percentageUsed >= 90) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
-		const canDelete = space.targetSpaceId != account.info.accountSpaceId;
+		const canDelete = space.targetSpaceId != accountSpaceId;
 
 		let extend = null;
 		let createdDate = null;

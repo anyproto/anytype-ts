@@ -1,5 +1,5 @@
 import { C, UtilData, Preview, analytics, Storage } from 'Lib';
-import { commonStore, blockStore, menuStore, popupStore } from 'Store';
+import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 type RouteParam = { 
@@ -117,6 +117,7 @@ class UtilRouter {
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
 		const { space } = commonStore;
+		const { accountSpaceId } = authStore;
 
 		if (!id || (space == id)) {
 			return;
@@ -124,6 +125,9 @@ class UtilRouter {
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
+				if (id != accountSpaceId) {
+					this.switchSpace(accountSpaceId, route, callBack);
+				};
 				return;
 			};
 

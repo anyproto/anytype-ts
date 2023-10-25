@@ -1053,7 +1053,7 @@ class Dispatcher {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
 
 		if ((id == blockStore.spaceview) && (details.spaceAccountStatus == I.SpaceStatus.Deleted)) {
-			UtilRouter.switchSpace(authStore.account.info.accountSpaceId, '');
+			UtilRouter.switchSpace(authStore.accountSpaceId, '');
 		};
 
 		detailStore.update(rootId, { id, details }, clear);

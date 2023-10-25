@@ -56,6 +56,10 @@ class AuthStore {
 		return String(this.accountPathValue || '');
     };
 
+	get accountSpaceId (): string {
+		return String(this.accountItem?.info?.accountSpaceId || '');
+	};
+
 	walletPathSet (v: string) {
 		this.walletPathValue = v;
     };
