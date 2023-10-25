@@ -37,8 +37,6 @@ const Item = observer(class Item extends React.Component<Props> {
 		const length = items.length;
 		const cn = [ 'day' ];
 
-		console.log(items, slice);
-
 		if (className) {
 			cn.push(className);
 		};
