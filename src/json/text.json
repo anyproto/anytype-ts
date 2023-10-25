@@ -954,8 +954,8 @@
 	"popupPhraseTitle1": "What is Recovery Phrase?",
 	"popupPhraseTitle2": "How to save my phrase?",
 	"popupPhraseLabel1": "Recovery Phrase is 12 random words from which your account is magically generated on this device.",
-	"popupPhraseLabel2": "Who knows combination of these words – owns the account. Now, you are the only person in the world who can access it.",
-	"popupPhraseLabel3": "That is why it is essential to keep Recovery Phrase secure! You own - you responsible!",
+	"popupPhraseLabel2": "Who knows combination of these words &ndash; owns the account. Now, you are the only person in the world who can access it.",
+	"popupPhraseLabel3": "That is why it is essential to keep Recovery Phrase secure! You own &ndash; you responsible!",
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
