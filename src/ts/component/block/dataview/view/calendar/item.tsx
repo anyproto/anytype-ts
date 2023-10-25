@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, UtilCommon, UtilObject, translate } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { dbStore, detailStore, menuStore, blockStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -23,10 +23,13 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
-		const { className, d, getView } = this.props;
+		const { className, d, m, y, getView } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
 		const items = this.getItems();
@@ -47,6 +50,31 @@ const Item = observer(class Item extends React.Component<Props> {
 			);
 		};
 
+		const Item = (item: any) => {
+			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+
+			let icon = null;
+			if (!hideIcon) {
+				icon = (
+					<IconObject 
+						object={item} 
+						size={16} 
+						canEdit={canEdit} 
+						onSelect={icon => this.onSelect(item, icon)} 
+						onUpload={hash => this.onUpload(item, hash)} 
+						onCheckbox={() => this.onCheckbox(item)} 
+					/>
+				);
+			};
+
+			return (
+				<div className="item">
+					{icon}
+					<ObjectName object={item} onMouseDown={() => this.onOpen(item)} />
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				ref={node => this.node = node} 
@@ -55,10 +83,7 @@ const Item = observer(class Item extends React.Component<Props> {
 				<div className="number">{d}</div>
 				<div className="items">
 					{slice.map((item, i) => (
-						<div key={i} className="item" onClick={() => this.onOpen(item)}>
-							{!hideIcon ? <IconObject object={item} size={16} /> : ''}
-							<ObjectName object={item} />
-						</div>
+						<Item key={[ y, m, d, item.id ].join('-')} {...item} />
 					))}
 
 					{more}
@@ -80,6 +105,18 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onOpen (item: any) {
 		UtilObject.openPopup(item);
+	};
+
+	onSelect (item: any, icon: string) {
+		UtilObject.setIcon(item.id, icon, '');
+	};
+
+	onUpload (item: any, hash: string) {
+		UtilObject.setIcon(item.id, '', hash);
+	};
+
+	onCheckbox (item: any) {
+		UtilObject.setDone(item.id, !item.done);
 	};
 
 	onMore () {
