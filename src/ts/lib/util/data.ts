@@ -321,7 +321,7 @@ class UtilData {
 				keys: this.spaceRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
-					{ operator: I.FilterOperator.And, relationKey: 'spaceAccountStatus', condition: I.FilterCondition.NotEqual, value: I.SpaceStatus.SpaceDeleted },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceAccountStatus', condition: I.FilterCondition.NotEqual, value: I.SpaceStatus.Deleted },
 				],
 				sorts: [
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

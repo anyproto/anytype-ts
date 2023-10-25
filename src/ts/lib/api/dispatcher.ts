@@ -5,7 +5,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
-import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -1051,6 +1051,10 @@ class Dispatcher {
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+
+		if ((details.spaceAccountStatus == I.SpaceStatus.Deleted) && (id == commonStore.space)) {
+			UtilRouter.switchSpace(authStore.account.info.accountSpaceId, '');
+		};
 
 		detailStore.update(rootId, { id, details }, clear);
 

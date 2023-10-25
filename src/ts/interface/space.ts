@@ -6,7 +6,7 @@ export enum SpaceStatus {
 	Error					 = 4,
 	RemoteWaitingDeletion	 = 5,
 	RemoteDeleted			 = 6,
-	SpaceDeleted			 = 7,
+	Deleted					 = 7,
 };
 
 export enum SpaceType {
