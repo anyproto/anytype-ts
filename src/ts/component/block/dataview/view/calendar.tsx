@@ -83,6 +83,10 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 								if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
 									cn.push('active');
 								};
+								if (i < 7) {
+									cn.push('first');
+								};
+
 								return (
 									<Item 
 										key={i}

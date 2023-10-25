@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, UtilCommon, UtilObject, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -21,7 +21,8 @@ const Item = observer(class Item extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onClick = this.onClick.bind(this);
+		this.onOpen = this.onOpen.bind(this);
+		this.onMore = this.onMore.bind(this);
 	};
 
 	render () {
@@ -40,7 +41,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		let more = null;
 		if (length > LIMIT) {
 			more = (
-				<div className="item more">
+				<div className="item more" onClick={this.onMore}>
 					+{length - LIMIT} {translate('commonMore')} {UtilCommon.plural(length, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
@@ -50,12 +51,11 @@ const Item = observer(class Item extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node} 
 				className={cn.join(' ')}
-				onClick={this.onClick}
 			>
 				<div className="number">{d}</div>
 				<div className="items">
 					{slice.map((item, i) => (
-						<div key={i} className="item">
+						<div key={i} className="item" onClick={() => this.onOpen(item)}>
 							{!hideIcon ? <IconObject object={item} size={16} /> : ''}
 							<ObjectName object={item} />
 						</div>
@@ -78,7 +78,11 @@ const Item = observer(class Item extends React.Component<Props> {
 		});
 	};
 
-	onClick () {
+	onOpen (item: any) {
+		UtilObject.openPopup(item);
+	};
+
+	onMore () {
 		const node = $(this.node);
 
 		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {

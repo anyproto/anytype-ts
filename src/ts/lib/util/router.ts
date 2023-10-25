@@ -1,4 +1,4 @@
-import { C, UtilCommon, UtilData, Preview, analytics, keyboard } from 'Lib';
+import { C, UtilData, Preview, analytics, Storage } from 'Lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -137,6 +137,7 @@ class UtilRouter {
 
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
+					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);
 					UtilData.onAuth({ routeParam: { replace: true } }, callBack);

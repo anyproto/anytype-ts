@@ -6,7 +6,7 @@
 		.viewContent.viewCalendar {
 			.dateSelect { 
 				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 6px;
-				left: 8px; top: 28px; z-index: 10;
+				left: 8px; top: 30px; z-index: 10;
 			}
 			.dateSelect {
 				.month { font-weight: 600; }
@@ -32,13 +32,14 @@
 					}
 				}
 
-				.body { overflow: overlay; flex-grow: 1; grid-auto-rows: minmax(136px, auto); }
+				.body { overflow: overlay; flex-grow: 1; }
 			}
 
 			.day { 
 				text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
-				border-right-width: 1px; border-bottom-width: 1px; padding: 6px 8px; position: relative;
+				border-right-width: 1px; border-top-width: 1px; padding: 6px 8px; position: relative; height: 136px;
 			}
+			.day.first { border-top-width: 0px; }
 			.day.active .number { color: $colorSystemAccent100; }
 			.day.other .number { color: $colorTextSecondary; }
 
