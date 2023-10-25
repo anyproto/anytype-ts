@@ -1052,10 +1052,6 @@ class Dispatcher {
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
 
-		if ((details.spaceAccountStatus == I.SpaceStatus.Deleted) && (id == commonStore.space)) {
-			UtilRouter.switchSpace(authStore.account.info.accountSpaceId, '');
-		};
-
 		detailStore.update(rootId, { id, details }, clear);
 
 		const root = blockStore.getLeaf(rootId, id);
