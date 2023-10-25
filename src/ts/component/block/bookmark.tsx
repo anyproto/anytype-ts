@@ -195,7 +195,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 	
 	onClick (e: any) {
-		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.button) {
+		if (e.button) {
 			return;
 		};
 
