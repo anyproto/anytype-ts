@@ -755,10 +755,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const defaultTemplateId = this.getDefaultTemplateId();
 		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
+		const typeId = this.getTypeId();
+		const type = dbStore.getTypeById(typeId);
 
 		this.creating = true;
 
-		if (details.layout == I.ObjectLayout.Bookmark) {
+		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
