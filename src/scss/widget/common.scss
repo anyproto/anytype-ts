@@ -53,7 +53,7 @@
 	> .dropTarget.targetBot { bottom: -7px; }
 
 	> .dropTarget.isOver::before { 
-		content: ""; position: absolute; background: $colorSystemAccent100; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 12px;
+		content: ""; position: absolute; background: $colorSystemAccent100; width: calc(100% - 24px); height: 2px; border-radius: 2px; left: 12px;
 	}
 	> .dropTarget.targetTop.isOver::before { top: 0px; }
 	> .dropTarget.targetBot.isOver::before { bottom: 0px; }
