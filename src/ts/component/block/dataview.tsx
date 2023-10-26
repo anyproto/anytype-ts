@@ -648,6 +648,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
+
+		if (!view) {
+			return;
+		};
+
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 		
