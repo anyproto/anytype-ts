@@ -198,7 +198,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).
 		map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys())).
-		filter(it => it.spaceAccountStatus != I.SpaceStatus.Deleted).
+		filter(it => it.spaceAccountStatus == I.SpaceStatus.Ok).
 		map(it => ({ ...it, isActive: spaceview == it.id }));
 
 		items.sort((c1, c2) => {
