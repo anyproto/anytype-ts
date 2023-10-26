@@ -276,16 +276,16 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const targetId = '';
-		const position = I.BlockPosition.Bottom;
-		const details: any = { type: item.id };
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 
-		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			UtilObject.openAuto({ id: message.targetId });
+		C.ObjectCreate({ layout: item.recommendedLayout }, flags, item.defaultTemplateId, item.uniqueKey, commonStore.space, (message: any) => {
+			if (message.error.code || !message.details) {
+				return;
+			};
+
+			const { id, layout } = message.details;
+
+			UtilObject.openAuto({ id, layout });
 			analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
 		});
 	};
