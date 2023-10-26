@@ -279,7 +279,7 @@ class UtilData {
 			},
 			{
 				subId: Constant.subId.type,
-				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+				keys: this.typeRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
@@ -349,7 +349,11 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccountStatus', 'spaceAccessibility', 'targetSpaceId', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+	};
+
+	typeRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
 	};
 
 	createSession (callBack?: (message: any) => void) {

@@ -393,7 +393,7 @@ class Relation {
 		};
 	};
 
-	public getArrayValue (value: any): string[] {
+	public getArrayValue (value: any): any[] {
 		if (this.isEmpty(value)) {
 			return [];
 		};

@@ -249,7 +249,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		UtilData.search({
 			filters,
 			sorts,
-			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+			keys: UtilData.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
@@ -409,7 +409,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
-					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+					keys: UtilData.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

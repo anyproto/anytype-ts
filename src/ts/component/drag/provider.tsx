@@ -493,6 +493,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 					case I.DropType.Record: {
 						objectId = ids[0];
+						layout = I.WidgetLayout.Link;
+						limit = 0;
 						create = true;
 						break;
 					};
