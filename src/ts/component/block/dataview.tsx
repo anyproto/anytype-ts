@@ -86,7 +86,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 
 		this.isAllowedObject = this.isAllowedObject.bind(this);
-		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 	};
@@ -165,7 +164,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
 			isAllowedObject: this.isAllowedObject,
-			isAllowedTemplate: this.isAllowedTemplate,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
@@ -357,9 +355,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', { offset, viewId });
 
-		if ([ I.ViewType.Board ].includes(view.type)) {
+		if (view.type == I.ViewType.Board) {
 			if (this.refView && this.refView.loadGroupList) {
 				this.refView.loadGroupList();
+			} else {
+				this.viewId = '';
+			};
+		} else 
+		if (view.type == I.ViewType.Calendar) {
+			if (this.refView && this.refView.load) {
+				this.refView.load();
 			} else {
 				this.viewId = '';
 			};
@@ -638,34 +643,46 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
+		
+		let typeId = '';
+		let templateId = '';
 
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
-			if (template.targetObjectType) {
-				details.type = template.targetObjectType;
-			};
-
 			template = UtilData.checkBlankTemplate(template);
+
+			if (template) {
+				templateId = template.id;
+
+				if (template.targetObjectType) {
+					typeId = template.targetObjectType;
+				};
+			};
 		};
 
-		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
-		const currentTemplate = detailStore.get(rootId, templateId);
-
-		if (currentTemplate.isArchived || currentTemplate.isDeleted) {
-			template = null;
+		if (!typeId) {
+			typeId = this.getTypeId();
+		};
+		if (!templateId) {
+			templateId = this.getDefaultTemplateId(typeId);
 		};
 
-		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
+		const type = dbStore.getTypeById(typeId);
+		const templateObject = detailStore.get(rootId, templateId);
+
+		if (templateObject.isArchived || templateObject.isDeleted) {
+			templateId = '';
+		};
+
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, commonStore.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -764,8 +781,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateMenu (e: any, dir: number) {
 		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
-		const route = this.isCollection() ? 'Collection' : 'Set';
-		const hasSources = this.isCollection() || this.getSources().length;
+		const isCollection = this.isCollection();
+		const route = isCollection ? 'Collection' : 'Set';
+		const hasSources = isCollection || this.getSources().length;
+		const view = this.getView();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -785,14 +804,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				typeId: this.getTypeId(),
 				templateId: this.getDefaultTemplateId(),
 				route,
+				onTypeChange: (id) => {
+					if (id != this.getTypeId()) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+
+						analytics.event('DefaultTypeChange', { route });
+					};
+				},
+				onSetDefault: (item) => {
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+				},
 				onSelect: (item: any) => {
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
 
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+
 						menuStore.closeAll();
-						analytics.event('SelectTemplate', { route });
+						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
 			}
@@ -800,8 +831,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateAdd (id?: string) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
+		const route = this.isCollection() ? 'Collection' : 'Set';
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
@@ -812,10 +846,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
-			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
+			const object = message.details;
 
-			UtilObject.openPopup(message.details);
+			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
+
+			focus.clear(true);
+			analytics.event('CreateTemplate', { objectType: typeId, route });
+			analytics.event('ChangeDefaultTemplate', { route });
+			UtilObject.openPopup(object);
 		});
 	};
 
@@ -1151,10 +1189,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return isAllowed;
-	};
-
-	isAllowedTemplate (): boolean {
-		return UtilObject.isAllowedTemplate(this.getTypeId());
 	};
 
 	isAllowedDefaultType (): boolean {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
+import { I, translate, analytics, Renderer, UtilObject, Action } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -42,7 +42,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="spellcheck"
 							value={config.languages}
 							options={spellingLanguages}
-							onChange={v => Renderer.send('setLanguage', v)}
+							onChange={v => Action.setSpellingLang(v)}
 							arrowClassName="black"
 							isMultiple={true}
 							noFilter={false}
@@ -57,7 +57,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="interfaceLang"
 							value={commonStore.interfaceLang}
 							options={interfaceLanguages}
-							onChange={v => Renderer.send('changeInterfaceLang', v)}
+							onChange={v => Action.setInterfaceLang(v)}
 							arrowClassName="black"
 							menuParam={{ 
 								horizontal: I.MenuDirection.Right, 

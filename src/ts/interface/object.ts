@@ -62,7 +62,7 @@ export enum ObjectFlag {
 };
 
 export enum ObjectOrigin {
-	User			 = 0,
+	None			 = 0,
 	Clipboard		 = 1,
 	DragAndDrop		 = 2,
 	Import			 = 3,

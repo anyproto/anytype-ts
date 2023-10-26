@@ -25,4 +25,5 @@ export interface PopupSettings extends Popup {
 	setPinConfirmed: (v: boolean) => void;
 	onConfirmPin: () => void;
 	onExport: (format: I.ExportType, param: any) => void;
+	onSpaceTypeTooltip: (e: any) => void;
 };

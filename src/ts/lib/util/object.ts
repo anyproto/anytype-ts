@@ -1,5 +1,5 @@
 import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
-import { commonStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
+import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -29,6 +29,11 @@ class UtilObject {
 		return detailStore.get(Constant.subId.space, blockStore.spaceview);
 	};
 
+	getSpaceviewBySpaceId (id: string) {
+		const subId = Constant.subId.space;
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
+	};
+
 	getSpaceDashboard () {
 		const space = this.getSpaceview();
 		const id = space.spaceDashboardId;
@@ -53,8 +58,14 @@ class UtilObject {
 		return home;
 	};
 
+	getIdentityId () {
+		const { account } = authStore;
+		return account ? `_id_${account.id}` : '';
+	};
+
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
+		const id = this.getIdentityId();
+		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
 	};
 
 	getGraph () {
@@ -70,7 +81,6 @@ class UtilObject {
 		return { 
 			id: I.HomePredefinedId.Last,
 			name: translate('spaceLast'),
-			spaceId: commonStore.space,
 		};
 	};
 
@@ -80,6 +90,7 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
+			case I.ObjectLayout.Date:
 			case I.ObjectLayout.Set:
 			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
@@ -102,12 +113,21 @@ class UtilObject {
 			return '';
 		};
 
-		const action = this.actionByLayout(object.layout);
+		let { id, spaceId, layout, identityProfileLink } = object;
+
+		const { accountSpaceId } = authStore;
+		const action = this.actionByLayout(layout);
+
 		if (!action) {
 			return '';
 		};
 
-		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
+		if (identityProfileLink) {
+			id = identityProfileLink;
+			spaceId = accountSpaceId;
+		};
+
+		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
 
 	openEvent (e: any, object: any, param?: any) {
@@ -316,6 +336,10 @@ class UtilObject {
 		return this.getFileLayouts().includes(layout);
 	};
 
+	isFileOrSystemLayout (layout: I.ObjectLayout) {
+		return this.getFileAndSystemLayouts().includes(layout);
+	};
+
 	isSystemLayout (layout: I.ObjectLayout) {
 		return this.getSystemLayouts().includes(layout);
 	};
@@ -361,10 +385,8 @@ class UtilObject {
 	getLayoutsWithoutTemplates () {
 		return [
 			I.ObjectLayout.Note,
-			I.ObjectLayout.Set,
-			I.ObjectLayout.Collection,
 			I.ObjectLayout.Bookmark,
-		].concat(this.getFileAndSystemLayouts());
+		].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts () {

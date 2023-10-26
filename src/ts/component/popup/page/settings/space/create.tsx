@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
-import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard } from 'Lib';
+import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
+import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
+	error: string;
 	name: string;
 	iconEmoji: string;
 	iconOption: number;
 	iconImage: string;
-	useCase: I.Usecase;
+	usecase: I.Usecase;
 	isLoading: boolean;
 };
 
@@ -20,11 +21,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	refName: any = null;
 
 	state = {
+		error: '',
 		name: '',
 		iconEmoji: '',
 		iconOption: UtilCommon.rand(1, Constant.iconCnt),
 		iconImage: '',
-		useCase: 0,
+		usecase: 0,
 		isLoading: false,
 	};
 
@@ -35,10 +37,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onSelectUsecase = this.onSelectUsecase.bind(this);
 	};
 
 	render () {
-		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
+		const { error, name, iconOption, iconEmoji, iconImage, usecase, isLoading } = this.state;
+		const { onSpaceTypeTooltip } = this.props;
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
 			name,
@@ -70,7 +74,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value=""
@@ -83,6 +86,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate(`spaceType${I.SpaceType.Private}`)}
+							onMouseEnter={onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
 				</div>
@@ -99,12 +104,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="side right">
 										<Select 
 											id="select-usecase"
-											value={String(useCase || '')}
+											value={String(usecase || '')}
 											options={options}
-											onChange={id => this.setState({ useCase: Number(id) || 0 })}
+											onChange={this.onSelectUsecase}
 											menuParam={{
 												width: 360,
 												horizontal: I.MenuDirection.Center,
+												className: 'withFullDescripion',
+												data: { noVirtualisation: true, noScroll: true }
 											}}
 										/>
 									</div>
@@ -116,6 +123,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 				<div className="buttons">
 					<Button text={translate('commonCreate')} onClick={this.onSubmit} />
+					<Error text={error} />
 				</div>
 
 			</React.Fragment>
@@ -148,7 +156,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onSubmit () {
 		const { close } = this.props;
-		const { isLoading } = this.state;
+		const { isLoading, usecase } = this.state;
 
 		if (isLoading) {
 			return;
@@ -156,9 +164,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		this.setState({ isLoading: true });
 
-		C.WorkspaceCreate(this.state,  this.state.useCase, (message: any) => {
+		C.WorkspaceCreate(this.state, usecase, (message: any) => {
 			this.setState({ isLoading: false });
-			UtilRouter.switchSpace(message.objectId, '', () => close());
+
+			if (!message.error.code) {
+				analytics.event('CreateSpace', { usecase });
+				analytics.event('SelectUsecase', { type: usecase });
+
+				UtilRouter.switchSpace(message.objectId, '', () => close());
+			} else {
+				this.setState({ error: message.error.description });
+			};
 		});
 	};
 
@@ -170,19 +186,30 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getUsecaseOptions () {
-		return [
-			{ id: I.Usecase.Empty }
-		].concat(_.shuffle([
-			{ id: I.Usecase.Personal },
-			{ id: I.Usecase.Notes },
-			{ id: I.Usecase.Knowledge },
-			{ id: I.Usecase.Strategic },
-        ])).map(it => ({
+		let ret: any = [ 
+			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
+		];
+
+		ret = ret.concat(_.shuffle([
+			{ id: I.Usecase.Personal, icon: 'postbox', },
+			{ id: I.Usecase.Notes, icon: 'memo' },
+			{ id: I.Usecase.Knowledge, icon: 'books' },
+			{ id: I.Usecase.Strategic, icon: 'bulb' },
+        ]));
+
+		return ret.map((it: any) => ({
 			...it,
 			name: translate(`usecase${it.id}Title`),
 			description: translate(`usecase${it.id}Label`),
 			withDescription: true,
+			iconSize: 40,
+			object: { iconEmoji: `:${it.icon}:` }
 		}));
+	};
+
+	onSelectUsecase (id: string) {
+		const usecase = Number(id) || 0;
+		this.setState({ usecase });
 	};
 
 });

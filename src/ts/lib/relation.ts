@@ -262,8 +262,8 @@ class Relation {
 			};
 
 			case 'origin': {
-				value = Number(value) || I.ObjectOrigin.User;
-				return translate(`objectOrigin${value}`);
+				value = Number(value) || I.ObjectOrigin.None;
+				return (value == I.ObjectOrigin.None) ? null : translate(`objectOrigin${value}`);
 			};
 		};
 		return null;
@@ -393,7 +393,7 @@ class Relation {
 		};
 	};
 
-	public getArrayValue (value: any): string[] {
+	public getArrayValue (value: any): any[] {
 		if (this.isEmpty(value)) {
 			return [];
 		};
@@ -406,7 +406,7 @@ class Relation {
 		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
-	private isEmpty (v: any) {
+	public isEmpty (v: any) {
 		return (v === null) || (v === undefined) || (v === '');
 	};
 

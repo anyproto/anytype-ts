@@ -385,23 +385,20 @@
     /* MenuDataviewTemplateList */
 
     .menu.menuDataviewTemplateList {
-        .content {
-            .emptySearch { border-color: $colorShapePrimary; }
-        }
+        .emptySearch { border-color: $colorShapePrimary; }
+		.items {
+			.item {
+				.previewObject { background-color: $colorBgPrimary; }
+				.previewObject::before { background-color: $colorShapeHighlightMedium; }
+			}
+		}
     }
     .menu.menuDataviewTemplateList.objectCreate {
-        .content {
-            .items {
-                .previewObject { background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
-            }
-        }
-    }
-    .menu.menuDataviewTemplateList.fromBanner {
-        .content {
-            .items {
-                .previewObject { background: $colorBgPrimary; }
-            }
-        }
+		.items {
+			.item {
+				.previewObject { box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
+			}
+		}
     }
 
 	/* MenuSpace */

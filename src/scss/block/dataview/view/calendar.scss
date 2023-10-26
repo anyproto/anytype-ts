@@ -4,17 +4,8 @@
 	.block.blockDataview {
 		.viewContent.viewCalendar { position: relative; height: 100%; }
 		.viewContent.viewCalendar {
-			.dateSelect { 
-				position: absolute; background: rgba(255,255,255,0.9); padding: 2px 8px; @include text-paragraph; display: flex; gap: 0px 4px;
-				left: 8px; top: 28px; z-index: 10;
-			}
-			.dateSelect {
-				.month { font-weight: 600; }
-			}
-
 			.table { 
-				border-color: $colorShapeSecondary; border-style: solid; border-width: 1px; border-left-width: 0px; border-right-width: 0px; 
-				display: flex; flex-flow: column; height: 100%;
+				border-color: $colorShapeSecondary; border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
 			}
 
 			.table {
@@ -27,13 +18,14 @@
 					}
 				}
 
-				.body { overflow: auto; flex-grow: 1; }
+				.body { overflow: overlay; flex-grow: 1; }
 			}
 
 			.day { 
-				height: 136px; display: table-cell; text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
-				border-right-width: 1px; border-bottom-width: 1px; padding: 6px 8px; position: relative;
+				text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; 
+				border-right-width: 1px; border-top-width: 1px; padding: 6px 8px; position: relative; height: 136px;
 			}
+			.day.first { border-top-width: 0px; }
 			.day.active .number { color: $colorSystemAccent100; }
 			.day.other .number { color: $colorTextSecondary; }
 
@@ -52,4 +44,10 @@
 			}
         }
     }
+
+	.block.blockDataview.isInline {
+		.viewContent.viewCalendar {
+			.table { border-left-width: 1px; border-bottom-width: 0px; }
+		}
+	}
 }

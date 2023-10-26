@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, translate, Action } from 'Lib';
+import { authStore, dbStore, detailStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -38,6 +38,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)} 
 					onMouseLeave={e => setHover()}
+					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
 						<IconObject object={item} size={96} forceLetter={true} />
@@ -67,7 +68,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 						<IconObject object={profile} size={48} />
 						<ObjectName object={profile} onClick={this.onSettings} />
 					</div>
-					<div className="side left">
+					<div className="side right">
 						<Icon className="settings" onClick={this.onSettings} />
 					</div>
 				</div>
@@ -85,11 +86,17 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	componentDidMount (): void {
-		const { space } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { shortcut } = data;
 		const items = this.getItems();
 
-		this.n = items.findIndex(it => it.spaceId == space);
+		this.n = items.findIndex(it => it.isActive);
 		this.rebind();
+
+		if (shortcut) {
+			this.onArrow(1);
+		};
 	};
 
 	componentDidUpdate (): void {
@@ -101,13 +108,17 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		win.on('keydown.menu', e => this.onKeyDown(e));
+		win.on('keyup.menu', e => this.onKeyUp(e));
+
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
-		$(window).off('keydown.menu');
+		$(window).off('keydown.menu keyup.menu');
 	};
 
 	onKeyDown (e: any) {
@@ -123,10 +134,46 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		};
 	};
 
+	onKeyUp (e: any) {
+		if (e.key.toLowerCase() == 'control') {
+			this.onClick(e, this.getItems()[this.n]);
+		};
+	};
+
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+	};
+
+	onContextMenu (e: any, item: any) {
+		const { param } = this.props;
+		const { classNameWrap } = param;
+		const { accountSpaceId } = authStore;
+
+		if (item.targetSpaceId == accountSpaceId) {
+			return;
+		};
+
+		menuStore.open('select', {
+			classNameWrap,
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				options: [
+					{ id: 'remove', icon: 'remove', name: translate('commonDelete') }
+				],
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'remove':
+							Action.removeSpace(item.targetSpaceId, 'Navigation');
+							break;
+					};
+				},
+			},
+		});
 	};
 
 	onArrow (dir: number) {
@@ -146,21 +193,21 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const { space } = commonStore;
 		const subId = Constant.subId.space;
-		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
-		const canAdd = items.length < Constant.limit.space;
+		const { spaceview } = blockStore;
+
+		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).
+		map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys())).
+		filter(it => it.spaceAccountStatus != I.SpaceStatus.Deleted).
+		map(it => ({ ...it, isActive: spaceview == it.id }));
 
 		items.sort((c1, c2) => {
-			const isSpace1 = c1.spaceId == space;
-			const isSpace2 = c2.spaceId == space;
-
-			if (isSpace1 && !isSpace2) return -1;
-			if (!isSpace1 && isSpace2) return 1;
+			if (c1.isActive && !c2.isActive) return -1;
+			if (!c1.isActive && c2.isActive) return 1;
 			return 0;
 		});
 
-		if (canAdd) {
+		if (items.length < Constant.limit.space) {
 			items.push({ id: 'add' });
 		};
 		return items;

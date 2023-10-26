@@ -92,16 +92,16 @@
 			.children { width: 100%; }
 		}
 
-		.element.blockText.header1,
-		.element.blockText.header2,
-		.element.blockText.header3
+		.element.blockText.textHeader1,
+		.element.blockText.textHeader2,
+		.element.blockText.textHeader3
 		{ @include text-small; font-weight: bold; }
 
-		.element.blockText.toggle > .children,
-		.element.blockText.numbered > .children,
-		.element.blockText.bulleted > .children,
-		.element.blockText.checkbox > .children,
-		.element.blockText.paragraph > .children
+		.element.blockText.textToggle > .children,
+		.element.blockText.textNumbered > .children,
+		.element.blockText.textBulleted > .children,
+		.element.blockText.textCheckbox > .children,
+		.element.blockText.textParagraph > .children
 		{ padding-left: 8px; }
 
 

@@ -169,6 +169,11 @@ class DetailStore {
 			object.name = object.snippet;
 		};
 
+		if (object.id == UtilObject.getIdentityId()) {
+			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
+			object.type = type ? type.id : object.type;
+		};
+
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');
 		};
@@ -189,6 +194,7 @@ class DetailStore {
 				break;
 			};
 
+			case I.ObjectLayout.Date:
 			case I.ObjectLayout.Set: {
 				object = this.mapSet(object);
 				break;
@@ -208,7 +214,7 @@ class DetailStore {
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
-		object.origin = Number(object.origin) || I.ObjectOrigin.User;
+		object.origin = Number(object.origin) || I.ObjectOrigin.None;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;

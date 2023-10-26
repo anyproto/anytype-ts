@@ -3,8 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { I, C, Relation, analytics, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { menuStore, detailStore } from 'Store';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
@@ -97,9 +96,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onAdd (e: any) {
-		const { getId, getSize, param } = this.props;
-		const { data } = param;
-		const { blockId } = data;
+		const { getId, getSize } = this.props;
 		const value = this.getValue();
 
 		menuStore.open('searchObject', { 
@@ -139,7 +136,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { readonly, blockId } = data;
+		const { readonly } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
@@ -168,6 +165,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 		C.ObjectSetSource(objectId, value, () => {
 			$(window).trigger(`updateDataviewData.${blockId}`);
+
 			if (callBack) {
 				callBack();
 			};

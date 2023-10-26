@@ -39,6 +39,7 @@ class Input extends React.Component<Props, State> {
 	_isMounted = false;
 	node: any = null;
 	mask: any = null;
+	isFocused: boolean = false;
 
 	public static defaultProps = {
         type: 'text',
@@ -116,6 +117,11 @@ class Input extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		if (this.isFocused) {
+			this.isFocused = false;
+			keyboard.setFocus(false);
+		};
 	};
 
 	initMask () {
@@ -157,6 +163,7 @@ class Input extends React.Component<Props, State> {
 			this.props.onFocus(e, this.state.value);
 		};
 		
+		this.isFocused = true;
 		keyboard.setFocus(true);
 	};
 	
@@ -165,6 +172,7 @@ class Input extends React.Component<Props, State> {
 			this.props.onBlur(e, this.state.value);
 		};
 		
+		this.isFocused = false;
 		keyboard.setFocus(false);
 	};
 	

@@ -11,6 +11,30 @@
 			}
 		}
 	}
+
+	.block.blockLayout:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
+		> .wrapContent {
+			> .children {
+				> .block.first {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.last {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.first.last {
+					.colResize {
+						.inner { top: 0px; height: 100%; }
+					}
+				}
+			}
+		}
+	}
 	
 	/* Row */
 	.block.blockLayout.layoutRow { padding: 14px 0px; }
@@ -48,14 +72,14 @@
 				.content { overflow: hidden; }
 			}
 
-			> .block.first.blockText.header1 { padding-top: 0px; }
-			> .block.last.blockText.header1 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader1 { padding-top: 0px; }
+			> .block.last.blockText.textHeader1 { padding-bottom: 0px; }
 
-			> .block.first.blockText.header2 { padding-top: 0px; }
-			> .block.last.blockText.header2 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader2 { padding-top: 0px; }
+			> .block.last.blockText.textHeader2 { padding-bottom: 0px; }
 
-			> .block.first.blockText.header3 { padding-top: 0px; }
-			> .block.last.blockText.header3 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader3 { padding-top: 0px; }
+			> .block.last.blockText.textHeader3 { padding-bottom: 0px; }
 
 			> .block.first.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
 			> .block.last.blockFile > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }

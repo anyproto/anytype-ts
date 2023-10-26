@@ -48,15 +48,16 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			return;
 		};
 
-		C.AccountDelete(false, (message: any) => {
+		C.AccountDelete((message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			authStore.accountSet({ status: message.status });		
-			this.props.close();
-			UtilRouter.go('/auth/deleted', { replace: true });
+			authStore.accountSetStatus(message.status);	
 
+			this.props.close();
+
+			UtilRouter.go('/auth/deleted', { replace: true });
 			analytics.event('DeleteAccount');
 		});
 	};

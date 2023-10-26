@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, ObjectName } from 'Component';
+import { Icon, ObjectName, DropTarget } from 'Component';
 import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -83,6 +83,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let content = null;
 		let back = null;
 		let buttons = null;
+		let targetTop = null;
+		let targetBot = null;
 
 		if (isPreview) {
 			back = (
@@ -118,6 +120,28 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					</div>
 					{buttons}
 				</div>
+			);
+
+			targetTop = (
+				<DropTarget 
+					{...this.props} 
+					isTargetTop={true} 
+					rootId={blockStore.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+				/>
+			);
+
+			targetBot = (
+				<DropTarget 
+					{...this.props} 
+					isTargetBottom={true} 
+					rootId={blockStore.widgets} 
+					id={block.id} 
+					dropType={I.DropType.Widget} 
+					canDropMiddle={false} 
+				/>
 			);
 		};
 
@@ -160,6 +184,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				</div>
 
 				<div className="dimmer" />
+
+				{targetTop}
+				{targetBot}
 			</div>
 		);
 	};
@@ -355,14 +382,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const { targetBlockId } = child.content;
-		const sorts = [];
+		const space = UtilObject.getSpaceview();
+ 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 		];
+		const limit = this.getLimit(block.content);
 
-		let limit = this.getLimit(block.content);
+		if (targetBlockId != Constant.widgetId.recentEdit) {
+			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+		};
 
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
@@ -371,14 +401,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case Constant.widgetId.recentEdit: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: timeRegister + 60 });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 60 });
 				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 				break;
 			};
 
 			case Constant.widgetId.recentOpen: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
-				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 

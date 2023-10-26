@@ -87,6 +87,13 @@
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
+		.dateSelect {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); border-radius: 4px; }
+			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+
+			.btn:hover { background-color: $colorShapeHighlightMedium; }
+		}
+
 		.dataviewEmpty { border-color: $colorShapeSecondary; }
 		.dataviewEmpty {
 			.button { color: $colorTextPrimary; }
@@ -208,6 +215,15 @@
 				.cardContent { border: 2px solid $colorSystemAccent100; }
 			}
         }
+
+		.viewContent.viewCalendar {
+			.table, .day { border-color: $colorShapeSecondary; }
+			.table {
+				.head {
+					.item { border-color: $colorShapeSecondary; }
+				}
+			}
+		}
 
 		.content {
 			.scrollWrap { background: $colorBgPrimary; }

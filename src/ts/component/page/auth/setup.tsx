@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
 import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -145,12 +145,23 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	select (accountId: string, walletPath: string, animate: boolean) {
+		const spaceId = Storage.get('spaceId');
+
 		C.AccountSelect(accountId, walletPath, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
 
-			UtilData.onAuth(message.account, message.account.info, { routeParam: { animate } });
+			authStore.accountSet(message.account);
+			commonStore.configSet(message.account.config, false);
+
+			if (spaceId) {
+				UtilRouter.switchSpace(spaceId);
+			} else {
+				UtilData.onInfo(message.account.info);
+				UtilData.onAuth({ routeParam: { animate } });
+			};
+
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

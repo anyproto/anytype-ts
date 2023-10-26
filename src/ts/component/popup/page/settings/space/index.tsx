@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, translate, Renderer, Preview, analytics, UtilDate } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -16,12 +16,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onDashboard = this.onDashboard.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
+		this.onDelete = this.onDelete.bind(this);
 	};
 
 	render () {
-		const { onPage } = this.props;
+		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
-		const { account } = authStore;
+		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
@@ -31,6 +32,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const limitUsage = String(UtilFile.size(bytesLimit));
 		const isRed = (percentageUsed >= 90) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
+		const canDelete = space.targetSpaceId != accountSpaceId;
 
 		let extend = null;
 		let createdDate = null;
@@ -85,7 +87,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate(`spaceType${space.spaceType}`)}
-							onMouseEnter={this.onSpaceTypeTooltip}
+							onMouseEnter={onSpaceTypeTooltip}
 							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
@@ -219,6 +221,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							{createdDate}
 						</div>
 					</div>
+
+					{canDelete ? (
+						<div className="buttons">
+							<Button text={translate('commonDelete')} color="red c36" onClick={this.onDelete} />
+						</div>
+					) : ''}
 				</div>
 
 			</React.Fragment>
@@ -261,15 +269,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
 	};
 
-	onSpaceTypeTooltip (e) {
-		Preview.tooltipShow({
-			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
-			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
-			className: 'big',
-			element: $(e.currentTarget),
-			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Left
-		});
+	onDelete () {
+		Action.removeSpace(commonStore.space, 'Settings');
 	};
 
 	checkName (v: string): string {

@@ -118,7 +118,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		// keyboard.pageCreate();
+		// keyboard.pageCreate('Navigation');
 		const element = '#button-navigation-plus';
 
 		if (menuStore.isOpen('quickCapture')) {
@@ -149,7 +149,11 @@ class Navigation extends React.Component {
 	};
 
 	onProfile () {
-		keyboard.onSpaceMenu();
+		if (menuStore.isOpen('space')) {
+			menuStore.close('space');
+		} else {
+			keyboard.onSpaceMenu(false);
+		};
 	};
 
 	resize () {

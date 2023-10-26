@@ -257,18 +257,16 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onCreate (typeId: any) {
 		const { rootId, isPopup } = this.props;
 		const type = dbStore.getTypeById(typeId);
-		const template = type.defaultTemplateId || Constant.templateId.blank;
+		if (!type) {
+			return;
+		};
 
-		C.ObjectSetObjectType(rootId, type?.uniqueKey, () => {
-			C.ObjectApplyTemplate(rootId, template, this.onTemplate);
+		C.ObjectSetObjectType(rootId, type.uniqueKey, () => {
+			C.ObjectApplyTemplate(rootId, type.defaultTemplateId || Constant.templateId.blank, this.onTemplate);
 		});
 
 		Onboarding.start('objectCreationFinish', isPopup);
-
-		analytics.event('SelectObjectType', {
-			objectType: typeId,
-			layout: template?.layout,
-		});
+		analytics.event('SelectObjectType', { objectType: typeId });
 	};
 
 	onBlock () {

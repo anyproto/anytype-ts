@@ -88,11 +88,11 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: any) => void) => {
+const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
 	request.setDetails(Encode.encodeStruct(details));
-	request.setUsecase(useCase as number);
+	request.setUsecase(usecase as number);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
@@ -131,6 +131,16 @@ const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any
 	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
 
+// ---------------------- SPACE ---------------------- //
+
+const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.Delete.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceDelete.name, request, callBack);
+};
+
 // ---------------------- ACCOUNT ---------------------- //
 
 const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
@@ -167,12 +177,16 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.request(AccountStop.name, request, callBack);
 };
 
-const AccountDelete = (revert: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Account.Delete.Request();
-
-	request.setRevert(revert);
+const AccountDelete = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
 
 	dispatcher.request(AccountDelete.name, request, callBack);
+};
+
+const AccountRevertDeletion = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+
+	dispatcher.request(AccountRevertDeletion.name, request, callBack);
 };
 
 const AccountMove = (path: string, callBack?: (message: any) => void) => {
@@ -1232,11 +1246,12 @@ const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message
 	dispatcher.request(ObjectBookmarkFetch.name, request, callBack);
 };
 
-const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
@@ -1255,11 +1270,12 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	});
 };
 
-const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any) => void) => {
+const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Show.Request();
 
 	request.setObjectid(objectId);
 	request.setTraceid(traceId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
@@ -1273,10 +1289,11 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 };
 
 
-const ObjectClose = (objectId: string, callBack?: (message: any) => void) => {
+const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
 	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectClose.name, request, callBack);
 };
@@ -1753,16 +1770,31 @@ const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message:
 	dispatcher.request(DebugExportLocalstore.name, request, callBack);
 };
 
-const DebugSpaceSummary = (callBack?: (message: any) => void) => {
+const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.SpaceSummary.Request();
 
+	request.setSpaceid(spaceId);
+
 	dispatcher.request(DebugSpaceSummary.name, request, callBack);
+};
+
+const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.StackGoroutines.Request();
+
+	request.setPath(path);
+
+	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
 export {
 	MetricsSetParameters,
 	LinkPreview,
 	ProcessCancel,
+
+	DebugTree,
+	DebugExportLocalstore,
+	DebugSpaceSummary,
+	DebugStackGoroutines,
 
 	AppGetVersion,
 	AppShutdown,
@@ -1779,17 +1811,16 @@ export {
 	WorkspaceObjectListRemove,
 	WorkspaceSetInfo,
 
+	SpaceDelete,
+
 	AccountCreate,
 	AccountRecover,
 	AccountRecoverFromLegacyExport,
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
+	AccountRevertDeletion,
 	AccountMove,
-
-	DebugTree,
-	DebugExportLocalstore,
-	DebugSpaceSummary,
 
 	FileUpload,
 	FileDownload,

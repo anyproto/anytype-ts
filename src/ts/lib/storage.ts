@@ -199,7 +199,8 @@ class Storage {
 
 	logout () {
 		const keys = [ 
-			'accountId', 
+			'accountId',
+			'spaceId',
 			'tabStore', 
 			'graph',
 			'space',

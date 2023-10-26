@@ -390,7 +390,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
-					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+					keys: UtilData.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

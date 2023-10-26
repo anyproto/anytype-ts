@@ -13,6 +13,7 @@ export enum DropType {
 	Menu	 = 'menu',
 	Relation = 'relation',
 	Record	 = 'record',
+	Widget	 = 'widget',
 };
 
 export enum SelectType {
@@ -196,10 +197,6 @@ export enum SliceOperation {
     Move	 = 2,
 	Remove	 = 3,
     Replace	 = 4,
-};
-
-export enum SpaceType {
-	Private	 = 0,
 };
 
 export interface Dataset {

@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -6,6 +6,7 @@ class Action {
 
 	pageClose (rootId: string, close: boolean) {
 		const { profile } = blockStore;
+		const { space } = commonStore;
 
 		if (rootId == profile) {
 			return;
@@ -25,7 +26,7 @@ class Action {
 		};
 
 		if (close) {
-			C.ObjectClose(rootId, onClose);
+			C.ObjectClose(rootId, space, onClose);
 		} else {
 			onClose();
 		};
@@ -225,6 +226,8 @@ class Action {
 			};
 
 			const { details } = message;
+			const eventParam: any = { layout: object.layout };
+
 			let toast = '';
 			let subId = '';
 
@@ -232,12 +235,16 @@ class Action {
 				case I.ObjectLayout.Type: {
 					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
+
+					eventParam.objectType = object.id;
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
 					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
+
+					eventParam.relationKey = object.relationKey;
 					break;
 				};
 			};
@@ -247,11 +254,13 @@ class Action {
 			};
 
 			detailStore.update(subId, { id: details.id, details }, false);
-			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
+			analytics.event('ObjectInstall', eventParam);
 		});
 	};
 
 	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+		const eventParam: any = { layout: object.layout };
+
 		let title = '';
 		let text = '';
 		let toast = '';
@@ -261,6 +270,8 @@ class Action {
 				title = translate('libActionUninstallTypeTitle');
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
+
+				eventParam.objectType = object.id;
 				break;
 			};
 
@@ -268,6 +279,8 @@ class Action {
 				title = translate('libActionUninstallRelationTitle');
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
+
+				eventParam.relationKey = object.relationKey;
 				break;
 			};
 		};
@@ -291,7 +304,7 @@ class Action {
 						if (showToast) {
 							Preview.toastShow({ text: toast });
 						};
-						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
+						analytics.event('ObjectUninstall', eventParam);
 					});
 				},
 			},
@@ -335,9 +348,9 @@ class Action {
 					return;
 				};
 
-				const { accountId } = message;
+				const { accountId, spaceId } = message;
 
-				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
+				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
@@ -347,11 +360,12 @@ class Action {
 							return;
 						};
 
-						UtilData.onAuth(message.account, message.account.info, { routeParam: { animate: true } }, () => {
-							window.setTimeout(() => {
-								popupStore.open('migration', { data: { type: 'import' } });
-							}, Constant.delay.popup);
+						authStore.accountSet(message.account);
+						commonStore.configSet(message.account.config, false);
 
+						UtilData.onInfo(message.account.info);
+						UtilData.onAuth({ routeParam: { animate: true } }, () => {
+							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, Constant.delay.popup);
 							blockStore.closeRecentWidgets();
 						});
 					});
@@ -507,6 +521,64 @@ class Action {
 		});
 
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
+	};
+
+	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
+		const { accountSpaceId } = authStore;
+		const space = UtilObject.getSpaceview();
+		const deleted = UtilObject.getSpaceviewBySpaceId(id);
+
+		if (!deleted) {
+			return;
+		};
+
+		analytics.event('ClickDeleteSpace', { route });
+
+		popupStore.open('confirm', {
+			data: {
+				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
+				text: translate('spaceDeleteWarningText'),
+				textConfirm: translate('commonDelete'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
+
+					const cb = () => {
+						C.SpaceDelete(id, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							if (callBack) {
+								callBack(message);
+							};
+
+							Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
+							analytics.event('DeleteSpace', { type: deleted.spaceType });
+						});
+					};
+
+					if (space.id == deleted.id) {
+						UtilRouter.switchSpace(accountSpaceId, '', cb);
+					} else {
+						cb();
+					};
+				},
+				onCancel: () => {
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
+				}
+			},
+		});
+	};
+
+	setInterfaceLang (id: string) {
+		Renderer.send('setInterfaceLang', id);
+		analytics.event('SwitchInterfaceLanguage', { type: id });
+	};
+
+	setSpellingLang (id: string) {
+		Renderer.send('setSpellingLang', id);
+		analytics.event('AddSpellcheckLanguage', { type: id });
 	};
 
 };
