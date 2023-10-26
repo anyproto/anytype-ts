@@ -126,7 +126,7 @@ class Navigation extends React.Component {
 			return;
 		};
 
-		$(element).addClass('active');
+		
 		menuStore.open('quickCapture', {
 			element,
 			type: I.MenuType.Horizontal,
@@ -135,9 +135,8 @@ class Navigation extends React.Component {
 			noFlipY: true,
 			offsetY: -16,
 			offsetX: 20,
-			onClose: () => {
-				$(element).removeClass('active');
-			}
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
 		});
 	};
 
