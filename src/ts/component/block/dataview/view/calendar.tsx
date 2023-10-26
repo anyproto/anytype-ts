@@ -14,6 +14,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	refMonth = null;
 	refYear = null;
 	value = UtilDate.now();
+	scroll = false;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -126,6 +127,11 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	componentDidUpdate (): void {
 		this.init();
+
+		if (this.scroll) {
+			this.scrollToday();
+			this.scroll = false;
+		};
 	};
 
 	init () {
@@ -222,16 +228,25 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	onToday () {
 		const today = this.getDateParam(UtilDate.now());
+
+		this.scroll = true;
+		this.setValue(UtilDate.timestamp(today.y, today.m, today.d));
+	};
+
+	scrollToday () {
 		const node = $(this.node);
+		const el = node.find('.day.active');
+
+		if (!el.length) {
+			return;
+		};
+
 		const scroll = node.find('.body');
 		const st = scroll.scrollTop();
 		const ch = scroll.height();
-		const el = node.find('.day.active');
 		const pt = el.position().top;
 		const eh = el.outerHeight();
 		const top = Math.max(0, st + pt + eh - ch);
-
-		this.setValue(UtilDate.timestamp(today.y, today.m, today.d));
 
 		scroll.scrollTop(top);
 	};
