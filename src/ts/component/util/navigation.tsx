@@ -134,6 +134,7 @@ class Navigation extends React.Component {
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			offsetY: -16,
+			offsetX: 20,
 			onClose: () => {
 				$(element).removeClass('active');
 			}
