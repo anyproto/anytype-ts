@@ -486,6 +486,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 								limit = 0;
 							};
 
+							if (UtilObject.isSetLayout(object.layout)) {
+								layout = I.WidgetLayout.Compact;
+								limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+							};
+
 							create = true;
 						};
 						break;
