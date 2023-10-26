@@ -771,6 +771,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				type: I.MenuType.Horizontal,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				offsetX: dir < 0 ? -24 : 0,
+				offsetY: 4 * -dir,
 				data: {
 					details,
 					onSubmit: (bookmark) => {
