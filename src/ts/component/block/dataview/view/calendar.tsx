@@ -17,6 +17,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	constructor (props: I.ViewComponent) {
 		super (props);
+
+		this.onToday = this.onToday.bind(this);
 	};
 
 	render () {
@@ -67,7 +69,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 					<div className="side right">
 						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div className="btn" onClick={() => this.setValue(UtilDate.timestamp(today.y, today.m, today.d))}>
+						<div className="btn" onClick={this.onToday}>
 							{translate('menuCalendarToday')}
 						</div>
 						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
@@ -216,6 +218,22 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		};
 
 		this.setValue(UtilDate.timestamp(y, m, 1))
+	};
+
+	onToday () {
+		const today = this.getDateParam(UtilDate.now());
+		const node = $(this.node);
+		const scroll = node.find('.body');
+		const st = scroll.scrollTop();
+		const ch = scroll.height();
+		const el = node.find('.day.active');
+		const pt = el.position().top;
+		const eh = el.outerHeight();
+		const top = Math.max(0, st + pt + eh - ch);
+
+		this.setValue(UtilDate.timestamp(today.y, today.m, today.d));
+
+		scroll.scrollTop(top);
 	};
 
 	setValue (value: number) {
