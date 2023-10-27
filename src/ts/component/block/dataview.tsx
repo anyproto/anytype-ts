@@ -556,7 +556,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const view = this.getView();
 		const conditions = [
 			I.FilterCondition.Equal,
