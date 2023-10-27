@@ -8,12 +8,9 @@ import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
-	name: string;
-	iconEmoji: string;
-	iconOption: number;
-	iconImage: string;
-	usecase: I.Usecase;
 	isLoading: boolean;
+	iconOption: number;
+	usecase: I.Usecase;
 };
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
@@ -22,33 +19,25 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	state = {
 		error: '',
-		name: '',
-		iconEmoji: '',
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
-		iconImage: '',
-		usecase: 0,
 		isLoading: false,
+		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		usecase: I.Usecase.Empty,
 	};
 
 	constructor (props: any) {
 		super(props);
 
-		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onSelectUsecase = this.onSelectUsecase.bind(this);
 	};
 
 	render () {
-		const { error, name, iconOption, iconEmoji, iconImage, usecase, isLoading } = this.state;
+		const { error, iconOption, usecase, isLoading } = this.state;
 		const { onSpaceTypeTooltip } = this.props;
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
-			name,
 			iconOption,
-			iconEmoji,
-			iconImage,
 		};
 		const options = this.getUsecaseOptions();
 
@@ -68,7 +57,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							forceLetter={true}
 							canEdit={false}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
 						/>
 					</div>
 
@@ -78,7 +66,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref}
 								value=""
 								onKeyDown={this.onKeyDown}
-								onKeyUp={this.onKeyUp}
 								placeholder={UtilObject.defaultName('Page')}
 							/>
 						</div>
@@ -131,15 +118,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentDidMount (): void {
+		this.onSelectUsecase(I.Usecase.Empty);
+
 		window.setTimeout(() => this.refName?.focus(), 15);
 	};
 
 	componentWillUnmount(): void {
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
-	};
-
-	onSelect (iconEmoji: string) {
-		this.setState({ iconEmoji, iconImage: '' });
 	};
 
 	onKeyDown (e: any, v: string) {
@@ -150,13 +135,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		});
 	};
 
-	onKeyUp (e: any, v: string) {
-		this.setState({ name: this.checkName(v) });
-	};
-
 	onSubmit () {
 		const { close } = this.props;
-		const { isLoading, usecase } = this.state;
+		const { isLoading, usecase, iconOption } = this.state;
 
 		if (isLoading) {
 			return;
@@ -164,7 +145,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		this.setState({ isLoading: true });
 
-		C.WorkspaceCreate(this.state, usecase, (message: any) => {
+		let name = this.checkName(this.refName.getValue());
+		if (!name) {
+			const item = this.getUsecase(usecase);
+
+			if (item) {
+				name = item.name;
+			};
+		};
+
+		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (!message.error.code) {
@@ -185,7 +175,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return v;
 	};
 
-	getUsecaseOptions () {
+	getUsecaseOptions (): any[] {
 		let ret: any = [ 
 			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
 		];
@@ -207,9 +197,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}));
 	};
 
-	onSelectUsecase (id: string) {
-		const usecase = Number(id) || 0;
+	onSelectUsecase (id: any) {
+		const usecase = Number(id) || I.Usecase.Empty;
+		const item = this.getUsecase(usecase);
+
 		this.setState({ usecase });
+
+		if (item) {
+			this.refName.setPlaceholder(item.name);
+		};
+	};
+
+	getUsecase (id: I.Usecase) {
+		return this.getUsecaseOptions().find(it => it.id == id);
 	};
 
 });

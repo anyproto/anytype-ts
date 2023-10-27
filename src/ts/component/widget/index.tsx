@@ -387,6 +387,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
  		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: Constant.typeKey.template },
 		];
 		const limit = this.getLimit(block.content);
 

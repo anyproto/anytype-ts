@@ -453,6 +453,7 @@ class UtilMenu {
 								data: {
 									filters: [
 										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+										{ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: Constant.typeKey.template },
 									],
 									canAdd: true,
 									onSelect: (el: any) => onSelect(el, true),

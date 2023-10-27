@@ -301,7 +301,7 @@
 	"authOnboardAccountDataLocation": "Account data location",
 	"authOnboardMoreInfo": "You can find Recovery Phrase later in Anytype settings",
 
-	"authOnboardVoidTitle": "Set your name",
+	"authOnboardVoidTitle": "Choose your name",
 	"authOnboardVoidLabel": "This is how you will appear in the app",
 
 	"authOnboardPhraseTitle": "Save your Recovery Phrase",
@@ -665,15 +665,15 @@
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
-	"popupSettingsExportTitle": "Export",
+	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
 	"popupSettingsExportOk": "Export data",
 
-	"popupSettingsExportMarkdownTitle": "Export to Markdown",
+	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
 	"popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
 	"popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
-	"popupSettingsExportProtobufTitle": "Export to Any-Block",
+	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
 
 	"popupSettingsLogout": "Log out",
@@ -739,7 +739,7 @@
 	"popupExportPageSize": "Page size",
 	"popupExportLandscape": "Landscape",
 	"popupExportPrintBackground": "Print background",
-	"popupExportTitle": "Export",
+	"popupExportTitle": "Export Object",
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
@@ -951,11 +951,11 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is Recovery Phrase?",
+	"popupPhraseTitle1": "What is a Recovery Phrase?",
 	"popupPhraseTitle2": "How to save my phrase?",
-	"popupPhraseLabel1": "Recovery Phrase is 12 random words from which your account is magically generated on this device.",
-	"popupPhraseLabel2": "Who knows combination of these words &ndash; owns the account. Now, you are the only person in the world who can access it.",
-	"popupPhraseLabel3": "That is why it is essential to keep Recovery Phrase secure! You own &ndash; you responsible!",
+	"popupPhraseLabel1": "Your Recovery Phrase is 12 random words from which your account is magically generated on this device.",
+	"popupPhraseLabel2": "Whomever knows your Recovery Phrase, owns the account. At this moment, you are the only person in the world who knows it.",
+	"popupPhraseLabel3": "That's why it's essential to keep your Recovery Phrase safe. As the sole owner, nobody can help you if it's lost.",
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
@@ -1393,6 +1393,8 @@
 	"navigationAccount": "Spaces",
 
 	"spaceType0": "Private Space",
+	"spaceType1": "Personal Space",
+
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 	"spaceDeleteWarningTitle": "Delete '%s' space",

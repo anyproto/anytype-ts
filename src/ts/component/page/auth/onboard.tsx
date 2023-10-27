@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject } from 'Lib';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Action } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
@@ -295,11 +295,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.isSidebarFixedSet(true);
 
 					UtilData.onInfo(message.account.info);
-
-					C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
-
 					Renderer.send('keytarSet', message.account.id, phrase);
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
+
+					C.WorkspaceSetInfo(commonStore.space, { name }, () => {
+						Action.importUsecase(commonStore.space, I.Usecase.Skip, callBack);
+					});
 				});
 			});
 		});
