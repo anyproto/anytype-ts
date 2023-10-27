@@ -1,9 +1,11 @@
 @import "~scss/_vars";
 
 .progressBar {
-    .bar { position: relative; overflow: hidden; height: 6px; border-radius: 8px; background-color: $colorShapeTertiary; }
+    .bar { position: relative; overflow: hidden; height: 12px; border-radius: 4px; display: flex; flex-direction: row; gap: 0px 2px; }
     .bar {
-		.fill { height: 6px; background-color: $colorSystemAccent100; }
+		.fill { height: 100%; background-color: $colorSystemAccent25; }
+		.fill.current { background-color: $colorSystemAccent100; }
+		.fill.empty { background-color: $colorShapeTertiary; }
 	}
     .labels { display: flex; justify-content: space-between; }
     .labels {

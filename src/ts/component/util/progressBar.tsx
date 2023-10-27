@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Label } from 'Component';
 
 interface Props {
 	percent: number;
@@ -12,26 +13,19 @@ class ProgressBar extends React.Component<Props> {
 
 	render () {
 		const { percent, current, max } = this.props;
-		let currentLabel = null;
-		let maxLabel = null;
-
-		if (current) {
-			currentLabel = <div className="label current">{current}</div>;
-		};
-
-		if (max) {
-			maxLabel = <div className="label max">{max}</div>;
-		};
 
 		return (
 			<div className="progressBar">
 				<div className="bar">
-					<div className="fill" style={{ width: percent + '%' }} />
+					<div className="fill current" style={{ width: '30%' }} />
+					<div className="fill" style={{ width: '10%' }} />
+					<div className="fill" style={{ width: '15%' }} />
+					<div className="fill empty" style={{ width: '45%' }} />
 				</div>
 
 				<div className="labels">
-					{currentLabel}
-					{maxLabel}
+					{current ? <Label className="current" text={current} /> : ''}
+					{max ? <Label className="max" text={max} /> : '' }
 				</div>
 			</div>
 		);
