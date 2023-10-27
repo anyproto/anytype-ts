@@ -219,7 +219,7 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileSpaceUsage(space, (message: any) => {
+		C.FileNodeUsage((message: any) => {
 			if (!message.error.code) {
 				commonStore.spaceStorageSet(message);
 			};

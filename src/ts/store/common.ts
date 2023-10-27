@@ -24,6 +24,12 @@ interface SpaceStorage {
 	bytesUsed: number;
 	bytesLimit: number;
 	localUsage: number;
+	spaces: {
+		spaceId: string;
+		filesCount: number;
+		cidsCount: number;
+		bytesUsage: number;
+	}[],
 };
 
 class CommonStore {
@@ -69,6 +75,7 @@ class CommonStore {
 		bytesUsed: 0,
 		bytesLimit: 0,
 		localUsage: 0,
+		spaces: [],
 	};
 
     constructor() {
