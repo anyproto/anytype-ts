@@ -665,15 +665,15 @@
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
-	"popupSettingsExportTitle": "Export",
+	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
 	"popupSettingsExportOk": "Export data",
 
-	"popupSettingsExportMarkdownTitle": "Export to Markdown",
+	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
 	"popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
 	"popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
-	"popupSettingsExportProtobufTitle": "Export to Any-Block",
+	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
 
 	"popupSettingsLogout": "Log out",
@@ -739,7 +739,7 @@
 	"popupExportPageSize": "Page size",
 	"popupExportLandscape": "Landscape",
 	"popupExportPrintBackground": "Print background",
-	"popupExportTitle": "Export",
+	"popupExportTitle": "Export Object",
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
