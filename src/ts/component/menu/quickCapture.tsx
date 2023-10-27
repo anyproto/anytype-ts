@@ -273,10 +273,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return;
 		};
 
-		const cb = (details?: any) => {
+		const cb = (created?: any) => {
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			const layout = details ? details.recommendedLayout : item.recommendedLayout;
-			const uniqueKey = details ? details.uniqueKey : item.uniqueKey;
+			const layout = created ? created.recommendedLayout : item.recommendedLayout;
+			const uniqueKey = created ? created.uniqueKey : item.uniqueKey;
 
 			C.ObjectCreate({ layout }, flags, item.defaultTemplateId, uniqueKey, commonStore.space, (message: any) => {
 				if (message.error.code || !message.details) {
@@ -286,7 +286,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				const { id, layout } = message.details;
 
 				UtilObject.openAuto({ id, layout });
-				analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
+				analytics.event('CreateObject', { route: 'Navigation', objectType: created ? created.id : item.id });
 			});
 		};
 
@@ -301,7 +301,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			if (item.isInstalled) {
 				cb();
 			} else {
-				Action.install(item, true, (message: any) => { cb(); });
+				Action.install(item, true, () => cb);
 			};
 		};
 	};
