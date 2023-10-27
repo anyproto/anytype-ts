@@ -1393,6 +1393,8 @@
 	"navigationAccount": "Spaces",
 
 	"spaceType0": "Private Space",
+	"spaceType1": "Personal Space",
+
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
 	"spaceDeleteWarningTitle": "Delete '%s' space",
