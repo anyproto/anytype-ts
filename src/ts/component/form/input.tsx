@@ -106,13 +106,16 @@ class Input extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+
+		const { value, type, focusOnMount } = this.props;
 		
-		this.setValue(this.props.value);
-		this.setState({ type: this.props.type });
+		this.setValue(value);
+		this.setState({ type });
 		this.initMask();
-		if (this.props.focusOnMount) {
+
+		if (focusOnMount) {
 			this.focus();
-		}
+		};
 	};
 	
 	componentWillUnmount () {
@@ -131,9 +134,7 @@ class Input extends React.Component<Props, State> {
 		};
 
 		maskOptions = maskOptions || {};
-
-		const node = $(this.node);
-		new Inputmask(maskOptions.mask, maskOptions).mask(node.get(0));
+		new Inputmask(maskOptions.mask, maskOptions).mask($(this.node).get(0));
 	};
 
 	onChange (e: any) {
@@ -275,6 +276,10 @@ class Input extends React.Component<Props, State> {
 		};
 
 		$(this.node).removeClass(v);
+	};
+
+	setPlaceholder (v: string) {
+		$(this.node).attr({ placeholder: v });
 	};
 	
 };
