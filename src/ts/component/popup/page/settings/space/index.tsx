@@ -14,6 +14,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		super(props);
 
 		this.onDashboard = this.onDashboard.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
@@ -68,6 +69,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							forceLetter={true}
 							canEdit={true}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
+							onSelect={this.onSelect}
 							onUpload={this.onUpload}
 						/>
 					</div>
@@ -263,6 +265,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onName (e: any, v: string) {
 		C.WorkspaceSetInfo(commonStore.space, { name: this.checkName(v) });
+	};
+
+	onSelect (icon: string) {
+		if (!icon) {
+			C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
+		};
 	};
 
 	onUpload (hash: string) {
