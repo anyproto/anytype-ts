@@ -134,7 +134,7 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				onRouteChange: () => {
+				onFadeOut: () => {
 					if (route) {
 						commonStore.redirectSet(route);
 					};
