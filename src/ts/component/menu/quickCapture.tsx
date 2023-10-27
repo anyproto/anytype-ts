@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action } from 'Lib';
 import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -36,7 +36,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const Item = (item: any) => (
 			<div
 				id={`item-${item.id}`}
-				className="item"
+				className={item.isSection ? 'label' : 'item'}
 				onClick={() => this.onClick(item)}
 				onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				onMouseLeave={this.onOut}
@@ -50,30 +50,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			</div>
 		);
 
-		const Section = (section: any) => (
-			<div className="row">
-				<div className="name">{section.name}</div>
-				<div className="items">
-					{section.children.map((item: any, i: number) => (
-						<Item key={i} idx={i} {...item} />
-					))}
-				</div>
-			</div>
-		);
-
-		let content = null;
-
-		if (!this.isExpanded) {
-			content = (
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} idx={i} {...item} />
-					))}
-				</div>
-			);
-		} else {
-			content = (
-				<React.Fragment>
+		return (
+			<div ref={node => this.node = node} className="wrap">
+				{this.isExpanded ? (
 					<Filter
 						ref={ref => this.refFilter = ref}
 						icon="search"
@@ -82,18 +61,12 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						value={this.filter}
 						onChange={this.onFilterChange}
 					/>
-					<div className="itemsWrapper">
-						{items.map((section: any, i: number) => (
-							<Section key={i} idx={i} {...section} />
-						))}
-					</div>
-				</React.Fragment>
-			);
-		};
-
-		return (
-			<div ref={node => this.node = node} className="wrap">
-				{content}
+				) : ''}
+				<div className="items">
+					{items.map((item: any, i: number) => (
+						<Item key={i} idx={i} {...item} />
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -102,6 +75,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		this._isMounted = true;
 		this.rebind();
 		this.load(true);
+	};
+
+	componentDidUpdate () {
+		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -117,48 +94,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	onFilterChange (v: string) {
-		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.filter = this.refFilter.getValue();
-			this.n = -1;
-			this.offset = 0;
-			this.load(true);
-		}, Constant.delay.keyboard);
-	};
-
-	onKeyDown (e: any) {
-		const items = this.getItems();
-
-		keyboard.disableMouse(true);
-
-		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed) => {
-			e.preventDefault();
-			
-			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
-
-			this.n += dir;
-
-			if (this.n < 0) {
-				this.n = items.length - 1;
-			};
-
-			if (this.n > items.length - 1) {
-				this.n = 0;
-			};
-
-			this.setHover(items[this.n]);
-		});
-
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-
-			if (items[this.n]) {
-				this.onClick(items[this.n]);
-			};
-		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -248,26 +183,88 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		if (this.isExpanded) {
-			return this.getSections();
-		};
-
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = detailStore.get(rootId, rootId, []);
 
-		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
-		const itemIds = items.map(it => it.id);
-		const defaultType = dbStore.getTypeById(commonStore.type);
+		let items: any[] = [];
 
-		if (!itemIds.includes(defaultType.id)) {
-			items.unshift(defaultType);
+		if (this.isExpanded) {
+			const sections = this.getSections();
+
+			sections.forEach((section: any, i: number) => {
+				if (section.name && section) {
+					items.push({ id: section.id, name: section.name, isSection: true });
+				};
+
+				items = items.concat(section.children);
+			});
+
+		} else {
+			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
+			const itemIds = items.map(it => it.id);
+			const defaultType = dbStore.getTypeById(commonStore.type);
+
+			if (!itemIds.includes(defaultType.id)) {
+				items.unshift(defaultType);
+			};
+
+			items.unshift({ id: 'search', icon: 'search', name: '' });
 		};
 
-		items.unshift({ id: 'search', icon: 'search', name: '' });
+		this.props.position();
 
 		return items;
+	};
+
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.filter = this.refFilter.getValue();
+			this.n = -1;
+			this.offset = 0;
+			this.load(true);
+		}, Constant.delay.keyboard);
+	};
+
+	onKeyDown (e: any) {
+		const items = this.getItems();
+
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed) => {
+			e.preventDefault();
+
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
+
+			this.n += dir;
+
+			if (this.n < 0) {
+				this.n = items.length - 1;
+			};
+
+			if (this.n > items.length - 1) {
+				this.n = 0;
+			};
+
+			const next = items[this.n];
+
+			if (next.isSection) {
+				this.onKeyDown(e);
+				return;
+			};
+
+			this.setHover(items[this.n]);
+		});
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+
+			if (items[this.n]) {
+				this.onClick(items[this.n]);
+			};
+		});
 	};
 
 	onClick (item: any) {
@@ -276,29 +273,50 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return;
 		};
 
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+		const cb = (details?: any) => {
+			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+			const layout = details ? details.recommendedLayout : item.recommendedLayout;
+			const uniqueKey = details ? details.uniqueKey : item.uniqueKey;
 
-		C.ObjectCreate({ layout: item.recommendedLayout }, flags, item.defaultTemplateId, item.uniqueKey, commonStore.space, (message: any) => {
-			if (message.error.code || !message.details) {
-				return;
+			C.ObjectCreate({ layout }, flags, item.defaultTemplateId, uniqueKey, commonStore.space, (message: any) => {
+				if (message.error.code || !message.details) {
+					return;
+				};
+
+				const { id, layout } = message.details;
+
+				UtilObject.openAuto({ id, layout });
+				analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
+			});
+		};
+
+		if (item.id == 'add') {
+			C.ObjectCreateObjectType({ name: this.filter }, [], commonStore.space, (message: any) => {
+				if (!message.error.code) {
+					cb(message.details);
+					analytics.event('CreateType');
+				};
+			});
+		} else {
+			if (item.isInstalled) {
+				cb();
+			} else {
+				Action.install(item, true, (message: any) => { cb(); });
 			};
-
-			const { id, layout } = message.details;
-
-			UtilObject.openAuto({ id, layout });
-			analytics.event('CreateObject', { route: 'Navigation', objectType: item.id });
-		});
+		};
 	};
 
 	onExpand () {
 		this.isExpanded = true;
 		menuStore.update('quickCapture', { className: 'expanded' });
-		this.forceUpdate();
+		this.props.position();
 
 		window.setTimeout(() => {
 			if (this.refFilter) {
 				this.refFilter.focus();
-			}
+			};
+
+			this.props.position();
 		}, 50);
 	};
 

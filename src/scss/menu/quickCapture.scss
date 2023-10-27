@@ -13,6 +13,10 @@
             }
 
             .items { display: flex; gap: 0px 8px; transition: $transitionAllCommon; }
+
+            .label { @include text-small; color: $colorTextSecondary; padding-top: 12px; width: 100%; flex-shrink: 0; }
+            .label:first-child { padding-top: 0; }
+
             .item {
                 position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; justify-content: center; gap: 0px 8px; padding: 0px 14px;
                 background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
@@ -28,13 +32,7 @@
     .menu.menuQuickCapture.expanded { width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: $colorBgPrimary; padding: 0px; border-radius: 12px; }
     .menu.menuQuickCapture.expanded {
         .wrap {
-            .itemsWrapper { padding: 0px 16px 16px; display: flex; flex-direction: column; gap: 20px 0px; }
-            .itemsWrapper {
-                .row {
-                    > .name { @include text-small; color: $colorTextSecondary; margin-bottom: 8px; }
-                }
-            }
-            .items { flex-wrap: wrap; gap: 8px; }
+            .items { padding: 0px 16px 16px; flex-wrap: wrap; gap: 8px; }
             .item { box-shadow: none; }
         }
     }
