@@ -63,13 +63,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<div className="head">
+				<div className="head" onClick={this.onSettings}>
 					<div className="side left">
 						<IconObject object={profile} size={48} />
-						<ObjectName object={profile} onClick={this.onSettings} />
+						<ObjectName object={profile} />
 					</div>
 					<div className="side right">
-						<Icon className="settings" onClick={this.onSettings} />
+						<Icon className="settings" />
 					</div>
 				</div>
 				<div className="items">
