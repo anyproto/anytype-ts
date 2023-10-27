@@ -283,6 +283,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'source': {
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: Constant.typeKey.template },
 				];
 
 				menuId = 'searchObject';
