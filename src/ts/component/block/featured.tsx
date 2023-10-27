@@ -412,7 +412,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
-		const internalFlags = Relation.getArrayValue(object.internalFlags);
 
 		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
@@ -445,7 +444,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						detailStore.update(rootId, { id: item.id, details: item }, false);
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
-							if (internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
+							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
 								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || Constant.templateId.blank, open);
 							} else {
 								open();
