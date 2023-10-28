@@ -30,7 +30,7 @@ class UtilFile {
 		let ret = 0;
 		let unit = '';
 
-		for (let i = 5; i >= 1; --i) {
+		for (let i = UtilCommon.objectLength(UNITS); i >= 1; --i) {
 			const n = v / Math.pow(SIZE_UNIT, i - 1);
 			if ((n >= 1) || (i == 1)) {
 				ret = n;
