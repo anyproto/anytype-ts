@@ -5,7 +5,7 @@ html.themeDark {
 
     /* Common */
 
-    body { background: $colorBgPrimary; color: $colorTextPrimary; }
+    body { background: $colorBgPrimary; color: $colorTextPrimary; color-scheme: dark; }
 
     a { color: $colorTextPrimary; }
     a:hover { color: $colorOrange; }
