@@ -2,6 +2,15 @@ import loadImage from 'blueimp-load-image';
 import { UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
+const SIZE_UNIT = 1000;
+const UNITS = {
+	1: 'B',
+	2: 'KB',
+	3: 'MB',
+	4: 'GB',
+	5: 'TB',
+};
+
 class UtilFile {
 
 	fromPath (path: string) {
@@ -15,27 +24,22 @@ class UtilFile {
 		return file;
 	};
 
-	size (v: number) {
+	size (v: number): string {
 		v = Number(v) || 0;
 
-		const trimmer = (n, afterComma) => {
-			return Number.isInteger(n) ? 0 : afterComma;
+		let ret = 0;
+		let unit = '';
+
+		for (let i = 5; i >= 1; --i) {
+			const n = v / Math.pow(SIZE_UNIT, i - 1);
+			if ((n >= 1) || (i == 1)) {
+				ret = n;
+				unit = UNITS[i];
+				break;
+			};
 		};
 
-		const unit = 1000;
-		const g = v / (unit * unit * unit);
-		const m = v / (unit * unit);
-		const k = v / unit;
-		if (g >= 1) {
-			v = UtilCommon.sprintf(`%0.${trimmer(g, 2)}fGB`, UtilCommon.round(g, trimmer(g, 2)));
-		} else if (m > 1) {
-			v = UtilCommon.sprintf(`%0.${trimmer(m, 1)}fMB`, UtilCommon.round(m, trimmer(m, 1)));
-		} else if (k > 1) {
-			v = UtilCommon.sprintf(`%0.${trimmer(k, 1)}fKB`, UtilCommon.round(k, trimmer(k, 1)));
-		} else {
-			v = UtilCommon.sprintf('%dB', UtilCommon.round(v, 0));
-		};
-		return v;
+		return ret ? Number(UtilCommon.sprintf(`%0.2f`, ret)) + unit : '';
 	};
 
 	icon (obj: any): string {

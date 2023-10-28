@@ -22,18 +22,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
-		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
+		const { localUsage, bytesUsed, bytesLimit, spaces } = commonStore.spaceStorage;
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
-		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
 
-		const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
-		const currentUsage = String(UtilFile.size(bytesUsed));
-		const limitUsage = String(UtilFile.size(bytesLimit));
-		const isRed = (percentageUsed >= 90) || (localUsage > bytesLimit);
+		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
+		const progressSegments = (spaces || []).map(it => {
+			const object = UtilObject.getSpaceviewBySpaceId(it.spaceId);
+			if (object._empty_) {
+				return null;
+			};
+
+			return { name: object.name, percent: it.bytesUsage / bytesLimit, isActive: (it.spaceId == commonStore.space) };
+		}).filter(it => it);
 
 		let extend = null;
 		let createdDate = null;
@@ -79,7 +83,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
-								value={name}
+								value={this.checkName(space.name)}
 								onKeyUp={this.onName}
 								placeholder={UtilObject.defaultName('Page')}
 							/>
@@ -115,7 +119,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									</div>
 								</div>
 
-								<ProgressBar percent={percentageUsed} current={currentUsage} max={limitUsage} />
+								<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
 							</div>
 
 							<div className="item">
