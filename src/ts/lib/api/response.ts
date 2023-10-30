@@ -63,10 +63,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 
 	if (usage) {
 		res = Object.assign(res, {
-			bytesUsed: usage.getBytesusage(),
-			bytesLeft: usage.getBytesleft(),
 			bytesLimit: usage.getByteslimit(),
-			filesCount: usage.getFilescount(),
 			localUsage: usage.getLocalbytesusage(),
 		});
 	};
@@ -75,8 +72,6 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 		...res,
 		spaces: (response.getSpacesList() || []).map(it => ({
 			spaceId: it.getSpaceid(),
-			filesCount: it.getFilescount(),
-			cidsCount: it.getCidscount(),
 			bytesUsage: it.getBytesusage(),
 		})),
 	};

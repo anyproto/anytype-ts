@@ -246,10 +246,14 @@ class Dispatcher {
 
 				case 'fileSpaceUsage': {
 					const spaceId = data.getSpaceid();
-					const space = (commonStore.spaceStorage.spaces || []).find(it => it.spaceId == spaceId);
+					const { spaces } = commonStore.spaceStorage;
+					const space = spaces.find(it => it.spaceId == spaceId);
+					const bytesUsage = data.getBytesusage();
 
 					if (space) {
-						set(space, { bytesUsage: data.getBytesusage() });
+						set(space, { bytesUsage });
+					} else {
+						spaces.push({ spaceId, bytesUsage });
 					};
 					break;
 				};
@@ -260,7 +264,8 @@ class Dispatcher {
 				};
 
 				case 'fileLimitReached': {
-					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
+					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
