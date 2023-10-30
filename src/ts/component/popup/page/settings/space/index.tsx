@@ -30,25 +30,28 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { localUsage, bytesUsed, bytesLimit, spaces } = commonStore.spaceStorage;
+		const { localUsage, bytesLimit, spaces } = commonStore.spaceStorage;
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 
-		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
+
+		let bytesUsed = 0;
+		let extend = null;
+		let createdDate = null;
+
 		const progressSegments = (spaces || []).map(it => {
 			const object = UtilObject.getSpaceviewBySpaceId(it.spaceId);
 			if (object._empty_) {
 				return null;
 			};
 
+			bytesUsed += it.bytesUsage;
 			return { name: object.name, percent: it.bytesUsage / bytesLimit, isActive: (it.spaceId == commonStore.space) };
 		}).filter(it => it);
-
-		let extend = null;
-		let createdDate = null;
+		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
 
 		if (isRed) {
 			usageCn.push('red');

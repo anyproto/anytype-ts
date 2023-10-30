@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Label } from 'Component';
+import { Preview } from 'Lib';
 
 interface Props {
 	segments: { name: string; percent: number; isActive: boolean; }[];
@@ -11,22 +12,38 @@ class ProgressBar extends React.Component<Props> {
 
 	node: any = null;
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onTooltipShow = this.onTooltipShow.bind(this);
+	};
+
 	render () {
 		const { segments, current, max } = this.props;
 		const total = segments.reduce((res, current) => res += current.percent, 0);
 
+		const Item = (item: any) => {
+			const cn = [ 'fill' ];
+			if (item.isActive) {
+				cn.push('isActive');
+			};
+
+			return (
+				<div 
+					className={cn.join(' ')} 
+					style={{ width: `${item.percent * 100}%` }} 
+					onMouseEnter={e => this.onTooltipShow(e, item)}
+					onMouseLeave={() => Preview.tooltipHide(false)}
+				/>
+			);
+		};
+
 		return (
 			<div className="progressBar">
 				<div className="bar">
-					{segments.map((item, i) => {
-						const cn = [ 'fill' ];
-						if (item.isActive) {
-							cn.push('isActive');
-						};
-
-						return <div className={cn.join(' ')} style={{ width: `${item.percent * 100}%` }} />;
-					})}
-
+					{segments.map((item, i) => (
+						<Item key={i} {...item} />
+					))}
 					<div className="fill empty" style={{ width: `${(1 - total) * 100}%` }} />
 				</div>
 
@@ -36,6 +53,10 @@ class ProgressBar extends React.Component<Props> {
 				</div>
 			</div>
 		);
+	};
+
+	onTooltipShow (e: any, item: any) {
+		Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) });
 	};
 	
 };

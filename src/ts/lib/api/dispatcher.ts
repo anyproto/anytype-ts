@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
-import { observable } from 'mobx';
+import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
@@ -245,7 +245,12 @@ class Dispatcher {
 				};
 
 				case 'fileSpaceUsage': {
-					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
+					const spaceId = data.getSpaceid();
+					const space = (commonStore.spaceStorage.spaces || []).find(it => it.spaceId == spaceId);
+
+					if (space) {
+						set(space, { bytesUsage: data.getBytesusage() });
+					};
 					break;
 				};
 
