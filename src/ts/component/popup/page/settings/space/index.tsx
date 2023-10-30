@@ -1,14 +1,21 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
+interface State {
+	error: string;
+};
+
+const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
 
 	refName: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -22,6 +29,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
+		const { error } = this.state;
 		const { localUsage, bytesUsed, bytesLimit, spaces } = commonStore.spaceStorage;
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
@@ -233,6 +241,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<Button text={translate('commonDelete')} color="red c36" onClick={this.onDelete} />
 						</div>
 					) : ''}
+
+					<Error text={error} />
 				</div>
 
 			</React.Fragment>
@@ -282,7 +292,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDelete () {
-		Action.removeSpace(commonStore.space, 'Settings');
+		Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			};
+		});
 	};
 
 	checkName (v: string): string {
