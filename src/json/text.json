@@ -268,8 +268,8 @@
 	"authInviteEmpty": "Invite code is empty",
 
 	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "I already have one",
-	"authSelectSignup": "Generate new account",
+	"authSelectLogin": "Log In",
+	"authSelectSignup": "Create new account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSelfHost": "Self-host",
