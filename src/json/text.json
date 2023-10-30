@@ -273,7 +273,7 @@
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSelfHost": "Self-host",
-	"authLoginSubmit": "Login",
+	"authLoginSubmit": "Log In",
 	"authLoginLostPhrase": "I've lost the Phrase",
 	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover Recovery Phrase for you<\/h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
