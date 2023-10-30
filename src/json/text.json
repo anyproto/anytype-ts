@@ -269,7 +269,7 @@
 
 	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
 	"authSelectLogin": "Log In",
-	"authSelectSignup": "Create new account",
+	"authSelectSignup": "Create New Account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSelfHost": "Self-host",
