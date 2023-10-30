@@ -322,6 +322,13 @@ class MenuManager {
 				} 
 			},
 
+			(is.windows || is.linux) ? { 
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
+					Api.setConfig(this.win, { hideMenuBar: !config.hideMenuBar });
+					this.initTray();
+				} 
+			} : null,
+
 			Separator,
 
 			{ 
@@ -359,7 +366,7 @@ class MenuManager {
 					Util.send(this.win, 'commandGlobal', 'create'); 
 				} 
 			},
-		];
+		].filter(it => it);
 	};
 
 	openSettings (page, param) {

@@ -139,6 +139,7 @@
 	"electronMenuSpaceSettings": "Space",
 	"electronMenuAccountSettings": "Account",
 	"electronMenuShowTray": "Show Anytype in Menu Bar",
+	"electronMenuShowMenu": "Show system menu",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
 	"electronMenuDirectory": "Show Work Directory",
