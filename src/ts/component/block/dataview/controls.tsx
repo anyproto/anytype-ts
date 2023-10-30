@@ -414,12 +414,15 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
-		this.refFilter.focus();
+
+		if (!isInline) {
+			this.refFilter.focus();
+		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
 			const value = this.refFilter.getValue();
