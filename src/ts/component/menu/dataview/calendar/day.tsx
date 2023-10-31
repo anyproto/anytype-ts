@@ -30,11 +30,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 			cn.push(className);
 		};
 
-		// Subscriptions
-		items.forEach(item => {
-			const { iconEmoji, iconImage, done } = item;
-		});
-
 		const Item = (item) => {
 			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 			return (
