@@ -397,6 +397,7 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = commonStore;
 		const { spaceview } = blockStore;
+		const templateType = dbStore.getTemplateType();
 
 		const onSelect = (object: any, update: boolean) => {
 			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
@@ -453,7 +454,7 @@ class UtilMenu {
 								data: {
 									filters: [
 										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
-										{ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: Constant.typeKey.template },
+										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
 									onSelect: (el: any) => onSelect(el, true),

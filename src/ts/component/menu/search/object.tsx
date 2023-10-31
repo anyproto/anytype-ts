@@ -296,6 +296,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
+		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
@@ -316,7 +317,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: Constant.typeKey.template });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
 		if (clear) {
