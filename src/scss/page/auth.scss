@@ -25,6 +25,24 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: $colorPrimary; }
 	}
 
+	#popupConfirm-innerWrap {
+		.content { text-align: left; }
+
+		.button.disabled { color: $colorTextTertiary }
+
+		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
+		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
+		
+		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
+		.button.blank:hover { background: $colorButtonBlankHover; }
+
+		h1 { font-size: 18px; margin-bottom: 16px; color: $colorPrimary; }
+		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
+		p { margin-bottom: 8px; }
+		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
+		ul.last { margin: 0px; }
+	}
+
 	#popupPhrase-innerWrap {
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }

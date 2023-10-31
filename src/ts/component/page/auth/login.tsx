@@ -83,8 +83,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		if (accounts && accounts.length) {
 			const account = accounts[0];
 
-			console.log('ACCOUNT', account);
-
 			authStore.accountSet(account);
 			Renderer.send('keytarSet', account.id, phrase);
 
@@ -111,9 +109,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refSubmit.setLoading(true);
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			if (message.error.code) {
-				this.refPhrase.setError(true);
-				this.setState({ error: translate('pageAuthLoginInvalidPhrase') });	
+			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
 
@@ -121,11 +117,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			authStore.accountListClear();
 
 			UtilData.createSession(() => {
-				C.AccountRecover((message) => {
-					if (this.setError(message.error)) {
-						return;
-					};
-				});
+				C.AccountRecover((message) => this.setError(message.error));
 			});
 		});
 	};
@@ -160,6 +152,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		};
 
 		this.setState({ error: error.description });
+		this.refPhrase.setError(true);
 		this.refSubmit.setLoading(false);
 
 		UtilCommon.checkError(error.code);
