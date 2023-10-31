@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -30,7 +30,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { localUsage, bytesLimit, spaces } = commonStore.spaceStorage;
+		const { localUsage, bytesLimit } = commonStore.spaceStorage;
+		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
@@ -42,14 +43,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let extend = null;
 		let createdDate = null;
 
-		const progressSegments = (spaces || []).map(it => {
-			const object = UtilObject.getSpaceviewBySpaceId(it.spaceId);
-			if (object._empty_) {
-				return null;
-			};
+		const progressSegments = (spaces || []).map(space => {
+			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+			const usage = Number(object.bytesUsage) || 0;
 
-			bytesUsed += it.bytesUsage;
-			return { name: object.name, percent: it.bytesUsage / bytesLimit, isActive: (it.spaceId == commonStore.space) };
+			bytesUsed += usage;
+			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
 

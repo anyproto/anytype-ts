@@ -193,19 +193,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const subId = Constant.subId.space;
-		const { spaceview } = blockStore;
-
-		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).
-		map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys())).
-		filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok)).
-		map(it => ({ ...it, isActive: spaceview == it.id }));
-
-		items.sort((c1, c2) => {
-			if (c1.isActive && !c2.isActive) return -1;
-			if (!c1.isActive && c2.isActive) return 1;
-			return 0;
-		});
+		const items = UtilCommon.objectCopy(dbStore.getSpaces());
 
 		if (items.length < Constant.limit.space) {
 			items.push({ id: 'add' });

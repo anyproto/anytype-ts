@@ -3,7 +3,7 @@ import { Label } from 'Component';
 import { Preview } from 'Lib';
 
 interface Props {
-	segments: { name: string; percent: number; isActive: boolean; }[];
+	segments: { name: string; caption: string; percent: number; isActive: boolean; }[];
 	current?: string;
 	max?: string;
 };
@@ -56,7 +56,8 @@ class ProgressBar extends React.Component<Props> {
 	};
 
 	onTooltipShow (e: any, item: any) {
-		Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) });
+		const t = Preview.tooltipCaption(item.name, item.caption);
+		Preview.tooltipShow({ text: t, element: $(e.currentTarget) });
 	};
 	
 };
