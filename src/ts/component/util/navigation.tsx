@@ -118,26 +118,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		// keyboard.pageCreate('Navigation');
-		const element = '#button-navigation-plus';
-
-		if (menuStore.isOpen('quickCapture')) {
-			menuStore.close('quickCapture');
-			return;
-		};
-
-		
-		menuStore.open('quickCapture', {
-			element,
-			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			offsetY: -16,
-			offsetX: 20,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
-		});
+		keyboard.showQuickCapture('Navigation');
 	};
 
 	onGraph () {

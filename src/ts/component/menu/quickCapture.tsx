@@ -265,6 +265,21 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				this.onClick(items[this.n]);
 			};
 		});
+
+		keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7 ,8, 9', e, (pressed) => {
+			if (this.isExpanded) {
+				return;
+			};
+
+			const n = Number(pressed);
+
+			if (!n || !items[n - 1]) {
+				this.onExpand();
+				return;
+			};
+
+			this.onClick(items[n - 1]);
+		});
 	};
 
 	onClick (item: any) {
