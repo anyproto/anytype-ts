@@ -662,14 +662,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
-			template = UtilData.checkBlankTemplate(template);
+			templateId = template.id;
 
-			if (template) {
-				templateId = template.id;
-
-				if (template.targetObjectType) {
-					typeId = template.targetObjectType;
-				};
+			if (template.targetObjectType) {
+				typeId = template.targetObjectType;
 			};
 		};
 
@@ -824,6 +820,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
+					console.log('ITEM', JSON.stringify(item));
+
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {

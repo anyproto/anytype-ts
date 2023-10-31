@@ -564,10 +564,6 @@ class UtilData {
 		});
 	};
 
-	checkBlankTemplate (template: any) {
-		return template && (template.id != Constant.templateId.blank) ? template : null;
-	};
-
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
 		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
