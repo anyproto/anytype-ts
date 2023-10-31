@@ -124,7 +124,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	select () {
 		const { account, walletPath } = authStore;
-		const spaceId = Storage.get('spaceId');
 
 		C.AccountSelect(account.id, walletPath, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
@@ -134,15 +133,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			authStore.accountSet(message.account);
 			commonStore.configSet(message.account.config, false);
 
-			if (spaceId) {
-				UtilRouter.switchSpace(spaceId);
-			} else {
-				UtilData.onInfo(message.account.info);
-				UtilData.onAuth({ routeParam: { animate: true } });
-			};
+			UtilData.onInfo(message.account.info);
+			UtilData.onAuth({ routeParam: { animate: true } }, () => {
+				this.refSubmit.setLoading(false);
 
-			this.refSubmit.setLoading(false);
-			analytics.event('SelectAccount', { middleTime: message.middleTime });
+				analytics.event('SelectAccount', { middleTime: message.middleTime });
+			});
 		});
 	};
 
