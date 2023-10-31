@@ -12,6 +12,7 @@ interface State {
 const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<I.PopupSettings, State> {
 
 	refCheckbox: any = null;
+	refButton = null;
 	node: any = null;
 	state = {
 		error: '',
@@ -46,11 +47,15 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 					<Checkbox ref={ref => this.refCheckbox = ref} /> {translate('popupSettingsDeleteCheckboxLabel')}
 				</div>
 
-				<Button id="button" text={translate('commonDelete')} color="red c36" className="disabled" onClick={this.onDelete} />
+				<Button ref={ref => this.refButton = ref} text={translate('commonDelete')} color="red" className="c36" onClick={this.onDelete} />
 
 				<Error text={error} />
 			</div>
 		);
+	};
+
+	componentDidMount (): void {
+		this.onCheck();
 	};
 
 	onDelete (e: any) {
@@ -75,12 +80,10 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	};
 
 	onCheck () {
-		const node = $(this.node);
-		const button = node.find('#button');
 		const value = !this.refCheckbox.getValue();
 
 		this.refCheckbox.setValue(value);
-		value ? button.removeClass('disabled') : button.addClass('disabled');
+		this.refButton.setDisabled(!value);
 	};
 
 });
