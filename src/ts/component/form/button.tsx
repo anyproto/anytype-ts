@@ -99,6 +99,11 @@ class Button extends React.Component<I.ButtonComponent, State> {
 	setLoading (v: boolean) {
 		this.setState({ isLoading: v });
 	};
+
+	setDisabled (v: boolean) {
+		const node = $(this.node);
+		v ? node.addClass('disabled') : node.removeClass('disabled');
+	};
 	
 };
 

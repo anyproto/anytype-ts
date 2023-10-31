@@ -391,8 +391,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		];
 		const limit = this.getLimit(block.content);
 
-		if (targetBlockId != Constant.widgetId.recentEdit) {
-			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+		if (targetBlockId != Constant.widgetId.recentOpen) {
+			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 		};
 
 		switch (targetBlockId) {
@@ -403,12 +403,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			case Constant.widgetId.recentEdit: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 60 });
-				sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 				break;
 			};
 
 			case Constant.widgetId.recentOpen: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 
