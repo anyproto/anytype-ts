@@ -855,11 +855,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			const object = message.details;
 
-			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
-
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route });
-			analytics.event('ChangeDefaultTemplate', { route });
+
 			UtilObject.openPopup(object);
 		});
 	};

@@ -75,7 +75,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
+							<div className="title">{totalObject} {UtilCommon.sprintf(translate('pageMainRelationObjectsCreated'), UtilCommon.plural(totalObject, translate('pluralObject')))}</div>
 							<div className="content">
 								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
 							</div>
