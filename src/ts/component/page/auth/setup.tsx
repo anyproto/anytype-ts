@@ -69,7 +69,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		} else {
 			content = (
 				<React.Fragment>
-					<Title className="animation" text={translate('pageAuthSetupEnteringVoid')} />
+					<Title className="animation" text={translate('pageAuthSetupEntering')} />
 					<Loader className="animation" />
 				</React.Fragment>
 			);

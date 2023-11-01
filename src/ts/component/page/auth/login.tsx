@@ -134,11 +134,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			commonStore.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
-			UtilData.onAuth({ routeParam: { animate: true } }, () => {
-				this.refSubmit.setLoading(false);
-
-				analytics.event('SelectAccount', { middleTime: message.middleTime });
-			});
+			Animation.from(() => UtilData.onAuth());
+			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
 
