@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
@@ -18,6 +18,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	refFilter = null;
+	target = null;
+	view = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -32,22 +34,29 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onViewContext = this.onViewContext.bind(this);
 		this.onViewCopy = this.onViewCopy.bind(this);
 		this.onViewRemove = this.onViewRemove.bind(this);
+
+		makeObservable(this, {
+			target: observable,
+			view: observable,
+		});
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId } = this.props;
-		const target = getTarget();
+		if (!this.view) {
+			return null;
+		};
+
+		const { className, rootId, block, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTypeId } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
-		const view = getView();
-		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
+		const sortCnt = this.view.sorts.length;
+		const filters = this.view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
+		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (this.target && UtilObject.isSetLayout(this.target.layout) && hasSources);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -92,7 +101,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return (
 				<div 
 					id={elementId} 
-					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
+					className={'viewItem ' + (item.id == this.view.id ? 'active' : '')} 
 					onClick={() => this.onViewSet(item)} 
 					onContextMenu={e => this.onViewContext(e, `#views #${elementId}`, item)}
 				>
@@ -124,9 +133,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							id="view-selector"
 							className="viewSelect viewItem select"
 							onClick={() => this.onButton(`#block-${block.id} #view-selector`, 'dataviewViewList')}
-							onContextMenu={(e: any) => this.onViewContext(e, `#block-${block.id} #view-selector`, view)}
+							onContextMenu={e => this.onViewContext(e, `#block-${block.id} #view-selector`, this.view)}
 						>
-							<div className="name">{view.name}</div>
+							<div className="name">{this.view.name}</div>
 							<Icon className="arrow dark" />
 						</div>
 
@@ -181,7 +190,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	componentDidMount () {
+		const { getTarget, getView } = this.props;
+
 		this._isMounted = true;
+		this.target = getTarget();
+		this.view = getView();
 	};
 
 	componentDidUpdate () {

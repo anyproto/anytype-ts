@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
@@ -18,6 +19,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	columnCount = 0;
 	length = 0;
 	timeout = 0;
+	view = null;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -32,11 +34,20 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
 		this.getCoverObject = this.getCoverObject.bind(this);
+
+		makeObservable(this, {
+			view: observable,
+		});
 	};
 
 	render () {
 		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
-		const view = getView();
+		const view = this.view;
+		
+		if (!view) {
+			return null;
+		};
+
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = getRecords();
@@ -158,6 +169,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	componentDidMount () {
+		const { getView } = this.props;
+
+		this.view = getView();
 		this.reset();
 	};
 
