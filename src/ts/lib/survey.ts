@@ -99,7 +99,7 @@ class Survey {
 			return;
 		};
 
-		if (!popupStore.isOpen() && (cancelTime || !lastCompleted)) {
+		if (!popupStore.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
 			this.show(I.SurveyType.Pmf);
 		};
 	};
