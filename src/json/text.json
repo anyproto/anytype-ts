@@ -122,7 +122,7 @@
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
-	"pluralType": "Type|Types",
+	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
 
 	"electronAboutVersion": "Version:",
@@ -375,6 +375,7 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
