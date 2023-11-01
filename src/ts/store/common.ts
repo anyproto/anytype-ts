@@ -17,6 +17,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	local: boolean;
 	filter: string;
 };
 
@@ -62,6 +63,7 @@ class CommonStore {
 		label: true,
 		relation: true,
 		link: true,
+		local: false,
 		filter: '',
 	};
 

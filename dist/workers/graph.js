@@ -104,7 +104,7 @@ init = (param) => {
 
 	// Center initially on root node
 	setTimeout(() => {
-		root = getNodeById(data.rootId);
+		const root = getNodeById(data.rootId);
 
 		let x = width / 2;
 		let y = height / 2;
@@ -202,10 +202,12 @@ initForces = () => {
 };
 
 updateForces = () => {
-	let old = getNodeMap();
+	const old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
+
+	const root = getNodeById(data.rootId);
 
 	// Filter links
 	if (!settings.link) {
@@ -215,6 +217,14 @@ updateForces = () => {
 	// Filter relations
 	if (!settings.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
+	};
+
+	if (settings.local && root) {
+		edges = edges.filter(d => (d.source == root.id) || (d.target == root.id));
+
+		const nodeIds = util.arrayUnique([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
+
+		nodes = nodes.filter(d => nodeIds.includes(d.id));
 	};
 
 	let map = getNodeMap();
@@ -258,17 +268,18 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const needUpdate = (param.link != settings.link) || 
-						(param.relation != settings.relation) || 
-						(param.orphan != settings.orphan);
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	
+	let needUpdate = false;
+	for (let key of updateKeys) {
+		if (param[key] != settings[key]) {
+			needUpdate = true;
+			break;
+		};
+	};
 
 	settings = Object.assign(settings, param);
-
-	if (needUpdate) {
-		updateForces();
-	} else {
-		redraw();
-	};
+	needUpdate ? updateForces() : redraw();
 };
 
 updateTheme = ({ theme }) => {
