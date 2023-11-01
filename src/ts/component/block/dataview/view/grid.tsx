@@ -31,14 +31,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, className, isAllowedObject, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
-		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
 		if (!length) {

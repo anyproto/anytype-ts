@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore, commonStore, dbStore } from 'Store';
@@ -17,6 +18,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
+	target = null;
 	ref = null;
 	range: I.TextRange = null;
 
@@ -35,13 +37,16 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onTitleOver = this.onTitleOver.bind(this);
 		this.onTitleSelect = this.onTitleSelect.bind(this);
 		this.onSource = this.onSource.bind(this);
+
+		makeObservable(this, {
+			target: observable,
+		});
 	};
 
 	render () {
-		const { block, readonly, className, isCollection, getTarget } = this.props;
+		const { block, readonly, className, isCollection } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
-		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {

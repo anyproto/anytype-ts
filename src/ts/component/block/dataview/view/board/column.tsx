@@ -33,7 +33,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, isAllowedObject, getSubId, getView, getLimit, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -45,7 +45,6 @@ const Column = observer(class Column extends React.Component<Props> {
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
 		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
-		const isAllowedObject = this.props.isAllowedObject();
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');

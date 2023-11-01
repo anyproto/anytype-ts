@@ -107,11 +107,12 @@ export interface ViewComponent {
 	bodyContainer?: string;
 	pageContainer?: string;
 	dataset?: I.Dataset;
+	className?: string;
+	refCells?: any;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;
-	className?: string;
-	refCells?: any;
+	isAllowedObject?: boolean;
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
@@ -136,13 +137,11 @@ export interface ViewComponent {
 	onDragRecordStart?: (e: any, id?: string) => void;
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
-	isAllowedObject?: () => boolean;
 	isAllowedDefaultType?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
 	onSourceTypeSelect?(element: any): void;
-	onViewSettings?(): void;
 	getSearchIds?(): string[];
 };
 

@@ -20,6 +20,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	refFilter = null;
 	target = null;
 	view = null;
+	sources: string[] = [];
+	typeId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -38,6 +40,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		makeObservable(this, {
 			target: observable,
 			view: observable,
+			sources: observable,
+			typeId: observable,
 		});
 	};
 
@@ -46,7 +50,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return null;
 		};
 
-		const { className, rootId, block, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTypeId } = this.props;
+		const { className, rootId, block, onRecordAdd, onTemplateMenu, isInline, isCollection, isAllowedObject, onFilterChange } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const sortCnt = this.view.sorts.length;
 		const filters = this.view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
@@ -54,9 +58,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
-		const hasSources = (isCollection || getSources().length);
-		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (this.target && UtilObject.isSetLayout(this.target.layout) && hasSources);
+		const hasSources = (isCollection || this.sources.length);
+		const isAllowedTemplate = UtilObject.isAllowedTemplate(this.typeId) || (this.target && UtilObject.isSetLayout(this.target.layout) && hasSources);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -190,11 +193,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		const { getTarget, getView } = this.props;
+		const { getTarget, getView, getSources, getTypeId } = this.props;
 
 		this._isMounted = true;
 		this.target = getTarget();
 		this.view = getView();
+		this.sources = getSources();
+		this.typeId = getTypeId();
 	};
 
 	componentDidUpdate () {
@@ -216,10 +221,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const { block } = this.props;
 
 		this.onViewSet(view);
-
-		window.setTimeout(() => {
-			$(`#button-${block.id}-settings`).trigger('click');
-		}, 50);
+		window.setTimeout(() => $(`#button-${block.id}-settings`).trigger('click'), 50);
 	};
 
 	onViewCopy (view) {

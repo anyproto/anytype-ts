@@ -33,7 +33,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { rootId, block, getView, className, onViewSettings } = this.props;
+		const { rootId, block, getView, className } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -47,7 +47,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					description={translate('blockDataviewBoardRelationDeletedDescription')}
 					button={translate('blockDataviewBoardOpenViewMenu')}
 					className="withHead"
-					onClick={onViewSettings}
+					onClick={() => $(`#button-${block.id}-settings`).trigger('click')}
 				/>
 			);
 		};

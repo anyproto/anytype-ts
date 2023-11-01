@@ -20,6 +20,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	length = 0;
 	timeout = 0;
 	view = null;
+	relations = [];
+	records = [];
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -37,20 +39,21 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		makeObservable(this, {
 			view: observable,
+			relations: observable,
+			records: observable,
 		});
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
+		const { rootId, block, isPopup, isInline, className, getKeys, getLimit, onRecordAdd, getEmpty } = this.props;
 		const view = this.view;
 		
 		if (!view) {
 			return null;
 		};
 
-		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = getRecords();
+		const records = this.records;
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
@@ -169,9 +172,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	componentDidMount () {
-		const { getView } = this.props;
+		const { getView, getVisibleRelations, getRecords } = this.props;
 
 		this.view = getView();
+		this.relations = getVisibleRelations();
+		this.records = getRecords();
 		this.reset();
 	};
 
@@ -241,7 +246,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { getRecords, isAllowedObject } = this.props;
 		const records = UtilCommon.objectCopy(getRecords());
 		
-		if (isAllowedObject()) {
+		if (isAllowedObject) {
 			records.push('add-record');
 		};
 

@@ -85,7 +85,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.multiSelectAction = this.multiSelectAction.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 
-		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 	};
@@ -147,6 +146,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isCollection,
 			isInline,
 			className: className.join(' '),
+			isAllowedObject: this.isAllowedObject(),
 			loadData: this.loadData,
 			getView: this.getView,
 			getTarget: this.getTarget,
@@ -163,15 +163,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
-			isAllowedObject: this.isAllowedObject,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
-			onViewSettings: () => {
-				if (this.refControls && this.refControls.onViewSettings) {
-					this.refControls.onViewSettings();
-				};
-			},
 			getSearchIds: this.getSearchIds,
 		};
 
