@@ -556,7 +556,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const view = this.getView();
 		const conditions = [
 			I.FilterCondition.Equal,
@@ -648,6 +648,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
+
+		if (!view) {
+			return;
+		};
+
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
 		
@@ -657,14 +662,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
-			template = UtilData.checkBlankTemplate(template);
+			templateId = template.id;
 
-			if (template) {
-				templateId = template.id;
-
-				if (template.targetObjectType) {
-					typeId = template.targetObjectType;
-				};
+			if (template.targetObjectType) {
+				typeId = template.targetObjectType;
 			};
 		};
 
@@ -755,15 +756,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const defaultTemplateId = this.getDefaultTemplateId();
 		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
+		const typeId = this.getTypeId();
+		const type = dbStore.getTypeById(typeId);
 
 		this.creating = true;
 
-		if (details.layout == I.ObjectLayout.Bookmark) {
+		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				offsetX: dir < 0 ? -24 : 0,
+				offsetY: 4 * -dir,
 				data: {
 					details,
 					onSubmit: (bookmark) => {
@@ -815,6 +820,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
+					console.log('ITEM', JSON.stringify(item));
+
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {

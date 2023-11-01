@@ -63,13 +63,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<div className="head">
+				<div className="head" onClick={this.onSettings}>
 					<div className="side left">
 						<IconObject object={profile} size={48} />
-						<ObjectName object={profile} onClick={this.onSettings} />
+						<ObjectName object={profile} />
 					</div>
 					<div className="side right">
-						<Icon className="settings" onClick={this.onSettings} />
+						<Icon className="settings" />
 					</div>
 				</div>
 				<div className="items">
@@ -198,7 +198,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		const items = UtilCommon.objectCopy(dbStore.getRecords(subId, '')).
 		map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys())).
-		filter(it => it.spaceAccountStatus != I.SpaceStatus.Deleted).
+		filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok)).
 		map(it => ({ ...it, isActive: spaceview == it.id }));
 
 		items.sort((c1, c2) => {

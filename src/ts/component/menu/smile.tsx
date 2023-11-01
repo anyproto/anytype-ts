@@ -608,13 +608,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		this.skin = Number(skin) || 1;
-		this.setLastIds(id, this.skin);
+		if (id) {
+			this.skin = Number(skin) || 1;
+			this.setLastIds(id, this.skin);
 
-		storageSet({ skin: this.skin });
+			storageSet({ skin: this.skin });
+		};
 
 		if (onSelect) {
-			onSelect(UtilSmile.nativeById(id, this.skin));
+			onSelect(id ? UtilSmile.nativeById(id, this.skin) : '');
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');

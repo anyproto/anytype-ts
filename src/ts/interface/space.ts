@@ -11,4 +11,5 @@ export enum SpaceStatus {
 
 export enum SpaceType {
 	Private	 = 0,
+	Personal = 1,
 };

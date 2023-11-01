@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilData, UtilCommon, UtilDate, translate } from 'Lib';
+import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
@@ -70,9 +70,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 					<div className="side right">
 						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div className="btn" onClick={this.onToday}>
-							{translate('menuCalendarToday')}
-						</div>
+						<div className="btn" onClick={this.onToday}>{translate('menuCalendarToday')}</div>
 						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
 					</div>
 				</div>
@@ -278,7 +276,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { top } = node.offset();
 		const day = node.find('.day').first();
 
-		wrap.css({ width: cw, height: ch - top - 90, marginLeft: -margin - 2 });
+		wrap.css({ width: cw, height: Math.max(600, ch - top - 90), marginLeft: -margin - 2 });
 		win.trigger('resize.menuDataviewCalendarDay');
 
 		if (day.length) {

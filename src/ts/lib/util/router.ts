@@ -1,4 +1,4 @@
-import { C, UtilData, Preview, analytics, Storage } from 'Lib';
+import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -134,7 +134,7 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				onRouteChange: () => {
+				onFadeOut: () => {
 					if (route) {
 						commonStore.redirectSet(route);
 					};
@@ -153,7 +153,8 @@ class UtilRouter {
 	};
 
 	getRouteSpaceId () {
-		return commonStore.space;
+		const param = this.getParam(this.history.location.pathname);
+		return param.spaceId || commonStore.space;
 	};
 
 };

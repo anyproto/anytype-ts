@@ -329,10 +329,13 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 62;
+		const offset = allowedView ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });

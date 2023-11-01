@@ -142,11 +142,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.page);
+		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.note);
 
 		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.typeKey.page);
+			type = dbStore.getTypeByKey(Constant.typeKey.note);
 		};
 
 		return type ? type.id : '';

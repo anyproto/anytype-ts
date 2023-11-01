@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, UtilRouter, translate, C, keyboard, Animation } from 'Lib';
+import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics, Storage } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -12,6 +12,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	node = null;
 	refPhrase = null;
+	refSubmit = null;
 
 	state = {
 		error: '',
@@ -32,6 +33,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	render () {
 		const { error } = this.state;
 		const { config } = commonStore;
+		const { accounts } = authStore;
+		const length = accounts.length;
 		
         return (
 			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
@@ -47,7 +50,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						</div>
 						<div className="buttons">
 							<div className="animation">
-								<Button id="submit" type="input" text={translate('authLoginSubmit')} />
+								<Button ref={ref => this.refSubmit = ref} text={translate('authLoginSubmit')} onClick={this.onSubmit} />
 							</div>
 
 							<div className="animation">
@@ -73,15 +76,17 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { error } = this.state;
+		const { accounts, phrase } = authStore;
 
 		this.focus();
 
-		if (error) {
-			window.setTimeout(() => {
-				this.setState({ error: '' });
-				this.refPhrase.setError(false);
-			}, 1500);
+		if (accounts && accounts.length) {
+			const account = accounts[0];
+
+			authStore.accountSet(account);
+			Renderer.send('keytarSet', account.id, phrase);
+
+			this.select();
 		};
 	};
 
@@ -100,24 +105,55 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		
 		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
+
+		this.refSubmit.setLoading(true);
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			if (message.error.code) {
-				this.refPhrase.setError(true);
-				this.setState({ error: translate('pageAuthLoginInvalidPhrase') });	
+			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
 
 			authStore.phraseSet(phrase);
-			Animation.from(() => UtilRouter.go('/auth/account-select', { replace: true }));
+			authStore.accountListClear();
+
+			UtilData.createSession(() => {
+				C.AccountRecover((message) => this.setError(message.error));
+			});
 		});
 	};
 
-	checkButton () {
-		const node = $(this.node);
-		const button = node.find('#submit');
+	select () {
+		const { account, walletPath } = authStore;
 
-		this.canSubmit() ? button.removeClass('disabled') : button.addClass('disabled');
+		C.AccountSelect(account.id, walletPath, (message: any) => {
+			if (this.setError(message.error) || !message.account) {
+				return;
+			};
+
+			authStore.accountSet(message.account);
+			commonStore.configSet(message.account.config, false);
+
+			UtilData.onInfo(message.account.info);
+			Animation.from(() => UtilData.onAuth());
+			analytics.event('SelectAccount', { middleTime: message.middleTime });
+		});
+	};
+
+	setError (error: { description: string, code: number}) {
+		if (!error.code) {
+			return false;
+		};
+
+		this.setState({ error: error.description });
+		this.refPhrase.setError(true);
+		this.refSubmit.setLoading(false);
+
+		UtilCommon.checkError(error.code);
+		return true;
+	};
+
+	checkButton () {
+		this.refSubmit.setDisabled(!this.canSubmit());
 	};
 
 	canSubmit () {

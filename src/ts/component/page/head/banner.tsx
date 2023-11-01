@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C } from 'Lib';
+import { I, Action, translate, UtilObject, UtilCommon, C, analytics } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -122,6 +122,8 @@ class HeaderBanner extends React.Component<Props> {
 				previewSize: I.PreviewSize.Medium,
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);
+
+					analytics.event('SelectTemplate');
 					menuContext.close();
 				},
 			},
