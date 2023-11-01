@@ -22,6 +22,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	view = null;
 	relations = [];
 	records = [];
+	keys = [];
+	limit = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -41,11 +43,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			view: observable,
 			relations: observable,
 			records: observable,
+			limit: observable,
+			keys: observable,
 		});
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getKeys, getLimit, onRecordAdd, getEmpty } = this.props;
+		const { rootId, block, isPopup, isInline, className, onRecordAdd, getEmpty } = this.props;
 		const view = this.view;
 		
 		if (!view) {
@@ -56,7 +60,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const records = this.records;
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const limit = getLimit();
+		const limit = this.limit;
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
@@ -69,7 +73,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
-			const item = detailStore.get(subId, id, getKeys(view.id));
+			const item = detailStore.get(subId, id, this.keys);
 			if (item._empty_) {
 				continue;
 			};
@@ -172,11 +176,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	componentDidMount () {
-		const { getView, getVisibleRelations, getRecords } = this.props;
+		const { getView, getVisibleRelations, getRecords, getLimit, getKeys } = this.props;
 
 		this.view = getView();
 		this.relations = getVisibleRelations();
 		this.records = getRecords();
+		this.limit = getLimit();
+		this.keys = getKeys(this.view.id);
 		this.reset();
 	};
 
@@ -203,8 +209,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	setColumnCount () {
-		const { getView } = this.props;
-		const view = getView();
+		const view = this.view;
 
 		if (!view) {
 			return;
@@ -230,10 +235,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
-		const { rootId, block, loadData, getView, getLimit } = this.props;
+		const { rootId, block, loadData, getLimit } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
-		const view = getView();
+		const view = this.view;
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
@@ -243,8 +248,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getRecords () {
-		const { getRecords, isAllowedObject } = this.props;
-		const records = UtilCommon.objectCopy(getRecords());
+		const { isAllowedObject } = this.props;
+		const records = UtilCommon.objectCopy(this.records);
 		
 		if (isAllowedObject) {
 			records.push('add-record');
@@ -281,8 +286,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getCardHeight (): number {
-		const { getVisibleRelations } = this.props;
-		const relations = getVisibleRelations();
+		const relations = this.relations;
 		const size = Constant.size.dataview.gallery;
 
 		let height = size.padding * 2 + size.margin - 4;
@@ -320,8 +324,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getCoverObject (id: string): any {
-		const { rootId, block, getView, getRecord } = this.props;
-		const view = getView();
+		const { rootId, block, getRecord } = this.props;
+		const view = this.view;
 
 		if (!view.coverRelationKey) {
 			return null;

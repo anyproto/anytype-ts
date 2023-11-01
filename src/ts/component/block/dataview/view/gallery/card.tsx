@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
+import { observable, makeObservable } from 'mobx';
+import { Cell, Cover, MediaAudio, MediaVideo, DropTarget } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { commonStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+import { commonStore, dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	recordId: string;
@@ -15,17 +15,27 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
+	view = null;
 
 	constructor (props: Props) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
+
+		makeObservable(this, {
+			view: observable,
+		});
 	};
 
 	render () {
-		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
-		const view = getView();
+		const { rootId, block, recordId, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const view = this.view;
+
+		if (!view) {
+			return null;
+		};
+
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -109,7 +119,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	componentDidMount () {
+		const { getView } = this.props;
+
 		this._isMounted = true;
+		this.view = getView();
 		this.resize();
 	};
 
