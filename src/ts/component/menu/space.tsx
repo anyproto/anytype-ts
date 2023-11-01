@@ -55,7 +55,10 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				onClick={this.onAdd}
 				onMouseEnter={e => this.onMouseEnter(e, item)} 
 				onMouseLeave={e => setHover()}
-			/>
+			>
+				<div className="iconWrap" />
+				<div className="name">{translate('commonCreateNew')}</div>
+			</div>
 		);
 
 		return (
@@ -65,7 +68,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			>
 				<div className="head" onClick={this.onSettings}>
 					<div className="side left">
-						<IconObject object={profile} size={48} />
+						<IconObject object={profile} size={40} />
 						<ObjectName object={profile} />
 					</div>
 					<div className="side right">

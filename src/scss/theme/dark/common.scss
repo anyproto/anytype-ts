@@ -357,7 +357,7 @@ html.themeDark {
 
 	.navigationPanel { background: rgba(141, 141, 141, 0.2); }
 	.navigationPanel {
-		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
+		.iconWrap:hover { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
     @import "./menu.scss";
