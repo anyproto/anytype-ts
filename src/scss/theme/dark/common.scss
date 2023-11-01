@@ -72,11 +72,6 @@ html.themeDark {
 		.controls, .emptySearch { border-color: $colorShapePrimary; }
 	}
 
-	.progressBar {
-        .bar { background: $colorBgSecondary; }
-        .fill { background: $colorSystemAccent100; }
-	}
-
     /* Components */
 
     .loaderWrapper {

@@ -91,9 +91,6 @@
 						.item {
 							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 						}
-						.item.red {
-							.progressBar .fill { background: $colorRed; }
-						}
 					}
 				}
 			}
