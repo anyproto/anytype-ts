@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSpace { 
-		border-radius: 16px; background: rgba(37, 37, 37, 0.4) !important; backdrop-filter: blur(12.5px); padding: 20px 12px 16px 12px;
+		border-radius: 16px; background: rgba(37, 37, 37, 0.4) !important; backdrop-filter: blur(12.5px); padding: 20px 16px 16px 16px;
 		box-shadow: 0px 0px; min-width: 368px; color: $colorTextInversion;
 	}
 
@@ -10,7 +10,7 @@
 		.wrap { width: 100%; }
 
 		.head { 
-			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 24px 0px; 
+			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 12px 0px; 
 			@include text-paragraph; font-weight: 600; gap: 0px 16px; padding: 0px 8px;
 		}
 		.head {
@@ -31,7 +31,7 @@
 			}
 			.item {
 				.iconWrap { width: 96px; height: 96px; border-radius: 4px; overflow: hidden; }
-				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; }
+				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; font-weight: 500; }
 			}
 
 			.item.add {
