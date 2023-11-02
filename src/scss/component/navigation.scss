@@ -14,7 +14,7 @@
 		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
 		position: relative; transition: $transitionAllCommon;
 	}
-	.iconWrap:not(.disabled):hover { background-color: $colorShapeHighlightMedium; }
+	.iconWrap:not(.disabled):hover { background-color: rgba(37, 37, 37, 0.15); }
 	
 	.iconWrap.active:before {
 		content: ''; position: absolute; z-index: 0; left: 2px; top: 2px; width: 28px; height: 28px;

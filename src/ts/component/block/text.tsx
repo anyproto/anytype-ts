@@ -674,10 +674,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+-`, preventDefault: false },
 			{ key: `${cmd}+z`, preventDefault: true },
 			{ key: `${cmd}+shift+z`, preventDefault: true },
+			{ key: `${cmd}+/`, preventDefault: false },
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
+			{ key: `ctrl+shift+/`, preventDefault: false },
 		];
 
 		if (isInsideTable) {

@@ -217,7 +217,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
-			this.onCreate(item.id);
+			this.onChange(item.id);
 		};
 	};
 
@@ -254,7 +254,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 	};
 
-	onCreate (typeId: any) {
+	onChange (typeId: any) {
 		const { rootId, isPopup } = this.props;
 		const type = dbStore.getTypeById(typeId);
 		if (!type) {
