@@ -813,7 +813,7 @@
 	"popupShortcutMain": "Main",
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutMarkdown": "Markdown",
-	"popupShortcutCommands": "Commands",
+	"popupShortcutCommand": "Commands",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutMainBasics1": "Create new Object",
@@ -874,6 +874,7 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
+	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
