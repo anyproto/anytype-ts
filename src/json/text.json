@@ -1508,6 +1508,9 @@
 	"onboardingInlineCollection2Title": "Views",
 	"onboardingInlineCollection2Description": "Adjust rules and views to suit the current context.",
 
+	"onboardingDefaultTypeTitle": "Change Types Easily",
+	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
