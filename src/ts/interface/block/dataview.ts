@@ -117,7 +117,6 @@ export interface ViewComponent {
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
 	getRecord(id: string): any;
-	getCoverObject?(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
 	getTarget?(): any;

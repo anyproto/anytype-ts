@@ -4,7 +4,8 @@ import { observer } from 'mobx-react';
 import { observable, makeObservable } from 'mobx';
 import { Cell, Cover, MediaAudio, MediaVideo, DropTarget } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Dataview } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, dbStore, detailStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	recordId: string;
@@ -199,13 +200,44 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	getCover (): any {
-		const { recordId, getCoverObject } = this.props;
-		const cover = getCoverObject(recordId);
+		const { rootId, block } = this.props;
+		const view = this.view;
 
-		return cover ? this.mediaCover(cover) : null;
+		if (!view.coverRelationKey) {
+			return null;
+		};
+
+		const subId = dbStore.getSubId(rootId, block.id);
+		const value = Relation.getArrayValue(this.record[view.coverRelationKey]);
+		const fileLayouts = UtilObject.getFileLayouts();
+
+		let object = null;
+		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
+			object = this.record;
+		} else {
+			for (const id of value) {
+				const file = detailStore.get(subId, id, []);
+				if (file._empty_ || !fileLayouts.includes(file.layout)) {
+					continue;
+				};
+
+				object = file;
+				break;
+			};
+		};
+
+		if (!object || object._empty_) {
+			return null;
+		};
+
+		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
+			return null;
+		};
+
+		return this.renderCover(object);
 	};
 
-	mediaCover (item: any) {
+	renderCover (item: any) {
 		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
 		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 		

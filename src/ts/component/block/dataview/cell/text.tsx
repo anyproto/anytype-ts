@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
@@ -21,6 +22,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	range: any = null;
 	ref = null;
 	value: any = null;
+	record = null;
+	view = null;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -33,12 +36,17 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
+
+		makeObservable(this, {
+			view: observable,
+			record: observable,
+		});
 	};
 
 	render () {
 		const { isEditing } = this.state;
-		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
-		const record = getRecord(recordId);
+		const { relation, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const record = this.record;
 		
 		if (!record || !relation) {
 			return null;
@@ -50,11 +58,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const isNumber = relation.format == I.RelationType.Number;
 		const isUrl = relation.format == I.RelationType.Url;
 
-		let view = null;
+		let view = this.view;
 		let viewRelation: any = {};
 
-		if (getView) {
-			view = getView();
+		if (view) {
 			viewRelation = view.getRelation(relation.relationKey);
 		};
 
@@ -227,27 +234,31 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
+		const { relation, recordId, getRecord, getView } = this.props;
+		
 		this._isMounted = true;
-		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
+		this.record = getRecord(recordId);
+
+		if (getView) {
+			this.view = getView();
+		};
+
+		this.setValue(Relation.formatValue(relation, this.record[relation.relationKey], true));
 	};
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, recordId, viewType, cellPosition, getView, getRecord } = this.props;
+		const { id, relation, recordId, viewType, cellPosition } = this.props;
 		const cell = $(`#${id}`);
-		const record = getRecord(recordId);
+		const record = this.record;
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
-		let view = null;
+		let view = this.view;
 		let viewRelation: any = {};
 		let card = null;
 		
-		if (getView) {
-			view = getView();
+		if (view) {
 			viewRelation = view.getRelation(relation.relationKey);
 		};
 
@@ -387,8 +398,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, onChange, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
+		const { relation, onChange } = this.props;
+		const record = this.record;
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -416,15 +427,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	fixDateValue (v: any) {
-		const { relation, getView } = this.props;
-
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
+		const { relation } = this.props;
+		const viewRelation: any = this.view ? this.view.getRelation(relation.relationKey) : {};
 
 		v = String(v || '').replace(/_/g, '');
 		return v ? UtilDate.parseDate(v, viewRelation.dateFormat) : null;
@@ -439,10 +443,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onCheckbox () {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
-		UtilObject.setDone(recordId, !record.done, () => this.forceUpdate());
+		UtilObject.setDone(this.record.id, !this.record.done, () => this.forceUpdate());
 	};
 
 });

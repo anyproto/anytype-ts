@@ -37,7 +37,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
-		this.getCoverObject = this.getCoverObject.bind(this);
 
 		makeObservable(this, {
 			view: observable,
@@ -101,7 +100,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			if (id == 'add-record') {
 				return <CardAdd key={'gallery-card-' + view.id + id} />;
 			} else {
-				return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} getCoverObject={this.getCoverObject} />;
+				return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
 			};
 		};
 
@@ -321,45 +320,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		});
 
 		return Math.max(size.height, height);
-	};
-
-	getCoverObject (id: string): any {
-		const { rootId, block, getRecord } = this.props;
-		const view = this.view;
-
-		if (!view.coverRelationKey) {
-			return null;
-		};
-
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(id);
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const fileLayouts = UtilObject.getFileLayouts();
-
-		let object = null;
-		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
-			object = record;
-		} else {
-			for (const id of value) {
-				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !fileLayouts.includes(file.layout)) {
-					continue;
-				};
-
-				object = file;
-				break;
-			};
-		};
-
-		if (!object || object._empty_) {
-			return null;
-		};
-
-		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
-			return null;
-		};
-
-		return object;
 	};
 
 });

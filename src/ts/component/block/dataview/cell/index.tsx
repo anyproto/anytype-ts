@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -24,12 +24,13 @@ interface Props extends I.Cell {
 
 const Cell = observer(class Cell extends React.Component<Props> {
 
-	node: any = null;
 	public static defaultProps = {
 		canOpen: true,
 	};
 
+	node: any = null;
 	ref = null;
+	record = null;
 	timeout = 0;
 	
 	constructor (props: Props) {
@@ -39,12 +40,16 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		this.onChange = this.onChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+
+		makeObservable(this, {
+			record: observable,
+		});
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord } = this.props;
+		const { elementId, relationKey, recordId, onClick, idPrefix } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
+		const record = this.record;
 
 		if (!relation || !record) {
 			return null;
@@ -124,6 +129,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	componentDidMount () {
+		const { recordId, getRecord } = this.props;
+
+		this.record = getRecord(recordId);
 		this.checkIcon();
 	};
 
@@ -144,9 +152,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, recordId, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
+		const record = this.record;
 
 		if (!relation || !record) {
 			return;
@@ -478,9 +486,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	canEdit () {
-		const { readonly, getRecord, recordId } = this.props;
+		const { readonly } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
+		const record = this.record;
 
 		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;

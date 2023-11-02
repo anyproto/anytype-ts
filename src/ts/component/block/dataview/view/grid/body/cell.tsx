@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { I, Relation, Dataview } from 'Lib';
 import { Cell, Icon } from 'Component';
 import { dbStore } from 'Store';
@@ -22,15 +23,20 @@ interface Props {
 const BodyCell = observer(class BodyCell extends React.Component<Props> {
 
 	ref = null;
+	record = null;
 
 	constructor (props: Props) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
+
+		makeObservable(this, {
+			record: observable,
+		});
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange } = this.props;
+		const { rootId, block, className, relationKey, recordId, readonly, onRef, onCellClick, onCellChange } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = Dataview.getIdPrefix(block.id);
@@ -38,7 +44,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(recordId);
+		const record = this.record;
 
 		if (relation.relationKey == 'name') {
 			cn.push('isName');
@@ -80,6 +86,12 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				{iconEdit}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		const { recordId, getRecord } = this.props;
+
+		this.record = getRecord(recordId);
 	};
 
 	onEdit (e: React.MouseEvent) {
