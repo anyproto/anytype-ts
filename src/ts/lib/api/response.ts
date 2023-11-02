@@ -56,15 +56,24 @@ export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
 	};
 };
 
-export const FileSpaceUsage = (response: Rpc.File.SpaceUsage.Response) => {
+export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 	const usage = response.getUsage();
+	
+	let res = {};
+
+	if (usage) {
+		res = Object.assign(res, {
+			bytesLimit: usage.getByteslimit(),
+			localUsage: usage.getLocalbytesusage(),
+		});
+	};
 
 	return {
-		bytesUsed: usage.getBytesusage(),
-		bytesLeft: usage.getBytesleft(),
-		bytesLimit: usage.getByteslimit(),
-		filesCount: usage.getFilescount(),
-		localUsage: usage.getLocalbytesusage(),
+		...res,
+		spaces: (response.getSpacesList() || []).map(it => ({
+			spaceId: it.getSpaceid(),
+			bytesUsage: it.getBytesusage(),
+		})),
 	};
 };
 

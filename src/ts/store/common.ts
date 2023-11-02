@@ -20,9 +20,12 @@ interface Graph {
 };
 
 interface SpaceStorage {
-	bytesUsed: number;
 	bytesLimit: number;
 	localUsage: number;
+	spaces: {
+		spaceId: string;
+		bytesUsage: number;
+	}[],
 };
 
 class CommonStore {
@@ -65,9 +68,9 @@ class CommonStore {
 	};
 
 	public spaceStorageObj: SpaceStorage = {
-		bytesUsed: 0,
 		bytesLimit: 0,
 		localUsage: 0,
+		spaces: [],
 	};
 
     constructor() {
@@ -188,16 +191,8 @@ class CommonStore {
 	};
 
 	get spaceStorage (): SpaceStorage {
-		let { bytesUsed, localUsage } = this.spaceStorageObj;
-		
-		if (bytesUsed <= 1024 * 1024) {
-			bytesUsed = 0;
-		};
-		if (localUsage <= 1024 * 1024) {
-			localUsage = 0;
-		};
-
-		return { ...this.spaceStorageObj, bytesUsed, localUsage };
+		const spaces = this.spaceStorageObj.spaces || [];
+		return { ...this.spaceStorageObj, spaces };
 	};
 
 	get interfaceLang (): string {

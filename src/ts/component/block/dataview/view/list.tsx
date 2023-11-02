@@ -102,20 +102,20 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 						<div className={cn.join(' ')}>
 							{content}
 
-							{isInline && (limit + offset < total) ? (
-								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
-							) : ''}
-
-							{isAllowedObject && !isInline ? (
+							{isAllowedObject ? (
 								<div className="row add">
 									<div className="cell add">
-										<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
+										<div className="btn" onClick={e => onRecordAdd(e, 1)}>
 											<Icon className="plus" />
 											<div className="name">{translate('blockDataviewNew')}</div>
 										</div>
 									</div>
 								</div>
 							) : null}
+
+							{isInline && (limit + offset < total) ? (
+								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
+							) : ''}
 						</div>
 					</div>
 				</div>

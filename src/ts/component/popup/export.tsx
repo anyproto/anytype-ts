@@ -49,7 +49,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 					control = (
 						<Switch
 							className="big"
-							value={this[item.id]}
+							value={this.data[item.id]}
 							onChange={(e: any, v: boolean) => {
 								this.data[item.id] = v;
 								this.save();
