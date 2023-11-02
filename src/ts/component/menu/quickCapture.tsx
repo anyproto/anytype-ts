@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action, Storage } from 'Lib';
 import { commonStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -172,8 +172,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
 
 		let sections: any[] = [
-			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => (!groupKeys.includes(it.uniqueKey))) },
-			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: library.filter(it => (groupKeys.includes(it.uniqueKey))) },
+			{ id: 'objects', name: translate('commonObjects'), children: this.sortLastUsed(library.filter(it => (!groupKeys.includes(it.uniqueKey)))) },
+			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: this.sortLastUsed(library.filter(it => (groupKeys.includes(it.uniqueKey)))) },
 		];
 
 		if (this.filter) {
@@ -215,7 +215,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		} else {
 			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
-			
+			items = this.sortLastUsed(items);
+
 			const itemIds = items.map(it => it.id);
 			const defaultType = dbStore.getTypeById(commonStore.type);
 
@@ -305,13 +306,17 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 			const layout = created ? created.recommendedLayout : item.recommendedLayout;
 			const uniqueKey = created ? created.uniqueKey : item.uniqueKey;
+			const lastUsedTypes = Storage.get('lastUsedTypes') || {};
 
 			C.ObjectCreate({ layout }, flags, item.defaultTemplateId, uniqueKey, commonStore.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
 
-				const { id, layout } = message.details;
+				const { id, layout, type, createdDate } = message.details;
+
+				lastUsedTypes[type] = createdDate;
+				Storage.set('lastUsedTypes', lastUsedTypes);
 
 				UtilObject.openAuto({ id, layout });
 				analytics.event('CreateObject', { route: 'Navigation', objectType: created ? created.id : item.id });
@@ -370,6 +375,17 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 	};
 
+	sortLastUsed (items: any[]) {
+		const lastUsedTypes = Storage.get('lastUsedTypes') || {};
+
+		return items.sort((c1: any, c2: any) => {
+			const d1 = lastUsedTypes[c1.id];
+			const d2 = lastUsedTypes[c2.id];
+			if (d1 > d2 || !d2) return -1;
+			if (d1 < d2) return 1;
+			return 0;
+		});
+	};
 };
 
 export default MenuQuickCapture;
