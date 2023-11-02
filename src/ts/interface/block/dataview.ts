@@ -122,7 +122,6 @@ export interface ViewComponent {
 	getSources?(): string[];
 	getTarget?(): any;
 	getKeys?(viewId: string): string[];
-	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
 	getTypeId?(): string;

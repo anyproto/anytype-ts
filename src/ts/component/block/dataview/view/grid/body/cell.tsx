@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, Relation } from 'Lib';
+import { I, Relation, Dataview } from 'Lib';
 import { Cell, Icon } from 'Component';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -14,7 +14,6 @@ interface Props {
 	width: number;
 	className?: string;
 	getRecord(id: string): any;
-	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
@@ -31,10 +30,10 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
+		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
-		const idPrefix = getIdPrefix();
+		const idPrefix = Dataview.getIdPrefix(block.id);
 		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;

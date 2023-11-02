@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { observable, makeObservable } from 'mobx';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Cell, DropTarget, Icon } from 'Component';
+import { Cell } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -15,12 +16,20 @@ const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
+	relations = [];
+
+	constructor (props: Props) {
+		super(props);
+
+		makeObservable(this, {
+			relations: observable,
+		});
+	};
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, isInline } = this.props;
 		const view = getView();
-		const relations = getVisibleRelations();
-		const idPrefix = getIdPrefix();
+		const idPrefix = Dataview.getIdPrefix(block.id);
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
@@ -28,7 +37,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				{relations.map((relation: any, i: number) => (
+				{this.relations.map((relation: any, i: number) => (
 					<Cell
 						key={'board-cell-' + view.id + relation.relationKey}
 						{...this.props}
@@ -77,7 +86,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	componentDidMount () {
+		const { getVisibleRelations } = this.props;
+
 		this._isMounted = true;
+		this.relations = getVisibleRelations();
 		this.resize();
 	};
 

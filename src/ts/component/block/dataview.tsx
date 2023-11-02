@@ -56,7 +56,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
-		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
@@ -154,7 +153,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getRecord: this.getRecord,
 			getRecords: this.getRecords,
 			getKeys: this.getKeys,
-			getIdPrefix: this.getIdPrefix,
 			getLimit: () => this.getLimit(view.type),
 			getVisibleRelations: this.getVisibleRelations,
 			getTypeId: this.getTypeId,
@@ -637,7 +635,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId } = this.props;
+		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
@@ -709,7 +707,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				dbStore.recordsSet(subId, '', records);
 			};
 
-			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const id = Relation.cellId(Dataview.getIdPrefix(block.id), 'name', object.id);
 			const ref = this.refCells.get(id);
 
 			if (object.layout == I.ObjectLayout.Note) {
@@ -861,10 +859,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
+		const id = Relation.cellId(Dataview.getIdPrefix(block.id), relationKey, recordId);
 		const ref = this.refCells.get(id);
 		const record = this.getRecord(recordId);
 		const view = this.getView();
@@ -1097,10 +1095,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.recordsSet(subId, '', records);
 		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
-	};
-
-	getIdPrefix () {
-		return [ 'dataviewCell', this.props.block.id ].join('-');
 	};
 
 	getVisibleRelations () {

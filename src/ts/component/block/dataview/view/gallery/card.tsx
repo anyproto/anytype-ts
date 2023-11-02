@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable, makeObservable } from 'mobx';
 import { Cell, Cover, MediaAudio, MediaVideo, DropTarget } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Dataview } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -16,6 +16,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	view = null;
+	record = null;
+	relations = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -25,11 +27,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		makeObservable(this, {
 			view: observable,
+			relations: observable,
+			record: observable,
 		});
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, recordId, onRef, style, onContext, isInline, isCollection } = this.props;
 		const view = this.view;
 
 		if (!view) {
@@ -37,9 +41,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const { cardSize, coverFit, hideIcon } = view;
-		const relations = getVisibleRelations();
-		const idPrefix = getIdPrefix();
-		const record = getRecord(recordId);
+		const idPrefix = Dataview.getIdPrefix(block.id);
+		const record = this.record;
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
 		const subId = dbStore.getSubId(rootId, block.id);
 		const cover = this.getCover();
@@ -57,7 +60,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				{cover}
 
 				<div className="inner">
-					{relations.map(relation => {
+					{this.relations.map(relation => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 						return (
 							<Cell
@@ -119,10 +122,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		const { getView } = this.props;
+		const { recordId, getView, getVisibleRelations, getRecord } = this.props;
 
 		this._isMounted = true;
 		this.view = getView();
+		this.relations = getVisibleRelations();
+		this.record = getRecord(recordId);
 		this.resize();
 	};
 
@@ -159,14 +164,14 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { recordId, getRecord, onContext, dataset } = this.props;
+		const { onContext, dataset } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(recordId);
+		const record = this.record;
 		const cb = {
 			0: () => { 
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
-			2: () => { onContext(e, record.id); }
+			2: () => onContext(e, record.id)
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];

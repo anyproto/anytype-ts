@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, Relation, UtilCommon, UtilObject } from 'Lib';
+import { I, keyboard, Relation, UtilCommon, UtilObject, Dataview } from 'Lib';
 import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
@@ -16,10 +16,10 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
-		const idPrefix = getIdPrefix();
+		const idPrefix = Dataview.getIdPrefix(block.id);
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(recordId);
 		const cn = [ 'row' ];

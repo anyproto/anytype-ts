@@ -270,6 +270,10 @@ class Dataview {
 		return records;
 	};
 
+	getIdPrefix (blockId: string): string {
+		return [ 'dataviewCell', blockId ].join('-');
+	};
+
 };
 
 export default new Dataview();
