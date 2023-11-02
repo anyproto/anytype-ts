@@ -33,10 +33,12 @@ class Onboarding {
 					noAnimation: true,
 					noFlipY: true,
 					noFlipX: true,
-					onClose: () => { 
-						this.start(this.getReminderKey(key), isPopup, force);
-						
-						Storage.setOnboarding(key); 
+					onClose: () => {
+						Storage.setOnboarding(key);
+
+						if (section.onComplete) {
+							section.onComplete(force);
+						};
 					},
 					data: {
 						...param.data,
@@ -50,8 +52,8 @@ class Onboarding {
 		});
 	};
 
-	getReminderKey (key: string) {
-		return UtilCommon.toCamelCase([ key, 'reminder' ].join('-'));
+	isCompleted (key: string): boolean {
+		return Storage.getOnboarding(key);
 	};
 
 	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
