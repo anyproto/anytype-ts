@@ -1,4 +1,4 @@
-import { I, translate } from 'Lib';
+import { I, Onboarding, keyboard, translate } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -17,17 +17,17 @@ export default {
             }
         ],
 
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'wizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'wizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
 			noClose: true,
 			passThrough: true,
-            offsetY: -4,
-        },
+			offsetY: -4,
+		},
     }),
 
     mainSet: () => ({
@@ -53,6 +53,9 @@ export default {
                 buttonText: translate('onboardingMainSet3Button'),
             }
         ],
+		onComplete: (force: boolean) => {
+			Onboarding.start('changeDefaultTypeInSet', keyboard.isPopup(), force);
+		},
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
@@ -352,5 +355,23 @@ export default {
 			},
 		],
 	}),
+
+	changeDefaultTypeInSet: () => (
+		{
+			items: [
+				{
+					name: translate('onboardingDefaultTypeTitle'),
+					description: translate('onboardingDefaultTypeDescription'),
+				},
+			],
+
+			param: {
+				element: '#button-dataview-add-record-select',
+				horizontal: I.MenuDirection.Right,
+				offsetX: -4,
+				offsetY: 12,
+			},
+		}
+	),
 
 };

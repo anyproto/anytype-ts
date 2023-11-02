@@ -24,7 +24,7 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { languages, zoom } = ConfigManager.config;
+		const { languages, zoom, hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -66,6 +66,11 @@ class WindowManager {
 
 		Api.setSpellingLang(win, languages);
 		Api.setZoom(win, zoom);
+
+		if (hideMenuBar) {
+			win.setMenuBarVisibility(false);
+			win.setAutoHideMenuBar(true);
+		};
 
 		return win;
 	};

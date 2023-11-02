@@ -110,6 +110,7 @@
 	"commonSetDefault": "Set as default",
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
+	"commonCreateNew": "Create new",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -122,7 +123,7 @@
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
-	"pluralType": "Type|Types",
+	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
 
 	"electronAboutVersion": "Version:",
@@ -139,6 +140,7 @@
 	"electronMenuSpaceSettings": "Space",
 	"electronMenuAccountSettings": "Account",
 	"electronMenuShowTray": "Show Anytype in Menu Bar",
+	"electronMenuShowMenu": "Show system menu",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
 	"electronMenuDirectory": "Show Work Directory",
@@ -374,6 +376,7 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
@@ -810,7 +813,7 @@
 	"popupShortcutMain": "Main",
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutMarkdown": "Markdown",
-	"popupShortcutCommands": "Commands",
+	"popupShortcutCommand": "Commands",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutMainBasics1": "Create new Object",
@@ -871,6 +874,7 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
+	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -1506,6 +1510,9 @@
 	"onboardingInlineCollection1Description": "Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.",
 	"onboardingInlineCollection2Title": "Views",
 	"onboardingInlineCollection2Description": "Adjust rules and views to suit the current context.",
+
+	"onboardingDefaultTypeTitle": "Change Types Easily",
+	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",

@@ -216,7 +216,9 @@
 					.input { padding: 0; }
 
 					.name { margin-bottom: 8px; }
-					.name .input { @include text-header1; }
+					.name {
+						.input { @include text-header1; height: 32px; }
+					}
 
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
@@ -272,14 +274,6 @@
 							.storageLabel {
 								.label { display: inline; }
 								.label.extend { color: $colorRed; }
-							}
-							.progressBar {
-								.fill { background: $colorLime; }
-							}
-						}
-						> .item.red {
-							.progressBar {
-								.fill { background: $colorRed; }
 							}
 						}
 					}

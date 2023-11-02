@@ -70,6 +70,26 @@ class Api {
 		this.setConfig(win, { zoom });
 	};
 
+	setHideTray (win, show) {
+		ConfigManager.set({ hideTray: !show }, () => {
+			Util.send(win, 'config', ConfigManager.config);
+
+			MenuManager.initMenu();
+			MenuManager.initTray();
+		});
+	};
+
+	setMenuBarVisibility (win, show) {
+		const hide = !show;
+
+		ConfigManager.set({ hideMenuBar: hide }, () => {
+			Util.send(win, 'config', ConfigManager.config);
+
+			win.setMenuBarVisibility(show);
+			win.setAutoHideMenuBar(hide);
+		});
+	};
+
 	spellcheckAdd (win, s) {
 		win.webContents.session.addWordToSpellCheckerDictionary(s);
 	};

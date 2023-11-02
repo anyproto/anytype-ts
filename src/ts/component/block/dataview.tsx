@@ -237,21 +237,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, isPopup, isInline } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const { isInline, isPopup } = this.props;
 
 		this.reloadData();
-
-		if (root.isObjectSet()) {
-			Onboarding.start('set', isPopup);
-		};
-
 		this.init();
 		this.resize();
 		this.rebind();
 
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
+
+		if (!isInline && Onboarding.isCompleted('mainSet')) {
+			Onboarding.start('changeDefaultTypeInSet', isPopup);
+		};
 	};
 
 	componentDidUpdate () {
@@ -855,11 +853,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			const object = message.details;
 
-			C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: object.id });
-
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route });
-			analytics.event('ChangeDefaultTemplate', { route });
+
 			UtilObject.openPopup(object);
 		});
 	};

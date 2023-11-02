@@ -545,16 +545,14 @@ class Action {
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
 							if (callBack) {
 								callBack(message);
 							};
 
-							Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-							analytics.event('DeleteSpace', { type: deleted.spaceType });
+							if (!message.error.code) {
+								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
+								analytics.event('DeleteSpace', { type: deleted.spaceType });
+							};
 						});
 					};
 

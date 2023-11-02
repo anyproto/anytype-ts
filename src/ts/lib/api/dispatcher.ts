@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
-import { observable } from 'mobx';
+import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
@@ -245,7 +245,16 @@ class Dispatcher {
 				};
 
 				case 'fileSpaceUsage': {
-					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
+					const spaceId = data.getSpaceid();
+					const { spaces } = commonStore.spaceStorage;
+					const space = spaces.find(it => it.spaceId == spaceId);
+					const bytesUsage = data.getBytesusage();
+
+					if (space) {
+						set(space, { bytesUsage });
+					} else {
+						spaces.push({ spaceId, bytesUsage });
+					};
 					break;
 				};
 
@@ -255,7 +264,8 @@ class Dispatcher {
 				};
 
 				case 'fileLimitReached': {
-					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
+					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {

@@ -1,6 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, M, UtilCommon, Dataview } from 'ts/lib';
-import { detailStore, commonStore } from 'ts/store';
+import { I, M, UtilCommon, UtilData, Dataview } from 'Lib';
+import { detailStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 enum KeyMapType {
@@ -295,7 +295,25 @@ class DbStore {
 
 	getRelations () {
 		return dbStore.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
-			filter(it => it && !it.isArchived);
+			filter(it => it && !it.isArchived && !it.isDeleted);
+	};
+
+	getSpaces () {
+		const subId = Constant.subId.space;
+		const { spaceview } = blockStore;
+
+		let items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+
+		items = items.filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok));
+		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
+
+		items.sort((c1, c2) => {
+			if (c1.isActive && !c2.isActive) return -1;
+			if (!c1.isActive && c2.isActive) return 1;
+			return 0;
+		});
+
+		return items;
 	};
 
 	getObjectRelationKeys (rootId: string, blockId: string): any[] {

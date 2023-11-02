@@ -253,12 +253,11 @@ const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message:
 	dispatcher.request(FileListOffload.name, request, callBack);
 };
 
-const FileSpaceUsage = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.File.SpaceUsage.Request();
 
-	request.setSpaceid(spaceId);
+const FileNodeUsage = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
 
-	dispatcher.request(FileSpaceUsage.name, request, callBack);
+	dispatcher.request(FileNodeUsage.name, request, callBack);
 };
 
 const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -1607,7 +1606,6 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request(ObjectApplyTemplate.name, request, callBack);
 };
 
-
 const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ShareByLink.Request();
 
@@ -1826,7 +1824,7 @@ export {
 	FileDownload,
 	FileDrop,
 	FileListOffload,
-	FileSpaceUsage,
+	FileNodeUsage,
 
 	NavigationGetObjectInfoWithLinks,
 

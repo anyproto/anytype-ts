@@ -1,4 +1,4 @@
-import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -511,6 +511,35 @@ class Relation {
 		};
 
 		return value;
+	};
+
+	getParamForNewObject (name: string, relation: any): { flags: I.ObjectFlag[], details: any } {
+		const details: any = { name };
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
+		const objectTypes = this.getArrayValue(relation.objectTypes);
+
+		let type = null;
+
+		if (objectTypes.length) {
+			const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
+			const l = allowedTypes.length;
+
+			if (l) {
+				type = allowedTypes[0];
+
+				if (l > 1) {
+					flags.push(I.ObjectFlag.SelectType);
+				};
+			};
+		};
+
+		if (type) {
+			details.type = type.id;
+		} else {
+			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		return { flags, details }
 	};
 
 	systemKeys () {
