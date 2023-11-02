@@ -2,7 +2,7 @@ import loadImage from 'blueimp-load-image';
 import { UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-const SIZE_UNIT = 1000;
+const SIZE_UNIT = 1024;
 const UNITS = {
 	1: 'B',
 	2: 'KB',
