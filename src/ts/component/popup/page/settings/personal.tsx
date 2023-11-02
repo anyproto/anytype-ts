@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select, Switch } from 'Component';
-import { I, translate, analytics, UtilObject, UtilCommon, Action, Renderer } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, translate, UtilCommon, Action, Renderer } from 'Lib';
+import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
 	constructor (props: I.PopupSettings) {
 		super(props);
-
-		this.onType = this.onType.bind(this);
 	};
 
 	render () {
 		const { config, interfaceLang } = commonStore;
 		const { languages, hideTray, hideMenuBar } = config;
-		const type = dbStore.getTypeById(commonStore.type);
 		const interfaceLanguages = this.getInterfaceLanguages();
 		const spellingLanguages = this.getSpellinngLanguages();
 		const canHideMenu = UtilCommon.isPlatformWindows() || UtilCommon.isPlatformLinux();
@@ -26,16 +23,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalDefaultObjectType')} />
-
-						<div id="defaultType" className="select" onClick={this.onType}>
-							<div className="item">
-								<div className="name">{type?.name || translate('commonSelect')}</div>
-							</div>
-							<Icon className="arrow black" />
-						</div>
-					</div>
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalSpellcheckLanguage')} />
@@ -84,25 +71,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 			</React.Fragment>
 		);
-	};
-
-	onType (e: any) {
-		const { getId } = this.props;
-
-		menuStore.open('typeSuggest', {
-			element: `#${getId()} #defaultType`,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				filter: '',
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-				],
-				onClick: (item: any) => {
-					commonStore.typeSet(item.uniqueKey);
-					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
-				},
-			}
-		});
 	};
 
 	getInterfaceLanguages () {
