@@ -12,7 +12,7 @@
                 .line { display: none; }
             }
 
-            .items { display: flex; gap: 0px 8px; transition: $transitionAllCommon; }
+            .items { display: flex; gap: 0px 8px; }
 
             .label { @include text-small; color: $colorTextSecondary; padding-top: 12px; width: 100%; flex-shrink: 0; }
             .label:first-child { padding-top: 0; }
@@ -20,7 +20,7 @@
             .item {
                 position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; justify-content: center; gap: 0px 8px; padding: 0px 14px;
                 background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
-                box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
+                box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon;
             }
             .item {
                 .icon { margin-right: 0; }

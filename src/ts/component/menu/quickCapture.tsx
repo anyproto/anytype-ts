@@ -33,22 +33,33 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	render () {
 		const items = this.getItems();
 
-		const Item = (item: any) => (
-			<div
-				id={`item-${item.id}`}
-				className={item.isSection ? 'label' : 'item'}
-				onClick={() => this.onClick(item)}
-				onMouseEnter={(e: any) => { this.onOver(e, item); }}
-				onMouseLeave={this.onOut}
-			>
-				{item.id == 'search' ? <Icon className="search" /> : (
-					<React.Fragment>
-						{item.id == 'add' ? <Icon className="add" /> : <IconObject object={item} />}
-						<ObjectName object={item} />
-					</React.Fragment>
-				)}
-			</div>
-		);
+		const Item = (item: any) => {
+			let icon = null;
+			let name = null;
+
+			if ([ 'search', 'add' ].includes(item.id)) {
+				icon = <Icon className={item.id} />;
+			} else {
+				icon = <IconObject object={item} />;
+			};
+
+			if (item.id != 'search') {
+				name = <ObjectName object={item} />;
+			};
+
+			return (
+				<div
+					id={`item-${item.id}`}
+					className={item.isSection ? 'label' : 'item'}
+					onClick={() => this.onClick(item)}
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					onMouseLeave={this.onOut}
+				>
+					{icon}
+					{name}
+				</div>
+			);
+		};
 
 		return (
 			<div ref={node => this.node = node} className="wrap">
@@ -109,6 +120,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		let filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 		];
 
 		if (clear) {
@@ -118,7 +130,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		UtilData.search({
 			filters,
 			sorts,
-			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+			keys: UtilData.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
@@ -168,10 +180,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store }
+				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[0].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) })
+			sections[0].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
 		};
 
 		sections = sections.filter((section: any) => {
@@ -203,6 +215,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		} else {
 			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
+			
 			const itemIds = items.map(it => it.id);
 			const defaultType = dbStore.getTypeById(commonStore.type);
 
@@ -322,17 +335,18 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onExpand () {
+		const { getId } = this.props;
+
+		$(`#${getId()}`).addClass('expanded');
+
 		this.isExpanded = true;
-		menuStore.update('quickCapture', { className: 'expanded' });
-		this.props.position();
+		this.forceUpdate();
 
 		window.setTimeout(() => {
 			if (this.refFilter) {
 				this.refFilter.focus();
 			};
-
-			this.props.position();
-		}, 50);
+		}, 15);
 	};
 
 	onOver (e: any, item: any) {
