@@ -1,10 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
 import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
-import { dbStore, menuStore, detailStore, commonStore } from 'Store';
+import { dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
-import { observer } from 'mobx-react';
 
 const TEMPLATE_WIDTH = 230;
 
@@ -17,6 +18,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	node: any = null;
 	n = 0;
 	typeId: string = '';
+	view = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -29,6 +31,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		this.updateRowLength = this.updateRowLength.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.rebind = this.rebind.bind(this);
+
+		makeObservable(this, {
+			view: observable,
+		});
 	};
 
 	render () {
@@ -130,9 +136,18 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	componentDidMount () {
+		const { param, position } = this.props;
+		const { data } = param;
+		const { getView } = data;
+
 		this.rebind();
-		this.props.position();
 		this.load();
+
+		if (getView) {
+			this.view = getView();
+		};
+
+		position();
 	};
 
 	componentDidUpdate (): void {
@@ -220,9 +235,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	getTemplateId () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, templateId } = data;
+		const { templateId } = data;
 
-		return (getView ? getView().defaultTemplateId || templateId : templateId) || Constant.templateId.blank;
+		return this.view?.defaultTemplateId || templateId || Constant.templateId.blank;
 	};
 
 	getItems () {

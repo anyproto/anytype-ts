@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
@@ -16,6 +17,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	node: any = null;
 	ox = 0;
+	view = null;
+	relations = [];
+	records = [];
+	limit = 0;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -28,15 +33,20 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getColumnWidths = this.getColumnWidths.bind(this);
+
+		makeObservable(this, {
+			view: observable,
+			relations: observable,
+			limit: observable,
+		});
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, isAllowedObject, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
-		const view = getView();
-		const relations = getVisibleRelations();
-		const records = getRecords();
+		const { rootId, block, isPopup, isInline, className, isAllowedObject, onRecordAdd, getEmpty } = this.props;
+		const view = this.view;
+		const relations = this.relations;
+		const records = this.records;
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
-		const limit = getLimit();
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
 
@@ -136,8 +146,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 								</div>
 							) : null}
 
-							{isInline && (limit + offset < total) ? (
-								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
+							{isInline && (this.limit + offset < total) ? (
+								<LoadMore limit={this.limit} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 							) : ''}
 						</div>
 					</div>
@@ -147,6 +157,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	componentDidMount () {
+		const { getView, getVisibleRelations, getRecords, getLimit } = this.props;
+
+		this.view = getView();
+		this.relations = getVisibleRelations();
+		this.records = getRecords();
+		this.limit = getLimit();
 		this.resize();
 		this.rebind();
 	};
@@ -188,14 +204,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	resizeColumns (relationKey: string, width: number) {
-		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
-		const relations = getVisibleRelations();
 		const size = Constant.size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const str = this.relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
-		relations.forEach(it => {
+		this.relations.forEach(it => {
 			const width = widths[it.relationKey];
 			const el = node.find(`#${Relation.cellId('head', it.relationKey, '')}`);
 
@@ -207,11 +221,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {
-		const { getVisibleRelations } = this.props;
-		const relations = getVisibleRelations();
 		const columns: any = {};
 		
-		relations.forEach(it => {
+		this.relations.forEach(it => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
 
@@ -276,10 +288,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onResizeEnd (e: any, relationKey: string) {
-		const { rootId, block, getView, getVisibleRelations } = this.props;
-		const view = getView();
+		const { rootId, block } = this.props;
+		const view = this.view;
 		const node = $(this.node);
-		const relations = getVisibleRelations();
+		const relations = this.relations;
 		const width = this.checkWidth(e.pageX - this.ox);
 
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
@@ -299,7 +311,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			width: this.checkWidth(e.pageX - this.ox),
 		});
 
-		window.setTimeout(() => { keyboard.setResize(false); }, 50);
+		window.setTimeout(() => keyboard.setResize(false), 50);
 	};
 
 	checkWidth (width: number): number {
@@ -333,33 +345,30 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onSortEnd (result: any) {
-		const { rootId, block, getView, getVisibleRelations } = this.props;
+		const { rootId, block } = this.props;
 		const { oldIndex, newIndex } = result;
-		const view = getView();
-		const relations = getVisibleRelations();
 
-		view.relations = arrayMove(relations, oldIndex, newIndex);
-		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
+		this.view.relations = arrayMove(this.relations, oldIndex, newIndex);
+		C.BlockDataviewViewRelationSort(rootId, block.id, this.view.id, this.view.relations.map(it => it.relationKey));
 
 		keyboard.setDragging(false);
 		keyboard.disableSelection(false);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		const { rootId, block, loadData, getView, getLimit } = this.props;
+		const { rootId, block, loadData } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
-		const view = getView();
 
         return new Promise((resolve, reject) => {
-			offset += getLimit();
-			loadData(view.id, offset, false, resolve);
+			offset += this.limit;
+			loadData(this.view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};
 
 	resize () {
-		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
 		
 		if (!element) {
@@ -372,7 +381,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = UtilCommon.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
+		const width = this.relations.reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
