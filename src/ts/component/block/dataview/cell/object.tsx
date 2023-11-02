@@ -2,6 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
@@ -23,6 +24,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		isEditing: false,
 	};
 	timeoutFilter = 0;
+	record = null;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -36,12 +38,16 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		this.onBlur = this.onBlur.bind(this);
 		this.focus = this.focus.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+
+		makeObservable(this, {
+			record: observable,
+		});
 	};
 
 	render () {
 		const { isEditing } = this.state;
-		const { getRecord, recordId, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
-		const record = getRecord(recordId);
+		const { relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const record = this.record;
 		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
@@ -140,7 +146,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	componentDidMount () {
+		const { recordId, getRecord } = this.props;
 		this._isMounted = true;
+
+		this.record = getRecord(recordId);
 	};
 
 	componentDidUpdate () {
@@ -216,14 +225,13 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, recordId, subId } = this.props;
-		const record = getRecord(recordId);
+		const { relation, subId } = this.props;
 
-		if (!relation || !record) {
+		if (!relation || !this.record) {
 			return [];
 		};
 
-		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
+		let value: any[] = Relation.getArrayValue(this.record[relation.relationKey]);
 		value = value.map(id => detailStore.get(subId, id, []));
 		value = value.filter(it => !it._empty_);
 		return value;

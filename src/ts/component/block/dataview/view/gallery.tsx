@@ -3,10 +3,11 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable, makeObservable } from 'mobx';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
+import Empty from '../../dataview/empty';
 import Constant from 'json/constant.json';
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
@@ -48,7 +49,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, onRecordAdd, getEmpty } = this.props;
+		const { rootId, block, isPopup, isInline, className, onRecordAdd, isAllowedObject } = this.props;
 		const view = this.view;
 		
 		if (!view) {
@@ -65,7 +66,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const cardHeight = this.getCardHeight();
 
 		if (!length) {
-			return getEmpty('view');
+			return (
+				<Empty 
+					className="withHead" 
+					description={isAllowedObject ? translate('blockDataviewEmptyViewDescription') : ''}
+					button={isAllowedObject ? translate('blockDataviewEmptyViewButton') : ''}
+					onClick={isAllowedObject ? e => onRecordAdd(e, 1) : null}
+				/>
+			);
 		};
 
 		const items = this.getItems();

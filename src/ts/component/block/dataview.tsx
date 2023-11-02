@@ -171,10 +171,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = null;
 		} else
 		if (isInline && !targetId) {
-			body = this.getEmpty('target');
+			body = this.getEmpty(isInline, block.id, 'target');
 		} else
 		if (!isCollection && !sources.length) {
-			body = this.getEmpty('source');
+			body = this.getEmpty(isInline, block.id, 'source');
 		} else {
 			body = (
 				<div className="content">
@@ -1105,25 +1105,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 
-	getEmpty (type: string) {
-		const { isInline, block } = this.props;
-		const isCollection = this.isCollection();
+	getEmpty (isInline: boolean, blockId: string, type: string) {
 		const cn = [];
-
+		
 		if (isInline) {
 			cn.push('withHead');
 		};
 
-		let emptyProps: any = {};
+		let emptyProps: Partial<I.ViewEmpty> = { blockId };
 
 		switch (type) {
 			case 'target': {
+				const isCollection = this.isCollection();
 				const name = translate(isCollection ? 'blockDataviewEmptyTargetCollections' : 'blockDataviewEmptyTargetSets');
+
 				emptyProps = {
 					title: translate('blockDataviewEmptyTargetTitle'),
 					description: UtilCommon.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
 					button: translate('blockDataviewEmptyTargetButton'),
-					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+					onClick: () => this.onSourceSelect(`#block-${blockId} .dataviewEmpty .button`, {}),
 				};
 				break;
 			};
@@ -1137,29 +1137,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 				break;
 			};
-
-			case 'view': {
-				cn.push('withHead');
-
-				emptyProps.title = translate('commonNoObjects');
-
-				if (this.isAllowedObject()) {
-					emptyProps.description = translate('blockDataviewEmptyViewDescription');
-					emptyProps.button = translate('blockDataviewEmptyViewButton');
-					emptyProps.onClick = e => this.onRecordAdd(e, 1);
-				};
-				break;
-			};
 		};
 
-		return (
-			<Empty
-				{...this.props}
-				{...emptyProps}
-				className={cn.join(' ')}
-				withButton={emptyProps.button ? true : false}
-			/>
-		);
+		return <Empty {...emptyProps} className={cn.join(' ')} />;
 	};
 
 	isAllowedObject () {

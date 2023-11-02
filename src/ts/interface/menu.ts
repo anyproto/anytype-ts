@@ -60,6 +60,7 @@ export interface Menu {
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
+	getParamData?(): any;
 	position? (): void;
 	close? (): void;
 };

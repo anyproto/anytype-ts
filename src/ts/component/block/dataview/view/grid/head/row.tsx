@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { SortableContainer } from 'react-sortable-hoc';
 import { I } from 'Lib';
 import { Icon } from 'Component';
@@ -17,10 +18,20 @@ interface Props extends I.ViewComponent {
 
 const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
+	relations = [];
+
+	constructor (props: Props) {
+		super(props);
+
+		makeObservable(this, {
+			relations: observable,
+		});
+	};
+
 	render () {
-		const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = this.props;
+		const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;
 		const widths = getColumnWidths('', 0);
-		const relations = getVisibleRelations();
+		const relations = this.relations;
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
@@ -58,6 +69,12 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 				helperContainer={() => $(`#block-${block.id} .wrap`).get(0)}
 			/>
 		);
+	};
+
+	componentDidMount () {
+		const { getVisibleRelations } = this.props;
+
+		this.relations = getVisibleRelations();
 	};
 
 });

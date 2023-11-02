@@ -37,6 +37,12 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, className, relationKey, recordId, readonly, onRef, onCellClick, onCellChange } = this.props;
+		const record = this.record;
+
+		if (!record) {
+			return null;
+		};
+
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = Dataview.getIdPrefix(block.id);
@@ -44,7 +50,6 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = this.record;
 
 		if (relation.relationKey == 'name') {
 			cn.push('isName');

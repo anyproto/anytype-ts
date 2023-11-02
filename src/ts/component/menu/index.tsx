@@ -181,12 +181,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.close = this.close.bind(this);
 		this.setHover = this.setHover.bind(this);
 		this.setActive = this.setActive.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.storageGet = this.storageGet.bind(this);
 		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.getPosition = this.getPosition.bind(this);
+		this.getParamData = this.getParamData.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onDimmerClick = this.onDimmerClick.bind(this);
 	};
@@ -294,6 +295,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getId={this.getId} 
 							getSize={this.getSize}
 							getPosition={this.getPosition}
+							getParamData={this.getParamData}
 							position={this.position} 
 							close={this.close} 
 						/>
@@ -1003,6 +1005,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	getPosition (): DOMRect {
 		const obj = $('#' + this.getId());
 		return obj.get(0).getBoundingClientRect() as DOMRect;
+	};
+
+	getParamData () {
+		return this.props.param.data || {};
 	};
 
 	getArrowDirection (): I.MenuDirection {

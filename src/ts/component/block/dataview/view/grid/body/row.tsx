@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I, keyboard, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
+import { observable, makeObservable } from 'mobx';
 import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 
@@ -14,10 +15,27 @@ interface Props extends I.ViewComponent {
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
+	relations = [];
+	record = null;
+
+	constructor (props: Props) {
+		super(props);
+
+		makeObservable(this, {
+			relations: observable,
+			record: observable,
+		});
+	};
+
 	render () {
-		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
-		const relations = getVisibleRelations();
-		const record = getRecord(recordId);
+		const { rootId, recordId, block, style, onContext, onDragRecordStart, getColumnWidths, isInline, isCollection, onSelectToggle } = this.props;
+		const record = this.record;
+
+		if (!this.record) {
+			return null;
+		};
+
+		const relations = this.relations;
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', UtilData.layoutClass('', record.layout), ];
@@ -94,6 +112,13 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				{content}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		const { recordId, getVisibleRelations, getRecord } = this.props;
+
+		this.record = getRecord(recordId);
+		this.relations = getVisibleRelations();
 	};
 
 });

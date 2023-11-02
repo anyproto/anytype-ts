@@ -125,7 +125,7 @@ export interface ViewComponent {
 	getVisibleRelations?(): I.ViewRelation[];
 	getTypeId?(): string;
 	getTemplateId?(): string;
-	getEmpty?(type: string): any;
+	getEmpty?(isInline: boolean, blockId: string, type: string): any;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
@@ -145,13 +145,12 @@ export interface ViewComponent {
 
 export interface ViewEmpty {
 	rootId?: string;
-	block?: I.Block;
-	title: string;
-	description: string;
-	button: string;
-	withButton: boolean;
+	blockId?: string;
+	title?: string;
+	description?: string;
+	button?: string;
 	className?: string;
-	onClick: (e: any) => void;
+	onClick?: (e: any) => void;
 };
 
 export interface View {

@@ -5,13 +5,9 @@ import { observer } from 'mobx-react';
 
 const Empty = observer(class Empty extends React.Component<I.ViewEmpty> {
 
-	public static defaultProps = {
-		withButton: true,
-	};
-
 	render () {
-		const { block, title, description, button, withButton, className, onClick } = this.props;
-		const id = [ 'dataviewEmpty', block.id ];
+		const { blockId, title, description, button, className, onClick } = this.props;
+		const id = [ 'dataviewEmpty', blockId ];
 		const cn = [ 'dataviewEmpty' ];
 
 		if (className) {
@@ -23,7 +19,7 @@ const Empty = observer(class Empty extends React.Component<I.ViewEmpty> {
 				<div className="inner">
 					<Label className="name" text={title} />
 					<Label className="descr" text={description} />
-					{withButton ? <Button color="blank" className="c28" text={button} onClick={onClick} /> : ''}
+					{button ? <Button color="blank" className="c28" text={button} onClick={onClick} /> : ''}
 				</div>
 			</div>
 		);

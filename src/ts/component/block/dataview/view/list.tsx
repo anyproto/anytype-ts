@@ -6,6 +6,7 @@ import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
 import Row from './list/row';
+import Empty from '../../dataview/empty';
 
 const HEIGHT = 34;
 
@@ -21,7 +22,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, isAllowedObject, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, isAllowedObject, getView, onRecordAdd, getLimit, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
@@ -30,7 +31,14 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const cn = [ 'viewContent', className ];
 
 		if (!length) {
-			return getEmpty('view');
+			return (
+				<Empty 
+					className="withHead" 
+					description={isAllowedObject ? translate('blockDataviewEmptyViewDescription') : ''}
+					button={isAllowedObject ? translate('blockDataviewEmptyViewButton') : ''}
+					onClick={isAllowedObject ? e => onRecordAdd(e, 1) : null}
+				/>
+			);
 		};
 
 		let content = null;

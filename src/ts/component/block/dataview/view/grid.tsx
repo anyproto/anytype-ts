@@ -10,6 +10,7 @@ import { dbStore, menuStore, blockStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
+import Empty from '../../dataview/empty';
 
 const PADDING = 46;
 
@@ -42,7 +43,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, isAllowedObject, onRecordAdd, getEmpty } = this.props;
+		const { rootId, block, isPopup, isInline, className, isAllowedObject, onRecordAdd } = this.props;
 		const view = this.view;
 		const relations = this.relations;
 		const records = this.records;
@@ -51,7 +52,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const cn = [ 'viewContent', className ];
 
 		if (!length) {
-			return getEmpty('view');
+			return (
+				<Empty 
+					className="withHead" 
+					description={isAllowedObject ? translate('blockDataviewEmptyViewDescription') : ''}
+					button={isAllowedObject ? translate('blockDataviewEmptyViewButton') : ''}
+					onClick={isAllowedObject ? e => onRecordAdd(e, 1) : null}
+				/>
+			);
 		};
 
 		let content = null;
