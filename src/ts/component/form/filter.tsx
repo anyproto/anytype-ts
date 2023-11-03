@@ -11,6 +11,10 @@ interface Props {
 	value?: string;
 	placeholder?: string;
 	placeholderFocus?: string;
+	tooltip?: string;
+	tooltipCaption?: string;
+	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	onClick?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -31,6 +35,7 @@ class Filter extends React.Component<Props, State> {
 		className: '',
 		inputClassName: '',
 		placeholder: translate('commonFilterClick'),
+		tooltipY: I.MenuDirection.Bottom,
 	};
 
 	state = {
@@ -53,7 +58,7 @@ class Filter extends React.Component<Props, State> {
 	
 	render () {
 		const { isActive } = this.state;
-		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
+		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
 		const cn = [ 'filter' ];
 
 		if (className) {
@@ -64,6 +69,20 @@ class Filter extends React.Component<Props, State> {
 			cn.push('isActive');
 		};
 
+		let iconObj = null;
+		if (icon) {
+			iconObj = (
+				<Icon 
+					className={icon} 
+					tooltip={tooltip}
+					tooltipCaption={tooltipCaption}
+					tooltipX={tooltipX}
+					tooltipY={tooltipY}
+					onClick={onIconClick} 
+				/>
+			);
+		};
+
 		return (
 			<div
 				ref={node => this.node = node}
@@ -72,7 +91,7 @@ class Filter extends React.Component<Props, State> {
 				onClick={onClick}
 			>
 				<div className="inner">
-					{icon ? <Icon className={icon} onClick={onIconClick} /> : ''}
+					{iconObj}
 
 					<div className="filterInputWrap">
 						<Input 
