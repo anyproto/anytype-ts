@@ -232,6 +232,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
