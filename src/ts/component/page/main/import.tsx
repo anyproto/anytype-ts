@@ -41,7 +41,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
-				popupStore.open('usecase', { data: { object: message } });
+				popupStore.open('usecase', { data: { object: message.info } });
 			};
 		});
 	};

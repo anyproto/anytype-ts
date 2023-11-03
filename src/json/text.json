@@ -964,6 +964,9 @@
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
+	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseUpdated": "Updated: %s",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 

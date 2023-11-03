@@ -1,14 +1,19 @@
 import * as React from 'react';
 import { Title, Label, Button, Tag } from 'Component';
-import { I, UtilCommon, UtilFile, UtilDate, translate } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 class PopupUsecase extends React.Component<I.Popup> {
+
+	constructor (props: I.Popup) {
+		super(props);
+
+		this.onAuthor = this.onAuthor.bind(this);
+	};
 	
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const object: any = data.object || {};
+		const object = this.getObject();
+		const author = this.getAuthor();
 		const screenshots = object.screenshots || [];
 		const categories = object.categories || [];
 
@@ -17,7 +22,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 				<div className="titleWrap">
 					<div className="side left">
 						<Title text={object.title} />
-						<Label text={UtilCommon.sprintf('Made by @%s', object.author)} />
+						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={this.onAuthor} />
 					</div>
 					<div className="side right">
 						<Button text="Install" arrow={true} />
@@ -44,12 +49,40 @@ class PopupUsecase extends React.Component<I.Popup> {
 								<Tag key={i} text={name} />
 							))}
 						</div>
-						<Label text={UtilCommon.sprintf(`Updated: %s`, UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), UtilDate.now()))} />
+						<Label text={UtilCommon.sprintf(translate('popupUsecaseUpdated'), UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), UtilDate.now()))} />
 						<Label text={UtilFile.size(object.size)} />
 					</div>
 				</div>
 			</div>
 		);
+	};
+
+	onAuthor () {
+		const object = this.getObject();
+
+		if (object.author) {
+			Renderer.send('urlOpen', object.author);
+		};
+	};
+
+	getObject (): any {
+		const { param } = this.props;
+		const { data } = param;
+
+		return data.object || {};
+	};
+
+	getAuthor (): string {
+		const object = this.getObject();
+
+		if (!object.author) {
+			return '';
+		};
+
+		let a: any = {};
+		try { a = new URL(object.author); } catch (e) {};
+
+		return String(a.pathname || '').replace(/^\//, '');
 	};
 
 };
