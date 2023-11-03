@@ -6,6 +6,7 @@ const SPACE_KEYS = [
 	'lastOpened',
 	'scroll',
 	'defaultType',
+	'lastUsedTypes',
 ];
 
 class Storage {
@@ -196,6 +197,20 @@ class Storage {
 		const obj = this.get('survey') || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
 		this.set('survey', obj, true);
+	};
+
+	setLastUsedTypes (id: string) {
+		let list = this.get('lastUsedTypes') || [];
+
+		list.unshift(id);
+		list = list.slice(0, 50);
+
+		this.set('lastUsedTypes', list);
+		return list;
+	};
+
+	getLastUsedTypes () {
+		return this.get('lastUsedTypes') || [];
 	};
 
 	logout () {

@@ -213,7 +213,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 				items = items.concat(section.children);
 			});
-
 		} else {
 			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
 			items = this.sortLastUsed(items);
@@ -227,9 +226,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 			items.unshift({ id: 'search', icon: 'search', name: '' });
 		};
-
-		this.props.position();
-
 		return items;
 	};
 
@@ -281,7 +277,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 		});
 
-		keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7 ,8, 9', e, (pressed) => {
+		keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
 			if (this.isExpanded) {
 				return;
 			};
@@ -305,22 +301,16 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		const cb = (created?: any) => {
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			const layout = created ? created.recommendedLayout : item.recommendedLayout;
-			const uniqueKey = created ? created.uniqueKey : item.uniqueKey;
-			const lastUsedTypes = Storage.get('lastUsedTypes') || {};
+			const type = created || item;
 
-			C.ObjectCreate({ layout }, flags, item.defaultTemplateId, uniqueKey, commonStore.space, (message: any) => {
+			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
 
-				const { id, layout, type, createdDate } = message.details;
-
-				lastUsedTypes[type] = createdDate;
-				Storage.set('lastUsedTypes', lastUsedTypes);
-
-				UtilObject.openAuto({ id, layout });
-				analytics.event('CreateObject', { route: 'Navigation', objectType: created ? created.id : item.id });
+				Storage.setLastUsedTypes(type.id);
+				UtilObject.openAuto(message.details);
+				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
 			});
 		};
 
@@ -371,18 +361,20 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
+
 		if (item) {
-			node.find('#item-' + item.id).addClass('hover');
+			node.find(`#item-${item.id}`).addClass('hover');
 		};
 	};
 
 	sortLastUsed (items: any[]) {
-		const lastUsedTypes = Storage.get('lastUsedTypes') || {};
+		const lastUsedTypes = Storage.getLastUsedTypes();
 
 		return items.sort((c1: any, c2: any) => {
-			const d1 = lastUsedTypes[c1.id];
-			const d2 = lastUsedTypes[c2.id];
-			if (d1 > d2 || !d2) return -1;
+			const d1 = lastUsedTypes.indexOf(c1.id);
+			const d2 = lastUsedTypes.indexOf(c2.id);
+
+			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 			return 0;
 		});
