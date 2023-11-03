@@ -192,7 +192,11 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		this.props.setActive();
+		if (items[this.n] && (items[this.n].id == 'add')) {
+			this.onArrow(dir);
+		} else {
+			this.props.setActive();
+		};
 	};
 
 	getItems () {
