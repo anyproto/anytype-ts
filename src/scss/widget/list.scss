@@ -53,7 +53,7 @@
 		.item:hover::before { opacity: 1; }
 
 		.item { 
-			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; }
+			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; border-radius: 6px; height: 100%; }
 
 			.icon.dnd { 
 				width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; 
@@ -61,7 +61,6 @@
 			}
 
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
-			.dropTarget { border-radius: 6px; height: 100%; }
 			.iconObject { flex-shrink: 0; }
 			.iconObject.isTask { background: none; }
 
@@ -79,7 +78,6 @@
 
 		.item.canDrag {
 			.inner { padding-left: 0px; }
-			.dropTarget { width: calc(100% - 20px); }
 		}
 
 		.item.isDragging { margin-top: -46px; margin-left: -12px; }

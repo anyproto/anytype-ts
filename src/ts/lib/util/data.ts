@@ -544,6 +544,22 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
+	sortLastUsedTypes (items: any[]) {
+		const lastUsedTypes = Storage.getLastUsedTypes();
+
+		return items.sort((c1: any, c2: any) => {
+			const d1 = lastUsedTypes.indexOf(c1.id);
+			const d2 = lastUsedTypes.indexOf(c2.id);
+
+			if ((d1 < 0) && (d2 > 0)) return 1;
+			if ((d1 > 0) && (d2 < 0)) return -1;
+
+			if (d1 > d2) return 1;
+			if (d1 < d2) return -1;
+			return 0;
+		});
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },

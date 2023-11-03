@@ -145,7 +145,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
-			this.sortLastUsed(this.items);
+			UtilData.sortLastUsedTypes(this.items);
+
 			this.forceUpdate();
 		});
 	};
@@ -322,21 +323,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 	};
 
-	sortLastUsed (items: any[]) {
-		const lastUsedTypes = Storage.getLastUsedTypes();
-
-		return items.sort((c1: any, c2: any) => {
-			const d1 = lastUsedTypes.indexOf(c1.id);
-			const d2 = lastUsedTypes.indexOf(c2.id);
-
-			if ((d1 < 0) && (d2 > 0)) return 1;
-			if ((d1 > 0) && (d2 < 0)) return -1;
-
-			if (d1 > d2) return 1;
-			if (d1 < d2) return -1;
-			return 0;
-		});
-	};
 };
 
 export default MenuQuickCapture;
