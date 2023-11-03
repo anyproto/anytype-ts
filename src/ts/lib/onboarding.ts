@@ -33,7 +33,7 @@ class Onboarding {
 					noAnimation: true,
 					noFlipY: true,
 					noFlipX: true,
-					onClose: () => {
+					onClose: () => { 
 						Storage.setOnboarding(key);
 
 						if (section.onComplete) {
@@ -50,10 +50,6 @@ class Onboarding {
 				});
 			}, t);
 		});
-	};
-
-	isCompleted (key: string): boolean {
-		return Storage.getOnboarding(key);
 	};
 
 	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
@@ -140,6 +136,10 @@ class Onboarding {
 		};
 
 		return param;
+	};
+
+	isCompleted (key: string): boolean {
+		return Storage.getOnboarding(key);
 	};
 	
 };
