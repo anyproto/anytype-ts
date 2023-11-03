@@ -194,7 +194,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				items = items.concat(section.children);
 			});
 		} else {
-			items = this.items.filter(it => it.isInstalled).slice(0, 3).concat([ dbStore.getSetType(), dbStore.getCollectionType() ]).filter(it => it);
+			items = this.items.filter(it => it.isInstalled && !UtilObject.isSetLayout(it.recommendedLayout)).slice(0, 3).
+			concat([ dbStore.getSetType(), dbStore.getCollectionType() ]).filter(it => it);
 			items.unshift({ id: 'search', icon: 'search', name: '' });
 		};
 		return items;
@@ -213,6 +214,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	onKeyDown (e: any) {
 		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
+		const length = items.length;
 
 		keyboard.disableMouse(true);
 
@@ -226,10 +228,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			this.n += dir;
 
 			if (this.n < 0) {
-				this.n = items.length - 1;
+				this.n = length - 1;
 			};
 
-			if (this.n > items.length - 1) {
+			if (this.n > length - 1) {
 				this.n = 0;
 			};
 
