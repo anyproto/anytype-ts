@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -36,7 +36,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
-		const type = dbStore.getTypeById(commonStore.type);
+		const defaultTypeId = Storage.get('defaultTypeId');
+		const type = dbStore.getTypeById(defaultTypeId);
 
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -291,8 +292,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					commonStore.typeSet(item.uniqueKey);
+					Storage.set('defaultTypeId', item.id);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+					this.forceUpdate();
 				},
 			}
 		});
