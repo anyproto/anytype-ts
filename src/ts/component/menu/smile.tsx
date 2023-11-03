@@ -503,7 +503,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
-		if (row) {
+		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
