@@ -316,7 +316,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(e, item);
+			this.props.setActive(item);
 		};
 	};
 
