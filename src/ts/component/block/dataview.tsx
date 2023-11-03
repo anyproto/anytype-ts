@@ -836,8 +836,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateAdd (id?: string) {
-		const { rootId, block } = this.props;
-		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
 		const route = this.isCollection() ? 'Collection' : 'Set';
