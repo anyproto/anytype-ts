@@ -159,8 +159,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
 
 		let sections: any[] = [
-			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => !groupKeys.includes(it.uniqueKey)) },
 			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: library.filter(it => groupKeys.includes(it.uniqueKey)) },
+			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => !groupKeys.includes(it.uniqueKey)) },
 		];
 
 		if (this.filter) {
