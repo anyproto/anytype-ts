@@ -157,14 +157,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		);
 	};
 
-	componentDidMount () {
-		this.reset();
-	};
-
-	componentDidUpdate () {
-		this.reset();
-	};
-
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
 	};
@@ -235,6 +227,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getItems () {
+		if (!this.width) {
+			return [];
+		};
+
 		this.setColumnCount();
 
 		const records = this.getRecords();
