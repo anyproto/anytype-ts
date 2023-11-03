@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -21,6 +21,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		super(props);
 
 		this.onDashboard = this.onDashboard.bind(this);
+		this.onType = this.onType.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
@@ -35,6 +36,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
+		const defaultTypeId = Storage.get('defaultTypeId');
+		const type = dbStore.getTypeById(defaultTypeId);
 
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -115,7 +118,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="sectionContent">
 
 							<div className={usageCn.join(' ')}>
-								<div className="sides">
+								<div className="sides alignTop">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 										<div className="storageLabel">
@@ -143,6 +146,24 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 											<div className="item">
 												<div className="name">{home ? home.name : translate('commonSelect')}</div>
+											</div>
+											<Icon className="arrow black" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className="item">
+								<div className="sides">
+									<div className="side left">
+										<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
+										<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
+									</div>
+
+									<div className="side right">
+										<div id="defaultType" className="select" onClick={this.onType}>
+											<div className="item">
+												<div className="name">{type?.name || translate('commonSelect')}</div>
 											</div>
 											<Icon className="arrow black" />
 										</div>
@@ -257,6 +278,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onDashboard () {
 		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+	};
+
+	onType (e: any) {
+		const { getId } = this.props;
+
+		menuStore.open('typeSuggest', {
+			element: `#${getId()} #defaultType`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filter: '',
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+				],
+				onClick: (item: any) => {
+					Storage.set('defaultTypeId', item.id);
+					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+					this.forceUpdate();
+				},
+			}
+		});
 	};
 
 	onExtend () {

@@ -244,6 +244,7 @@
 
 						> .item {
 							.sides { display: flex; justify-content: space-between; gap: 0px 16px; }
+							.sides:not(.alignTop) { align-items: center; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
 								.side.left { flex-grow: 1; }
