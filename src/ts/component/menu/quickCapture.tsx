@@ -2,16 +2,12 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action, Storage } from 'Lib';
-import { commonStore, dbStore, detailStore, menuStore } from 'Store';
+import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
 
-	state = {
-		loading: false,
-	};
-
-	n = -1;
+	n = 0;
 	node: any = null;
 	_isMounted = false;
 
@@ -26,7 +22,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	constructor (props: I.Menu) {
 		super(props);
 
-		this.onOut = this.onOut.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
@@ -51,9 +46,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				<div
 					id={`item-${item.id}`}
 					className={item.isSection ? 'label' : 'item'}
-					onClick={() => this.onClick(item)}
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
-					onMouseLeave={this.onOut}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onOver(e, item)}
+					onMouseLeave={() => this.props.setHover()}
 				>
 					{icon}
 					{name}
@@ -90,6 +85,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	componentDidUpdate () {
 		this.props.position();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
@@ -124,17 +120,12 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 		];
 
-		if (clear) {
-			this.setState({ loading: true });
-		};
-
 		UtilData.search({
 			filters,
 			sorts,
 			keys: UtilData.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
 			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -142,7 +133,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 
 			if (message.error.code) {
-				this.setState({ loading: false });
 				return;
 			};
 
@@ -155,13 +145,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
-
-			if (clear) {
-				this.setState({ loading: false });
-				this.props.position();
-			} else {
-				this.forceUpdate();
-			};
+			this.sortLastUsed(this.items);
+			this.forceUpdate();
 		});
 	};
 
@@ -173,8 +158,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
 
 		let sections: any[] = [
-			{ id: 'objects', name: translate('commonObjects'), children: this.sortLastUsed(library.filter(it => (!groupKeys.includes(it.uniqueKey)))) },
-			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: this.sortLastUsed(library.filter(it => (groupKeys.includes(it.uniqueKey)))) },
+			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => !groupKeys.includes(it.uniqueKey)) },
+			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: library.filter(it => groupKeys.includes(it.uniqueKey)) },
 		];
 
 		if (this.filter) {
@@ -196,11 +181,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, []);
-
 		let items: any[] = [];
 
 		if (this.isExpanded) {
@@ -214,16 +194,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				items = items.concat(section.children);
 			});
 		} else {
-			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
-			items = this.sortLastUsed(items);
-
-			const itemIds = items.map(it => it.id);
-			const defaultType = dbStore.getTypeById(commonStore.type);
-
-			if (!itemIds.includes(defaultType.id)) {
-				items.unshift(defaultType);
-			};
-
+			items = this.items.filter(it => it.isInstalled).slice(0, 3).concat([ dbStore.getSetType(), dbStore.getCollectionType() ]).filter(it => it);
 			items.unshift({ id: 'search', icon: 'search', name: '' });
 		};
 		return items;
@@ -233,18 +204,21 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.filter = this.refFilter.getValue();
-			this.n = -1;
+			this.n = 0;
 			this.offset = 0;
 			this.load(true);
 		}, Constant.delay.keyboard);
 	};
 
 	onKeyDown (e: any) {
+		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed) => {
+		let ret = false;
+
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed: string) => {
 			e.preventDefault();
 
 			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
@@ -259,41 +233,34 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				this.n = 0;
 			};
 
-			const next = items[this.n];
-
-			if (next.isSection) {
-				this.onKeyDown(e);
-				return;
-			};
-
-			this.setHover(items[this.n]);
+			setHover(items[this.n], true);
+			ret = true;
 		});
 
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
+		if (!this.isExpanded) {
+			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
+				if (this.isExpanded) {
+					return;
+				};
 
-			if (items[this.n]) {
-				this.onClick(items[this.n]);
-			};
-		});
+				const n = Number(pressed);
+				if (!n || !items[n - 1]) {
+					this.onExpand();
+				} else {
+					this.onClick(e, items[n - 1]);
+				};
+				ret = true;
+			});
+		};
 
-		keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
-			if (this.isExpanded) {
-				return;
-			};
-
-			const n = Number(pressed);
-
-			if (!n || !items[n - 1]) {
-				this.onExpand();
-				return;
-			};
-
-			this.onClick(items[n - 1]);
-		});
+		if (!ret) {
+			onKeyDown(e);
+		};
 	};
 
-	onClick (item: any) {
+	onClick (e: any, item: any) {
+		const { close } = this.props;
+
 		if (item.id == 'search') {
 			this.onExpand();
 			return;
@@ -325,9 +292,11 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			if (item.isInstalled) {
 				cb();
 			} else {
-				Action.install(item, true, () => cb);
+				Action.install(item, true, message => cb(message.details));
 			};
 		};
+
+		close();
 	};
 
 	onExpand () {
@@ -347,23 +316,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setHover(item);
-		};
-	};
-
-	onOut () {
-		if (!keyboard.isMouseDisabled) {
-			this.setHover();
-		};
-	};
-
-	setHover (item?: any) {
-		const node = $(this.node);
-
-		node.find('.item.hover').removeClass('hover');
-
-		if (item) {
-			node.find(`#item-${item.id}`).addClass('hover');
+			this.props.setActive(e, item);
 		};
 	};
 
@@ -374,8 +327,11 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			const d1 = lastUsedTypes.indexOf(c1.id);
 			const d2 = lastUsedTypes.indexOf(c2.id);
 
-			if (d1 > d2) return -1;
-			if (d1 < d2) return 1;
+			if ((d1 < 0) && (d2 > 0)) return 1;
+			if ((d1 > 0) && (d2 < 0)) return -1;
+
+			if (d1 > d2) return 1;
+			if (d1 < d2) return -1;
 			return 0;
 		});
 	};

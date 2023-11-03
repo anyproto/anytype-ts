@@ -205,7 +205,7 @@ class Storage {
 		list.unshift(id);
 		list = list.slice(0, 50);
 
-		this.set('lastUsedTypes', list);
+		this.set('lastUsedTypes', list, true);
 		return list;
 	};
 
