@@ -26,7 +26,8 @@
 		"interfaceLang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
-		"pinTime": 600
+		"pinTime": 600,
+		"typeKey": "ot-note"
 	},
 	
 	"delay": {
