@@ -246,6 +246,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					return;
 				};
 
+				e.preventDefault();
+
 				const n = Number(pressed);
 				if (!n || !items[n - 1]) {
 					this.onExpand();
