@@ -22,6 +22,7 @@ import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
 import 'emoji-mart/css/emoji-mart.css';
+import 'swiper/scss';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';
@@ -80,6 +81,7 @@ import 'scss/page/main/navigation.scss';
 import 'scss/page/main/block.scss';
 import 'scss/page/main/empty.scss';
 import 'scss/page/main/usecase.scss';
+import 'scss/page/main/import.scss';
 
 import 'scss/block/bookmark.scss';
 import 'scss/block/common.scss';
@@ -142,6 +144,7 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
 import 'scss/popup/phrase.scss';
+import 'scss/popup/usecase.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/button.scss';

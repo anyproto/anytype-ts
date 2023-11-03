@@ -406,7 +406,7 @@ export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
 		title: response.getTitle(),
 		description: response.getDescription(),
 		downloadLink: response.getDownloadlink(),
-		fileSize: response.getFilesize(),
+		size: response.getFilesize(),
 		screenshots: response.getScreenshotsList() || [],
 		categories: response.getCategoriesList() || [],
 	};
