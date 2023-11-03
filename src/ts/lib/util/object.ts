@@ -399,6 +399,7 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
 		];
 	};
