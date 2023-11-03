@@ -71,7 +71,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 3 }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
 

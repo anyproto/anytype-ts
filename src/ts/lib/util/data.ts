@@ -396,42 +396,34 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, withDefault } = param || {};
+		const { withSet, withBookmark, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
+		const skipLayouts = UtilObject.getSetLayouts();
+
+		if (!withBookmark) {
+			skipLayouts.push(I.ObjectLayout.Bookmark);
+		};
 
 		let items: any[] = [];
 
-		if (!withDefault) {
-			const skipLayouts = [ 
-				I.ObjectLayout.Note,
-				I.ObjectLayout.Page,
-				I.ObjectLayout.Task,
-				I.ObjectLayout.Bookmark,
-			].concat(UtilObject.getSetLayouts());
+		items = items.concat(dbStore.getTypes().filter(it => {
+			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+		}));
+		items = this.sortLastUsedTypes(items);
 
-			items = items.concat(dbStore.getTypes().filter(it => {
-				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
-			}));
-			items.sort(this.sortByName);
-		};
-
-		if (withBookmark) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.bookmark));
-		};
-
-		if (withCollection) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.collection));
+		if (limit) {
+			items = items.slice(0, limit);
 		};
 
 		if (withSet) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.set));
+			items.push(dbStore.getSetType());
 		};
 
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.page));
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.note));
-		
+		if (withCollection) {
+			items.push(dbStore.getCollectionType());
+		};
+
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {
