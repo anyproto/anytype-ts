@@ -31,6 +31,14 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
+const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.DownloadManifest.Request();
+
+	request.setUrl(url);
+
+	dispatcher.request(DownloadManifest.name, request, callBack);
+};
+
 // ---------------------- APP ---------------------- //
 
 const AppShutdown = (callBack?: (message: any) => void) => {
@@ -1789,6 +1797,7 @@ export {
 	MetricsSetParameters,
 	LinkPreview,
 	ProcessCancel,
+	DownloadManifest,
 
 	DebugTree,
 	DebugExportLocalstore,

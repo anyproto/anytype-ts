@@ -395,3 +395,19 @@ export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 		hash: response.getHash(),
 	};
 };
+
+export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
+	return {
+		schema: response.getSchema(),
+		id: response.getId(),
+		name: response.getName(),
+		author: response.getAuthor(),
+		license: response.getLicense(),
+		title: response.getTitle(),
+		description: response.getDescription(),
+		downloadLink: response.getDownloadlink(),
+		fileSize: response.getFilesize(),
+		screenshots: response.getScreenshotsList() || [],
+		categories: response.getCategoriesList() || [],
+	};
+};
