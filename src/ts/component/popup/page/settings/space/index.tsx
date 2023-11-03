@@ -36,8 +36,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
-		const defaultTypeId = Storage.get('defaultTypeId');
-		const type = dbStore.getTypeById(defaultTypeId);
+		const type = dbStore.getTypeById(commonStore.type);
 
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -292,9 +291,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					Storage.set('defaultTypeId', item.id);
+					commonStore.typeSet(item.uniqueKey);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
-					this.forceUpdate();
 				},
 			}
 		});
