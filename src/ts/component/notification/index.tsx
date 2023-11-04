@@ -12,12 +12,16 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	};
 
 	render () {
+		const { id, style } = this.props;
+
 		return (
 			<div 
+				id={`notification-${id}`}
 				ref={node => this.node = node}
 				className="notification"
+				style={style}
 			>
-				{this.props.id}
+				{id}
 			</div>
 		);
 	};

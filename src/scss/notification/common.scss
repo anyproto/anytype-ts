@@ -5,7 +5,8 @@
 
 	.notification {
 		width: 360px; height: 146px; background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); border-radius: 12px;
-		margin: 0px 0px 8px 0px;
+		margin: 0px 0px 8px 0px; border: 1px solid $colorShapeSecondary; position: absolute; right: 0px; bottom: 0px; padding: 16px;
+    	transform-origin: 50% 0%;
 	}
 
 }

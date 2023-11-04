@@ -9,15 +9,31 @@ interface Props {
 	history: any;
 };
 
+const LIMIT = 10;
+const WIDTH = 360;
+
 const ListNotification = observer(class ListNotification extends React.Component<Props> {
+
+	isExpanded = false;
 
 	render () {
 		const { list } = notificationStore;
+
+
+
 		return (
-			<div className="notifications">
-				{list.map((item: I.Notification, i: number) => (
-					<Notification {...this.props} key={item.id} {...item} />
-				))}
+			<div id="notifications" className="notifications">
+				{list.slice(0, LIMIT).map((item: I.Notification, i: number) => {
+					const scale = 1 - (i / 20);
+					const style: any = {};
+
+					if (!this.isExpanded) {
+						style.transform = `scale3d(${scale}, ${scale}, 1) translate3d(0px, -${8 * i}px, 0px)`;
+						style.zIndex = LIMIT - i;
+					};
+
+					return <Notification {...this.props} key={item.id} {...item} style={style} />
+				})}
 			</div>
 		);
 	};
