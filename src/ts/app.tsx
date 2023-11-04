@@ -8,8 +8,8 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from 'Component';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate
@@ -229,6 +229,7 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	notificationStore,
 };
 
 window.Store = rootStore;

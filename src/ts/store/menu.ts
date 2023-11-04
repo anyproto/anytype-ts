@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
-
 class MenuStore {
 
     public menuList: I.Menu[] = [];

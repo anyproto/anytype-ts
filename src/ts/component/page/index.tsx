@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate, UtilRouter } from 'Lib';
-import { Sidebar, Label } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
+import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -82,7 +82,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />;
+			return (
+				<Frame>
+					<Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+				</Frame>
+			);
 		};
 
 		const wrap = (

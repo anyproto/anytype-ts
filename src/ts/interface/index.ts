@@ -37,6 +37,7 @@ import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
+import { NotificationType, Notification } from './notification';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
@@ -150,6 +151,9 @@ export {
 
 	RestrictionObject, 
 	RestrictionDataview,
+
+	NotificationType, 
+	Notification,
 	
 	PageInfo,
 
