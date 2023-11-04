@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.notifications { position: fixed; right: 12px; bottom: 60px; z-index: 200; }
+.notifications {
+
+	.notification {
+		width: 360px; height: 146px; background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); border-radius: 12px;
+		margin: 0px 0px 8px 0px;
+	}
+
+}

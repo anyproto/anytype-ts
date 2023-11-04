@@ -1,28 +1,29 @@
 import { observable, action, computed, makeObservable } from 'mobx';
-import { I } from 'Lib';
+import { I, M } from 'Lib';
 
 class NotificationStore {
 
     public itemList: I.Notification[] = [];
 
-    timeout = 0;
-	isAnimatingFlag: Map<string, boolean> = new Map();
-
     constructor () {
         makeObservable(this, {
             itemList: observable,
             list: computed,
+			add: action,
+			delete: action,
         });
     };
 
-    get list(): I.Notification[] {
+    get list (): I.Notification[] {
 		return this.itemList;
 	};
 
-	add () {
+	add (item: I.Notification): void {
+		this.itemList.unshift(new M.Notification(item));
 	};
 
-	delete () {
+	delete (id: string) {
+		this.itemList = this.itemList.filter(it => it.id == id);
 	};
 
 };
