@@ -23,6 +23,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	constructor (props: I.NotificationComponent) {
 		super(props);
 
+		this.onButton = this.onButton.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 	};
 
@@ -34,12 +35,12 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		let content = null;
 		switch (type) {
 			case I.NotificationType.Usecase: {
-				content = <NotificationUsecase {...this.props} />;
+				content = <NotificationUsecase {...this.props} onButton={this.onButton} />;
 				break;
 			};
 
 			case I.NotificationType.Invite: {
-				content = <NotificationInvite {...this.props} />;
+				content = <NotificationInvite {...this.props} onButton={this.onButton} />;
 				break;
 			};
 		};
@@ -72,15 +73,21 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		window.clearTimeout(this.timeout);
 	};
 
+	onButton (action: string) {
+		const { item } = this.props;
+
+		this.onDelete();
+	};
+
 	onDelete () {
 		const { item, resize } = this.props;
 		const node = $(this.node);
 
-		raf(() => {
-			node.addClass('to');
+		node.addClass('to');
+		this.timeout = window.setTimeout(() => {
 			notificationStore.delete(item.id);
-			window.setTimeout(() => resize(), Constant.delay.notification);
-		});
+			resize();
+		}, 40);
 	};
 	
 });

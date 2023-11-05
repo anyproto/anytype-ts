@@ -38,7 +38,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 						{...this.props}
 						item={item}
 						key={item.id} 
-						style={{ zIndex: LIMIT - i }} 
+						style={{ zIndex: LIMIT - i }}
 						resize={this.resize}
 					/>
 				))}

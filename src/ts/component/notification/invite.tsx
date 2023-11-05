@@ -9,11 +9,11 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 	node = null;
 
 	render () {
-		const { item } = this.props;
+		const { item, onButton } = this.props;
 		const { type } = item;
 		const buttons = [
-			{ text: 'Accept' },
-			{ text: 'Reject' },
+			{ id: 'inviteAccept', text: 'Accept' },
+			{ id: 'inviteReject', text: 'Reject' },
 		];
 
 		return (
@@ -22,7 +22,7 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 
 				<div className="buttons">
 					{buttons.map((item: any, i: number) => (
-						<Button key={i} color="blank" className="c28" {...item} />
+						<Button key={i} color="blank" className="c28" {...item} onClick={() => onButton(item.id)} />
 					))}
 				</div>
 			</div>

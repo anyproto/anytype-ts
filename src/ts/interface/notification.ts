@@ -15,5 +15,6 @@ export interface NotificationComponent {
 	item: Notification;
 	className?: string;
 	style?: any;
+	onButton?: (action: string) => void;
 	resize?: () => void;
 };
