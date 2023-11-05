@@ -3,10 +3,11 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
 import { I, UtilCommon, translate } from 'Lib';
 
-const NotificationUsecase = observer(class NotificationUsecase extends React.Component<I.Notification, {}> {
+const NotificationUsecase = observer(class NotificationUsecase extends React.Component<I.NotificationComponent, {}> {
 
 	render () {
-		const { type, status, object } = this.props;
+		const { item } = this.props;
+		const { type, status, object } = item;
 
 		let title = '';
 		let text = '';

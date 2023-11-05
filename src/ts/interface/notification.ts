@@ -9,5 +9,11 @@ export interface Notification {
 	status: boolean;
 	object: any;
 	subject: any;
+};
+
+export interface NotificationComponent {
+	item: Notification;
+	className?: string;
 	style?: any;
+	resize?: () => void;
 };

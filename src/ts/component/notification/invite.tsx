@@ -4,12 +4,13 @@ import { observer } from 'mobx-react';
 import { Label, Button, IconObject, ObjectName } from 'Component';
 import { I, translate } from 'Lib';
 
-const NotificationInvite = observer(class NotificationInvite extends React.Component<I.Notification, {}> {
+const NotificationInvite = observer(class NotificationInvite extends React.Component<I.NotificationComponent, {}> {
 
 	node = null;
 
 	render () {
-		const { type } = this.props;
+		const { item } = this.props;
+		const { type } = item;
 		const buttons = [
 			{ text: 'Accept' },
 			{ text: 'Reject' },
@@ -29,9 +30,11 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 	};
 
 	componentDidMount(): void {
+		const { item } = this.props;
+		const { object, subject } = item;
 		const node = $(this.node);
-		const object = node.find('#object');
-		const subject = node.find('#subject');
+		const objectEl = node.find('#object');
+		const subjectEl = node.find('#subject');
 
 		const Element = (item: any) => (
 			<React.Fragment>
@@ -40,8 +43,8 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 			</React.Fragment>
 		);
 
-		ReactDOM.render(<Element {...this.props.object} />, object.get(0));
-		ReactDOM.render(<Element {...this.props.subject} />, subject.get(0));
+		ReactDOM.render(<Element {...object} />, objectEl.get(0));
+		ReactDOM.render(<Element {...subject} />, subjectEl.get(0));
 	};
 	
 });

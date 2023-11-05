@@ -19,6 +19,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -33,7 +34,13 @@ const ListNotification = observer(class ListNotification extends React.Component
 				onMouseLeave={this.onMouseLeave}
 			>
 				{list.slice(0, LIMIT).map((item: I.Notification, i: number) => (
-					<Notification {...this.props} key={item.id} {...item} style={{ zIndex: LIMIT - i }} />
+					<Notification 
+						{...this.props}
+						item={item}
+						key={item.id} 
+						style={{ zIndex: LIMIT - i }} 
+						resize={this.resize}
+					/>
 				))}
 			</div>
 		);
@@ -111,10 +118,13 @@ const ListNotification = observer(class ListNotification extends React.Component
 		raf(() => {
 			items.each((i: number, item: any) => {
 				item = $(item);
-
-				const h = item.outerHeight();
-				const css: any = { right: 12, width: '100%' };
+				item.css({ 
+					width: (this.isExpanded ? '100%' : `calc(100% - ${4 * i * 2}px)`),
+					right: (this.isExpanded ? 12 : 12 + 4 * i),
+				});
 				
+				const h = item.outerHeight();
+
 				if (i == 0) {
 					fh = h;
 				};
@@ -122,8 +132,6 @@ const ListNotification = observer(class ListNotification extends React.Component
 				if (!this.isExpanded) {
 					if (i > 0) {
 						bottom = fh + 4 * i - h;
-						css.width = `calc(100% - ${4 * i * 2}px)`
-						css.right += 4 * i;
 					};
 				} else {
 					const o = i > 0 ? 8 : 0;
@@ -132,7 +140,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 					nh += h + o;
 				};
 
-				item.css({ ...css, bottom });
+				item.css({ bottom });
 				height = h;
 			});
 
