@@ -19,11 +19,13 @@ class NotificationStore {
 	};
 
 	add (item: I.Notification): void {
+		item.id = String(this.itemList.length + 1);
+
 		this.itemList.unshift(new M.Notification(item));
 	};
 
 	delete (id: string) {
-		this.itemList = this.itemList.filter(it => it.id == id);
+		this.itemList = this.itemList.filter(it => it.id != id);
 	};
 
 };

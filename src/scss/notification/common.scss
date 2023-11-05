@@ -1,12 +1,29 @@
 @import "~scss/_vars";
 
-.notifications { position: fixed; right: 12px; bottom: 60px; z-index: 200; }
+.notifications { position: fixed; right: 12px; bottom: 68px; z-index: 200; width: 360px; }
 .notifications {
 
 	.notification {
 		width: 360px; height: 146px; background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); border-radius: 12px;
-		margin: 0px 0px 8px 0px; border: 1px solid $colorShapeSecondary; position: absolute; right: 0px; bottom: 0px; padding: 16px;
-    	transform-origin: 50% 0%;
+		border: 1px solid $colorShapeSecondary; position: absolute; right: 0px; bottom: 0px; padding: 16px;
+    	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s;
+		transition-property: transform, opacity, bottom; opacity: 1; 
+	}
+
+	.notification.hide {
+		transform: scale3d(0.75, 0.75, 1) translate3d(0px, 100%, 0px); transform-origin: 50% 100%; opacity: 0;
+		transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53);
+	}
+
+	.notification {
+		.icon.delete { 
+			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: $colorBgPrimary; 
+			border: 1px solid $colorShapeSecondary; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
+			background-size: 10px; transition: $transitionAllCommon; opacity: 0;
+		}
+	}
+	.notification:hover {
+		.icon.delete { opacity: 1; }
 	}
 
 }
