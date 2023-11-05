@@ -87,7 +87,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		this.timeout = window.setTimeout(() => {
 			notificationStore.delete(item.id);
 			resize();
-		}, 40);
+		}, Constant.delay.notification);
 	};
 	
 });
