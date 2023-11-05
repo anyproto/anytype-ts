@@ -1,11 +1,13 @@
 @import "~scss/_vars";
 
+@mixin shadow { box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
+@mixin border { border: 1px solid $colorShapeSecondary; }
+
 .notifications { position: fixed; right: 12px; bottom: 68px; z-index: 200; width: 360px; }
 .notifications {
 
 	.notification {
-		width: 360px; height: 146px; background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); border-radius: 12px;
-		border: 1px solid $colorShapeSecondary; position: absolute; right: 0px; bottom: 0px; padding: 16px;
+		width: 100%; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; left: 0px; bottom: 0px; padding: 16px;
     	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s;
 		transition-property: transform, opacity, bottom; opacity: 1; 
 	}
@@ -18,9 +20,27 @@
 	.notification {
 		.icon.delete { 
 			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: $colorBgPrimary; 
-			border: 1px solid $colorShapeSecondary; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
+			@include border; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
 			background-size: 10px; transition: $transitionAllCommon; opacity: 0;
 		}
+
+		.content { display: none; }
+		.content {
+			.title { @include text-small; font-weight: 600; margin: 0px 0px 2px 0px; }
+			.label { @include text-small; margin: 0px 0px 12px 0px; }
+			.buttons { display: flex; flex-direction: row; gap: 0px 8px; }
+
+			.element { display: inline; }
+			.element {
+				.iconObject { display: inline; margin-right: 4px; }
+				.iconObject:empty { display: none; }
+				.name { display: inline; font-weight: 500; }
+			}
+		}
+	}
+	.notification:first-child { @include shadow; }
+	.notification:first-child {
+		.content { display: block; }
 	}
 	.notification:hover {
 		.icon.delete { opacity: 1; }
@@ -29,5 +49,8 @@
 }
 
 .notifications.isExpanded {
-	.notification { position: relative; }
+	.notification { @include shadow; }
+	.notification {
+		.content { display: block; }
+	}
 }

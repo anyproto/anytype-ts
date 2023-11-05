@@ -203,6 +203,7 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+
 interface RouteElement { path: string; };
 
 interface State {
@@ -296,7 +297,6 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				<DragProvider>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
-					<ListNotification key="listNotification" {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>
@@ -348,6 +348,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<Navigation />
+						<ListNotification key="listNotification" />
 
 						<div id="tooltipContainer" />
 						<div id="drag" />

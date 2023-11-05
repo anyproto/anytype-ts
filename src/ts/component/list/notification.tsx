@@ -1,9 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { Notification } from 'Component';
 import { notificationStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import { I, UtilSmile, UtilCommon } from 'Lib';
 
 const LIMIT = 5;
 
@@ -11,6 +12,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 	node = null;
 	isExpanded = false;
+	timeout = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -21,13 +23,12 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 	render () {
 		const { list } = notificationStore;
-		const cn = [ 'notifications' ];
 
 		return (
 			<div 
 				id="notifications" 
 				ref={node => this.node = node}
-				className={cn.join(' ')}
+				className="notifications"
 				onMouseEnter={this.onMouseEnter}
 				onMouseLeave={this.onMouseLeave}
 			>
@@ -39,6 +40,31 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	componentDidMount (): void {
+		for (let i = 0; i < 10; ++i) {
+			const icon1 = UtilSmile.randomParam();
+			const icon2 = UtilSmile.randomParam();
+
+			const object = { 
+				name: 'Strategic writing', 
+				iconEmoji: `:${icon1.id}:`, 
+				layout: I.ObjectLayout.Page,
+			};
+
+			const subject = { 
+				name: 'Investors space', 
+				iconEmoji: `:${icon2.id}:`, 
+				layout: I.ObjectLayout.Page,
+			};
+
+			notificationStore.add({ 
+				id: String(i), 
+				type: UtilCommon.rand(0, 1), 
+				status: Boolean(UtilCommon.rand(0, 1)), 
+				object,
+				subject,
+			});
+		};
+
 		this.resize();
 	};
 
@@ -46,14 +72,31 @@ const ListNotification = observer(class ListNotification extends React.Component
 		this.resize();
 	};
 
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);
+	};
+
 	onMouseEnter () {
+		const node = $(this.node);
+
+		node.addClass('isExpanded');
+
 		this.isExpanded = true;
 		this.resize();
+
+		window.clearTimeout(this.timeout);
 	};
 
 	onMouseLeave () {
-		this.isExpanded = false;
-		this.resize();
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			const node = $(this.node);
+
+			node.removeClass('isExpanded');
+
+			this.isExpanded = false;
+			this.resize();
+		});
 	};
 
 	resize () {
@@ -65,32 +108,42 @@ const ListNotification = observer(class ListNotification extends React.Component
 		let height = 0;
 		let bottom = 0;
 
-		items.each((i: number, item: any) => {
-			item = $(item);
+		raf(() => {
+			items.each((i: number, item: any) => {
+				item = $(item);
 
-			const h = item.outerHeight();
-			if (i == 0) {
-				fh = h;
-			};
+				const h = item.outerHeight();
+				const css: any = { left: 0, width: '100%' };
+				
+				if (i == 0) {
+					fh = h;
+				};
+
+				if (!this.isExpanded) {
+					if (i > 0) {
+						bottom = fh + 4 * i - h;
+						css.width = `calc(100% - ${4 * i * 2}px)`
+						css.left = 4 * i;
+					};
+				} else {
+					const o = i > 0 ? 8 : 0;
+
+					bottom += height + o;
+					nh += h + o;
+				};
+
+				css.bottom = bottom;
+
+				item.css(css);
+				height = h;
+			});
 
 			if (!this.isExpanded) {
-				bottom = 4 * i;
-				if (height > h) {
-					bottom += height - h;
-				};
-				nh = fh + 4 * i;
-			} else {
-				const o = i > 0 ? 8 : 0;
-
-				bottom += height + o;
-				nh += h + o;
+				nh = fh + 4 * (LIMIT - 1);
 			};
 
-			item.css({ bottom });
-			height = h;
+			node.css({ height: nh + 50 });
 		});
-
-		node.css({ height: nh });
 	};
 	
 });
