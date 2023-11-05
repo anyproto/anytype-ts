@@ -52,8 +52,8 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	onMouseLeave () {
-		//this.isExpanded = false;
-		//this.resize();
+		this.isExpanded = false;
+		this.resize();
 	};
 
 	resize () {

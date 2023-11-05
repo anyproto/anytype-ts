@@ -10,10 +10,10 @@
 		transition-property: transform, opacity, bottom; opacity: 1; 
 	}
 
-	.notification.hide {
-		transform: scale3d(0.75, 0.75, 1) translate3d(0px, 100%, 0px); transform-origin: 50% 100%; opacity: 0;
-		transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53);
-	}
+	.notification.from, .notification.to { opacity: 0; transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53); }
+
+	.notification.from { transform-origin: 50% 100%; transform: scale3d(0.75, 0.75, 1) translate3d(0px, 100%, 0px); }
+	.notification.to { transform: scale3d(0.75, 0.75, 1); }
 
 	.notification {
 		.icon.delete { 

@@ -35,12 +35,16 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	componentDidMount (): void {
 		const node = $(this.node);
 
-		node.addClass('hide');
-		window.setTimeout(() => node.removeClass('hide'), 40);
+		node.addClass('from');
+		window.setTimeout(() => node.removeClass('from'), 40);
 	};
 
 	onDelete () {
-		notificationStore.delete(this.props.id);
+		const { id } = this.props;
+		const node = $(this.node);
+
+		node.addClass('to');
+		window.setTimeout(() => notificationStore.delete(id), 200);
 	};
 	
 });
