@@ -64,7 +64,6 @@ const ListNotification = observer(class ListNotification extends React.Component
 			};
 
 			notificationStore.add({ 
-				id: String(i), 
 				type: UtilCommon.rand(0, 1), 
 				status: Boolean(UtilCommon.rand(0, 1)), 
 				object,

@@ -19,7 +19,7 @@ class NotificationStore {
 	};
 
 	add (item: I.Notification): void {
-		item.id = String(this.itemList.length + 1);
+		item.id = item.id || String(Math.random()).replace(/\./, '-');
 
 		this.itemList.unshift(new M.Notification(item));
 	};

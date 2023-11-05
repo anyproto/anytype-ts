@@ -4,11 +4,11 @@ export enum NotificationType {
 };
 
 export interface Notification {
-	id: string;
+	id?: string;
 	type: NotificationType;
 	status: boolean;
-	object: any;
-	subject: any;
+	object?: any;
+	subject?: any;
 };
 
 export interface NotificationComponent {
