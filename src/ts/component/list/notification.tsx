@@ -96,7 +96,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 			this.isExpanded = false;
 			this.resize();
-		});
+		}, 500);
 	};
 
 	resize () {
@@ -113,7 +113,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 				item = $(item);
 
 				const h = item.outerHeight();
-				const css: any = { left: 0, width: '100%' };
+				const css: any = { right: 12, width: '100%' };
 				
 				if (i == 0) {
 					fh = h;
@@ -123,7 +123,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 					if (i > 0) {
 						bottom = fh + 4 * i - h;
 						css.width = `calc(100% - ${4 * i * 2}px)`
-						css.left = 4 * i;
+						css.right += 4 * i;
 					};
 				} else {
 					const o = i > 0 ? 8 : 0;
@@ -132,9 +132,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 					nh += h + o;
 				};
 
-				css.bottom = bottom;
-
-				item.css(css);
+				item.css({ ...css, bottom });
 				height = h;
 			});
 
