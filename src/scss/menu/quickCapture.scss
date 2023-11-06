@@ -4,36 +4,35 @@
     .menu.menuQuickCapture { box-shadow: none; background: none; position: fixed; }
     .menu.menuQuickCapture {
         .wrap { display: flex; flex-direction: column; width: 100%; }
-        .wrap {
-            .filter { @include text-paragraph; border-bottom: 1px solid $colorShapeSecondary; padding-left: 20px; }
-            .filter {
-                .icon.search { margin-right: 3px; }
-                .inner { height: 54px; }
-                .line { display: none; }
-            }
+		
+		.filter { @include text-paragraph; padding: 0px 16px; }
+		.filter {
+			.icon.search { margin-right: 3px; }
+			.inner { height: 54px; }
+			.line { margin: 0px -16px !important; }
+		}
 
-            .items { display: flex; gap: 0px 8px; }
+		.items { display: flex; gap: 0px 8px; }
 
-            .label { @include text-small; color: $colorTextSecondary; padding-top: 12px; width: 100%; flex-shrink: 0; }
-            .label:first-child { padding-top: 0; }
+		.label { @include text-small; color: $colorTextSecondary; padding-top: 12px; width: 100%; flex-shrink: 0; }
+		.label:first-child { padding-top: 0; }
 
-            .item {
-                position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; gap: 0px 8px; padding: 0px 14px;
-                background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
-                box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon; max-width: 200px;
-            }
-            .item {
-                .icon { margin-right: 0; flex-shrink: 0; }
-				.iconObject { flex-shrink: 0; }
-				.name { @include text-overflow-nw; width: 100%; }
-            }
-			.item.withIcon {
-				.name { width: calc(100% - 20px); }
-			}
-            .item.hover:before { 
-				content: ''; position: absolute; z-index: 0; width: 100%; height: 100%; left: 0px; top: 0px; background: $colorShapeHighlightLight; 
-			}
-        }
+		.item {
+			position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; gap: 0px 8px; padding: 0px 14px;
+			background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
+			box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon; max-width: 200px;
+		}
+		.item {
+			.icon { margin-right: 0; flex-shrink: 0; }
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; width: 100%; }
+		}
+		.item.withIcon {
+			.name { width: calc(100% - 20px); }
+		}
+		.item.hover:before { 
+			content: ''; position: absolute; z-index: 0; width: 100%; height: 100%; left: 0px; top: 0px; background: $colorShapeHighlightLight; 
+		}
     }
 
     .menu.menuQuickCapture.expanded { width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: $colorBgPrimary; padding: 0px; border-radius: 12px; }
