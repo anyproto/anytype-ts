@@ -1,68 +1,15 @@
 import * as React from 'react';
 import $ from 'jquery';
 import Prism from 'prismjs';
-import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
 import { I, keyboard, UtilCommon, C, focus, translate } from 'Lib';
-import { menuStore, commonStore, blockStore } from 'Store';
+import { blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
-import Constant from 'json/constant.json';
 
-mermaid.initialize({
-	startOnLoad: true,
-	theme: "default",
-	securityLevel: "loose",
-	themeCSS: `
-		g.classGroup rect {
-			fill: #282a36;
-			stroke: #6272a4;
-		} 
-		g.classGroup text {
-			fill: #f8f8f2;
-		}
-		g.classGroup line {
-			stroke: #f8f8f2;
-			stroke-width: 0.5;
-		}
-		.classLabel .box {
-			stroke: #21222c;
-			stroke-width: 3;
-			fill: #21222c;
-			opacity: 1;
-		}
-		.classLabel .label {
-			fill: #f1fa8c;
-		}
-		.relation {
-			stroke: #ff79c6;
-			stroke-width: 1;
-		}
-		#compositionStart, #compositionEnd {
-			fill: #bd93f9;
-			stroke: #bd93f9;
-			stroke-width: 1;
-		}
-		#aggregationEnd, #aggregationStart {
-			fill: #21222c;
-			stroke: #50fa7b;
-			stroke-width: 1;
-		}
-		#dependencyStart, #dependencyEnd {
-			fill: #00bcd4;
-			stroke: #00bcd4;
-			stroke-width: 1;
-		} 
-		#extensionStart, #extensionEnd {
-			fill: #f8f8f2;
-			stroke: #f8f8f2;
-			stroke-width: 1;
-		}`,
-	fontFamily: "Fira Code"
-});
+//mermaid.initialize({});
 
-const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComponent> {
+const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
 	range: any = { start: 0, end: 0 };
@@ -285,7 +232,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 			return '';
 		};
 
-		this.input.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		this.input.innerHTML = Prism.highlight(value, Prism.languages.yaml, 'yaml');
 		this.setContent(value);
 	};
 
@@ -305,19 +252,15 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const id = [ 'block', block.id, 'container' ].join('-');
 		const node = $(this.node);
-		const container = node.find(`#${id}`);
 		const value = node.find('#value');
 
 		this.text = String(text || '');
-		this.value.html(this.text);
 
-		mermaid.mermaidAPI.render(id, this.text).then(res => {
-			if (res.svg) {
-				value.html(res.svg);
-			} else {
-				value.text(this.text);
-			};
-		});
+		if (this.text) {
+			mermaid.mermaidAPI.render(id, this.text).then(res => {
+				value.html(res.svg || this.text);
+			});
+		};
 
 		this.placeholderCheck(this.text);
 	};
@@ -375,4 +318,4 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 
 });
 
-export default BlockLatex;
+export default BlockMermaid;
