@@ -506,7 +506,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
 			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
-				element: `#item-${item.id} .more`,
+				element: `#item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				onOpen: () => $(`#item-${item.id}`).addClass('active'),
