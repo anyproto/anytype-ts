@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C, analytics } from 'Lib';
+import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -85,6 +85,14 @@ class HeaderBanner extends React.Component<Props> {
 		);
 	};
 
+	componentDidMount (): void {
+		const { type, isPopup } = this.props;
+
+		if (type == I.BannerType.TemplateSelect) {
+			Onboarding.start('templateSelect', isPopup);
+		};
+	};
+
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
@@ -129,6 +137,7 @@ class HeaderBanner extends React.Component<Props> {
 			},
 		});
 	};
+
 };
 
 export default HeaderBanner;

@@ -1512,6 +1512,12 @@
 	"onboardingDefaultTypeTitle": "Change Types Easily",
 	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
 
+	"onboardingCalendarDescription": "Check out the calendar view.",
+
+	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
+
+	"onboardingSpaceSelect": "Here is your Spaces selector! Swipe between spaces or create a new one.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
