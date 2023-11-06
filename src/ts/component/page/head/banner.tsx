@@ -100,7 +100,7 @@ class HeaderBanner extends React.Component<Props> {
 		const templateId = sourceObject || Constant.templateId.blank;
 		const node = $(this.node);
 
-		if (menuStore.isOpen('dataviewTemplateList')) {
+		if (!type || menuStore.isOpen('dataviewTemplateList')) {
 			return;
 		};
 
@@ -128,6 +128,9 @@ class HeaderBanner extends React.Component<Props> {
 				typeId: type.id,
 				templateId,
 				previewSize: I.PreviewSize.Medium,
+				onSetDefault: () => {
+					UtilObject.setDefaultTemplateId(type.id, templateId);
+				},
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);
 

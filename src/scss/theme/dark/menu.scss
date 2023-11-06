@@ -391,6 +391,8 @@
         .emptySearch { border-color: $colorShapePrimary; }
 		.items {
 			.item {
+				.icon.more:hover { background-color: unset; }
+
 				.previewObject { background-color: $colorBgPrimary; }
 				.previewObject::before { background-color: $colorShapeHighlightMedium; }
 			}

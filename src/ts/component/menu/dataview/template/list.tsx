@@ -245,7 +245,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	onMore (e: any, template: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { onSetDefault, route, typeId } = data;
+		const { onSetDefault, route, typeId, getView } = data;
 		const item = UtilCommon.objectCopy(template);
 		const node = $(`#item-${item.id}`);
 		const templateId = this.getTemplateId();
@@ -278,11 +278,11 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				data: {
 					rebind: this.rebind,
 					template: item,
-					isView: true,
+					isView: !!getView,
 					typeId,
 					templateId,
 					route,
-					onDuplicate: (object) => UtilObject.openPopup(object, {}),
+					onDuplicate: object => UtilObject.openPopup(object, {}),
 					onSetDefault,
 				}
 			});
