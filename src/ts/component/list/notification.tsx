@@ -47,6 +47,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	componentDidMount (): void {
+		/*
 		for (let i = 0; i < 10; ++i) {
 			const icon1 = UtilSmile.randomParam();
 			const icon2 = UtilSmile.randomParam();
@@ -70,6 +71,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 				subject,
 			});
 		};
+		*/
 
 		this.resize();
 	};

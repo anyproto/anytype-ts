@@ -1,17 +1,22 @@
 import * as React from 'react';
-import { Title, Label, Button, Tag } from 'Component';
-import { I, UtilCommon, UtilFile, UtilDate, UtilRouter, translate, Renderer } from 'Lib';
+import $ from 'jquery';
+import { Title, Label, Button, Tag, Icon } from 'Component';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
 import { menuStore, dbStore, detailStore, popupStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
 
 class PopupUsecase extends React.Component<I.Popup> {
 
+	node = null;
+	swiper = null;
+
 	constructor (props: I.Popup) {
 		super(props);
 
 		this.onMenu = this.onMenu.bind(this);
 		this.onAuthor = this.onAuthor.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
 	};
 	
 	render () {
@@ -21,7 +26,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const categories = object.categories || [];
 
 		return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				<div className="titleWrap">
 					<div className="side left">
 						<Title text={object.title} />
@@ -33,13 +38,21 @@ class PopupUsecase extends React.Component<I.Popup> {
 				</div>
 
 				<div className="screenWrap">
-					<Swiper spaceBetween={56} slidesPerView={1}>
+					<Swiper 
+						spaceBetween={20} 
+						slidesPerView={1}
+						onSlideChange={() => this.checkArrows()}
+						onSwiper={swiper => this.onSwiper(swiper)}
+					>
 						{screenshots.map((url: string, i: number) => (
 							<SwiperSlide key={i}>
 								<div className="screen" style={{ backgroundImage: `url('${url}')` }} />
 							</SwiperSlide>
 						))}
     				</Swiper>
+
+					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
+					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 
 				<div className="footerWrap">
@@ -58,6 +71,29 @@ class PopupUsecase extends React.Component<I.Popup> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		window.setTimeout(() => this.checkArrows(), 10);
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
+	};
+
+	onArrow (dir: number) {
+		dir < 0 ? this.swiper.slidePrev() : this.swiper.slideNext();
+	};
+
+	checkArrows () {
+		const node = $(this.node);
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+		const idx = this.swiper.activeIndex;
+		const length = this.swiper.slides.length;
+
+		!idx ? arrowLeft.addClass('hide') : arrowLeft.removeClass('hide');
+		idx >= length - 1 ? arrowRight.addClass('hide') : arrowRight.removeClass('hide');
 	};
 
 	onMenu () {
