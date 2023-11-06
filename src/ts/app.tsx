@@ -8,11 +8,11 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -146,6 +146,8 @@ import 'scss/popup/pin.scss';
 import 'scss/popup/phrase.scss';
 import 'scss/popup/usecase.scss';
 
+import 'scss/notification/common.scss';
+
 import 'scss/menu/common.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/common.scss';
@@ -201,6 +203,7 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+
 interface RouteElement { path: string; };
 
 interface State {
@@ -229,6 +232,7 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	notificationStore,
 };
 
 window.Store = rootStore;
@@ -242,6 +246,7 @@ window.Lib = {
 	UtilObject,
 	UtilMenu,
 	UtilRouter,
+	UtilSmile,
 	analytics,
 	dispatcher,
 	keyboard,
@@ -344,6 +349,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<Navigation />
+						<ListNotification key="listNotification" />
 
 						<div id="tooltipContainer" />
 						<div id="drag" />
