@@ -141,6 +141,7 @@ class UtilRouter {
 
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
+					commonStore.defaultType = '';
 					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);

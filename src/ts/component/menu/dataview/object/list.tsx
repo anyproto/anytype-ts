@@ -252,7 +252,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [].concat(data.filters || []);
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() }
+		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
@@ -262,8 +264,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (map.length) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
 			};
-		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
 		};
 
 		if (clear) {
