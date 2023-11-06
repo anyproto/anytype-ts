@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { Title, Label, Button, Tag } from 'Component';
-import { I, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, UtilRouter, translate, Renderer } from 'Lib';
+import { menuStore, dbStore, detailStore, popupStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import Constant from 'json/constant.json';
 
 class PopupUsecase extends React.Component<I.Popup> {
 
 	constructor (props: I.Popup) {
 		super(props);
 
+		this.onMenu = this.onMenu.bind(this);
 		this.onAuthor = this.onAuthor.bind(this);
 	};
 	
@@ -25,7 +28,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={this.onAuthor} />
 					</div>
 					<div className="side right">
-						<Button text="Install" arrow={true} />
+						<Button id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
 					</div>
 				</div>
 
@@ -55,6 +58,55 @@ class PopupUsecase extends React.Component<I.Popup> {
 				</div>
 			</div>
 		);
+	};
+
+	onMenu () {
+		const { getId } = this.props;
+
+		menuStore.open('select', {
+			element: `#${getId()} #button-install`,
+			offsetY: 2,
+			noFlipX: true,
+			className: 'spaceSelect',
+			data: {
+				options: this.getSpaceOptions(),
+				noVirtualisation: true, 
+				noScroll: true,
+				onSelect: (e: any, item: any) => {
+					console.log('SPACE', item);
+
+					if (item.id == 'add') {
+						popupStore.open('settings', { 
+							className: 'isSpaceCreate',
+							data: { 
+								page: 'spaceCreate', 
+								isSpace: true,
+								onCreate: id => {
+									console.log('onCreate', id);
+								},
+							}, 
+						});
+					} else {
+						
+					};
+				},
+			}
+		});
+	};
+
+	getSpaceOptions (): any[] {
+		const subId = Constant.subId.space;
+		
+		let list = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+
+		list = list.map(it => ({ id: it.id, name: it.name, iconSize: 48, object: it }));
+
+		if (list.length < Constant.limit.space) {
+			list.unshift({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
+		};
+		list.unshift({ name: translate('popupUsecaseMenuLabel'), isSection: true });
+
+		return list;
 	};
 
 	onAuthor () {

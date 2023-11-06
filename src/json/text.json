@@ -966,6 +966,9 @@
 
 	"popupUsecaseAuthor": "Made by @%s",
 	"popupUsecaseUpdated": "Updated: %s",
+	"popupUsecaseInstall": "Install",
+	"popupUsecaseMenuLabel": "Install experience to",
+	"popupUsecaseSpaceCreate": "Create new space",
 
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",

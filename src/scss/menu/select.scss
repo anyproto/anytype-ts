@@ -52,4 +52,19 @@
 		.content { overflow: hidden; max-height: unset; }
 	}
 
+	.menu.menuSelect.spaceSelect { width: 280px; }
+	.menu.menuSelect.spaceSelect {
+		.content { padding: 8px 0px; }
+		.item { padding: 4px 16px; }
+		.item {
+			.icon.add { 
+				border-radius: 8px; border: 1px solid $colorShapeSecondary; background-color: $colorShapeHighlightLight;
+				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
+			}
+			.iconObject { margin-right: 12px; }
+			.iconObject.isSpaceView { border-radius: 8px !important; }
+			.clickable { align-items: center; }
+		}
+	}
+
 }
