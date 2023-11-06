@@ -25,8 +25,8 @@ const NotificationUsecase = observer(class NotificationUsecase extends React.Com
 			text = translate(`notification${type}ErrorText`);
 
 			buttons = buttons.concat([
-				{ text: 'Retry' },
-				{ text: 'Report' },
+				{ id: 'usecaseRetry', text: 'Retry' },
+				{ id: 'usecaseReport', text: 'Report' },
 			]);
 		};
 

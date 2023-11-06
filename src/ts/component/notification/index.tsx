@@ -76,6 +76,9 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	onButton (action: string) {
 		const { item } = this.props;
 
+		switch (action) {
+		};
+
 		this.onDelete();
 	};
 
