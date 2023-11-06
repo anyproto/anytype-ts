@@ -148,6 +148,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refPhrase?.setError(true);
 		this.refSubmit.setLoading(false);
 
+		authStore.accountListClear();
+
 		UtilCommon.checkError(error.code);
 		return true;
 	};
