@@ -61,9 +61,9 @@
 				border-radius: 8px; border: 1px solid $colorShapeSecondary; background-color: $colorShapeHighlightLight;
 				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
 			}
-			.iconObject { margin-right: 12px; }
+			.iconObject, .icon { margin: 0px; }
 			.iconObject.isSpaceView { border-radius: 8px !important; }
-			.clickable { align-items: center; }
+			.clickable { align-items: center; gap: 0px 12px; }
 		}
 	}
 
