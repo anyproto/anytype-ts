@@ -9,7 +9,7 @@
 	.notification {
 		width: 100%; min-height: 110px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
     	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s;
-		transition-property: transform, opacity, bottom; opacity: 1;
+		transition-property: transform, opacity, bottom; opacity: 1; user-select: none;
 	}
 
 	.notification.from, .notification.to { opacity: 0; transform-origin: 50% 50%; transform: scale3d(0.75, 0.75, 1); }
