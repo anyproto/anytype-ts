@@ -286,9 +286,9 @@
         .dot { background: $colorShapePrimary !important; }
     }
 
-    /* BlockLatex */
+    /* BlockEmbed */
 
-    .block.blockLatex {
+    .block.blockEmbed {
         .select { color: $colorTextPrimary; }
         .wrap.isEditing { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
         #input { background: $colorShapeSecondary; }

@@ -398,7 +398,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 
 		e.stopPropagation();
 
-		$('.block.blockLatex .focusable.isEditing').removeClass('isEditing');
+		$('.block.blockEmbed .focusable.isEditing').removeClass('isEditing');
 
 		this.setEditing(true);
 		this.focus();

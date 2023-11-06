@@ -560,6 +560,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					];
 				};
 
+				if (item.type == I.BlockType.Embed) {
+					param.content.processor = item.itemId;
+				};
+
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						if (message.error.code) {

@@ -50,6 +50,7 @@ class UtilMenu {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', lang: 'Latex' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', lang: 'Mermaid' },
 		].map(this.mapperBlock);
 	};
 

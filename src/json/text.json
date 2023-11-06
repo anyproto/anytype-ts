@@ -417,6 +417,7 @@
 	"blockNameRelation": "Relation",
 	"blockNameNewRelation": "New Relation",
 	"blockNameLatex": "LaTeX",
+	"blockNameMermaid": "Mermaid",
 	"blockNameSimpleTable": "Table 3x3",
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
@@ -447,6 +448,7 @@
 	"blockTextRelation": "Meaningful connection between Objects",
 	"blockTextNewRelation": "Meaningful connection between Objects",
 	"blockTextLatex": "Display a math equations",
+	"blockTextMermaid": "...",
 	"blockTextSimpleTable": "Create a Simple Table",
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
@@ -518,9 +520,9 @@
 
 	"blockLatexPlaceholder": "Enter text in format LaTeX",
 	"blockLatexTemplate": "Template formula",
+	"blockLatexEmpty": "Here your equation will be rendered with <span class='icon text'></span>. Click to edit",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
-
 
 	"blockFeaturedTypesList": "Object %s: %s",
 	"blockFeaturedQuery": "Query",

@@ -68,7 +68,7 @@ class UtilData {
 
 	blockClass (block: any) {
 		const { content } = block;
-		const { style, type, state } = content;
+		const { style, type, processor } = content;
 		const dc = UtilCommon.toCamelCase('block-' + block.type);
 
 		const c = [];
@@ -92,7 +92,7 @@ class UtilData {
 				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
 				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
 				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
-				case I.BlockType.Embed:					 c.push(this.blockEmbedClass(style)); break;
+				case I.BlockType.Embed:					 c.push(this.blockEmbedClass(processor)); break;
 			};
 		};
 

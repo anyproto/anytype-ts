@@ -8,6 +8,18 @@
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			#input { display: block; }
+		}
+
+		#value { font-size: 20px; line-height: 20px; width: 100%; }
+		#value:empty { display: none; }
+		#input { 
+			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
+			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
+		}
+	}
+
+	.block.blockEmbed.isLatex {
+		.wrap.isEditing {
 			.select { display: inline-block; }
 		}
 
@@ -23,15 +35,6 @@
 			.select:hover, .select.active { background: none; }
 		}
 
-		#value { font-size: 20px; line-height: 20px; width: 100%; }
-		#value:empty { display: none; }
-		#input { 
-			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
-			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
-		}
-	}
-
-	.block.blockEmbed.isLatex {
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }
