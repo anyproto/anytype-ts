@@ -247,7 +247,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				break;
 			};
 
-			case I.BlockType.Latex: {
+			case I.BlockType.Embed: {
 				blockComponent = <BlockLatex key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};

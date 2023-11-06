@@ -36,6 +36,15 @@ class UtilData {
 		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
 
+	blockEmbedClass (v: I.EmbedProcessor): string {
+		let c = '';
+		switch (v) {
+			case I.EmbedProcessor.Latex: c = 'isLatex'; break;
+			default: c = 'isDefault'; break;
+		};
+		return c;
+	};
+
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
@@ -83,6 +92,7 @@ class UtilData {
 				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
 				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
 				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+				case I.BlockType.Embed:					 c.push(this.blockEmbedClass(style)); break;
 			};
 		};
 

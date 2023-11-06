@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLatex { padding: 6px 0px; }
-	.block.blockLatex { 
+	.block.blockEmbed { padding: 6px 0px; }
+	.block.blockEmbed { 
 		.wrap { padding: 2px 0px; }
 		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 6px; }
 		.wrap.isEditing {
@@ -29,7 +29,9 @@
 			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
 			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
 		}
+	}
 
+	.block.blockEmbed.isLatex {
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }

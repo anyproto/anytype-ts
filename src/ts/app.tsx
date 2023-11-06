@@ -97,7 +97,7 @@ import 'scss/block/featured.scss';
 import 'scss/block/file.scss';
 import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
-import 'scss/block/latex.scss';
+import 'scss/block/embed.scss';
 import 'scss/block/layout.scss';
 import 'scss/block/link.scss';
 import 'scss/block/media.scss';

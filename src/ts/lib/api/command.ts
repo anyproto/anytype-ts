@@ -559,14 +559,14 @@ const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.Te
 
 // ---------------------- BLOCK LATEX ---------------------- //
 
-const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockLatex.SetText.Request();
+const BlockEmbedSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockEmbed.SetText.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
 
-	dispatcher.request(BlockLatexSetText.name, request, callBack);
+	dispatcher.request(BlockEmbedSetText.name, request, callBack);
 };
 
 // ---------------------- BLOCK LINK ---------------------- //
@@ -1870,7 +1870,7 @@ export {
 
 	BlockDivListSetStyle,
 
-	BlockLatexSetText,
+	BlockEmbedSetText,
 
 	BlockRelationSetKey,
 

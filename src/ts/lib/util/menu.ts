@@ -49,7 +49,7 @@ class UtilMenu {
 			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', lang: 'Latex' },
 		].map(this.mapperBlock);
 	};
 

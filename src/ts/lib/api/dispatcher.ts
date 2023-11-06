@@ -105,7 +105,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
+		if (v == V.BLOCKSETEMBED)				 t = 'blockSetEmbed';
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
@@ -575,7 +575,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'blockSetLatex': {
+				case 'blockSetEmbed': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {

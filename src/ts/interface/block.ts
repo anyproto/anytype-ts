@@ -24,7 +24,7 @@ export enum BlockType {
 	Relation			 = 'relation',
 	Featured			 = 'featured',
 	Type				 = 'type',
-	Latex				 = 'latex',
+	Embed				 = 'embed',
 	Table				 = 'table',
 	TableColumn			 = 'tableColumn',
 	TableRow			 = 'tableRow',
@@ -188,7 +188,7 @@ export interface Block {
 	isFileStyleLink?(): boolean;
 	isFileStyleEmbed?(): boolean;
 
-	isLatex?(): boolean;
+	isEmbed?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

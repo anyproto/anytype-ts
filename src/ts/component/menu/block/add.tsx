@@ -623,7 +623,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						};
 
 						// Auto-open BlockLatex edit mode
-						if (param.type == I.BlockType.Latex) {
+						if (param.type == I.BlockType.Embed) {
 							window.setTimeout(() => { $(`#block-${newBlockId} #value`).trigger('click'); }, Constant.delay.menu);
 						};
 
