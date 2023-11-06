@@ -259,6 +259,10 @@ const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockCo
 		if (this.text) {
 			mermaid.mermaidAPI.render(id, this.text).then(res => {
 				value.html(res.svg || this.text);
+
+				if (res.bindFunctions) {
+					res.bindFunctions(value.get(0));
+				};
 			});
 		};
 
