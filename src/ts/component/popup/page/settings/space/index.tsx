@@ -293,6 +293,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				onClick: (item: any) => {
 					commonStore.typeSet(item.uniqueKey);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+					this.forceUpdate();
 				},
 			}
 		});
