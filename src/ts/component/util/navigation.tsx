@@ -118,7 +118,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		keyboard.showQuickCapture('Navigation');
+		keyboard.onQuickCapture();
 	};
 
 	onGraph () {

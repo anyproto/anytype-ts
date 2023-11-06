@@ -246,7 +246,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.showQuickCapture('Shortcut');
+				this.onQuickCapture();
 			});
 
 			// Settings
@@ -316,27 +316,6 @@ class Keyboard {
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
-		});
-	};
-
-	showQuickCapture (route: string) {
-		const element = '#button-navigation-plus';
-
-		if (menuStore.isOpen('quickCapture')) {
-			menuStore.close('quickCapture');
-			return;
-		};
-
-		menuStore.open('quickCapture', {
-			element,
-			type: I.MenuType.Horizontal,
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			offsetY: -16,
-			offsetX: 20,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
 		});
 	};
 
@@ -796,17 +775,41 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.open('space', {
-			element: '#navigationPanel',
-			className: 'fixed',
-			classNameWrap: 'fromNavigation',
-			type: I.MenuType.Horizontal,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			offsetY: -12,
-			data: {
-				shortcut,
-			}
+		menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.open('space', {
+				element: '#navigationPanel',
+				className: 'fixed',
+				classNameWrap: 'fromNavigation',
+				type: I.MenuType.Horizontal,
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Top,
+				offsetY: -12,
+				data: {
+					shortcut,
+				}
+			});
+		});
+	};
+
+	onQuickCapture () {
+		const element = '#button-navigation-plus';
+
+		if (menuStore.isOpen('quickCapture')) {
+			menuStore.close('quickCapture');
+			return;
+		};
+
+		menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.open('quickCapture', {
+				element,
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				offsetY: -20,
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+			});
 		});
 	};
 

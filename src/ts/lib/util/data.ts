@@ -410,7 +410,7 @@ class UtilData {
 		items = items.concat(dbStore.getTypes().filter(it => {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
-		items = this.sortLastUsedTypes(items);
+		items = this.sortByLastUsedTypes(items);
 
 		if (limit) {
 			items = items.slice(0, limit);
@@ -536,18 +536,20 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
-	sortLastUsedTypes (items: any[]) {
+	sortByLastUsedTypes (items: any[]) {
 		const lastUsedTypes = Storage.getLastUsedTypes();
 
 		return items.sort((c1: any, c2: any) => {
-			const d1 = lastUsedTypes.indexOf(c1.id);
-			const d2 = lastUsedTypes.indexOf(c2.id);
+			const idx1 = lastUsedTypes.indexOf(c1.id);
+			const idx2 = lastUsedTypes.indexOf(c2.id);
+			const is1 = idx1 >= 0;
+			const is2 = idx2 >= 0;
 
-			if ((d1 < 0) && (d2 > 0)) return 1;
-			if ((d1 > 0) && (d2 < 0)) return -1;
+			if (!is1 && is2) return 1;
+			if (is1 && !is2) return -1;
 
-			if (d1 > d2) return 1;
-			if (d1 < d2) return -1;
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
 			return 0;
 		});
 	};

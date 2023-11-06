@@ -85,6 +85,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	componentDidUpdate () {
 		this.props.position();
+		this.resize();
 		this.rebind();
 	};
 
@@ -145,7 +146,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
-			UtilData.sortLastUsedTypes(this.items);
+			UtilData.sortByLastUsedTypes(this.items);
 
 			this.forceUpdate();
 		});
@@ -170,7 +171,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[0].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
+			sections[1].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
 		};
 
 		sections = sections.filter((section: any) => {
@@ -323,6 +324,15 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item);
 		};
+	};
+
+	resize () {
+		const node = $(this.node);
+
+		node.find('.item').each((i: number, item: any) => {
+			item = $(item);
+			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+		});
 	};
 
 };
