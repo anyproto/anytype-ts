@@ -7,8 +7,6 @@ import { I, keyboard, UtilCommon, C, focus, translate } from 'Lib';
 import { blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 
-//mermaid.initialize({});
-
 const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
