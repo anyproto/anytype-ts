@@ -189,6 +189,8 @@ export interface Block {
 	isFileStyleEmbed?(): boolean;
 
 	isEmbed?(): boolean;
+	isEmbedLatex?(): boolean;
+	isEmbedMermaid?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

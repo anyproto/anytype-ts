@@ -12,7 +12,7 @@ import Constant from 'json/constant.json';
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComponent> {
+const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I.BlockComponentEmbed> {
 	
 	_isMounted = false;
 	range: any = { start: 0, end: 0 };
@@ -24,7 +24,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 	value: any = null;
 	empty: any = null;
 
-	constructor (props: I.BlockComponent) {
+	constructor (props: I.BlockComponentEmbed) {
 		super(props);
 
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
@@ -37,13 +37,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onTemplate = this.onTemplate.bind(this);
 	};
 
 	render () {
-		const { readonly, block } = this.props;
+		const { readonly, block, onSelect } = this.props;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
 
 		return (
@@ -71,7 +70,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
 					placeholder={translate('blockLatexPlaceholder')}
-					onSelect={this.onSelect}
+					onSelect={onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
@@ -247,7 +246,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		});
 	};
 
-	onChange (e: any) {
+	onChange () {
 		this.setValue(this.getValue());
 	};
 
@@ -336,9 +335,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 			},
 		};
 
-		raf(() => {
-			menuStore.open('blockLatex', menuParam);
-		});
+		raf(() => menuStore.open('blockLatex', menuParam));
 	};
 
 	setValue (value: string) {
@@ -422,20 +419,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		this.range = range || { start: 0, end: 0 };
 	};
 
-	onSelect () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.setRange(getRange(this.input));
-		keyboard.disableSelection(true);
-
-		this.win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
-			keyboard.disableSelection(false);
-			this.win.off('mouseup.latex');
-		});
-	};
-
 });
 
-export default BlockLatex;
+export default BlockEmbedLatex;

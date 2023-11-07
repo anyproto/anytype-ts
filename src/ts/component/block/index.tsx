@@ -25,8 +25,7 @@ import BlockVideo from './media/video';
 import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
-import BlockLatex from './embed/latex';
-import BlockMermaid from './embed/mermaid';
+import BlockEmbed from './embed';
 
 import Constant from 'json/constant.json';
 
@@ -253,17 +252,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Embed: {
-				switch (content.processor) {
-					case I.EmbedProcessor.Latex: {
-						blockComponent = <BlockLatex key={key} ref={setRef} {...this.props} />;
-						break;
-					};
-
-					case I.EmbedProcessor.Mermaid: {
-						blockComponent = <BlockMermaid key={key} ref={setRef} {...this.props} />;
-						break;
-					};
-				};
+				blockComponent = <BlockEmbed key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 

@@ -8,8 +8,12 @@ export enum EmbedProcessor {
 export interface ContentEmbed {
 	text: string;
 	processor: EmbedProcessor;
+}
+
+export interface BlockComponentEmbed extends I.BlockComponent {
+	onSelect?(): void;
 };
 
-export interface BlockEEmbed extends I.Block {
+export interface BlockEmbed extends I.Block {
 	content: ContentEmbed;
 };

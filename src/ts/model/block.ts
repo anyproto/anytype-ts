@@ -361,6 +361,14 @@ class Block implements I.Block {
 	isEmbed (): boolean {
 		return this.type == I.BlockType.Embed;
 	};
+
+	isEmbedLatex (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Latex);
+	};
+
+	isEmbedMermaid (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Mermaid);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;

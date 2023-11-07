@@ -7,7 +7,7 @@ import { I, keyboard, UtilCommon, C, focus, translate } from 'Lib';
 import { blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 
-const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockComponent> {
+const BlockEmbedMermaid = observer(class BlockEmbedMermaid extends React.Component<I.BlockComponentEmbed> {
 	
 	_isMounted = false;
 	range: any = { start: 0, end: 0 };
@@ -32,11 +32,10 @@ const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockCo
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
-		this.onSelect = this.onSelect.bind(this);
 	};
 
 	render () {
-		const { readonly, block } = this.props;
+		const { readonly, block, onSelect } = this.props;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
 
 		return (
@@ -58,7 +57,7 @@ const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockCo
 					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
 					placeholder={translate('blockLatexPlaceholder')}
-					onSelect={this.onSelect}
+					onSelect={onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
@@ -304,20 +303,6 @@ const BlockMermaid = observer(class BlockLatex extends React.Component<I.BlockCo
 		this.range = range || { start: 0, end: 0 };
 	};
 
-	onSelect () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.setRange(getRange(this.input));
-		keyboard.disableSelection(true);
-
-		this.win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
-			keyboard.disableSelection(false);
-			this.win.off('mouseup.latex');
-		});
-	};
-
 });
 
-export default BlockMermaid;
+export default BlockEmbedMermaid;

@@ -67,7 +67,7 @@ import { FileType, FileState, FileStyle, ContentFile } from './block/file';
 import { BookmarkState, ContentBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv } from './block/div';
 import { ContentRelation } from './block/relation';
-import { EmbedProcessor, ContentEmbed } from './block/embed';
+import { EmbedProcessor, ContentEmbed, BlockComponentEmbed } from './block/embed';
 import { BlockComponentTable, ContentTableRow } from './block/table';
 import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
 
@@ -211,6 +211,7 @@ export {
 
 	EmbedProcessor,
 	ContentEmbed,
+	BlockComponentEmbed,
 
 	BlockComponentTable,
 	ContentTableRow, 
