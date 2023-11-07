@@ -20,6 +20,7 @@ interface Props {
     rowHeight?: number;
     resize?: () => void;
     sources?: string[];
+	collectionId?: string;
 };
 
 interface State {
@@ -335,7 +336,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     };
 
     getData () {
-        const { subId, sources, withArchived } = this.props;
+        const { subId, sources, withArchived, collectionId } = this.props;
         const filter = this.getFilterValue();
         const filters = [].concat(this.props.filters || []);
 		const sorts = [].concat(this.props.sorts || []);
@@ -351,7 +352,8 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             sorts,
             filters,
             withArchived,
-            sources: sources || []
+            sources: sources || [],
+			collectionId: collectionId || null
         }, () => {
            this.setState({ isLoading: false });
         });

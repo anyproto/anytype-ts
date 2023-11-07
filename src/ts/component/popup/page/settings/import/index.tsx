@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, Action } from 'Lib';
+import { I, UtilCommon, translate, Action, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 
 import Head from '../head';
+import { dbStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -64,8 +66,19 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		Action.import(type, extensions, options);
-		this.props.close();
+		const { onPage } = this.props;
+		Action.import(type, extensions, options, (message: any) => {
+			const { collectionId } = message;
+
+			if (collectionId) {
+				popupStore.close('settings', () => {
+					popupStore.open('import', { data: { collectionId } });
+				});
+				return;
+			};
+
+			this.props.close();
+		});
 	};
 
 	onImportHtml () {

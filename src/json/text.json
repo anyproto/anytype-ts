@@ -669,6 +669,8 @@
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
+	"popupSettingsImportFavouriteTitle": "Selected objects will appear in your Favorites widget",
+
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
 	"popupSettingsExportOk": "Export data",

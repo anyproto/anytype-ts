@@ -132,6 +132,7 @@ import 'scss/widget/tree.scss';
 import 'scss/popup/common.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/import.scss';
 import 'scss/popup/help.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/preview.scss';
