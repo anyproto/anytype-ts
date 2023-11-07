@@ -39,6 +39,13 @@
 			};
 
 			function loadLibs (list, callBack) {
+				if (!list.length) {
+					if (callBack) {
+						callBack();
+					};
+					return;
+				};
+
 				const src = list.shift();
 				const script = document.createElement('script');
 
@@ -47,10 +54,9 @@
 				script.onload = function (e) {
 					if (list.length) {
 						loadScripts(list, callBack);
-					} else {
-						if (callBack) {
-							callBack();
-						};
+					} else 
+					if (callBack) {
+						callBack();
 					};
 				};
 
