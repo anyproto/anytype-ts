@@ -426,7 +426,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					<canvas id="chart"></canvas>
 				`;
 
-				libs.push('./embed/chart/chart.umd.js');
+				libs.push('./chart/chart.umd.js');
 				break;
 			};
 		};
@@ -470,22 +470,17 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					iw.postMessage(data, '*');
 
 					win.off(`message.${block.id}`).on(`message.${block.id}`, (e: any) => {
-						const height = Number(e.originalEvent.data.height) || 0;
-
-						if (height) {
-							iframe.css({ height });
-						};
 					});
 				};
 
-				if (processor == I.EmbedProcessor.Youtube) {
+				if ([ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo].includes(processor)) {
 					sandbox.push('allow-same-origin');
 				};
 
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: './iframe.html',
+						src: './embed/iframe.html',
 						frameborder: 0,
 						sandbox: sandbox.join(' '),
 						allowtransparency: true,
