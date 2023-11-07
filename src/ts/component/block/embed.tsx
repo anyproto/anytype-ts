@@ -399,7 +399,31 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			default: break;
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
+			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Youtube:
+			case I.EmbedProcessor.Vimeo: return 'html';
 		};
+	};
+
+	getEnvironmentContent (): { html: string; libs: string[] } {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		let html = '';
+		let libs = [];
+
+		switch (processor) {
+			case I.EmbedProcessor.Chart: {
+				html = `
+					<canvas id="chart"></canvas>
+				`;
+
+				libs.push('./embed/chart/chart.umd.js');
+				break;
+			};
+		};
+
+		return { html, libs };
 	};
 
 	setContent (text: string) {
@@ -411,6 +435,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const { processor } = block.content;
+		const node = $(this.node);
 
 		switch (processor) {
 			default: {
@@ -418,21 +443,41 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					break;
 				};
 
-				const iframe = $('<iframe />', {
-					src: './iframe.html',
-					id:  'receiver',
-					frameborder: 0,
-					sandbox: 'allow-scripts allow-same-origin',
-					allowtransparency: true,
-				});
+				let iframe = node.find('iframe');
 
-				iframe.on('load', () => {
+				const sandbox = [ 'allow-scripts' ];
+				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
+					const env = this.getEnvironmentContent();
+					const data: any = { ...env, theme: commonStore.getThemeClass() };
 
-					iw.postMessage({ html: this.text, theme: commonStore.getThemeClass() }, '*');
-				});
+					if (processor == I.EmbedProcessor.Chart) {
+						data.js = this.text;
+					} else {
+						data.html = this.text;
+					};
 
-				this.value.html('').append(iframe);
+					iw.postMessage(data, '*');
+				};
+
+				if (processor == I.EmbedProcessor.Youtube) {
+					sandbox.push('allow-same-origin');
+				};
+
+				if (!iframe.length) {
+					iframe = $('<iframe />', {
+						id: 'receiver',
+						src: './iframe.html',
+						frameborder: 0,
+						sandbox: sandbox.join(' '),
+						allowtransparency: true,
+					});
+
+					iframe.off('load').on('load', onLoad);
+					this.value.html('').append(iframe);
+				} else {
+					onLoad();
+				};
 				break;
 			};
 

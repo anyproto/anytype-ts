@@ -16,12 +16,41 @@
 			window.addEventListener('message', event => {
 				if (event.origin.match('http://localhost:') || (event.origin === null)) {
 					const body = document.body;
-					const { html, theme } = event.data;
+					const { html, js, theme, libs } = event.data;
 
-					body.innerHTML = html;
-					body.className = theme;
+					loadLibs(libs, () => {
+						body.innerHTML = html;
+						body.className = theme;
+
+						if (js) {
+							eval(js);
+						};
+					});
 				};
 			});
+
+			function loadLibs (list, callBack) {
+				const src = list.shift();
+				const script = document.createElement('script');
+
+				document.head.appendChild(script);
+
+				script.onload = function (e) {
+					console.log(e, src);
+
+					if (list.length) {
+						loadScripts(list, callBack);
+					} else {
+						console.log('run app');
+						if (callBack) {
+							callBack();
+						};
+					};
+				};
+
+				script.type = 'text/javascript';
+				script.src = src;
+			};
 		</script>
 	</body>
 </html>
