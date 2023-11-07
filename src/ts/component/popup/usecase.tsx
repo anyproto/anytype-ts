@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon } from 'Component';
-import { I, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
 import { menuStore, dbStore, detailStore, popupStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
@@ -10,6 +10,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 
 	node = null;
 	swiper = null;
+	refButton = null;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -33,7 +34,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={this.onAuthor} />
 					</div>
 					<div className="side right">
-						<Button id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
+						<Button ref={ref => this.refButton = ref} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
 					</div>
 				</div>
 
@@ -97,33 +98,43 @@ class PopupUsecase extends React.Component<I.Popup> {
 	};
 
 	onMenu () {
-		const { getId } = this.props;
+		const { getId, close } = this.props;
+		const object = this.getObject();
+
+		let menuContext = null;
+
+		const cb = (spaceId: string) => {
+			this.refButton.setLoading(true);
+
+			C.ObjectImportExperience(spaceId, object.downloadLink, false, () => {
+				close();
+			});
+		};
 
 		menuStore.open('select', {
 			element: `#${getId()} #button-install`,
 			offsetY: 2,
 			noFlipX: true,
 			className: 'spaceSelect',
+			onOpen: context => {
+				menuContext = context;
+			},
 			data: {
 				options: this.getSpaceOptions(),
 				noVirtualisation: true, 
 				noScroll: true,
 				onSelect: (e: any, item: any) => {
-					console.log('SPACE', item);
-
 					if (item.id == 'add') {
 						popupStore.open('settings', { 
 							className: 'isSpaceCreate',
 							data: { 
 								page: 'spaceCreate', 
 								isSpace: true,
-								onCreate: id => {
-									console.log('onCreate', id);
-								},
+								onCreate: cb,
 							}, 
 						});
 					} else {
-						
+						cb(item.id);
 					};
 				},
 			}

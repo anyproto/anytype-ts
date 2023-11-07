@@ -1412,6 +1412,16 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
+const ObjectImportExperience = (spaceId: string, source: string, isLocal: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportExperience.Request();
+
+	request.setSpaceid(spaceId);
+	request.setSource(source);
+	request.setIslocal(isLocal);
+
+	dispatcher.request(ObjectImportExperience.name, request, callBack);
+};
+
 const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 
@@ -1963,8 +1973,8 @@ export {
 
 	ObjectImport,
 	ObjectImportNotionValidateToken,
-
 	ObjectImportUseCase,
+	ObjectImportExperience,
 
 	ObjectCreate,
 	ObjectCreateSet,

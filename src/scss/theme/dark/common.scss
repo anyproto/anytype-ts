@@ -338,7 +338,7 @@ html.themeDark {
     /* Footer */
 
     .footer {
-        .iconWrap .bg { background-color: $colorShapeSecondary; }
+        .iconWrap .bg { background-color: $colorShapeSecondary; border-color: $colorShapeSecondary; }
     }
 
     /* Sidebar */
