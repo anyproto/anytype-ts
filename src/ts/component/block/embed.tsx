@@ -267,8 +267,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 		};
 
-		this.setContent(value);
-		this.save();
+		if (!keyboard.isSpecial(e)) {
+			this.setContent(value);
+			this.save();
+		};
 	};
 
 	updateRect () {
@@ -447,6 +449,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const { block } = this.props;
 		const { processor } = block.content;
 		const node = $(this.node);
+		const win = $(window);
 
 		switch (processor) {
 			default: {
@@ -465,6 +468,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					};
 
 					iw.postMessage(data, '*');
+
+					win.off(`message.${block.id}`).on(`message.${block.id}`, (e: any) => {
+						const height = Number(e.originalEvent.data.height) || 0;
+
+						if (height) {
+							iframe.css({ height });
+						};
+					});
 				};
 
 				if (processor == I.EmbedProcessor.Youtube) {

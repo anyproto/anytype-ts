@@ -3,7 +3,6 @@
 	<head>
 		<style type="text/css">
 			* { margin: 0px; padding: 0px; }
-			html, body { height: 100%; }
 
 			body { background-color: #fff; }
 			body.dark { background-color: #171717; }
@@ -13,10 +12,10 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-			window.addEventListener('message', event => {
-				if (event.origin.match('http://localhost:') || (event.origin === null)) {
+			window.addEventListener('message', e => {
+				if (e.origin.match('http://localhost:') || (e.origin === null)) {
 					const body = document.body;
-					const { html, js, theme, libs } = event.data;
+					const { html, js, theme, libs } = e.data;
 
 					loadLibs(libs, () => {
 						body.innerHTML = html;
@@ -25,9 +24,17 @@
 						if (js) {
 							eval(js);
 						};
+
+						resize(e);
 					});
 				};
 			});
+
+			window.addEventListener('resize', resize);
+
+			function resize (e) {
+				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+			};
 
 			function loadLibs (list, callBack) {
 				const src = list.shift();
