@@ -28,7 +28,7 @@ const csp = [
 	`style-src 'unsafe-inline' http://localhost:* file://* https://*.youtube.com/ https://*.vimeocdn.com`,
 	`font-src data: file://* http://localhost:* https://*.youtube.com/ https://*.vimeocdn.com`,
 	`connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data: https://*.youtube.com/ https://*.vimeocdn.com/ https://*.vimeo.com/ https://*.googlevideo.com`,
-	`script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline' https://*.youtube.com/ https://*.vimeocdn.com`,
+	`script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline' https://*.youtube.com/ https://*.vimeocdn.com https://*.gstatic.com/`,
 	`frame-src chrome-extension://react-developer-tools http://localhost:*/embed/iframe.html https://*.youtube.com/ https://*.vimeo.com/`,
 	`worker-src 'self' 'unsafe-eval' blob: http://localhost:*`,
 ];
