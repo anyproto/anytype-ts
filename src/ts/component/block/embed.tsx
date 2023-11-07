@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
+import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
+import { Icon, Label } from 'Component';
 import { I, keyboard, UtilCommon, C, focus, Renderer, translate } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
@@ -12,21 +13,23 @@ import Constant from 'json/constant.json';
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I.BlockComponentEmbed> {
+const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
-	range: any = { start: 0, end: 0 };
+	range = { start: 0, end: 0 };
 	text = '';
 	timeout = 0;
-	node: any = null;
-	win: any = null;
-	input: any = null;
-	value: any = null;
-	empty: any = null;
+	node = null;
+	win = null;
+	input = null;
+	value = null;
+	empty = null;
+	container = null;
 
-	constructor (props: I.BlockComponentEmbed) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 
+		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
 		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
 		this.onFocusBlock = this.onFocusBlock.bind(this);
@@ -42,8 +45,32 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 	};
 
 	render () {
-		const { readonly, block, onSelect } = this.props;
+		const { readonly, block } = this.props;
+		const { processor } = block.content;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+
+		let select = null;
+		let empty = '';
+
+		switch (processor) {
+			case I.EmbedProcessor.Latex: {
+				select = (
+					<div className="selectWrap">
+						<div id="select" className="select" onClick={this.onTemplate}>
+							<div className="name">{translate('blockLatexTemplate')}</div>
+							<Icon className="arrow light" />
+						</div>
+					</div>
+				);
+
+				empty = translate('blockLatexEmpty');
+				break;
+			};
+
+			case I.EmbedProcessor.Mermaid: {
+				break;
+			}; 
+		};
 
 		return (
 			<div 
@@ -54,23 +81,17 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div className="selectWrap">
-					<div id="select" className="select" onClick={this.onTemplate}>
-						<div className="name">{translate('blockLatexTemplate')}</div>
-						<Icon className="arrow light" />
-					</div>
-				</div>
+				{select}
 
 				<div id="value" onClick={this.onEdit} />
-				<div id="empty" className="empty" onClick={this.onEdit}>
-					Here your equation will be rendered with <Icon className="tex" />. Click to edit
-				</div>
+				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
+				<div id={this.getContainerId()} />
 				<div 
 					id="input"
 					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
 					placeholder={translate('blockLatexPlaceholder')}
-					onSelect={onSelect}
+					onSelect={this.onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
@@ -93,6 +114,7 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 		this.empty = node.find('#empty');
 		this.value = node.find('#value');
 		this.input = node.find('#input').get(0);
+		this.container = node.find(`#${this.getContainerId()}`);
 
 		const length = this.text.length;
 
@@ -145,6 +167,10 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 		if (this._isMounted && this.range) {
 			setRange(this.input, this.range);
 		};
+	};
+
+	getContainerId () {
+		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
 	setEditing (v: boolean) {
@@ -212,22 +238,26 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 			return;
 		};
 
-		const { filter } = commonStore;
+		const { block } = this.props;
 		const value = this.getValue();
-		const range = getRange(this.input);
-		const symbolBefore = value[range?.start - 1];
-		const menuOpen = menuStore.isOpen('blockLatex');
 
-		if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
-			commonStore.filterSet(range.start, '');
-			this.onMenu(e, 'input', false);
-		};
+		if (block.isEmbedLatex()) {
+			const { filter } = commonStore;
+			const range = getRange(this.input);
+			const symbolBefore = value[range?.start - 1];
+			const menuOpen = menuStore.isOpen('blockLatex');
 
-		if (menuOpen) {
-			const d = range.start - filter.from;
-			if (d >= 0) {
-				const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
-				commonStore.filterSetText(part);
+			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
+				commonStore.filterSet(range.start, '');
+				this.onMenu(e, 'input', false);
+			};
+
+			if (menuOpen) {
+				const d = range.start - filter.from;
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
+					commonStore.filterSetText(part);
+				};
 			};
 		};
 
@@ -343,7 +373,13 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 			return '';
 		};
 
-		this.input.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		const lang = this.getLang();
+		
+		if (lang) {
+			this.input.innerHTML = Prism.highlight(value, Prism.languages[lang], lang);
+		} else {
+			this.input.innerText = value;
+		};
 		this.setContent(value);
 	};
 
@@ -355,6 +391,17 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 		return String(this.input.innerText || '');
 	};
 
+	getLang () {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		switch (processor) {
+			default: break;
+			case I.EmbedProcessor.Latex: return 'latex';
+			case I.EmbedProcessor.Mermaid: return 'yaml';
+		};
+	};
+
 	setContent (text: string) {
 		if (!this._isMounted) {
 			return '';
@@ -362,24 +409,71 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 
 		this.text = String(text || '');
 
-		this.value.html(this.text ? katex.renderToString(this.text, { 
-			displayMode: true, 
-			throwOnError: false,
-			output: 'html',
-			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-		}) : '');
+		const { block } = this.props;
+		const { processor } = block.content;
 
-		this.value.find('a').each((i: number, item: any) => {
-			item = $(item);
+		switch (processor) {
+			default: {
+				if (!this.text) {
+					break;
+				};
 
-			item.off('click').click((e: any) => {
-				e.preventDefault();
-				Renderer.send('urlOpen', item.attr('href'));
-			});
-		});
+				const iframe = $('<iframe />', {
+					src: './iframe.html',
+					id:  'receiver',
+					frameborder: 0,
+					sandbox: 'allow-scripts allow-same-origin',
+					allowtransparency: true,
+				});
+
+				iframe.on('load', () => {
+					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
+
+					iw.postMessage({ html: this.text, theme: commonStore.getThemeClass() }, '*');
+				});
+
+				this.value.html('').append(iframe);
+				break;
+			};
+
+			case I.EmbedProcessor.Latex: {
+				this.value.html(this.text ? katex.renderToString(this.text, { 
+					displayMode: true, 
+					throwOnError: false,
+					output: 'html',
+					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+				}) : '');
+
+				this.value.find('a').each((i: number, item: any) => {
+					item = $(item);
+
+					item.off('click').click((e: any) => {
+						e.preventDefault();
+						Renderer.send('urlOpen', item.attr('href'));
+					});
+				});
+
+				this.updateRect();
+				break;
+			};
+
+			case I.EmbedProcessor.Mermaid: {
+				if (!this.text) {
+					break;
+				};
+
+				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
+					this.value.html(res.svg || this.text);
+
+					if (res.bindFunctions) {
+						res.bindFunctions(this.value.get(0));
+					};
+				});
+				break;
+			};
+		};
 
 		this.placeholderCheck(this.text);
-		this.updateRect();
 	};
 
 	placeholderCheck (value: string) {
@@ -419,6 +513,20 @@ const BlockEmbedLatex = observer(class BlockEmbedLatex extends React.Component<I
 		this.range = range || { start: 0, end: 0 };
 	};
 
+	onSelect () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		this.setRange(getRange(this.input));
+		keyboard.disableSelection(true);
+
+		this.win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
+			keyboard.disableSelection(false);
+			this.win.off('mouseup.embed');
+		});
+	};
+
 });
 
-export default BlockEmbedLatex;
+export default BlockEmbed;

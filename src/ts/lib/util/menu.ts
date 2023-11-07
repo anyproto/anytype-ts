@@ -51,6 +51,9 @@ class UtilMenu {
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', lang: 'Latex' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', lang: 'Mermaid' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', lang: 'Chart' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', lang: 'Youtube' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', lang: 'Vimeo' },
 		].map(this.mapperBlock);
 	};
 
