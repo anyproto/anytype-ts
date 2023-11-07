@@ -17,7 +17,13 @@
 			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
 		}
 
+		.button.source { position: absolute; top: 10px; right: 10px; display: none; } 
+
 		iframe { width: 100%; height: 400px; }
+	}
+
+	.block.blockEmbed:hover {
+		.button.source { display: inline-flex; } 
 	}
 
 	.block.blockEmbed.isLatex {

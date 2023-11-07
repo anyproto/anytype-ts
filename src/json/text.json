@@ -524,9 +524,11 @@
 
 	"blockBookmarkError": "There was an error fetching the url",
 
-	"blockLatexPlaceholder": "Enter text in format LaTeX",
-	"blockLatexTemplate": "Template formula",
-	"blockLatexEmpty": "Here your equation will be rendered with <span class='icon text'></span>. Click to edit",
+	"blockEmbedLatexPlaceholder": "Enter text in format LaTeX",
+	"blockEmbedLatexTemplate": "Template formula",
+	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon text'></span>. Click to edit",
+
+	"blockEmbedSource": "Source",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 

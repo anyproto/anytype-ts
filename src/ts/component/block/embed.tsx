@@ -4,7 +4,7 @@ import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
+import { Icon, Label, Button } from 'Component';
 import { I, keyboard, UtilCommon, C, focus, Renderer, translate } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
@@ -51,25 +51,30 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		let select = null;
 		let empty = '';
+		let button = null;
 
 		switch (processor) {
 			case I.EmbedProcessor.Latex: {
 				select = (
 					<div className="selectWrap">
 						<div id="select" className="select" onClick={this.onTemplate}>
-							<div className="name">{translate('blockLatexTemplate')}</div>
+							<div className="name">{translate('blockEmbedLatexTemplate')}</div>
 							<Icon className="arrow light" />
 						</div>
 					</div>
 				);
 
-				empty = translate('blockLatexEmpty');
+				empty = translate('blockEmbedLatexEmpty');
 				break;
 			};
 
 			case I.EmbedProcessor.Mermaid: {
 				break;
 			}; 
+		};
+
+		if (processor != I.EmbedProcessor.Latex) {
+			button = <Button className="source c28" text={translate('blockEmbedSource')} onClick={this.onEdit} />;
 		};
 
 		return (
@@ -82,6 +87,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				onFocus={this.onFocusBlock}
 			>
 				{select}
+				{button}
 
 				<div id="value" onClick={this.onEdit} />
 				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
@@ -90,7 +96,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					id="input"
 					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
-					placeholder={translate('blockLatexPlaceholder')}
+					placeholder={translate('blockEmbedLatexPlaceholder')}
 					onSelect={this.onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
@@ -433,16 +439,17 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		this.text = String(text || '');
 
+		if (!this.text) {
+			this.value.html('');
+			return;
+		};
+
 		const { block } = this.props;
 		const { processor } = block.content;
 		const node = $(this.node);
 
 		switch (processor) {
 			default: {
-				if (!this.text) {
-					break;
-				};
-
 				let iframe = node.find('iframe');
 
 				const sandbox = [ 'allow-scripts' ];
@@ -482,12 +489,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 
 			case I.EmbedProcessor.Latex: {
-				this.value.html(this.text ? katex.renderToString(this.text, { 
+				this.value.html(katex.renderToString(this.text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-				}) : '');
+				}));
 
 				this.value.find('a').each((i: number, item: any) => {
 					item = $(item);
@@ -503,10 +510,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				if (!this.text) {
-					break;
-				};
-
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
 					this.value.html(res.svg || this.text);
 

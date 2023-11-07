@@ -36,12 +36,9 @@
 				document.head.appendChild(script);
 
 				script.onload = function (e) {
-					console.log(e, src);
-
 					if (list.length) {
 						loadScripts(list, callBack);
 					} else {
-						console.log('run app');
 						if (callBack) {
 							callBack();
 						};
