@@ -101,14 +101,9 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const { getId, close } = this.props;
 		const object = this.getObject();
 
-		let menuContext = null;
-
 		const cb = (spaceId: string) => {
 			this.refButton.setLoading(true);
-
-			C.ObjectImportExperience(spaceId, object.downloadLink, false, () => {
-				close();
-			});
+			C.ObjectImportExperience(spaceId, object.downloadLink, false, () => close());
 		};
 
 		menuStore.open('select', {
@@ -116,9 +111,6 @@ class PopupUsecase extends React.Component<I.Popup> {
 			offsetY: 2,
 			noFlipX: true,
 			className: 'spaceSelect',
-			onOpen: context => {
-				menuContext = context;
-			},
 			data: {
 				options: this.getSpaceOptions(),
 				noVirtualisation: true, 
@@ -142,17 +134,11 @@ class PopupUsecase extends React.Component<I.Popup> {
 	};
 
 	getSpaceOptions (): any[] {
-		const subId = Constant.subId.space;
-		
-		let list = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
-
-		list = list.map(it => ({ id: it.id, name: it.name, iconSize: 48, object: it }));
-
+		const list: any[] = dbStore.getSpaces().map(it => ({ id: it.id, name: it.name, iconSize: 48, object: it }));
 		if (list.length < Constant.limit.space) {
 			list.unshift({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
 		list.unshift({ name: translate('popupUsecaseMenuLabel'), isSection: true });
-
 		return list;
 	};
 
