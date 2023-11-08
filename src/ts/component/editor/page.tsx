@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -1727,8 +1727,27 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			isEmpty && !isInsideTable ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
 			!isInsideTable ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
-			//{ id: 'embed', name: translate('editorPagePasteEmbed') },
 		].filter(it => it);
+
+		const embed = url.match(/(youtube.com|youtu.be|vimeo.com)/gi);
+
+		let processor = null;
+		if (embed) {
+			switch (embed[0]) {
+				case 'youtu.be':
+				case 'youtube.com': {
+					processor = I.EmbedProcessor.Youtube;
+					break;
+				};
+
+				case 'vimeo.com': {
+					processor = I.EmbedProcessor.Vimeo;
+					break;
+				}
+			};
+
+			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
+		};
 
 		menuStore.open('select', { 
 			element: `#block-${focused}`,
@@ -1747,10 +1766,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onSelect: (event: any, item: any) => {
 					let value = block.content.text;
 					let to = 0;
+
 					const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 					switch (item.id) {
-						case 'link':
+						case 'link': {
 							if (currentFrom == currentTo) {
 								value = UtilCommon.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -1769,8 +1789,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								focus.apply();
 							});
 							break;
+						};
 
-						case 'object':
+						case 'object': {
 							C.ObjectToBookmark(rootId, url, (message: any) => {
 								if (message.error.code) {
 									return;
@@ -1786,16 +1807,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								});
 							});
 							break;
+						};
 
-						case 'block':
+						case 'block': {
 							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
 							});
 							break;
+						};
 
-						case 'cancel':
+						case 'cancel': {
 							value = UtilCommon.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
@@ -1804,6 +1827,37 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								focus.apply();
 							});
 							break;
+						};
+
+						case 'embed': {
+							if (processor === null) {
+								break;
+							};
+
+							switch (processor) {
+								case I.EmbedProcessor.Youtube: {
+									url = url.replace(/\/watch\/?\??/, '/embed/');
+									url = url.replace('v=', '');
+									break;
+								};
+
+								case I.EmbedProcessor.Vimeo: {
+									const a = new URL(url);
+									url = `https://player.vimeo.com/video${a.pathname}`;
+									break;
+								};
+							};
+
+							this.blockCreate(block.id, I.BlockPosition.Bottom, { 
+								type: I.BlockType.Embed,
+								content: {
+									processor,
+									text: UtilEmbed.getHtml(processor, url),
+								}
+							});
+							break;
+						};
+
 					};
 				},
 			}
