@@ -126,7 +126,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 							}, 
 						});
 					} else {
-						cb(item.id);
+						cb(item.targetSpaceId);
 					};
 				},
 			}
