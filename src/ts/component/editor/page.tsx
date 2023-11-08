@@ -1721,6 +1721,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
@@ -1810,7 +1811,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'block': {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
@@ -1848,7 +1849,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								};
 							};
 
-							this.blockCreate(block.id, I.BlockPosition.Bottom, { 
+							this.blockCreate(block.id, position, { 
 								type: I.BlockType.Embed,
 								content: {
 									processor,
