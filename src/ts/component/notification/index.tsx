@@ -73,16 +73,20 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		window.clearTimeout(this.timeout);
 	};
 
-	onButton (action: string) {
+	onButton (e: any, action: string) {
+		e.stopPropagation();
+
 		const { item } = this.props;
 
 		switch (action) {
 		};
 
-		this.onDelete();
+		this.onDelete(e);
 	};
 
-	onDelete () {
+	onDelete (e: any) {
+		e.stopPropagation();
+
 		const { item, resize } = this.props;
 		const node = $(this.node);
 
