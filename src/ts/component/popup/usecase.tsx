@@ -134,7 +134,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 	};
 
 	getSpaceOptions (): any[] {
-		const list: any[] = dbStore.getSpaces().map(it => ({ id: it.id, name: it.name, iconSize: 48, object: it }));
+		const list: any[] = dbStore.getSpaces().map(it => ({ ...it, iconSize: 48, object: it }));
 		if (list.length < Constant.limit.space) {
 			list.unshift({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
