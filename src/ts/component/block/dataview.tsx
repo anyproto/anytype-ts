@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -578,6 +578,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			relations.forEach((it: any) => {
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+
+		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
+			details[view.groupRelationKey] = UtilDate.now();
 		};
 
 		for (const filter of view.filters) {
