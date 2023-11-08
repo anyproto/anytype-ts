@@ -28,6 +28,10 @@ class NotificationStore {
 		this.itemList = this.itemList.filter(it => it.id != id);
 	};
 
+	clear () {
+		this.itemList = [];
+	};
+
 };
 
  export const notificationStore: NotificationStore = new NotificationStore();

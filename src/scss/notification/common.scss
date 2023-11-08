@@ -3,8 +3,19 @@
 @mixin shadow { box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
 @mixin border { border: 1px solid $colorShapeSecondary; }
 
-.notifications { position: fixed; right: 0px; bottom: 54px; z-index: 200; width: 384px; }
+.notifications { 
+	position: fixed; right: 12px; bottom: 54px; z-index: 200; width: 384px; display: flex; flex-direction: column;
+}
 .notifications {
+
+	.head { display: none; flex-direction: row; justify-content: flex-end; align-items: center; margin: 0px 0px 14px 0px; gap: 0px 8px; flex-shrink: 0; }
+	.head {
+		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: $colorBgPrimary; @include border; }
+		.icon.hide { background-image: url('~img/icon/notification/hide.svg'); background-size: 12px 8px; }
+		.icon.clear { background-image: url('~img/icon/notification/delete.svg'); background-size: 10px; }
+	}
+
+	.body { flex-grow: 1; position: relative; }
 
 	.notification {
 		width: 100%; min-height: 110px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
@@ -46,6 +57,8 @@
 }
 
 .notifications.isExpanded {
+	.head { display: flex; }
+
 	.notification { @include shadow; }
 	.notification {
 		.content { display: block; }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Notification } from 'Component';
+import { Notification, Icon } from 'Component';
 import { notificationStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, UtilSmile, UtilCommon } from 'Lib';
@@ -12,13 +12,13 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 	node = null;
 	isExpanded = false;
-	timeout = 0;
 
 	constructor (props: any) {
 		super(props);
 
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onShow = this.onShow.bind(this);
+		this.onHide = this.onHide.bind(this);
+		this.onClear = this.onClear.bind(this);
 		this.resize = this.resize.bind(this);
 	};
 
@@ -30,24 +30,31 @@ const ListNotification = observer(class ListNotification extends React.Component
 				id="notifications" 
 				ref={node => this.node = node}
 				className="notifications"
-				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
+				onClick={this.onShow}
 			>
-				{list.slice(0, LIMIT).map((item: I.Notification, i: number) => (
-					<Notification 
-						{...this.props}
-						item={item}
-						key={item.id} 
-						style={{ zIndex: LIMIT - i }}
-						resize={this.resize}
-					/>
-				))}
+				{list.length ? (
+					<div className="head">
+						<Icon className="hide" onClick={this.onHide} />
+						<Icon className="clear" onClick={this.onClear} />
+					</div>
+				) : ''}
+
+				<div className="body">
+					{list.slice(0, LIMIT).map((item: I.Notification, i: number) => (
+						<Notification 
+							{...this.props}
+							item={item}
+							key={item.id} 
+							style={{ zIndex: LIMIT - i }}
+							resize={this.resize}
+						/>
+					))}
+				</div>
 			</div>
 		);
 	};
 
 	componentDidMount (): void {
-		/*
 		for (let i = 0; i < 10; ++i) {
 			const icon1 = UtilSmile.randomParam();
 			const icon2 = UtilSmile.randomParam();
@@ -71,7 +78,6 @@ const ListNotification = observer(class ListNotification extends React.Component
 				subject,
 			});
 		};
-		*/
 
 		this.resize();
 	};
@@ -80,31 +86,32 @@ const ListNotification = observer(class ListNotification extends React.Component
 		this.resize();
 	};
 
-	componentWillUnmount(): void {
-		window.clearTimeout(this.timeout);
-	};
+	onShow () {
+		if (this.isExpanded) {
+			return;
+		};
 
-	onMouseEnter () {
-		const node = $(this.node);
-
-		node.addClass('isExpanded');
+		$(this.node).addClass('isExpanded');
 
 		this.isExpanded = true;
 		this.resize();
-
-		window.clearTimeout(this.timeout);
 	};
 
-	onMouseLeave () {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const node = $(this.node);
+	onHide (e: any) {
+		e.stopPropagation();
 
-			node.removeClass('isExpanded');
+		if (!this.isExpanded) {
+			return;
+		};
 
-			this.isExpanded = false;
-			this.resize();
-		}, 500);
+		$(this.node).removeClass('isExpanded');
+
+		this.isExpanded = false;
+		this.resize();
+	};
+
+	onClear () {
+		notificationStore.clear();
 	};
 
 	resize () {
@@ -121,7 +128,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 				item = $(item);
 				item.css({ 
 					width: (this.isExpanded ? '100%' : `calc(100% - ${4 * i * 2}px)`),
-					right: (this.isExpanded ? 12 : 12 + 4 * i),
+					right: (this.isExpanded ? 0 : 4 * i),
 				});
 				
 				const h = item.outerHeight();
@@ -147,9 +154,12 @@ const ListNotification = observer(class ListNotification extends React.Component
 
 			if (!this.isExpanded) {
 				nh = fh + 4 * (LIMIT - 1);
+			} else 
+			if (items.length) {
+				nh += 38;
 			};
 
-			node.css({ height: nh + 50 });
+			node.css({ height: nh });
 		});
 	};
 	
