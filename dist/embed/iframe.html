@@ -34,9 +34,9 @@
 
 			window.addEventListener('resize', resize);
 
-			window.addEventListener('error', e => {
-				e.preventDefault();
-			});
+			window.onerror = function (message, url, lineNumber) {  
+				return true;
+			};
 
 			function resize (e) {
 				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
