@@ -167,6 +167,7 @@
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
+			"dist/embed/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
