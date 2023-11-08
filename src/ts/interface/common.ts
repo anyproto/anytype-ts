@@ -181,6 +181,7 @@ export interface ButtonComponent {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	showDot?: boolean;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 };
 

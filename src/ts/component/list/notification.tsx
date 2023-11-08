@@ -86,7 +86,9 @@ const ListNotification = observer(class ListNotification extends React.Component
 		this.resize();
 	};
 
-	onShow () {
+	onShow (e: any) {
+		e.stopPropagation();
+
 		if (this.isExpanded) {
 			return;
 		};
