@@ -10,7 +10,8 @@
 
 	.head { display: none; flex-direction: row; justify-content: flex-end; align-items: center; margin: 0px 0px 14px 0px; gap: 0px 8px; flex-shrink: 0; }
 	.head {
-		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: $colorBgPrimary; @include border; }
+		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: $colorBgPrimary; @include border; transition: $transitionAllCommon; }
+		.icon:hover { background-color: $colorShapeHighlightLight; }
 		.icon.hide { background-image: url('~img/icon/notification/hide.svg'); background-size: 12px 8px; }
 		.icon.clear { background-image: url('~img/icon/notification/delete.svg'); background-size: 10px; }
 	}
@@ -19,8 +20,8 @@
 
 	.notification {
 		width: 100%; min-height: 110px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
-    	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s;
-		transition-property: transform, opacity, bottom; opacity: 1; user-select: none;
+    	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
+		opacity: 1; user-select: none; @include shadow;
 	}
 
 	.notification.from, .notification.to { opacity: 0; transform-origin: 50% 50%; transform: scale3d(0.75, 0.75, 1); }
@@ -37,6 +38,7 @@
 			.title { @include text-small; font-weight: 600; margin: 0px 0px 2px 0px; }
 			.label { @include text-small; margin: 0px 0px 12px 0px; }
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; }
+			.button { @include text-small; font-weight: 500; }
 
 			.element { display: inline; }
 			.element {
@@ -46,11 +48,10 @@
 			}
 		}
 	}
-	.notification:first-child { @include shadow; }
 	.notification:first-child {
 		.content { display: block; }
 	}
-	.notification:hover {
+	.notification:first-child:hover {
 		.icon.delete { opacity: 1; }
 	}
 
@@ -59,8 +60,10 @@
 .notifications.isExpanded {
 	.head { display: flex; }
 
-	.notification { @include shadow; }
 	.notification {
 		.content { display: block; }
+	}
+	.notification:hover {
+		.icon.delete { opacity: 1; }
 	}
 }

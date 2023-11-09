@@ -1412,12 +1412,11 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectImportExperience = (spaceId: string, source: string, isLocal: boolean, callBack?: (message: any) => void) => {
+const ObjectImportExperience = (spaceId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
-	request.setSource(source);
-	request.setIslocal(isLocal);
+	request.setUrl(url);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
