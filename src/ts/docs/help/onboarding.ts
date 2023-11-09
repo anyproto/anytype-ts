@@ -54,7 +54,7 @@ export default {
             }
         ],
 		onComplete: (force: boolean) => {
-			Onboarding.start('changeDefaultTypeInSet', keyboard.isPopup(), force);
+			Onboarding.start('setSettings', keyboard.isPopup(), force);
 		},
         param: {
             element: '#page.isFull #footer #button-help',
@@ -187,6 +187,9 @@ export default {
     dashboard: () => ({
         category: translate('onboardingDashboard'),
         showConfetti: true,
+		onComplete: (force: boolean) => {
+			Onboarding.start('navigation', keyboard.isPopup(), force);
+		},
         items: [
             {
                 description: `
@@ -356,20 +359,64 @@ export default {
 		],
 	}),
 
-	changeDefaultTypeInSet: () => (
+	setSettings: () => (
 		{
 			items: [
 				{
 					name: translate('onboardingDefaultTypeTitle'),
 					description: translate('onboardingDefaultTypeDescription'),
+					param: {
+						element: '#button-dataview-add-record-select',
+						horizontal: I.MenuDirection.Right,
+						offsetX: -4,
+						offsetY: 12,
+					},
+				},
+
+				{
+					description: translate('onboardingCalendarDescription'),
+					param: {
+						element: '#button-dataview-settings',
+						horizontal: I.MenuDirection.Right,
+						offsetX: -4,
+						offsetY: 12,
+					},
+				},
+			],
+		}
+	),
+
+	templateSelect: () => (
+		{
+			items: [
+				{
+					description: translate('onboardingTemplateSelectDescription'),
 				},
 			],
 
 			param: {
-				element: '#button-dataview-add-record-select',
-				horizontal: I.MenuDirection.Right,
-				offsetX: -4,
+				element: '#headerBanner',
+				horizontal: I.MenuDirection.Center,
 				offsetY: 12,
+				noButton: true,
+			},
+		}
+	),
+
+	navigation: () => (
+		{
+			items: [
+				{
+					description: translate('onboardingSpaceSelect'),
+				},
+			],
+
+			param: {
+				element: '#navigationPanel #button-navigation-profile',
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
+				offsetY: -24,
+				noButton: true,
 			},
 		}
 	),

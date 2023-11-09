@@ -258,6 +258,12 @@ html.themeDark {
         }
     }
 
+	.progressBar {
+		.bar {
+			.fill.empty { background-color: $colorShapeTertiary; }
+		}
+	}
+
     .tooltip { background: $colorShapeSecondary; color: $colorTextPrimary; }
     .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
 

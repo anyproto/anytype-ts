@@ -108,7 +108,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	};
 
 	onClick (e: any, item: any) {
-		UtilObject.openAuto(item);
+		UtilObject.openPopup(item);
 	};
 
 	onSelect (item: any, icon: string) {

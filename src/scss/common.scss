@@ -48,7 +48,7 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 #globalFade { 
-	position: fixed; z-index: 10000; background: $colorBgPrimary; left: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0;
+	position: fixed; z-index: 999; background: $colorBgPrimary; left: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0;
 	transition: opacity 0.25s ease-in-out;
 }
 #globalFade.show { opacity: 1; }
