@@ -421,6 +421,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (filter) {
 			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+
+			const settingsSpace: any[] = ([
+				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
+
+				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
+				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+
+				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+			] as any).map(it => {
+				it.isSpace = true;
+				it.className = 'isSpace';
+				return it;
+			}).filter(it => it.name.match(reg));
 			
 			const settingsItems: any[] = ([
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
@@ -429,17 +445,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
 				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
-
-				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle'), isSpace: true },
-
-				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle'), isSpace: true },
-				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle'), isSpace: true },
-				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
-
-				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle'), isSpace: true },
-				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle'), isSpace: true },
-				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle'), isSpace: true },
-			] as any).map(it => {
+			] as any).concat(settingsSpace).map(it => {
 				it.isSettings = true;
 				return it;
 			}).filter(it => it.name.match(reg));
@@ -498,6 +504,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else 
 		if (item.isSettings) {
 			window.setTimeout(() => {
+				console.log(item);
+
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
 			}, Constant.delay.popup);
 		} else {
