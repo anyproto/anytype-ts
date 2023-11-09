@@ -246,8 +246,6 @@
 								.txt { @include text-overflow-nw; line-height: unset; }
 							}
 
-							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
-							.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 							.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 							.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 							.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
@@ -474,13 +472,6 @@
 				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
 				.name { @include text-small; line-height: 1em; }
 			}
-
-			.item.notion .icon { background-image: url('~img/icon/import/notion.svg'); }
-			.item.markdown .icon { background-image: url('~img/icon/import/markdown.svg'); }
-			.item.html .icon { background-image: url('~img/icon/import/html.svg'); }
-			.item.text .icon { background-image: url('~img/icon/import/text.svg'); }
-			.item.csv .icon { background-image: url('~img/icon/import/csv.svg'); }
-			.item.protobuf .icon { background-image: url('~img/icon/import/protobuf.svg'); }
 		}
 
 		.side.right.tabImportNotion, 

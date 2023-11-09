@@ -51,10 +51,28 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const Item = (item: any) => {
 			let content = null;
+			let icon = null;
+			let object = null;
+
+			if (item.isObject) {
+				object = item;
+			} else 
+			if (item.id == 'account') {
+				object = UtilObject.getProfile();
+			} else 
+			if (item.id == 'spaceIndex') {
+				object = UtilObject.getSpaceview();
+			};
+
+			if (object) {
+				icon = <IconObject object={object} size={18} />;
+			} else {
+				icon = <Icon className={item.icon} />;
+			};
+
 			if (item.isObject) {
 				content = (
 					<React.Fragment>
-						<IconObject object={item} size={18} />
 						<ObjectName object={item} />
 						<div className="caption">{item.caption}</div>
 					</React.Fragment>
@@ -62,7 +80,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				content = (
 					<React.Fragment>
-						{item.icon ? <Icon className={item.icon} /> : ''}
 						<div className="name">{item.name}</div>
 						<div className="caption">
 							{item.shortcut.map((item, i) => (
@@ -80,6 +97,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					onMouseOver={e => this.onOver(e, item)} 
 					onClick={e => this.onClick(e, item)}
 				>
+					{icon}
 					{content}
 				</div>
 			);
@@ -402,26 +420,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		/* Settings */
 
 		if (filter) {
+			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+			
 			const settingsItems: any[] = ([
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
-				{ id: 'personal', icon: 'personal', name: translate('popupSettingsPersonalTitle') },
-				{ id: 'appearance', icon: 'appearance', name: translate('popupSettingsAppearanceTitle') },
-				{ id: 'pinIndex', icon: 'pin', name: translate('popupSettingsPinTitle') },
-				{ id: 'dataManagement', icon: 'storage', name: translate('popupSettingsDataManagementTitle') },
-				{ id: 'phrase', icon: 'phrase', name: translate('popupSettingsPhraseTitle') },
-				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle'), isSpace: true, className: 'isSpaceCreate' },
-				{ id: 'importIndex', icon: 'import', name: translate('popupSettingsImportTitle') },
-				{ id: 'importNotion', icon: 'export', name: translate('popupSettingsImportNotionTitle') },
-				{ id: 'importCsv', name: translate('popupSettingsImportCsvTitle') },
-				{ id: 'exportIndex', name: translate('popupSettingsExportTitle') },
-				{ id: 'exportProtobuf', name: translate('popupSettingsExportProtobufTitle') },
-				{ id: 'exportMarkdown', name: translate('popupSettingsExportMarkdownTitle') },
+				{ id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle') },
+				{ id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle') },
+				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+
+				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle'), isSpace: true },
+
+				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle'), isSpace: true },
+				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle'), isSpace: true },
+				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+
+				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle'), isSpace: true },
+				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle'), isSpace: true },
+				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle'), isSpace: true },
 			] as any).map(it => {
-				it.icon = it.icon ? `settings-${it.icon}` : '';
 				it.isSettings = true;
-				it.shortcut = [];
 				return it;
-			});
+			}).filter(it => it.name.match(reg));
 
 			items = items.concat(settingsItems);
 		};
@@ -432,7 +453,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
 		};
 
-		return items;
+		return items.map(it => {
+			it.shortcut = it.shortcut || [];
+			return it;
+		});
 	};
 
 	filterMapper (it: any) {
