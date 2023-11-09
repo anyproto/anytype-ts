@@ -1,5 +1,9 @@
 import { I, UtilCommon } from 'Lib';
 
+const DOMAINS: any  = {};
+DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
+DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
+
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
@@ -13,6 +17,38 @@ class UtilEmbed {
 
 	getVimeoHtml (content: string): string {
 		return `<iframe src="${content}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+	};
+
+	getProcessorByUrl (url: string): I.EmbedProcessor {
+		let p = null;
+		for (let i in DOMAINS) {
+			const reg = new RegExp(DOMAINS[i].join('|'), 'gi');
+			if (url.match(reg)) {
+				p = Number(i);
+				break;
+			};
+		};
+		return p;
+	};
+
+	getParsedUrl (url: string): string {
+		const processor = this.getProcessorByUrl(url);
+
+		switch (processor) {
+			case I.EmbedProcessor.Youtube: {
+				url = url.replace(/\/watch\/?\??/, '/embed/');
+				url = url.replace('v=', '');
+				break;
+			};
+
+			case I.EmbedProcessor.Vimeo: {
+				const a = new URL(url);
+				url = `https://player.vimeo.com/video${a.pathname}`;
+				break;
+			};
+		};
+
+		return url;
 	};
 
 };

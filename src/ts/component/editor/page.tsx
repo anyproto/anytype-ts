@@ -1730,23 +1730,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			{ id: 'cancel', name: translate('editorPagePasteText') },
 		].filter(it => it);
 
-		const embed = url.match(/(youtube.com|youtu.be|vimeo.com)/gi);
+		const processor = UtilEmbed.getProcessorByUrl(url);
 
-		let processor = null;
-		if (embed) {
-			switch (embed[0]) {
-				case 'youtu.be':
-				case 'youtube.com': {
-					processor = I.EmbedProcessor.Youtube;
-					break;
-				};
-
-				case 'vimeo.com': {
-					processor = I.EmbedProcessor.Vimeo;
-					break;
-				}
-			};
-
+		if (processor !== null) {
 			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
@@ -1831,31 +1817,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						case 'embed': {
-							if (processor === null) {
-								break;
+							if (processor !== null) {
+								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } });
 							};
-
-							switch (processor) {
-								case I.EmbedProcessor.Youtube: {
-									url = url.replace(/\/watch\/?\??/, '/embed/');
-									url = url.replace('v=', '');
-									break;
-								};
-
-								case I.EmbedProcessor.Vimeo: {
-									const a = new URL(url);
-									url = `https://player.vimeo.com/video${a.pathname}`;
-									break;
-								};
-							};
-
-							this.blockCreate(block.id, position, { 
-								type: I.BlockType.Embed,
-								content: {
-									processor,
-									text: UtilEmbed.getHtml(processor, url),
-								}
-							});
 							break;
 						};
 

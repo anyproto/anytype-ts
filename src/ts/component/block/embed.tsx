@@ -5,7 +5,7 @@ import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
-import { I, keyboard, UtilCommon, C, focus, Renderer, translate } from 'Lib';
+import { I, keyboard, UtilCommon, C, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
@@ -454,6 +454,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		switch (processor) {
 			default: {
 				let iframe = node.find('iframe');
+				let text = this.text;
 
 				const sandbox = [ 'allow-scripts' ];
 				const onLoad = () => {
@@ -461,10 +462,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					const env = this.getEnvironmentContent();
 					const data: any = { ...env, theme: commonStore.getThemeClass() };
 
+					if ([ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ].includes(processor)) {
+						if (!text.match(/<iframe/)) {
+							text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+						};
+					};
+
 					if (processor == I.EmbedProcessor.Chart) {
-						data.js = this.text;
+						data.js = text;
 					} else {
-						data.html = this.text;
+						data.html = text;
 					};
 
 					iw.postMessage(data, '*');
