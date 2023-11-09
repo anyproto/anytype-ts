@@ -180,7 +180,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item" onClick={() => onPage('importIndex')}>
 								<div className="sides">
 									<div className="side left">
-										<Icon className="import" />
+										<Icon className="settings-import" />
 										<Title text={translate(`popupSettingsSpaceIndexImport`)} />
 									</div>
 									<div className="side right">
@@ -192,7 +192,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item" onClick={() => onPage('exportIndex')}>
 								<div className="sides">
 									<div className="side left">
-										<Icon className="export" />
+										<Icon className="settings-export" />
 										<Title text={translate(`popupSettingsSpaceIndexExport`)} />
 									</div>
 									<div className="side right">
