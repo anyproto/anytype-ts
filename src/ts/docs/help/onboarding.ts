@@ -53,9 +53,6 @@ export default {
                 buttonText: translate('onboardingMainSet3Button'),
             }
         ],
-		onComplete: (force: boolean) => {
-			Onboarding.start('setSettings', keyboard.isPopup(), force);
-		},
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
