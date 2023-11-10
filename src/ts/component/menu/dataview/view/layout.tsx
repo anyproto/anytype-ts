@@ -153,12 +153,19 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const current = data.view.get();
 		const clearGroups = isBoard && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		if (isBoard && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
-		};
-
 		if (isCalendar && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = 'lastModifiedDate';
+		};
+
+		if (isBoard || isCalendar) {
+			const groupOptions = Relation.getGroupOptions(rootId, blockId, this.param.type);
+			if (!groupOptions.map(it => it.id).includes(this.param.groupRelationKey)) {
+				if (isCalendar) {
+					this.param.groupRelationKey = 'lastModifiedDate';
+				} else {
+					this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
+				};
+			};
 		};
 
 		if (withName) {
