@@ -371,7 +371,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			const filters = [];
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option, I.ObjectLayout.SpaceView, I.ObjectLayout.Space ] },
+			];
 			if (this.searchIds) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
