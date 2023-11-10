@@ -60,7 +60,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						value={name}
 						label={translate('menuDataviewViewName')}
 						readonly={readonly}
-						placeholder={this.defaultName(type)}
+						placeholder={Dataview.defaultViewName(type)}
 						maxLength={32}
 						onKeyUp={this.onKeyUp}
 						onFocus={this.onNameFocus}
@@ -126,7 +126,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		
 		let n = name;
 		for (const i in I.ViewType) {
-			if (n == this.defaultName(Number(i))) {
+			if (n == Dataview.defaultViewName(Number(i))) {
 				n = '';
 				break;
 			};
@@ -213,26 +213,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const current = data.view.get();
-		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if (withName) {
 			this.param.name = this.getViewName();
 		};
 
-		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
-		};
-
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
-			if (clearGroups) {
-				Dataview.groupUpdate(rootId, blockId, current.id, []);
-				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
-			} else {
-				if (onSave) {
-					onSave();
-				};
-			};
-		});
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, onSave);
 	};
 
 	getSections () {
@@ -260,7 +246,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const layoutSettings = [
-			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
+			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: Dataview.defaultViewName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
 			!isCalendar ? { id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') } : null,
 		];
@@ -348,21 +334,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			return;
 		};
 
-		if (item.sectionId == 'type') {
-			let withName = false;
-			if (this.param.name == this.defaultName(this.param.type)) {
-				this.param.name = this.defaultName(item.id);
-				withName = true;
-			};
-			this.param.type = item.id;
-			this.save(withName);
-
-			analytics.event('ChangeViewType', {
-				type: item.id,
-				objectType: object.type,
-				embedType: analytics.embedType(isInline)
-			});
-		} else 
 		if (view.id) {
 			this.preventSaveOnClose = true;
 			close();
@@ -418,11 +389,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	getViewName (name?: string) {
-		return (name || this.param.name || this.defaultName(this.param.type)).trim();
-	};
-
-	defaultName (type: I.ViewType): string {
-		return translate(`viewName${type}`);
+		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
 	};
 
 	resize () {
