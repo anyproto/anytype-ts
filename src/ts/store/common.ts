@@ -1,9 +1,8 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
-import { blockStore, dbStore } from 'Store';
+import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import * as Sentry from '@sentry/browser';
 
 interface Filter {
 	from: number;
@@ -22,9 +21,12 @@ interface Graph {
 };
 
 interface SpaceStorage {
-	bytesUsed: number;
 	bytesLimit: number;
 	localUsage: number;
+	spaces: {
+		spaceId: string;
+		bytesUsage: number;
+	}[],
 };
 
 class CommonStore {
@@ -68,9 +70,9 @@ class CommonStore {
 	};
 
 	public spaceStorageObj: SpaceStorage = {
-		bytesUsed: 0,
 		bytesLimit: 0,
 		localUsage: 0,
+		spaces: [],
 	};
 
     constructor() {
@@ -144,11 +146,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.note);
+		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
 
 		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.typeKey.note);
+			type = dbStore.getTypeByKey(Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';
@@ -191,16 +193,8 @@ class CommonStore {
 	};
 
 	get spaceStorage (): SpaceStorage {
-		let { bytesUsed, localUsage } = this.spaceStorageObj;
-		
-		if (bytesUsed <= 1024 * 1024) {
-			bytesUsed = 0;
-		};
-		if (localUsage <= 1024 * 1024) {
-			localUsage = 0;
-		};
-
-		return { ...this.spaceStorageObj, bytesUsed, localUsage };
+		const spaces = this.spaceStorageObj.spaces || [];
+		return { ...this.spaceStorageObj, spaces };
 	};
 
 	get interfaceLang (): string {

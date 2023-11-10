@@ -503,7 +503,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
-		if (row) {
+		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
@@ -513,14 +513,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.active = item;
 
 		if (this.active) {
-			const item = node.find(`#item-${$.escapeSelector(this.active.id)}`);
+			const element = node.find(`#item-${$.escapeSelector(this.active.id)}`);
 
-			item.addClass('active');
+			element.addClass('active');
 
-			Preview.tooltipShow({
-				text: this.aliases[this.active.itemId] || this.active.itemId,
-				element: item,
-			});
+			Preview.tooltipShow({ text: (this.aliases[this.active.itemId] || this.active.itemId), element });
 		};
 	};
 

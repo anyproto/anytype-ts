@@ -72,11 +72,6 @@ html.themeDark {
 		.controls, .emptySearch { border-color: $colorShapePrimary; }
 	}
 
-	.progressBar {
-        .bar { background: $colorBgSecondary; }
-        .fill { background: $colorSystemAccent100; }
-	}
-
     /* Components */
 
     .loaderWrapper {
@@ -263,6 +258,12 @@ html.themeDark {
         }
     }
 
+	.progressBar {
+		.bar {
+			.fill.empty { background-color: $colorShapeTertiary; }
+		}
+	}
+
     .tooltip { background: $colorShapeSecondary; color: $colorTextPrimary; }
     .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
 
@@ -362,7 +363,7 @@ html.themeDark {
 
 	.navigationPanel { background: rgba(141, 141, 141, 0.2); }
 	.navigationPanel {
-		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
+		.iconWrap:hover { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
     @import "./menu.scss";

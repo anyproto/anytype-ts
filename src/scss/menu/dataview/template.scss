@@ -16,16 +16,12 @@
 			.item::before { display: none; }
 
 			.item {
-				.icon.more {
-					position: static;
-					width: 20px;
-					height: 20px;
-					margin: 0px;
-				}
+				.icon.more { position: static; width: 20px; height: 20px; margin: 0px; opacity: 1; }
 				.icon.more:hover { background-color: unset; }
 
 				.previewObject {
 					.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
+					.moreWrapper.hover { opacity: 1; }
 				}
 				.previewObject.isDefault {
 					.border { border-color: $colorSystemAccent100; border-width: 2px; }

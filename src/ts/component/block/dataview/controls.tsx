@@ -48,6 +48,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
+		const cmd = keyboard.cmdSymbol();
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -148,6 +149,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search"
+							tooltip={translate('commonSearch')}
+							tooltipCaption={`${cmd} + F`}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>
@@ -414,12 +417,15 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
-		this.refFilter.focus();
+
+		if (!isInline) {
+			this.refFilter.focus();
+		};
 
 		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
 			const value = this.refFilter.getValue();

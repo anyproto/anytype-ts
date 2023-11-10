@@ -221,10 +221,6 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
-
 			const { details } = message;
 			const eventParam: any = { layout: object.layout };
 
@@ -255,6 +251,10 @@ class Action {
 
 			detailStore.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', eventParam);
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -545,16 +545,14 @@ class Action {
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
 							if (callBack) {
 								callBack(message);
 							};
 
-							Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-							analytics.event('DeleteSpace', { type: deleted.spaceType });
+							if (!message.error.code) {
+								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
+								analytics.event('DeleteSpace', { type: deleted.spaceType });
+							};
 						});
 					};
 

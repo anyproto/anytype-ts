@@ -29,6 +29,10 @@
 			@media (max-width: 960px) {
 				.title { @include text-header1; }
 			}
+
+			@media (max-width: 660px) {
+				.title { @include text-header2; }
+			}
 		}
 
 		.tabs { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; }

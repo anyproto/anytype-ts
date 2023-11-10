@@ -223,11 +223,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const filter = String(data.filter || '');
-		const skipKeys = (data.skipKeys || []).concat(Relation.systemKeysWithoutUser());
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
+			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
 		];
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },

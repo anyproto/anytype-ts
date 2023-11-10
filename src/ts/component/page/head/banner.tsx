@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C, analytics } from 'Lib';
+import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -85,6 +85,14 @@ class HeaderBanner extends React.Component<Props> {
 		);
 	};
 
+	componentDidMount (): void {
+		const { type, isPopup } = this.props;
+
+		if (type == I.BannerType.TemplateSelect) {
+			Onboarding.start('templateSelect', isPopup);
+		};
+	};
+
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
@@ -92,7 +100,7 @@ class HeaderBanner extends React.Component<Props> {
 		const templateId = sourceObject || Constant.templateId.blank;
 		const node = $(this.node);
 
-		if (menuStore.isOpen('dataviewTemplateList')) {
+		if (!type || menuStore.isOpen('dataviewTemplateList')) {
 			return;
 		};
 
@@ -120,15 +128,19 @@ class HeaderBanner extends React.Component<Props> {
 				typeId: type.id,
 				templateId,
 				previewSize: I.PreviewSize.Medium,
+				onSetDefault: () => {
+					UtilObject.setDefaultTemplateId(type.id, templateId);
+				},
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);
 
-					analytics.event('SelectTemplate');
+					analytics.event('SelectTemplate', { route: 'Banner' });
 					menuContext.close();
 				},
 			},
 		});
 	};
+
 };
 
 export default HeaderBanner;

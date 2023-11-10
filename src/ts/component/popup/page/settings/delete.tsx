@@ -1,15 +1,22 @@
 import * as React from 'react';
-import { Title, Button, Checkbox } from 'Component';
+import { Title, Button, Checkbox, Error } from 'Component';
 import { I, C, translate, UtilRouter, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Head from './head';
 
-const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<I.PopupSettings> {
+interface State {
+	error: string;
+};
 
-	refCheckbox = null;
+const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<I.PopupSettings, State> {
+
+	refCheckbox: any = null;
 	refButton = null;
-	node = null;
+	node: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.PopupSettings) {
 		super(props);
@@ -19,6 +26,8 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	};
 
 	render () {
+		const { error } = this.state;
+
 		return (
 			<div
 				ref={node => this.node = node}
@@ -38,7 +47,9 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 					<Checkbox ref={ref => this.refCheckbox = ref} /> {translate('popupSettingsDeleteCheckboxLabel')}
 				</div>
 
-				<Button ref={ref => this.refButton = ref} text={translate('commonDelete')} color="red c36" onClick={this.onDelete} />
+				<Button ref={ref => this.refButton = ref} text={translate('commonDelete')} color="red" className="c36" onClick={this.onDelete} />
+
+				<Error text={error} />
 			</div>
 		);
 	};
@@ -55,6 +66,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 		C.AccountDelete((message: any) => {
 			if (message.error.code) {
+				this.setState({ error: message.error.description });
 				return;
 			};
 

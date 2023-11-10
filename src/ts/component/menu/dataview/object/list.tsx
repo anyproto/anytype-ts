@@ -252,16 +252,18 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [].concat(data.filters || []);
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() }
+		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
 			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
-		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			if (map.length) {
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
+			};
 		};
 
 		if (clear) {
@@ -336,8 +338,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			cellRef.clear();
 		};
 
-		const objectTypes = Relation.getArrayValue(relation.objectTypes);
-
 		const cb = (id: string) => {
 			if (!id) {
 				return;
@@ -357,31 +357,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			const details: any = { name: filter };
-			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
-			
-			let type = null;
-
-			if (objectTypes.length) {
-				const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => {
-					return it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout);
-				});
-				const l = allowedTypes.length;
-
-				if (l) {
-					type = allowedTypes[0];
-
-					if (l > 1) {
-						flags.push(I.ObjectFlag.SelectType);
-					};
-				};
-			};
-
-			if (type) {
-				details.type = type.id;
-			} else {
-				flags.push(I.ObjectFlag.SelectType);
-			};
+			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
 			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);

@@ -2,6 +2,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -253,12 +254,11 @@ const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message:
 	dispatcher.request(FileListOffload.name, request, callBack);
 };
 
-const FileSpaceUsage = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.File.SpaceUsage.Request();
 
-	request.setSpaceid(spaceId);
+const FileNodeUsage = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
 
-	dispatcher.request(FileSpaceUsage.name, request, callBack);
+	dispatcher.request(FileNodeUsage.name, request, callBack);
 };
 
 const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -1173,7 +1173,7 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, t
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
-	request.setObjecttypeuniquekey(typeKey);
+	request.setObjecttypeuniquekey(typeKey || Constant.default.typeKey);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1607,7 +1607,6 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request(ObjectApplyTemplate.name, request, callBack);
 };
 
-
 const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ShareByLink.Request();
 
@@ -1826,7 +1825,7 @@ export {
 	FileDownload,
 	FileDrop,
 	FileListOffload,
-	FileSpaceUsage,
+	FileNodeUsage,
 
 	NavigationGetObjectInfoWithLinks,
 

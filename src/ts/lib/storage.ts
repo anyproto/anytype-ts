@@ -5,6 +5,7 @@ const SPACE_KEYS = [
 	'toggle',
 	'lastOpened',
 	'scroll',
+	'defaultType',
 ];
 
 class Storage {

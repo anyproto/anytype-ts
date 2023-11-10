@@ -145,21 +145,15 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onCoverOpen () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass('hover');
 		};
-
-		const node = $(this.node);
-		node.addClass('hover');
 	};
 
 	onCoverClose () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass('hover');
 		};
-		
-		const node = $(this.node);
-		node.removeClass('hover');
 	};
 
 	onCoverSelect (item: any) {
