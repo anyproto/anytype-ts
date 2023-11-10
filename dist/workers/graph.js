@@ -70,7 +70,9 @@ let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
+let rootId = '';
 let root = null;
+let paused = false;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -82,7 +84,7 @@ init = (param) => {
 	data = param;
 	canvas = data.canvas;
 	settings = data.settings;
-
+	rootId = data.rootId;
 	ctx = canvas.getContext('2d');
 
 	util.ctx = ctx;
@@ -99,12 +101,12 @@ init = (param) => {
 
 	initForces();
 
-	simulation.on('tick', () => { redraw(); });
+	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
 	// Center initially on root node
 	setTimeout(() => {
-		const root = getNodeById(data.rootId);
+		root = getNodeById(rootId);
 
 		let x = width / 2;
 		let y = height / 2;
@@ -207,8 +209,6 @@ updateForces = () => {
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
 
-	const root = getNodeById(data.rootId);
-
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
@@ -219,11 +219,11 @@ updateForces = () => {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
-	if (settings.local && root) {
-		edges = edges.filter(d => (d.source == root.id) || (d.target == root.id));
+	// Filte local only edges
+	if (settings.local) {
+		edges = edges.filter(d => (d.source == rootId) || (d.target == rootId));
 
 		const nodeIds = util.arrayUnique([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
-
 		nodes = nodes.filter(d => nodeIds.includes(d.id));
 	};
 
@@ -247,7 +247,9 @@ updateForces = () => {
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	// Shallow copy to disable mutations
-	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+	nodes = nodes.map(d => {
+		return Object.assign(old.get(d.id) || { x: width / 2, y: width / 2 }, d);
+	});
 	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
@@ -263,8 +265,7 @@ updateForces = () => {
 		edgeMap.set(d.id, [].concat(sources).concat(targets));
 	});
 
-	simulation.alpha(1).restart();
-	redraw();
+	simulation.alpha(0.1).restart();
 };
 
 updateSettings = (param) => {
@@ -300,7 +301,7 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawLine(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
@@ -314,10 +315,12 @@ draw = (t) => {
 
 redraw = () => {
 	cancelAnimationFrame(frame);
-	frame = requestAnimationFrame(draw);
+	if (!paused) {
+		frame = requestAnimationFrame(draw);
+	};
 };
 
-drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
+drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
 	const r1 = getRadius(d.source);
@@ -588,6 +591,22 @@ onSelect = ({ x, y, selectRelated }) => {
 	};
 };
 
+onSetRootId = ({ x, y }) => {
+  	const d = getNodeByCoords(x, y);
+	if (d) {
+		this.setRootId({ rootId: d.id });
+	};
+};
+
+onSetEdges = (param) => {
+	data.edges = param.edges;
+	updateForces();
+};
+
+onSetSelected = ({ ids }) => {
+	selected = ids;
+};
+
 onMouseMove = ({ x, y }) => {
 	const active = nodes.find(d => d.isOver);
 	const d = getNodeByCoords(x, y);
@@ -629,12 +648,11 @@ onContextMenu = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (!d) {
 		send('onContextSpaceClick', { x, y });
-		return;
+	} else {
+		send('onContextMenu', { node: d, x, y });
+		d.isOver = true;
+		redraw();
 	};
-
-	d.isOver = true;
-	send('onContextMenu', { node: d, x, y });
-	redraw();
 };
 
 onAddNode = ({ target, sourceId }) => {
@@ -681,18 +699,10 @@ onRemoveNode = ({ ids }) => {
 	redraw();
 };
 
-onSetEdges = (param) => {
-	data.edges = param.edges;
+setRootId = (param) => {
+	rootId = param.rootId;
+	root = getNodeById(rootId);
 
-	updateForces();
-};
-
-onSetSelected = ({ ids }) => {
-	selected = ids;
-};
-
-onSetRootId = ({ rootId }) => {
-	root = nodes.find(d => d.id == rootId);
 	if (!root) {
 		return;
 	};
@@ -707,12 +717,14 @@ onSetRootId = ({ rootId }) => {
 		transform = Object.assign(transform, coords);
 		redraw();
 	})
-	.onComplete(() => {
-		send('onTransform', { ...transform });
-	})
+	.onComplete(() => send('onTransform', { ...transform }))
 	.start();
 
-	redraw();
+	if (settings.local) {
+		updateForces();
+	} else {
+		redraw();
+	};
 };
 
 restart = (alpha) => {
