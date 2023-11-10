@@ -21,17 +21,12 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
-const csp = [
-	`default-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-	`img-src 'self' http://*:* https://*:* data: blob: file://*`,
-	`media-src 'self' http://*:* https://*:* data: blob: file://* https://*.googlevideo.com`,
-	`style-src 'unsafe-inline' http://localhost:* file://* https://*.youtube.com/ https://*.vimeocdn.com`,
-	`font-src data: file://* http://localhost:* https://*.youtube.com/ https://*.vimeocdn.com`,
-	`connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data: https://*.youtube.com/ https://*.vimeocdn.com/ https://*.vimeo.com/ https://*.googlevideo.com https://*.akamaized.net`,
-	`script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline' https://*.youtube.com/ https://*.vimeocdn.com https://*.gstatic.com/`,
-	`frame-src chrome-extension://react-developer-tools http://localhost:*/embed/iframe.html https://*.youtube.com/ https://*.vimeo.com/`,
-	`worker-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-];
+const Cors = require('./electron/json/cors.json');
+const csp = [];
+
+for (let i in Cors) {
+	csp.push([ i ].concat(Cors[i]).join(' '));
+};
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);

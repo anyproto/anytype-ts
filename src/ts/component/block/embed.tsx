@@ -457,6 +457,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				let text = this.text;
 
 				const sandbox = [ 'allow-scripts' ];
+				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud ];
+
+				if (allowSameOrigin.includes(processor)) {
+					sandbox.push('allow-same-origin');
+				};
+
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
@@ -475,13 +481,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					};
 
 					iw.postMessage(data, '*');
-
-					win.off(`message.${block.id}`).on(`message.${block.id}`, (e: any) => {
-					});
-				};
-
-				if ([ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo].includes(processor)) {
-					sandbox.push('allow-same-origin');
+					win.off(`message.${block.id}`).on(`message.${block.id}`, () => {});
 				};
 
 				if (!iframe.length) {

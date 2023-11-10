@@ -1,0 +1,89 @@
+{
+	"default-src": [ 
+		"'self'", 
+		"'unsafe-eval'", 
+		"blob:", 
+		"http://localhost:*" 
+	],
+
+	"img-src": [ 
+		"'self'", 
+		"http://*:*", 
+		"https://*:*", 
+		"data:", 
+		"blob:", 
+		"file://*",
+		"https://*.sndcdn.com"
+	],
+
+	"media-src": [ 
+		"'self'", 
+		"http://*:*", 
+		"https://*:*", 
+		"data:", 
+		"blob:", 
+		"file://*", 
+		"https://*.googlevideo.com" 
+	],
+
+	"style-src": [ 
+		"'unsafe-inline'", 
+		"http://localhost:*", 
+		"file://*", 
+		"https://*.youtube.com", 
+		"https://*.vimeocdn.com" 
+	],
+
+	"font-src": [ 
+		"data:", 
+		"file://*", 
+		"http://localhost:*", 
+		"https://*.youtube.com", 
+		"https://*.vimeocdn.com" 
+	],
+
+	"connect-src": [ 
+		"file://*", 
+		"data:",
+		"http://localhost:*", 
+		"http://127.0.0.1:*",
+		"ws://localhost:*", 
+		"https://*.anytype.io", 
+		"https://api.amplitude.com", 
+		"devtools://devtools", 
+		"https://*.youtube.com",
+		"https://*.vimeocdn.com", 
+		"https://*.vimeo.com", 
+		"https://*.googlevideo.com", 
+		"https://*.akamaized.net",
+		"https://*.soundcloud.com",
+		"https://*.sndcdn.com"
+	],
+
+	"script-src-elem": [
+		"file:",
+		"'unsafe-inline'",
+		"http://localhost:*",
+		"https://sentry.io",
+		"devtools://devtools",
+		"https://*.youtube.com",
+		"https://*.vimeocdn.com",
+		"https://*.gstatic.com",
+		"https://*.sndcdn.com"
+	],
+
+	"frame-src": [
+		"chrome-extension://react-developer-tools",
+		"http://localhost:*/embed/iframe.html",
+		"https://*.youtube.com",
+		"https://*.vimeo.com",
+		"https://w.soundcloud.com"
+	],
+
+	"worker-src": [ 
+		"'self'", 
+		"'unsafe-eval'", 
+		"blob:", 
+		"http://localhost:*" 
+	]
+}

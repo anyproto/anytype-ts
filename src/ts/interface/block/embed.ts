@@ -6,6 +6,7 @@ export enum EmbedProcessor {
 	Chart		 = 2,
 	Youtube		 = 3,
 	Vimeo		 = 4,
+	Soundcloud	 = 5,
 };
 
 export interface ContentEmbed {

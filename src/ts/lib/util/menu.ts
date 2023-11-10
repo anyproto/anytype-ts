@@ -49,11 +49,13 @@ class UtilMenu {
 			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', lang: 'Latex' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', lang: 'Mermaid' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', lang: 'Chart' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', lang: 'Youtube' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', lang: 'Vimeo' },
+
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
 		].map(this.mapperBlock);
 	};
 
