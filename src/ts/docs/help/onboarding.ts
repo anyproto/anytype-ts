@@ -53,9 +53,6 @@ export default {
                 buttonText: translate('onboardingMainSet3Button'),
             }
         ],
-		onComplete: (force: boolean) => {
-			Onboarding.start('setSettings', keyboard.isPopup(), force);
-		},
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
@@ -374,6 +371,7 @@ export default {
 				},
 
 				{
+					name: translate('onboardingCalendarTitle'),
 					description: translate('onboardingCalendarDescription'),
 					param: {
 						element: '#button-dataview-settings',
@@ -390,6 +388,7 @@ export default {
 		{
 			items: [
 				{
+					name: translate('onboardingTemplateSelectTitle'),
 					description: translate('onboardingTemplateSelectDescription'),
 				},
 			],
@@ -407,7 +406,8 @@ export default {
 		{
 			items: [
 				{
-					description: translate('onboardingSpaceSelect'),
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
 				},
 			],
 
