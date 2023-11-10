@@ -223,6 +223,10 @@
 					.item { border-color: $colorShapeSecondary; }
 				}
 			}
+
+			.day.other {
+				.number { color: $colorTextTertiary; }
+			}
 		}
 
 		.content {

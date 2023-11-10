@@ -161,16 +161,9 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	save (value: string[], callBack?: () => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { objectId, blockId } = data;
+		const { objectId } = data;
 
-		C.ObjectSetSource(objectId, value, () => {
-			$(window).trigger(`updateDataviewData.${blockId}`);
-
-			if (callBack) {
-				callBack();
-			};
-		});
-
+		C.ObjectSetSource(objectId, value, callBack);
 		this.forceUpdate();
 	};
 

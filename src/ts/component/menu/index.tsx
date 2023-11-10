@@ -568,7 +568,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			x = Math.min(ww - width - BORDER, x);
 
 			y = Math.max(minY, y);
-			y = Math.min(wh - height - BORDER, y);
+			y = Math.min(wh - height - 80, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
