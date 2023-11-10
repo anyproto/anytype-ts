@@ -52,6 +52,7 @@
 		.separator .inner { background: $colorShapeSecondary; }
 
         .item { background: none; }
+		.item::before { background: rgba(238, 238, 238, 0); }
         .item.hover::before { background: $colorShapeHighlightMedium; }
         .item {
             .icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }

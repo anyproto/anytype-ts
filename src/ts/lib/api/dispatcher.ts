@@ -1076,6 +1076,7 @@ class Dispatcher {
 
 			if (undefined !== details.setOf) {
 				blockStore.updateWidgetData(rootId);
+				$(window).trigger(`updateDataviewData.dataview`);
 			};
 
 			blockStore.checkTypeSelect(rootId);
