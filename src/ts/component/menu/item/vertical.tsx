@@ -22,7 +22,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			cn.push(className);
 		};
 		if (color) {
-			cn.push(color + ' withColor');
+			cn.push(`textColor textColor-${color}`);
 		};
 		if (withArrow) {
 			cn.push('withArrow');

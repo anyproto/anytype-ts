@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'Component';
 import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { commonStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -69,9 +69,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	onSearch () {
 		const { graph } = commonStore;
-		const menuParam = Object.assign({
-			element: '#button-header-search',
-			className: 'fromHeader',
+		const menuParam = {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: this.rootId,
@@ -87,18 +85,16 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 					commonStore.graphSet({ filter: v });
 				},
 			}
-		});
+		};
 
-		menuStore.open('searchObject', menuParam);
+		this.props.menuOpen('searchObject', '#button-header-search', menuParam);
 	};
 
 	onFilter () {
 	};
 
 	onSettings () {
-		const { menuOpen } = this.props;
-
-		menuOpen('graphSettings', '#button-header-settings', { horizontal: I.MenuDirection.Right });
+		this.props.menuOpen('graphSettings', '#button-header-settings', { horizontal: I.MenuDirection.Right });
 	};
 
 	setRootId (id: string) {

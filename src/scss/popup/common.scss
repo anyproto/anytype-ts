@@ -4,7 +4,7 @@
 	.popup { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 101; }
 	.popup.show {
 		.innerWrap { opacity: 1; transform: scale3d(1,1,1); }
-		.dimmer { opacity: 1; }
+		.dimmer { opacity: 1; -webkit-app-region: no-drag; }
 	}
 	.popup.showDimmer {
 		.dimmer { background: rgba(0,0,0,0.25); }

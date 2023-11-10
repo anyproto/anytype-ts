@@ -470,7 +470,7 @@ drawNode = (d) => {
 			x = d.x - radius;
 			y = d.y - radius;
 	
-			if (isIconCircle(d)) {
+			if (isLayoutHuman(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
 				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
@@ -740,10 +740,6 @@ const isLayoutHuman = (d) => {
 
 const isLayoutBookmark = (d) => {
 	return d.layout == ObjectLayout.Bookmark;
-};
-
-const isIconCircle = (d) => {
-	return isLayoutHuman(d);
 };
 
 const getNodeById = (id) => {

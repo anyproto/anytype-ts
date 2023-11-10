@@ -238,24 +238,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources, getView } = data;
+		const { rootId, blockId, readonly } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
 
-		const typeId = getTypeId();
-		const objectType = detailStore.get(rootId, typeId);
-		const defaultTypeName = objectType ? objectType.name : '';
-
-		const templateId = getTemplateId();
-		const template = detailStore.get(rootId, templateId);
-		const templateName = (templateId == Constant.templateId.blank) ? translate('commonBlank') : template.name;
-
-		const hasSources = (isCollection || getSources().length);
-		const allowedDefaultType = isAllowedDefaultType();
-		const allowedDefaultSettings = hasSources && (allowedDefaultType || isAllowedTemplate());
-
 		const isBoard = type == I.ViewType.Board;
+		const isCalendar = type == I.ViewType.Calendar;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -270,46 +259,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt.push(`+${relations.length - 2}`);
 		};
 
-		const updateDefaultTemplate = (item) => {
-			if (item.id == Constant.templateId.new) {
-				if (onTemplateAdd) {
-					onTemplateAdd(item.targetObjectType);
-				};
-			} else {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id });
-			};
-		};
-
-		const defaultSettings = [
-			{
-				id: 'defaultType',
-				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
-				subComponent: 'dataviewTemplateList',
-				caption: allowedDefaultType ? defaultTypeName : templateName,
-				data: {
-					rebind: this.rebind,
-					typeId,
-					hasSources,
-					getView,
-					templateId: getTemplateId(),
-					defaultTemplate: template,
-					withTypeSelect: allowedDefaultType,
-					onSelect: updateDefaultTemplate,
-					onSetDefault: updateDefaultTemplate,
-					onTypeChange: (id) => {
-						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-
-							analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
-						};
-					}
-				}
-			}
-		];
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') }
+			!isCalendar ? { id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') } : null,
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
@@ -317,7 +270,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		];
 
 		let sections: any[] = [
-			allowedDefaultSettings ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
 			{ id: 'layoutSettings', name: '', children: layoutSettings },
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
@@ -334,7 +286,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);
 			return s;
-		});
+		}).filter(s => !!s.children.length);
 
 		return sections;
 	};

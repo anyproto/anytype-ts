@@ -152,20 +152,30 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const object = detailStore.get(rootId, rootId, [ 'targetObjectType', 'featuredRelations' ]);
+		const object = detailStore.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
 		const relations = dbStore.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
-		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => {
-			return { ...dbStore.getRelationById(it), scope: I.RelationScope.Type };
-		}).filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
+		const readonly = this.isReadonly();
+		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
+			...dbStore.getRelationById(it), 
+			scope: I.RelationScope.Type,
+		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
 		items = items.sort(UtilData.sortByHidden).filter((it: any) => {
-			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
+			if (!it) {
+				return false;
+			};
+
+			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey])) {
+				return false;
+			};
+
+			return !config.debug.ho ? !it.isHidden : true;
 		});
 
 		let sections = [ 
@@ -186,8 +196,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			});
 		};
 
-		sections = sections.filter(it => it.children.length);
-		return sections;
+		return sections.filter(it => it.children.length);
 	};
 
 	getItems () {
@@ -243,7 +252,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
+				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId).concat(Relation.systemKeysWithoutUser()),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -326,6 +335,20 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		container.scrollTop(y);
 	};
 
+	isReadonly (): boolean {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, readonly } = data;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return false;
+		};
+
+		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		return Boolean(readonly || root.isLocked() || !allowedValue);
+	};
+
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
@@ -334,9 +357,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const container = UtilCommon.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
+		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - UtilCommon.sizeHeader() - 16,
+			height: container.height() - UtilCommon.sizeHeader() - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

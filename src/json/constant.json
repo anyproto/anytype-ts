@@ -26,7 +26,8 @@
 		"interfaceLang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
-		"pinTime": 600
+		"pinTime": 600,
+		"typeKey": "ot-note"
 	},
 	
 	"delay": {
@@ -73,7 +74,7 @@
 
 	"defaultRelationKeys": [ 
 		"id", "spaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
-		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId"
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId", "identityProfileLink", "createdDate"
 	],
 
 	"sidebarRelationKeys": [
@@ -91,6 +92,7 @@
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
+	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "createdDate" ],
 
 	"pageCoverRelationKey": "pageCover",
 
@@ -127,7 +129,8 @@
 		"option": "ot-relationOption",
 		"collection": "ot-collection",
 		"dashboard": "ot-dashboard",
-		"date": "ot-date"
+		"date": "ot-date",
+		"profile": "ot-profile"
 	},
 
 	"storeSpaceId": "_anytype_marketplace",

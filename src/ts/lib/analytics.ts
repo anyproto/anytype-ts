@@ -7,7 +7,7 @@ import { OnboardStage } from 'Component/page/auth/animation/constants';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -148,6 +148,8 @@ class Analytics {
 				break;
 			};
 
+			case 'ObjectInstall':
+			case 'ObjectUninstall':
 			case 'SelectGraphNode':
 			case 'CreateObject': {
 				data.layout = I.ObjectLayout[data.layout];
@@ -273,6 +275,7 @@ class Analytics {
 			};
 
 			case 'SelectUsecase': {
+				data.type = Number(data.type) || 0;
 				data.type = I.Usecase[data.type];
 				break;
 			};
@@ -326,6 +329,12 @@ class Analytics {
 				break;
 			};
 
+			case 'DeleteSpace': {
+				data.type = Number(data.type) || 0;
+				data.type = I.SpaceType[data.type];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -348,6 +357,11 @@ class Analytics {
 
 		if (undefined !== converted.align) {
 			converted.align = I.BlockHAlign[converted.align];
+		};
+
+		if (undefined !== converted.usecase) {
+			converted.usecase = Number(converted.usecase) || 0;
+			converted.usecase = I.Usecase[converted.usecase];
 		};
 
 		param = Object.assign(param, converted);
@@ -378,7 +392,6 @@ class Analytics {
 	popupMapper (params: any): string {
 		const { id } = params;
 		const map = {
-			settings: 'ScreenSettings',
 			search: 'ScreenSearch',
 		};
 
@@ -412,14 +425,30 @@ class Analytics {
 		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
-	typeMapper (id: string) {
-		const type = dbStore.getTypeById(id);
-		return type ? (type.sourceObject ? type.sourceObject : 'custom') : '';
+	typeMapper (id: string): string {
+		const object = dbStore.getTypeById(id);
+		if (!object) {
+			return '';
+		};
+
+		if (!object.isInstalled) {
+			return object.id;
+		} else {
+			return object.sourceObject ? object.sourceObject : 'custom';
+		};
 	};
 
 	relationMapper (key: string) {
-		const relation = dbStore.getRelationByKey(key);
-		return relation ? (relation.sourceObject ? relation.sourceObject : 'custom') : '';
+		const object = dbStore.getRelationByKey(key);
+		if (!object) {
+			return '';
+		};
+
+		if (!object.isInstalled) {
+			return object.id;
+		} else {
+			return object.sourceObject ? object.sourceObject : 'custom';
+		};
 	};
 
 	embedType (isInline: boolean): string {

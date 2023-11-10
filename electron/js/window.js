@@ -24,7 +24,7 @@ class WindowManager {
 	create (options, param) {
 		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { languages, zoom } = ConfigManager.config;
+		const { languages, zoom, hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -64,8 +64,13 @@ class WindowManager {
 
 		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
 
-		Api.setLanguage(win, languages);
+		Api.setSpellingLang(win, languages);
 		Api.setZoom(win, zoom);
+
+		if (hideMenuBar) {
+			win.setMenuBarVisibility(false);
+			win.setAutoHideMenuBar(true);
+		};
 
 		return win;
 	};
@@ -232,6 +237,10 @@ class WindowManager {
 		this.list.forEach(it => {
 			Util.send.apply(this, [ it ].concat(args));
 		});
+	};
+
+	reloadAll () {
+		this.list.forEach(it => it.webContents.reload());
 	};
 
 };

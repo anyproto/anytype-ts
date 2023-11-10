@@ -1,9 +1,8 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
-import { blockStore, dbStore } from 'Store';
+import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import * as Sentry from '@sentry/browser';
 
 interface Filter {
 	from: number;
@@ -21,9 +20,12 @@ interface Graph {
 };
 
 interface SpaceStorage {
-	bytesUsed: number;
 	bytesLimit: number;
 	localUsage: number;
+	spaces: {
+		spaceId: string;
+		bytesUsage: number;
+	}[],
 };
 
 class CommonStore {
@@ -44,6 +46,7 @@ class CommonStore {
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
+	public techSpaceId = '';
 	public notionToken = '';
 
 	public previewObj: I.Preview = { 
@@ -65,9 +68,9 @@ class CommonStore {
 	};
 
 	public spaceStorageObj: SpaceStorage = {
-		bytesUsed: 0,
 		bytesLimit: 0,
 		localUsage: 0,
+		spaces: [],
 	};
 
     constructor() {
@@ -86,6 +89,7 @@ class CommonStore {
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
 			spaceId: observable,
+			techSpaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -95,6 +99,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			space: computed,
+			techSpace: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -107,6 +112,7 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
+			techSpaceSet: action,
 			spaceStorageSet: action,
 		});
 
@@ -138,11 +144,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.page);
+		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
 
 		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.typeKey.page);
+			type = dbStore.getTypeByKey(Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';
@@ -176,21 +182,17 @@ class CommonStore {
 		return String(this.spaceId || '');
 	};
 
+	get techSpace(): string {
+		return String(this.techSpaceId || '');
+	};
+
 	get graph(): Graph {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
 
 	get spaceStorage (): SpaceStorage {
-		let { bytesUsed, localUsage } = this.spaceStorageObj;
-		
-		if (bytesUsed <= 1024 * 1024) {
-			bytesUsed = 0;
-		};
-		if (localUsage <= 1024 * 1024) {
-			localUsage = 0;
-		};
-
-		return { ...this.spaceStorageObj, bytesUsed, localUsage };
+		const spaces = this.spaceStorageObj.spaces || [];
+		return { ...this.spaceStorageObj, spaces };
 	};
 
 	get interfaceLang (): string {
@@ -275,6 +277,10 @@ class CommonStore {
 
 	spaceSet (id: string) {
 		this.spaceId = String(id || '');
+	};
+
+	techSpaceSet (id: string) {
+		this.techSpaceId = String(id || '');
 	};
 
 	previewClear () {

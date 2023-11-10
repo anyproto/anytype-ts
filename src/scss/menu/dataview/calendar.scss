@@ -52,7 +52,7 @@
 	}
 
 	.menu.menuDataviewCalendarDay {
-		.content { padding: 8px 4px; }
+		.content { padding: 8px 4px 4px 4px; max-height: 272px; }
 
 		.number { @include text-paragraph; text-align: right; position: relative; z-index: 1; padding: 0px 8px; }
 		.day.active .number { color: $colorSystemAccent100; }

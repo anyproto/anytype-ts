@@ -245,10 +245,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, label, canAdd, addParam } = data;
+		const length = this.items.length;
 
 		let items = [].concat(this.items);
-		const length = items.length;
-
+		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
@@ -296,6 +296,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
+		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
@@ -305,6 +306,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
+			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
 		};
 
 		if (skipIds && skipIds.length) {
@@ -313,8 +315,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
-		if ([ I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Relation ] });
+		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
 		if (clear) {
@@ -458,7 +461,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
 					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
 					close();
 				});

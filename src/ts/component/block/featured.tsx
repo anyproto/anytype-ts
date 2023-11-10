@@ -411,7 +411,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
+
 		const menuParam = {
 			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
@@ -437,11 +438,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
+					keys: UtilData.typeRelationKeys(),
 					onClick: (item: any) => {
+						const open = () => UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+
 						detailStore.update(rootId, { id: item.id, details: item }, false);
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
-							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
+								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || Constant.templateId.blank, open);
+							} else {
+								open();
+							};
 						});
 
 						this.menuContext.close();
@@ -495,7 +503,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				const details: any = {};
 
 				if (type) {
-					details.name = type.name + ' set';
+					details.name = type.name;
 					details.iconEmoji = type.iconEmoji;
 				};
 

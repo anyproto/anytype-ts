@@ -13,6 +13,7 @@ interface Props {
 	checkPin?: boolean;
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
+	onCopy?: () => void;
 };
 
 interface State {
@@ -66,7 +67,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { readonly } = this.props;
+		const { readonly, onCopy } = this.props;
 		const { isHidden, hasError, phrase } = this.state;
 		const cn = [ 'phraseWrapper' ];
 
@@ -115,6 +116,7 @@ class Phrase extends React.Component<Props, State> {
 
 				<div id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</div>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
+				<Icon className="copy" onClick={onCopy} />
 			</div>
 		);
 	};

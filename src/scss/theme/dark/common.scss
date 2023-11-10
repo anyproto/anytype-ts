@@ -5,7 +5,7 @@ html.themeDark {
 
     /* Common */
 
-    body { background: $colorBgPrimary; color: $colorTextPrimary; }
+    body { background: $colorBgPrimary; color: $colorTextPrimary; color-scheme: dark; }
 
     a { color: $colorTextPrimary; }
     a:hover { color: $colorOrange; }
@@ -40,7 +40,7 @@ html.themeDark {
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
 	.isTag.archive { background-color: $colorShapeHighlightMedium; color: $colorTextSecondary; }
-    .isTag.tagColor-default { color: $colorTextPrimary !important; background: $colorTextPrimary !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+    .isTag.tagColor-default { color: $colorTextPrimary !important; background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
     .isTag.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
     .isTag.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
@@ -72,11 +72,6 @@ html.themeDark {
 		.controls, .emptySearch { border-color: $colorShapePrimary; }
 	}
 
-	.progressBar {
-        .bar { background: $colorBgSecondary; }
-        .fill { background: $colorSystemAccent100; }
-	}
-
     /* Components */
 
     .loaderWrapper {
@@ -87,7 +82,7 @@ html.themeDark {
 		}
 
         .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
-		.dot { animation-name: dots-dark; }
+		.dot { animation-name: dots-dark; border-color: $colorControlAccent; }
     }
 
     .mediaAudio {
@@ -263,6 +258,12 @@ html.themeDark {
         }
     }
 
+	.progressBar {
+		.bar {
+			.fill.empty { background-color: $colorShapeTertiary; }
+		}
+	}
+
     .tooltip { background: $colorShapeSecondary; color: $colorTextPrimary; }
     .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
 
@@ -362,7 +363,7 @@ html.themeDark {
 
 	.navigationPanel { background: rgba(141, 141, 141, 0.2); }
 	.navigationPanel {
-		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
+		.iconWrap:hover { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
     @import "./menu.scss";

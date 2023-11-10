@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate } from 'Lib';
+import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview } from 'Lib';
 import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
@@ -91,6 +91,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		this.setConfirmPin = this.setConfirmPin.bind(this);
 		this.setPinConfirmed = this.setPinConfirmed.bind(this);
 		this.setLoading = this.setLoading.bind(this);
+		this.onSpaceTypeTooltip = this.onSpaceTypeTooltip.bind(this);
 	};
 
 	render () {
@@ -122,6 +123,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					setConfirmPin={this.setConfirmPin}
 					setPinConfirmed={this.setPinConfirmed}
 					setLoading={this.setLoading}
+					onSpaceTypeTooltip={this.onSpaceTypeTooltip}
 				/>
 			);
 
@@ -376,6 +378,17 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		};
 
 		return false;
+	};
+
+	onSpaceTypeTooltip (e) {
+		Preview.tooltipShow({
+			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
+			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
+			className: 'big',
+			element: $(e.currentTarget),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Left
+		});
 	};
 
 	resize () {

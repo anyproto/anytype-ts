@@ -390,6 +390,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
+		const templateType = dbStore.getTemplateType();
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
@@ -397,6 +398,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		let limit = Constant.limit.menuRecords;
 		let filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 		for (let item of this.parsedFilters) {
 			//filters = filters.concat(item.filters || []);
@@ -611,7 +613,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else {
 			switch (item.id) {
 				case 'add': {
-					keyboard.pageCreate();
+					keyboard.pageCreate('Search');
 					break;
 				};
 

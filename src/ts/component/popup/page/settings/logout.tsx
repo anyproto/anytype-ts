@@ -82,10 +82,8 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			replace: true, 
 			animate: true,
 			onFadeIn: () => {
-				authStore.logout(false);
+				authStore.logout(true, false);
 				setPinConfirmed(false);
-
-				Renderer.send('logout');
 			},
 		});
 	};

@@ -44,8 +44,12 @@ class ListObjectPreview extends React.Component<Props> {
 		);
 
 		const ItemBlank = (item: any) => (
-			<div className="previewObject blank" onClick={onBlank}>
-				{onMenu ? <div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}><Icon className="more" /></div> : ''}
+			<div id={`item-${item.id}`} className="previewObject blank" onClick={onBlank}>
+				{onMenu ? (
+					<div id={`item-more-${item.id}`} className="moreWrapper" onClick={e => onMenu(e, item)}>
+						<Icon className="more" />
+					</div>
+				) : ''}
 
 				<div className="scroller">
 					<div className="heading">

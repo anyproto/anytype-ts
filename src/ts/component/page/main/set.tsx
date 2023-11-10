@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics, Preview } from 'Lib';
-import { blockStore, detailStore, popupStore, dbStore } from 'Store';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, UtilRouter } from 'Lib';
+import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
@@ -129,8 +129,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		this.unbind();
 
-		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
-		container.on('scroll.set' + namespace, e => this.onScroll());
+		win.on(`keydown.set${namespace}`, e => this.onKeyDown(e));
+		container.on(`scroll.set${namespace}`, () => this.onScroll());
 	};
 
 	checkDeleted () {
@@ -161,7 +161,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
@@ -229,29 +229,34 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			return;
 		};
 
+		const node = $(this.node);
 		const { selection } = dataset || {};
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const count = ids.length;
 		const rootId = this.getRootId();
 
+		keyboard.shortcut(`${cmd}+f`, e, () => {
+			e.preventDefault();
+
+			node.find('#dataviewControls .filter .icon.search').trigger('click');
+		});
+
 		if (!keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const subId = dbStore.getSubId(rootId, Constant.blockId.dataview);
-				const records = dbStore.getRecords(subId, '');
-
+				const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
-		};
 
-		if (count) {
-			keyboard.shortcut('backspace, delete', e, () => {
-				e.preventDefault();
-				Action.archive(ids);
-				selection.clear();
-			});
+			if (count && !menuStore.isOpen()) {
+				keyboard.shortcut('backspace, delete', e, () => {
+					e.preventDefault();
+					Action.archive(ids);
+					selection.clear();
+				});
+			};
 		};
 	};
 

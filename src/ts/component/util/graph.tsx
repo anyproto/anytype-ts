@@ -390,9 +390,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case I.ObjectLayout.Human: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
-				} else
-				if (d.iconOption) {
-					src = this.gradientIcon(d.iconOption);
 				};
 				break;
 			};

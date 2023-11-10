@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -86,7 +86,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 
 		this.isAllowedObject = this.isAllowedObject.bind(this);
-		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 	};
@@ -165,7 +164,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
 			isAllowedObject: this.isAllowedObject,
-			isAllowedTemplate: this.isAllowedTemplate,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
@@ -239,21 +237,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, isPopup, isInline } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const { isInline, isPopup } = this.props;
 
 		this.reloadData();
-
-		if (root.isObjectSet()) {
-			Onboarding.start('set', isPopup);
-		};
-
 		this.init();
 		this.resize();
 		this.rebind();
 
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
+
+		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
+			Onboarding.start('setSettings', isPopup);
+		};
 	};
 
 	componentDidUpdate () {
@@ -357,9 +353,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', { offset, viewId });
 
-		if ([ I.ViewType.Board ].includes(view.type)) {
+		if (view.type == I.ViewType.Board) {
 			if (this.refView && this.refView.loadGroupList) {
 				this.refView.loadGroupList();
+			} else {
+				this.viewId = '';
+			};
+		} else 
+		if (view.type == I.ViewType.Calendar) {
+			if (this.refView && this.refView.load) {
+				this.refView.load();
 			} else {
 				this.viewId = '';
 			};
@@ -551,7 +554,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const view = this.getView();
 		const conditions = [
 			I.FilterCondition.Equal,
@@ -575,6 +578,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			relations.forEach((it: any) => {
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+
+		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
+			details[view.groupRelationKey] = UtilDate.now();
 		};
 
 		for (const filter of view.filters) {
@@ -638,34 +645,47 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
 		const view = this.getView();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+
+		if (!view) {
+			return;
+		};
+
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
-		const type = dbStore.getTypeById((template && template.targetObjectType) ? template.targetObjectType : this.getTypeId());
+		
+		let typeId = '';
+		let templateId = '';
 
 		flags.push(I.ObjectFlag.SelectTemplate);
 
 		if (template) {
+			templateId = template.id;
+
 			if (template.targetObjectType) {
-				details.type = template.targetObjectType;
+				typeId = template.targetObjectType;
 			};
-
-			template = UtilData.checkBlankTemplate(template);
 		};
 
-		const templateId = template ? template.id : this.getDefaultTemplateId(details.type);
-		const currentTemplate = detailStore.get(rootId, templateId);
-
-		if (currentTemplate.isArchived || currentTemplate.isDeleted) {
-			template = null;
+		if (!typeId) {
+			typeId = this.getTypeId();
+		};
+		if (!templateId) {
+			templateId = this.getDefaultTemplateId(typeId);
 		};
 
-		C.ObjectCreate(details, flags, template?.id, type?.uniqueKey, commonStore.space, (message: any) => {
+		const type = dbStore.getTypeById(typeId);
+		const templateObject = detailStore.get(rootId, templateId);
+
+		if (templateObject.isArchived || templateObject.isDeleted) {
+			templateId = '';
+		};
+
+		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, commonStore.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -738,15 +758,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const defaultTemplateId = this.getDefaultTemplateId();
 		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
+		const typeId = this.getTypeId();
+		const type = dbStore.getTypeById(typeId);
 
 		this.creating = true;
 
-		if (details.layout == I.ObjectLayout.Bookmark) {
+		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				offsetX: dir < 0 ? -24 : 0,
+				offsetY: 4 * -dir,
 				data: {
 					details,
 					onSubmit: (bookmark) => {
@@ -764,8 +788,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateMenu (e: any, dir: number) {
 		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
-		const route = this.isCollection() ? 'Collection' : 'Set';
-		const hasSources = this.isCollection() || this.getSources().length;
+		const isCollection = this.isCollection();
+		const route = isCollection ? 'Collection' : 'Set';
+		const hasSources = isCollection || this.getSources().length;
+		const view = this.getView();
 
 		analytics.event('ClickNewOption', { route });
 
@@ -785,14 +811,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				typeId: this.getTypeId(),
 				templateId: this.getDefaultTemplateId(),
 				route,
+				onTypeChange: (id) => {
+					if (id != this.getTypeId()) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+
+						analytics.event('DefaultTypeChange', { route });
+					};
+				},
+				onSetDefault: (item) => {
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+				},
 				onSelect: (item: any) => {
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
 
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+
 						menuStore.closeAll();
-						analytics.event('SelectTemplate', { route });
+						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
 			}
@@ -802,6 +840,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateAdd (id?: string) {
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
+		const route = this.isCollection() ? 'Collection' : 'Set';
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
@@ -812,10 +851,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
-			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
+			const object = message.details;
 
-			UtilObject.openPopup(message.details);
+			focus.clear(true);
+			analytics.event('CreateTemplate', { objectType: typeId, route });
+
+			UtilObject.openPopup(object);
 		});
 	};
 
@@ -1151,10 +1192,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return isAllowed;
-	};
-
-	isAllowedTemplate (): boolean {
-		return UtilObject.isAllowedTemplate(this.getTypeId());
 	};
 
 	isAllowedDefaultType (): boolean {

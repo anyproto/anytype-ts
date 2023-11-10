@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.35.2",
+	"version": "0.35.17-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -44,6 +44,7 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
+		"@electron/notarize": "^2.1.0",
 		"@types/history": "^4.7.8",
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",
@@ -60,7 +61,6 @@
 		"css-loader": "^3.6.0",
 		"electron": "^25.0.0",
 		"electron-builder": "^24.6.3",
-		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",

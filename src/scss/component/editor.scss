@@ -69,7 +69,7 @@
 .editorWrapper.isResizing #editorSize { visibility: visible; }
 
 .editorWrapper.withDescription {
-	.blocks .block.blockText.description { display: flex; }
+	.blocks .block.blockText.textDescription { display: flex; }
 }
 
 .editor.help {

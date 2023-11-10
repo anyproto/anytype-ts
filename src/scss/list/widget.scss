@@ -26,6 +26,24 @@
 			padding: 0px 10px;
 		}
 	}
+
+	> .dropTarget.firstTarget, 
+	> .dropTarget.lastTarget 
+	{ position: relative; }
+
+	> .dropTarget.lastTarget { display: flex; flex-direction: column; gap: 12px 0px; }
+
+	> .dropTarget.firstTarget.isOver, 
+	> .dropTarget.lastTarget.isOver 
+	{ box-shadow: 0px 0px !important; }
+
+	> .dropTarget.firstTarget.isOver::before, 
+	> .dropTarget.lastTarget.isOver::before { 
+		content: ""; position: absolute; background: $colorSystemAccent100; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 12px;
+	}
+
+	> .dropTarget.firstTarget.isOver::before { bottom: -7px; }
+	> .dropTarget.lastTarget.isOver::before { top: -7px; }
 }
 
 .listWidget.isEditing {
@@ -50,7 +68,7 @@
 
 	.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
 	.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
-	.widget.isEditable.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
+	.widget.isEditable.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; height: 2px; width: calc(100% - 24px); border-radius: 2px; left: 12px; } 
 	.widget.isEditable.isOver.top::before { top: -7px; }
 	.widget.isEditable.isOver.bottom::before { bottom: -7px; }
 	.widget.isEditable:hover {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, UtilData, UtilCommon, Action, translate } from 'Lib';
+import { I, C, UtilData, UtilRouter, Action, translate } from 'Lib';
 import Constant from 'json/constant.json';
 import $ from 'jquery';
 
@@ -460,7 +460,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.ObjectShow(rootId, 'preview', () => {
+		C.ObjectShow(rootId, 'preview', UtilRouter.getRouteSpaceId(), () => {
 			if (!this._isMounted) {
 				return;
 			};

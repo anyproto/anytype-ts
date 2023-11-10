@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter, UtilDate } from 'Lib';
+import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Action } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
+import Constant from 'json/constant.json';
 
 type State = {
 	stage: Stage;
-	animationStage: Stage;
-	phraseCopied: boolean;
-	error?: string;
-	iconOption: number;
+	phraseVisible: boolean;
+	error: string;
 };
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
@@ -20,173 +18,124 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	node: HTMLDivElement = null;
 	refFrame: Frame = null;
 	refPhrase: Phrase = null;
-	refNext = null;
-	account: I.Account = null;
+	refNext: Button = null;
 	isDelayed = false;
+	isCreating = false;
 
 	state: State = {
 		stage: Stage.Void,
-		animationStage: Stage.Void,
-		phraseCopied: false,
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		phraseVisible: false,
+		error: '',
+	};
+
+	constructor (props: I.PageComponent) {
+		super(props);
+
+		this.onNext = this.onNext.bind(this);
+		this.onBack = this.onBack.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onAccountPath = this.onAccountPath.bind(this);
+		this.onShowPhrase = this.onShowPhrase.bind(this);
 	};
 
 	render () {
-		const { error, stage, animationStage } = this.state;
+		const { stage, phraseVisible, error } = this.state;
 		const { config } = commonStore;
+		const cnb = [];
 
-		let back = null;
-		let indicator = null;
-		let label = null;
-		let footer = null;
+		if (!this.canMoveForward()) {
+			cnb.push('disabled');
+		};
+
 		let content = null;
+		let footer = null;
+		let buttons = null;
+		let more = null;
 
-		if (this.canMoveBackward()) {
-			back = <Icon className="arrow back" onClick={this.onBack} />;
-		};
+		switch (stage) {
+			case Stage.Void: {
+				content = (
+					<div className="inputWrapper animation">
+						<Input
+							focusOnMount
+							type="text"
+							placeholder={translate('defaultNamePage')}
+							value={authStore.name}
+							onKeyUp={(e, v) => authStore.nameSet(v)}
+							maxLength={255}
+						/>
+					</div>
+				);
 
-		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			indicator = <DotIndicator className="animation" index={stage} count={4} />;
-			label = <Label id="label" className="animation" text={this.getText('Label')} />;
-		};
+				buttons = (
+					<div className="animation">
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />
+					</div>
+				);
+				break;
+			};
 
-		if ([ Stage.Phrase, Stage.Offline ].includes(stage) && config.experimental ) {
-			footer = (
-				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-					<Icon className="gear" />
-					{translate('pageAuthOnboardAccountDataLocation')}
-				</div>
-			);
-		};
+			case Stage.Phrase: {
+				const text = phraseVisible ? translate('authOnboardGoApp') : translate('authOnboardPhraseSubmit');
 
-		if (error) {
-			content = <Error className="animation" text={error} />;
-		} else {
-			content = (
-				<React.Fragment>
-					{indicator}
-					<Title className="animation" text={this.getText('Title')} />
-					{label}
-					{this.renderContent()}
-					{this.renderButtons()}
-					{footer}
-				</React.Fragment>
-			);
+				content = (
+					<div className="animation" onClick={this.onCopy}>
+						<Phrase
+							ref={ref => this.refPhrase = ref}
+							value={authStore.phrase}
+							readonly={true}
+							isHidden={!phraseVisible}
+							onCopy={this.onCopy}
+						/>
+					</div>
+				);
+
+				buttons = (
+					<React.Fragment>
+						<div className="animation">
+							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
+						</div>
+						<div className="animation">
+							<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
+						</div>
+					</React.Fragment>
+				);
+
+				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+
+				if (config.experimental) {
+					footer = (
+						<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
+							<Icon className="gear" />
+							{translate('pageAuthOnboardAccountDataLocation')}
+						</div>
+					);
+				};
+				break;
+			};
 		};
 
 		return (
 			<div ref={(ref) => (this.node = ref)}>
-				{back}
+				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>
+					<DotIndicator className="animation" index={stage} count={2} />
+					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
+					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+
 					{content}
+
+					<Error className="animation" text={error} />
+
+					<div className="buttons">{buttons}</div>
+
+					{more}
 				</Frame>
 
-				<CanvasWorkerBridge state={animationStage} />
-			</div>
-		);
-	};
+				{footer}
 
-	renderContent = (): JSX.Element => {
-		const { stage, phraseCopied, iconOption } = this.state;
-
-		if (stage == Stage.Phrase) {
-			return (
-				<div className="animation" onClick={this.onCopy}>
-					<Phrase
-						ref={(ref) => (this.refPhrase = ref)}
-						value={authStore.phrase}
-						readonly={true}
-						isHidden={!phraseCopied}
-					/>
-				</div>
-			);
-		};
-
-		if (stage == Stage.Soul) {
-			return (
-				<div className="inputWrapper animation">
-					<Input
-						focusOnMount={true}
-						type="text"
-						placeholder={translate('pageAuthOnboardEnterYourName')}
-						value={authStore.name}
-						onKeyUp={(e, v) => authStore.nameSet(v)}
-						maxLength={255}
-					/>
-				</div>
-			);
-		};
-
-		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			const cn = [ 'soulContent' ];
-
-			if (stage == Stage.SoulCreating) {
-				cn.push('soulCreating');
-			};
-
-			if (stage == Stage.SpaceCreating) {
-				cn.push('spaceCreating');
-			};
-
-			return (
-				// Hack, because React's diffing algorithm doesnt change the DOM node when only the className changes,
-				// so we have to set a different element type to force the DOM to change,
-				// otherwise the animation library css styles remain (I tried setting style={{}}, doesnt work)
-				// https://legacy.reactjs.org/docs/reconciliation.html
-				<section className={cn.join(' ')}>
-					<div className="account">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={64} />
-						<span className="accountName">
-							{authStore.name}
-						</span>
-					</div>
-
-					<div className="line left" />
-					<div className="line right" />
-
-					<div className="space">
-						<IconObject object={{ iconOption, layout: I.ObjectLayout.SpaceView }} size={64} />
-						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
-					</div>
-				</section>
-			);
-		};
-
-		return null;
-	};
-
-	renderButtons = (): JSX.Element => {
-		const { stage, phraseCopied } = this.state;
-		const cn = [ 'animation' ];
-
-		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			return null;
-		};
-
-		let text = this.getText('Submit');
-		let moreInfo = null;
-
-		if (stage == Stage.Void) {
-			text = translate('authOnboardSubmit');
-		};
-
-		if ((stage == Stage.Phrase) && phraseCopied) {
-			text = translate('authOnboardGoAhead');
-		};
-
-		if (stage == Stage.Phrase) {
-			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>{translate('pageAuthOnboardMoreInfo')}</div>;
-		};
-
-		if (!this.canMoveForward()) {
-			cn.push('disabled');
-		};
-
-		return (
-			<div className="buttons">
-				<Button ref={ref => this.refNext = ref} className={cn.join(' ')} text={text} onClick={this.onNext} />
-				{moreInfo}
+				<CanvasWorkerBridge state={Stage.Void} />
 			</div>
 		);
 	};
@@ -222,34 +171,20 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	rebind () {
 		const node = $(this.node);
-		const questionPhrase = node.find('#questionMarkPhrase');
-		const questionAccount = node.find('#questionMarkAccount');
+		const tooltipPhrase = node.find('#tooltipPhrase');
 
 		this.unbind();
-
 		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
-		questionPhrase.off('mouseenter mouseleave');
-		questionPhrase.on('mouseenter', () => this.onPhraseTooltip());
-		questionPhrase.on('mouseleave', () => Preview.tooltipHide());
-
-		questionAccount.off('mouseenter mouseleave');
-		questionAccount.on('mouseenter', () => this.onAccountTooltip());
-		questionAccount.on('mouseleave', () => Preview.tooltipHide());
+		tooltipPhrase.off('click').on('click', () => this.onPhraseTooltip());
 	};
 
-	getText = (name: string) => {
-		const { stage } = this.state;
-
-		return translate(`authOnboard${Stage[stage]}${name}`);
-	};
-
-	onKeyDown = (e) => {
+	onKeyDown (e) {
 		keyboard.shortcut('enter', e, this.onNext);
 	};
 
 	/** Guard to prevent illegal state change */
-	canMoveForward = (): boolean => {
+	canMoveForward (): boolean {
 		const { stage } = this.state;
 
 		if (this.isDelayed) {
@@ -257,131 +192,85 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		let ret = false;
-		if ([ Stage.Void, Stage.Phrase, Stage.Offline ].includes(stage)) {
-			ret = true;
-		};
-		if ((stage == Stage.Soul) && authStore.name) {
+		if ([ Stage.Void, Stage.Phrase ].includes(stage)) {
 			ret = true;
 		};
 		return ret;
 	};
 
 	/** Guard to prevent illegal state change */
-	canMoveBackward = (): boolean => {
-		return this.state.stage <= Stage.Soul;
+	canMoveBack (): boolean {
+		return this.state.stage <= Stage.Phrase;
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
-	onNext = () => {
+	onNext () {
 		if (!this.canMoveForward()) {
 			return;
 		};
 
-		const { stage, phraseCopied } = this.state;
-
-		if (stage == Stage.Phrase && !phraseCopied) {
-			this.refPhrase.onToggle();
-			this.setState({ phraseCopied: true });
-			this.onCopy();
-
-			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
-			return;
-		};
-
-		const delay = (cb, duration: number) => () => {
-			this.isDelayed = true;
-			window.setTimeout(() => {
-				this.isDelayed = false;
-				cb();
-			}, duration);
-		};
-		const incrementAnimation = (cb?) => () => this.setState((prev) => ({ ...prev, animationStage: prev.animationStage + 1 }), cb);
-		const incrementOnboarding = (cb?) => () => this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }), cb);
-
-		const run = () => {
+		const { stage } = this.state;
+		const { account, name } = authStore;
+		const next = () => {
 			Animation.from(() => {
-				this.refNext?.setLoading(false);
-
-				// Move animation forward, wait for delay, move onboarding forward
-				if (stage == Stage.Void) {
-					incrementAnimation(delay(incrementOnboarding(), 100))();
-					return;
-				};
-
-				// Move animation forward, wait for delay, move onboarding forward
-				if (stage == Stage.Phrase) {
-					incrementAnimation(delay(incrementOnboarding(), 1000))();
-					return;
-				};
-
-				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
-				if (stage == Stage.Offline) {
-					const second = delay(incrementOnboarding(), 500);
-					const first = delay(incrementAnimation(second), 2400);
-
-					incrementAnimation(first)();
-					return;
-				};
-
-				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
-				if (stage == Stage.Soul) {
-					const second = delay(incrementOnboarding(this.accountUpdate), 3000);
-					const first = delay(incrementOnboarding(second), 1000);
-
-					first();
-					return;
-				};
+				this.refNext.setLoading(false);
+				this.setState({ stage: stage + 1 });
 			});
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext?.setLoading(true);
-			this.accountCreate(() => run());
+			this.refNext.setLoading(true);
+
+			if (account) {
+				this.accountUpdate(() => next());
+			} else {
+				this.accountCreate(() => next());
+			};
 		} else {
-			run();
+			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
+
+			if (!name) {
+				analytics.event('ScreenOnboardingSkipName');
+			};
+		};
+	};
+
+	onShowPhrase () {
+		const { stage, phraseVisible } = this.state;
+
+		if (phraseVisible) {
+			this.onNext();
+		} else {
+			this.refPhrase.onToggle();
+			this.setState({ phraseVisible: true });
+
+			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
 		};
 	};
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
-	onBack = () => {
-		if (!this.canMoveBackward()) {
+	onBack () {
+		if (!this.canMoveBack()) {
 			return;
 		};
 
-		const { stage, animationStage } = this.state;
+		const { stage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilRouter.go('/', { replace: true });
-			return;
+			Animation.from(() => UtilRouter.go('/', { replace: true }));
+		} else {
+			this.setState({ stage: stage - 1 });
 		};
-
-		const nextStage = stage - 1;
-		let nextAnimation = animationStage - 1;
-
-		if (animationStage == Stage.SoulCreating) {
-			nextAnimation = Stage.Offline;
-		};
-
-		if (animationStage == Stage.Offline) {
-			nextAnimation = Stage.Void;
-		};
-
-		this.setState((prev) => ({
-			...prev,
-			animationStage: nextAnimation,
-			stage: nextStage,
-		}));
 	};
 
-	accountCreate = (callBack?: () => void): void => {
-		if (this.account) {
-			callBack();
-			return;
-		};
+	accountCreate (callBack?: () => void) {
+		this.refNext.setLoading(true);
 
-		C.WalletCreate(authStore.walletPath, (message) => {
+		const { name, walletPath } = authStore;
+
+		C.WalletCreate(walletPath, (message) => {
 			if (message.error.code) {
-				this.showErrorAndExit(message);
+				this.setError(message.error.description);
 				return;
 			};
 
@@ -389,117 +278,67 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			UtilData.createSession((message) => {
 				if (message.error.code) {
-					this.showErrorAndExit(message);
+					this.setError(message.error.description);
 					return;
 				};
 
-				const { iconOption } = this.state;
 				const { accountPath, phrase } = authStore;
 
-				C.AccountCreate('', '', accountPath, iconOption, (message) => {
+				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), (message) => {
 					if (message.error.code) {
-						this.showErrorAndExit(message);
+						this.setError(message.error.description);
 						return;
 					};
 
-					this.account = message.account;
+					authStore.accountSet(message.account);
+					commonStore.configSet(message.account.config, false);
+					commonStore.isSidebarFixedSet(true);
 
 					UtilData.onInfo(message.account.info);
-					commonStore.configSet(message.account.config, false);
-
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Storage.set('timeRegister', UtilDate.now());
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.Skip });
 
-					if (callBack) {
-						callBack();
-					};
+					C.WorkspaceSetInfo(commonStore.space, { name }, () => {
+						Action.importUsecase(commonStore.space, I.Usecase.Skip, callBack);
+					});
 				});
 			});
 		});
 	};
 
-	accountUpdate = () => {
-		const { profile } = blockStore;
+	accountUpdate = (callBack?: () => void): void => {
 		const { name } = authStore;
 
-		authStore.accountSet(this.account);
-
-		UtilObject.setName(profile, name, () => {
-			C.WorkspaceSetInfo(this.account.info.accountSpaceId, { name });
-
-			window.setTimeout(() => {
-				commonStore.redirectSet('/main/usecase');
-				UtilData.onAuth(this.account, this.account.info, { routeParam: { replace: true, animate: true } });
-			}, 2000);
+		UtilObject.setName(blockStore.profile, name, () => {
+			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
 		});
 	};
 
-	/** Shows an error message and reroutes to the index page after a delay */
-	showErrorAndExit = (message) => {
-		this.setState({ error: message.error.description }, () => window.setTimeout(() => UtilRouter.go('/', { replace: true }), 3000));
-	};
-
 	/** Copies key phrase to clipboard and shows a toast */
-	onCopy = () => {
+	onCopy () {
 		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
-	onPhraseTooltip = () => {
-		const node = $(this.node);
-		const element = node.find('#questionMarkPhrase');
-
-		Preview.tooltipShow({
-			delay: 150,
-			text: translate('authOnboardPhraseTooltip'),
-			element,
-			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Center,
-		});
-	};
-
-	onAccountTooltip = () => {
-		const node = $(this.node);
-		const element = node.find('#questionMarkAccount');
-
-		Preview.tooltipShow({
-			delay: 150,
-			text: translate('authOnboardAccountTooltip'),
-			element,
-			typeY: I.MenuDirection.Top,
-			typeX: I.MenuDirection.Center,
-		});
-	};
-
-	/** Shows a simple popup that educates the user about their account keyphrase */
-	onPhraseInfo = () => {
-		const { stage } = this.state;
-
-		popupStore.open('confirm', {
-			data: {
-				text: translate('authOnboardPhraseMoreInfoPopupContent'),
-				textConfirm: translate('commonOkay'),
-				canConfirm: true,
-				canCancel: false,
-				onConfirm: () => {
-					popupStore.close('confirm');
-				},
-			},
-		});
-
-		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: stage });
+	onPhraseTooltip () {
+		popupStore.open('phrase', {});
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath = () => {
+	onAccountPath () {
 		menuStore.open('accountPath', {
 			element: '#accountPath',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			offsetY: -20,
 		});
+	};
+
+	setError (error: string) {
+		this.refNext.setLoading(false);
+		this.setState({ error });
 	};
 
 });

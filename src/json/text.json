@@ -109,6 +109,8 @@
 	"commonBlank": "Blank",
 	"commonSetDefault": "Set as default",
 	"commonTemplates": "Templates",
+	"commonSkip": "Skip",
+	"commonCreateNew": "Create new",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -121,7 +123,7 @@
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
-	"pluralType": "Type|Types",
+	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
 
 	"electronAboutVersion": "Version:",
@@ -135,8 +137,10 @@
 	"electronMenuHideOthers": "Hide Others",
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
-	"electronMenuSpaceSettings": "Space Settings",
-	"electronMenuAccountSettings": "Account Settings",
+	"electronMenuSpaceSettings": "Space",
+	"electronMenuAccountSettings": "Account",
+	"electronMenuShowTray": "Show Anytype in Menu Bar",
+	"electronMenuShowMenu": "Show system menu",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
 	"electronMenuDirectory": "Show Work Directory",
@@ -265,14 +269,13 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectTitle": "the everything app",
-	"authSelectLabel": "For those who celebrate trust &amp; autonomy. Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "Login",
-	"authSelectSignup": "Join",
+	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
+	"authSelectLogin": "Log In",
+	"authSelectSignup": "Create New Account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSelfHost": "Self-host",
-	"authLoginSubmit": "Login",
+	"authLoginSubmit": "Log In",
 	"authLoginLostPhrase": "I've lost the Phrase",
 	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover Recovery Phrase for you<\/h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
@@ -296,26 +299,16 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardSubmit": "Next",
-	"authOnboardGoAhead": "Go ahead",
-	"authOnboardMoreInfo": "More info",
+	"authOnboardGoApp": "Go to the app",
 	"authOnboardAccountDataLocation": "Account data location",
-	"authOnboardVoidTitle": "This is the Void",
-	"authOnboardVoidLabel": "It is an encrypted location for everything you create. Everything is stored on your device, and backed up to the distributed network.",
-	"authOnboardPhraseTitle": "End-to-end Encryption",
-	"authOnboardPhraseLabel": "Your data is encrypted by the Key below - your secret Recovery phrase. Store it securely. This is the only way to login and access your Void. <span id='questionMarkPhrase' class='questionMark'>?<\/span>",
-	"authOnboardPhraseTooltip": "<b>How do I protect my recovery phrase?<\/b><ul><li>If you have system password storage, this will be done automatically when you create your account.<\/li><li>You can keep a copy inside your password manager, if you use one.<\/li><li>Writing it down and keeping it in a safe, secure place is another good option.<\/li><\/ul>",
-	"authOnboardPhraseMoreInfoPopupContent": "<b>No passwords here: Anytype uses a recovery phrase to protect your account and encrypt your data<\/b><ul><li>The phrase is a randomly generated 12-word mnemonic from your device (not our servers).<\/li><li>No one can access your account without your recovery phrase.<\/li><li>This phrase ensures that you are the sole owner of your data.<\/li><\/ul><b>Think of it like a key: If you lose your recovery phrase, there is no way to get it back<\/b><ul><li>To protect your privacy, Anytype is not able to store, access, reset, or change your recovery phrase, ie: only you hold the key.<\/li><li>Anytype will never reach out to ask for your recovery phrase.<\/li><li>Sharing the phrase is equivalent to sharing ownership of your account.<\/li><li>The ordering of the words in your recovery phrase matters.<\/li><\/ul>",
-	"authOnboardPhraseSubmit": "Show and copy",
-	"authOnboardOfflineTitle": "Offline-first application",
-	"authOnboardOfflineLabel": "Your data is kept locally on your device. A connection to the Internet is needed only to synchronize your data across devices or back it up to the distributed network",
-	"authOnboardOfflineSubmit": "Establish Connection",
-	"authOnboardSoulTitle": "Anytype Identity",
-	"authOnboardSoulLabel": "Great! As a last step, let's create your Identity <span id='questionMarkAccount' class='questionMark'>?<\/span> and enter your name. Don't worry \u2013 you can always change the name later.",
-	"authOnboardAccountTooltip": "Anytype uses asymmetric keys to verify data ownership. Your data, created in the system, is signed with your private key and can be authenticated by others using your public key, which acts as your identity.",
-	"authOnboardSoulSubmit": "Go to the app",
-	"authOnboardSoulCreatingTitle": "Creating your Identity...",
-	"authOnboardSpaceCreatingTitle": "Setting up your Personal space...",
+	"authOnboardMoreInfo": "You can find Recovery Phrase later in Anytype settings",
+
+	"authOnboardVoidTitle": "Choose your name",
+	"authOnboardVoidLabel": "This is how you will appear in the app",
+
+	"authOnboardPhraseTitle": "Save your Recovery Phrase",
+	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Show Recovery Phrase",
 
 	"usecase0Title": "Empty",
 	"usecase0Label": "Just a blank canvas",
@@ -330,7 +323,6 @@
 
 	"pageMainUsecaseTitle": "How would you like to start?",
 	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
-	"pageMainUsecaseSkip": "Skip",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
@@ -366,14 +358,13 @@
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
 
 	"pageAuthOnboardAccountDataLocation": "Account Data Location",
-	"pageAuthOnboardEnterYourName": "Enter your name",
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
 	"pageAuthSetupCongratulations": "⚡️ Congratulations!",
 	"pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEnteringVoid": "Entering the Void...",
+	"pageAuthSetupEntering": "Entering the Account...",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
@@ -385,6 +376,7 @@
 
 	"pageMainArchiveEmpty": "Your Bin is empty",
 	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
@@ -590,6 +582,7 @@
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
+	"popupSettingsPersonalDefaultObjectTypeDescription": "Set the default type for newly created objects",
 	"popupSettingsPersonalDefaultObjectTypeSelect": "Select",
 	"popupSettingsPersonalSpellcheckLanguage": "Spellcheck Languages",
 	"popupSettingsPersonalInterfaceLanguage": "Interface Language",
@@ -676,15 +669,15 @@
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 
-	"popupSettingsExportTitle": "Export",
+	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
 	"popupSettingsExportOk": "Export data",
 
-	"popupSettingsExportMarkdownTitle": "Export to Markdown",
+	"popupSettingsExportMarkdownTitle": "Export Space to Markdown",
 	"popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
 	"popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
-	"popupSettingsExportProtobufTitle": "Export to Any-Block",
+	"popupSettingsExportProtobufTitle": "Export Space to Any-Block",
 	"popupSettingsExportProtobufFormat": "File Format",
 
 	"popupSettingsLogout": "Log out",
@@ -750,7 +743,7 @@
 	"popupExportPageSize": "Page size",
 	"popupExportLandscape": "Landscape",
 	"popupExportPrintBackground": "Print background",
-	"popupExportTitle": "Export",
+	"popupExportTitle": "Export Object",
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
@@ -821,7 +814,7 @@
 	"popupShortcutMain": "Main",
 	"popupShortcutNavigation": "Navigation",
 	"popupShortcutMarkdown": "Markdown",
-	"popupShortcutCommands": "Commands",
+	"popupShortcutCommand": "Commands",
 
 	"popupShortcutBasics": "Basics",
 	"popupShortcutMainBasics1": "Create new Object",
@@ -882,6 +875,7 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
+	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -961,6 +955,14 @@
 	"popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
+
+	"popupPhraseTitle1": "What is a Recovery Phrase?",
+	"popupPhraseTitle2": "How to save my phrase?",
+	"popupPhraseLabel1": "Your Recovery Phrase is 12 random words from which your account is magically generated on this device.",
+	"popupPhraseLabel2": "Whomever knows your Recovery Phrase, owns the account. At this moment, you are the only person in the world who knows it.",
+	"popupPhraseLabel3": "That's why it's essential to keep your Recovery Phrase safe. As the sole owner, nobody can help you if it's lost.",
+	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
+	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
@@ -1078,6 +1080,7 @@
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
+	"menuDataviewFilterNewFilter": "New filter",
 	"menuDataviewViewEditView": "Edit view",
 
 	"menuDataviewUrlActionGo7": "Open link",
@@ -1162,7 +1165,6 @@
 
 	"menuDataviewTemplateSetDefaultForView": "Default for this view",
 	"menuDataviewTemplateEdit": "Edit template",
-	"menuDataviewTemplateUnsupported": "This Object Type doesn't support Templates",
 
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
@@ -1393,11 +1395,16 @@
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 
 	"navigationCreateNew": "Create new Object",
-	"navigationAccount": "Account",
+	"navigationAccount": "Spaces",
 
 	"spaceType0": "Private Space",
+	"spaceType1": "Personal Space",
+
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
+	"spaceDeleteWarningTitle": "Delete '%s' space",
+	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
+	"spaceDeleteToast": "Space '%s' was deleted",
 
 	"quickOption0": "Exact date",
 	"quickOption1": "Yesterday",
@@ -1501,6 +1508,18 @@
 	"onboardingInlineCollection1Description": "Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.",
 	"onboardingInlineCollection2Title": "Views",
 	"onboardingInlineCollection2Description": "Adjust rules and views to suit the current context.",
+
+	"onboardingDefaultTypeTitle": "Change Types Easily",
+	"onboardingDefaultTypeDescription": "You can change type and template of a new object in this menu.",
+
+	"onboardingCalendarTitle": "New Calendar View",
+	"onboardingCalendarDescription": "Display objects on a calendar based on selected date attributes.",
+
+	"onboardingTemplateSelectTitle": "New Template Selector",
+	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
+
+	"onboardingSpaceSelectTitle": "Meet Multiple Spaces",
+	"onboardingSpaceSelectDescription": "Click your profile icon to access the space selector. Switch between spaces or create new ones here.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",

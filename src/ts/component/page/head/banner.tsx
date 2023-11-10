@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C } from 'Lib';
-import { commonStore, dbStore, menuStore } from 'Store';
+import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
+import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -24,8 +24,7 @@ class HeaderBanner extends React.Component<Props> {
 
 	render () {
 		const { type, object, count } = this.props;
-		const menuOpened = menuStore.isOpen('dataviewTemplateList');
-		const cn = [ 'headerBanner', menuOpened ? 'menuOpened' : '' ];
+		const cn = [ 'headerBanner' ];
 
 		let label = '';
 		let target = null;
@@ -86,20 +85,29 @@ class HeaderBanner extends React.Component<Props> {
 		);
 	};
 
+	componentDidMount (): void {
+		const { type, isPopup } = this.props;
+
+		if (type == I.BannerType.TemplateSelect) {
+			Onboarding.start('templateSelect', isPopup);
+		};
+	};
+
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
 		const type = dbStore.getTypeById(object.type);
 		const templateId = sourceObject || Constant.templateId.blank;
+		const node = $(this.node);
 
-		if (menuStore.isOpen('dataviewTemplateList')) {
+		if (!type || menuStore.isOpen('dataviewTemplateList')) {
 			return;
 		};
 
 		let menuContext = null;
 
 		menuStore.open('dataviewTemplateList', {
-			element: $(this.node),
+			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
@@ -107,6 +115,10 @@ class HeaderBanner extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
+				node.addClass('active');
+			},
+			onClose: () => {
+				node.removeClass('active');
 			},
 			data: {
 				fromBanner: true,
@@ -116,13 +128,19 @@ class HeaderBanner extends React.Component<Props> {
 				typeId: type.id,
 				templateId,
 				previewSize: I.PreviewSize.Medium,
+				onSetDefault: () => {
+					UtilObject.setDefaultTemplateId(type.id, templateId);
+				},
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);
+
+					analytics.event('SelectTemplate', { route: 'Banner' });
 					menuContext.close();
 				},
 			},
 		});
 	};
+
 };
 
 export default HeaderBanner;

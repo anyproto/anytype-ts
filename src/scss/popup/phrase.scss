@@ -1,0 +1,23 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupPhrase {
+		.innerWrap { width: 548px; padding: 32px; }
+
+		.title { @include text-header3; text-align: center; margin: 0px 0px 24px 0px; }
+		.title.c2::before {
+			content: ""; width: 18px; height: 18px; display: inline-block; vertical-align: middle; background-image: url('~img/icon/popup/phrase/lock.svg');
+			background-repeat: no-repeat; background-position: center; background-size: contain; margin: -2px 6px 0px 0px;
+		}
+
+		.rows { display: flex; flex-direction: column; gap: 18px 0px; margin: 0px 0px 24px 0px; }
+		.row { display: flex; flex-direction: row; gap: 0px 24px; }
+
+		.columns { display: flex; flex-direction: row; gap: 0px 14px; margin: 0px 0px 16px 0px; }
+		.column { width: 50%; }
+
+		.button { width: 100%; }
+
+		li:before { content: ""; margin-left: -0.5rem; }
+	}
+}

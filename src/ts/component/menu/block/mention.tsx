@@ -214,6 +214,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
 		if (skipIds && skipIds.length) {
@@ -302,7 +303,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const type = dbStore.getTypeById(commonStore.type);
 			const name = this.getFilter();
 
-			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

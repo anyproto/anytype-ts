@@ -56,6 +56,10 @@ class AuthStore {
 		return String(this.accountPathValue || '');
     };
 
+	get accountSpaceId (): string {
+		return String(this.accountItem?.info?.accountSpaceId || '');
+	};
+
 	walletPathSet (v: string) {
 		this.walletPathValue = v;
     };
@@ -105,6 +109,12 @@ class AuthStore {
 		};
     };
 
+	accountSetStatus (status: I.AccountStatus) {
+		if (this.accountItem) {
+			set(this.accountItem.status, status);
+		};
+	};
+
 	accountIsDeleted (): boolean {
 		return this.accountItem && this.accountItem.status && [ 
 			I.AccountStatusType.StartedDeletion,
@@ -144,13 +154,17 @@ class AuthStore {
 		this.phraseSet('');
 	};
 
-	logout (removeData: boolean) {
-		C.WalletCloseSession(this.token, () => {
-			this.tokenSet('');
-			C.AccountStop(removeData);
-		});
+	logout (mainWindow: boolean, removeData: boolean) {
+		if (mainWindow) {
+			C.WalletCloseSession(this.token, () => {
+				this.tokenSet('');
+				C.AccountStop(removeData);
+			});
 
-		analytics.event('LogOut');
+			analytics.event('LogOut');
+			Renderer.send('logout');
+		};
+
 		analytics.profile('');
 		analytics.removeContext();
 
