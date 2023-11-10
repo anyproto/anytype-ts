@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate, Storage } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -219,6 +219,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		} else {
 			this.onChange(item.id);
 		};
+
+		Storage.setLastUsedTypes(item.id);
 	};
 
 	onObjectTo (layout: I.ObjectLayout) {

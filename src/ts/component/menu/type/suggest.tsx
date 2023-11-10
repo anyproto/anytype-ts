@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, Storage } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -441,10 +441,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		e.stopPropagation();
 
 		const cb = (item: any) => {
-			close(); 
+			close();
+
+			item = detailStore.mapper(item);
+
+			Storage.setLastUsedTypes(item.id);
 
 			if (onClick) {
-				onClick(detailStore.mapper(item));
+				onClick(item);
 			};
 		};
 
