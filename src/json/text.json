@@ -666,6 +666,8 @@
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
 
+	"popupSettingsImportNotionTitle": "Notion Import",
+
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
 

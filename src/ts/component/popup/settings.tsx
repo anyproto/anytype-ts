@@ -137,18 +137,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			let icon = null;
 			let name = null;
-			const onlineStatus = null;
 
 			if (action.id == 'account') {
-				const isOnline = true;
-				const status = isOnline ? 'online' : 'offline';
-
 				icon = <IconObject object={profile} size={36} iconSize={36} forceLetter={true} />;
 				name = profile.name;
+
 				cn.push('itemAccount');
-				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>
 			} else {
-				icon = <Icon className={action.icon || action.id} />;
+				icon = <Icon className={`settings-${action.icon || action.id}`} />;
 				name = action.name;
 			};
 
@@ -159,10 +155,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					onClick={() => this.onPage(action.id)}
 				>
 					{icon}
-					<div className="name">
-						{name}
-						{onlineStatus}
-					</div>
+					<div className="name">{name}</div>
 				</div>
 			);
 		};

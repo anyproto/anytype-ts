@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
+import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -51,23 +51,35 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const Item = (item: any) => {
 			let content = null;
+			let icon = null;
+			let object = null;
+
+			if (item.isObject) {
+				object = item;
+			} else 
+			if (item.id == 'account') {
+				object = UtilObject.getProfile();
+			} else 
+			if (item.id == 'spaceIndex') {
+				object = UtilObject.getSpaceview();
+			};
+
+			if (object) {
+				icon = <IconObject object={object} size={18} />;
+			} else {
+				icon = <Icon className={item.icon} />;
+			};
+
 			if (item.isObject) {
 				content = (
 					<React.Fragment>
-						<IconObject object={item} size={18} />
 						<ObjectName object={item} />
 						<div className="caption">{item.caption}</div>
 					</React.Fragment>
 				);
 			} else {
-				let caption = '';
-				if (item.shortcut) {
-					caption = item.shortcut.map(it => <div className="key">{it}</div>).join('');
-				};
-
 				content = (
 					<React.Fragment>
-						<Icon className={item.icon} />
 						<div className="name">{item.name}</div>
 						<div className="caption">
 							{item.shortcut.map((item, i) => (
@@ -82,9 +94,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				<div 
 					id={'item-' + item.id} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onMouseOver={(e: any) => { this.onOver(e, item); }} 
-					onClick={(e: any) => { this.onClick(e, item); }}
+					onMouseOver={e => this.onOver(e, item)} 
+					onClick={e => this.onClick(e, item)}
 				>
+					{icon}
 					{content}
 				</div>
 			);
@@ -380,6 +393,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
+		const filter = this.getFilter();
+
+		let name = '';
+		if (filter) {
+			name = UtilCommon.sprintf(translate('commonCreateObject'), filter);
+		} else {
+			name = translate('popupSearchCreateObject');
+		};
 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
@@ -396,11 +417,52 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		items.push({ id: 'add', name: translate('popupSearchCreateObject'), icon: 'plus', shortcut: [ cmd, 'N' ] });
+		/* Settings */
+
+		if (filter) {
+			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+
+			const settingsSpace: any[] = ([
+				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
+
+				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
+				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+
+				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+			] as any).map(it => {
+				it.isSpace = true;
+				it.className = 'isSpace';
+				return it;
+			}).filter(it => it.name.match(reg));
+			
+			const settingsItems: any[] = ([
+				{ id: 'account', name: translate('popupSettingsProfileTitle') },
+				{ id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle') },
+				{ id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle') },
+				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+			] as any).concat(settingsSpace).map(it => {
+				it.isSettings = true;
+				return it;
+			}).filter(it => it.name.match(reg));
+
+			items = items.concat(settingsItems);
+		};
+
+		items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
+
 		if (hasRelations) {
 			items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
 		};
-		return items;
+
+		return items.map(it => {
+			it.shortcut = it.shortcut || [];
+			return it;
+		});
 	};
 
 	filterMapper (it: any) {
@@ -434,15 +496,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		e.stopPropagation();
 		this.props.close();
 
-		if (item.isObject) {
-			const filter = UtilCommon.regexEscape(this.getFilter());
+		const filter = this.getFilter();
 
+		if (item.isObject) {
 			UtilObject.openEvent(e, { ...item, id: item.id });
 			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+		} else 
+		if (item.isSettings) {
+			window.setTimeout(() => {
+				console.log(item);
+
+				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
+			}, Constant.delay.popup);
 		} else {
 			switch (item.id) {
 				case 'add': {
-					keyboard.pageCreate('Search');
+					keyboard.pageCreate({ name: filter }, 'Search');
 					break;
 				};
 
