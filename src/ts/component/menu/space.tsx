@@ -103,7 +103,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	componentDidUpdate (): void {
-		this.beforePosition();
+		this.props.position();
 	};
 
 	componentWillUnmount (): void {
