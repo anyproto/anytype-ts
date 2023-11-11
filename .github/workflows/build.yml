@@ -1,9 +1,12 @@
 name: Release
 
+#on:
+#  push:
+#    tags:        
+#      - v*
+
 on:
-  push:
-    tags:        
-      - v*
+  push
 
 jobs:
   release:
@@ -26,6 +29,9 @@ jobs:
 
       - name: Check out Git repository
         uses: actions/checkout@v1
+
+      - name: Setup distutils
+        run: sudo -H pip install setuptools
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1

@@ -18,7 +18,57 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Fresh Updates for September`),
+	title(`When a little more space is all you need...`),
+	text(`Buckle up, Anytypers - November's release is a power lineup of features designed to level up your space game. It's so big in fact, that it <b><i><u>requires you to install the updated version on all devices with Anytype installed before you begin using it</u></i></b>, because backwards compatibility is not guaranteed between versions. Kindly remember to take this step before playing with the new feature set, and as always - we hope you enjoy!`),
+	text(link('https://download.anytype.io', 'Download latest platform versions here.')),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Multi-Spaces are Here!`),
+	img(``, `c70`),
+	text(`Spaces were first introduced in June of this year as a container for your graph of objects. From today's release onwards, you'll be able to level up your space game by creating separate spaces, each with their own graph of objects, widget sidebar, and eventually - privacy settings.`),
+	text(`Simply click your profile picture to create new spaces, or navigate between existing ones. Use the space management menu at the top of your sidebar to customize your space settings or delete your space. For now, your account is limited to 10 spaces.`),
+	img(``, `c70`),
+	text(`${hl(`Pro tip:`)} You can also make cross-space references to specific objects by clicking the three-dots menu in any object and selecting: ${hl(`"Copy Link"`)}.`),
+
+	h3(`Calendar View for Sets & Collections`),
+	video(``, `c70`),
+	text(`You asked, we listened - the most popular feature request from our forums is now live! Calendar view has been added as a new view option to sets and collections. To display objects in your calendar, you must select a Date relation to group your objects such as: Creation Date, Due Date, or any custom date relation.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`Widget Creation via Drag n' Drop`),
+	video(``, `c70`),
+	text(`As a quick solution for creating new widgets, you can now drag & drop linked and mentioned objects from your editor, or objects displayed in sets and collections, directly into the sidebar. `),
+
+	h3(`New Template Picker in Object Creation Flow`),
+	img(``, `c70`),
+	text(`Upon creating any new object, you'll no longer see a popup window to prompt template selection. Rather, your default template will be applied. If you wish to change it, you can use the template picker on the top of the editor, which will disappear once you begin adding content to the body of the object.`),
+
+	h3(`Search function added to Sets & Collections`),
+	text(`Using the new search button in sets and collections (the magnifying glass next to the filter menu), you can now search for objects whose names match your search terms.`),
+
+	h3(`Updated Default Template Selection Flow for Sets & Collections`),
+	img(``, `c70`),
+	text(`The selection menu for default templates according to set & collection views has been moved from the view settings menu. To select your default template, click the down caret arrow next to the ‘New' button and choose the template you'd like to apply to the view using the three-dots menu.`),
+
+	h3(`Onboarding Updates`),
+	text(`We've simplified the sequencing, copy, and text explainers for the new-user onboarding flow.`),
+
+	h3(`Import Improvements`),
+	text(`We've made several important improvements to the Notion import via API, including: import of tags, database views, custom icons, and video and audio files.`),
+
+	h2(`💻 Tech:`),
+
+	text(`Electron updated to 0.25.0`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`Fixed: Value in the last cell of a row no longer disappears when using right arrow key. Thanks, ${link('https://community.anytype.io/t/value-in-last-cell-of-a-row-goes-missing-when-using-right-arrow/10468', 'sambouwer')}!`),
+
+	div(),
+
+	h1(`Release 0.35.0 - Fresh Updates for September`),
 	text(`This month's release addresses a slew of bugs and polishes targeted at the editor, template, and import experiences, which we hope will bring greater ease to your workflows. Our next big release featuring multi-spaces is coming soon, so stay tuned for some big announcements in October!`),
 
 	h2(`💎 Highlights of this Release:`),
