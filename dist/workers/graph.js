@@ -15,6 +15,7 @@ const util = new Util();
 // CONSTANTS
 
 const transformThreshold = 1.5;
+const delayFocus = 1000;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -104,22 +105,7 @@ init = (param) => {
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	// Center initially on root node
-	setTimeout(() => {
-		root = getNodeById(rootId);
-
-		let x = width / 2;
-		let y = height / 2;
-		
-		if (root) {
-			x = root.x;
-			y = root.y;
-		};
-
-		transform = Object.assign(transform, getCenter(x, y));
-		send('onTransform', { ...transform });
-		redraw();
-	}, 100);
+	setTimeout(() => this.setRootId({ rootId }), 100);
 };
 
 initTheme = (theme) => {
@@ -265,22 +251,34 @@ updateForces = () => {
 		edgeMap.set(d.id, [].concat(sources).concat(targets));
 	});
 
-	simulation.alpha(0.1).restart();
+	simulation.alpha(1).restart();
+	redraw();
 };
 
 updateSettings = (param) => {
 	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
 	
 	let needUpdate = false;
+	let needFocus = false;
+
 	for (let key of updateKeys) {
 		if (param[key] != settings[key]) {
 			needUpdate = true;
+
+			if (key == 'local') {
+				needFocus = true;
+			};
+
 			break;
 		};
 	};
 
 	settings = Object.assign(settings, param);
 	needUpdate ? updateForces() : redraw();
+
+	if (needFocus) {
+		setTimeout(() => this.setRootId({ rootId }), delayFocus);
+	};
 };
 
 updateTheme = ({ theme }) => {
@@ -696,7 +694,6 @@ onRemoveNode = ({ ids }) => {
 	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 
 	updateForces();
-	redraw();
 };
 
 setRootId = (param) => {
