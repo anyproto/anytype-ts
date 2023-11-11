@@ -223,7 +223,7 @@ updateForces = () => {
 	if (settings.local) {
 		edges = edges.filter(d => (d.source == rootId) || (d.target == rootId));
 
-		const nodeIds = util.arrayUnique([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
+		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 		nodes = nodes.filter(d => nodeIds.includes(d.id));
 	};
 
