@@ -18,7 +18,58 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Fresh Updates for September`),
+	title(`When a little more space is all you need...`),
+	text(`Buckle up, Anytypers - November's release is a power lineup of features designed to level up your space game. It's so big in fact, that it <b><i><u>requires you to install the updated version on all devices with Anytype installed before you begin using it</u></i></b>, because backwards compatibility is not guaranteed between versions. Kindly remember to take this step before playing with the new feature set, and as always - we hope you enjoy!`),
+	text(link('https://download.anytype.io', 'Download latest platform versions here.')),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Multi-Spaces are Here!`),
+	video('./img/help/36/1.mp4', 'c70'),
+	text(`Spaces were first introduced in June of this year as a container for your graph of objects. From today's release onwards, you'll be able to level up your space game by creating separate spaces, each with their own graph of objects, widget sidebar, and eventually - privacy settings.`),
+	text(`Simply click your profile picture to create new spaces, or navigate between existing ones. Use the space management menu at the top of your sidebar to customize your space settings or delete your space. For now, your account is limited to 10 spaces.`),
+	img('./img/help/36/2.png', 'c70'),
+	text(`${hl(`Pro tip:`)} You can also make cross-space references to specific objects by clicking the three-dots menu in any object and selecting: ${hl(`"Copy Link"`)}.`),
+
+	h3(`Calendar View for Sets & Collections`),
+	video('./img/help/36/3.mp4', 'c70'),
+	text(`You asked, we listened - the most popular feature request from our forums is now live! Calendar view has been added as a new view option to sets and collections. To display objects in your calendar, you must select a Date relation to group your objects such as: Creation Date, Due Date, or any custom date relation.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`Widget Creation via Drag n' Drop`),
+	video('./img/help/36/4.mp4', 'c70'),
+	text(`As a quick solution for creating new widgets, you can now drag & drop linked and mentioned objects from your editor, or objects displayed in sets and collections, directly into the sidebar. `),
+
+	h3(`New Template Picker in Object Creation Flow`),
+	img('./img/help/36/5.png', 'c70'),
+	text(`Upon creating any new object, you'll no longer see a popup window to prompt template selection. Rather, your default template will be applied. If you wish to change it, you can use the template picker on the top of the editor, which will disappear once you begin adding content to the body of the object.`),
+
+	h3(`Search function added to Sets & Collections`),
+	text(`Using the new search button in sets and collections (the magnifying glass next to the filter menu), you can now search for objects whose names match your search terms.`),
+
+	h3(`Updated Default Template Selection Flow for Sets & Collections`),
+	img('./img/help/36/6.png', 'c70'),
+	text(`The selection menu for default templates according to set & collection views has been moved from the view settings menu. To select your default template, click the down caret arrow next to the ‘New' button and choose the template you'd like to apply to the view using the three-dots menu.`),
+
+	h3(`Onboarding Updates`),
+	text(`We've simplified the sequencing, copy, and text explainers for the new-user onboarding flow.`),
+
+	h3(`Import Improvements`),
+	text(`We've made several important improvements to the Notion import via API, including: import of tags, database views, custom icons, and video and audio files.`),
+
+	h2(`💻 Tech:`),
+
+	text(`Electron updated to 0.25.0`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`Fixed: Value in the last cell of a row no longer disappears when using right arrow key. Thanks, ${link('https://community.anytype.io/t/value-in-last-cell-of-a-row-goes-missing-when-using-right-arrow/10468', 'sambouwer')}!`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.35.0 - Fresh Updates for September`),
 	text(`This month's release addresses a slew of bugs and polishes targeted at the editor, template, and import experiences, which we hope will bring greater ease to your workflows. Our next big release featuring multi-spaces is coming soon, so stay tuned for some big announcements in October!`),
 
 	h2(`💎 Highlights of this Release:`),
@@ -88,6 +139,7 @@ export default [
 	bullet(`Fixed: Copy and deleting relations before they are created is no longer enabled in Objects, Sets &amp; Collections`),
 
 	div(),
+	// --------------------------------------------//
 
 	h1(`Release 0.34.0 - Anytype Goes Global 🌍`),
 
@@ -140,6 +192,7 @@ export default [
 	bullet(`Fixed: Horizontal scrollbar in code blocks no longer appear in PDF exports or print versions. Thanks, ${link(`https://community.anytype.io/t/double-scrollbar-on-pdf-export-for-code-blocks-with-scrollbar/9864`, `jannis`)}!`),
 
 	div(),
+	// --------------------------------------------//
 
 	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
@@ -182,6 +235,7 @@ export default [
 	bullet(`<b>Fixed: Caret position no longer jumps on alt + delete</b>`),
 
 	div(),
+	// --------------------------------------------//
 
 	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
 	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
@@ -216,6 +270,7 @@ export default [
 	text(`In case you would like to transfer objects between anytype accounts, protobuf export is now available on the object and account level. When sharing the object with another anytype user, simply share the exported file - which the other user can import directly as an object in their account. Separately, if for any reason you need to create a new account and wish to preserve all objects in your account, you can also make an export of all your objects by navigating to your Profile settings > Export. `),
 
 	div(),
+	// --------------------------------------------//
 
 	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
@@ -263,6 +318,7 @@ export default [
 	bullet(`Fixed: Center & Right align for LaTeX blocks is now working properly. Thanks, ${link('https://community.anytype.io/t/7725', 'uz4a8')}!`),
 
 	div(),
+	// --------------------------------------------//
 
 	h1(`2023: Ready, Set... Declutter 😎`),
 	text(`Welcome to the first release of the new year! After some major refactoring work in the last quarter of 2022, we're pleased to deliver an update that we hope will allow you to clear the clutter from your account and start the new year with a clean, productive slate.`),
@@ -322,6 +378,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
 	h1(`September: Preparation and Polish 💅`),
 
 	text(`Throughout September, our backend and platform teams have been occupied with refactoring relations aka the &quot;Relations as an Object&quot; project. This effort, though not visible in this month's release, is essential to unblocking long-awaited features such as Relations deletion/modification and in-line Sets (we promise, it's coming!).`),
@@ -1443,4 +1500,5 @@ export default [
 	text(''),
 	text(`Thank you for building a new web together, writing us a review, reporting a bug, or making a feature request, moving all of us forward. 🙏`),
 	text(`Don't forget to <span class="textColor textColor-red">save your seed phrase</span>  to save access to all your private data. All&nbsp;the&nbsp;new features will appear in automatic updates.`)
+	*/
 ];

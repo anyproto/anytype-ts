@@ -270,6 +270,10 @@ class Dataview {
 		return records;
 	};
 
+	defaultViewName (type: I.ViewType): string {
+		return translate(`viewName${type}`);
+	};
+
 };
 
 export default new Dataview();
