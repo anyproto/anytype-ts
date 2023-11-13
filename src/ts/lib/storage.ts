@@ -220,7 +220,6 @@ class Storage {
 			'spaceId',
 			'tabStore', 
 			'graph',
-			'space',
 			'pin',
 		];
 
