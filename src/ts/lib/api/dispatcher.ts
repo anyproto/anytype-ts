@@ -1066,6 +1066,10 @@ class Dispatcher {
 			UtilRouter.switchSpace(authStore.accountSpaceId, '');
 		};
 
+		if (!rootId) {
+			return;
+		};
+
 		detailStore.update(rootId, { id, details }, clear);
 
 		const root = blockStore.getLeaf(rootId, id);

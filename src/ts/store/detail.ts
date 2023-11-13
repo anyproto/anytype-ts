@@ -57,7 +57,13 @@ class DetailStore {
 
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
+		if (!rootId) {
+			console.log('[detailStore].update: rootId is not defined');
+			return;
+		};
+
 		if (!item.details) {
+			console.log('[detailStore].update: details are not defined');
 			return;
 		};
 
