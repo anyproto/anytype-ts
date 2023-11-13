@@ -7,10 +7,7 @@ export default {
             {
                 description: translate('onboardingMainGraph11'),
                 video: './img/help/onboarding/space.mp4',
-                noButton: true,
-                buttons: [
-                    { text: translate('commonFinish') },
-                ],
+				buttonText: translate('commonFinish'),
             }
         ],
 
