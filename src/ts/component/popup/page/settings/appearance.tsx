@@ -40,9 +40,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 
 				<div className="actionItems">
 					<div className="item">
-
 						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
-
 						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
 					</div>
 				</div>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget } from 'Component';
+import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -33,16 +33,16 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
-		this.addWidget = this.addWidget.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.setPreview = this.setPreview.bind(this);
-		this.setEditing = this.setEditing.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
+		this.addWidget = this.addWidget.bind(this);
+		this.setEditing = this.setEditing.bind(this);
+		this.setPreview = this.setPreview.bind(this);
 	};
 
 	render(): React.ReactNode {
@@ -95,6 +95,14 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				return true;
 			});
 
+			let last = null;
+			let first = null;
+
+			if (blocks.length) {
+				first = blocks[0];
+				last = blocks[blocks.length - 1];
+			};
+
 			if (isEditing) {
 				cn.push('isEditing');
 			};
@@ -111,13 +119,24 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 			content = (
 				<React.Fragment>
-					<Widget 
-						block={new M.Block({ id: 'widget-space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
-						disableContextMenu={true} 
-						onDragStart={this.onDragStart}
-						onDragOver={this.onDragOver}
-						isEditing={isEditing}
-					/>
+					<DropTarget 
+						{...this.props} 
+						isTargetTop={true}
+						rootId={blockStore.widgets} 
+						id={first?.id}
+						dropType={I.DropType.Widget} 
+						canDropMiddle={false}
+						className="firstTarget"
+						cacheKey="firstTarget"
+					>
+						<Widget 
+							block={new M.Block({ id: 'widget-space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
+							disableContextMenu={true} 
+							onDragStart={this.onDragStart}
+							onDragOver={this.onDragOver}
+							isEditing={isEditing}
+						/>
+					</DropTarget>
 
 					{blocks.map((block, i) => (
 						<Widget 
@@ -133,21 +152,31 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						/>
 					))}
 
-					<Button 
-						text={translate('widgetLibrary')}
-						color="" 
-						className="widget" 
-						icon="store" 
-						onClick={this.onLibrary} 
-					/>
-
-					<Button 
-						text={translate('widgetBin')}
-						color="" 
-						className="widget" 
-						icon="bin" 
-						onClick={this.onArchive} 
-					/>
+					<DropTarget 
+						{...this.props} 
+						isTargetBottom={true}
+						rootId={blockStore.widgets} 
+						id={last?.id}
+						dropType={I.DropType.Widget} 
+						canDropMiddle={false}
+						className="lastTarget"
+						cacheKey="lastTarget"
+					>
+						<Button 
+							text={translate('widgetLibrary')}
+							color="" 
+							className="widget" 
+							icon="store" 
+							onClick={this.onLibrary} 
+						/>
+						<Button 
+							text={translate('widgetBin')}
+							color="" 
+							className="widget" 
+							icon="bin" 
+							onClick={this.onArchive} 
+						/>
+					</DropTarget>
 
 					<div className="buttons">
 						{buttons.map(button => (
@@ -167,6 +196,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
+				onClick={isEditing ? this.onEdit : null}
 			>
 				{content}
 			</div>

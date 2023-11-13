@@ -60,7 +60,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						value={name}
 						label={translate('menuDataviewViewName')}
 						readonly={readonly}
-						placeholder={this.defaultName(type)}
+						placeholder={Dataview.defaultViewName(type)}
 						maxLength={32}
 						onKeyUp={this.onKeyUp}
 						onFocus={this.onNameFocus}
@@ -126,7 +126,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		
 		let n = name;
 		for (const i in I.ViewType) {
-			if (n == this.defaultName(Number(i))) {
+			if (n == Dataview.defaultViewName(Number(i))) {
 				n = '';
 				break;
 			};
@@ -213,49 +213,24 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const current = data.view.get();
-		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if (withName) {
 			this.param.name = this.getViewName();
 		};
 
-		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
-		};
-
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
-			if (clearGroups) {
-				Dataview.groupUpdate(rootId, blockId, current.id, []);
-				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
-			} else {
-				if (onSave) {
-					onSave();
-				};
-			};
-		});
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, onSave);
 	};
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly, getTypeId, getTemplateId, isAllowedDefaultType, isAllowedTemplate, onTemplateAdd, isCollection, getSources, getView } = data;
+		const { rootId, blockId, readonly } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
 
-		const typeId = getTypeId();
-		const objectType = detailStore.get(rootId, typeId);
-		const defaultTypeName = objectType ? objectType.name : '';
-
-		const templateId = getTemplateId();
-		const template = detailStore.get(rootId, templateId);
-		const templateName = (templateId == Constant.templateId.blank) ? translate('commonBlank') : template.name;
-
-		const hasSources = (isCollection || getSources().length);
-		const allowedDefaultType = isAllowedDefaultType();
-		const allowedDefaultSettings = hasSources && (allowedDefaultType || isAllowedTemplate());
-
 		const isBoard = type == I.ViewType.Board;
+		const isCalendar = type == I.ViewType.Calendar;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -270,46 +245,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			relationCnt.push(`+${relations.length - 2}`);
 		};
 
-		const updateDefaultTemplate = (item) => {
-			if (item.id == Constant.templateId.new) {
-				if (onTemplateAdd) {
-					onTemplateAdd(item.targetObjectType);
-				};
-			} else {
-				C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTemplateId: item.id });
-			};
-		};
-
-		const defaultSettings = [
-			{
-				id: 'defaultType',
-				name: allowedDefaultType ? translate('menuDataviewViewDefaultType') : translate('menuDataviewViewDefaultTemplate'),
-				subComponent: 'dataviewTemplateList',
-				caption: allowedDefaultType ? defaultTypeName : templateName,
-				data: {
-					rebind: this.rebind,
-					typeId,
-					hasSources,
-					getView,
-					templateId: getTemplateId(),
-					defaultTemplate: template,
-					withTypeSelect: allowedDefaultType,
-					onSelect: updateDefaultTemplate,
-					onSetDefault: updateDefaultTemplate,
-					onTypeChange: (id) => {
-						if (id != getTypeId()) {
-							C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-
-							analytics.event('DefaultTypeChange', { route: isCollection ? 'Collection' : 'Set' });
-						};
-					}
-				}
-			}
-		];
 		const layoutSettings = [
-			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
+			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: Dataview.defaultViewName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') }
+			!isCalendar ? { id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') } : null,
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
@@ -317,7 +256,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		];
 
 		let sections: any[] = [
-			allowedDefaultSettings ? { id: 'defaultSettings', name: '', children: defaultSettings } : null,
 			{ id: 'layoutSettings', name: '', children: layoutSettings },
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
@@ -334,7 +272,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		sections = sections.map((s: any) => {
 			s.children = s.children.filter(it => it);
 			return s;
-		});
+		}).filter(s => !!s.children.length);
 
 		return sections;
 	};
@@ -396,21 +334,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			return;
 		};
 
-		if (item.sectionId == 'type') {
-			let withName = false;
-			if (this.param.name == this.defaultName(this.param.type)) {
-				this.param.name = this.defaultName(item.id);
-				withName = true;
-			};
-			this.param.type = item.id;
-			this.save(withName);
-
-			analytics.event('ChangeViewType', {
-				type: item.id,
-				objectType: object.type,
-				embedType: analytics.embedType(isInline)
-			});
-		} else 
 		if (view.id) {
 			this.preventSaveOnClose = true;
 			close();
@@ -466,11 +389,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	getViewName (name?: string) {
-		return (name || this.param.name || this.defaultName(this.param.type)).trim();
-	};
-
-	defaultName (type: I.ViewType): string {
-		return translate(`viewName${type}`);
+		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
 	};
 
 	resize () {

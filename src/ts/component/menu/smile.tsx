@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, UtilCommon, UtilSmile, UtilMenu, UtilObject, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -378,6 +378,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
+
 		const ret: any[] = [];
 		const length = sections.reduce((res: number, section: any) => { 
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
@@ -502,7 +503,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
-		if (row) {
+		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
@@ -512,14 +513,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.active = item;
 
 		if (this.active) {
-			const item = node.find(`#item-${$.escapeSelector(this.active.id)}`);
+			const element = node.find(`#item-${$.escapeSelector(this.active.id)}`);
 
-			item.addClass('active');
+			element.addClass('active');
 
-			Preview.tooltipShow({
-				text: this.aliases[this.active.itemId] || this.active.itemId,
-				element: item,
-			});
+			Preview.tooltipShow({ text: (this.aliases[this.active.itemId] || this.active.itemId), element });
 		};
 	};
 
@@ -607,13 +605,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { data } = param;
 		const { onSelect } = data;
 		
-		this.skin = Number(skin) || 1;
-		this.setLastIds(id, this.skin);
+		if (id) {
+			this.skin = Number(skin) || 1;
+			this.setLastIds(id, this.skin);
 
-		storageSet({ skin: this.skin });
+			storageSet({ skin: this.skin });
+		};
 
 		if (onSelect) {
-			onSelect(UtilSmile.nativeById(id, this.skin));
+			onSelect(id ? UtilSmile.nativeById(id, this.skin) : '');
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
@@ -652,7 +652,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.onSkin(e, n, id);
 			}, 200);
 		};
-		
+
 		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;

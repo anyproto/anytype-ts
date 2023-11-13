@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -239,7 +239,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.id = rootId;
 		this.setState({ isLoading: true });
 
-		C.ObjectOpen(rootId, '', (message: any) => {
+		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
@@ -377,7 +377,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			details.layout = object.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [], object.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -404,7 +404,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const details = { 
-			name: object.name + ' set', 
+			name: object.name, 
 			iconEmoji: object.iconEmoji,
 		};
 
@@ -419,8 +419,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
+		const skipSystemKeys = [ 'tag', 'description', 'source' ];
 		const recommendedKeys = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it && it.relationKey);
-		const systemKeys = Relation.systemKeys().filter(it => ![ 'tag', 'description', 'source' ].includes(it));
+		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
@@ -505,7 +506,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
 			menuStore.open('dataviewTemplateContext', {
 				menuKey: item.id,
-				element: `#item-${item.id} .more`,
+				element: `#item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				onOpen: () => $(`#item-${item.id}`).addClass('active'),

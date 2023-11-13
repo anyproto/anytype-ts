@@ -337,6 +337,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				};
 			}
 		});
+
+		analytics.event('ScreenOnboardingVideo');
 	};
 
 	onImport () {

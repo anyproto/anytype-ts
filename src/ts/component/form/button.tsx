@@ -52,7 +52,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
 					>
-						{isLoading ? <Loader type="loader" /> : ''}
+						{isLoading ? <Loader /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 						{arrow ? <div className="arrow" /> : ''}
@@ -99,6 +99,11 @@ class Button extends React.Component<I.ButtonComponent, State> {
 
 	setLoading (v: boolean) {
 		this.setState({ isLoading: v });
+	};
+
+	setDisabled (v: boolean) {
+		const node = $(this.node);
+		v ? node.addClass('disabled') : node.removeClass('disabled');
 	};
 	
 };

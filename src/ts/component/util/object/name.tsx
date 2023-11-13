@@ -5,6 +5,7 @@ interface Props {
 	object: any;
 	className?: string;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
@@ -16,7 +17,7 @@ class Name extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, onMouseEnter, onMouseLeave, onClick } = this.props;
+		const { className, onMouseDown, onMouseEnter, onMouseLeave, onClick } = this.props;
 		const object = this.props.object || {};
 		const { layout, snippet, isDeleted } = object;
 	
@@ -34,6 +35,7 @@ class Name extends React.Component<Props> {
 			<div 
 				className={className} 
 				onClick={onClick}
+				onMouseDown={onMouseDown}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
 			>

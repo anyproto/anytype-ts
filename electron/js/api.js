@@ -60,15 +60,6 @@ class Api {
 		BrowserWindow.getAllWindows().forEach(win => win.setBackgroundColor(Util.getBgColor(theme)));
 	};
 
-	setLanguage (win, languages) {
-		languages = languages || [];
-
-		win.webContents.session.setSpellCheckerLanguages(languages);
-		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
-
-		this.setConfig(win, { languages });
-	};
-
 	setZoom (win, zoom) {
 		zoom = Number(zoom) || 0;
 		zoom = Math.max(-5, Math.min(5, zoom));
@@ -76,6 +67,26 @@ class Api {
 		win.webContents.setZoomLevel(zoom);
 		Util.send(win, 'zoom');
 		this.setConfig(win, { zoom });
+	};
+
+	setHideTray (win, show) {
+		ConfigManager.set({ hideTray: !show }, () => {
+			Util.send(win, 'config', ConfigManager.config);
+
+			MenuManager.initMenu();
+			MenuManager.initTray();
+		});
+	};
+
+	setMenuBarVisibility (win, show) {
+		const hide = !show;
+
+		ConfigManager.set({ hideMenuBar: hide }, () => {
+			Util.send(win, 'config', ConfigManager.config);
+
+			win.setMenuBarVisibility(show);
+			win.setAutoHideMenuBar(hide);
+		});
 	};
 
 	spellcheckAdd (win, s) {
@@ -163,19 +174,21 @@ class Api {
 		Server.stop(signal).then(() => { this.shutdown(win, relaunch); });
 	};
 
-	reloadAllWindows () {
-		BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
-	};
-
-	changeInterfaceLang (win, lang) {
-		console.log('[changeInterfaceLang]', lang);
-
+	setInterfaceLang (win, lang) {
 		ConfigManager.set({ interfaceLang: lang }, (err) => {
-			this.reloadAllWindows();
-
+			WindowManager.reloadAll();
 			MenuManager.initMenu();
 			MenuManager.initTray();
 		});
+	};
+
+	setSpellingLang (win, languages) {
+		languages = languages || [];
+
+		win.webContents.session.setSpellCheckerLanguages(languages);
+		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
+
+		this.setConfig(win, { languages });
 	};
 
 };

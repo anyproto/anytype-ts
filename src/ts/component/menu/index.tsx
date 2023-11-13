@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Dimmer, Icon, Button, Title } from 'Component';
+import { Dimmer, Icon, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -565,7 +565,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			x = Math.min(ww - width - BORDER, x);
 
 			y = Math.max(minY, y);
-			y = Math.min(wh - height - BORDER, y);
+			y = Math.min(wh - height - 80, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;

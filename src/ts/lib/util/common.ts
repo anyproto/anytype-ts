@@ -7,12 +7,6 @@ import Text from 'json/text.json';
 
 class UtilCommon {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-
 	getElectron () {
 		return window.Electron || {};
 	};

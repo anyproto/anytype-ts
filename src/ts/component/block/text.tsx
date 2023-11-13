@@ -641,7 +641,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onKeyDown (e: any) {
 		e.persist();
 
-		const { onKeyDown, rootId, block } = this.props;
+		const { onKeyDown, rootId, block, isInsideTable } = this.props;
 		const { id } = block;
 
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
@@ -670,13 +670,28 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
+			{ key: `${cmd}+=`, preventDefault: false },
+			{ key: `${cmd}+-`, preventDefault: false },
 			{ key: `${cmd}+z`, preventDefault: true },
 			{ key: `${cmd}+shift+z`, preventDefault: true },
+			{ key: `${cmd}+/`, preventDefault: false },
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
+			{ key: `ctrl+shift+/`, preventDefault: false },
 		];
+
+		if (isInsideTable) {
+			if (!range.to) {
+				saveKeys.push({ key: `arrowleft, arrowup`, preventDefault: false });
+			};
+
+			if (range.to == value.length) {
+				saveKeys.push({ key: `arrowright, arrowdown`, preventDefault: false });
+			};
+		};
+
 		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
 		const twineClose = {
 			'[': ']',
@@ -787,7 +802,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (range.to && ((range.from != range.to) || (range.to == value.length))) {
+			if (range.to && (range.from == range.to) && (range.to == value.length)) {
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});

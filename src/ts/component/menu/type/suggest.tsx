@@ -232,6 +232,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
@@ -249,7 +250,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		UtilData.search({
 			filters,
 			sorts,
-			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+			keys: UtilData.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
@@ -409,7 +410,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
-					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+					keys: UtilData.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

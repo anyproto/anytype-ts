@@ -184,12 +184,13 @@ class UtilData {
 
 	onInfo (info: I.AccountInfo) {
 		blockStore.rootSet(info.homeObjectId);
-		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);
+		blockStore.profileSet(info.profileObjectId);
 		blockStore.spaceviewSet(info.spaceViewId);
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
+		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.device(info.deviceId);
 		analytics.profile(info.analyticsId);
@@ -197,19 +198,10 @@ class UtilData {
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
-	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
-		if (!account) {
-			console.error('[onAuth] No account defined');
-			return;
-		};
-
-		this.onInfo(info);
-		commonStore.configSet(account.config, false);
-		authStore.accountSet(account);
-
+	onAuth (param?: any, callBack?: () => void) {
 		const pin = Storage.get('pin');
 		const { profile, widgets } = blockStore;
-		const { redirect } = commonStore;
+		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
@@ -227,18 +219,18 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileSpaceUsage(commonStore.space, (message: any) => {
+		C.FileNodeUsage((message: any) => {
 			if (!message.error.code) {
 				commonStore.spaceStorageSet(message);
 			};
 		});
 
-		C.ObjectOpen(blockStore.rootId, '', (message: any) => {
+		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', () => {
+			C.ObjectOpen(widgets, '', space, () => {
 				this.createsSubscriptions(() => {
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -263,21 +255,20 @@ class UtilData {
 						callBack();
 					};
 				});
-
-				if (profile) {
-					this.subscribeIds({
-						subId: Constant.subId.profile, 
-						ids: [ profile ], 
-						noDeps: true,
-						ignoreWorkspace: true,
-					});
-				};
 			});
 		});
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
 		const list = [
+			{
+				subId: Constant.subId.profile,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+			},
 			{
 				subId: Constant.subId.deleted,
 				keys: [],
@@ -288,7 +279,7 @@ class UtilData {
 			},
 			{
 				subId: Constant.subId.type,
-				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
+				keys: this.typeRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
@@ -358,7 +349,11 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'targetSpaceId', 'spaceAccessibility', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+	};
+
+	typeRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
 	};
 
 	createSession (callBack?: (message: any) => void) {
@@ -411,11 +406,9 @@ class UtilData {
 			const skipLayouts = [ 
 				I.ObjectLayout.Note,
 				I.ObjectLayout.Page,
-				I.ObjectLayout.Set,
-				I.ObjectLayout.Collection,
 				I.ObjectLayout.Task,
 				I.ObjectLayout.Bookmark,
-			];
+			].concat(UtilObject.getSetLayouts());
 
 			items = items.concat(dbStore.getTypes().filter(it => {
 				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
@@ -571,20 +564,6 @@ class UtilData {
 		});
 	};
 
-	// Check if there are at least 1 template for object types
-	checkTemplateCnt (ids: string[], callBack?: (cnt: number) => void) {
-		const templateType = dbStore.getTemplateType();
-		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, (message: any) => {
-			if (callBack) {
-				callBack(message.records.length);
-			};
-		});
-	};
-
-	checkBlankTemplate (template: any) {
-		return template && (template.id != Constant.templateId.blank) ? template : null;
-	};
-
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
 		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
@@ -650,7 +629,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -680,8 +659,8 @@ class UtilData {
 			return;
 		};
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -747,7 +726,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space, techSpace } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -766,8 +745,8 @@ class UtilData {
 		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		if (!ignoreWorkspace && space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+		if (!ignoreWorkspace) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -786,7 +765,15 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
+			if (message.records) {
+				message.records = message.records.map(it => detailStore.mapper(it));
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	sortMapper (it: any) {
@@ -830,7 +817,6 @@ class UtilData {
 		if (templateType) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
 		};
-
 		return filters;
 	};
 

@@ -1,8 +1,22 @@
-import { C, UtilCommon, UtilData, Preview } from 'Lib';
-import { commonStore, blockStore, authStore, menuStore, popupStore } from 'Store';
+import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
+import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
+type RouteParam = { 
+	replace: boolean;
+	animate: boolean;
+	onFadeOut: () => void;
+	onFadeIn?: () => void;
+	onRouteChange?: () => void;
+};
+
 class UtilRouter {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 
 	getParam (path: string): any {
 		const route = path.split('/');
@@ -39,14 +53,15 @@ class UtilRouter {
 		return route.join('/');
 	};
 
-	go (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
+	go (route: string, param: Partial<RouteParam>) {
 		if (!route) {
 			return;
 		};
 
-		const { replace, animate, onFadeOut, onFadeIn } = param;
+		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const method = replace ? 'replace' : 'push';
+		const { space, techSpace } = commonStore;
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
 		if (!timeout) {
@@ -56,7 +71,7 @@ class UtilRouter {
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && (routeParam.spaceId != Constant.storeSpaceId) && (routeParam.spaceId != commonStore.space)) {
+		if (routeParam.spaceId && ![ Constant.storeSpaceId, space, techSpace ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -65,7 +80,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (!animate) {
-				UtilCommon.history[method](route); 
+				this.history[method](route); 
 				return;
 			};
 
@@ -79,7 +94,12 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				UtilCommon.history[method](route); 
+				this.history[method](route);
+
+				if (onRouteChange) {
+					onRouteChange();
+				};
+
 				fade.removeClass('show');
 			}, Constant.delay.route);
 
@@ -96,12 +116,18 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		if (!id || (commonStore.space == id)) {
+		const { space } = commonStore;
+		const { accountSpaceId } = authStore;
+
+		if (!id || (space == id)) {
 			return;
 		};
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
+				if (id != accountSpaceId) {
+					this.switchSpace(accountSpaceId, route, callBack);
+				};
 				return;
 			};
 
@@ -113,11 +139,23 @@ class UtilRouter {
 						commonStore.redirectSet(route);
 					};
 
+					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
-					UtilData.onAuth(authStore.account, message.info, callBack);
+					commonStore.defaultType = '';
+					Storage.set('spaceId', id);
+
+					UtilData.onInfo(message.info);
+					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+
+					analytics.event('SwitchSpace');
 				}
 			});
 		});
+	};
+
+	getRouteSpaceId () {
+		const param = this.getParam(this.history.location.pathname);
+		return param.spaceId || commonStore.space;
 	};
 
 };

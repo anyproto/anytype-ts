@@ -22,6 +22,12 @@ interface Props {
 
 class DropTarget extends React.Component<Props> {
 	
+	public static defaultProps: Props = {
+		id: '',
+		rootId: '',
+		dropType: I.DropType.None,
+	};
+
 	constructor (props: Props) {
 		super(props);
 		

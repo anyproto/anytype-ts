@@ -46,7 +46,7 @@
 	}
 	.headerBanner.withMenu { padding-right: 24px; }
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
-	.headerBanner.withMenu.menuOpened:after { transform: rotateZ(180deg); }
+	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.sync { -webkit-app-region: no-drag; }
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }

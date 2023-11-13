@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import { I, C, focus, UtilObject, Action } from 'Lib';
 import { menuStore, blockStore, detailStore, commonStore } from 'Store';
-import ControlButtons  from './controlButtons';
+import ControlButtons from './controlButtons';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -145,21 +145,15 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onCoverOpen () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass('hover');
 		};
-
-		const node = $(this.node);
-		node.addClass('hover');
 	};
 
 	onCoverClose () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass('hover');
 		};
-		
-		const node = $(this.node);
-		node.removeClass('hover');
 	};
 
 	onCoverSelect (item: any) {

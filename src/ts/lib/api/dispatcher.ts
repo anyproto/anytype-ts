@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
 import arrayMove from 'array-move';
-import { observable } from 'mobx';
+import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
-import { UtilCommon, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -22,7 +22,7 @@ const SORT_IDS = [
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
-const SKIP_IDS = [];
+const SKIP_IDS = [ 'BlockSetCarriage' ];
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {
@@ -200,8 +200,13 @@ class Dispatcher {
 				};
 
 				case 'accountUpdate': {
-					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
+					authStore.accountSetStatus(Mapper.From.AccountStatus(data.getStatus()));
 					break;	
+				};
+
+				case 'accountDetails': {
+					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.decodeStruct(data.getDetails()) }, false);
+					break;
 				};
 
 				case 'accountConfigUpdate': {
@@ -241,7 +246,16 @@ class Dispatcher {
 				};
 
 				case 'fileSpaceUsage': {
-					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
+					const spaceId = data.getSpaceid();
+					const { spaces } = commonStore.spaceStorage;
+					const space = spaces.find(it => it.spaceId == spaceId);
+					const bytesUsage = data.getBytesusage();
+
+					if (space) {
+						set(space, { bytesUsage });
+					} else {
+						spaces.push({ spaceId, bytesUsage });
+					};
 					break;
 				};
 
@@ -251,7 +265,8 @@ class Dispatcher {
 				};
 
 				case 'fileLimitReached': {
-					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
+					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
@@ -1042,11 +1057,15 @@ class Dispatcher {
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]))
+		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+
+		if ((id == blockStore.spaceview) && (details.spaceAccountStatus == I.SpaceStatus.Deleted)) {
+			UtilRouter.switchSpace(authStore.accountSpaceId, '');
+		};
 
 		detailStore.update(rootId, { id, details }, clear);
 
@@ -1058,6 +1077,7 @@ class Dispatcher {
 
 			if (undefined !== details.setOf) {
 				blockStore.updateWidgetData(rootId);
+				$(window).trigger(`updateDataviewData.dataview`);
 			};
 
 			blockStore.checkTypeSelect(rootId);
@@ -1155,13 +1175,13 @@ class Dispatcher {
 		const { config } = commonStore;
 		const debug = config.debug.mw;
 		const ct = UtilCommon.toCamelCase(type);
+		const t0 = performance.now();
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
 
-		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;

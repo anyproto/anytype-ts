@@ -373,15 +373,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		const { relation } = this.props;
-		const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-		const details: any = { name: text };
-		const flags: I.ObjectFlag[] = [];
-
-		if (typeId) {
-			details.type = typeId;
-		} else {
-			flags.push(I.ObjectFlag.SelectType);
-		};
+		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 			if (!message.error.code) {

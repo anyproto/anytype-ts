@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation, translate } from 'Lib';
-import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
+import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
+import { dbStore, detailStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
 import Constant from 'json/constant.json';

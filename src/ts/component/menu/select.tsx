@@ -33,7 +33,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, disabled, placeholder } = data;
+		const { filter, value, disabled, placeholder, noVirtualisation } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -41,31 +41,36 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			const { switchValue } = item;
 		});
 
-		const rowRenderer = (param: any) => {
-			const item = items[param.index];
+		const Item = (item) => {
 			const cn = [];
-
-			if (item.isInitial) {
-				cn.push('isInitial');
-			};
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-			if (disabled) {
-				cn.push('disabled');
-			};
 
 			let content = null;
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+				cn.push('sectionName');
+
+				if (!item.index) {
+					cn.push('first');
+				};
+
+				content = <div className={cn.join(' ')} style={item.style}>{item.name}</div>;
 			} else
 			if (item.isDiv) {
 				content = (
-					<div className="separator" style={param.style}>
+					<div className="separator" style={item.style}>
 						<div className="inner" />
 					</div>
 				);
 			} else {
+				if (item.isInitial) {
+					cn.push('isInitial');
+				};
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+				if (disabled) {
+					cn.push('disabled');
+				};
+
 				content = (
 					<MenuItemVertical 
 						{...item} 
@@ -74,12 +79,25 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						checkbox={this.isActive(item)} 
 						onClick={e => this.onClick(e, item)} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
-						style={param.style}
+						style={item.style}
 					/>
 				);
 			};
 
-			return (
+			return content;
+		};
+
+		let content = null;
+		if (noVirtualisation) {
+			content = (
+				<React.Fragment>
+					{items.map((item, i) => (
+						<Item {...item} key={i} index={i} />
+					))}
+				</React.Fragment>
+			);
+		} else {
+			const rowRenderer = (param: any) => (
 				<CellMeasurer
 					key={param.key}
 					parent={param.parent}
@@ -87,8 +105,36 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					{content}
+					<Item {...items[param.index]} index={param.index} style={param.style} />
 				</CellMeasurer>
+			);
+
+			content = (
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={({ index }) => !!items[index]}
+				>
+					{({ onRowsRendered }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={ref => this.refList = ref}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={({ index }) => this.getRowHeight(items[index])}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+									overscanRowCount={10}
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
 			);
 		};
 		
@@ -109,31 +155,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				) : ''}
 
 				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => !!items[index]}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										onScroll={this.onScroll}
-										scrollToAlignment="center"
-										overscanRowCount={10}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
+					{content}
 				</div>
 			</React.Fragment>
 		);
@@ -373,27 +395,29 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const content = obj.find('.content');
 		const withFilter = this.isWithFilter();
 		
-		let height = 0;
-		if (withFilter) {
-			height += 60;
-		};
-		if (!withFilter || noScroll) {
-			height += 16;
-		};
-
-		if (!items.length) {
-			height += HEIGHT_ITEM;
-		} else {
-			items.forEach(it => { height += this.getRowHeight(it); });
-		};
-
 		if (!noScroll) {
-			height = Math.min(maxHeight || 370, height);
-		};
-		height = Math.max(44, height);
+			let height = 0;
+			if (withFilter) {
+				height += 60;
+			};
+			if (!withFilter || noScroll) {
+				height += 16;
+			};
 
-		content.css({ height });
+			if (!items.length) {
+				height += HEIGHT_ITEM;
+			} else {
+				height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+			};
+
+			height = Math.min(maxHeight || 370, height);
+			height = Math.max(44, height);
+
+			content.css({ height });
+		};
+
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
+		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
 
 		position();
 	};

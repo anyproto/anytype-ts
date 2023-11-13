@@ -5,6 +5,7 @@ const SPACE_KEYS = [
 	'toggle',
 	'lastOpened',
 	'scroll',
+	'defaultType',
 ];
 
 class Storage {
@@ -199,10 +200,10 @@ class Storage {
 
 	logout () {
 		const keys = [ 
-			'accountId', 
+			'accountId',
+			'spaceId',
 			'tabStore', 
 			'graph',
-			'space',
 			'pin',
 		];
 

@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
-import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard } from 'Lib';
+import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
+import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	name: string;
-	iconEmoji: string;
-	iconOption: number;
-	iconImage: string;
-	useCase: I.Usecase;
+	error: string;
 	isLoading: boolean;
+	iconOption: number;
+	usecase: I.Usecase;
 };
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
@@ -20,31 +18,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	refName: any = null;
 
 	state = {
-		name: '',
-		iconEmoji: '',
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
-		iconImage: '',
-		useCase: 0,
+		error: '',
 		isLoading: false,
+		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		usecase: I.Usecase.Empty,
 	};
 
 	constructor (props: any) {
 		super(props);
 
-		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onSelectUsecase = this.onSelectUsecase.bind(this);
 	};
 
 	render () {
-		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
+		const { error, iconOption, usecase, isLoading } = this.state;
+		const { onSpaceTypeTooltip } = this.props;
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
-			name,
 			iconOption,
-			iconEmoji,
-			iconImage,
 		};
 		const options = this.getUsecaseOptions();
 
@@ -64,18 +57,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							forceLetter={true}
 							canEdit={false}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
 						/>
 					</div>
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value=""
 								onKeyDown={this.onKeyDown}
-								onKeyUp={this.onKeyUp}
 								placeholder={UtilObject.defaultName('Page')}
 							/>
 						</div>
@@ -83,6 +73,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Label
 							className="spaceType"
 							text={translate(`spaceType${I.SpaceType.Private}`)}
+							onMouseEnter={onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>
 					</div>
 				</div>
@@ -99,12 +91,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="side right">
 										<Select 
 											id="select-usecase"
-											value={String(useCase || '')}
+											value={String(usecase || '')}
 											options={options}
-											onChange={id => this.setState({ useCase: Number(id) || 0 })}
+											onChange={this.onSelectUsecase}
 											menuParam={{
 												width: 360,
 												horizontal: I.MenuDirection.Center,
+												className: 'withFullDescripion',
+												data: { noVirtualisation: true, noScroll: true }
 											}}
 										/>
 									</div>
@@ -116,6 +110,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 				<div className="buttons">
 					<Button text={translate('commonCreate')} onClick={this.onSubmit} />
+					<Error text={error} />
 				</div>
 
 			</React.Fragment>
@@ -123,15 +118,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentDidMount (): void {
+		this.onSelectUsecase(I.Usecase.Empty);
+
 		window.setTimeout(() => this.refName?.focus(), 15);
 	};
 
 	componentWillUnmount(): void {
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
-	};
-
-	onSelect (iconEmoji: string) {
-		this.setState({ iconEmoji, iconImage: '' });
 	};
 
 	onKeyDown (e: any, v: string) {
@@ -142,13 +135,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		});
 	};
 
-	onKeyUp (e: any, v: string) {
-		this.setState({ name: this.checkName(v) });
-	};
-
 	onSubmit () {
 		const { close } = this.props;
-		const { isLoading } = this.state;
+		const { isLoading, usecase, iconOption } = this.state;
 
 		if (isLoading) {
 			return;
@@ -156,9 +145,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		this.setState({ isLoading: true });
 
-		C.WorkspaceCreate(this.state,  this.state.useCase, (message: any) => {
+		let name = this.checkName(this.refName.getValue());
+		if (!name) {
+			const item = this.getUsecase(usecase);
+
+			if (item) {
+				name = item.name;
+			};
+		};
+
+		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
 			this.setState({ isLoading: false });
-			UtilRouter.switchSpace(message.objectId, '', () => close());
+
+			if (!message.error.code) {
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
+				analytics.event('SelectUsecase', { type: usecase });
+
+				UtilRouter.switchSpace(message.objectId, '', () => close());
+			} else {
+				this.setState({ error: message.error.description });
+			};
 		});
 	};
 
@@ -169,20 +175,41 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return v;
 	};
 
-	getUsecaseOptions () {
-		return [
-			{ id: I.Usecase.Empty }
-		].concat(_.shuffle([
-			{ id: I.Usecase.Personal },
-			{ id: I.Usecase.Notes },
-			{ id: I.Usecase.Knowledge },
-			{ id: I.Usecase.Strategic },
-        ])).map(it => ({
+	getUsecaseOptions (): any[] {
+		let ret: any = [ 
+			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
+		];
+
+		ret = ret.concat(_.shuffle([
+			{ id: I.Usecase.Personal, icon: 'postbox', },
+			{ id: I.Usecase.Notes, icon: 'memo' },
+			{ id: I.Usecase.Knowledge, icon: 'books' },
+			{ id: I.Usecase.Strategic, icon: 'bulb' },
+        ]));
+
+		return ret.map((it: any) => ({
 			...it,
 			name: translate(`usecase${it.id}Title`),
 			description: translate(`usecase${it.id}Label`),
 			withDescription: true,
+			iconSize: 40,
+			object: { iconEmoji: `:${it.icon}:` }
 		}));
+	};
+
+	onSelectUsecase (id: any) {
+		const usecase = Number(id) || I.Usecase.Empty;
+		const item = this.getUsecase(usecase);
+
+		this.setState({ usecase });
+
+		if (item) {
+			this.refName.setPlaceholder(item.name);
+		};
+	};
+
+	getUsecase (id: I.Usecase) {
+		return this.getUsecaseOptions().find(it => it.id == id);
 	};
 
 });

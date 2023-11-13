@@ -163,7 +163,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		// Restrictions
 
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedSearch = !block.isObjectSet() && !block.isObjectSpaceView();
+		const allowedSearch = !block.isObjectSet();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedFav = !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -178,8 +178,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			block.isObjectRelation() || 
 			block.isObjectFileKind() || 
 			block.isObjectSet() || 
-			block.isObjectCollection() || 
-			block.isObjectSpaceView()
+			block.isObjectCollection()
 		);
 
 		if (!allowedArchive)	 archive = null;

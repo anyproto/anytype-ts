@@ -252,16 +252,18 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters: I.Filter[] = [].concat(data.filters || []);
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() }
+		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
 			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
-		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			if (map.length) {
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
+			};
 		};
 
 		if (clear) {
@@ -327,7 +329,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!item) {
+		if (!item || !relation) {
 			close();
 			return;
 		};
@@ -355,15 +357,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			const details: any = { name: filter };
-			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const flags: I.ObjectFlag[] = [];
-			
-			if (typeId) {
-				details.type = typeId;
-			} else {
-				flags.push(I.ObjectFlag.SelectType);
-			};
+			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
 			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);

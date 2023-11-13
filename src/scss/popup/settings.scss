@@ -116,8 +116,6 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { padding-left: 10px; }
-
 				.name { width: 100%; }
 				.name {
 					.label { margin: 0px 0px 6px 0px; }
@@ -164,11 +162,15 @@
 
 				.select {
 					background: none; border: solid 1px $colorShapeSecondary; font-weight: 400; text-decoration: none;
-					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px; padding-left: 10px;
 				}
 				.select:hover { background: $colorShapeHighlightMedium; }
 				.select {
 					.item { border-bottom: 0; color: $colorTextPrimary; }
+					.item {
+						.iconObject { display: none; }
+						.name { line-height: 20px; }
+					}
 					.icon.arrow { right: 3px !important; }
 				}
 			}
@@ -214,7 +216,9 @@
 					.input { padding: 0; }
 
 					.name { margin-bottom: 8px; }
-					.name .input { @include text-header1; }
+					.name {
+						.input { @include text-header1; height: 32px; }
+					}
 
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
@@ -240,6 +244,7 @@
 
 						> .item {
 							.sides { display: flex; justify-content: space-between; gap: 0px 16px; }
+							.sides:not(.alignTop) { align-items: center; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
 								.side.left { flex-grow: 1; }
@@ -271,14 +276,6 @@
 								.label { display: inline; }
 								.label.extend { color: $colorRed; }
 							}
-							.progressBar {
-								.fill { background: $colorLime; }
-							}
-						}
-						> .item.red {
-							.progressBar {
-								.fill { background: $colorRed; }
-							}
 						}
 					}
 				}
@@ -298,6 +295,7 @@
 					}
 				}
 
+				.section.sectionInfo { margin: 0px 0px 25px 0px; }
 				.section.sectionInfo {
 					.sectionContent {
 						> .item {
@@ -313,9 +311,10 @@
 		}
 
 		.side.right.tabSpaceCreate {
-			.title { margin: 0px 0px 26px 0px; }
-			.spaceHeader { margin: 0px 0px 24px 0px; }
+			> .title { margin: 0px 0px 24px 0px !important; }
+			.spaceHeader { margin: 0px 0px 16px 0px; }
 			.spaceHeader {
+				.headerContent .name { margin-bottom: 12px; }
 				.iconObject:hover:after { opacity: 0 !important; }
 			}
 

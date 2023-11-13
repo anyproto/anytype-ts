@@ -334,8 +334,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
+		const templateType = dbStore.getTemplateType();
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -350,7 +352,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: !filter ? 8 : Constant.limit.menuRecords,
+			limit: !filter && clear ? 8 : Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
@@ -440,7 +442,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else {
 			switch (item.id) {
 				case 'add': {
-					keyboard.pageCreate();
+					keyboard.pageCreate('Search');
 					break;
 				};
 

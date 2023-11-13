@@ -186,9 +186,7 @@ class Keyboard {
 
 			// Spaces
 			this.shortcut('ctrl+tab', e, () => {
-				if (!menuStore.isOpen('space')) {
-					this.onSpaceMenu();
-				};
+				this.onSpaceMenu(true);
 			});
 
 			// Lock/Unlock
@@ -248,7 +246,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.pageCreate();
+				this.pageCreate('Shortcut');
 			});
 
 			// Settings
@@ -298,7 +296,7 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate () {
+	pageCreate (route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -317,7 +315,7 @@ class Keyboard {
 		
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			UtilObject.openAuto({ id: message.targetId });
-			analytics.event('CreateObject', { route: 'Navigation', objectType: commonStore.type });
+			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};
 
@@ -353,7 +351,7 @@ class Keyboard {
 				});
 			};
 		} else {
-			const history = UtilCommon.history;
+			const history = UtilRouter.history;
 
 			let prev = history.entries[history.index - 1];
 
@@ -394,7 +392,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			UtilCommon.history.goForward();
+			UtilRouter.history.goForward();
 		};
 
 		menuStore.closeAll();
@@ -404,7 +402,7 @@ class Keyboard {
 	checkBack (): boolean {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
-		const history = UtilCommon.history;
+		const history = UtilRouter.history;
 
 		if (!history) {
 			return;
@@ -439,7 +437,7 @@ class Keyboard {
 
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
-		const history = UtilCommon.history;
+		const history = UtilRouter.history;
 
 		if (!history) {
 			return;
@@ -507,7 +505,7 @@ class Keyboard {
 			};
 
 			case 'create': {
-				this.pageCreate();
+				this.pageCreate('MenuSystem');
 				break;
 			};
 
@@ -557,7 +555,7 @@ class Keyboard {
 			};
 
 			case 'debugSpace': {
-				C.DebugSpaceSummary((message: any) => {
+				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
 						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
 
@@ -576,8 +574,22 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugProcess': {
+				C.DebugStackGoroutines(logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+			};
+
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
+				break;
+			};
+
+			case 'interfaceLang': {
+				Action.setInterfaceLang(arg);
 				break;
 			};
 
@@ -758,7 +770,11 @@ class Keyboard {
 		});
 	};
 
-	onSpaceMenu () {
+	onSpaceMenu (shortcut: boolean) {
+		if (menuStore.isOpen('space')) {
+			return;
+		};
+
 		menuStore.open('space', {
 			element: '#navigationPanel',
 			className: 'fixed',
@@ -767,6 +783,9 @@ class Keyboard {
 			horizontal: I.MenuDirection.Center,
 			vertical: I.MenuDirection.Top,
 			offsetY: -12,
+			data: {
+				shortcut,
+			}
 		});
 	};
 

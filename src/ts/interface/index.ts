@@ -1,4 +1,5 @@
 import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
+import { SpaceStatus, SpaceType } from './space';
 import { AnimType, AnimDirection } from './animation';
 import { 
 	Platform, 
@@ -23,7 +24,6 @@ import {
 	SliceOperation,
 	Dataset,
 	ButtonComponent,
-	SpaceType,
 	FileSyncStatus,
 	BannerType,
 	StoreTab,
@@ -78,6 +78,9 @@ export {
 	AccountStatus,
 	AccountStatusType,
 
+	SpaceStatus, 
+	SpaceType,
+
 	AnimType, 
 	AnimDirection,
 
@@ -127,8 +130,6 @@ export {
 	PreviewLink,
 	PreviewType,
 	PreviewSize,
-
-	SpaceType,
 
 	FileSyncStatus,
 
