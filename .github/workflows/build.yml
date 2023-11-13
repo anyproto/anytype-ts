@@ -27,6 +27,10 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
+      - name: Setup distutils
+        if: matrix.os != 'windows-latest'
+        run: sudo -H pip install setuptools
+
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
