@@ -216,6 +216,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			Survey.check(I.SurveyType.Register);
 			Survey.check(I.SurveyType.Pmf);
 			Survey.check(I.SurveyType.Object);
+
+			if (!Onboarding.isCompleted('navigation') && !$('#navigationPanel').hasClass('hide')) {
+				Onboarding.start('navigation', keyboard.isPopup(), false);
+			};
+
 		}, Constant.delay.popup);
 	};
 
@@ -224,7 +229,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
+		if (!home || !id || (home.id != id) || isPopup || !Onboarding.isCompleted('dashboard')) {
 			return;
 		};
 

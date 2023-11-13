@@ -179,7 +179,9 @@ export default {
         category: translate('onboardingDashboard'),
         showConfetti: true,
 		onComplete: (force: boolean) => {
-			Onboarding.start('navigation', keyboard.isPopup(), force);
+			if (!$('#navigationPanel').hasClass('hide')) {
+				Onboarding.start('navigation', keyboard.isPopup(), force);
+			};
 		},
         items: [
             {
