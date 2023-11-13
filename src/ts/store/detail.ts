@@ -27,6 +27,11 @@ class DetailStore {
 
 	/** Idempotent. adds details to the detail store. */
     public set (rootId: string, items: Item[]) {
+		if (!rootId) {
+			console.log('[detailStore].set: rootId is not defined');
+			return;
+		};
+
 		const map = observable.map(new Map());
 
 		for (const item of items) {
