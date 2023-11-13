@@ -226,12 +226,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				break;
 			};
 
-			case 'dashboard': {
-				close();
-				UtilObject.openHome('route');
-				break;
-			};
-
 			case 'changeType':
 				menuStore.open('typeSuggest', {
 					element: `#${getId()}`,

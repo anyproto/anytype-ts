@@ -5,14 +5,11 @@ export default {
         category: translate('onboardingMainGraph'),
         items: [
             {
-                description: `
-					<p>${translate('onboardingMainGraph11')}</p>
-					<p>${translate('onboardingMainGraph12')}</p>
-				`,
+                description: translate('onboardingMainGraph11'),
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
-                    { text: translate('commonFinish'), action: 'dashboard' },
+                    { text: translate('commonFinish') },
                 ],
             }
         ],
@@ -192,6 +189,7 @@ export default {
                 description: `
 					<p>${translate('onboardingDashboard11')}</p>
 					<p>${translate('onboardingDashboard12')}</p>
+					<p>${translate('onboardingDashboard13')}</p>
 				`,
                 video: './img/help/onboarding/homepage.mp4',
             },
