@@ -698,6 +698,8 @@ class Keyboard {
 		if (clearTheme) {
 			UtilCommon.addBodyClass('theme', '');
 		};
+
+		$('#link-prism').remove();
 		focus.clearRange(true);
 	};
 

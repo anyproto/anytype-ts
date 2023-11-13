@@ -28,9 +28,9 @@
 			.day.first { border-top-width: 0px; }
 
 			.day.active {
-				.number { 
-					display: inline-block; color: $colorTextInversion; background-color: $colorSystemAccent100; border-radius: 12px; 
-					padding: 0px 7px; align-self: flex-end; 
+				.number { padding: 0px; color: $colorTextInversion; }
+				.number {
+					.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
 				}
 			}
 
@@ -39,7 +39,11 @@
 			}
 
 			.day {
-				.number { @include text-paragraph; text-align: right; }
+				.number { @include text-paragraph; text-align: right; padding: 0px 8px; }
+				.number {
+					.inner { display: inline-block; }
+				}
+
 				.item { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-small; @include text-overflow-nw; 
 					margin: 0px 0px 2px 0px; position: relative; padding: 0px 8px; border-radius: 4px;
