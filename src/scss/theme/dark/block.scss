@@ -223,6 +223,14 @@
 					.item { border-color: $colorShapeSecondary; }
 				}
 			}
+
+			.day.other {
+				.number { color: $colorTextTertiary; }
+			}
+
+			.day {
+				.item:hover::before { background: $colorShapeHighlightMedium; }
+			}
 		}
 
 		.content {

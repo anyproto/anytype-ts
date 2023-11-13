@@ -239,6 +239,7 @@ window.Lib = {
 	UtilFile,
 	UtilObject,
 	UtilMenu,
+	UtilRouter,
 	analytics,
 	dispatcher,
 	keyboard,

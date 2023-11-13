@@ -2,6 +2,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
@@ -1172,7 +1173,7 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, t
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
-	request.setObjecttypeuniquekey(typeKey);
+	request.setObjecttypeuniquekey(typeKey || Constant.default.typeKey);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };

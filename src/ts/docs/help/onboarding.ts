@@ -53,9 +53,6 @@ export default {
                 buttonText: translate('onboardingMainSet3Button'),
             }
         ],
-		onComplete: (force: boolean) => {
-			Onboarding.start('changeDefaultTypeInSet', keyboard.isPopup(), force);
-		},
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
@@ -187,6 +184,9 @@ export default {
     dashboard: () => ({
         category: translate('onboardingDashboard'),
         showConfetti: true,
+		onComplete: (force: boolean) => {
+			Onboarding.start('navigation', keyboard.isPopup(), force);
+		},
         items: [
             {
                 description: `
@@ -356,20 +356,67 @@ export default {
 		],
 	}),
 
-	changeDefaultTypeInSet: () => (
+	setSettings: () => (
 		{
 			items: [
 				{
 					name: translate('onboardingDefaultTypeTitle'),
 					description: translate('onboardingDefaultTypeDescription'),
+					param: {
+						element: '#button-dataview-add-record-select',
+						horizontal: I.MenuDirection.Right,
+						offsetX: -4,
+						offsetY: 12,
+					},
+				},
+
+				{
+					name: translate('onboardingCalendarTitle'),
+					description: translate('onboardingCalendarDescription'),
+					param: {
+						element: '#button-dataview-settings',
+						horizontal: I.MenuDirection.Right,
+						offsetX: -4,
+						offsetY: 12,
+					},
+				},
+			],
+		}
+	),
+
+	templateSelect: () => (
+		{
+			items: [
+				{
+					name: translate('onboardingTemplateSelectTitle'),
+					description: translate('onboardingTemplateSelectDescription'),
 				},
 			],
 
 			param: {
-				element: '#button-dataview-add-record-select',
-				horizontal: I.MenuDirection.Right,
-				offsetX: -4,
+				element: '#headerBanner',
+				horizontal: I.MenuDirection.Center,
 				offsetY: 12,
+				noButton: true,
+			},
+		}
+	),
+
+	navigation: () => (
+		{
+			items: [
+				{
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
+				},
+			],
+
+			param: {
+				element: '#navigationPanel #button-navigation-profile',
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
+				offsetY: -24,
+				noButton: true,
 			},
 		}
 	),

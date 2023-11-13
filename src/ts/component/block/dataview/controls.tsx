@@ -48,6 +48,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
+		const cmd = keyboard.cmdSymbol();
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -148,6 +149,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
 							icon="search"
+							tooltip={translate('commonSearch')}
+							tooltipCaption={`${cmd} + F`}
 							onChange={onFilterChange}
 							onIconClick={this.onFilterShow}
 						/>

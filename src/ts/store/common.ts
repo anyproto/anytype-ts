@@ -1,9 +1,8 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
-import { blockStore, dbStore } from 'Store';
+import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import * as Sentry from '@sentry/browser';
 
 interface Filter {
 	from: number;
@@ -145,11 +144,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.typeKey.note);
+		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
 
 		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.typeKey.note);
+			type = dbStore.getTypeByKey(Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';

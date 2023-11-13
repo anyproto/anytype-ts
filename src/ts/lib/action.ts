@@ -221,10 +221,6 @@ class Action {
 				return;
 			};
 
-			if (callBack) {
-				callBack(message);
-			};
-
 			const { details } = message;
 			const eventParam: any = { layout: object.layout };
 
@@ -255,6 +251,10 @@ class Action {
 
 			detailStore.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', eventParam);
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 

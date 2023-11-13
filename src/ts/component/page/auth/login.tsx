@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics, Storage } from 'Lib';
+import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -117,7 +117,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			authStore.accountListClear();
 
 			UtilData.createSession(() => {
-				C.AccountRecover((message) => this.setError(message.error));
+				C.AccountRecover(message => this.setError(message.error));
 			});
 		});
 	};
@@ -145,8 +145,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		};
 
 		this.setState({ error: error.description });
-		this.refPhrase.setError(true);
-		this.refSubmit.setLoading(false);
+		this.refPhrase?.setError(true);
+		this.refSubmit?.setLoading(false);
+
+		authStore.accountListClear();
 
 		UtilCommon.checkError(error.code);
 		return true;
@@ -161,7 +163,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, () => { this.onSubmit(e); });
+		keyboard.shortcut('enter', e, () => this.onSubmit(e));
 	};
 	
 	onCancel () {

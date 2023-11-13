@@ -27,10 +27,14 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
+      - name: Setup distutils
+        if: matrix.os != 'windows-latest'
+        run: sudo -H pip install setuptools
+
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 16.19.0
+          node-version: 18.15.0
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps

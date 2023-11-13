@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -247,8 +247,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
 		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
 
-		if (!isInline && Onboarding.isCompleted('mainSet')) {
-			Onboarding.start('changeDefaultTypeInSet', isPopup);
+		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
+			Onboarding.start('setSettings', isPopup);
 		};
 	};
 
@@ -371,7 +371,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			const filters = [];
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			];
 			if (this.searchIds) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
@@ -578,6 +580,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			relations.forEach((it: any) => {
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+
+		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
+			details[view.groupRelationKey] = UtilDate.now();
 		};
 
 		for (const filter of view.filters) {
@@ -818,8 +824,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
-					console.log('ITEM', JSON.stringify(item));
-
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
@@ -836,8 +840,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onTemplateAdd (id?: string) {
-		const { rootId, block } = this.props;
-		const view = this.getView();
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
 		const route = this.isCollection() ? 'Collection' : 'Set';

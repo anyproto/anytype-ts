@@ -399,6 +399,7 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
 		];
 	};
@@ -410,6 +411,10 @@ class UtilObject {
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
 		];
+	};
+
+	excludeFromSet () {
+		return [ I.ObjectLayout.Option, I.ObjectLayout.SpaceView, I.ObjectLayout.Space ];
 	};
 
 	isAllowedTemplate (typeId): boolean {
