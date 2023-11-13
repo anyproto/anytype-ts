@@ -169,7 +169,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { m, y } = this.getDateParam(this.value);
 		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
 		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
-		const filters: I.Filter[] = [].concat(view.filters);
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 		const subId = this.getSubId(m, y);

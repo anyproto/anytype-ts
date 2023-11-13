@@ -138,12 +138,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		this.props.onKeyDown(e);
 	};
 
-	save () {
+	save (withName?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly, getView } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const view = getView();
 
 		if (readonly || !block) {
 			return;
@@ -152,26 +151,34 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isBoard = this.param.type == I.ViewType.Board;
 		const isCalendar = this.param.type == I.ViewType.Calendar;
 		const current = data.view.get();
-		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
-
-		if (isBoard && !this.param.groupRelationKey) {
-			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
-		};
+		const clearGroups = isBoard && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if (isCalendar && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = 'lastModifiedDate';
 		};
 
-		this.param.name = view.name;
-		
+		if (isBoard || isCalendar) {
+			const groupOptions = Relation.getGroupOptions(rootId, blockId, this.param.type);
+			if (!groupOptions.map(it => it.id).includes(this.param.groupRelationKey)) {
+				if (isCalendar) {
+					this.param.groupRelationKey = 'lastModifiedDate';
+				} else {
+					this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.type, this.param.groupRelationKey)?.id;
+				};
+			};
+		};
+
+		if (withName) {
+			this.param.name = this.getViewName();
+		};
+
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
 				Dataview.groupUpdate(rootId, blockId, current.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
-			} else {
-				if (onSave) {
-					onSave();
-				};
+			} else 
+			if (onSave) {
+				onSave();
 			};
 		});
 
@@ -283,7 +290,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			return;
 		};
 
-		let menuId = '';
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -299,6 +305,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				},
 			}
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'coverRelationKey': {
@@ -358,9 +366,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		if (item.sectionId == 'type') {
+			let withName = false;
+			if (this.param.name == Dataview.defaultViewName(this.param.type)) {
+				this.param.name = Dataview.defaultViewName(item.id);
+				withName = true;
+			};
 			this.param.type = item.id;
+
 			this.n = -1;
-			this.save();
+			this.save(withName);
 
 			analytics.event('ChangeViewType', {
 				type: item.id,
@@ -372,6 +386,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		if (onSelect) {
 			onSelect();
 		};
+	};
+
+	getViewName (name?: string) {
+		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
 	};
 
 	menuClose () {

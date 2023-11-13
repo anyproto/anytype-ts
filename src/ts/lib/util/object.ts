@@ -413,6 +413,10 @@ class UtilObject {
 		];
 	};
 
+	excludeFromSet () {
+		return [ I.ObjectLayout.Option, I.ObjectLayout.SpaceView, I.ObjectLayout.Space ];
+	};
+
 	isAllowedTemplate (typeId): boolean {
 		const type = dbStore.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;

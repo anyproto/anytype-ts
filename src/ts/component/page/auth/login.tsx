@@ -146,7 +146,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.setState({ error: error.description });
 		this.refPhrase?.setError(true);
-		this.refSubmit.setLoading(false);
+		this.refSubmit?.setLoading(false);
 
 		authStore.accountListClear();
 

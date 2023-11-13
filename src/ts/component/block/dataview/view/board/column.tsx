@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilCommon, translate } from 'Lib';
+import { I, Relation, UtilData, UtilObject, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -148,7 +148,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		const objectIds = el ? el.objectIds || [] : [];
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
-		const filters: I.Filter[] = [].concat(view.filters);
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 
