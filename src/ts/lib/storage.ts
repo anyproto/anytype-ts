@@ -200,7 +200,11 @@ class Storage {
 	};
 
 	setLastUsedTypes (id: string) {
-		let list = this.get('lastUsedTypes') || [];
+		let list = this.getLastUsedTypes();
+
+		if (!id) {
+			return list;
+		};
 
 		list.unshift(id);
 		list = list.slice(0, 50);
