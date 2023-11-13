@@ -1440,8 +1440,7 @@
 	"dispatcherImportTryAgain": "Try again",
 
 	"onboardingMainGraph": "Onboarding",
-	"onboardingMainGraph11": "<b>Welcome to your Anytype Space.</b> Space is a graph of interconnected objects, providing a natural way to organize information.",
-	"onboardingMainGraph12": "To access your Homepage, click on the <span class=\"highlight\">Next</span> button.",
+	"onboardingMainGraph11": "<b>Space is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
 
 	"onboardingMainSet": "Set & Collection",
 	"onboardingMainSet11": "<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.",
@@ -1471,13 +1470,9 @@
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
 
 	"onboardingDashboard": "Onboarding",
-	"onboardingDashboard11": "<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.<br />We've included some materials to help you get started, but feel free to make adjustments as needed.",
-	"onboardingDashboard12": "Let's take a few minutes to explore the features together.",
-	"onboardingDashboard21": "<b>Sets, acting as filters for your objects</b>, are featured on your Homepage.",
-	"onboardingDashboard22": "Sets make it easy to navigate and collect specific Objects, such as Notes, Links, Tasks, ideas, and more.",
-	"onboardingDashboard23": "To access different Set Views, simply select them.",
-	"onboardingDashboard31": "<b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with Relations and links.",
-	"onboardingDashboard32": "To add an Object to a Set, click the <span class=\"highlight\">New</span> button and view its relation as properties in columns.",
+	"onboardingDashboard11": "<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.",
+	"onboardingDashboard12": "Feel free to make adjustments as needed.",
+	"onboardingDashboard13": "Let's take a few minutes to explore the features together.",
 	"onboardingDashboard41": "<b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.",
 	"onboardingDashboard42": "Change the Widget appearance and see what looks best. Make your Favorites as a Tree Widget.",
 	"onboardingDashboard51": "<b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.",

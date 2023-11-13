@@ -5,15 +5,9 @@ export default {
         category: translate('onboardingMainGraph'),
         items: [
             {
-                description: `
-					<p>${translate('onboardingMainGraph11')}</p>
-					<p>${translate('onboardingMainGraph12')}</p>
-				`,
+                description: translate('onboardingMainGraph11'),
                 video: './img/help/onboarding/space.mp4',
-                noButton: true,
-                buttons: [
-                    { text: translate('commonNext'), action: 'dashboard' },
-                ],
+				buttonText: translate('commonFinish'),
             }
         ],
 
@@ -192,23 +186,9 @@ export default {
                 description: `
 					<p>${translate('onboardingDashboard11')}</p>
 					<p>${translate('onboardingDashboard12')}</p>
+					<p>${translate('onboardingDashboard13')}</p>
 				`,
                 video: './img/help/onboarding/homepage.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard21')}</p>
-					<p>${translate('onboardingDashboard22')}</p>
-					<p>${translate('onboardingDashboard23')}</p>
-                `,
-                video: './img/help/onboarding/sets.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard31')}</p>
-					<p>${translate('onboardingDashboard32')}</p>
-                `,
-                video: './img/help/onboarding/objects.mp4',
             },
             {
                 description: `
