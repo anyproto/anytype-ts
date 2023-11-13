@@ -12,7 +12,7 @@ export default {
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
-                    { text: translate('commonNext'), action: 'dashboard' },
+                    { text: translate('commonFinish'), action: 'dashboard' },
                 ],
             }
         ],
@@ -194,21 +194,6 @@ export default {
 					<p>${translate('onboardingDashboard12')}</p>
 				`,
                 video: './img/help/onboarding/homepage.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard21')}</p>
-					<p>${translate('onboardingDashboard22')}</p>
-					<p>${translate('onboardingDashboard23')}</p>
-                `,
-                video: './img/help/onboarding/sets.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard31')}</p>
-					<p>${translate('onboardingDashboard32')}</p>
-                `,
-                video: './img/help/onboarding/objects.mp4',
             },
             {
                 description: `
