@@ -1,12 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import arrayMove from 'array-move';
-import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -217,14 +216,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	};
 
 	onAdd () {
-		const { param, getId, getSize, close } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget, onViewSwitch } = data;
+		const { rootId, blockId, getView, getSources, isInline, getTarget, onViewSwitch } = data;
 		const view = getView();
 		const sources = getSources();
 		const relations = UtilCommon.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
-		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const object = getTarget();
 
 		for (const relation of relations) {
@@ -241,7 +239,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		};
 
 		const newView = {
-			name: '',
+			name: Dataview.defaultViewName(I.ViewType.Grid),
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
 			filters,
@@ -256,9 +254,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			close();
-			window.setTimeout(() => {
-				onViewSwitch(view);
-			}, Constant.delay.menu);
+			window.setTimeout(() => onViewSwitch(view), Constant.delay.menu);
 
 			analytics.event('AddView', {
 				type: view.type,

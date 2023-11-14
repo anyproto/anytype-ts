@@ -141,7 +141,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	save (withName?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, readonly, getView } = data;
+		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (readonly || !block) {
@@ -171,6 +171,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		if (withName) {
 			this.param.name = this.getViewName();
 		};
+
+		let view = data.view.get();
+		view = Object.assign(view, this.param);
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
@@ -389,6 +392,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	getViewName (name?: string) {
+		console.log(name, this.param.name);
+
 		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
 	};
 
