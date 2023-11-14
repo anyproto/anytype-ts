@@ -35,7 +35,7 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 300,
+		distanceMax: 200,
 	},
 	link: {
 		distance: 50,
@@ -105,7 +105,21 @@ init = (param) => {
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	setTimeout(() => this.setRootId({ rootId }), 100);
+	setTimeout(() => {
+		root = getNodeById(rootId);
+
+		let x = width / 2;
+		let y = height / 2;
+
+		if (root) {
+			x = root.x;
+			y = root.y;
+		};
+
+		transform = Object.assign(transform, getCenter(x, y));
+		send('onTransform', { ...transform });
+		redraw();
+	}, 100);
 };
 
 initTheme = (theme) => {
