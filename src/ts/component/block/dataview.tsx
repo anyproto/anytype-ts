@@ -939,7 +939,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
-			onClose: () => { selection.clear(); },
+			onClose: () => selection.clear(),
 			data: {
 				targetId: this.getObjectId(),
 				objectIds: ids,
