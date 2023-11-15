@@ -28,7 +28,6 @@ export default [
 	video('./img/help/36/1.mp4', 'c70'),
 	text(`Spaces were first introduced in June of this year as a container for your graph of objects. From today's release onwards, you'll be able to level up your space game by creating separate spaces, each with their own graph of objects, widget sidebar, and eventually - privacy settings.`),
 	text(`Simply click your profile picture to create new spaces, or navigate between existing ones. Use the space management menu at the top of your sidebar to customize your space settings or delete your space. For now, your account is limited to 10 spaces.`),
-	img('./img/help/36/2.png', 'c70'),
 
 	h3(`Calendar View for Sets & Collections`),
 	video('./img/help/36/3.mp4', 'c70'),

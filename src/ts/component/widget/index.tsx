@@ -403,7 +403,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case Constant.widgetId.recentEdit: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
 				break;
 			};
 

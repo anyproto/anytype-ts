@@ -205,7 +205,7 @@ class Dispatcher {
 				};
 
 				case 'accountDetails': {
-					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.decodeStruct(data.getDetails()) }, false);
+					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.struct(data.getDetails()) }, false);
 					break;
 				};
 
@@ -330,7 +330,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.decodeStruct(data.getFields()) : {} });
+					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.struct(data.getFields()) : {} });
 					break;
 				};
 
@@ -366,7 +366,7 @@ class Dispatcher {
 					};
 
 					if (data.hasFields()) {
-						block.content.fields = Decode.decodeStruct(data.getFields());
+						block.content.fields = Decode.struct(data.getFields());
 					};
 
 					blockStore.updateContent(rootId, id, block.content);
@@ -862,7 +862,7 @@ class Dispatcher {
 					id = data.getId();
 					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
-					details = Decode.decodeStruct(data.getDetails());
+					details = Decode.struct(data.getDetails());
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
@@ -875,7 +875,7 @@ class Dispatcher {
 
 					details = {};
 					for (const item of (data.getDetailsList() || [])) {
-						details[item.getKey()] = Decode.decodeValue(item.getValue());
+						details[item.getKey()] = Decode.value(item.getValue());
 					};
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
@@ -1065,6 +1065,10 @@ class Dispatcher {
 
 		if ((id == blockStore.spaceview) && (details.spaceAccountStatus == I.SpaceStatus.Deleted)) {
 			UtilRouter.switchSpace(authStore.accountSpaceId, '');
+		};
+
+		if (!rootId) {
+			return;
 		};
 
 		detailStore.update(rootId, { id, details }, clear);

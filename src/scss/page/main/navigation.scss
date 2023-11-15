@@ -3,7 +3,14 @@
 .pageMainNavigation {
 	.wrapper > #loader { position: fixed; top: 0px; width: 100%; height: 100%; background: $colorBgPrimary; z-index: 1; }
 
+	.sides { display: flex; padding: 0px 16px; }
+	.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; padding: 0px 16px; }
+
+	.items { width: 33.33%; padding: 4px 0px; }
+	.items.center { padding: 39px 16px 4px 16px; }
 	.items {
+		.row { width: 100%; padding: 0px 32px 0px 16px; }
+
 		.item { 
 			transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
 			height: 80px; border: 1px solid $colorShapeSecondary; border-radius: 8px;
@@ -21,21 +28,28 @@
 				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
 				background-image: url('~img/arrow/nav0.svg');
 			}
-		}
 
-		.item.active { background-color: $colorShapeHighlightMedium; }
-	}
-
-	.sides { display: flex; padding: 0px 16px; }
-	
-	.items { width: 33.33%; padding: 4px 0px; }
-	.items.center { padding: 39px 16px 4px 16px; }
-	.items {
-		.row { width: 100%; padding: 0px 32px 0px 16px; }
-		.item {
 			.icon.arrow { 
 				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
 				background-image: url('~img/arrow/nav0.svg');
+			}
+		}
+
+		.item.selected { 
+			padding: 16px; border-radius: 8px; border: 1px solid $colorShapeSecondary; transition: $transitionAllCommon; height: auto;
+		}
+		.item.selected {
+			.iconObject { margin-bottom: 8px; }
+			.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
+			.descr { @include text-small; color: $colorTextSecondary; @include text-overflow; max-height: 54px; }
+			.cover { position: relative; height: 156px; margin-top: 11px; border-radius: 2px; }
+
+			.buttons { margin-top: 16px; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+			.buttons {
+				.button { width: 100%; }
+				.button {
+					.icon.expand { background-image: url('~img/icon/expand.svg'); width: 20px; height: 20px; position: absolute; left: 8px; top: 6px; }
+				}
 			}
 		}
 
@@ -50,25 +64,6 @@
 		}
 	}
 
-	.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; padding: 0px 16px; }
-	
-	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorShapeSecondary; transition: $transitionAllCommon; }
-	.selected {
-		.iconObject { margin-bottom: 8px; }
-		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
-		.descr { @include text-small; color: $colorTextSecondary; @include text-overflow; max-height: 54px; }
-		.cover { position: relative; height: 156px; margin-top: 11px; border-radius: 2px; }
-
-		.buttons { margin-top: 16px; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
-		.buttons {
-			.button { width: 100%; }
-			.button {
-				.icon.expand { background-image: url('~img/icon/expand.svg'); width: 20px; height: 20px; position: absolute; left: 8px; top: 6px; }
-			}
-		}
-	}
-	.selected.active { border-color: $colorSystemAccent100 !important; box-shadow: 0px 0px 0px 1px $colorSystemAccent100; }
-	
 	.items.right {
 		.item {
 			.icon.arrow { right: auto; left: -24px; }

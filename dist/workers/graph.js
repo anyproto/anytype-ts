@@ -15,6 +15,7 @@ const util = new Util();
 // CONSTANTS
 
 const transformThreshold = 1.5;
+const delayFocus = 1000;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -70,7 +71,9 @@ let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
+let rootId = '';
 let root = null;
+let paused = false;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -82,7 +85,7 @@ init = (param) => {
 	data = param;
 	canvas = data.canvas;
 	settings = data.settings;
-
+	rootId = data.rootId;
 	ctx = canvas.getContext('2d');
 
 	util.ctx = ctx;
@@ -99,16 +102,15 @@ init = (param) => {
 
 	initForces();
 
-	simulation.on('tick', () => { redraw(); });
+	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	// Center initially on root node
 	setTimeout(() => {
-		root = getNodeById(data.rootId);
+		root = getNodeById(rootId);
 
 		let x = width / 2;
 		let y = height / 2;
-		
+
 		if (root) {
 			x = root.x;
 			y = root.y;
@@ -199,10 +201,11 @@ initForces = () => {
 	.y(height * forceY.y);
 
 	updateForces();
+	redraw();
 };
 
 updateForces = () => {
-	let old = getNodeMap();
+	const old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
@@ -215,6 +218,14 @@ updateForces = () => {
 	// Filter relations
 	if (!settings.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
+	};
+
+	// Filte local only edges
+	if (settings.local) {
+		edges = edges.filter(d => (d.source == rootId) || (d.target == rootId));
+
+		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
+		nodes = nodes.filter(d => nodeIds.includes(d.id));
 	};
 
 	let map = getNodeMap();
@@ -237,7 +248,13 @@ updateForces = () => {
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	// Shallow copy to disable mutations
-	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+	nodes = nodes.map(d => {
+		let o = old.get(d.id);
+		if (!o) {
+			o = settings.local ? { x: width / 2, y: width / 2 } : {};
+		};
+		return Object.assign(o, d);
+	});
 	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
@@ -258,16 +275,28 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const needUpdate = (param.link != settings.link) || 
-						(param.relation != settings.relation) || 
-						(param.orphan != settings.orphan);
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	
+	let needUpdate = false;
+	let needFocus = false;
+
+	for (let key of updateKeys) {
+		if (param[key] != settings[key]) {
+			needUpdate = true;
+
+			if (key == 'local') {
+				needFocus = true;
+			};
+
+			break;
+		};
+	};
 
 	settings = Object.assign(settings, param);
+	needUpdate ? updateForces() : redraw();
 
-	if (needUpdate) {
-		updateForces();
-	} else {
-		redraw();
+	if (needFocus) {
+		setTimeout(() => this.setRootId({ rootId }), delayFocus);
 	};
 };
 
@@ -289,7 +318,7 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawLine(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
@@ -303,10 +332,12 @@ draw = (t) => {
 
 redraw = () => {
 	cancelAnimationFrame(frame);
-	frame = requestAnimationFrame(draw);
+	if (!paused) {
+		frame = requestAnimationFrame(draw);
+	};
 };
 
-drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
+drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
 	const r1 = getRadius(d.source);
@@ -577,6 +608,22 @@ onSelect = ({ x, y, selectRelated }) => {
 	};
 };
 
+onSetRootId = ({ x, y }) => {
+  	const d = getNodeByCoords(x, y);
+	if (d) {
+		this.setRootId({ rootId: d.id });
+	};
+};
+
+onSetEdges = (param) => {
+	data.edges = param.edges;
+	updateForces();
+};
+
+onSetSelected = ({ ids }) => {
+	selected = ids;
+};
+
 onMouseMove = ({ x, y }) => {
 	const active = nodes.find(d => d.isOver);
 	const d = getNodeByCoords(x, y);
@@ -618,12 +665,11 @@ onContextMenu = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (!d) {
 		send('onContextSpaceClick', { x, y });
-		return;
+	} else {
+		send('onContextMenu', { node: d, x, y });
+		d.isOver = true;
+		redraw();
 	};
-
-	d.isOver = true;
-	send('onContextMenu', { node: d, x, y });
-	redraw();
 };
 
 onAddNode = ({ target, sourceId }) => {
@@ -667,21 +713,12 @@ onRemoveNode = ({ ids }) => {
 	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 
 	updateForces();
-	redraw();
 };
 
-onSetEdges = (param) => {
-	data.edges = param.edges;
+setRootId = (param) => {
+	rootId = param.rootId;
+	root = getNodeById(rootId);
 
-	updateForces();
-};
-
-onSetSelected = ({ ids }) => {
-	selected = ids;
-};
-
-onSetRootId = ({ rootId }) => {
-	root = nodes.find(d => d.id == rootId);
 	if (!root) {
 		return;
 	};
@@ -696,12 +733,14 @@ onSetRootId = ({ rootId }) => {
 		transform = Object.assign(transform, coords);
 		redraw();
 	})
-	.onComplete(() => {
-		send('onTransform', { ...transform });
-	})
+	.onComplete(() => send('onTransform', { ...transform }))
 	.start();
 
-	redraw();
+	if (settings.local) {
+		updateForces();
+	} else {
+		redraw();
+	};
 };
 
 restart = (alpha) => {
