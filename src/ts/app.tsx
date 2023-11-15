@@ -24,105 +24,17 @@ import 'react-virtualized/styles.css';
 import 'emoji-mart/css/emoji-mart.css';
 
 import 'scss/common.scss';
-import 'scss/debug.scss';
-import 'scss/font.scss';
-
-import 'scss/component/cover.scss';
-import 'scss/component/deleted.scss';
-import 'scss/component/dragbox.scss';
-import 'scss/component/dragLayer.scss';
-import 'scss/component/dotIndicator.scss';
-import 'scss/component/editor.scss';
-import 'scss/component/emptySearch.scss';
-import 'scss/component/error.scss';
-import 'scss/component/footer.scss';
-import 'scss/component/frame.scss';
-import 'scss/component/header.scss';
-import 'scss/component/headSimple.scss';
-import 'scss/component/icon.scss';
-import 'scss/component/iconObject.scss';
-import 'scss/component/loader.scss';
-import 'scss/component/pager.scss';
-import 'scss/component/progress.scss';
-import 'scss/component/selection.scss';
-import 'scss/component/sidebar.scss';
-import 'scss/component/sync.scss';
-import 'scss/component/tag.scss';
-import 'scss/component/title.scss';
-import 'scss/component/toast.scss';
-import 'scss/component/tooltip.scss';
-import 'scss/component/navigation.scss';
-
+import 'scss/component/common.scss';
 import 'scss/component/preview/common.scss';
-import 'scss/component/preview/link.scss';
-import 'scss/component/preview/object.scss';
-
-import 'scss/component/media/audio.scss';
-import 'scss/component/media/video.scss';
-
-import 'scss/component/hightlight.scss';
-import 'scss/component/progressBar.scss';
-
-import 'scss/page/auth.scss';
-import 'scss/page/main/edit.scss';
-import 'scss/page/main/graph.scss';
-import 'scss/page/main/history.scss';
-import 'scss/page/main/media.scss';
-import 'scss/page/main/navigation.scss';
-import 'scss/page/main/relation.scss';
-import 'scss/page/main/set.scss';
-import 'scss/page/main/space.scss';
-import 'scss/page/main/store.scss';
-import 'scss/page/main/type.scss';
-import 'scss/page/main/archive.scss';
-import 'scss/page/main/graph.scss';
-import 'scss/page/main/navigation.scss';
-import 'scss/page/main/block.scss';
-import 'scss/page/main/empty.scss';
-import 'scss/page/main/usecase.scss';
-
+import 'scss/component/media/common.scss';
+import 'scss/page/common.scss';
 import 'scss/block/common.scss';
-
-import 'scss/form/button.scss';
-import 'scss/form/drag.scss';
-import 'scss/form/filter.scss';
-import 'scss/form/input.scss';
-import 'scss/form/inputWithFile.scss';
-import 'scss/form/inputWithLabel.scss';
-import 'scss/form/phrase.scss';
-import 'scss/form/pin.scss';
-import 'scss/form/select.scss';
-import 'scss/form/switch.scss';
-import 'scss/form/textarea.scss';
-
-import 'scss/list/object.scss';
-import 'scss/list/widget.scss';
-import 'scss/list/previewObject.scss';
-import 'scss/list/objectManager.scss';
-
+import 'scss/form/common.scss';
+import 'scss/list/common.scss';
 import 'scss/widget/common.scss';
-import 'scss/widget/space.scss';
-import 'scss/widget/list.scss';
-import 'scss/widget/tree.scss';
-
 import 'scss/popup/common.scss';
-import 'scss/popup/confirm.scss';
-import 'scss/popup/export.scss';
-import 'scss/popup/help.scss';
-import 'scss/popup/page.scss';
-import 'scss/popup/preview.scss';
-import 'scss/popup/prompt.scss';
-import 'scss/popup/search.scss';
-import 'scss/popup/settings.scss';
-import 'scss/popup/shortcut.scss';
-import 'scss/popup/migration.scss';
-import 'scss/popup/pin.scss';
-import 'scss/popup/phrase.scss';
-
 import 'scss/menu/common.scss';
-
 import 'scss/media/print.scss';
-
 import 'scss/theme/dark/common.scss';
 
 import Constant from 'json/constant.json';

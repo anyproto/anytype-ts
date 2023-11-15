@@ -46,3 +46,6 @@
     .descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
     .featured { @include text-very-small; color: $colorControlActive; }
 }
+
+@import "scss/component/preview/link.scss";
+@import "scss/component/preview/object.scss";

@@ -97,3 +97,7 @@
 	.icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
 	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
 }
+
+@import "scss/widget/space.scss";
+@import "scss/widget/list.scss";
+@import "scss/widget/tree.scss";

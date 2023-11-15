@@ -193,3 +193,6 @@ search.active { background: orange !important; }
 	.icon.resize { display: none; }
 	.icon.download { display: none; }
 }
+
+@import "scss/debug.scss";
+@import "scss/font.scss";
