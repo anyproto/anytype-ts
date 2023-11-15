@@ -35,7 +35,7 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 300,
+		distanceMax: 100,
 	},
 	link: {
 		distance: 50,
@@ -201,6 +201,7 @@ initForces = () => {
 	.y(height * forceY.y);
 
 	updateForces();
+	redraw();
 };
 
 updateForces = () => {
@@ -248,7 +249,11 @@ updateForces = () => {
 
 	// Shallow copy to disable mutations
 	nodes = nodes.map(d => {
-		return Object.assign(old.get(d.id) || { x: width / 2, y: width / 2 }, d);
+		let o = old.get(d.id);
+		if (!o) {
+			o = settings.local ? { x: width / 2, y: width / 2 } : {};
+		};
+		return Object.assign(o, d);
 	});
 	edges = edges.map(d => Object.assign({}, d));
 

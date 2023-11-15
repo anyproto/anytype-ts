@@ -95,7 +95,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar {...this.props} />
+					<Sidebar key="sidebar" {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -155,8 +155,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-		const param = this.getMatchParams();
-		const { page, action, spaceId } = this.getMatchParams();
+		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
