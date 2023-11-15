@@ -221,29 +221,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { rootId, blockId, getView, getSources, isInline, getTarget, onViewSwitch } = data;
 		const view = getView();
 		const sources = getSources();
-		const relations = UtilCommon.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const object = getTarget();
-
-		for (const relation of relations) {
-			if (relation.isHidden || !relation.isVisible) {
-				continue;
-			};
-
-			filters.push({
-				relationKey: relation.relationKey,
-				operator: I.FilterOperator.And,
-				condition: I.FilterCondition.None,
-				value: null,
-			});
-		};
 
 		const newView = {
 			name: Dataview.defaultViewName(I.ViewType.Grid),
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, blockId, view.type, '')?.id,
-			filters,
 			cardSize: I.CardSize.Medium,
+			filters,
+			sorts: [],
 		};
 
 		C.BlockDataviewViewCreate(rootId, blockId, newView, sources, (message: any) => {
