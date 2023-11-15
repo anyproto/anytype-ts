@@ -392,8 +392,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	getViewName (name?: string) {
-		console.log(name, this.param.name);
-
 		return (name || this.param.name || Dataview.defaultViewName(this.param.type)).trim();
 	};
 
