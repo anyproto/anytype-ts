@@ -101,6 +101,7 @@ class Relation {
 
 	public filterConditionsDictionary () {
 		return [ 
+			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
 			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
 			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
