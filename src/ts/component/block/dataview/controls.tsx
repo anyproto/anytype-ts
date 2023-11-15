@@ -328,6 +328,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			type: I.ViewType.Grid,
 			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, view.type, '')?.id,
 			cardSize: view.cardSize || I.CardSize.Medium,
+			filters: [],
+			sorts: [],
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, sources, (message: any) => {
