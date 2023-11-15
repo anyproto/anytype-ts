@@ -99,6 +99,15 @@ class Relation {
 		return ret;
 	};
 
+	public filterConditionsDictionary () {
+		return [ 
+			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+			{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+		];
+	};
+
 	public filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
 		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			return [];
@@ -263,7 +272,7 @@ class Relation {
 
 			case 'origin': {
 				value = Number(value) || I.ObjectOrigin.None;
-				return (value == I.ObjectOrigin.None) ? null : translate(`objectOrigin${value}`);
+				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
 			};
 		};
 		return null;
@@ -383,6 +392,24 @@ class Relation {
 			options = [ 12, 24, 60, 84, 120 ];
 		};
 		return options.map(it => ({ id: it, name: it }));
+	};
+
+	public getDictionaryOptions (relationKey: string) {
+		const options = [];
+		const dictionary = {
+			layout: I.ObjectLayout,
+			origin: I.ObjectOrigin,
+		};
+
+		const item = dictionary[relationKey];
+		if (item) {
+			const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
+			keys.forEach((key, index) => {
+				options.push({ id: index, name: translate(`${relationKey}${index}`) });
+			});
+		};
+
+		return options;
 	};
 
 	public getStringValue (value: any) {
@@ -551,8 +578,16 @@ class Relation {
 		return this.systemKeys().filter(it => !skipKeys.includes(it));
 	};
 
-	isSystem (relationKey: string) {
+	isSystem (relationKey: string): boolean {
 		return this.systemKeys().includes(relationKey);
+	};
+
+	dictionaryKeys () {
+		return [ 'layout', 'origin' ];
+	};
+
+	isDictionary (relationKey: string): boolean {
+		return this.dictionaryKeys().includes(relationKey);
 	};
 	
 };

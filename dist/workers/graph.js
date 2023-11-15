@@ -35,7 +35,7 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 200,
+		distanceMax: 300,
 	},
 	link: {
 		distance: 50,

@@ -1573,13 +1573,13 @@
 	"errorAccountRecover109": "Account has been deleted",
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
-	"objectOrigin0": "User",
-	"objectOrigin1": "Clipboard",
-	"objectOrigin2": "Drag'n'Drop",
-	"objectOrigin3": "Import",
-	"objectOrigin4": "Webclipper",
-	"objectOrigin5": "Sharing Extension",
-	"objectOrigin6": "Usecase",
-	"objectOrigin7": "Built-in"
+	"origin0": "User",
+	"origin1": "Clipboard",
+	"origin2": "Drag'n'Drop",
+	"origin3": "Import",
+	"origin4": "Webclipper",
+	"origin5": "Sharing Extension",
+	"origin6": "Usecase",
+	"origin7": "Built-in"
 
 }
