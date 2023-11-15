@@ -153,7 +153,7 @@ const Progress = observer(class Progress extends React.Component {
 
 		if ((coords.x !== null) && (coords.y !== null)) {
 			this.obj.css({ margin: 0, left: coords.x, top: coords.y });
-			Storage.set('progress', coords);
+			Storage.set('progress', coords, true);
 		};
 	};
 	
