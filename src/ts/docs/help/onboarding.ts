@@ -395,6 +395,7 @@ export default {
 
 			param: {
 				element: '#navigationPanel #button-navigation-profile',
+				classNameWrap: 'fixed',
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
 				offsetY: -24,
