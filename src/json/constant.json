@@ -43,7 +43,13 @@
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
-		"pdf": [ "pdf" ]
+		"pdf": [ "pdf" ],
+		"import": {
+			"1": [ "zip", "md" ],
+			"3": [ "zip", "pb", "json" ],
+			"4": [ "zip", "html", "htm", "mhtml" ],
+			"5": [ "zip", "txt" ]
+		}
 	},
 
 	"menuIds": {

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics, Action } from 'Lib';
 import { commonStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -422,6 +422,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (filter) {
 			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
 
+			const itemsImport: any[] = ([
+				{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+				{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+				{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImporProtobufTitle'), format: I.ImportType.Protobuf },
+				{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+			] as any[]).map(it => ({ ...it, isImport: true }));
+
 			const settingsSpace: any[] = ([
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
 
@@ -432,25 +439,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
 				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
 				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
-			] as any).map(it => {
-				it.isSpace = true;
-				it.className = 'isSpace';
-				return it;
-			}).filter(it => it.name.match(reg));
+			] as any).map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
 			
-			const settingsItems: any[] = ([
+			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
 				{ id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle') },
 				{ id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle') },
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
 				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
-			] as any).concat(settingsSpace).map(it => {
-				it.isSettings = true;
-				return it;
-			}).filter(it => it.name.match(reg));
+			];
 
-			items = items.concat(settingsItems);
+			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true }));
+
+			items = items.concat(itemsImport.concat(settingsItems).filter(it => it.name.match(reg)));
 		};
 
 		items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
@@ -508,6 +510,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
 			}, Constant.delay.popup);
+		} else 
+		if (item.isImport) {
+			Action.import(item.format, Constant.extension.import[item.format]);
 		} else {
 			switch (item.id) {
 				case 'add': {
