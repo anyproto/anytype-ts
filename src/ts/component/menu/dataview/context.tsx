@@ -89,6 +89,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -145,6 +146,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (length > 1) {
 			open = null;
 			linkTo = null;
+			createWidget = null;
 		};
 
 		if (archiveCnt == length) {
@@ -163,7 +165,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedType)		 changeType = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, createWidget, changeType, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -204,7 +206,6 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		const itemId = objectIds[0];
-		let menuId = '';
 		const menuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -218,6 +219,7 @@ class MenuContext extends React.Component<I.Menu> {
 			}
 		};
 
+		let menuId = '';
 		switch (item.id) {
 			case 'changeType': {
 				menuId = 'typeSuggest';
@@ -352,6 +354,17 @@ class MenuContext extends React.Component<I.Menu> {
 					cb();
 					analytics.event('UnlinkFromCollection', { count, route });
 				});
+				break;
+			};
+
+			case 'createWidget': {
+				if (!first) {
+					break;
+				};
+
+				const firstBlock = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+
+				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
 				break;
 			};
 
