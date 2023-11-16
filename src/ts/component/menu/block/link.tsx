@@ -246,6 +246,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const buttons: any[] = [
 			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' }
 		];
+
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		if (items.length) {
