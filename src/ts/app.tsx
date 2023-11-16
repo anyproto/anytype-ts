@@ -188,6 +188,8 @@ import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/template.scss';
 
+import 'scss/menu/quickCapture.scss';
+
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';

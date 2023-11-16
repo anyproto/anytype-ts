@@ -288,6 +288,10 @@ class DbStore {
 		return this.getTypeByKey(Constant.typeKey.type);
 	};
 
+	getBookmarkType () {
+		return this.getTypeByKey(Constant.typeKey.bookmark);
+	};
+
 	getTypes () {
 		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);

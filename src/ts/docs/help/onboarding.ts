@@ -11,17 +11,17 @@ export default {
             }
         ],
 
-        param: {
-            element: '#page.isFull #footer #button-help',
-            classNameWrap: 'fixed',
-            className: 'wizard',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            noArrow: true,
+		param: {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'wizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
 			noClose: true,
 			passThrough: true,
-            offsetY: -4,
-        },
+			offsetY: -4,
+		},
     }),
 
     mainSet: () => ({

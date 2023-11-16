@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -227,6 +227,8 @@ class UtilObject {
 				if (!templateId) {
 					templateId = type.defaultTemplateId || Constant.templateId.blank;
 				};
+
+				Storage.setLastUsedTypes(type.id);
 			};
 		};
 		

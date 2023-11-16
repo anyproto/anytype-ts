@@ -78,6 +78,7 @@ import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
 
+import MenuQuickCapture from './quickCapture';
 
 interface State {
 	tab: string;
@@ -159,6 +160,8 @@ const Components: any = {
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
 	dataviewTemplateList:	 MenuDataviewTemplateList,
+
+	quickCapture: 			 MenuQuickCapture,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
