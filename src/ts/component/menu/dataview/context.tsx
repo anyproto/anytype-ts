@@ -358,10 +358,6 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'createWidget': {
-				if (!first) {
-					break;
-				};
-
 				const firstBlock = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
