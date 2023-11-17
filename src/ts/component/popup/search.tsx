@@ -20,7 +20,6 @@ interface State {
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 48;
 const LIMIT_HEIGHT = 12;
-const SYMBOLS = [ ':', '<=', '>=', '=', '<', '>' ];
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
@@ -40,6 +39,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	top = 0;
 	offset = 0;
 	filter = '';
+	menuContext = null;
 	
 	constructor (props: I.Popup) {
 		super (props);
@@ -57,7 +57,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { loading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
-		const parsedFilter = this.getParsedFilters();
+		const parsedFilters = this.getParsedFilters();
 
 		const Item = (item: any) => {
 			let content = null;
@@ -70,11 +70,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					</React.Fragment>
 				);
 			} else {
-				let caption = '';
-				if (item.shortcut) {
-					caption = item.shortcut.map(it => <div className="key">{it}</div>).join('');
-				};
-
 				content = (
 					<React.Fragment>
 						<Icon className={item.icon} />
@@ -90,10 +85,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			return (
 				<div 
-					id={'item-' + item.id} 
+					id={`item-${item.id}`} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onMouseOver={(e: any) => { this.onOver(e, item); }} 
-					onClick={(e: any) => { this.onClick(e, item); }}
+					onMouseOver={e => this.onOver(e, item)} 
+					onClick={e => this.onClick(e, item)}
 				>
 					{content}
 				</div>
@@ -127,7 +122,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			);
 		};
 
-		console.log(JSON.stringify(this.parsedFilters, null, 3));
+		console.log(JSON.stringify(parsedFilters.map(it => ({ key: it.relation.relationKey, condition: it.condition, value: it.value }))));
 
 		return (
 			<div 
@@ -140,8 +135,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					<Icon className="search" />
 
 					<div className="parsedFilters">
-						{this.parsedFilters.map((item: any, i: number) => {
+						{parsedFilters.map((item: any, i: number) => {
 							const condition = this.getCondition(item.relation.format, item.condition);
+							const value = this.getValueString(item.relation.format, item.value);
 
 							return (
 								<div key={i} className="element">
@@ -149,6 +145,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 									{condition ? (
 										<div className="condition">
 											{condition.name}
+										</div>
+									) : ''}
+									{value ? (
+										<div className="value">
+											{value}
 										</div>
 									) : ''}
 								</div>
@@ -267,7 +268,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		
 		const win = $(window);
 		win.on('keydown.search', e => this.onKeyDown(e));
-		win.on('resize.search', (e: any) => { this.resize(); });
+		win.on('resize.search', () => this.resize());
 	};
 
 	unbind () {
@@ -299,7 +300,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
+		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, () => {
 			const item = items[this.n];
 			if (item) {
 				this.onClick(e, item);
@@ -357,6 +358,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterKeyUp (e: any) {
+		const cmd = keyboard.cmdKey();
+
 		window.clearTimeout(this.timeout);
 
 		let ret = false;
@@ -364,20 +367,40 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		keyboard.shortcut('backspace', e, () => {
 			const range = this.refFilter?.ref?.getRange();
 
-			if (range && !range.to) {
-				this.newFilter = null;
-				this.parsedFilters.pop();
-				this.reload();
+			if (!range || !range.to) {
+				return;
+			};
+
+			this.newFilter = null;
+			this.parsedFilters.pop();
+			this.menuContext?.close();
+			this.reload();
+
+			ret = true;
+		});
+
+		if (
+			!menuStore.isOpen() &&
+			this.newFilter &&  
+			this.newFilter.relation && 
+			(this.newFilter.condition != I.FilterCondition.None) && 
+			(this.newFilter.value === null)
+		) {
+
+			keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, () => {
+				this.newFilter.value = this.getFilter();
+				this.refFilter.setValue('');
+				this.forceUpdate();
 
 				ret = true;
-			};
-		});
+			});
+		};
 
 		if (!ret) {
 			this.timeout = window.setTimeout(() => {
 				this.refFilter.setValue(this.parseFilter());
 				this.reload();
-			}, Constant.delay.keyboard * 2);
+			}, Constant.delay.keyboard);
 		};
 	};
 
@@ -403,11 +426,25 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		let limit = Constant.limit.menuRecords;
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			//{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
+
+		// Add parsed filters to request
 		for (let item of this.parsedFilters) {
-			//filters = filters.concat(item.filters || []);
+			if (item.condition === I.FilterCondition.None) {
+				continue;
+			};
+			if ((item.value === null) && ![ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
+				continue;
+			};
+
+			filters.push({ 
+				operator: I.FilterOperator.And, 
+				relationKey: item.relation.relationKey, 
+				condition: item.condition, 
+				value: Relation.formatValue(item.relation, item.value, false), 
+			});
 		};
 
 		if (clear) {
@@ -473,8 +510,28 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		};
 
+		const onCondition = () => {
+			const filter = this.getFilter();
+			const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+			const conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
+
+			this.menuOpen('select', {
+				onOpen: context => this.menuContext = context,
+				data: {
+					value: conditions.length ? conditions[0].id : '',
+					options: conditions,
+					onSelect: (e: any, item: any) => {
+						this.newFilter.condition = item.id;
+						this.refFilter.setValue('');
+						this.forceUpdate();
+					}
+				}
+			});
+		};
+
 		if (!this.newFilter.relation && relations.length) {
 			this.menuOpen('searchObject', {
+				onOpen: context => this.menuContext = context,
 				data: {
 					noFilter: true,
 					filter,
@@ -484,50 +541,41 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc }
 					],
+					keys: Constant.relationRelationKeys,
 					onSelect: (item: any) => {
 						this.newFilter.relation = item;
 						this.refFilter.setValue('');
 						this.parsedFilters.push(this.newFilter);
 						this.forceUpdate();
 
-						const filter = this.getFilter();
-						const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
-						const conditions = Relation.filterConditionsByType(item.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
-
-						this.menuOpen('select', {
-							data: {
-								value: conditions.length ? conditions[0].id : '',
-								options: conditions,
-								onSelect: (e: any, item: any) => {
-									this.newFilter.condition = item.id;
-									this.refFilter.setValue('');
-									this.forceUpdate();
-
-									
-								}
-							}
-						});
+						onCondition();
 					},
 				}
 			});
 		};
-		
+
+		if (this.newFilter.relation && (this.newFilter.condition == I.FilterCondition.None)) {
+			onCondition();
+		};
+
 		return filter;
 	};
 
 	menuOpen (id: string, param: any) {
-		const { getId } = this.props;
-		
+		if (!id) {
+			return;
+		};
+
 		let menuParam: Partial<I.MenuParam> = {
 			className: 'single',
 			commonFilter: true,
-			element: `#${getId()} .filter`,
-			/*
+			offsetY: 54,
 			recalcRect: () => { 
-				const rect = UtilCommon.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+				const st = $(window).scrollTop();
+				const rect = this.refFilter?.ref?.getSelectionRect();
+
+				return rect ? { x: rect.x + rect.width, y: rect.y + st, width: 0, height: 0, } : null; 
 			},
-			*/
 			data: {
 				noFilter: true,
 			},
@@ -536,12 +584,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, param.data);
 
-		if (id) {
-			if (!menuStore.isOpen(id)) {
-				menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
-			} else {
-				menuStore.update(id, menuParam);
-			};
+		if (!menuStore.isOpen(id)) {
+			menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
+		} else {
+			menuStore.update(id, menuParam);
+			menuStore.updateData(id, menuParam.data);
 		};
 	};
 
@@ -555,6 +602,33 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		return Relation.filterConditionsByType(type).find(it => it.id == condition);
+	};
+
+	getValueString (type: I.RelationType, value: any): string {
+		let ret = null;
+		switch (type) {
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
+			case I.RelationType.Url: 
+			case I.RelationType.Email: 
+			case I.RelationType.Phone:
+			case I.RelationType.Number:
+				ret = String(value || '');
+				break;
+
+			case I.RelationType.Object: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				break;
+
+			case I.RelationType.Date:
+				break;
+			
+			case I.RelationType.Checkbox:
+				ret = value ? translate('menuDataviewFilterValuesChecked') : translate('menuDataviewFilterValuesUnchecked');
+				break;
+		};
+		return ret;
 	};
 
 	getItems () {

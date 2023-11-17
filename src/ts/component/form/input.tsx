@@ -279,6 +279,41 @@ class Input extends React.Component<Props, State> {
 	setPlaceholder (v: string) {
 		$(this.node).attr({ placeholder: v });
 	};
+
+	getSelectionRect (): DOMRect {
+		if (!this._isMounted) {
+			return null;
+		};
+
+		const { id } = this.props;
+		const node = $(this.node);
+		const parent = node.parent();
+		const { left, top } = node.position();
+		const value = this.getValue();
+		const range = this.getRange();
+		const elementId = `${id || 'input'}-clone`;
+
+		let clone = parent.find(`#${elementId}`);
+		if (!clone.length) {
+			clone = $('<div></div>').attr({ id: elementId });
+			parent.append(clone);
+		};
+
+		clone.attr({ class: node.attr('class') });
+		clone.css({
+			position: 'absolute',
+			width: 'auto',
+			left,
+			top,
+			zIndex: 100,
+		});
+		clone.text(value.substring(0, range.to));
+
+		const rect = clone.get(0).getBoundingClientRect() as DOMRect;
+
+		clone.remove();
+		return rect;
+	};
 	
 };
 
