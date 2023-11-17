@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, ObjectDescription, ListObjectManager } from 'Component';
+import { Title, Button, ObjectDescription, ListObjectManager } from 'Component';
 import { analytics, C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PopupImport = observer(class PopupImport extends React.Component<I.Popup> {
+const PopupAfterImport = observer(class PopupAfterImport extends React.Component<I.Popup> {
 
 	refManager = null;
 
@@ -86,4 +86,4 @@ const PopupImport = observer(class PopupImport extends React.Component<I.Popup> 
 	
 });
 
-export default PopupImport;
+export default PopupAfterImport;
