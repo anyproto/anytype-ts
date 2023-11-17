@@ -16,12 +16,21 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { collectionId } = data;
+		const { collectionId, type } = data;
 		const subId = [ getId(), 'data' ].join('-');
+
+		let title = '';
+
+		switch (type) {
+			case I.ObjectManagerPopup.Favorites: {
+				title = translate('popupSettingsImportFavouriteTitle');
+				break;
+			};
+		};
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSettingsImportFavouriteTitle')} />
+				<Title text={title} />
 
 				<ListObjectManager
 					ref={ref => this.refManager = ref}
@@ -72,8 +81,14 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 
 		const { param } = this.props;
 		const { data } = param;
+		const { type } = data;
 
-		C.ObjectListSetIsFavorite(this.refManager.selected, true);
+		switch (type) {
+			case I.ObjectManagerPopup.Favorites: {
+				C.ObjectListSetIsFavorite(this.refManager.selected, true);
+				break;
+			};
+		};
 
 		this.props.close();
 	};

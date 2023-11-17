@@ -44,7 +44,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				if (collectionId) {
 					popupStore.close(id, () => {
-						popupStore.open('objectManager', { data: { collectionId } });
+						popupStore.open('objectManager', { data: { collectionId, type: I.ObjectManagerPopup.Favorites } });
 					});
 				};
 

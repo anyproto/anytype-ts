@@ -239,3 +239,7 @@ export enum ObjectManagerItemInfo {
 	Description 	= 0,
 	FileSize 		= 1,
 };
+
+export enum ObjectManagerPopup {
+	Favorites 	= 0,
+};
