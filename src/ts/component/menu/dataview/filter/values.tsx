@@ -26,6 +26,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocusText = this.onFocusText.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
+		this.onSubmitDate = this.onSubmitDate.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onObject = this.onObject.bind(this);
 		this.onTag = this.onTag.bind(this);
@@ -64,6 +65,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			onClose: this.onSelectClose,
 		};
 
+		let wrapValue = false;
 		let value = null;
 		let Item = null;
 		let list = [];
@@ -75,8 +77,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				className="item add" 
 				onClick={item.onClick} 
 				onMouseEnter={() => { 
-					menuStore.close('select'); 
-					setHover({ id: 'add' }); 
+					menuStore.close('select', () => {
+						window.setTimeout(() => setHover({ id: 'add' }), 35);
+					});
 				}}
 			>
 				<Icon className="plus" />
@@ -176,6 +179,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						menuParam={selectParam}
 					/>
 				);
+				wrapValue = true;
 				break;
 			};
 
@@ -211,8 +215,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							<Icon className="clear" onClick={this.onClear} />
 						</React.Fragment>
 					);
-					onSubmit = (e: any) => { this.onSubmitDate(e); };
+					onSubmit = this.onSubmitDate;
 				};
+				wrapValue = true;
 				break;
 			};
 
@@ -230,6 +235,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						<Icon className="clear" onClick={this.onClear} />
 					</React.Fragment>
 				);
+				wrapValue = true;
 				break;
 			};
 		};
@@ -247,10 +253,23 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					menuParam={selectParam}
 				/>
 			);
+			wrapValue = true;
 		};
 
 		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
 			value = null;
+		};
+
+		if (value && wrapValue) {
+			value = (
+				<div 
+					id="item-value" 
+					className="item" 
+					onMouseEnter={this.onValueHover}
+				>
+					{value}
+				</div>
+			);
 		};
 
 		return (
@@ -264,13 +283,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				{value ? (
 					<div className="section">
 						<form id="value" onSubmit={onSubmit}>
-							<div 
-								id="value-item" 
-								className="item" 
-								onMouseEnter={this.onValueHover}
-							>
-								{value}
-							</div>
+							{value}
 						</form>
 					</div>
 				) : ''}
@@ -692,20 +705,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onValueHover (e: React.MouseEvent) {
 		e.persist();
 
-		const node = $(this.node);
-	
 		menuStore.closeAll([ 'select' ], () => {
 			this.refSelect?.show(e);
 
-			window.setTimeout(() => {
-				node.find('.item.hover').removeClass('hover');
-				node.find('#value-item').addClass('hover');
-			}, 35);
+			window.setTimeout(() => this.props.setHover({ id: 'value' }), 35);
 		});
 	};
 
 	onSelectClose () {
-		$(this.node).find('#value-item').removeClass('hover');
+		this.props.setHover();
 	};
 
 });
