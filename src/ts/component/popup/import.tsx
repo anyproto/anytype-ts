@@ -17,7 +17,7 @@ const PopupImport = observer(class PopupImport extends React.Component<I.Popup> 
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { collectionId } = data;
-		const subId = [getId(), 'data'].join('-');
+		const subId = [ getId(), 'data' ].join('-');
 
 		const Info = (item: any) => (
 			<ObjectDescription object={item} />

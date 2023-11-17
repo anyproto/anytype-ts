@@ -1012,7 +1012,7 @@ class Dispatcher {
 											showPopup = false;
 											break;
 										};
-										
+
 										case I.ProgressType.Export: {
 											title = translate('dispatcherExportSuccessTitle');
 											text = translate('dispatcherExportSuccessText');
