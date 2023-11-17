@@ -358,6 +358,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterKeyUp (e: any) {
+		if (this.n >= 0) {
+			return;
+		};
+
 		const cmd = keyboard.cmdKey();
 
 		window.clearTimeout(this.timeout);
@@ -400,7 +404,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.timeout = window.setTimeout(() => {
 				this.refFilter.setValue(this.parseFilter());
 				this.reload();
-			}, Constant.delay.keyboard);
+			}, Constant.delay.keyboard / 2);
 		};
 	};
 
