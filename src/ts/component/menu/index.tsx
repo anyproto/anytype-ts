@@ -1002,7 +1002,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	getPosition (): DOMRect {
 		const obj = $(`#${this.getId()}`);
-		return obj.get(0).getBoundingClientRect() as DOMRect;
+		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
 	};
 
 	getArrowDirection (): I.MenuDirection {
