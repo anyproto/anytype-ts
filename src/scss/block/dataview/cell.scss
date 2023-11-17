@@ -56,7 +56,7 @@
 	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
 }
 .cellContent.c-checkbox.canEdit {
-	.icon:hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 }
 
 .cellContent.c-file {
