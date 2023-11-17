@@ -510,13 +510,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		};
 
+		const onOpen = context => {
+			this.menuContext = context;
+			this.menuContext.ref.n = 0;
+			this.menuContext.setActive();
+		};
+
 		const onCondition = () => {
 			const filter = this.getFilter();
 			const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
 			const conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
 
 			this.menuOpen('select', {
-				onOpen: context => this.menuContext = context,
+				onOpen,
 				data: {
 					value: conditions.length ? conditions[0].id : '',
 					options: conditions,
@@ -531,7 +537,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (!this.newFilter.relation && relations.length) {
 			this.menuOpen('searchObject', {
-				onOpen: context => this.menuContext = context,
+				onOpen,
 				data: {
 					noFilter: true,
 					filter,
@@ -584,21 +590,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, param.data);
 
-		const onOpen = () => {
-			if (this.menuContext && this.menuContext.ref) {
-				this.menuContext.ref.n = 0;
-				this.menuContext.setActive();
-			};
-		};
 
 		if (!menuStore.isOpen(id)) {
-			menuStore.closeAll(Constant.menuIds.search, () => {
-				menuStore.open(id, menuParam);
-				onOpen();
-			});
+			menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
 		} else {
 			menuStore.update(id, menuParam);
-			onOpen();
+
+			if (this.menuContext && menuParam.onOpen) {
+				menuParam.onOpen(this.menuContext);
+			};
 		};
 	};
 
