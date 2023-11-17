@@ -73,7 +73,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 			if (collectionId) {
 				popupStore.close(id, () => {
-					popupStore.open('afterImport', { data: { collectionId } });
+					popupStore.open('objectManager', { data: { collectionId } });
 				});
 				return;
 			};

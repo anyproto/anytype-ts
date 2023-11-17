@@ -3,7 +3,7 @@ import { Title, Button, ListObjectManager } from 'Component';
 import { analytics, C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PopupAfterImport = observer(class PopupAfterImport extends React.Component<I.Popup> {
+const PopupObjectManage = observer(class PopupObjectManage extends React.Component<I.Popup> {
 
 	refManager = null;
 
@@ -72,7 +72,6 @@ const PopupAfterImport = observer(class PopupAfterImport extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { collectionId } = data;
 
 		C.ObjectListSetIsFavorite(this.refManager.selected, true);
 
@@ -81,4 +80,4 @@ const PopupAfterImport = observer(class PopupAfterImport extends React.Component
 	
 });
 
-export default PopupAfterImport;
+export default PopupObjectManage;

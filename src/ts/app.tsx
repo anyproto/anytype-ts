@@ -132,7 +132,6 @@ import 'scss/widget/tree.scss';
 import 'scss/popup/common.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/export.scss';
-import 'scss/popup/import.scss';
 import 'scss/popup/help.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/preview.scss';
@@ -143,6 +142,7 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/migration.scss';
 import 'scss/popup/pin.scss';
 import 'scss/popup/phrase.scss';
+import 'scss/popup/objectManager.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/button.scss';

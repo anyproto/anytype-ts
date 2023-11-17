@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-    .popup.popupAfterImport {
+    .popup.popupObjectManager {
         .innerWrap { width: 548px; height: 472px; padding: 32px 32px 40px 32px; }
         .content { height: 100%; display: flex; flex-direction: column; gap: 24px 0; }
 
