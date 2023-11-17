@@ -367,7 +367,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		keyboard.shortcut('backspace', e, () => {
 			const range = this.refFilter?.ref?.getRange();
 
-			if (!range || !range.to) {
+			if (!range || range.to) {
 				return;
 			};
 
@@ -584,11 +584,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, param.data);
 
+		const onOpen = () => {
+			if (this.menuContext && this.menuContext.ref) {
+				this.menuContext.ref.n = 0;
+				this.menuContext.setActive();
+			};
+		};
+
 		if (!menuStore.isOpen(id)) {
-			menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
+			menuStore.closeAll(Constant.menuIds.search, () => {
+				menuStore.open(id, menuParam);
+				onOpen();
+			});
 		} else {
 			menuStore.update(id, menuParam);
-			menuStore.updateData(id, menuParam.data);
+			onOpen();
 		};
 	};
 
