@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Button, ObjectDescription, ListObjectManager } from 'Component';
+import { Title, Button, ListObjectManager } from 'Component';
 import { analytics, C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -19,10 +19,6 @@ const PopupAfterImport = observer(class PopupAfterImport extends React.Component
 		const { collectionId } = data;
 		const subId = [ getId(), 'data' ].join('-');
 
-		const Info = (item: any) => (
-			<ObjectDescription object={item} />
-		);
-
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSettingsImportFavouriteTitle')} />
@@ -33,7 +29,6 @@ const PopupAfterImport = observer(class PopupAfterImport extends React.Component
 					rowLength={2}
 					withArchived={true}
 					buttons={[]}
-					Info={Info}
 					iconSize={48}
 					collectionId={collectionId}
 					textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}

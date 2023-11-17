@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch } from 'Component';
-import { UtilData, I, UtilCommon, translate, UtilObject } from 'Lib';
+import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
+import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -12,7 +12,7 @@ interface Props {
     rowLength: number;
     withArchived: boolean;
     buttons: I.ButtonComponent[];
-    Info: (item: any) => any;
+	info?: I.ObjectManagerItemInfo,
     iconSize: number;
     textEmpty: string;
     filters?: I.Filter[];
@@ -59,7 +59,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { isLoading } = this.state;
-        const { buttons, rowHeight, Info, iconSize } = this.props;
+        const { buttons, rowHeight, iconSize, info } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
 		const filter = this.getFilterValue();
@@ -79,6 +79,25 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         } else {
             buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: this.onSelectAll });
         };
+
+		const Info = (item: any) => {
+			let itemInfo: any = null;
+
+			switch (info) {
+				default:
+				case I.ObjectManagerItemInfo.Description: {
+					itemInfo = <ObjectDescription object={item} />;
+					break;
+				};
+
+				case I.ObjectManagerItemInfo.FileSize: {
+					itemInfo = <Label text={String(UtilFile.size(item.sizeInBytes))} />;
+					break;
+				};
+			};
+
+			return itemInfo;
+		};
 
         const Button = (item: any) => (
             <div className="element" onClick={item.onClick}>
