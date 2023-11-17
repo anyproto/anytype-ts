@@ -21,6 +21,7 @@ interface Props {
     resize?: () => void;
     sources?: string[];
 	collectionId?: string;
+	onAfterLoad?: (message: any) => void;
 };
 
 interface State {
@@ -335,6 +336,18 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         return [ start, end ];
     };
 
+	setSelectedRange (start: number, end: number) {
+		const { subId } = this.props;
+		const records = dbStore.getRecords(subId, '');
+
+		if (end > records.length) {
+			end = records.length;
+		};
+
+		this.selected = this.selected.concat(records.slice(start, end));
+		this.forceUpdate();
+	};
+
     onSelectAll () {
         this.selected.length ? this.selectionClear() : this.selectionAll();
     };
@@ -355,7 +368,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     };
 
     getData () {
-        const { subId, sources, withArchived, collectionId } = this.props;
+        const { subId, sources, withArchived, collectionId, onAfterLoad } = this.props;
         const filter = this.getFilterValue();
         const filters = [].concat(this.props.filters || []);
 		const sorts = [].concat(this.props.sorts || []);
@@ -373,8 +386,12 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             withArchived,
             sources: sources || [],
 			collectionId: collectionId || ''
-        }, () => {
+        }, (message) => {
            this.setState({ isLoading: false });
+
+		   if (onAfterLoad) {
+			   onAfterLoad(message);
+		   };
         });
     };
 

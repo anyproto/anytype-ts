@@ -11,6 +11,7 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onAfterLoad = this.onAfterLoad.bind(this);
 	};
 
 	render () {
@@ -41,6 +42,7 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 					iconSize={48}
 					collectionId={collectionId}
 					textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
+					onAfterLoad={this.onAfterLoad}
 				/>
 
 				<Button text={translate('commonDone')} onClick={this.onClick} />
@@ -91,6 +93,21 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 		};
 
 		this.props.close();
+	};
+
+	onAfterLoad (message) {
+		const { param } = this.props;
+		const { data } = param;
+		const { type } = data;
+
+		switch (type) {
+			case I.ObjectManagerPopup.Favorites: {
+				if (message.records && message.records.length <= 8) {
+					this.refManager.setSelectedRange(0, 8);
+				};
+				break;
+			};
+		};
 	};
 	
 });
