@@ -353,7 +353,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             filters,
             withArchived,
             sources: sources || [],
-			collectionId: collectionId || null
+			collectionId: collectionId || ''
         }, () => {
            this.setState({ isLoading: false });
         });

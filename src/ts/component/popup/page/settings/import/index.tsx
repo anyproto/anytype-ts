@@ -66,12 +66,13 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		const { onPage } = this.props;
+		const { id } = this.props;
+
 		Action.import(type, extensions, options, (message: any) => {
 			const { collectionId } = message;
 
 			if (collectionId) {
-				popupStore.close('settings', () => {
+				popupStore.close(id, () => {
 					popupStore.open('import', { data: { collectionId } });
 				});
 				return;

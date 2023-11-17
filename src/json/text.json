@@ -1430,8 +1430,6 @@
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",
 
-	"dispatcherImportSuccessTitle": "The import process is complete!",
-	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
 	"dispatcherExportSuccessTitle": "The export process is complete!",
 	"dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
 	"dispatcherImportErrorTitle": "The import wasn't completed",

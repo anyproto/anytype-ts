@@ -11,7 +11,6 @@ const PopupImport = observer(class PopupImport extends React.Component<I.Popup> 
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
-		this.onCancel = this.onCancel.bind(this);
 	};
 
 	render () {
@@ -71,11 +70,6 @@ const PopupImport = observer(class PopupImport extends React.Component<I.Popup> 
 			e.stopPropagation();
 			this.onClick(e);
 		});
-
-		keyboard.shortcut('escape', e, (pressed: string) => {
-			e.stopPropagation();
-			this.onCancel(e);
-		});
 	};
 	
 	onClick (e: any) {
@@ -86,12 +80,7 @@ const PopupImport = observer(class PopupImport extends React.Component<I.Popup> 
 		const { collectionId } = data;
 
 		C.ObjectListSetIsFavorite(this.refManager.selected, true);
-		C.ObjectSetIsFavorite(collectionId, false);
 
-		this.props.close();
-	};
-
-	onCancel (e: any) {
 		this.props.close();
 	};
 	
