@@ -80,14 +80,14 @@ export const Mapper = {
 		ObjectInfo: (obj: any): I.PageInfo => {
 			return {
 				id: obj.getId(),
-				details: Decode.decodeStruct(obj.getDetails()),
+				details: Decode.struct(obj.getDetails()),
 				snippet: obj.getSnippet(),
 				hasInboundLinks: obj.getHasinboundlinks(),
 			};
 		},
 
 		Record: (obj: any): any => {
-			return Decode.decodeStruct(obj);
+			return Decode.struct(obj);
 		},
 
 		Range: (obj: any): I.TextRange => {
@@ -119,7 +119,7 @@ export const Mapper = {
 		Details: (obj: any): any => {
 			return {
 				id: obj.getId(),
-				details: Decode.decodeStruct(obj.getDetails()),
+				details: Decode.struct(obj.getDetails()),
 			};
 		},
 
@@ -251,7 +251,7 @@ export const Mapper = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
-				fields: Decode.decodeStruct(obj.getFields()),
+				fields: Decode.struct(obj.getFields()),
 				hAlign: obj.getAlign(),
 				vAlign: obj.getVerticalalign(),
 				bgColor: obj.getBackgroundcolor(),
@@ -330,7 +330,7 @@ export const Mapper = {
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
 				quickOption: obj.getQuickoption(),
-				value: obj.hasValue() ? Decode.decodeValue(obj.getValue()) : null,
+				value: obj.hasValue() ? Decode.value(obj.getValue()) : null,
 			};
 		},
 
@@ -339,7 +339,7 @@ export const Mapper = {
 				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
-				customOrder: (obj.getCustomorderList() || []).map(Decode.decodeValue),
+				customOrder: (obj.getCustomorderList() || []).map(Decode.value),
 			};
 		},
 
@@ -507,7 +507,7 @@ export const Mapper = {
 			const item = new Rpc.Object.SetDetails.Detail();
 
 			item.setKey(obj.key);
-			item.setValue(Encode.encodeValue(obj.value));
+			item.setValue(Encode.value(obj.value));
 
 			return item;
 		},
@@ -516,7 +516,7 @@ export const Mapper = {
 			const item = new Rpc.Block.ListSetFields.Request.BlockField();
 
 			item.setBlockid(obj.blockId);
-			item.setFields(Encode.encodeStruct(obj.fields || {}));
+			item.setFields(Encode.struct(obj.fields || {}));
 
 			return item;
 		},
@@ -665,7 +665,7 @@ export const Mapper = {
 			};
 	
 			if (obj.fields) {
-				block.setFields(Encode.encodeStruct(obj.fields || {}));
+				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
 			const fb = UtilCommon.toCamelCase('set-' + obj.type.toLowerCase());
@@ -702,7 +702,7 @@ export const Mapper = {
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
 			item.setQuickoption(obj.quickOption);
-			item.setValue(Encode.encodeValue(obj.value));
+			item.setValue(Encode.value(obj.value));
 			item.setIncludetime(obj.includeTime);
 
 			return item;
@@ -714,7 +714,7 @@ export const Mapper = {
 			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
-			item.setCustomorderList((obj.customOrder || []).map(Encode.encodeValue));
+			item.setCustomorderList((obj.customOrder || []).map(Encode.value));
 			item.setFormat(obj.format);
 			item.setIncludetime(obj.includeTime);
 

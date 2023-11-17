@@ -357,6 +357,9 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const icon = node.find('.iconObject');
 			const rect = (node.get(0) as Element).getBoundingClientRect();
 			const mw = getWrapperWidth();
+			const name = node.find('.cardName');
+
+			UtilCommon.textStyle(name, { border: 0.4 });
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 			rect.width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');

@@ -76,7 +76,7 @@ class Header extends React.Component<Props> {
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup();
+		keyboard.onSearchPopup('Header');
 	};
 
 	onNavigation () {

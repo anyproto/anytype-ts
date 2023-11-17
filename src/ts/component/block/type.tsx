@@ -233,6 +233,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			keyboard.disableClose(true);
 			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
+			keyboard.disableClose(false);
 
 			analytics.event('SelectObjectType', { objectType: typeId, layout });
 		};

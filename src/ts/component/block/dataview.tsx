@@ -729,8 +729,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				window.setTimeout(() => { ref.onClick(e); }, 15);
 			};
 
-			analytics.event('CreateObject', {
-				route: (isCollection ? 'Collection' : 'Set'),
+			analytics.event('CreateObject', { 
+				route: this.analyticsRoute(),
 				objectType: object.type,
 				layout: object.layout,
 			});
@@ -791,7 +791,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
 		const isCollection = this.isCollection();
-		const route = isCollection ? 'Collection' : 'Set';
+		const route = this.analyticsRoute();
 		const hasSources = isCollection || this.getSources().length;
 		const view = this.getView();
 
@@ -842,7 +842,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplateAdd (id?: string) {
 		const typeId = id || this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
-		const route = this.isCollection() ? 'Collection' : 'Set';
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
@@ -856,7 +855,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const object = message.details;
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: typeId, route });
+			analytics.event('CreateTemplate', { objectType: typeId, route: this.analyticsRoute() });
 
 			UtilObject.openPopup(object);
 		});
@@ -939,13 +938,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
-			onClose: () => { selection.clear(); },
+			onClose: () => selection.clear(),
 			data: {
 				targetId: this.getObjectId(),
 				objectIds: ids,
 				subId,
 				isCollection,
-				route: isCollection ? 'Collection' : 'Set',
+				route: this.analyticsRoute(),
 			}
 		});
 	};
@@ -1319,6 +1318,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.searchIds = null;
 				this.reloadData();
 			};
+
+			analytics.event('ScreenSearchDataview', { route: this.analyticsRoute() });
 		}, Constant.delay.keyboard);
 	};
 
@@ -1359,6 +1360,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getSearchIds () {
 		return this.searchIds;
+	};
+
+	analyticsRoute () {
+		return this.isCollection() ? 'Collection' : 'Set';
 	};
 
 	resize () {

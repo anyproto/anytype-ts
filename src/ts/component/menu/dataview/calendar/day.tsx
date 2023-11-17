@@ -56,7 +56,9 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 		return (
 			<div className={cn.join(' ')}>
-				<div className="number">{d}</div>
+				<div className="number">
+					<div className="inner">{d}</div>
+				</div>
 				<div className="items">
 					{items.map((item, i) => (
 						<Item key={i} {...item} />

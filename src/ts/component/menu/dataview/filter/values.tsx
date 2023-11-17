@@ -73,7 +73,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		switch (relation.format) {
 
 			case I.RelationType.Tag:
-			case I.RelationType.Status:
+			case I.RelationType.Status: {
 				Item = (element: any) => {
 					return (
 						<div 
@@ -109,8 +109,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					</React.Fragment>
 				);
 				break;
+			};
 			
-			case I.RelationType.Object:
+			case I.RelationType.Object: {
 				Item = (element: any) => {	
 					const type = dbStore.getTypeById(element.type);
 
@@ -146,8 +147,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					</React.Fragment>
 				);
 				break;
+			};
 
-			case I.RelationType.Checkbox:
+			case I.RelationType.Checkbox: {
 				value = (
 					<div className="item">
 						<Select 
@@ -156,13 +158,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							arrowClassName="light"
 							options={checkboxOptions} 
 							value={item.value ? '1' : '0'} 
-							onChange={(v: string) => { this.onChange('value', Boolean(Number(v)), true); }} 
+							onChange={v => this.onChange('value', Boolean(Number(v)), true)} 
 						/>
 					</div>
 				);
 				break;
+			};
 
-			case I.RelationType.Date:
+			case I.RelationType.Date: {
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(item.quickOption)) {
 					value = (
 						<div key="filter-value-date-days" className="item">
@@ -197,10 +200,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 					onSubmit = (e: any) => { this.onSubmitDate(e); };
 				};
-
 				break;
+			};
 
-			default:
+			default: {
 				value = (
 					<div className="item">
 						<Input 
@@ -208,13 +211,29 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							value={item.value} 
 							placeholder={translate('commonValue')} 
 							onFocus={this.onFocusText}
-							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
-							onSelect={(e: any) => { this.onSelect(e); }}
+							onKeyUp={(e: any, v: string) => this.onChange('value', v, true)} 
+							onSelect={e => this.onSelect(e)}
 						/>
 						<Icon className="clear" onClick={this.onClear} />
 					</div>
 				);
 				break;
+			};
+		};
+
+		if (Relation.isDictionary(item.relationKey)) {
+			value = (
+				<div className="item">
+					<Select 
+						id={[ 'filter', 'dictionary', item.id ].join('-')} 
+						className="checkboxValue" 
+						arrowClassName="light"
+						options={Relation.getDictionaryOptions(item.relationKey)} 
+						value={item.value} 
+						onChange={v => this.onChange('value', Number(v), true)} 
+					/>
+				</div>
+			);
 		};
 
 		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
@@ -329,11 +348,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		
-		const conditionOptions = Relation.filterConditionsByType(relation.format);
-		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
-		
 		const filterQuickOptions = Relation.filterQuickOptions(relation.format, item.condition);
 		const filterOption: any = filterQuickOptions.find(it => it.id == item.quickOption) || {};
+
+		let conditionOptions = [];
+		if (Relation.isDictionary(item.relationKey)) {
+			conditionOptions = Relation.filterConditionsDictionary();
+		} else {
+			conditionOptions = Relation.filterConditionsByType(relation.format);
+		};
+
+		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
 
 		const ret: any[] = [
 			{ id: 'relation', icon: relationOption.icon, name: relationOption.name, arrow: true },
@@ -348,7 +373,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onOver (e: any, item: any) {
-		const { getId, getSize, setActive } = this.props;
+		const { getId, getSize, setActive, param } = this.props;
+		const { data } = param;
+		const { getView, itemId } = data;
+		const view = getView();
+		const filter = view.getFilter(itemId);
 
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
@@ -365,7 +394,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 
 			case 'condition': {
-				options = Relation.filterConditionsByType(item.format);	
+				if (Relation.isDictionary(filter.relationKey)) {
+					options = Relation.filterConditionsDictionary();	
+				} else {
+					options = Relation.filterConditionsByType(item.format);	
+				};
 				break;
 			};
 

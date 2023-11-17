@@ -57,9 +57,15 @@
 		.day { display: flex; flex-direction: column; }
 		.day {
 			.number { @include text-paragraph; text-align: right; position: relative; z-index: 1; padding: 0px 8px; flex-shrink: 0; }
+			.number {
+				.inner { display: inline-block; }
+			}
 		}
 		.day.active {
-			.number { color: $colorSystemAccent100; }
+			.number { padding: 0px; color: $colorTextInversion; }
+			.number {
+				.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
+			}
 		}
 		.day.other {
 			.number { color: $colorTextSecondary; }
