@@ -174,6 +174,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
 		this._isMounted = true;
 		this.n = -1;
 
@@ -182,6 +186,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.resize();
 
 		focus.clear(true);
+
+		analytics.event('ScreenSearch', { route });
 	};
 	
 	componentDidUpdate () {
