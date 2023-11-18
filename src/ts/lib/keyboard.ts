@@ -206,7 +206,7 @@ class Keyboard {
 					return;
 				};
 
-				this.onSearchPopup();
+				this.onSearchPopup('Shortcut');
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
@@ -697,6 +697,8 @@ class Keyboard {
 		if (clearTheme) {
 			UtilCommon.addBodyClass('theme', '');
 		};
+
+		$('#link-prism').remove();
 		focus.clearRange(true);
 	};
 
@@ -763,9 +765,9 @@ class Keyboard {
 		}, Constant.delay.menu);
 	};
 
-	onSearchPopup () {
+	onSearchPopup (route: string) {
 		popupStore.open('search', {
-			data: { isPopup: this.isPopup() },
+			data: { isPopup: this.isPopup(), route },
 		});
 	};
 

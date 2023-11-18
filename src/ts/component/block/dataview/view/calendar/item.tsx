@@ -80,7 +80,9 @@ const Item = observer(class Item extends React.Component<Props> {
 				ref={node => this.node = node} 
 				className={cn.join(' ')}
 			>
-				<div className="number">{d}</div>
+				<div className="number">
+					<div className="inner">{d}</div>
+				</div>
 				<div className="items">
 					{slice.map((item, i) => (
 						<Item key={[ y, m, d, item.id ].join('-')} {...item} />

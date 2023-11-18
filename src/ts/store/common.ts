@@ -16,6 +16,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	local: boolean;
 	filter: string;
 };
 
@@ -64,6 +65,7 @@ class CommonStore {
 		label: true,
 		relation: true,
 		link: true,
+		local: false,
 		filter: '',
 	};
 
@@ -338,11 +340,15 @@ class CommonStore {
 	};
 
 	getThemeClass () {
+		let ret = '';
+
 		if (this.themeId == 'system') {
-			return this.nativeThemeIsDark ? 'dark' : '';
+			ret = this.nativeThemeIsDark ? 'dark' : '';
 		} else {
-			return this.themeId;
+			ret = this.themeId;
 		};
+
+		return String(ret || '');
 	};
 
 	setThemeClass() {

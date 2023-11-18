@@ -23,7 +23,15 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 	render () {
 		const { id, index, relation, condition, quickOption, subId, readonly, style, onOver, onClick, onRemove } = this.props;
-		const conditionOptions = Relation.filterConditionsByType(relation.format);
+		const isDictionary = Relation.isDictionary(relation.relationKey);
+
+		let conditionOptions = [];
+		if (isDictionary) {
+			conditionOptions = Relation.filterConditionsDictionary();
+		} else {
+			conditionOptions = Relation.filterConditionsByType(relation.format);
+		};
+
 		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
 		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
 		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
@@ -121,6 +129,15 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					</React.Fragment>
 				);
 				break;
+			};
+		};
+
+		if (isDictionary) {
+			const options = Relation.getDictionaryOptions(relation.relationKey);
+			const option = options.find(it => it.id == v);
+
+			if (option) {
+				v = option.name;
 			};
 		};
 

@@ -72,7 +72,7 @@ const Progress = observer(class Progress extends React.Component {
 			node.addClass('hide');
 			win.off('resize.progress');
 
-			window.setTimeout(() => { commonStore.progressClear(); }, 200);
+			window.setTimeout(() => commonStore.progressClear(), 200);
 		};
 	};
 
@@ -85,23 +85,6 @@ const Progress = observer(class Progress extends React.Component {
 		const { id } = progress;
 		
 		C.ProcessCancel(id);
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const coords = Storage.get('progress');
-
-		this.obj = node.find('#inner');
-		this.height = this.obj.outerHeight();
-		this.width = this.obj.outerWidth();
-
-		if (coords) {
-			this.setStyle(coords.x, coords.y);
-		};
 	};
 
 	onDragStart (e: any) {
@@ -148,11 +131,30 @@ const Progress = observer(class Progress extends React.Component {
 		return { x, y };
 	};
 
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(this.node);
+		const coords = Storage.get('progress');
+
+		this.obj = node.find('#inner');
+		this.height = this.obj.outerHeight();
+		this.width = this.obj.outerWidth();
+
+		if (coords) {
+			this.setStyle(coords.x, coords.y);
+		};
+	};
+
 	setStyle (x: number, y: number) {
 		const coords = this.checkCoords(x, y);
-		
-		this.obj.css({ margin: 0, left: coords.x, top: coords.y });
-		Storage.set('progress', coords);
+
+		if ((coords.x !== null) && (coords.y !== null)) {
+			this.obj.css({ margin: 0, left: coords.x, top: coords.y });
+			Storage.set('progress', coords, true);
+		};
 	};
 	
 });

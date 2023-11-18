@@ -60,7 +60,6 @@ class UtilRouter {
 
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const method = replace ? 'replace' : 'push';
 		const { space, techSpace } = commonStore;
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
@@ -79,8 +78,13 @@ class UtilRouter {
 		const onTimeout = () => {
 			Preview.hideAll();
 
+			if (replace) {
+				this.history.entries = [];
+				this.history.index = -1;
+			};
+
 			if (!animate) {
-				this.history[method](route); 
+				this.history.push(route); 
 				return;
 			};
 
@@ -94,7 +98,7 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				this.history[method](route);
+				this.history.push(route);
 
 				if (onRouteChange) {
 					onRouteChange();

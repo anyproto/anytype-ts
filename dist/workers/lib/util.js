@@ -78,4 +78,8 @@ class Util {
 		this.ctx.restore();
 	};
 
+	arrayUnique (a) {
+		return [ ...new Set(a) ];
+	};
+
 };
