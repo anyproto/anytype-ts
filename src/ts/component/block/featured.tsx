@@ -439,7 +439,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					],
 					keys: UtilData.typeRelationKeys(),
 					onClick: (item: any) => {
-						const open = () => UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+						keyboard.disableClose(true);
+
+						const open = () => {
+							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+							keyboard.disableClose(false);
+						};
 
 						detailStore.update(rootId, { id: item.id, details: item }, false);
 

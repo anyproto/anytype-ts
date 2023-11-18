@@ -320,9 +320,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		items.each((i: number, item) => {
-			this.textStyle($(item));
-		});
+		items.each((i: number, item) => this.textStyle($(item)));
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {

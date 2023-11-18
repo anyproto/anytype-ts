@@ -295,7 +295,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		this.hide();
 		this.setIsSelecting(false);
-
 		this.cache.clear();
 		this.focused = '';
 		this.range = null;
@@ -337,7 +336,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 	
-	cacheRect (node: any) {
+	cacheRect (node: any): { x: number; y: number; width: number; height: number; } {
+		if (!node.id) {
+			return { x: 0, y: 0, width: 0, height: 0 };
+		};
+
 		let cached = this.cache.get(node.id);
 		if (cached) {
 			return cached;

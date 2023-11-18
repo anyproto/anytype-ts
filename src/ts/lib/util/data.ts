@@ -409,39 +409,37 @@ class UtilData {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
+		const bookmark = dbStore.getTypeByKey(Constant.typeKey.bookmark);
+		const collection = dbStore.getTypeByKey(Constant.typeKey.collection);
+		const set = dbStore.getTypeByKey(Constant.typeKey.set);
+		const task = dbStore.getTypeByKey(Constant.typeKey.task);
+		const page = dbStore.getTypeByKey(Constant.typeKey.page);
+		const note = dbStore.getTypeByKey(Constant.typeKey.note);
 
 		let items: any[] = [];
 
 		if (!withDefault) {
-			const skipLayouts = [ 
-				I.ObjectLayout.Note,
-				I.ObjectLayout.Page,
-				I.ObjectLayout.Task,
-				I.ObjectLayout.Bookmark,
-			].concat(UtilObject.getSetLayouts());
+			const skipIds = [ bookmark, collection, set, task, page, note ].filter(it => it).map(it => it.id);
 
 			items = items.concat(dbStore.getTypes().filter(it => {
-				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+				return pageLayouts.includes(it.recommendedLayout) && !skipIds.includes(it.id) && (it.spaceId == space);
 			}));
 			items.sort(this.sortByName);
 		};
 
 		if (withBookmark) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.bookmark));
+			items.unshift(bookmark);
 		};
 
 		if (withCollection) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.collection));
+			items.unshift(collection);
 		};
 
 		if (withSet) {
-			items.unshift(dbStore.getTypeByKey(Constant.typeKey.set));
+			items.unshift(set);
 		};
 
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.page));
-		items.unshift(dbStore.getTypeByKey(Constant.typeKey.note));
-		
+		items = [ note, page, task ].concat(items);
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {

@@ -34,8 +34,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.focus = this.focus.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.focus = this.focus.bind(this);
 	};
 
 	render () {
@@ -226,6 +226,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(id => detailStore.get(subId, id, []));
 		value = value.filter(it => !it._empty_);
+
 		return value;
 	};
 
