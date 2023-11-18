@@ -3,7 +3,7 @@ import { Title, Button, ListObjectManager } from 'Component';
 import { analytics, C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-const PopupObjectManage = observer(class PopupObjectManage extends React.Component<I.Popup> {
+const PopupObjectManager = observer(class PopupObjectManager extends React.Component<I.Popup> {
 
 	refManager = null;
 
@@ -112,4 +112,4 @@ const PopupObjectManage = observer(class PopupObjectManage extends React.Compone
 	
 });
 
-export default PopupObjectManage;
+export default PopupObjectManager;
