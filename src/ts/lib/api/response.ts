@@ -111,28 +111,28 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
 export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
 export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
 export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
@@ -140,14 +140,14 @@ export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Respons
 	return {
 		objectId: response.getObjectid(),
 		relationKey: response.getKey(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
 export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
@@ -165,7 +165,7 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+		records: (response.getRecordsList() || []).map(Decode.struct),
 	};
 };
 
@@ -184,22 +184,22 @@ export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Respo
 			nextCount: counters.getNextcount(),
 			prevCount: counters.getPrevcount(),
 		},
-		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
+		records: (response.getRecordsList() || []).map(Decode.struct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
 	};
 };
 
 export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
+		records: (response.getRecordsList() || []).map(Decode.struct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
 	};
 };
 
 export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
-		nodes: (response.getNodesList() || []).map(Decode.decodeStruct),
+		nodes: (response.getNodesList() || []).map(Decode.struct),
 	};
 };
 
@@ -380,7 +380,7 @@ export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
 export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
 	return {
 		objectId: response.getObjectid(),
-		details: Decode.decodeStruct(response.getDetails()),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 

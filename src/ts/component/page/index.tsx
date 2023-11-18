@@ -101,7 +101,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar {...this.props} />
+					<Sidebar key="sidebar" {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -161,8 +161,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-		const param = this.getMatchParams();
-		const { page, action, spaceId } = this.getMatchParams();
+		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
@@ -230,7 +229,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
+		if (!home || !id || (home.id != id) || isPopup) {
 			return;
 		};
 
@@ -238,7 +237,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		Onboarding.start('dashboard', false, false);
+		if (!Onboarding.isCompleted('dashboard')) {
+			Onboarding.start('dashboard', false, false);
+		} else
+		if (!Onboarding.isCompleted('navigation') && !$('#navigationPanel').hasClass('hide')) {
+			Onboarding.start('navigation', false, false);
+		};
 	};
 
 	unbind () {

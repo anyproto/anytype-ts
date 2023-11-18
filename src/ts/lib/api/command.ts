@@ -100,7 +100,7 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setUsecase(usecase as number);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
@@ -135,7 +135,7 @@ const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any
 	const request = new Rpc.Workspace.SetInfo.Request();
 
 	request.setSpaceid(spaceId);
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 
 	dispatcher.request(WorkspaceSetInfo.name, request, callBack);
 };
@@ -399,7 +399,7 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setFields(Encode.encodeStruct(fields || {}));
+	request.setFields(Encode.struct(fields || {}));
 
 	dispatcher.request(BlockSetFields.name, request, callBack);
 };
@@ -587,9 +587,9 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setPosition(position as number);
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setTemplateid(templateId);
-	request.setFields(Encode.encodeStruct(fields || {}));
+	request.setFields(Encode.struct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setObjecttypeuniquekey(typeKey);
 	request.setSpaceid(spaceId);
@@ -1177,7 +1177,7 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], 
 const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
@@ -1190,7 +1190,7 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, sp
 	const request = new Rpc.Object.CreateSet.Request();
 
 	request.setSourceList(sources);
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
 
@@ -1200,7 +1200,7 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, sp
 const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
@@ -1209,7 +1209,7 @@ const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message
 const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setSpaceid(spaceId);
 
@@ -1221,7 +1221,7 @@ const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message
 
 	const request = new Rpc.Object.CreateRelation.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateRelation.name, request, callBack);
@@ -1230,7 +1230,7 @@ const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message
 const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateRelation.Request();
 
-	request.setDetails(Encode.encodeStruct(details));
+	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);

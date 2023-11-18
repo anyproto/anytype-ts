@@ -22,8 +22,14 @@
 		.block.blockDataview {
 			.dropTarget { padding: 0px !important; }
 
-			.viewItem {
-				.record { left: 0px !important; top: 0px !important; overflow: hidden; }
+			.viewContent {
+				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; }
+				.record {
+					.selectable.isSelectionSelected::after { display: none; }
+				}
+			}
+			.viewContent.viewGallery {
+				.record { margin: 0px 10px 10px 0px; }
 			}
 		}
 	}
