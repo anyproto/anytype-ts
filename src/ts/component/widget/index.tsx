@@ -31,6 +31,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
@@ -56,6 +57,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
+		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		const props = {
 			...this.props,
@@ -99,9 +101,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		} else {
 			buttons = (
 				<div className="buttons">
-					<div className="iconWrap options">
-						<Icon id="button-options" className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
-					</div>
+					{!isRecent ? (
+						<div className="iconWrap create">
+							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
+						</div>
+					) : ''}
 					<div className="iconWrap collapse">
 						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={this.onToggle} />
 					</div>
@@ -272,6 +276,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!e.button) {
 			UtilObject.openEvent(e, this.getObject());
 		};
+	};
+
+	onCreate (e: React.MouseEvent): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const object = this.getObject();
+
+		console.log('OBJECT: ', object)
 	};
 
 	onOptions (e: React.MouseEvent): void {
