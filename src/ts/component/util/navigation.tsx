@@ -126,7 +126,7 @@ class Navigation extends React.Component {
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup();
+		keyboard.onSearchPopup('Navigation');
 	};
 
 	onProfile () {

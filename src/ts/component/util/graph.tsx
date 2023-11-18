@@ -83,7 +83,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.unbind();
 		win.on('updateGraphSettings.graph', () => { this.updateSettings(); });
-		win.on('updateGraphRoot.graph', (e: any, data: any) => { this.setRootId(data.id); });
+		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
 		win.on('updateTheme.graph', () => { this.send('updateTheme', { theme: commonStore.getThemeClass() }); });
 	};
 
@@ -138,8 +138,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		.call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
 		.on('click', (e: any) => {
+			const { local } = commonStore.graph;
 			const [ x, y ] = d3.pointer(e);
-			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+
+			if (local) {
+				this.send('onSetRootId', { x, y });
+			} else {
+				this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+			};
 		})
 		.on('dblclick', (e: any) => {
 			if (e.shiftKey) {
@@ -464,7 +470,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	setRootId (id: string) {
-		this.send('onSetRootId', { rootId: id });
+		this.send('setRootId', { rootId: id });
 	};
 
 	send (id: string, param: any, transfer?: any[]) {

@@ -84,7 +84,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getSections (): any[] {
-		const { graph } = commonStore;
+		const { graph, config } = commonStore;
 
 		let sections: any[] = [
 			{ 
@@ -99,12 +99,13 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'link', name: translate('menuGraphSettingsLinks') },
 					{ id: 'relation', name: translate('menuGraphSettingsRelations') },
 					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
+					config.experimental ? { id: 'local', name: translate('menuGraphSettingsLocal') } : null,
 				] 
 			}
 		];
 
 		sections = sections.map(s => {
-			s.children = s.children.map(c => {
+			s.children = s.children.filter(it => it).map(c => {
 				c.switchValue = graph[c.id];
 				c.withSwitch = true;
 				c.onSwitch = (e: any, v: boolean) => { this.onClick(e, c); };
