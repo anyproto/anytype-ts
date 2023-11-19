@@ -77,9 +77,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (isEditing) {
 			if (isLongText) {
-				EditorComponent = (item: any) => (
-					<span>{value}</span>
-				);
+				EditorComponent = () => <span>{value}</span>;
 			} else 
 			if (isDate) {
 				const mask = [ '99.99.9999' ];

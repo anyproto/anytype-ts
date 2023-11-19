@@ -137,7 +137,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					<div className="parsedFilters">
 						{parsedFilters.map((item: any, i: number) => {
 							const condition = this.getCondition(item.relation.format, item.condition);
-							const value = this.getValueString(item.relation.format, item.value);
+							const value = this.getValueString(item.relation, item.value);
 
 							return (
 								<div key={i} className="element">
@@ -348,24 +348,17 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.n = this.getItems().findIndex(it => it.id == item.id);
 		this.unsetActive();
 
-		const node = $(this.node);
-		node.find(`#item-${item.id}`).addClass('active');
+		$(this.node).find(`#item-${item.id}`).addClass('active');
 	};
 
 	unsetActive () {
-		const node = $(this.node);
-		node.find('.item.active').removeClass('active');
+		$(this.node).find('.item.active').removeClass('active');
 	};
 
 	onFilterKeyUp (e: any) {
-		if (this.n >= 0) {
-			return;
-		};
-
-		const cmd = keyboard.cmdKey();
-
 		window.clearTimeout(this.timeout);
 
+		const cmd = keyboard.cmdKey();
 		let ret = false;
 
 		keyboard.shortcut('backspace', e, () => {
@@ -383,8 +376,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			ret = true;
 		});
 
+		if (menuStore.isOpen()) {
+			return;
+		};
+
 		if (
-			!menuStore.isOpen() &&
 			this.newFilter &&  
 			this.newFilter.relation && 
 			(this.newFilter.condition != I.FilterCondition.None) && 
@@ -498,6 +494,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	parseFilter (): string {
 		const filter = this.getFilter();
+
+		console.log(filter);
 
 		if (!filter.length) {
 			return;
@@ -618,16 +616,25 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		return Relation.filterConditionsByType(type).find(it => it.id == condition);
 	};
 
-	getValueString (type: I.RelationType, value: any): string {
+	getValueString (relation: any, value: any): string {
 		let ret = null;
-		switch (type) {
+
+		switch (relation.format) {
 			case I.RelationType.ShortText: 
 			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
 			case I.RelationType.Phone:
-			case I.RelationType.Number:
 				ret = String(value || '');
+				break;
+
+			case I.RelationType.Number:
+				if (value !== null) {
+					const mapped = Relation.mapValue(relation, value);
+					ret = mapped !== null ? mapped : UtilCommon.formatNumber(value);
+				} else {
+					ret = '';
+				};
 				break;
 
 			case I.RelationType.Object: 
@@ -642,6 +649,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				ret = value ? translate('menuDataviewFilterValuesChecked') : translate('menuDataviewFilterValuesUnchecked');
 				break;
 		};
+
 		return ret;
 	};
 
