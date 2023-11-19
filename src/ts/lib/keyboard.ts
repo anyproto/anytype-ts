@@ -1002,10 +1002,11 @@ class Keyboard {
 	};
 	
 	isSpecial (e: any): boolean {
-		return [ 
-			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, 
-			Key.alt, Key.meta, Key.up, Key.down, Key.left, Key.right,
-		].includes(this.eventKey(e));
+		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
+	};
+
+	isArrow (e: any): boolean {
+		return [ Key.up, Key.down, Key.left, Key.right ].includes(this.eventKey(e));
 	};
 
 	withCommand (e: any): boolean {

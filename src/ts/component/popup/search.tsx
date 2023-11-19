@@ -376,10 +376,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			ret = true;
 		});
 
-		if (menuStore.isOpen()) {
-			return;
-		};
-
 		if (
 			this.newFilter &&  
 			this.newFilter.relation && 
@@ -394,6 +390,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				ret = true;
 			});
+		};
+
+		if (menuStore.isOpen() && keyboard.isArrow(e)) {
+			return;
 		};
 
 		if (!ret) {
@@ -495,14 +495,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	parseFilter (): string {
 		const filter = this.getFilter();
 
-		console.log(filter);
-
 		if (!filter.length) {
 			return;
 		};
 
 		const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
-		const relations = dbStore.getRelations().filter(it => !it.isHidden && it.isInstalled && (it.name.match(filterReg) || it.description.match(filterReg)));
 
 		if (!this.newFilter) {
 			this.newFilter = {
@@ -519,8 +516,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const onCondition = () => {
-			const filter = this.getFilter();
-			const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
 			const conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
 
 			this.menuOpen('select', {
@@ -537,7 +532,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			});
 		};
 
-		if (!this.newFilter.relation && relations.length) {
+		if (!this.newFilter.relation) {
 			this.menuOpen('searchObject', {
 				onOpen,
 				data: {
@@ -592,14 +587,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, param.data);
 
-
 		if (!menuStore.isOpen(id)) {
 			menuStore.closeAll(Constant.menuIds.search, () => menuStore.open(id, menuParam));
 		} else {
 			menuStore.update(id, menuParam);
 
-			if (this.menuContext && menuParam.onOpen) {
-				menuParam.onOpen(this.menuContext);
+			if (this.menuContext) {
+				if (menuParam.onOpen) {
+					menuParam.onOpen(this.menuContext);
+				};
+				console.log(this.menuContext, this.menuContext.ref);
+				if (this.menuContext.ref.reload) {
+					this.menuContext.ref.reload();
+				};
 			};
 		};
 	};
