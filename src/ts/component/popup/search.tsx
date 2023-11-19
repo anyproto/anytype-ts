@@ -592,14 +592,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else {
 			menuStore.update(id, menuParam);
 
-			if (this.menuContext) {
-				if (menuParam.onOpen) {
-					menuParam.onOpen(this.menuContext);
-				};
-				console.log(this.menuContext, this.menuContext.ref);
-				if (this.menuContext.ref.reload) {
-					this.menuContext.ref.reload();
-				};
+			if (this.menuContext && menuParam.onOpen) {
+				menuParam.onOpen(this.menuContext);
 			};
 		};
 	};
