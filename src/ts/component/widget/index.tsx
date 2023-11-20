@@ -58,6 +58,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
 
 		const props = {
 			...this.props,
@@ -101,7 +102,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		} else {
 			buttons = (
 				<div className="buttons">
-					{!isRecent ? (
+					{!isRecent && layoutWithPlus ? (
 						<div className="iconWrap create">
 							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
 						</div>
@@ -178,6 +179,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 				onDragEnd={this.onDragEnd}
+				onContextMenu={this.onOptions}
 			>
 				<Icon className="remove" inner={<div className="inner" />} onClick={this.onRemove} />
 
@@ -282,9 +284,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		const { block } = this.props;
+		const { layout } = block.content;
 		const object = this.getObject();
+		const { id, type } = object;
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content || {};
 
 		console.log('OBJECT: ', object)
+		console.log('TARGET BLOCK ID: ', targetBlockId)
 	};
 
 	onOptions (e: React.MouseEvent): void {
@@ -294,7 +302,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
-		const element = `#widget-${block.id} #button-options`;
+		const element = `#widget-${block.id}`;
 
 		if (!object || object._empty_) {
 			return;
@@ -306,7 +314,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			classNameWrap: 'fromSidebar',
 			subIds: Constant.menuIds.widget,
 			vertical: I.MenuDirection.Center,
-			offsetX: 32,
+			horizontal: I.MenuDirection.Right,
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
