@@ -230,6 +230,7 @@ class UtilMenu {
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
+			{ id: I.ViewType.Graph },
 		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 

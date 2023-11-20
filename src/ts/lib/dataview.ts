@@ -126,19 +126,6 @@ class Dataview {
 			return;
 		};
 
-		const mapper = (it: any) => {
-			const relation = dbStore.getRelationByKey(it.relationKey);
-			const vr = view.getRelation(it.relationKey);
-
-			if (relation) {
-				it.format = relation.format;
-			};
-			if (vr && vr.includeTime) {
-				it.includeTime = true;
-			};
-			return it;
-		};
-
 		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
@@ -167,8 +154,8 @@ class Dataview {
 		UtilData.searchSubscribe({
 			...param,
 			subId,
-			filters: filters.map(mapper),
-			sorts: sorts.map(mapper),
+			filters: filters.map(it => this.filterMapper(view, it)),
+			sorts: sorts.map(it => this.filterMapper(view, it)),
 			keys,
 			limit,
 			offset,
@@ -176,6 +163,19 @@ class Dataview {
 			ignoreDeleted: true,
 			ignoreHidden: true,
 		}, callBack);
+	};
+
+	filterMapper (view: any, it: any) {
+		const relation = dbStore.getRelationByKey(it.relationKey);
+		const vr = view.getRelation(it.relationKey);
+
+		if (relation) {
+			it.format = relation.format;
+		};
+		if (vr && vr.includeTime) {
+			it.includeTime = true;
+		};
+		return it;
 	};
 
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
