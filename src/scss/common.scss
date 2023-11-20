@@ -55,6 +55,7 @@ input, textarea, select { font-family: 'Inter'; }
 #graphPreview { position: fixed; z-index: 1000; }
 
 html.platformWindows {
+	#drag { -webkit-app-region: no-drag; }
 	body { overflow-y: overlay; }
 }
 
