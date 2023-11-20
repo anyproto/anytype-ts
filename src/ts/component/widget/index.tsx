@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -285,31 +285,49 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { block } = this.props;
+		const { viewId } = block.content;
 		const object = this.getObject();
 		const { id, layout } = object;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
 		const isSetOrCollection = UtilObject.isSetLayout(layout);
+		const defaultType = dbStore.getTypeById(commonStore.type);
 
-		const details: any = {};
-
+		let details: any = {};
 		let flags: I.ObjectFlag[] = [];
 		let typeKey: string = '';
 		let templateId: string = '';
 		let createWithLink: boolean = false;
+		let isCollection = false;
 
 		if (isSetOrCollection) {
-			// dataview logic
+			const rootId = this.ref.getRootId();
+			const blockId = 'dataview';
+			const view = Dataview.getView(rootId, blockId);
+			const typeId = Dataview.getTypeId(rootId, blockId, id, viewId);
+			const type = dbStore.getTypeById(typeId);
+
+			details = Dataview.getDetails(rootId, blockId, id, viewId);
+			flags = [ I.ObjectFlag.SelectTemplate ];
+			typeKey = type.uniqueKey;
+			templateId = view.defaultTemplateId || defaultType.defaultTemplateId;
+			isCollection = Dataview.isCollection(rootId, blockId);
+
+			if (templateId) {
+				const templateObject = detailStore.get(rootId, templateId);
+
+				if (templateObject.isArchived || templateObject.isDeleted || templateObject.targetObjectType != type.id) {
+					templateId = '';
+				};
+			};
 		} else {
 			switch (targetBlockId) {
 				default:
 				case Constant.widgetId.favorite: {
-					const type = dbStore.getTypeById(commonStore.type);
-
-					details.layout = type.recommendedLayout;
+					details.layout = defaultType.recommendedLayout;
 					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-					templateId = type.defaultTemplateId;
-					typeKey = type.uniqueKey;
+					typeKey = defaultType.uniqueKey;
+					templateId = defaultType.defaultTemplateId;
 
 					if (!this.isCollection(targetBlockId)) {
 						createWithLink = true;
@@ -344,6 +362,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			if (targetBlockId == Constant.widgetId.favorite) {
 				Action.setFavorite(created.id, true, 'widget');
+			};
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(id, [ created.id ]);
 			};
 
 			UtilObject.openAuto(created);
