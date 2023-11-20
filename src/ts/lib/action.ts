@@ -1,6 +1,7 @@
 import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import { ObjectListSetIsFavorite } from 'ts/lib/api/command';
 
 class Action {
 
@@ -590,11 +591,11 @@ class Action {
 		});
 	};
 
-	setFavorite (objectId: string, action: boolean, route: string) {
-		C.ObjectSetIsFavorite(objectId, action, () => {
-			const code = action ? 'AddToFavorites' : 'RemoveFromFavorites';
+	setIsFavorite (objectIds: string[], v: boolean, route: string) {
+		C.ObjectListSetIsFavorite(objectIds, v, () => {
+			const code = v ? 'AddToFavorites' : 'RemoveFromFavorites';
 
-			analytics.event(code, { count: 1, route });
+			analytics.event(code, { count: objectIds.length, route });
 		});
 	};
 

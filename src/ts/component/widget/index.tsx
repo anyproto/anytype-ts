@@ -291,7 +291,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
 		const isSetOrCollection = UtilObject.isSetLayout(layout);
-		const defaultType = dbStore.getTypeById(commonStore.type);
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [];
@@ -307,10 +306,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const typeId = Dataview.getTypeId(rootId, blockId, id, viewId);
 			const type = dbStore.getTypeById(typeId);
 
+			if (!type) {
+				return;
+			};
+
 			details = Dataview.getDetails(rootId, blockId, id, viewId);
 			flags = [ I.ObjectFlag.SelectTemplate ];
 			typeKey = type.uniqueKey;
-			templateId = view.defaultTemplateId || defaultType.defaultTemplateId;
+			templateId = view.defaultTemplateId || type.defaultTemplateId;
 			isCollection = Dataview.isCollection(rootId, blockId);
 
 			if (templateId) {
@@ -324,10 +327,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			switch (targetBlockId) {
 				default:
 				case Constant.widgetId.favorite: {
-					details.layout = defaultType.recommendedLayout;
+					const type = dbStore.getTypeById(commonStore.type);
+
+					if (!type) {
+						return;
+					};
+
+					details.layout = type.recommendedLayout;
 					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-					typeKey = defaultType.uniqueKey;
-					templateId = defaultType.defaultTemplateId;
+					typeKey = type.uniqueKey;
+					templateId = type.defaultTemplateId;
 
 					if (!this.isCollection(targetBlockId)) {
 						createWithLink = true;
@@ -361,7 +370,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const created = message.details || { id: message.targetId };
 
 			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setFavorite(created.id, true, 'widget');
+				Action.setIsFavorite([ created.id ], true, 'widget');
 			};
 
 			if (isCollection) {
