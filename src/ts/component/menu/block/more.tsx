@@ -517,16 +517,12 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'fav': {
-				C.ObjectSetIsFavorite(rootId, true, () => {
-					analytics.event('AddToFavorites', { count: 1, route: ROUTE });
-				});
+				Action.setIsFavorite([ rootId ], true, ROUTE);
 				break;
 			};
 
 			case 'unfav': {
-				C.ObjectSetIsFavorite(rootId, false, () => {
-					analytics.event('RemoveFromFavorites', { count: 1, route: ROUTE });
-				});
+				Action.setIsFavorite([ rootId ], false, ROUTE);
 				break;
 			};
 

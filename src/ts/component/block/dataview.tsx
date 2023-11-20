@@ -522,87 +522,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getTypeId (): string {
-		const { rootId } = this.props;
+		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
 		const view = this.getView();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 
-		let typeId = '';
-		if (types.length) {
-			typeId = types[0].id;
-		} else
-		if (relations.length) {
-			for (const item of relations) {
-				if (item.objectTypes.length) {
-					const first = dbStore.getTypeById(item.objectTypes[0]);
-
-					if (first && !UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
-						typeId = first.id;
-						break;
-					};
-				};
-			};
-		};
-		if (view && view.defaultTypeId && this.isAllowedDefaultType()) {
-			typeId = view.defaultTypeId;
-		};
-		if (!typeId) {
-			typeId = commonStore.type;
-		};
-		return typeId;
+		return Dataview.getTypeId(rootId, block.id, objectId, view.id);
 	};
 
 	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const view = this.getView();
-		const conditions = [
-			I.FilterCondition.Equal,
-			I.FilterCondition.GreaterOrEqual,
-			I.FilterCondition.LessOrEqual,
-			I.FilterCondition.In,
-			I.FilterCondition.AllIn,
-		];
-		const details: any = {};
 
-		let group = null;
-
-		if (groupId) {
-			group = dbStore.getGroup(rootId, block.id, groupId);
-			if (group) {
-				details[view.groupRelationKey] = group.value;
-			};
-		};
-
-		if (relations.length) {
-			relations.forEach((it: any) => {
-				details[it.relationKey] = Relation.formatValue(it, null, true);
-			});
-		};
-
-		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
-			details[view.groupRelationKey] = UtilDate.now();
-		};
-
-		for (const filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
-				continue;
-			};
-
-			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
-			if (!value) {
-				continue;
-			};
-
-			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (relation && !relation.isReadonlyValue) {
-				details[filter.relationKey] = Relation.formatValue(relation, value, true);
-			};
-		};
-
-		return details;
+		return Dataview.getDetails(rootId, block.id, objectId, view.id, groupId);
 	};
 
 	getMenuParam (e: any, dir: number): any {

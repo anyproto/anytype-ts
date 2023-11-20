@@ -1,7 +1,6 @@
 import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-import { ObjectListSetIsFavorite } from 'ts/lib/api/command';
 
 class Action {
 
