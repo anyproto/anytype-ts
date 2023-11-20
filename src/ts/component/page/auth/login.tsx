@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
-import { observer } from 'mobx-react';
+import Errors from 'json/error.json';
 
 interface State {
 	error: string;
@@ -142,6 +143,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	setError (error: { description: string, code: number}) {
 		if (!error.code) {
 			return false;
+		};
+
+		if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+			UtilRouter.go('/auth/setup/select', {});
+			return;
 		};
 
 		this.setState({ error: error.description });
