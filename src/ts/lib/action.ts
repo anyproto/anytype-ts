@@ -590,6 +590,14 @@ class Action {
 		});
 	};
 
+	setFavorite (objectId: string, action: boolean, route: string) {
+		C.ObjectSetIsFavorite(objectId, action, () => {
+			const code = action ? 'AddToFavorites' : 'RemoveFromFavorites';
+
+			analytics.event(code, { count: 1, route });
+		});
+	};
+
 };
 
 export default new Action();

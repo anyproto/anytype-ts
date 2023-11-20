@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore, dbStore } from 'Store';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
+import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
@@ -285,14 +285,75 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { block } = this.props;
-		const { layout } = block.content;
 		const object = this.getObject();
-		const { id, type } = object;
+		const { id, layout } = object;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
+		const isSetOrCollection = UtilObject.isSetLayout(layout);
 
-		console.log('OBJECT: ', object)
-		console.log('TARGET BLOCK ID: ', targetBlockId)
+		const details: any = {};
+
+		let flags: I.ObjectFlag[] = [];
+		let typeKey: string = '';
+		let templateId: string = '';
+		let createWithLink: boolean = false;
+
+		if (isSetOrCollection) {
+			// dataview logic
+		} else {
+			switch (targetBlockId) {
+				default:
+				case Constant.widgetId.favorite: {
+					const type = dbStore.getTypeById(commonStore.type);
+
+					details.layout = type.recommendedLayout;
+					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+					templateId = type.defaultTemplateId;
+					typeKey = type.uniqueKey;
+
+					if (!this.isCollection(targetBlockId)) {
+						createWithLink = true;
+					};
+					break;
+				};
+
+				case Constant.widgetId.set: {
+					details.layout = I.ObjectLayout.Set;
+					typeKey = Constant.typeKey.set;
+					break;
+				};
+
+				case Constant.widgetId.collection: {
+					details.layout = I.ObjectLayout.Collection;
+					typeKey = Constant.typeKey.collection;
+					break;
+				};
+			};
+		};
+
+		if (!typeKey) {
+			return;
+		};
+
+		const callBack = (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const created = message.details || { id: message.targetId };
+
+			if (targetBlockId == Constant.widgetId.favorite) {
+				Action.setFavorite(created.id, true, 'widget');
+			};
+
+			UtilObject.openAuto(created);
+		};
+
+		if (createWithLink) {
+			UtilObject.create(id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+		} else {
+			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
+		};
 	};
 
 	onOptions (e: React.MouseEvent): void {
