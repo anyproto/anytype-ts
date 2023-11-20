@@ -4,17 +4,14 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
+import { commonStore, menuStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props {
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
-	onClick?: (object: any) => void;
-	onContextMenu?: (id: string, param: any) => void;
-	onContextSpaceClick?: (param: any, data: any) => void;
-	onSelect?: (id: string, related?: string[]) => void;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -76,13 +73,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const win = $(window);
 
 		this.unbind();
-		win.on('updateGraphSettings.graph', () => { this.updateSettings(); });
+		win.on('updateGraphSettings.graph', () => this.updateSettings());
 		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
-		win.on('updateTheme.graph', () => { this.send('updateTheme', { theme: commonStore.getThemeClass() }); });
+		win.on('updateTheme.graph', () => this.send('updateTheme', { theme: commonStore.getThemeClass() }));
+		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) }));
+		win.on(`keydown.graph`, e => this.onKeyDown(e));
 	};
 
 	unbind () {
-		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateTheme' ];
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateTheme', 'removeGraphNode', 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
@@ -285,7 +284,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	onMessage (e) {
 		const { id, data } = e.data;
-		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
 		const node = $(this.node);
 		const { left, top } = node.offset();
 
@@ -306,13 +304,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		switch (id) {
 			case 'onClick': {
-				onClick(data.node);
+				this.onClickObject(data.node);
 				break;
 			};
 
 			case 'onSelect': {
-				const { related } = data;
-				onSelect(data.node, related);
+				this.onSelect(data.node, data.related);
 				break;
 			};
 
@@ -337,15 +334,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				};
 
 				this.onPreviewHide();
-
-				onContextMenu(data.node.id, menuParam);
+				this.onContextMenu(data.node.id, menuParam);
 				break;
 			};
 
 			case 'onContextSpaceClick': {
 				this.onPreviewHide();
-
-				onContextSpaceClick(menuParam, data);
+				this.onContextSpaceClick(menuParam, data);
 				break;
 			};
 
@@ -357,6 +352,162 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 		};
+	};
+
+	onKeyDown (e: any) {
+		const cmd = keyboard.cmdKey();
+		const length = this.ids.length;
+
+		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
+
+		if (length) {
+			keyboard.shortcut('escape', e, () => {
+				this.ids = [];
+				this.send('onSetSelected', { ids: [] });
+			});
+
+			keyboard.shortcut('backspace, delete', e, () => {
+				Action.archive(this.ids, () => {
+					this.nodes = this.nodes.filter(d => !this.ids.includes(d.id));
+					this.send('onRemoveNode', { ids: this.ids });
+				});
+			});
+		};
+	};
+
+	onContextMenu (id: string, param: any) {
+		const ids = this.ids.length ? this.ids : [ id ];
+
+		menuStore.open('dataviewContext', {
+			...param,
+			data: {
+				route: 'Graph',
+				subId: Constant.subId.graph,
+				objectIds: ids,
+				getObject: id => this.getNode(id),
+				onLinkTo: (sourceId: string, targetId: string) => {
+					const target = this.getNode(targetId);
+					if (target) {
+						this.edges.push(this.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
+						this.send('onSetEdges', { edges: this.edges });
+					} else {
+						this.addNewNode(targetId, target => this.send('onAddNode', { target, sourceId }));
+					};
+				},
+				onSelect: (itemId: string) => {
+					switch (itemId) {
+						case 'archive': {
+							this.nodes = this.nodes.filter(d => !ids.includes(d.id));
+							this.send('onRemoveNode', { ids });
+							break;
+						};
+
+						case 'fav': {
+							ids.forEach((id: string) => {
+								const node = this.getNode(id);
+								
+								if (node) {
+									node.isFavorite = true;
+								};
+							});
+							this.send('onSetEdges', { edges: this.edges });
+							break;
+						};
+
+						case 'unfav': {
+							ids.forEach((id: string) => {
+								const node = this.getNode(id);
+								
+								if (node) {
+									node.isFavorite = false;
+								};
+							});
+							break;
+						};
+					};
+
+					this.ids = [];
+					this.send('onSetSelected', { ids: this.ids });
+				},
+			}
+		});
+	};
+
+	onContextSpaceClick (param: any, data: any) {
+		menuStore.open('select', {
+			...param,
+			data: {
+				options: [
+					{ id: 'newObject', name: translate('pageMainGraphNewObject') },
+				],
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'newObject': {
+							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+								UtilObject.openPopup({ id: message.targetId }, {
+									onClose: () => {
+										this.addNewNode(message.targetId, target => {
+											target = Object.assign(target, { x: data.x, y: data.y });
+											this.send('onAddNode', { target });
+										});
+									}
+								});
+
+								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
+							});
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
+	onSelect (id: string, related?: string[]) {
+		const isSelected = this.ids.includes(id);
+
+		let ids = [ id ];
+
+		if (related && related.length) {
+			if (!isSelected) {
+				this.ids = [];
+			};
+
+			ids = ids.concat(related);
+		};
+
+		ids.forEach((id) => {
+			if (isSelected) {
+				this.ids = this.ids.filter(it => it != id);
+				return;
+			};
+
+			this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+		});
+
+		this.send('onSetSelected', { ids: this.ids });
+	};
+
+	onClickObject (id: string) {
+		this.ids = [];
+		this.send('onSetSelected', { ids: [] });
+		
+		UtilObject.openAuto(this.nodes.find(d => d.id == id));
+	};
+
+	addNewNode (id: string, cb: (target: any) => void) {
+		UtilObject.getById(id, (object: any) => {
+			object = this.nodeMapper(object);
+
+			this.nodes.push(object);
+			cb(object);
+		});
+	};
+
+	getNode (id: string) {
+		return this.nodes.find(d => d.id == id);
 	};
 
 	setRootId (id: string) {
