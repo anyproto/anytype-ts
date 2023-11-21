@@ -82,7 +82,7 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject, isCollection } = data;
+		const { subId, objectIds, getObject, isCollection, allowedLink } = data;
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
@@ -163,9 +163,10 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
+		if (!allowedLink)		 linkTo = null;
 
 		let sections = [
-			{ children: [ open, fav, createWidget, changeType, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, createWidget, changeType, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
