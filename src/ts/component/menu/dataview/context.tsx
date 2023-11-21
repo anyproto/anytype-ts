@@ -90,7 +90,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
-		let div = null;
+		let div = { isDiv: true };
 		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
@@ -103,7 +103,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedType = true;
 
 		if (isCollection) {
-			div = { isDiv: true };
 			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		};
 
