@@ -82,7 +82,7 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject, isCollection, allowedLink } = data;
+		const { subId, objectIds, getObject, isCollection, allowedLink, allowedOpen } = data;
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
@@ -90,7 +90,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
-		let div = null;
+		let div = { isDiv: true };
 		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
@@ -103,7 +103,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedType = true;
 
 		if (isCollection) {
-			div = { isDiv: true };
 			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		};
 
@@ -164,6 +163,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
 		if (!allowedLink)		 linkTo = null;
+		if (!allowedOpen)		 open = null;
 
 		let sections = [
 			{ children: [ open, fav, createWidget, changeType, linkTo, div, pageCopy, unlink, archive ] },
