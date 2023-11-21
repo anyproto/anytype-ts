@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { ObjectType, Cell } from 'Component';
+import { ObjectType, Cell, Select } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -20,6 +20,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	menuContext: any = null;
 	setId = '';
 	node = null;
+	linksOptions: any = { linksFrom: [], linksTo: [] };
 
 	public static defaultProps = {
 		iconSize: 24,
@@ -40,6 +41,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.elementMapper = this.elementMapper.bind(this);
+		this.getLinksOptions = this.getLinksOptions.bind(this);
 	};
 
 	render () {
@@ -109,16 +111,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const links = [];
-		const linksFrom = Relation.getArrayValue(short.links);
-		const linksTo = Relation.getArrayValue(short.backlinks);
-		const lfl = linksFrom.length;
-		const ltl = linksTo.length;
+		const lfl = this.linksOptions.linksFrom.length;
+		const ltl = this.linksOptions.linksTo.length;
 
 		if (lfl) {
-			links.push(`${lfl} ${UtilCommon.plural(lfl, translate('pluralLinkFrom'))}`);
+			links.push({ id: 'linksFrom', label: `${lfl} ${UtilCommon.plural(lfl, translate('pluralLinkFrom'))}`});
 		};
 		if (ltl) {
-			links.push(`${ltl} ${UtilCommon.plural(ltl, translate('pluralLinkTo'))}`);
+			links.push({ id: 'linksTo', label: `${ltl} ${UtilCommon.plural(ltl, translate('pluralLinkTo'))}`});
 		};
 
 		return (
@@ -208,11 +208,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					);
 				})}
 
-				{links.map((linkType: any, i: number) => (
+				{links.map((links: any, i: number) => (
 					<span className="cell" key={i}>
 						{bullet}
-						<div className="cellContent">
-							{linkType}
+						<div className="cellContent" onClick={e => this.onLinks(e, links.id)}>
+							{links.label}
 						</div>
 					</span>
 				))}
@@ -232,6 +232,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		this.init();
+		this.getLinksOptions();
 	};
 
 	componentDidUpdate (): void {
@@ -301,6 +302,40 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 
 		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
+	};
+
+	getLinksOptions () {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ 'links', 'backlinks' ], true);
+		const linksFrom = Relation.getArrayValue(object.links);
+		const linksTo = Relation.getArrayValue(object.backlinks);
+		const options: any = {
+			linksFrom: [],
+			linksTo: []
+		};
+
+		const mapper = (it: any) => ({
+			...it,
+			withDescription: true,
+			iconSize: 40,
+			object: {
+				iconEmoji: it.iconEmoji,
+				iconImage: it.iconImage
+			}
+		});
+
+		UtilObject.getByIds(linksFrom, (lfObjects) => {
+			console.log('LF: ', lfObjects)
+			options.linksFrom = lfObjects.map(mapper);
+
+			UtilObject.getByIds(linksTo, (ltObjects) => {
+				options.linksTo = ltObjects.map(mapper);
+
+				this.linksOptions = options;
+				this.forceUpdate();
+			});
+		})
 	};
 
 	onFocus () {
@@ -641,6 +676,28 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	onLinks (e: React.MouseEvent, id: any) {
+		const menuParam = {
+			element: e.currentTarget,
+			width: 360,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Bottom,
+			noFlipY: true,
+			data: {
+				menuLabel: translate(`blockFeatured${id.charAt(0).toUpperCase() + id.slice(1)}`),
+				options: this.linksOptions[id],
+				forceLetter: true,
+				onSelect: (e: any, item: any) => {
+					UtilObject.openAuto(item);
+				}
+			}
+		};
+
+		menuStore.closeAll([ 'select' ], () => {
+			menuStore.open('select', menuParam);
+		});
 	};
 
 	elementMapper (relation: any, item: any) {
