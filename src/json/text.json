@@ -125,6 +125,8 @@
 	"pluralBlock": "Block|Blocks",
 	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
+	"pluralLinkFrom": "link from|links from",
+	"pluralLinkTo": "link to|links to",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",

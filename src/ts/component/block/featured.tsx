@@ -45,7 +45,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations', 'backlinks', 'links' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 		const object = detailStore.get(rootId, storeId, featuredRelations);
 		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
@@ -106,6 +106,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
 			};
+		};
+
+		const links = [];
+		const linksFrom = Relation.getArrayValue(short.links);
+		const linksTo = Relation.getArrayValue(short.backlinks);
+		const lfl = linksFrom.length;
+		const ltl = linksTo.length;
+
+		if (lfl) {
+			links.push(`${lfl} ${UtilCommon.plural(lfl, translate('pluralLinkFrom'))}`);
+		};
+		if (ltl) {
+			links.push(`${ltl} ${UtilCommon.plural(ltl, translate('pluralLinkTo'))}`);
 		};
 
 		return (
@@ -194,6 +207,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						</span>
 					);
 				})}
+
+				{links.map((linkType: any, i: number) => (
+					<span className="cell" key={i}>
+						{bullet}
+						<div className="cellContent">
+							{linkType}
+						</div>
+					</span>
+				))}
 			</div>
 		);
 	};
