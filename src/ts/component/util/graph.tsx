@@ -386,6 +386,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,
+				allowedOpen: true,
 				onLinkTo: (sourceId: string, targetId: string) => {
 					const target = this.getNode(targetId);
 					if (target) {
