@@ -193,15 +193,13 @@ class PopupSettingsPageImportCsv extends React.Component<I.PopupSettings, State>
 	};
 
 	onImport () {
-		const { close } = this.props;
-
 		Action.import(I.ImportType.Csv, [ 'csv', 'zip' ], this.data, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
 			};
 
-			close();
+			this.props.close();
 		});
 	};
 

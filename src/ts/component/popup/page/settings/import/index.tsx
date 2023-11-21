@@ -66,20 +66,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		const { id } = this.props;
-
-		Action.import(type, extensions, options, (message: any) => {
-			const { collectionId } = message;
-
-			if (collectionId) {
-				popupStore.close(id, () => {
-					popupStore.open('objectManager', { data: { collectionId, type: I.ObjectManagerPopup.Favorites } });
-				});
-				return;
-			};
-
-			this.props.close();
-		});
+		Action.import(type, extensions, options, () => this.props.close());
 	};
 
 	onImportHtml () {

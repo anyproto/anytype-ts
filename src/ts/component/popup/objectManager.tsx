@@ -103,7 +103,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
 				if (message.records && message.records.length <= 8) {
-					this.refManager.setSelectedRange(0, 8);
+					this.refManager?.setSelectedRange(0, 8);
 				};
 				break;
 			};
