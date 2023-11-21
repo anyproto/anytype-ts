@@ -996,13 +996,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getSize (): { width: number; height: number; } {
-		const obj = $('#' + this.getId());
+		const obj = $(`#${this.getId()}`);
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
 	getPosition (): DOMRect {
-		const obj = $('#' + this.getId());
-		return obj.get(0).getBoundingClientRect() as DOMRect;
+		const obj = $(`#${this.getId()}`);
+		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
 	};
 
 	getArrowDirection (): I.MenuDirection {
