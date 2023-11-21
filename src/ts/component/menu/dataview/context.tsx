@@ -90,7 +90,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
-		let div = { isDiv: true };
 		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
@@ -166,7 +165,8 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedOpen)		 open = null;
 
 		let sections = [
-			{ children: [ open, fav, createWidget, changeType, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ createWidget, open, fav, linkTo ] },
+			{ children: [ changeType, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {

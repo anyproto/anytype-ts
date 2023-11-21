@@ -29,9 +29,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 		const { error } = this.state;
 
 		return (
-			<div
-				ref={node => this.node = node}
-			>
+			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="dataManagement" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
@@ -48,7 +46,6 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				</div>
 
 				<Button ref={ref => this.refButton = ref} text={translate('commonDelete')} color="red" className="c36" onClick={this.onDelete} />
-
 				<Error text={error} />
 			</div>
 		);
