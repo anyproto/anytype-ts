@@ -110,6 +110,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
+		const createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 
 		let archive = null;
 		let remove = null;
@@ -195,38 +196,35 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (hasShortMenu) {
-			if (!block.isObjectSet() && !block.isObjectCollection()) {
+			if (!UtilObject.isSetLayout(object.layout)) {
 				pageCopy = null;
 			};
 
 			sections = [
-				{ children: [ fav, remove, archive, pageInstall ] },
-				{ children: [ pageCopy, linkTo, pageLink ] },
-				{ children: [ search ] },
+				{ children: [ createWidget, fav, pageLock ] },
+				{ children: [ linkTo ] },
+				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 			];
 		} else
 		if (block.isPage()) {
 			if (isTemplate) {
 				sections = [
-					{ children: [ archive, history ] },
-					{ children: [ template, pageCopy, setDefaultTemplate ] },
-					{ children: [ search ] },
-					{ children: [ print, pageExport ] },
+					{ children: [ search, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
+					{ children: [ print ] },
 				];
 			} else
 			if (object.isArchived) {
 				sections = [
-					{ children: [ remove, archive ] },
-					{ children: [ search ] },
-					{ children: [ print, pageExport ] },
+					{ children: [ search, pageExport, remove, archive ] },
+					{ children: [ print ] },
 				];
 			} else {
 				sections = [
-					{ children: [ fav, archive, history ] },
-					{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
-					{ children: [ search ] },
-					{ children: [ print, pageExport, pageReload ] },
+					{ children: [ createWidget, fav, pageLock ] },
+					{ children: [ linkTo ] },
+					{ children: [ search, pageCopy, pageLink, pageExport, pageReload, template, archive, history ] },
+					{ children: [ print ] },
 				];
 			};
 
@@ -234,12 +232,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		} else {
 			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
 
-			sections.push({ children: [
-				turn,
-				move,
-				align,
-				blockRemove,
-			]});
+			sections = [
+				{ children: [ turn, move, align, blockRemove ]},
+			];
 		};
 
 		sections = sections.filter((section: any) => {
@@ -552,6 +547,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
 				analytics.event('ChangeDefaultTemplate', { route: ROUTE });
+				break;
+			};
+
+			case 'createWidget': {
+				const first = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+
+				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top);
 				break;
 			};
 		};

@@ -332,40 +332,44 @@ class UtilObject {
 		});
 	};
 
-	isFileLayout (layout: I.ObjectLayout) {
+	isFileLayout (layout: I.ObjectLayout): boolean {
 		return this.getFileLayouts().includes(layout);
 	};
 
-	isFileOrSystemLayout (layout: I.ObjectLayout) {
+	isFileOrSystemLayout (layout: I.ObjectLayout): boolean {
 		return this.getFileAndSystemLayouts().includes(layout);
 	};
 
-	isSystemLayout (layout: I.ObjectLayout) {
+	isSystemLayout (layout: I.ObjectLayout): boolean {
 		return this.getSystemLayouts().includes(layout);
 	};
 
-	isSetLayout (layout: I.ObjectLayout) {
+	isSetLayout (layout: I.ObjectLayout): boolean {
 		return this.getSetLayouts().includes(layout);
 	};
 
-	isTemplate (type: string) {
+	isTemplate (type: string): boolean {
 		const templateType = dbStore.getTemplateType();
 		return templateType ? type == templateType.id : false;
 	};
 
-	isTypeOrRelationLayout (layout: I.ObjectLayout) {
+	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
 		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
-	isTypeLayout (layout: I.ObjectLayout) {
+	isTypeLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Type;
 	};
 
-	isRelationLayout (layout: I.ObjectLayout) {
+	isRelationLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Relation;
 	};
 
-	getPageLayouts () {
+	isPageLayout (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().includes(layout);
+	};
+
+	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 
 			I.ObjectLayout.Human, 
@@ -375,25 +379,25 @@ class UtilObject {
 		];
 	};
 
-	getSetLayouts () {
+	getSetLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
 		];
 	};
 
-	getLayoutsWithoutTemplates () {
+	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.Note,
 			I.ObjectLayout.Bookmark,
 		].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
-	getFileAndSystemLayouts () {
+	getFileAndSystemLayouts (): I.ObjectLayout[] {
 		return this.getFileLayouts().concat(this.getSystemLayouts());
 	};
 
-	getSystemLayouts () {
+	getSystemLayouts (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.Type,
 			I.ObjectLayout.Relation,
@@ -404,7 +408,7 @@ class UtilObject {
 		];
 	};
 
-	getFileLayouts () {
+	getFileLayouts (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.File,
 			I.ObjectLayout.Image,
@@ -413,8 +417,12 @@ class UtilObject {
 		];
 	};
 
-	excludeFromSet () {
-		return [ I.ObjectLayout.Option, I.ObjectLayout.SpaceView, I.ObjectLayout.Space ];
+	excludeFromSet (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Option, 
+			I.ObjectLayout.SpaceView, 
+			I.ObjectLayout.Space,
+		];
 	};
 
 	isAllowedTemplate (typeId): boolean {

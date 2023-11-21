@@ -1050,6 +1050,7 @@
 	"menuBlockMoreLockPage": "Lock page",
 	"menuBlockMoreInstall": "Install",
 	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
+	"menuBlockMoreCreateWidget": "Create Widget",
 
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",

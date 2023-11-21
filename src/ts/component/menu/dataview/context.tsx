@@ -82,13 +82,14 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject, isCollection } = data;
+		const { subId, objectIds, getObject, isCollection, allowedLink } = data;
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -145,6 +146,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (length > 1) {
 			open = null;
 			linkTo = null;
+			createWidget = null;
 		};
 
 		if (archiveCnt == length) {
@@ -161,9 +163,10 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
+		if (!allowedLink)		 linkTo = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, createWidget, changeType, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -204,7 +207,6 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		const itemId = objectIds[0];
-		let menuId = '';
 		const menuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -218,6 +220,7 @@ class MenuContext extends React.Component<I.Menu> {
 			}
 		};
 
+		let menuId = '';
 		switch (item.id) {
 			case 'changeType': {
 				menuId = 'typeSuggest';
@@ -352,6 +355,13 @@ class MenuContext extends React.Component<I.Menu> {
 					cb();
 					analytics.event('UnlinkFromCollection', { count, route });
 				});
+				break;
+			};
+
+			case 'createWidget': {
+				const firstBlock = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+
+				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
 				break;
 			};
 
