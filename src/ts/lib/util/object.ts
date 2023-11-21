@@ -151,7 +151,7 @@ class UtilObject {
 	openAuto (object: any, param?: any) {
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId != commonStore.space) {
+		if (object.spaceId && (object.spaceId != commonStore.space)) {
 			this.openRoute(object, param);
 			return;
 		};
