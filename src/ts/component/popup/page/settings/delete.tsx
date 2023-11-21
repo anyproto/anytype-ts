@@ -44,7 +44,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				</div>
 
 				<div className="check" onClick={this.onCheck}>
-					<Checkbox ref={ref => this.refCheckbox = ref} /> {translate('popupSettingsDeleteCheckboxLabel')}
+					<Checkbox ref={ref => this.refCheckbox = ref} value={false} /> {translate('popupSettingsDeleteCheckboxLabel')}
 				</div>
 
 				<Button ref={ref => this.refButton = ref} text={translate('commonDelete')} color="red" className="c36" onClick={this.onDelete} />
@@ -52,10 +52,6 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				<Error text={error} />
 			</div>
 		);
-	};
-
-	componentDidMount (): void {
-		this.onCheck();
 	};
 
 	onDelete (e: any) {
