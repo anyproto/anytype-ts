@@ -72,7 +72,8 @@
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
-		"table":		 [ "select2", "blockColor", "blockBackground" ]
+		"table":		 [ "select2", "blockColor", "blockBackground" ],
+		"navigation":	 [ "space", "quickCapture" ]
 	},
 
 	"popupPinIds": [ "search" ],

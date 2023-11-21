@@ -12,11 +12,16 @@
 
 	.iconWrap { 
 		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
-		transition: $transitionAllCommon;
+		position: relative; transition: $transitionAllCommon;
 	}
 	.iconWrap:not(.disabled):hover { background-color: rgba(37, 37, 37, 0.15); }
+	
+	.iconWrap.active:before {
+		content: ''; position: absolute; z-index: 0; left: 2px; top: 2px; width: 28px; height: 28px;
+		border-radius: 6px; background-color: rgba(0, 0, 0, 0.2);
+	}
 
-	.icon { width: 20px; height: 20px;  }
+	.icon { width: 20px; height: 20px; z-index: 1;  }
 	.icon.back, .icon.forward { background-image: url('~img/icon/navigation/back.svg'); }
 	.icon.forward { transform: rotateZ('180deg'); }
 	.icon.plus { background-image: url('~img/icon/navigation/plus.svg'); }

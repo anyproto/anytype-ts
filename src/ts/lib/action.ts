@@ -475,7 +475,6 @@ class Action {
 		const range = UtilCommon.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const text: string[] = [];
 
 		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
 
@@ -489,10 +488,6 @@ class Action {
 		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
-
-			if (it.type == I.BlockType.Text) {
-				text.push(String(it.content.text || ''));
-			};
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = dbStore.getViews(rootId, it.id);

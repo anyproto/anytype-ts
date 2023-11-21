@@ -154,8 +154,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onKeyDown (e: any) {
-		const { setHover } = this.props;
+		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
+
+		let ret = false;
 
 		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed: string) => {
 			e.preventDefault();
@@ -173,9 +175,12 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			};
 
 			setHover(items[this.n], true);
+			ret = true;
 		});
 
-		keyboard.shortcut('enter', e, () => this.onClick(e, items[this.n]));
+		if (!ret) {
+			onKeyDown(e);
+		};
 	};
 
 	setCurrent () {

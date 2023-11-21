@@ -1241,6 +1241,9 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
+	"menuQuickCaptureSearchObjectTypes": "Search object types...",
+	"menuQuickCaptureGroups": "Groups",
+
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
 
