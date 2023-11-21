@@ -17,6 +17,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
+import ViewGraph from './dataview/view/graph';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -139,6 +140,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			case I.ViewType.Calendar:
 				ViewComponent = ViewCalendar;
+				break;
+
+			case I.ViewType.Graph:
+				ViewComponent = ViewGraph;
 				break;
 		};
 

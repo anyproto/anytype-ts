@@ -92,6 +92,7 @@ import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/list.scss';
 import 'scss/block/dataview/view/calendar.scss';
+import 'scss/block/dataview/view/graph.scss';
 import 'scss/block/div.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/file.scss';
