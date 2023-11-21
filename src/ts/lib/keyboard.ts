@@ -296,7 +296,7 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (route: string) {
+	pageCreate (details: any, route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -306,7 +306,6 @@ class Keyboard {
 		const targetId = '';
 		const position = I.BlockPosition.Bottom;
 		const rootId = '';
-		const details: any = {};
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 		
 		if (!rootId) {
@@ -505,7 +504,7 @@ class Keyboard {
 			};
 
 			case 'create': {
-				this.pageCreate('MenuSystem');
+				this.pageCreate({}, 'MenuSystem');
 				break;
 			};
 

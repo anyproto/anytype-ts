@@ -86,7 +86,7 @@
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
 	"commonMoveTo": "Move to",
-	"commonLinkTo": "Link to",
+	"commonLinkTo": "Add link to object",
 	"commonUpload": "Upload",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
@@ -666,8 +666,15 @@
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
 
+	"popupSettingsImportNotionTitle": "Notion Import",
+
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
+
+	"popupSettingsImportHtmlTitle": "HTML Import",
+	"popupSettingsImportTextTitle": "Text Import",
+	"popupSettingsImportProtobufTitle": "Any-Block Import",
+	"popupSettingsImportMarkdownTitle": "Markown Import",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
@@ -1039,8 +1046,6 @@
 	"menuBlockMoreMoveTo": "Move to",
 	"menuBlockMoreVersionHistory": "Version History",
 	"menuBlockMoreExport": "Export",
-	"menuBlockMoreDuplicateObject": "Duplicate Object",
-	"menuBlockMoreDuplicateTemplate": "Duplicate Template",
 	"menuBlockMoreCopyLink": "Copy link",
 	"menuBlockMoreReloadFromSource": "Reload from Source",
 	"menuBlockMoreCreateObject": "Create Object",
@@ -1049,6 +1054,7 @@
 	"menuBlockMoreLockPage": "Lock page",
 	"menuBlockMoreInstall": "Install",
 	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
+	"menuBlockMoreCreateWidget": "Create Widget",
 
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
