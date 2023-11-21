@@ -666,8 +666,15 @@
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
 
+	"popupSettingsImportNotionTitle": "Notion Import",
+
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
+
+	"popupSettingsImportHtmlTitle": "HTML Import",
+	"popupSettingsImportTextTitle": "Text Import",
+	"popupSettingsImportProtobufTitle": "Any-Block Import",
+	"popupSettingsImportMarkdownTitle": "Markown Import",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
