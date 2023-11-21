@@ -364,14 +364,14 @@ class Mark {
 
 		// Render mentions
 		for (const mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if ([ I.MarkType.Mention, I.MarkType.Latex ].includes(mark.type)) {
 				render(mark);
 			};
 		};
 
 		// Render everything except mentions
 		for (const mark of parts) {
-			if (mark.type != I.MarkType.Mention) {
+			if (![ I.MarkType.Mention, I.MarkType.Latex ].includes(mark.type)) {
 				render(mark);
 			};
 		};
@@ -398,7 +398,7 @@ class Mark {
 
 		obj.find('latex').each((i: number, item: any) => {
 			item = $(item);
-			item.html(item.text());
+			item.html(item.attr('data-text'));
 		});
 
 		obj.find('font').each((i: number, item: any) => {
@@ -523,8 +523,8 @@ class Mark {
 				const from = (Number(text.indexOf(s)) || 0) + p1.length;
 				const to = from + p3.length;
 				const replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
-				let check = true;
 
+				let check = true;
 				for (const mark of checked) {
 					if ((mark.range.from <= from) && (mark.range.to >= to)) {
 						check = false;
@@ -634,6 +634,7 @@ class Mark {
 
 			case I.MarkType.Mention:
 			case I.MarkType.Emoji:
+			case I.MarkType.Latex:
 				attr = 'contenteditable="false"';
 				break;
 				

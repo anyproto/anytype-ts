@@ -600,7 +600,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		items.each((i: number, item: any) => {
 			item = $(item);
 
-			item.html(katex.renderToString(item.text(), { 
+			const text = item.text();
+
+			item.attr({ 'data-text': text });
+			item.html(katex.renderToString(text, { 
 				displayMode: false, 
 				throwOnError: false,
 				output: 'html',
