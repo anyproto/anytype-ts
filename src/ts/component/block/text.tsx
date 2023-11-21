@@ -26,6 +26,9 @@ for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
+
 const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	public static defaultProps = {
@@ -299,6 +302,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				this.renderObjects();
 				this.renderMentions();
 				this.renderEmoji();
+				this.renderLatex();
 			});
 		};
 
@@ -582,6 +586,26 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (smile.length) {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
+		});
+	};
+
+	renderLatex () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(this.node);
+		const items = node.find('latex');
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			item.html(katex.renderToString(item.text(), { 
+				displayMode: false, 
+				throwOnError: false,
+				output: 'html',
+				trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+			}));
 		});
 	};
 

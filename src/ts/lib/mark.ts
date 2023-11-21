@@ -14,6 +14,7 @@ const Tags = [
 	'mention', 
 	'emoji', 
 	'obj',
+	'latex',
 ];
 
 const Patterns = {
@@ -76,14 +77,16 @@ class Mark {
 			{ key: '*', type: I.MarkType.Italic },
 			{ key: '_', type: I.MarkType.Italic },
 			{ key: '~~', type: I.MarkType.Strike },
+			{ key: '$', type: I.MarkType.Latex },
 		];
 
 		for (const item of Markdown) {
 			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
 			const k = UtilCommon.regexEscape(item.key);
+
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
+				reg: new RegExp('([^\\*_\\$]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
 			});
 		};
 	};
@@ -393,6 +396,11 @@ class Mark {
 			item.html(item.find('name').html());
 		});
 
+		obj.find('latex').each((i: number, item: any) => {
+			item = $(item);
+			item.html(item.text());
+		});
+
 		obj.find('font').each((i: number, item: any) => {
 			item = $(item);
 
@@ -489,7 +497,7 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /[`\*_~\[]{1}/.test(html);
+		const test = /[`\*_~\$\[]{1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {

@@ -29,6 +29,7 @@ export enum MarkType {
 	Mention		 = 8,
 	Emoji		 = 9,
 	Object		 = 10,
+	Latex		 = 11,
 };
 
 export interface TextRange {
