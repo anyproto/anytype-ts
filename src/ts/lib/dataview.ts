@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -272,6 +272,89 @@ class Dataview {
 
 	defaultViewName (type: I.ViewType): string {
 		return translate(`viewName${type}`);
+	};
+
+	getDetails (rootId: string, blockId: string, objectId: string, viewId?: string, groupId?: string): any {
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
+		const view = this.getView(rootId, blockId, viewId);
+		const conditions = [
+			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
+			I.FilterCondition.In,
+			I.FilterCondition.AllIn,
+		];
+		const details: any = {};
+
+		let group = null;
+
+		if (groupId) {
+			group = dbStore.getGroup(rootId, blockId, groupId);
+			if (group) {
+				details[view.groupRelationKey] = group.value;
+			};
+		};
+
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				details[it.relationKey] = Relation.formatValue(it, null, true);
+			});
+		};
+
+		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
+			details[view.groupRelationKey] = UtilDate.now();
+		};
+
+		for (const filter of view.filters) {
+			if (!conditions.includes(filter.condition)) {
+				continue;
+			};
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
+				continue;
+			};
+
+			const relation = dbStore.getRelationByKey(filter.relationKey);
+			if (relation && !relation.isReadonlyValue) {
+				details[filter.relationKey] = Relation.formatValue(relation, value, true);
+			};
+		};
+
+		return details;
+	};
+
+	getTypeId (rootId: string, blockId: string, objectId: string, viewId?: string) {
+		const view = this.getView(rootId, blockId, viewId);
+
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
+		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id).length;
+
+		let typeId = '';
+		if (types.length) {
+			typeId = types[0].id;
+		} else
+		if (relations.length) {
+			for (const item of relations) {
+				if (item.objectTypes.length) {
+					const first = dbStore.getTypeById(item.objectTypes[0]);
+
+					if (first && !UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
+						typeId = first.id;
+						break;
+					};
+				};
+			};
+		};
+		if (view && view.defaultTypeId && isAllowedDefaultType) {
+			typeId = view.defaultTypeId;
+		};
+		if (!typeId) {
+			typeId = commonStore.type;
+		};
+
+		return typeId;
 	};
 
 };

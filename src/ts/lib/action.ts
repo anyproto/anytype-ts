@@ -585,6 +585,12 @@ class Action {
 		});
 	};
 
+	setIsFavorite (objectIds: string[], v: boolean, route: string) {
+		C.ObjectListSetIsFavorite(objectIds, v, () => {
+			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+		});
+	};
+
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
 		const object = detailStore.get(rootId, objectId);
 

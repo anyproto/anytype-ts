@@ -1402,6 +1402,7 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
+	"widgetCreate": "Create new object",
 
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 

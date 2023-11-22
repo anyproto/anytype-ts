@@ -335,18 +335,12 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'fav': {
-				C.ObjectListSetIsFavorite(objectIds, true, () => {
-					cb();
-					analytics.event('AddToFavorites', { count, route });
-				});
+				Action.setIsFavorite(objectIds, true, route);
 				break;
 			};
 
 			case 'unfav': {
-				C.ObjectListSetIsFavorite(objectIds, false, () => {
-					cb();
-					analytics.event('RemoveFromFavorites', { count, route });
-				});
+				Action.setIsFavorite(objectIds, false, route);
 				break;
 			};
 
