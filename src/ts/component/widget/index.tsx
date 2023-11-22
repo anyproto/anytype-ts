@@ -39,6 +39,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
+		this.isPlusAllowed = this.isPlusAllowed.bind(this);
 	};
 
 	render () {
@@ -57,8 +58,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
-		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const withPlus = this.isPlusAllowed(object);
 
 		const props = {
 			...this.props,
@@ -102,7 +102,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		} else {
 			buttons = (
 				<div className="buttons">
-					{!isRecent && layoutWithPlus ? (
+					{withPlus ? (
 						<div className="iconWrap create">
 							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
 						</div>
@@ -603,6 +603,46 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
+	isPlusAllowed (object: any): boolean {
+		if (!object) {
+			return false;
+		};
+
+		const { block } = this.props;
+		const { layout } = block.content;
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content || {};
+		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+
+		let allowed = true;
+
+		if (isRecent || !layoutWithPlus) {
+			allowed = false;
+		};
+
+		if (isSetOrCollection && this.ref) {
+			const { id } = object;
+			const rootId = this.ref.getRootId();
+			const blockId = 'dataview';
+			const typeId = Dataview.getTypeId(rootId, blockId, id);
+			const type = dbStore.getTypeById(typeId);
+			const restrictedTypeKeys = [
+				Constant.typeKey.video,
+				Constant.typeKey.audio,
+				Constant.typeKey.file,
+				Constant.typeKey.image
+			];
+
+			if (type && restrictedTypeKeys.includes(type.uniqueKey)) {
+				allowed = false;
+			};
+		};
+
+		return allowed;
+	};
+
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
 		const options = UtilMenu.getWidgetLimits(layout).map(it => Number(it.id));
@@ -611,7 +651,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit = options[0];
 		};
 		return isPreview ? 0 : limit;
-	}; 
+	};
 
 });
 
