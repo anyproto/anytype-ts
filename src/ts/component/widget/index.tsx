@@ -293,7 +293,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isSetOrCollection = UtilObject.isSetLayout(layout);
 
 		let details: any = {};
-		let flags: I.ObjectFlag[] = [];
+		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty ];
 		let typeKey: string = '';
 		let templateId: string = '';
 		let createWithLink: boolean = false;
