@@ -25,8 +25,6 @@ import 'emoji-mart/css/emoji-mart.css';
 
 import 'scss/common.scss';
 import 'scss/component/common.scss';
-import 'scss/component/preview/common.scss';
-import 'scss/component/media/common.scss';
 import 'scss/page/common.scss';
 import 'scss/block/common.scss';
 import 'scss/form/common.scss';

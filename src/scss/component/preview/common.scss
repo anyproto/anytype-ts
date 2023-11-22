@@ -47,5 +47,5 @@
     .featured { @include text-very-small; color: $colorControlActive; }
 }
 
-@import "scss/component/preview/link.scss";
-@import "scss/component/preview/object.scss";
+@import "./link.scss";
+@import "./object.scss";

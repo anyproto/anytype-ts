@@ -29,6 +29,8 @@ import {
 	StoreTab,
 	HomePredefinedId,
 	Usecase,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -117,6 +119,8 @@ export {
 	ThreadCafe,
 	FilesStatus,
 	BannerType,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
 
 	Progress,
 	ProgressType,

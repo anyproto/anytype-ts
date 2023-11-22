@@ -427,6 +427,17 @@ class Action {
 
 			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
 				if (!message.error.code) {
+					if (message.collectionId) {
+						window.setTimeout(() => {
+							popupStore.open('objectManager', { 
+								data: { 
+									collectionId: message.collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, Constant.delay.popup + 10);
+					};
+
 					analytics.event('Import', { middleTime: message.middleTime, type });
 				};
 
@@ -582,6 +593,12 @@ class Action {
 			if (callBack) {
 				callBack();
 			};
+		});
+	};
+
+	setIsFavorite (objectIds: string[], v: boolean, route: string) {
+		C.ObjectListSetIsFavorite(objectIds, v, () => {
+			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
 		});
 	};
 

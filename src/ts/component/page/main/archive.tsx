@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Header, Footer, ObjectDescription, Icon, ListObjectManager } from 'Component';
-import { C, I, UtilCommon, analytics, translate, Action } from 'Lib';
-import { popupStore } from 'Store';
+import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
+import { I, UtilCommon, analytics, translate, Action } from 'Lib';
 import Constant from 'json/constant.json';
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
@@ -34,10 +33,6 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
 		];
 
-		const Info = (item: any) => (
-			<ObjectDescription object={item} />
-		);
-
 		return (
 			<div className="wrapper">
 				<Header component="mainEmpty" text={translate('commonBin')} layout={I.ObjectLayout.Archive} {...this.props} />
@@ -56,7 +51,6 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 						rowLength={this.getRowLength()}
 						withArchived={true}
 						buttons={buttons}
-						Info={Info}
 						iconSize={48}
 						resize={this.resize}
 						textEmpty={translate('pageMainArchiveEmpty')}

@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore, dbStore } from 'Store';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview } from 'Lib';
+import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
@@ -31,6 +31,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
@@ -38,6 +39,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
+		this.isPlusAllowed = this.isPlusAllowed.bind(this);
 	};
 
 	render () {
@@ -56,6 +58,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
+		const withPlus = this.isPlusAllowed(object);
 
 		const props = {
 			...this.props,
@@ -99,9 +102,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		} else {
 			buttons = (
 				<div className="buttons">
-					<div className="iconWrap options">
-						<Icon id="button-options" className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
-					</div>
+					{withPlus ? (
+						<div className="iconWrap create">
+							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
+						</div>
+					) : ''}
 					<div className="iconWrap collapse">
 						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={this.onToggle} />
 					</div>
@@ -174,6 +179,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 				onDragEnd={this.onDragEnd}
+				onContextMenu={this.onOptions}
 			>
 				<Icon className="remove" inner={<div className="inner" />} onClick={this.onRemove} />
 
@@ -274,6 +280,107 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 	};
 
+	onCreate (e: React.MouseEvent): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+		const { viewId } = block.content;
+		const object = this.getObject();
+		const { id, layout } = object;
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content || {};
+		const isSetOrCollection = UtilObject.isSetLayout(layout);
+
+		let details: any = {};
+		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty ];
+		let typeKey: string = '';
+		let templateId: string = '';
+		let createWithLink: boolean = false;
+		let isCollection = false;
+
+		if (isSetOrCollection) {
+			const rootId = this.ref.getRootId();
+			const blockId = 'dataview';
+			const view = Dataview.getView(rootId, blockId);
+			const typeId = Dataview.getTypeId(rootId, blockId, id, viewId);
+			const type = dbStore.getTypeById(typeId);
+
+			if (!type) {
+				return;
+			};
+
+			details = Dataview.getDetails(rootId, blockId, id, viewId);
+			flags = [ I.ObjectFlag.SelectTemplate ];
+			typeKey = type.uniqueKey;
+			templateId = view.defaultTemplateId || type.defaultTemplateId;
+			isCollection = Dataview.isCollection(rootId, blockId);
+		} else {
+			switch (targetBlockId) {
+				default:
+				case Constant.widgetId.favorite: {
+					const type = dbStore.getTypeById(commonStore.type);
+
+					if (!type) {
+						return;
+					};
+
+					details.layout = type.recommendedLayout;
+					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+					typeKey = type.uniqueKey;
+					templateId = type.defaultTemplateId;
+
+					if (!this.isCollection(targetBlockId)) {
+						createWithLink = true;
+					};
+					break;
+				};
+
+				case Constant.widgetId.set: {
+					details.layout = I.ObjectLayout.Set;
+					typeKey = Constant.typeKey.set;
+					break;
+				};
+
+				case Constant.widgetId.collection: {
+					details.layout = I.ObjectLayout.Collection;
+					typeKey = Constant.typeKey.collection;
+					break;
+				};
+			};
+		};
+
+		if (!typeKey) {
+			return;
+		};
+
+		const callBack = (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const created = message.details || { id: message.targetId };
+
+			if (targetBlockId == Constant.widgetId.favorite) {
+				Action.setIsFavorite([ created.id ], true, 'widget');
+			};
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(id, [ created.id ]);
+			};
+
+			UtilObject.openAuto(created);
+
+			analytics.event('CreateObject', { objectType: typeKey, route: 'widget' });
+		};
+
+		if (createWithLink) {
+			UtilObject.create(id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+		} else {
+			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
+		};
+	};
+
 	onOptions (e: React.MouseEvent): void {
 		e.preventDefault();
 		e.stopPropagation();
@@ -281,7 +388,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
-		const element = `#widget-${block.id} #button-options`;
+		const element = `#widget-${block.id}`;
 
 		if (!object || object._empty_) {
 			return;
@@ -293,7 +400,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			classNameWrap: 'fromSidebar',
 			subIds: Constant.menuIds.widget,
 			vertical: I.MenuDirection.Center,
-			offsetX: 32,
+			horizontal: I.MenuDirection.Right,
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
@@ -496,6 +603,46 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
+	isPlusAllowed (object: any): boolean {
+		if (!object) {
+			return false;
+		};
+
+		const { block } = this.props;
+		const { layout } = block.content;
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content || {};
+		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+
+		let allowed = true;
+
+		if (isRecent || !layoutWithPlus) {
+			allowed = false;
+		};
+
+		if (isSetOrCollection && this.ref) {
+			const { id } = object;
+			const rootId = this.ref.getRootId();
+			const blockId = 'dataview';
+			const typeId = Dataview.getTypeId(rootId, blockId, id);
+			const type = dbStore.getTypeById(typeId);
+			const restrictedTypeKeys = [
+				Constant.typeKey.video,
+				Constant.typeKey.audio,
+				Constant.typeKey.file,
+				Constant.typeKey.image
+			];
+
+			if (type && restrictedTypeKeys.includes(type.uniqueKey)) {
+				allowed = false;
+			};
+		};
+
+		return allowed;
+	};
+
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
 		const options = UtilMenu.getWidgetLimits(layout).map(it => Number(it.id));
@@ -504,7 +651,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit = options[0];
 		};
 		return isPreview ? 0 : limit;
-	}; 
+	};
 
 });
 

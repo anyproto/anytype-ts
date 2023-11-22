@@ -32,15 +32,16 @@ html.platformWindows {
 	}
 }
 
-@import "scss/popup/confirm.scss";
-@import "scss/popup/export.scss";
-@import "scss/popup/help.scss";
-@import "scss/popup/page.scss";
-@import "scss/popup/preview.scss";
-@import "scss/popup/prompt.scss";
-@import "scss/popup/search.scss";
-@import "scss/popup/settings.scss";
-@import "scss/popup/shortcut.scss";
-@import "scss/popup/migration.scss";
-@import "scss/popup/pin.scss";
-@import "scss/popup/phrase.scss";
+@import "./confirm.scss";
+@import "./export.scss";
+@import "./help.scss";
+@import "./page.scss";
+@import "./preview.scss";
+@import "./prompt.scss";
+@import "./search.scss";
+@import "./settings.scss";
+@import "./shortcut.scss";
+@import "./migration.scss";
+@import "./pin.scss";
+@import "./phrase.scss";
+@import "./objectManager.scss";
