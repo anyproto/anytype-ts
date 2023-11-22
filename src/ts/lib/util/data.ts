@@ -313,6 +313,9 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 				noDeps: true,
 				ignoreDeleted: true,
 			},
@@ -396,40 +399,34 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, withDefault } = param || {};
+		const { withSet, withBookmark, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const bookmark = dbStore.getTypeByKey(Constant.typeKey.bookmark);
-		const collection = dbStore.getTypeByKey(Constant.typeKey.collection);
-		const set = dbStore.getTypeByKey(Constant.typeKey.set);
-		const task = dbStore.getTypeByKey(Constant.typeKey.task);
-		const page = dbStore.getTypeByKey(Constant.typeKey.page);
-		const note = dbStore.getTypeByKey(Constant.typeKey.note);
+		const skipLayouts = UtilObject.getSetLayouts();
+
+		if (!withBookmark) {
+			skipLayouts.push(I.ObjectLayout.Bookmark);
+		};
 
 		let items: any[] = [];
 
-		if (!withDefault) {
-			const skipIds = [ bookmark, collection, set, task, page, note ].filter(it => it).map(it => it.id);
+		items = items.concat(dbStore.getTypes().filter(it => {
+			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+		}));
+		items = this.sortByLastUsedTypes(items);
 
-			items = items.concat(dbStore.getTypes().filter(it => {
-				return pageLayouts.includes(it.recommendedLayout) && !skipIds.includes(it.id) && (it.spaceId == space);
-			}));
-			items.sort(this.sortByName);
-		};
-
-		if (withBookmark) {
-			items.unshift(bookmark);
-		};
-
-		if (withCollection) {
-			items.unshift(collection);
+		if (limit) {
+			items = items.slice(0, limit);
 		};
 
 		if (withSet) {
-			items.unshift(set);
+			items.push(dbStore.getSetType());
 		};
 
-		items = [ note, page, task ].concat(items);
+		if (withCollection) {
+			items.push(dbStore.getCollectionType());
+		};
+
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {
@@ -540,6 +537,24 @@ class UtilData {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByLastUsedTypes (items: any[]) {
+		const lastUsedTypes = Storage.getLastUsedTypes();
+
+		return items.sort((c1: any, c2: any) => {
+			const idx1 = lastUsedTypes.indexOf(c1.id);
+			const idx2 = lastUsedTypes.indexOf(c2.id);
+			const is1 = idx1 >= 0;
+			const is2 = idx2 >= 0;
+
+			if (!is1 && is2) return 1;
+			if (is1 && !is2) return -1;
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

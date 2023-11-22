@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, Action, UtilData } from 'Lib';
+import { I, UtilCommon, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
-
-import Head from '../head';
-import { dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
+import Head from '../head';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -20,7 +18,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const Item = (item: any) => {
 			return (
 				<div className={[ 'item', item.id ].join(' ')} onClick={() => { this.onClick(item.id); }} >
-					<Icon />
+					<Icon className={`import-${item.id}`} />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -42,13 +40,14 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	onClick (id: string) {
-		const { onPage } = this.props;
+		const { onPage, close } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = UtilCommon.toCamelCase('onImport-' + item.id);
+		const common = [ I.ImportType.Html, I.ImportType.Text, I.ImportType.Protobuf, I.ImportType.Markdown ];
 
-		if (this[fn]) {
-			this[fn]();
+		if (common.includes(item.format)) {
+			Action.import(item.format, Constant.extension.import[item.format]);
+			close();
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));
 		};
@@ -56,33 +55,13 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	getItems () {
 		return [
-			{ id: 'notion', name: 'Notion' },
-			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'html', name: 'HTML' },
-			{ id: 'text', name: 'TXT' },
-			{ id: 'protobuf', name: 'Any-Block' },
-			{ id: 'csv', name: 'CSV' },
+			{ id: 'notion', name: 'Notion', format: I.ImportType.Notion },
+			{ id: 'markdown', name: 'Markdown', format: I.ImportType.Markdown },
+			{ id: 'html', name: 'HTML', format: I.ImportType.Html },
+			{ id: 'text', name: 'TXT', format: I.ImportType.Text },
+			{ id: 'protobuf', name: 'Any-Block', format: I.ImportType.Protobuf },
+			{ id: 'csv', name: 'CSV', format: I.ImportType.Csv },
 		];
-	};
-
-	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		Action.import(type, extensions, options, () => this.props.close());
-	};
-
-	onImportHtml () {
-		this.onImportCommon(I.ImportType.Html, [ 'zip', 'html', 'htm', 'mhtml' ]);
-	};
-
-	onImportText () {
-		this.onImportCommon(I.ImportType.Text, [ 'zip', 'txt' ]);
-	};
-
-	onImportProtobuf () {
-		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb', 'json' ]);
-	};
-
-	onImportMarkdown () {
-		this.onImportCommon(I.ImportType.Markdown, [ 'zip', 'md' ]);
 	};
 
 });

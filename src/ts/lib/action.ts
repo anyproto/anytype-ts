@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -486,7 +486,6 @@ class Action {
 		const range = UtilCommon.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const text: string[] = [];
 
 		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
 
@@ -500,10 +499,6 @@ class Action {
 		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
-
-			if (it.type == I.BlockType.Text) {
-				text.push(String(it.content.text || ''));
-			};
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = dbStore.getViews(rootId, it.id);
@@ -598,6 +593,42 @@ class Action {
 			if (callBack) {
 				callBack();
 			};
+		});
+	};
+
+	setIsFavorite (objectIds: string[], v: boolean, route: string) {
+		C.ObjectListSetIsFavorite(objectIds, v, () => {
+			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+		});
+	};
+
+	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
+		const object = detailStore.get(rootId, objectId);
+
+		let layout = I.WidgetLayout.Link;
+
+		if (object && !object._empty_) {
+			if (UtilObject.isFileOrSystemLayout(object.layout)) {
+				layout = I.WidgetLayout.Link;
+			} else 
+			if (UtilObject.isSetLayout(object.layout)) {
+				layout = I.WidgetLayout.Compact;
+			} else
+			if (UtilObject.isPageLayout(object.layout)) {
+				layout = I.WidgetLayout.Tree;
+			};
+		};
+
+		const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+		const newBlock = { 
+			type: I.BlockType.Link,
+			content: { 
+				targetBlockId: objectId, 
+			},
+		};
+
+		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
+			analytics.event('AddWidget', { type: layout });
 		});
 	};
 

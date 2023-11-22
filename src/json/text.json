@@ -86,7 +86,7 @@
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
 	"commonMoveTo": "Move to",
-	"commonLinkTo": "Link to",
+	"commonLinkTo": "Add link to object",
 	"commonUpload": "Upload",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
@@ -240,6 +240,7 @@
 	"viewName2": "Gallery",
 	"viewName3": "Kanban",
 	"viewName4": "Calendar",
+	"viewName5": "Graph",
 
 	"progress0": "Copying files %s\/%s",
 	"progress1": "Import in progress",
@@ -665,11 +666,14 @@
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
-
+	"popupSettingsImportNotionTitle": "Notion Import",
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
-
 	"popupSettingsImportFavouriteTitle": "Selected objects will appear in your Favorites widget",
+	"popupSettingsImportHtmlTitle": "HTML Import",
+	"popupSettingsImportTextTitle": "Text Import",
+	"popupSettingsImportProtobufTitle": "Any-Block Import",
+	"popupSettingsImportMarkdownTitle": "Markown Import",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
@@ -1041,8 +1045,6 @@
 	"menuBlockMoreMoveTo": "Move to",
 	"menuBlockMoreVersionHistory": "Version History",
 	"menuBlockMoreExport": "Export",
-	"menuBlockMoreDuplicateObject": "Duplicate Object",
-	"menuBlockMoreDuplicateTemplate": "Duplicate Template",
 	"menuBlockMoreCopyLink": "Copy link",
 	"menuBlockMoreReloadFromSource": "Reload from Source",
 	"menuBlockMoreCreateObject": "Create Object",
@@ -1051,6 +1053,7 @@
 	"menuBlockMoreLockPage": "Lock page",
 	"menuBlockMoreInstall": "Install",
 	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
+	"menuBlockMoreCreateWidget": "Create Widget",
 
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
@@ -1237,6 +1240,9 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
+	"menuQuickCaptureSearchObjectTypes": "Search object types...",
+	"menuQuickCaptureGroups": "Groups",
+
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
 
@@ -1394,6 +1400,7 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
+	"widgetCreate": "Create new object",
 
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 
