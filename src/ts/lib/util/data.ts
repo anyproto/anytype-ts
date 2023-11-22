@@ -313,6 +313,9 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 				noDeps: true,
 				ignoreDeleted: true,
 			},
