@@ -803,6 +803,8 @@ class Keyboard {
 		menuStore.closeAll(Constant.menuIds.navigation, () => {
 			menuStore.open('quickCapture', {
 				element,
+				className: 'fixed',
+				classNameWrap: 'fromNavigation',
 				type: I.MenuType.Horizontal,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
