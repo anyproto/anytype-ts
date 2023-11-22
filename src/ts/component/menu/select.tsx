@@ -223,6 +223,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		if (this.n == -1) {
 			this.focus();
 		};
+
 		this.resize();
 	};
 	

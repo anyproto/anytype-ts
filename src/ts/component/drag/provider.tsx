@@ -447,9 +447,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 
 			case I.DropType.Widget: {
-
-				let layout = I.WidgetLayout.Tree;
-				let limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
 				let create = false;
 				let objectId = '';
 
@@ -462,11 +459,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						};
 
 						const block = blocks[0];
-						if (block.isFile() || block.isBookmark()) {
-							layout = I.WidgetLayout.Link;
-							limit = 0;
-						};
-
 						if (block.isText()) {
 							const marks = block.content.marks.filter(it => [ I.MarkType.Object, I.MarkType.Mention ].includes(it.type));
 							if (!marks.length) {
@@ -479,18 +471,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						};
 
 						if (objectId) {
-							const object = detailStore.get(contextId, objectId);
-							
-							if (UtilObject.isFileOrSystemLayout(object.layout)) {
-								layout = I.WidgetLayout.Link;
-								limit = 0;
-							};
-
-							if (UtilObject.isSetLayout(object.layout)) {
-								layout = I.WidgetLayout.Compact;
-								limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
-							};
-
 							create = true;
 						};
 						break;
@@ -498,24 +478,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 					case I.DropType.Record: {
 						objectId = ids[0];
-						layout = I.WidgetLayout.Link;
-						limit = 0;
 						create = true;
 						break;
 					};
 				};
 
 				if (create) {
-					const newBlock = { 
-						type: I.BlockType.Link,
-						content: { 
-							targetBlockId: objectId, 
-						},
-					};
-
-					C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
-						analytics.event('AddWidget', { type: layout });
-					});
+					Action.createWidgetFromObject(contextId, objectId, targetId, position);
 				};
 
 				break;
