@@ -592,9 +592,7 @@ class Action {
 
 	setIsFavorite (objectIds: string[], v: boolean, route: string) {
 		C.ObjectListSetIsFavorite(objectIds, v, () => {
-			const code = v ? 'AddToFavorites' : 'RemoveFromFavorites';
-
-			analytics.event(code, { count: objectIds.length, route });
+			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
 		});
 	};
 
