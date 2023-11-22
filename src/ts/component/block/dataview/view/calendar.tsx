@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate } from 'Lib';
+import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
@@ -200,8 +200,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		UtilData.searchSubscribe({
 			subId,
-			filters,
-			sorts,
+			filters: filters.map(it => Dataview.filterMapper(view, it)),
+			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			ignoreHidden: true,
@@ -223,7 +223,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			y++;
 		};
 
-		this.setValue(UtilDate.timestamp(y, m, 1))
+		this.setValue(UtilDate.timestamp(y, m, 1));
 	};
 
 	onToday () {

@@ -103,7 +103,12 @@ class UtilFile {
 		};
 
 		for (const k in Constant.extension) {
-			if (Constant.extension[k].indexOf(e) >= 0) {
+			const el = Constant.extension[k];
+			if (!UtilCommon.hasProperty(el, 'length')) {
+				continue;
+			};
+
+			if (el.includes(e)) {
 				icon = k;
 				break;
 			};

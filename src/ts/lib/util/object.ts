@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilData, UtilRouter } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -113,14 +113,15 @@ class UtilObject {
 			return '';
 		};
 
-		let { id, spaceId, layout, identityProfileLink } = object;
-
+		const { layout, identityProfileLink } = object;
 		const { accountSpaceId } = authStore;
 		const action = this.actionByLayout(layout);
 
 		if (!action) {
 			return '';
 		};
+
+		let { id, spaceId } = object;
 
 		if (identityProfileLink) {
 			id = identityProfileLink;
@@ -151,7 +152,7 @@ class UtilObject {
 	openAuto (object: any, param?: any) {
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId != commonStore.space) {
+		if (object.spaceId && (object.spaceId != commonStore.space)) {
 			this.openRoute(object, param);
 			return;
 		};
@@ -227,6 +228,8 @@ class UtilObject {
 				if (!templateId) {
 					templateId = type.defaultTemplateId || Constant.templateId.blank;
 				};
+
+				Storage.setLastUsedTypes(type.id);
 			};
 		};
 		
@@ -332,40 +335,44 @@ class UtilObject {
 		});
 	};
 
-	isFileLayout (layout: I.ObjectLayout) {
+	isFileLayout (layout: I.ObjectLayout): boolean {
 		return this.getFileLayouts().includes(layout);
 	};
 
-	isFileOrSystemLayout (layout: I.ObjectLayout) {
+	isFileOrSystemLayout (layout: I.ObjectLayout): boolean {
 		return this.getFileAndSystemLayouts().includes(layout);
 	};
 
-	isSystemLayout (layout: I.ObjectLayout) {
+	isSystemLayout (layout: I.ObjectLayout): boolean {
 		return this.getSystemLayouts().includes(layout);
 	};
 
-	isSetLayout (layout: I.ObjectLayout) {
+	isSetLayout (layout: I.ObjectLayout): boolean {
 		return this.getSetLayouts().includes(layout);
 	};
 
-	isTemplate (type: string) {
+	isTemplate (type: string): boolean {
 		const templateType = dbStore.getTemplateType();
 		return templateType ? type == templateType.id : false;
 	};
 
-	isTypeOrRelationLayout (layout: I.ObjectLayout) {
+	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
 		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
-	isTypeLayout (layout: I.ObjectLayout) {
+	isTypeLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Type;
 	};
 
-	isRelationLayout (layout: I.ObjectLayout) {
+	isRelationLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Relation;
 	};
 
-	getPageLayouts () {
+	isPageLayout (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().includes(layout);
+	};
+
+	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 
 			I.ObjectLayout.Human, 
@@ -375,25 +382,25 @@ class UtilObject {
 		];
 	};
 
-	getSetLayouts () {
+	getSetLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
 		];
 	};
 
-	getLayoutsWithoutTemplates () {
+	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.Note,
 			I.ObjectLayout.Bookmark,
 		].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
-	getFileAndSystemLayouts () {
+	getFileAndSystemLayouts (): I.ObjectLayout[] {
 		return this.getFileLayouts().concat(this.getSystemLayouts());
 	};
 
-	getSystemLayouts () {
+	getSystemLayouts (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.Type,
 			I.ObjectLayout.Relation,
@@ -404,7 +411,7 @@ class UtilObject {
 		];
 	};
 
-	getFileLayouts () {
+	getFileLayouts (): I.ObjectLayout[] {
 		return [
 			I.ObjectLayout.File,
 			I.ObjectLayout.Image,
@@ -413,8 +420,12 @@ class UtilObject {
 		];
 	};
 
-	excludeFromSet () {
-		return [ I.ObjectLayout.Option, I.ObjectLayout.SpaceView, I.ObjectLayout.Space ];
+	excludeFromSet (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Option, 
+			I.ObjectLayout.SpaceView, 
+			I.ObjectLayout.Space,
+		];
 	};
 
 	isAllowedTemplate (typeId): boolean {

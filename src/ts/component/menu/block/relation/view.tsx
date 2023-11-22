@@ -178,7 +178,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return !config.debug.ho ? !it.isHidden : true;
 		});
 
-		let sections = [ 
+		const sections = [ 
 			{ 
 				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),
@@ -263,13 +263,15 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onEdit (e: any, id: string) {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId } = data;
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const { rootId, readonly } = data;
 		const relation = dbStore.getRelationById(id);
 
 		if (!relation) {
 			return;
 		};
+
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${id} .info`,
@@ -277,7 +279,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			classNameWrap,
 			data: {
 				...data,
-				readonly: !allowed,
+				readonly: Boolean(readonly || root.isLocked() || !allowed),
 				relationId: id,
 				ref: 'menu',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

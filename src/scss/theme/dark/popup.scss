@@ -123,8 +123,6 @@
 		.side.right.tabExportIndex {
             .item { border-color: $colorShapeSecondary; }
             .item:hover, .item.active { border-color: $colorShapePrimary; }
-            .item.notion .icon { background-image: url('#{$themePath}/icon/import/notion.svg'); }
-            .item.roam .icon { background-image: url('#{$themePath}/icon/import/roam.svg'); }
         }
 
 		.side.right.tabImportNotion {

@@ -50,7 +50,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 								<div className="screen" style={{ backgroundImage: `url('${url}')` }} />
 							</SwiperSlide>
 						))}
-    				</Swiper>
+					</Swiper>
 
 					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
 					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
@@ -103,7 +103,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 
 		const cb = (spaceId: string) => {
 			this.refButton.setLoading(true);
-			C.ObjectImportExperience(spaceId, object.downloadLink, () => close());
+			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, () => close());
 		};
 
 		menuStore.open('select', {

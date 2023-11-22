@@ -94,6 +94,7 @@ import 'scss/block/dataview/view/gallery.scss';
 import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/list.scss';
 import 'scss/block/dataview/view/calendar.scss';
+import 'scss/block/dataview/view/graph.scss';
 import 'scss/block/div.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/file.scss';
@@ -192,6 +193,8 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/template.scss';
+
+import 'scss/menu/quickCapture.scss';
 
 import 'scss/media/print.scss';
 

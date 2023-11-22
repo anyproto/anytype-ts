@@ -246,7 +246,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.pageCreate('Shortcut');
+				this.onQuickCapture();
 			});
 
 			// Settings
@@ -296,7 +296,7 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (route: string) {
+	pageCreate (details: any, route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -306,7 +306,6 @@ class Keyboard {
 		const targetId = '';
 		const position = I.BlockPosition.Bottom;
 		const rootId = '';
-		const details: any = {};
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 		
 		if (!rootId) {
@@ -505,7 +504,7 @@ class Keyboard {
 			};
 
 			case 'create': {
-				this.pageCreate('MenuSystem');
+				this.pageCreate({}, 'MenuSystem');
 				break;
 			};
 
@@ -777,17 +776,41 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.open('space', {
-			element: '#navigationPanel',
-			className: 'fixed',
-			classNameWrap: 'fromNavigation',
-			type: I.MenuType.Horizontal,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			offsetY: -12,
-			data: {
-				shortcut,
-			}
+		menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.open('space', {
+				element: '#navigationPanel',
+				className: 'fixed',
+				classNameWrap: 'fromNavigation',
+				type: I.MenuType.Horizontal,
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Top,
+				offsetY: -12,
+				data: {
+					shortcut,
+				}
+			});
+		});
+	};
+
+	onQuickCapture () {
+		const element = '#button-navigation-plus';
+
+		if (menuStore.isOpen('quickCapture')) {
+			menuStore.close('quickCapture');
+			return;
+		};
+
+		menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.open('quickCapture', {
+				element,
+				type: I.MenuType.Horizontal,
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				offsetY: -20,
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+			});
 		});
 	};
 

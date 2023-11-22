@@ -196,7 +196,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
-				onClick={isEditing ? this.onEdit : null}
 			>
 				{content}
 			</div>
@@ -214,6 +213,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		if (!isEditing) {
 			analytics.event('EditWidget');
+		};
+	};
+
+	onStopEdit () {
+		if (this.state.isEditing) {
+			this.onEdit();
 		};
 	};
 

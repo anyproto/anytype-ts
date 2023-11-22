@@ -22,7 +22,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
     ox = 0;
 	oy = 0;
 	sx = 0;
-    refFooter: React.Ref<HTMLUnknownElement> = null;
+	refList = null;
 	frame = 0;
 	width = 0;
 	movedX = false;
@@ -37,6 +37,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
+		this.onStopEdit = this.onStopEdit.bind(this);
 	};
 
     render() {
@@ -60,8 +61,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="body">
-						<ListWidget {...this.props} />
+					<div className="body" onClick={this.onStopEdit}>
+						<ListWidget ref={ref => this.refList = ref} {...this.props} />
 					</div>
 				</div>
 
@@ -238,6 +239,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		if (!this.movedX) {
 			sidebar.toggleOpenClose();
 		};
+	};
+
+	onStopEdit () {
+		this.refList?.onStopEdit();
 	};
 
 });

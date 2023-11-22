@@ -1376,6 +1376,8 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 			params = new Rpc.Object.Import.Request.PbParams();
 			params.setPathList(options.paths);
 			params.setNocollection(options.noCollection);
+			params.setCollectiontitle(options.title);
+			params.setImporttype(options.importType);
 
 			request.setPbparams(params);
 			break;
@@ -1412,11 +1414,12 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectImportExperience = (spaceId: string, url: string, callBack?: (message: any) => void) => {
+const ObjectImportExperience = (spaceId: string, url: string, title: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
 	request.setUrl(url);
+	request.setTitle(title);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
