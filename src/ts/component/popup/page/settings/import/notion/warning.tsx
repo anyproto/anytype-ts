@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
 import { I, C, translate, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, popupStore } from 'Store';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettings> {
@@ -33,13 +33,21 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 	};
 
 	onImport (): void {
-		const { close } = this.props;
+		const { id, close } = this.props;
 
 		analytics.event('ImportNotionProceed');
 
 		close();
 		C.ObjectImport(commonStore.space, { apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
 			if (!message.error.code) {
+				const { collectionId } = message;
+
+				if (collectionId) {
+					popupStore.close(id, () => {
+						popupStore.open('objectManager', { data: { collectionId, type: I.ObjectManagerPopup.Favorites } });
+					});
+				};
+
 				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion });
 			};
 		});

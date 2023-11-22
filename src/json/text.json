@@ -666,12 +666,10 @@
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
-
 	"popupSettingsImportNotionTitle": "Notion Import",
-
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
-
+	"popupSettingsImportFavouriteTitle": "Selected objects will appear in your Favorites widget",
 	"popupSettingsImportHtmlTitle": "HTML Import",
 	"popupSettingsImportTextTitle": "Text Import",
 	"popupSettingsImportProtobufTitle": "Any-Block Import",
@@ -1440,8 +1438,6 @@
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",
 
-	"dispatcherImportSuccessTitle": "The import process is complete!",
-	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
 	"dispatcherExportSuccessTitle": "The export process is complete!",
 	"dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
 	"dispatcherImportErrorTitle": "The import wasn't completed",

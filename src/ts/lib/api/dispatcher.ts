@@ -982,7 +982,7 @@ class Dispatcher {
 							let title = '';
 							let text = '';
 							let textConfirm = '';
-							const showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Done, I.ProgressState.Error ].includes(state);
+							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Error, I.ProgressState.Done ].includes(state);
 
 							switch (state) {
 								case I.ProgressState.Error: {
@@ -1008,13 +1008,12 @@ class Dispatcher {
 									textConfirm = translate('dispatcherImportConfirm');
 
 									switch (type) {
-										case I.ProgressType.Import: { 
-											title = translate('dispatcherImportSuccessTitle');
-											text = translate('dispatcherImportSuccessText'); 
-											break; 
+										case I.ProgressType.Import: {
+											showPopup = false;
+											break;
 										};
 
-										case I.ProgressType.Export: { 
+										case I.ProgressType.Export: {
 											title = translate('dispatcherExportSuccessTitle');
 											text = translate('dispatcherExportSuccessText');
 											break; 
