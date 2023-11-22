@@ -14,6 +14,7 @@ interface Props {
 	options: I.Option[];
 	noFilter: boolean;
 	isMultiple?: boolean;
+	showOnHover?: boolean;
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
 	onChange? (id: any): void;
@@ -45,7 +46,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className, arrowClassName, readonly, isMultiple } = this.props;
+		const { id, className, arrowClassName, readonly, showOnHover } = this.props;
 		const { options } = this.state;
 		const cn = [ 'select' ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
@@ -71,8 +72,16 @@ class Select extends React.Component<Props, State> {
 			current.push(options[0]);
 		};
 
+		const onClick = showOnHover ? null : this.show;
+		const onMouseEnter = showOnHover ? this.show : null;
+
 		return (
-			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
+			<div 
+				id={`select-${id}`} 
+				className={cn.join(' ')} 
+				onClick={onClick} 
+				onMouseEnter={onMouseEnter}
+			>
 				{current ? (
 					<React.Fragment>
 						{current.map((item: any, i: number) => (
@@ -149,13 +158,36 @@ class Select extends React.Component<Props, State> {
 		};
 
 		const mp = this.props.menuParam || {};
+
+		let onOpen = null;
+		let onClose = null;
+
+		if (mp.onOpen) {
+			onOpen = mp.onOpen;
+			delete(mp.onOpen);
+		};
+		if (mp.onClose) {
+			onClose = mp.onClose;
+			delete(mp.onClose);
+		};
+
 		const menuParam = Object.assign({ 
 			element,
 			noFlipX: true,
 			onOpen: () => {
-				window.setTimeout(() => { $(element).addClass('isFocused'); });
+				window.setTimeout(() => $(element).addClass('isFocused'));
+
+				if (onOpen) {
+					onOpen();
+				};
 			},
-			onClose: () => { $(element).removeClass('isFocused'); },
+			onClose: () => { 
+				window.setTimeout(() => $(element).removeClass('isFocused'));
+
+				if (onClose) {
+					onClose();
+				};
+			},
 		}, mp);
 
 		menuParam.data = Object.assign({

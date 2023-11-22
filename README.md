@@ -79,6 +79,8 @@ Options (these options allow building locally and bypass CI-only hooks):
 
 Before running Anytype locally, you need to build [`anytype-heart`](https://github.com/anyproto/anytype-heart).
 
+**Info**: If you want to switch directory where Anytype stores data for now it is available by adding --user-data-dir="<path>" flag to launch command (i.e. --user-data-dir="D:\Anytype").
+
 ### MacOS, Linux
 ```shell
 SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev

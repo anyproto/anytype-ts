@@ -51,8 +51,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return getEmpty('view');
 		};
 
-		console.log(relations);
-
 		const items = this.getItems();
 
 		// Subscriptions on dependent objects

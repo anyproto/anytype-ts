@@ -1,12 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
-import { Header, Footer, Graph, Loader } from 'Component';
+import { I, C, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
+import { Graph } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
+const PADDING = 46;
+
+const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	data: any = {
@@ -20,43 +22,29 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	timeoutLoading = 0;
 	rootId = '';
 
-	constructor (props: I.PageComponent) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
-		this.onTab = this.onTab.bind(this);
 	};
 
 	render () {
-		const rootId = this.getRootId();
+		const { className } = this.props;
+		const cn = [ 'viewContent', className ];
 
 		return (
 			<div 
 				ref={node => this.node = node} 
-				className="body"
+				className="wrap"
 			>
-				<Header 
-					{...this.props} 
-					ref={ref => this.refHeader = ref} 
-					component="mainGraph" 
-					rootId={rootId} 
-					tabs={UtilMenu.getGraphTabs()} 
-					tab="graph" 
-					onTab={this.onTab} 
-				/>
-
-				<Loader id="loader" />
-
-				<div className="wrapper">
+				<div className={cn.join(' ')}>
 					<Graph 
 						key="graph"
 						{...this.props} 
 						ref={ref => this.refGraph = ref} 
-						rootId={rootId} 
+						rootId="" 
 						data={this.data}
 					/>
 				</div>
-
-				<Footer component="mainObject" />
 			</div>
 		);
 	};
@@ -65,7 +53,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.rebind();
 		this.resize();
 		this.load();
-		this.initRootId(this.getRootId());
 
 		window.Graph = this;
 	};
@@ -93,7 +80,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		this.unbind();
 		win.on(`keydown.graphPage`, e => this.onKeyDown(e));
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => this.initRootId(data.id));
 		win.on('sidebarResize.graphPage', () => this.resize());
 	};
 
@@ -104,9 +90,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	load () {
+		const { getView } = this.props;
+		const view = getView();
+		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -152,62 +142,32 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	setLoading (v: boolean) {
-		const node = $(this.node);
-		const loader = node.find('#loader');
-
-		this.loading = v;
-
-		if (v) {
-			loader.show().css({ opacity: 1 });
-		} else {
-			loader.css({ opacity: 0 });
-			window.setTimeout(() => { loader.hide(); }, 200);
-		};
 	};
 
 	resize () {
 		const { isPopup } = this.props;
-		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
 		const node = $(this.node);
-		const wrapper = obj.find('.wrapper');
-		const oh = obj.height();
-		const header = node.find('#header');
-		const hh = header.height();
-		const wh = isPopup ? oh - hh : win.height();
 
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
-		
-		if (isPopup) {
-			const element = $('#popupPage .content');
-			if (element.length) {
-				element.css({ minHeight: 'unset', height: '100%' });
-			};
+		if (!node || !node.length) {
+			return;
 		};
+
+		node.css({ width: 0, height: 0, marginLeft: 0 });
+
+		const container = UtilCommon.getPageContainer(isPopup);
+		const cw = container.width();
+		const ch = container.height();
+		const mw = cw - PADDING * 2;
+		const margin = (cw - mw) / 2;
+		const { top } = node.offset();
+
+		node.css({ width: cw, height: Math.max(600, ch - top - 90), marginLeft: -margin - 2 });
 
 		if (this.refGraph) {
 			this.refGraph.resize();
 		};
 	};
 
-	initRootId (id: string) {
-		this.rootId = id; 
-		this.refHeader.refChild.setRootId(id);
-	};
-
-	getRootId () {
-		const { rootId, match } = this.props;
-		return this.rootId || (rootId ? rootId : match.params.id);
-	};
-
-	onTab (id: string) {
-		const tab = UtilMenu.getGraphTabs().find(it => it.id == id);
-
-		if (tab) {
-			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
-		};
-	};
-
 });
 
-export default PageMainGraph;
+export default ViewGraph;
