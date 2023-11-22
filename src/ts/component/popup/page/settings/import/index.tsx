@@ -47,7 +47,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const common = [ I.ImportType.Html, I.ImportType.Text, I.ImportType.Protobuf, I.ImportType.Markdown ];
 
 		if (common.includes(item.format)) {
-			Action.import(item.format, Constant.extension.import[item.format]);
+			Action.import(item.format, Constant.fileExtension.import[item.format]);
 			close();
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));

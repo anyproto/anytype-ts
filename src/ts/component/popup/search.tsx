@@ -524,7 +524,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			}, Constant.delay.popup);
 		} else 
 		if (item.isImport) {
-			Action.import(item.format, Constant.extension.import[item.format]);
+			Action.import(item.format, Constant.fileExtension.import[item.format]);
 		} else {
 			switch (item.id) {
 				case 'add': {
