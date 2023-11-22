@@ -315,14 +315,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
 			isCollection = Dataview.isCollection(rootId, blockId);
-
-			if (templateId) {
-				const templateObject = detailStore.get(rootId, templateId);
-
-				if (templateObject.isArchived || templateObject.isDeleted || templateObject.targetObjectType != type.id) {
-					templateId = '';
-				};
-			};
 		} else {
 			switch (targetBlockId) {
 				default:
