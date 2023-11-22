@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Textarea } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject } from 'Lib';
+import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
 import Util from '../lib/util';
@@ -55,7 +55,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { isLoading, error } = this.state;
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const tags = this.getTagsValue();
 
 		return (
@@ -92,7 +92,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 							<Select 
 								id="select-type" 
 								ref={ref => this.refType = ref}
-								readonly={!workspace}
+								readonly={!space}
 								value="" 
 								options={[]}
 								onChange={this.onTypeChange}
@@ -183,7 +183,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		const space = commonStore.workspace || spaces[0].id;
+		const space = commonStore.space || spaces[0].targetSpaceId;
 
 		this.refSpace.setOptions(spaces);
 		this.refSpace.setValue(space);
@@ -191,16 +191,16 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	initType () {
-		const types = this.getTypes();
+		const options = this.getTypes().map(it => ({ ...it, id: it.uniqueKey }));
 
-		if (!this.refType || !types.length) {
+		if (!this.refType || !options.length) {
 			return;
 		};
 
-		const type = this.details.type || types[0].id;
+		const value = this.details.type || options[0].id;
 
-		this.refType.setOptions(types);
-		this.refType.setValue(type);
+		this.refType.setOptions(options);
+		this.refType.setValue(value);
 	};
 
 	initName () {
@@ -247,7 +247,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSpaceChange (id: string): void {
-		commonStore.workspaceSet(id);
+		commonStore.spaceSet(id);
 		UtilData.createsSubscriptions(() => this.forceUpdate());
 	};
 
@@ -425,8 +425,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.setState({ isLoading: true, error: '' });
 
 		const details = Object.assign({ name: this.refName?.getValue() }, this.details);
+		const type = details.type;
 
-		C.ObjectCreate(details, [], '', (message: any) => {
+		delete(details.type);
+
+		C.ObjectCreate(details, [], '', type, commonStore.space, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
@@ -434,7 +437,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			} else {
 				extensionStore.createdObject = message.details;
 
-				UtilCommon.route('/success', {});
+				UtilRouter.go('/success', {});
 			};
 
 			this.isCreating = false;

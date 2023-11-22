@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader } from 'Component';
 import { I, C, UtilData } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -69,7 +69,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.setState({ isLoading: true });
 
 		UtilData.createsSubscriptions(() => {
-			C.ObjectOpen(ROOT_ID, '', (message: any) => {
+			C.ObjectOpen(ROOT_ID, '', commonStore.space, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

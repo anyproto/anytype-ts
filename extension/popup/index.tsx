@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, UtilCommon, UtilData, dispatcher } from 'Lib';
+import { I, UtilRouter, UtilData, dispatcher } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -55,7 +55,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
 
 			UtilData.createsSubscriptions(() => {
-				UtilCommon.route('/create', {});
+				UtilRouter.go('/create', {});
 			});
 		});
 	};

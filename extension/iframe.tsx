@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { dispatcher, C, UtilCommon } from 'Lib'; 
+import { dispatcher, C, UtilCommon, UtilRouter } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
 import Extension from 'json/extension.json';
 
@@ -105,7 +105,7 @@ class Iframe extends React.Component {
 	componentDidMount () {
 		console.log('isIframe', Util.isIframe());
 
-		UtilCommon.init(history);
+		UtilRouter.init(history);
 		commonStore.configSet({ debug: { mw: true } }, false);
 		
 		/* @ts-ignore */
@@ -129,7 +129,7 @@ class Iframe extends React.Component {
 			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
 			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
 
-			UtilCommon.route('/create', {});
+			UtilRouter.go('/create', {});
 		});
 	};
 
