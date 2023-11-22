@@ -32,7 +32,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, ref } = data;
+		const { rootId, ref, readonly } = data;
 
 		const relation = this.getRelation();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -49,7 +49,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (root) {
 			canDuplicate = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		};
-		if (relation && Relation.isSystem(relation.relationKey)) {
+		if (readonly || (relation && Relation.isSystem(relation.relationKey))) {
 			canDuplicate = false;
 		};
 		canDelete = canDuplicate;

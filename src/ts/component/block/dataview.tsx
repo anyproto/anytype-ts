@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -17,6 +17,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
+import ViewGraph from './dataview/view/graph';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -139,6 +140,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			case I.ViewType.Calendar:
 				ViewComponent = ViewCalendar;
+				break;
+
+			case I.ViewType.Graph:
+				ViewComponent = ViewGraph;
 				break;
 		};
 
@@ -666,6 +671,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				objectType: object.type,
 				layout: object.layout,
 			});
+
+			Storage.setLastUsedTypes(typeId);
 		});
 	};
 
