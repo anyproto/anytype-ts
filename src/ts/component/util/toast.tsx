@@ -168,7 +168,6 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 	};
 
     onClick (e: any, item: any) {
-       
 		switch (item.action) {
             case 'open': {
                 this.onOpen(e);
@@ -182,7 +181,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
 			case 'undoArchive': {
 				if (item.data) {
-          Action.restore(item.data);
+					Action.restore(item.data);
 				};
 				break;
 			};

@@ -770,6 +770,7 @@ class UtilCommon {
 	};
 
 	parseAllowedTags (s: string): string {
+		s = String(s || '');
 		s = s.replace(/<(\/?)(br|b|i)(\/?)>/g, '[$1$2$3]');
 		s = s.replace(/(<([^>]+)>)/gi, '');
 		s = s.replace(/\[(\/?)(br|b|i)(\/?)\]/g, '<$1$2$3>');
