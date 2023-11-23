@@ -27,6 +27,10 @@
 
 		.emptyToggle { color: $colorTextSecondary; }
 		.emptyToggle:hover { color: $colorTextPrimary; }
+
+		.colResize {
+			.line { background: $colorShapeSecondary; }
+		}
     }
     .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 

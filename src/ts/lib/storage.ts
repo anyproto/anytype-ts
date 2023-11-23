@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, UtilDate } from 'Lib';
 import { commonStore } from 'Store';
 
 const SPACE_KEYS = [
@@ -6,6 +6,7 @@ const SPACE_KEYS = [
 	'lastOpened',
 	'scroll',
 	'defaultType',
+	'lastUsedTypes',
 ];
 
 class Storage {
@@ -196,6 +197,35 @@ class Storage {
 		const obj = this.get('survey') || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
 		this.set('survey', obj, true);
+	};
+
+	setLastUsedTypes (id: string) {
+		let list = this.getLastUsedTypes();
+
+		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
+			list = [];
+		};
+
+		if (!id) {
+			return list;
+		};
+
+		list.unshift(id);
+		list = list.slice(0, 50);
+		list = [ ...new Set(list) ];
+
+		this.set('lastUsedTypes', list, true);
+		return list;
+	};
+
+	getLastUsedTypes () {
+		const list = this.get('lastUsedTypes') || [];
+
+		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
+			return [];
+		};
+
+		return list;
 	};
 
 	logout () {

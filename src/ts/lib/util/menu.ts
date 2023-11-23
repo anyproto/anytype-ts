@@ -230,13 +230,16 @@ class UtilMenu {
 	};
 
 	getViews () {
+		const { config } = commonStore;
+
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
-		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			config.experimental ? { id: I.ViewType.Graph } : null,
+		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -404,6 +407,7 @@ class UtilMenu {
 		const { space } = commonStore;
 		const { spaceview } = blockStore;
 		const templateType = dbStore.getTemplateType();
+		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
 			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
@@ -417,8 +421,6 @@ class UtilMenu {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
-				menuStore.closeAll();
-
 				if (openRoute) {
 					UtilObject.openHome('route');
 				};
@@ -430,10 +432,9 @@ class UtilMenu {
 		menuStore.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds: [ 'searchObject' ],
-			onOpen: (context: any) => {
-				menuContext = context;
-			},
+			subIds,
+			onOpen: context => menuContext = context,
+			onClose: () => menuStore.closeAll(subIds),
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -446,7 +447,7 @@ class UtilMenu {
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll([ 'searchObject' ]);
+						menuStore.closeAll(subIds);
 						return;
 					};
 
@@ -463,7 +464,7 @@ class UtilMenu {
 										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
-									onSelect: (el: any) => onSelect(el, true),
+									onSelect: el => onSelect(el, true),
 								}
 							});
 							break;

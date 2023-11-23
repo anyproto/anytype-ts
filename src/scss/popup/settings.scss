@@ -49,25 +49,12 @@
 				.item:hover, .item.active { background: $colorShapePrimary; }
 				.item {
 					.icon { width: 22px; height: 22px; flex-shrink: 0; }
-					.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
-					.icon.storage { background-image: url('~img/icon/popup/settings/storage.svg'); }
-					.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
-					.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
-					.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
-					.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
-					.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
-					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
-					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
 				.item.itemAccount {
 					.iconObject { flex-shrink: 0; }
 					.name { @include text-common; @include text-overflow-nw; font-weight: 600; }
-					.onlineStatus { @include text-small; color: $colorTextSecondary; font-weight: 400; text-transform: capitalize; display: flex; gap: 0px 6px; align-items: center; }
-					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
-					.onlineStatus.online:before { background: $colorLime; }
-					.onlineStatus.offline:before { background: $colorRed; }
 				}
 
 				.select { transition: none; border: 0px; color: $colorControlActive; max-width: 100%; }
@@ -259,8 +246,6 @@
 								.txt { @include text-overflow-nw; line-height: unset; }
 							}
 
-							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
-							.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 							.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 							.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 							.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
@@ -487,13 +472,6 @@
 				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
 				.name { @include text-small; line-height: 1em; }
 			}
-
-			.item.notion .icon { background-image: url('~img/icon/import/notion.svg'); }
-			.item.markdown .icon { background-image: url('~img/icon/import/markdown.svg'); }
-			.item.html .icon { background-image: url('~img/icon/import/html.svg'); }
-			.item.text .icon { background-image: url('~img/icon/import/text.svg'); }
-			.item.csv .icon { background-image: url('~img/icon/import/csv.svg'); }
-			.item.protobuf .icon { background-image: url('~img/icon/import/protobuf.svg'); }
 		}
 
 		.side.right.tabImportNotion, 

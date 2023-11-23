@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
+import { UtilCommon } from 'Lib';
 
 interface Props {
 	text: string;
@@ -15,11 +16,8 @@ class EmptySearch extends React.Component<Props> {
 		const { text } = this.props;
 		
 		return (
-			<div 
-				ref={node => this.node = node}
-				className="emptySearch"
-			>
-				<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
+			<div ref={node => this.node = node} className="emptySearch">
+				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(text) }} />
 			</div>
 		);
 	};

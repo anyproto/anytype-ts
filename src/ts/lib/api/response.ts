@@ -108,6 +108,12 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 	};
 };
 
+export const ObjectImport = (response: any) => {
+	return {
+		collectionId: response.getCollectionid(),
+	};
+};
+
 export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
 	return {
 		objectId: response.getObjectid(),
