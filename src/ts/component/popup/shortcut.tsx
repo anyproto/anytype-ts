@@ -69,7 +69,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 			return (
 				<div className="item">
-					<div className="key" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(caption) }} />
+					<div className="key" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(caption) }} />
 					<div className="descr">{item.name}</div>
 				</div>
 			);

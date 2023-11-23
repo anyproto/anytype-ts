@@ -4,6 +4,7 @@ import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import Text from 'json/text.json';
+import DOMPurify from 'dompurify';
 
 class UtilCommon {
 
@@ -769,14 +770,8 @@ class UtilCommon {
 		return Text[id] ? translate(id) : description;
 	};
 
-	parseAllowedTags (s: string): string {
-		const allowed = [ 'br', 'b', 'i', 'ul', 'li', 'span', 'a', 'h1', 'p' ];
-
-		s = String(s || '');
-		s = s.replace(new RegExp(`<(\\/?)(${allowed.join('|')})([^>]*)>`, 'g'), '[$1$2$3]');
-		s = s.replace(/(<([^>]+)>)/gi, '');
-		s = s.replace(new RegExp(`\\[(\\/?)(${allowed.join('|')})([^\\]]*)\\]`, 'g'), '<$1$2$3>');
-		return s;
+	sanitize (s: string): string {
+		return DOMPurify.sanitize(String(s || ''));
 	};
 
 };
