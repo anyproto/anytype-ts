@@ -331,6 +331,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					templateId = type.defaultTemplateId;
 
 					if (!this.isCollection(targetBlockId)) {
+						details.type = type.id;
 						createWithLink = true;
 					};
 					break;

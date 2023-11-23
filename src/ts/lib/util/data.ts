@@ -542,19 +542,18 @@ class UtilData {
 	sortByLastUsedTypes (items: any[]) {
 		const lastUsedTypes = Storage.getLastUsedTypes();
 
-		return items.sort((c1: any, c2: any) => {
-			const idx1 = lastUsedTypes.indexOf(c1.id);
-			const idx2 = lastUsedTypes.indexOf(c2.id);
-			const is1 = idx1 >= 0;
-			const is2 = idx2 >= 0;
+		const sorted = items.sort((c1: any, c2: any) => {
+			const d1 = lastUsedTypes[c1.id];
+			const d2 = lastUsedTypes[c2.id];
 
-			if (!is1 && is2) return 1;
-			if (is1 && !is2) return -1;
-
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
+			if (!d1) return -1;
+			if (!d2) return 1;
+			if (d1 > d2) return -1;
+			if (d1 < d2) return 1;
 			return 0;
 		});
+
+		return sorted;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

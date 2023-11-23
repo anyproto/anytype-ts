@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, UtilDate } from 'Lib';
 import { commonStore } from 'Store';
 
 const SPACE_KEYS = [
@@ -206,16 +206,14 @@ class Storage {
 			return list;
 		};
 
-		list.unshift(id);
-		list = list.slice(0, 50);
-		list = [ ...new Set(list) ];
+		list[id] = UtilDate.now();
 
 		this.set('lastUsedTypes', list, true);
 		return list;
 	};
 
-	getLastUsedTypes () {
-		return this.get('lastUsedTypes') || [];
+	getLastUsedTypes (): any {
+		return this.get('lastUsedTypes') || {};
 	};
 
 	logout () {
