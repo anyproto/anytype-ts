@@ -235,3 +235,12 @@ export enum BannerType {
 	IsTemplate		 = 1,
 	TemplateSelect	 = 2,
 };
+
+export enum ObjectManagerItemInfo {
+	Description 	= 0,
+	FileSize 		= 1,
+};
+
+export enum ObjectManagerPopup {
+	Favorites 	= 0,
+};

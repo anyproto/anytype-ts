@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, Storage } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -371,18 +371,24 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const type = dbStore.getTypeById(rootId);
+
+		if (!type) {
+			return;
+		};
+		
 		const details: any = {};
 
 		if (UtilObject.isSetLayout(object.recommendedLayout)) {
 			details.layout = object.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
 			UtilObject.openPopup(message.details);
+			Storage.setLastUsedTypes(type.id);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',

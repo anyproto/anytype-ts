@@ -431,7 +431,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const itemsImport: any[] = ([
 				{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
 				{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
-				{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImporProtobufTitle'), format: I.ImportType.Protobuf },
+				{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
 				{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
 			] as any[]).map(it => ({ ...it, isImport: true }));
 
@@ -457,8 +457,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			];
 
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true }));
+			const filtered = itemsImport.concat(settingsItems).filter(it => it.name.match(reg));
 
-			items = items.concat(itemsImport.concat(settingsItems).filter(it => it.name.match(reg)));
+			if (filtered.length) {
+				filtered.sort(UtilData.sortByName);
+				filtered.unshift({ name: translate('commonSettings'), isSection: true });
+
+				items = filtered.concat(items);
+			};
 		};
 
 		items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });

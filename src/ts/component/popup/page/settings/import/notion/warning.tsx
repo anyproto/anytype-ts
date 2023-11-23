@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, C, translate, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { I, C, translate, analytics, UtilCommon } from 'Lib';
+import { commonStore, popupStore } from 'Store';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettings> {
@@ -20,10 +20,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi1') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi2') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi3') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi4') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi1')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi2')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi3')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi4')) }} />
 					</ol>
 				</div>
 
@@ -33,13 +33,21 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 	};
 
 	onImport (): void {
-		const { close } = this.props;
+		const { id, close } = this.props;
 
 		analytics.event('ImportNotionProceed');
 
 		close();
 		C.ObjectImport(commonStore.space, { apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
 			if (!message.error.code) {
+				const { collectionId } = message;
+
+				if (collectionId) {
+					popupStore.close(id, () => {
+						popupStore.open('objectManager', { data: { collectionId, type: I.ObjectManagerPopup.Favorites } });
+					});
+				};
+
 				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion });
 			};
 		});

@@ -3,7 +3,6 @@ import { Icon, Title, Label } from 'Component';
 import { I, UtilCommon, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
-
 import Head from '../head';
 
 interface Props extends I.PopupSettings {
