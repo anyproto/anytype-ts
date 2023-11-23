@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, UtilDate } from 'Lib';
 import { commonStore } from 'Store';
 
 const SPACE_KEYS = [
@@ -219,7 +219,13 @@ class Storage {
 	};
 
 	getLastUsedTypes () {
-		return this.get('lastUsedTypes') || [];
+		const list = this.get('lastUsedTypes') || [];
+
+		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
+			return [];
+		};
+
+		return list;
 	};
 
 	logout () {
