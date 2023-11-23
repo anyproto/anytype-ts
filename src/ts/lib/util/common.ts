@@ -770,10 +770,12 @@ class UtilCommon {
 	};
 
 	parseAllowedTags (s: string): string {
+		const allowed = [ 'br', 'b', 'i', 'ul', 'li', 'span', 'a', 'h1', 'p' ];
+
 		s = String(s || '');
-		s = s.replace(/<(\/?)(br|b|i)(\/?)>/g, '[$1$2$3]');
+		s = s.replace(new RegExp(`<(\\/?)(${allowed.join('|')})([^>]*)>`, 'g'), '[$1$2$3]');
 		s = s.replace(/(<([^>]+)>)/gi, '');
-		s = s.replace(/\[(\/?)(br|b|i)(\/?)\]/g, '<$1$2$3>');
+		s = s.replace(new RegExp(`\\[(\\/?)(${allowed.join('|')})([^\\]]*)\\]`, 'g'), '<$1$2$3>');
 		return s;
 	};
 
