@@ -202,7 +202,7 @@ class Storage {
 	setLastUsedTypes (id: string) {
 		let list = this.getLastUsedTypes();
 
-		if (('object' != typeof(list)) && !UtilCommon.hasProperty(list, 'length')) {
+		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
 			list = [];
 		};
 
