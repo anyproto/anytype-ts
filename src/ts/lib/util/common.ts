@@ -709,7 +709,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),
+						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
