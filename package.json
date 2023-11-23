@@ -536,7 +536,8 @@
 				"snap",
 				"AppImage",
 				"deb",
-				"rpm"
+				"rpm",
+				"tar.gz"
 			],
 			"description": "Anytype",
 			"publish": [
