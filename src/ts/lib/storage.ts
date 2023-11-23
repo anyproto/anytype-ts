@@ -221,7 +221,7 @@ class Storage {
 			return [];
 		};
 
-		return this.get('lastUsedTypes') || [];
+		return list;
 	};
 
 	logout () {
