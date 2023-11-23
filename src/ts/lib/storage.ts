@@ -202,18 +202,24 @@ class Storage {
 	setLastUsedTypes (id: string) {
 		let list = this.getLastUsedTypes();
 
+		if (('object' != typeof(list)) && !UtilCommon.hasProperty(list, 'length')) {
+			list = [];
+		};
+
 		if (!id) {
 			return list;
 		};
 
-		list[id] = UtilDate.now();
+		list.unshift(id);
+		list = list.slice(0, 50);
+		list = [ ...new Set(list) ];
 
 		this.set('lastUsedTypes', list, true);
 		return list;
 	};
 
-	getLastUsedTypes (): any {
-		return this.get('lastUsedTypes') || {};
+	getLastUsedTypes () {
+		return this.get('lastUsedTypes') || [];
 	};
 
 	logout () {
