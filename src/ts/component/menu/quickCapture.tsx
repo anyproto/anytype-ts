@@ -68,7 +68,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						onChange={this.onFilterChange}
 					/>
 				) : ''}
-				<div className="items">
+				<div className="items scrollWrap">
 					{items.map((item: any, i: number) => (
 						<Item key={i} idx={i} {...item} />
 					))}
@@ -84,6 +84,16 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	componentDidUpdate () {
+		const filter = this.refFilter?.getValue();
+
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.n = 0;
+			this.offset = 0;
+			this.load(true);
+			return;
+		};
+
 		this.props.position();
 		this.resize();
 		this.rebind();
@@ -109,7 +119,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return;
 		};
 
-		const filter = String(this.filter || '');
+		const filter = this.refFilter?.getValue();
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -205,12 +215,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.filter = this.refFilter.getValue();
-			this.n = 0;
-			this.offset = 0;
-			this.load(true);
-		}, Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
 	};
 
 	onKeyDown (e: any) {
