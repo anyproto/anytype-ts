@@ -38,8 +38,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	},
 
 	fileWrite: (name, data, options) => {
-		name = String(name || 'temp');
-		name = name.replace('..', '');
+		name = String(name || 'temp').replace(/\.\.\//g, '');
 
 		const fp = path.join(tmpPath, name);
 		fs.writeFileSync(fp, data, options);

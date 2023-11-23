@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, IconObject, Switch, Select } from 'Component';
-import { I } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
 
@@ -108,7 +108,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				additional = (
 					<React.Fragment>
 						{typeof caption === 'string' ? (
-							<div className="caption" dangerouslySetInnerHTML={{ __html: caption }} />
+							<div className="caption" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(caption) }} />
 						) : (
 							<div className="caption">{caption}</div>
 						)}

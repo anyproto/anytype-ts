@@ -65,9 +65,11 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		};
 
 		const Item = (item: any) => {
+			const caption = isMac && item.mac ? item.mac : item.com;
+
 			return (
 				<div className="item">
-					<div className="key" dangerouslySetInnerHTML={{ __html: isMac && item.mac ? item.mac : item.com }} />
+					<div className="key" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(caption) }} />
 					<div className="descr">{item.name}</div>
 				</div>
 			);
