@@ -74,29 +74,31 @@ const rootStore = {
 	popupStore,
 };
 
-window.Store = rootStore;
-window.$ = $;
-window.Lib = {
-	I,
-	C,
-	UtilCommon,
-	UtilData,
-	UtilFile,
-	UtilObject,
-	UtilMenu,
-	UtilRouter,
-	analytics,
-	dispatcher,
-	keyboard,
-	Renderer,
-	Preview,
-	Storage,
-	Animation,
-	Onboarding,
-	Survey,
-	Docs,
-	Encode, 
-	Decode,
+if (!window.Electron.isPackaged) {
+	window.Store = rootStore;
+	window.$ = $;
+	window.Lib = {
+		I,
+		C,
+		UtilCommon,
+		UtilData,
+		UtilFile,
+		UtilObject,
+		UtilMenu,
+		UtilRouter,
+		analytics,
+		dispatcher,
+		keyboard,
+		Renderer,
+		Preview,
+		Storage,
+		Animation,
+		Onboarding,
+		Survey,
+		Docs,
+		Encode, 
+		Decode,
+	};
 };
 
 /*
