@@ -60,12 +60,12 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
 			this.onConfirm(e);
 		});
 
-		keyboard.shortcut('escape', e, (pressed: string) => {
+		keyboard.shortcut('escape', e, () => {
 			e.stopPropagation();
 			this.onCancel(e);
 		});
