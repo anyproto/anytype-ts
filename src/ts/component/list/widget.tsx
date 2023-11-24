@@ -208,12 +208,35 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onEdit (): void {
 		const { isEditing } = this.state;
+		const win = $(window);
 		
-		this.setState({ isEditing: !isEditing });
+		this.setEditing(!isEditing);
 
-		if (!isEditing) {
-			analytics.event('EditWidget');
+		if (isEditing) {
+			return;
 		};
+
+		analytics.event('EditWidget');
+
+		const unbind = () => win.off('click.sidebar keydown.sidebar');
+		const close = e => {
+			e.stopPropagation();
+
+			this.setEditing(false);
+			unbind();
+		};
+
+		unbind();
+
+		win.on('click.sidebar', e => {
+			if (!$(e.target).parents('.widget').length) {
+				close(e);
+			};
+		});
+
+		win.on('keydown.sidebar', e => {
+			keyboard.shortcut('escape', e, () => close(e));
+		});
 	};
 
 	onStopEdit () {
