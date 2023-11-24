@@ -11,7 +11,6 @@ interface Props {
 	iconClass?: string;
 	hash?: string;
 	size?: number;
-	native?: boolean;
 	asImage?: boolean;
 	className?: string;
 	canEdit?: boolean;
@@ -32,12 +31,11 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		offsetY: 0,
 		size: 18,
 		className: '',
-		native: true,
 		asImage: true,
 	};
 	
 	render () {
-		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
+		const { id, size, icon, hash, asImage, className, canEdit, menuId, iconClass } = this.props;
 		const cn = [ 'iconEmoji' ];
 		const css = { lineHeight: size + 'px' };
 
@@ -52,25 +50,22 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		};
 
 		let element = null;
-		let skin = 0;
-
 		if (icon) {
-			let colons = '';
+			let shortcodes = '';
 			if (icon.match(':')) {
-				colons = icon;
+				shortcodes = icon;
 			} else {
 				const data = UtilSmile.getData(icon);
-				if (data) {
-					colons = data.colons;
-					skin = data.skin;
+				if (data && data.skin) {
+					shortcodes = data.skin.shortcodes;
 				};
 			};
 
-			if (colons) {
+			if (shortcodes) {
 				if (asImage) {
-					element = <img src={UtilSmile.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+					element = <img src={UtilSmile.srcFromColons(shortcodes)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
 				} else {
-					//element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+					element = <em-emoji shortcodes={shortcodes}></em-emoji>;
 				};
 			};
 		} else 

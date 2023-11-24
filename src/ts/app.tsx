@@ -63,6 +63,14 @@ declare global {
 	}
 };
 
+declare global {
+	namespace JSX {
+		interface IntrinsicElements {
+			['em-emoji']: any;
+		}
+	}
+};
+
 const rootStore = {
 	commonStore,
 	authStore,

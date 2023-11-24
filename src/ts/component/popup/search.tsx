@@ -518,8 +518,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else 
 		if (item.isSettings) {
 			window.setTimeout(() => {
-				console.log(item);
-
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
 			}, Constant.delay.popup);
 		} else 

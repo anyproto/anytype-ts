@@ -61,8 +61,8 @@ class UtilGraph {
 				} else
 				if (d.iconEmoji) {
 					const data = UtilSmile.getData(d.iconEmoji);
-					if (data) {
-						src = UtilSmile.srcFromColons(data.colons, data.skin);
+					if (data && data.skin) {
+						src = UtilSmile.srcFromColons(data.skin.shortcodes);
 					};
 					src = src.replace(/^.\//, '');
 				} else
