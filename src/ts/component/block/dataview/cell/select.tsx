@@ -372,8 +372,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	resize () {
-		const win = $(window);
-		win.trigger('resize.menuDataviewOptionList');
+		$(window).trigger('resize.menuDataviewOptionList');
 	};
 
 });

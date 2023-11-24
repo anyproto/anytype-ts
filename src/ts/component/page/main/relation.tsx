@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
-import { detailStore, dbStore, commonStore } from 'Store';
+import { detailStore, dbStore, commonStore, menuStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 

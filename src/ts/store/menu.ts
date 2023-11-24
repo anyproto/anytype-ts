@@ -221,6 +221,14 @@ class MenuStore {
 		return this.menuList.find(it => it.param.menuKey == key) ? true : false;
 	};
 
+	resizeAll () {
+		const win = $(window);
+
+		this.list.forEach(it => {
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
+		});
+	};
+
 };
 
  export const menuStore: MenuStore = new MenuStore();

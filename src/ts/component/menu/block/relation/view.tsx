@@ -139,12 +139,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onScroll () {
-		const win = $(window);
-		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
-
-		for (const menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
-		};
+		menuStore.resizeAll();
 	};
 
 	getSections () {
