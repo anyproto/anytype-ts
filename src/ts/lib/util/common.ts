@@ -4,6 +4,7 @@ import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import Text from 'json/text.json';
+import DOMPurify from 'dompurify';
 
 class UtilCommon {
 
@@ -708,7 +709,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),
+						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
@@ -769,12 +770,8 @@ class UtilCommon {
 		return Text[id] ? translate(id) : description;
 	};
 
-	parseAllowedTags (s: string): string {
-		s = String(s || '');
-		s = s.replace(/<(\/?)(br|b|i)(\/?)>/g, '[$1$2$3]');
-		s = s.replace(/(<([^>]+)>)/gi, '');
-		s = s.replace(/\[(\/?)(br|b|i)(\/?)\]/g, '<$1$2$3>');
-		return s;
+	sanitize (s: string): string {
+		return DOMPurify.sanitize(String(s || ''));
 	};
 
 };

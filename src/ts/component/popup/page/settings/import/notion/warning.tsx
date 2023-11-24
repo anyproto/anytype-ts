@@ -20,10 +20,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi1')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi2')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi3')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(translate('popupSettingsImportNotionWarningLi4')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
 					</ol>
 				</div>
 

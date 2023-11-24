@@ -649,28 +649,30 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if (groupId) {
-				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
-					dbStore.recordsSet(subId, '', records);
-				});
+				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => dbStore.recordsSet(subId, '', records));
 			} else {
 				dbStore.recordsSet(subId, '', records);
 			};
 
-			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-			const ref = this.refCells.get(id);
+			if ([ I.ViewType.Calendar ].includes(view.type)) {
+				UtilObject.openPopup(object);
+			} else {
+				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+				const ref = this.refCells.get(id);
 
-			if (object.layout == I.ObjectLayout.Note) {
-				this.onCellClick(e, 'name', object.id);
-			} else
-			if (ref) {
-				window.setTimeout(() => { ref.onClick(e); }, 15);
+				if (object.layout == I.ObjectLayout.Note) {
+					this.onCellClick(e, 'name', object.id);
+				} else
+				if (ref) {
+					window.setTimeout(() => ref.onClick(e), 15);
+				};
+
+				analytics.event('CreateObject', { 
+					route: this.analyticsRoute(),
+					objectType: object.type,
+					layout: object.layout,
+				});
 			};
-
-			analytics.event('CreateObject', { 
-				route: this.analyticsRoute(),
-				objectType: object.type,
-				layout: object.layout,
-			});
 
 			Storage.setLastUsedTypes(typeId);
 		});

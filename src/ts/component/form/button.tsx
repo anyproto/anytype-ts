@@ -54,7 +54,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 					>
 						{isLoading ? <Loader /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
-						<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(text) }} />
+						<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 						{arrow ? <div className="arrow" /> : ''}
 					</div>
 				);

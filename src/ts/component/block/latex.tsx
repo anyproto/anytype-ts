@@ -346,7 +346,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 			return '';
 		};
 
-		this.input.innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages.latex, 'latex'));
 		this.setContent(value);
 	};
 

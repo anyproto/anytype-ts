@@ -217,9 +217,6 @@ class App extends React.Component<object, State> {
 		this.init();
 	};
 
-	componentDidUpdate () {
-	};
-
 	init () {
 		UtilRouter.init(history);
 

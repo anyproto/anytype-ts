@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Marker } from 'Component';
-import { I } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 interface Props {
 	text?: string;
@@ -50,7 +50,7 @@ class ContentText extends React.Component<Props> {
 					{marker ? <Marker {...marker} color={color} /> : ''}
 				</div>
 				{additional}
-				<div className="wrap" dangerouslySetInnerHTML={{ __html: text }} />
+				<div className="wrap" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 			</div>
 		);
 	};

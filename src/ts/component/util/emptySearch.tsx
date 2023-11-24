@@ -17,7 +17,7 @@ class EmptySearch extends React.Component<Props> {
 		
 		return (
 			<div ref={node => this.node = node} className="emptySearch">
-				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.parseAllowedTags(text) }} />
+				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 			</div>
 		);
 	};

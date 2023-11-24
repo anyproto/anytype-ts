@@ -93,6 +93,7 @@
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
+		"dompurify": "^3.0.6",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
@@ -537,7 +538,8 @@
 				"snap",
 				"AppImage",
 				"deb",
-				"rpm"
+				"rpm",
+				"tar.gz"
 			],
 			"description": "Anytype",
 			"publish": [

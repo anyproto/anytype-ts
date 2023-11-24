@@ -556,7 +556,7 @@ class Keyboard {
 			case 'debugSpace': {
 				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 
 						Renderer.send('pathOpen', tmpPath);
 					};
