@@ -118,6 +118,7 @@
         }
     }
 }
+.pageMainType > div > #loader { background: $colorBgPrimary; }
 
 /* PageMainRelation */
 
@@ -131,6 +132,7 @@
         }
     }
 }
+.pageMainRelation > div > #loader { background: $colorBgPrimary; }
 
 /* PageMainNavigation */
 
