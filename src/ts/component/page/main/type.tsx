@@ -47,10 +47,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
-		if (isLoading) {
-			return <Loader id="loader" />;
-		};
-
 		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const check = UtilData.checkDetails(rootId);
@@ -123,6 +119,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		return (
 			<div>
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+
+				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
