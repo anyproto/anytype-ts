@@ -21,7 +21,6 @@ configure({ enforceActions: 'never' });
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
-import 'emoji-mart/css/emoji-mart.css';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';

@@ -1,7 +1,7 @@
-import { UtilCommon } from 'Lib';
-import { getEmojiDataFromNative } from 'emoji-mart';
-
+import { UtilCommon, translate } from 'Lib';
+import { getEmojiDataFromNative, init } from 'emoji-mart';
 import EmojiData from 'json/emoji.json';
+import data from '@emoji-mart/data';
 
 const MAX_SIZE = 0x4000;
 const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
@@ -31,9 +31,15 @@ class UtilSmile {
 
 	icons: any[] = [];
 	cache: any = {};
+	data: any = {};
 
 	constructor () {
 		this.icons = Object.keys(EmojiData.emojis);
+
+		init({ data });
+
+		this.data = data;
+		console.log(data);
 	};
 
 	unifiedToNative (uni: string): string {
@@ -47,10 +53,11 @@ class UtilSmile {
 		};
 
 		const codeUnits = [];
+		const length = points.length;
+
 		let highSurrogate;
 		let lowSurrogate;
 		let index = -1;
-		const length = points.length;
 		let result = '';
 		
 		while (++index < length) {
@@ -137,7 +144,7 @@ class UtilSmile {
 
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
-		const item = EmojiData.emojis[id];
+		const item = this.data.emojis[id];
 
 		if (!item) {
 			return '';
@@ -145,17 +152,22 @@ class UtilSmile {
 
 		skin = skin || Number(String(parts[1] || '').replace(/skin-([\d]+):/, '$1')) || 0;
 
-		let code: any = String(item.unified || item.b || '').toLowerCase().replace(/-fe0f$/, '');
-		if (item.skin_variations && (skin > 1)) {
-			code = code.split(DIV_UNI);
-			code[0] = [ code[0], SKINS[(skin - 1)].toLowerCase() ].join('-');
-			code = code.join(DIV_UNI);
+		let code = '';
+		if (item.skins) {
+			if (skin > item.skins.length - 1) {
+				skin = 0;
+			};
+
+			const s = item.skins[skin];
+			if (s) {
+				code = s.unified;
+			};
 		};
 
 		return `./img/emoji/${code}.png`;
 	};
 
-	data (icon: string) {
+	getData (icon: string) {
 		icon = icon.trim();
 
 		if (!icon) {
@@ -181,11 +193,20 @@ class UtilSmile {
 
 		let data: any = null;
 		try {
-			data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+			for (const k in this.data.emojis) {
+				const item = this.data.emojis[k];
 
-			// Try to get emoji with divider byte
-			if (!data) {
-				data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
+				for (const skin of item.skins) {
+					if (skin.native === icon) {
+						data = item;
+						data.skin = skin;
+						break;
+					};
+				};
+
+				if (data) {
+					break;
+				};
 			};
 		} catch (e) { /**/ };
 
@@ -200,6 +221,13 @@ class UtilSmile {
 	strip (t: string) {
 		const r = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
 		return t.replace(r, '');
+	};
+
+	getCategories () {
+		return this.data.categories.filter(it => it.id != 'frequent').map(it => ({
+			...it,
+			name: translate(UtilCommon.toCamelCase(`emojiCategory-${it.id}`)),
+		}));
 	};
 
 };

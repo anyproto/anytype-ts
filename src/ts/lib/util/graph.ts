@@ -60,7 +60,7 @@ class UtilGraph {
 					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
-					const data = UtilSmile.data(d.iconEmoji);
+					const data = UtilSmile.getData(d.iconEmoji);
 					if (data) {
 						src = UtilSmile.srcFromColons(data.colons, data.skin);
 					};

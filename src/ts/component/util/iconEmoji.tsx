@@ -59,7 +59,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = UtilSmile.data(icon);
+				const data = UtilSmile.getData(icon);
 				if (data) {
 					colons = data.colons;
 					skin = data.skin;
@@ -70,7 +70,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 				if (asImage) {
 					element = <img src={UtilSmile.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
 				} else {
-					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+					//element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};
 			};
 		} else 

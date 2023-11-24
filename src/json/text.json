@@ -1587,6 +1587,15 @@
 	"origin4": "Webclipper",
 	"origin5": "Sharing Extension",
 	"origin6": "Usecase",
-	"origin7": "Built-in"
+	"origin7": "Built-in",
+
+	"emojiCategoryPeople": "Smileys & People",
+	"emojiCategoryNature": "Animals & Nature",
+	"emojiCategoryFoods": "Food & Drink",
+	"emojiCategoryActivity": "Activities",
+	"emojiCategoryPlaces": "Travel & Places",
+	"emojiCategoryObjects": "Objects",
+	"emojiCategorySymbols": "Symbols",
+	"emojiCategoryFlags": "Flags"
 
 }

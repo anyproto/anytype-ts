@@ -86,6 +86,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 				const Item = (item: any) => {
 					const str = `:${item.itemId}::skin-${item.skin}:`;
+					console.log(str);
 					return (
 						<div 
 							id={'item-' + item.id} 
@@ -125,9 +126,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 									<div className="row">
 										{item.children.map((smile: any, i: number) => {
 											smile.position = { row: param.index, n: i };
-											return (
-												<Item key={i} id={smile.id} {...smile} />
-											);
+											return <Item key={i} id={smile.id} {...smile} />;
 										})}
 									</div>
 								)}
@@ -251,8 +250,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
 
-		for (const k in EmojiData.aliases) {
-			this.aliases[EmojiData.aliases[k]] = k;
+		for (const k in UtilSmile.data.aliases) {
+			this.aliases[UtilSmile.data.aliases[k]] = k;
 		};
 
 		if (!this.cache) {
@@ -332,7 +331,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	getGroups () {
-		return this.checkRecent(EmojiData.categories.map(it => ({ id: it.id, name: it.name })));
+		return this.checkRecent(UtilSmile.getCategories().map(it => ({ id: it.id, name: it.name })));
 	};
 	
 	getSections () {
@@ -341,12 +340,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		let sections: any[] = [];
 
-		EmojiData.categories.forEach((it: any) => {
+		UtilSmile.getCategories().forEach(it => {
 			sections.push({
-				id: it.id,
-				name: it.name,
+				...it,
 				children: it.emojis.map(id => {
-					const item = EmojiData.emojis[id] || {};
+					const item = UtilSmile.data.emojis[id] || {};
 					return { id, skin: this.skin, keywords: item.keywords || [] };
 				}),
 			});
