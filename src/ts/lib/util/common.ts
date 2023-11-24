@@ -771,7 +771,12 @@ class UtilCommon {
 	};
 
 	sanitize (s: string): string {
-		return DOMPurify.sanitize(String(s || ''));
+		return DOMPurify.sanitize(String(s || ''), { 
+			ALLOWED_TAGS: [ 
+				'b', 'br', 'a', 'ul', 'li', 'h1', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color',
+				'bgcolor', 'mention', 'emoji', 'obj', 'span', 'p', 'name', 'smile', 'img'
+			] 
+		});
 	};
 
 };
