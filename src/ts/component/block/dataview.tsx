@@ -590,7 +590,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const view = this.getView();
 
-		if (!view) {
+		if (!view || this.creating) {
 			return;
 		};
 
@@ -618,13 +618,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const type = dbStore.getTypeById(typeId);
-		const templateObject = detailStore.get(rootId, templateId);
+		if (!type) {
+			return;
+		};
 
+		const templateObject = detailStore.get(rootId, templateId);
 		if (templateObject.isArchived || templateObject.isDeleted) {
 			templateId = '';
 		};
 
-		C.ObjectCreate(details, flags, templateId, type?.uniqueKey, commonStore.space, (message: any) => {
+		this.creating = true;
+
+		C.ObjectCreate(details, flags, templateId, type.uniqueKey, commonStore.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -693,50 +698,59 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			e.persist();
 		};
 
-		if (this.creating) {
-			return;
-		};
-
-		const objectId = this.getObjectId();
-		const defaultTemplateId = this.getDefaultTemplateId();
-		const details = this.getDetails(groupId);
-		const menuParam: any = this.getMenuParam(e, dir);
 		const typeId = this.getTypeId();
 		const type = dbStore.getTypeById(typeId);
 
-		this.creating = true;
-
 		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
-			menuStore.open('dataviewCreateBookmark', {
-				...menuParam,
-				type: I.MenuType.Horizontal,
-				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				offsetX: dir < 0 ? -24 : 0,
-				offsetY: 4 * -dir,
-				data: {
-					details,
-					onSubmit: (bookmark) => {
-						if (this.isCollection()) {
-							C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
-						};
-					}
-				},
-			});
+			this.onBookmarkMenu(e, dir, groupId);
 		} else {
-			this.recordCreate(e, { id: defaultTemplateId }, dir, groupId);
+			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
 		};
 	};
 
+	onBookmarkMenu (e: any, dir: number, groupId?: string, param?: any) {
+		param = param || {};
+
+		const objectId = this.getObjectId();
+		const details = this.getDetails(groupId);
+		const menuParam = this.getMenuParam(e, dir);
+
+		menuStore.open('dataviewCreateBookmark', {
+			...menuParam,
+			type: I.MenuType.Horizontal,
+			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+			offsetX: dir < 0 ? -24 : 0,
+			offsetY: 4 * -dir,
+			data: {
+				details,
+				onSubmit: (bookmark) => {
+					if (this.isCollection()) {
+						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
+					};
+				}
+			},
+			...param,
+		});
+	};
+
 	onTemplateMenu (e: any, dir: number) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		const { rootId, block } = this.props;
 		const menuParam = this.getMenuParam(e, dir);
 		const isCollection = this.isCollection();
 		const route = this.analyticsRoute();
 		const hasSources = isCollection || this.getSources().length;
 		const view = this.getView();
+		const typeId = this.getTypeId();
+		const type = dbStore.getTypeById(typeId);
 
 		analytics.event('ClickNewOption', { route });
+
+		let menuContext = null;
 
 		menuStore.open('dataviewTemplateList', {
 			...menuParam,
@@ -745,13 +759,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+			onOpen: context => menuContext = context,
 			data: {
 				rootId,
 				blockId: block.id,
 				hasSources,
 				getView: this.getView,
 				withTypeSelect: this.isAllowedDefaultType(),
-				typeId: this.getTypeId(),
+				typeId,
 				templateId: this.getDefaultTemplateId(),
 				route,
 				onTypeChange: (id) => {
@@ -765,6 +780,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
+					if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
+						menuContext.close();
+						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
+					} else
 					if (item.id == Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
@@ -772,7 +791,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 
-						menuStore.closeAll();
+						menuContext.close();
 						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
