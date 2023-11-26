@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { dbStore, menuStore, detailStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
@@ -28,7 +28,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const data = this.getData();
 		const { m, y } = this.getDateParam(this.value);
 		const today = this.getDateParam(UtilDate.now());
-		const subId = this.getSubId(m, y);
 
 		const days = [];
 		const months = [];
@@ -105,8 +104,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											{...this.props} 
 											{...item} 
 											className={cn.join(' ')}
-											getSubId={() => subId}
-											getDateParam={this.getDateParam}
+											items={this.getItems()}
 										/>
 									);
 								})}
@@ -140,10 +138,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getDateParam (t: number) {
-		const d = Number(UtilDate.date('j', t));
-		const m = Number(UtilDate.date('n', t));
-		const y = Number(UtilDate.date('Y', t));
-
+		const [ d, m, y ] = UtilDate.date('j,n,Y', t).split(',').map(it => Number(it));
 		return { d, m, y };
 	};
 
@@ -151,9 +146,9 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		return UtilDate.getCalendarMonth(this.value);
 	};
 
-	getSubId (m: number, y: number) {
+	getSubId () {
 		const { rootId, block } = this.props;
-		return [ rootId, block.id, y, m ].join('-');
+		return dbStore.getSubId(rootId, block.id);
 	};
 
 	load () {
@@ -174,7 +169,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
-		const subId = this.getSubId(m, y);
+		const subId = this.getSubId();
 
 		filters.push({ 
 			operator: I.FilterOperator.And, 
@@ -255,6 +250,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		this.value = value;
 		this.forceUpdate();
 		this.load();
+	};
+
+	getItems () {
+		const { getView } = this.props;
+		const view = getView();
+		const subId = this.getSubId();
+
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
 	};
 
 	resize () {
