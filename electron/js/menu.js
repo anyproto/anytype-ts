@@ -257,9 +257,7 @@ class MenuManager {
 		const { config } = ConfigManager;
 		const Api = require('./api.js');
 
-		if (this.tray) {
-			this.tray.destroy();
-		};
+		this.destroy();
 
 		if (config.hideTray) {
 			return;
@@ -400,6 +398,13 @@ class MenuManager {
 			icon = `iconTrayTemplate.png`;
 		};
 		return path.join(Util.imagePath(), icon);
+	};
+
+	destroy () {
+		if (this.tray) {
+			this.tray.destroy();
+			this.tray = null;
+		};
 	};
 
 };
