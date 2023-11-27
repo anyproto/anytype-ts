@@ -173,7 +173,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return !config.debug.ho ? !it.isHidden : true;
 		});
 
-		let sections = [ 
+		const sections = [ 
 			{ 
 				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),

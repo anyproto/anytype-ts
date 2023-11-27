@@ -119,16 +119,15 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return;
 		};
 
-		const filter = this.refFilter?.getValue();
-		const sorts = [
-			{ relationKey: 'spaceId', type: I.SortType.Desc },
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-
-		let filters: any[] = [
+		const filter = String(this.filter || '');
+		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+		];
+		const sorts = [
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		UtilData.search({

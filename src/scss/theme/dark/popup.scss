@@ -239,4 +239,28 @@
 		.qrWrap { background-color: $colorBgSecondary; }
 	}
 
+	/* PopupUsecase */
+
+	.popup.popupUsecase {
+		.titleWrap {
+			.label { color: $colorTextSecondary;  }
+		}
+
+		.screenWrap { background: $colorShapeHighlightMedium; }
+		.screenWrap {
+			.icon.arrow { 
+				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: $colorShapeSecondary;
+			}
+		}
+
+		.footerWrap {
+			.side.right {
+				.tags {
+					.tagItem { background: $colorShapeHighlightMedium; color: $colorTextSecondary; }
+				}
+				.label { color: $colorTextSecondary; }
+			}
+		}
+	}
+
 }

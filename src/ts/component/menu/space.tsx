@@ -218,7 +218,15 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onAdd () {
-		popupStore.open('settings', { data: { page: 'spaceCreate', isSpace: true }, className: 'isSpaceCreate' });
+		popupStore.open('settings', { 
+			className: 'isSpaceCreate',
+			data: { 
+				page: 'spaceCreate', 
+				isSpace: true,
+				onCreate: (id) => UtilRouter.switchSpace(id, ''),
+			}, 
+		});
+
 		this.props.close();
 	};
 

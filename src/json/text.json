@@ -970,6 +970,12 @@
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
+	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseUpdated": "Updated: %s",
+	"popupUsecaseInstall": "Install",
+	"popupUsecaseMenuLabel": "Install experience to",
+	"popupUsecaseSpaceCreate": "Create new space",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
@@ -1587,6 +1593,13 @@
 	"origin4": "Webclipper",
 	"origin5": "Sharing Extension",
 	"origin6": "Usecase",
-	"origin7": "Built-in"
+	"origin7": "Built-in",
+
+	"notification0SuccessTitle": "&quot;%s&quot; was installed",
+	"notification0SuccessText": "Experience was successfully  installed to a new space. You can now open and start using it.",
+	"notification0ErrorTitle": "Something went wrong",
+	"notification0ErrorText": "Oops! &quot;%s&quot; wasn't installed. Please check your internet connection and try again or post a report on forum.",
+
+	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights."
 
 }

@@ -239,12 +239,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		});
 	};
 
-	onStopEdit () {
-		if (this.state.isEditing) {
-			this.onEdit();
-		};
-	};
-
 	addWidget (): void {
 		menuStore.open('widget', {
 			element: '#widget-list-add',
