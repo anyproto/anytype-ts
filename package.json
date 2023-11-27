@@ -59,7 +59,7 @@
 		"@typescript-eslint/parser": "^5.46.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^25.0.0",
+		"electron": "^22.3.27",
 		"electron-builder": "^24.6.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
