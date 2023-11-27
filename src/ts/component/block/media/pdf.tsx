@@ -40,21 +40,14 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;		
+		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
+		const object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
+		const width = Number(fields) || 0;
+		const css: any = {};
 
-		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
-		if (object._empty_) {
-			object = UtilCommon.objectCopy(content);
-			object.sizeInBytes = object.size;
-		};
-
-		const { name, sizeInBytes } = object;
-
-		const { width } = fields;
 		let element = null;
 		let pager = null;
-		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
@@ -105,12 +98,12 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				element = (
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{name}</span>
-							<span className="size">{UtilFile.size(sizeInBytes)}</span>
+							<span className="name">{object.name}</span>
+							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 						</div>
 
 						<Document
-							file={commonStore.fileUrl(hash)}
+							file={commonStore.fileUrl(targetObjectId)}
 							onLoadSuccess={this.onDocumentLoad}
 							renderMode="canvas"
 							loading={<Loader />}
@@ -202,15 +195,9 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onClick (e: any) {
-		if (keyboard.withCommand(e)) {
-			return;
+		if (!keyboard.withCommand(e)) {
+			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.Image });
 		};
-
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-
-		UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 });

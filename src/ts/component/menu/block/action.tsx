@@ -680,7 +680,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openFileAsObject': {
-				UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				UtilObject.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;

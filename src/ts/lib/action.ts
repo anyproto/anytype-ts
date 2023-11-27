@@ -77,15 +77,15 @@ class Action {
 		};
 
 		const { content } = block;
-		const { type, hash } = content;
+		const { type, targetObjectId } = content;
 
-		if (!hash) {
+		if (!targetObjectId) {
 			return;
 		};
 		
-		const url = block.isFileImage() ? commonStore.imageUrl(hash, 1000000) : commonStore.fileUrl(hash);
+		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
+		
 		Renderer.send('download', url);
-
 		analytics.event('DownloadMedia', { type, route });
 	};
 

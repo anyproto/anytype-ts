@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentFile implements I.ContentFile {
 	
-	hash = '';
+	targetObjectId = '';
 	name = '';
 	mime = '';
 	size = 0;
@@ -12,7 +12,7 @@ class BlockContentFile implements I.ContentFile {
 	state: I.FileState = I.FileState.Empty;
 	
 	constructor (props: I.ContentFile) {
-		this.hash = String(props.hash || '');
+		this.targetObjectId = String(props.targetObjectId || '');
 		this.name = String(props.name || '');
 		this.mime = String(props.mime || '');
 		this.size = Number(props.size) || 0;
@@ -21,7 +21,7 @@ class BlockContentFile implements I.ContentFile {
 		this.state = Number(props.state) || I.FileState.Empty;
 		
 		makeObservable(this, {
-			hash: observable,
+			targetObjectId: observable,
 			name: observable,
 			mime: observable,
 			size: observable,

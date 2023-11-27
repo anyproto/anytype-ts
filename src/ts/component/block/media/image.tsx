@@ -31,15 +31,14 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { width } = block.fields || {};
-		const { state, hash } = block.content;
-		
-		let element = null;
+		const { state, targetObjectId } = block.content;
 		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
 		};
 		
+		let element = null;
 		switch (state) {
 			default:
 			case I.FileState.Empty:
@@ -68,8 +67,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 					<div id="wrap" className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={commonStore.imageUrl(hash, Constant.size.image)} 
-							onDragStart={(e: any) => { e.preventDefault(); }} 
+							src={commonStore.imageUrl(targetObjectId, Constant.size.image)} 
+							onDragStart={e => e.preventDefault()} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
 							onError={this.onError} 

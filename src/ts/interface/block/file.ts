@@ -23,7 +23,7 @@ export enum FileState {
 };
 
 export interface ContentFile {
-	hash: string;
+	targetObjectId: string;
 	name: string;
 	mime: string;
 	size: number;

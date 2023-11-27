@@ -32,16 +32,16 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;
-		
+		const { state, targetObjectId } = content;
 		const { width } = fields;
-		let element = null;
 		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
 			css.height = this.getHeight(width);
 		};
+
+		let element = null;
 		
 		switch (state) {
 			default:
@@ -71,7 +71,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				element = (
 					<div className="wrap resizable blockVideo" style={css}>
 						<MediaVideo
-							src={commonStore.fileUrl(hash)}
+							src={commonStore.fileUrl(targetObjectId)}
 							onPlay={this.onPlay}
 							onPause={this.onPause}
 						/>
@@ -195,7 +195,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const win = $(window);
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -287,11 +286,9 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
 		const { id, fields } = block;
-		
-		let { width } = fields;
-		width = Number(width) || 1;
-		
+		const width = Number(fields.width) || 1;
 		const el = $('#selectable-' + id);
+
 		if (!el.length) {
 			return width;
 		};

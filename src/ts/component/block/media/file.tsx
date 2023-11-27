@@ -22,17 +22,17 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state, style } = content;
+		const { state, style, targetObjectId } = content;
 		
-		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
+		let object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
 		if (object._empty_) {
 			object = UtilCommon.objectCopy(content);
 			object.sizeInBytes = object.size;
 		};
 
 		const { name, sizeInBytes } = object;
-		let element = null;
 
+		let element = null;
 		switch (state) {
 			default:
 			case I.FileState.Error:

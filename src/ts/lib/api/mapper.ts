@@ -180,7 +180,7 @@ export const Mapper = {
 
 		BlockFile: (obj: any) => {
 			return {
-				hash: obj.getHash(),
+				targetObjectId: obj.getTargetobjectid(),
 				name: obj.getName(),
 				type: obj.getType(),
 				style: obj.getStyle(),
@@ -547,7 +547,7 @@ export const Mapper = {
 		BlockFile: (obj: any) => {
 			const content = new Model.Block.Content.File();
 	
-			content.setHash(obj.hash);
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setName(obj.name);
 			content.setType(obj.type);
 			content.setMime(obj.mime);

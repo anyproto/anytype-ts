@@ -303,6 +303,10 @@
 				"to": "node_modules/electron-window-state"
 			},
 			{
+				"from": "node_modules/escape-goat",
+				"to": "node_modules/escape-goat"
+			},
+			{
 				"from": "node_modules/ext-list",
 				"to": "node_modules/ext-list"
 			},

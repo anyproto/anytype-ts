@@ -476,12 +476,12 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasName()) {
-						block.content.name = data.getName().getValue();
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
 					};
 
-					if (data.hasHash()) {
-						block.content.hash = data.getHash().getValue();
+					if (data.hasName()) {
+						block.content.name = data.getName().getValue();
 					};
 
 					if (data.hasMime()) {

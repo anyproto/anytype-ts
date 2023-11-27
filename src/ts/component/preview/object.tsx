@@ -238,7 +238,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />;
+							inner = <img className="media" src={commonStore.imageUrl(content.targetObjectId, Constant.size.image)} style={css} />;
 							break;
 						};
 
