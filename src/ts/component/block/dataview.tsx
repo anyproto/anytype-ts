@@ -746,7 +746,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hasSources = isCollection || this.getSources().length;
 		const view = this.getView();
 		const typeId = this.getTypeId();
-		const type = dbStore.getTypeById(typeId);
 
 		analytics.event('ClickNewOption', { route });
 
@@ -780,6 +779,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
+					const typeId = this.getTypeId();
+					const type = dbStore.getTypeById(typeId);
+
 					if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 						menuContext.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
