@@ -5,6 +5,7 @@ import { detailStore } from './detail';
 import { dbStore } from './db';
 import { menuStore } from './menu';
 import { popupStore } from './popup';
+import { notificationStore } from './notification';
 
 export {
 	commonStore,
@@ -14,4 +15,5 @@ export {
 	dbStore,
 	menuStore,
 	popupStore,
+	notificationStore,
 };

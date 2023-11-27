@@ -1,6 +1,7 @@
 import Account from './account';
 import Block from './block';
 import BlockStructure from './blockStructure';
+import Notification from './notification';
 
 import View from './view';
 import ViewRelation from './viewRelation';
@@ -12,6 +13,8 @@ export {
 
 	Block,
 	BlockStructure,
+
+	Notification,
 
 	View,
 	ViewRelation,

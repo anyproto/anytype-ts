@@ -113,14 +113,15 @@ class UtilObject {
 			return '';
 		};
 
-		let { id, spaceId, layout, identityProfileLink } = object;
-
+		const { layout, identityProfileLink } = object;
 		const { accountSpaceId } = authStore;
 		const action = this.actionByLayout(layout);
 
 		if (!action) {
 			return '';
 		};
+
+		let { id, spaceId } = object;
 
 		if (identityProfileLink) {
 			id = identityProfileLink;

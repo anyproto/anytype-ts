@@ -34,8 +34,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								onClick={(e: any) => { this.onClick(e, action); }}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+								onClick={e => this.onClick(e, action)}
+								onMouseEnter={e => this.onMouseEnter(e, action)}
 							/>
 						);
 					})}
