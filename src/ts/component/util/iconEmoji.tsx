@@ -51,26 +51,17 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 
 		let element = null;
 		if (icon) {
-			let shortcodes = '';
-			if (icon.match(':')) {
-				shortcodes = icon;
-			} else {
-				const data = UtilSmile.getData(icon);
-				if (data && data.skin) {
-					shortcodes = data.skin.shortcodes;
-				};
-			};
-
-			if (shortcodes) {
+			const code = icon.match(':') ? icon : UtilSmile.getCode(icon);
+			if (code) {
 				if (asImage) {
-					element = <img src={UtilSmile.srcFromColons(shortcodes)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
-					element = <em-emoji shortcodes={shortcodes}></em-emoji>;
+					element = <em-emoji shortcodes={code}></em-emoji>;
 				};
 			};
 		} else 
 		if (hash) {
-			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;

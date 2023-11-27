@@ -16,6 +16,14 @@ class UtilSmile {
 
 		this.data = data;
 		this.icons = Object.keys(this.data.emojis);
+
+		for (const id in this.data.emojis) {
+			const item = this.data.emojis[id];
+
+			for (const skin of item.skins) {
+				this.cache[skin.native] = skin.shortcodes;
+			};
+		};
 	};
 
 	nativeById (id: string, skin: number): string {
@@ -83,11 +91,11 @@ class UtilSmile {
 		return `./img/emoji/${code}.png`;
 	};
 
-	getData (icon: string) {
+	getCode (icon: string) {
 		icon = icon.trim();
 
 		if (!icon) {
-			return {};
+			return '';
 		};
 
 		if (this.cache[icon]) {
@@ -107,30 +115,29 @@ class UtilSmile {
 			icon = cp.map(it => String.fromCharCode(it)).join('');
 		};
 
-		let data: any = null;
+		let code = '';
 		try {
 			for (const k in this.data.emojis) {
 				const item = this.data.emojis[k];
 
 				for (const skin of item.skins) {
 					if (skin.native === icon) {
-						data = item;
-						data.skin = skin;
+						code = skin.shortcodes;
 						break;
 					};
 				};
 
-				if (data) {
+				if (code) {
 					break;
 				};
 			};
 		} catch (e) { /**/ };
 
-		if (data) {
-			this.cache[icon] = data;
-			return data;
+		if (code) {
+			this.cache[icon] = code;
+			return code;
 		} else {
-			return {};
+			return '';
 		};
 	};
 
