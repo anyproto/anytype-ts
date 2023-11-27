@@ -218,7 +218,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			y++;
 		};
 
-		this.setValue(UtilDate.timestamp(y, m, 1))
+		this.setValue(UtilDate.timestamp(y, m, 1));
 	};
 
 	onToday () {

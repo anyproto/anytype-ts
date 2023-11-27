@@ -35,7 +35,8 @@
 		"popup": 310,
 		"toast": 2500,
 		"route": 250,
-		"keyboard": 500
+		"keyboard": 500,
+		"notification": 200
 	},
 	
 	"extension": {

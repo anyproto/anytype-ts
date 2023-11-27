@@ -12,6 +12,7 @@ import SelectionProvider from './selection/provider';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
+import ListNotification from './list/notification';
 import ListChildren from './list/children';
 import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
@@ -24,6 +25,8 @@ import Widget from './widget';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
+
+import Notification from './notification';
 
 import Popup from './popup';
 import Frame from './util/frame';
@@ -98,6 +101,7 @@ export {
 	ListObjectPreview,
 	ListObject,
 	ListObjectManager,
+	ListNotification,
 
 	Header,
 	Footer,
@@ -134,6 +138,7 @@ export {
 	Label,
 	Error,
 	Navigation,
+	Notification,
 
 	Icon,
 	IconObject,
