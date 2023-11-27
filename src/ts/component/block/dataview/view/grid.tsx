@@ -178,13 +178,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onScroll () {
-		const win = $(window);
-		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
-
-		for (const menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
-		};
-
+		menuStore.resizeAll();
 		this.resizeColumns('', 0);
 	};
 

@@ -93,6 +93,7 @@ class AuthStore {
     };
 
 	accountSet (account: any) {
+		account = account || {};
 		account.info = account.info || {};
 		account.status = account.status || {};
 		account.config = account.config || {};
