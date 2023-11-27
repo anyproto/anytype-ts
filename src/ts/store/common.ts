@@ -210,7 +210,7 @@ class CommonStore {
 	};
 
     imageUrl (id: string, width: number) {
-		return [ this.gateway, 'file', String(id || '') ] + `?width=${Number(width) || 0}`;
+		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
     progressSet (v: I.Progress) {
