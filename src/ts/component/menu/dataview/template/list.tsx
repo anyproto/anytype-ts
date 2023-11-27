@@ -328,7 +328,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 				],
 				onClick: type => {
-					menuStore.updateData(id, { typeId: type.id, templateId: (type.defaultTemplateId || Constant.templateId.blank) });
+					data.typeId = type.id;
+					data.templateId = type.defaultTemplateId || Constant.templateId.blank;
 
 					this.load();
 
