@@ -11,7 +11,6 @@ interface Props {
 	iconClass?: string;
 	hash?: string;
 	size?: number;
-	native?: boolean;
 	asImage?: boolean;
 	className?: string;
 	canEdit?: boolean;
@@ -32,12 +31,11 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		offsetY: 0,
 		size: 18,
 		className: '',
-		native: true,
 		asImage: true,
 	};
 	
 	render () {
-		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
+		const { id, size, icon, hash, asImage, className, canEdit, menuId, iconClass } = this.props;
 		const cn = [ 'iconEmoji' ];
 		const css = { lineHeight: size + 'px' };
 
@@ -52,30 +50,18 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		};
 
 		let element = null;
-		let skin = 0;
-
 		if (icon) {
-			let colons = '';
-			if (icon.match(':')) {
-				colons = icon;
-			} else {
-				const data = UtilSmile.data(icon);
-				if (data) {
-					colons = data.colons;
-					skin = data.skin;
-				};
-			};
-
-			if (colons) {
+			const code = icon.match(':') ? icon : UtilSmile.getCode(icon);
+			if (code) {
 				if (asImage) {
-					element = <img src={UtilSmile.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
-					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
+					element = <em-emoji shortcodes={code}></em-emoji>;
 				};
 			};
 		} else 
 		if (hash) {
-			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;
