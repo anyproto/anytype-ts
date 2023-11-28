@@ -107,38 +107,23 @@ class UtilSmile {
 			cp.push(icon.charCodeAt(i));
 		};
 
-		if (cp.length && !cp.includes(DIV) && (cp[cp.length - 1] == CAP)) {
-			cp.pop();
-			cp.push(DIV);
-			cp.push(CAP);
+		if (!cp.length) {
+			return '';
+		};
+
+		if (!cp.includes(DIV)) {
+			if (cp[cp.length - 1] == CAP) {
+				cp.pop();
+				cp.push(DIV);
+				cp.push(CAP);
+			} else {
+				cp.push(DIV);
+			};
 
 			icon = cp.map(it => String.fromCharCode(it)).join('');
 		};
 
-		let code = '';
-		try {
-			for (const k in this.data.emojis) {
-				const item = this.data.emojis[k];
-
-				for (const skin of item.skins) {
-					if (skin.native === icon) {
-						code = skin.shortcodes;
-						break;
-					};
-				};
-
-				if (code) {
-					break;
-				};
-			};
-		} catch (e) { /**/ };
-
-		if (code) {
-			this.cache[icon] = code;
-			return code;
-		} else {
-			return '';
-		};
+		return this.cache[icon] || '';
 	};
 
 	strip (t: string) {
