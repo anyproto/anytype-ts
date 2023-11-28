@@ -10,7 +10,7 @@
         .objectManagerWrapper {
             .controls { margin-bottom: 8px; }
             .items {
-                .row { grid-template-columns: repeat(2, minmax(0, 50%)); grid-gap: 32px; }
+                .row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 32px; }
 
                 .item { margin-bottom: 0; }
                 .item {
