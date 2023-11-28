@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Key, focus, translate, analytics } from 'Lib';
-import { commonStore, dbStore, menuStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard, Key, focus, translate, analytics, Action } from 'Lib';
+import { commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface FilterItem {
