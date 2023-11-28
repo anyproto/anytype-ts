@@ -59,7 +59,7 @@ class Sidebar {
 			this.resizePage();
 
 			commonStore.autoSidebarSet(true);
-			commonStore.isSidebarFixedSet(false);
+			commonStore.isSidebarFixedSet(true);
 		};
 	};
 

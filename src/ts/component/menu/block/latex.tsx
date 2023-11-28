@@ -66,7 +66,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					>
 						{isTemplate ? (
 							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+								<div className="math" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(math) }} />
 							</div>
 						) : (
 							<div className="name">{name}</div>

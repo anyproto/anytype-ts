@@ -84,6 +84,9 @@
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 }
+.cellContent.c-object.canEdit {
+	.element { cursor: grab; }
+}
 
 .cellContent.isName {
 	.iconObject { z-index: 1; }

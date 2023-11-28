@@ -5,7 +5,6 @@ import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
 import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-import EmojiData from 'json/emoji.json';
 
 interface State {
 	filter: string;
@@ -85,7 +84,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				const groups = this.getGroups();
 
 				const Item = (item: any) => {
-					const str = `:${item.itemId}::skin-${item.skin}:`;
+					const str = `:${item.itemId}::skin-tone-${item.skin}:`;
 					return (
 						<div 
 							id={'item-' + item.id} 
@@ -125,9 +124,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 									<div className="row">
 										{item.children.map((smile: any, i: number) => {
 											smile.position = { row: param.index, n: i };
-											return (
-												<Item key={i} id={smile.id} {...smile} />
-											);
+											return <Item key={i} id={smile.id} {...smile} />;
 										})}
 									</div>
 								)}
@@ -251,8 +248,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
 
-		for (const k in EmojiData.aliases) {
-			this.aliases[EmojiData.aliases[k]] = k;
+		for (const k in UtilSmile.data.aliases) {
+			this.aliases[UtilSmile.data.aliases[k]] = k;
 		};
 
 		if (!this.cache) {
@@ -332,7 +329,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	getGroups () {
-		return this.checkRecent(EmojiData.categories.map(it => ({ id: it.id, name: it.name })));
+		return this.checkRecent(UtilSmile.getCategories().map(it => ({ id: it.id, name: it.name })));
 	};
 	
 	getSections () {
@@ -341,12 +338,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		let sections: any[] = [];
 
-		EmojiData.categories.forEach((it: any) => {
+		UtilSmile.getCategories().forEach(it => {
 			sections.push({
-				id: it.id,
-				name: it.name,
+				...it,
 				children: it.emojis.map(id => {
-					const item = EmojiData.emojis[id] || {};
+					const item = UtilSmile.data.emojis[id] || {};
 					return { id, skin: this.skin, keywords: item.keywords || [] };
 				}),
 			});
@@ -487,13 +483,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 			e.preventDefault();
 
-			const item = EmojiData.emojis[this.active.itemId];
+			const item = UtilSmile.data.emojis[this.active.itemId];
 
-			if (!item || !item.skin_variations) {
+			if (item.skins && (item.skins.length > 1)) {
+				this.onSkin(e, this.active.id, this.active.itemId);
+			} else {
 				this.onSelect(this.active.itemId, this.skin);
 				close();
-			} else {
-				this.onSkin(e, this.active.id, this.active.itemId);
 			};
 
 			Preview.tooltipHide(true);
@@ -637,7 +633,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onMouseDown (e: any, n: string, id: string, skin: number) {
 		const { close } = this.props;
 		const win = $(window);
-		const item = EmojiData.emojis[id];
+		const item = UtilSmile.data.emojis[id];
 
 		this.id = id;
 		window.clearTimeout(this.timeoutMenu);
@@ -646,7 +642,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (item && item.skin_variations) {
+		if (item && (item.skins.length > 1)) {
 			this.timeoutMenu = window.setTimeout(() => {
 				win.off('mouseup.smile');
 				this.onSkin(e, n, id);
@@ -667,14 +663,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onSkin (e: any, n: string, id: string) {
-		const { getId, close } = this.props;
-		const item = EmojiData.emojis[id];
+		const { getId, close, param } = this.props;
+		const item = UtilSmile.data.emojis[id];
 
-		if (!item || !item.skin_variations) {
+		if (item.skins.length <= 1) {
 			return;
 		};
 
 		menuStore.open('smileSkin', {
+			...param,
 			type: I.MenuType.Horizontal,
 			element: `#${getId()} #item-${$.escapeSelector(n)}`,
 			vertical: I.MenuDirection.Top,
@@ -683,7 +680,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				smileId: id,
 				onSelect: (skin: number) => {
 					this.onSelect(id, skin);
-
 					close();
 				},
 				rebind: this.rebind
@@ -822,8 +818,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		
-		zone.removeClass('isDraggingOver');
 		preventCommonDrop(true);
+
+		zone.removeClass('isDraggingOver');
 		this.setState({ isLoading: true });
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {

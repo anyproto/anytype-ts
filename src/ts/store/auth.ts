@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'Store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
 import { keyboard } from 'Lib';
 
 class AuthStore {
@@ -93,6 +93,7 @@ class AuthStore {
     };
 
 	accountSet (account: any) {
+		account = account || {};
 		account.info = account.info || {};
 		account.status = account.status || {};
 		account.config = account.config || {};
@@ -177,6 +178,7 @@ class AuthStore {
 		detailStore.clearAll();
 		dbStore.clearAll();
 		menuStore.closeAllForced();
+		notificationStore.clear();
 
 		this.clearAll();
 		Storage.logout();

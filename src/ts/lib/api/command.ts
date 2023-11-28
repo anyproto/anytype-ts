@@ -31,6 +31,14 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
+const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.DownloadManifest.Request();
+
+	request.setUrl(url);
+
+	dispatcher.request(DownloadManifest.name, request, callBack);
+};
+
 // ---------------------- APP ---------------------- //
 
 const AppShutdown = (callBack?: (message: any) => void) => {
@@ -1368,6 +1376,8 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 			params = new Rpc.Object.Import.Request.PbParams();
 			params.setPathList(options.paths);
 			params.setNocollection(options.noCollection);
+			params.setCollectiontitle(options.title);
+			params.setImporttype(options.importType);
 
 			request.setPbparams(params);
 			break;
@@ -1402,6 +1412,16 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	request.setUsecase(usecase);
 
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
+};
+
+const ObjectImportExperience = (spaceId: string, url: string, title: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportExperience.Request();
+
+	request.setSpaceid(spaceId);
+	request.setUrl(url);
+	request.setTitle(title);
+
+	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
 
 const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
@@ -1789,6 +1809,7 @@ export {
 	MetricsSetParameters,
 	LinkPreview,
 	ProcessCancel,
+	DownloadManifest,
 
 	DebugTree,
 	DebugExportLocalstore,
@@ -1954,8 +1975,8 @@ export {
 
 	ObjectImport,
 	ObjectImportNotionValidateToken,
-
 	ObjectImportUseCase,
+	ObjectImportExperience,
 
 	ObjectCreate,
 	ObjectCreateSet,

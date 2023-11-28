@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilObject, UtilCommon, translate } from 'Lib';
+import { I, Relation, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -191,8 +191,8 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		UtilData.searchSubscribe({
 			subId,
-			filters,
-			sorts,
+			filters: filters.map(it => Dataview.filterMapper(view, it)),
+			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			limit,

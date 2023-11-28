@@ -61,10 +61,28 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const Item = (item: any) => {
 			let content = null;
+			let icon = null;
+			let object = null;
+
+			if (item.isObject) {
+				object = item;
+			} else 
+			if (item.id == 'account') {
+				object = UtilObject.getProfile();
+			} else 
+			if (item.id == 'spaceIndex') {
+				object = UtilObject.getSpaceview();
+			};
+
+			if (object) {
+				icon = <IconObject object={object} size={18} />;
+			} else {
+				icon = <Icon className={item.icon} />;
+			};
+
 			if (item.isObject) {
 				content = (
 					<React.Fragment>
-						<IconObject object={item} size={18} />
 						<ObjectName object={item} />
 						<div className="caption">{item.caption}</div>
 					</React.Fragment>
@@ -72,7 +90,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			} else {
 				content = (
 					<React.Fragment>
-						<Icon className={item.icon} />
 						<div className="name">{item.name}</div>
 						<div className="caption">
 							{item.shortcut.map((item, i) => (
@@ -90,6 +107,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					onMouseOver={e => this.onOver(e, item)} 
 					onClick={e => this.onClick(e, item)}
 				>
+					{icon}
 					{content}
 				</div>
 			);
@@ -650,6 +668,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
+		const filter = this.getFilter();
+
+		let name = '';
+		if (filter) {
+			name = UtilCommon.sprintf(translate('commonCreateObject'), filter);
+		} else {
+			name = translate('popupSearchCreateObject');
+		};
 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
@@ -666,11 +692,60 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		items.push({ id: 'add', name: translate('popupSearchCreateObject'), icon: 'plus', shortcut: [ cmd, 'N' ] });
+		/* Settings */
+
+		if (filter) {
+			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+
+			const itemsImport: any[] = ([
+				{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+				{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+				{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
+				{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+			] as any[]).map(it => ({ ...it, isImport: true }));
+
+			const settingsSpace: any[] = ([
+				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
+
+				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
+				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+
+				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
+				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
+				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
+			] as any).map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
+			
+			const settingsAccount: any[] = [
+				{ id: 'account', name: translate('popupSettingsProfileTitle') },
+				{ id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle') },
+				{ id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle') },
+				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
+				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
+				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
+			];
+
+			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true }));
+			const filtered = itemsImport.concat(settingsItems).filter(it => it.name.match(reg));
+
+			if (filtered.length) {
+				filtered.sort(UtilData.sortByName);
+				filtered.unshift({ name: translate('commonSettings'), isSection: true });
+
+				items = filtered.concat(items);
+			};
+		};
+
+		items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
+
 		if (hasRelations) {
 			items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
 		};
-		return items;
+
+		return items.map(it => {
+			it.shortcut = it.shortcut || [];
+			return it;
+		});
 	};
 
 	filterMapper (it: any) {
@@ -701,15 +776,23 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		e.stopPropagation();
 		this.props.close();
 
-		if (item.isObject) {
-			const filter = UtilCommon.regexEscape(this.getFilter());
+		const filter = this.getFilter();
 
+		if (item.isObject) {
 			UtilObject.openEvent(e, { ...item, id: item.id });
 			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+		} else 
+		if (item.isSettings) {
+			window.setTimeout(() => {
+				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
+			}, Constant.delay.popup);
+		} else 
+		if (item.isImport) {
+			Action.import(item.format, Constant.extension.import[item.format]);
 		} else {
 			switch (item.id) {
 				case 'add': {
-					keyboard.pageCreate('Search');
+					keyboard.pageCreate({ name: filter }, 'Search');
 					break;
 				};
 

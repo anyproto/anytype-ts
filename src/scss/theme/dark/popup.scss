@@ -123,8 +123,6 @@
 		.side.right.tabExportIndex {
             .item { border-color: $colorShapeSecondary; }
             .item:hover, .item.active { border-color: $colorShapePrimary; }
-            .item.notion .icon { background-image: url('#{$themePath}/icon/import/notion.svg'); }
-            .item.roam .icon { background-image: url('#{$themePath}/icon/import/roam.svg'); }
         }
 
 		.side.right.tabImportNotion {
@@ -239,6 +237,30 @@
 
 	.popup.popupMigration {
 		.qrWrap { background-color: $colorBgSecondary; }
+	}
+
+	/* PopupUsecase */
+
+	.popup.popupUsecase {
+		.titleWrap {
+			.label { color: $colorTextSecondary;  }
+		}
+
+		.screenWrap { background: $colorShapeHighlightMedium; }
+		.screenWrap {
+			.icon.arrow { 
+				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: $colorShapeSecondary;
+			}
+		}
+
+		.footerWrap {
+			.side.right {
+				.tags {
+					.tagItem { background: $colorShapeHighlightMedium; color: $colorTextSecondary; }
+				}
+				.label { color: $colorTextSecondary; }
+			}
+		}
 	}
 
 }

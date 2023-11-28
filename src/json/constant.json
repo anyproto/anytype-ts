@@ -35,7 +35,8 @@
 		"popup": 310,
 		"toast": 2500,
 		"route": 250,
-		"keyboard": 500
+		"keyboard": 500,
+		"notification": 200
 	},
 	
 	"extension": {
@@ -43,7 +44,13 @@
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
-		"pdf": [ "pdf" ]
+		"pdf": [ "pdf" ],
+		"import": {
+			"1": [ "zip", "md" ],
+			"3": [ "zip", "pb", "json" ],
+			"4": [ "zip", "html", "htm", "mhtml" ],
+			"5": [ "zip", "txt" ]
+		}
 	},
 
 	"menuIds": {
@@ -67,7 +74,8 @@
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
 		"table":		 [ "select2", "blockColor", "blockBackground" ],
-		"search":		 [ "searchObject", "select" ]
+		"search":		 [ "searchObject", "select" ],
+		"navigation":	 [ "space", "quickCapture" ]
 	},
 
 	"popupPinIds": [ "search" ],

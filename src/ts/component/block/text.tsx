@@ -666,27 +666,37 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
 			{ key: `${cmd}+a`, preventDefault: true },
-			{ key: `${cmd}+[`, preventDefault: false },
-			{ key: `${cmd}+]`, preventDefault: false },
-			{ key: `${cmd}+=`, preventDefault: false },
-			{ key: `${cmd}+-`, preventDefault: false },
+			{ key: `${cmd}+[` },
+			{ key: `${cmd}+]` },
+			{ key: `${cmd}+=` },
+			{ key: `${cmd}+-` },
+			{ key: `${cmd}+0` },
+			{ key: `${cmd}+1` },
+			{ key: `${cmd}+2` },
+			{ key: `${cmd}+3` },
+			{ key: `${cmd}+4` },
+			{ key: `${cmd}+5` },
+			{ key: `${cmd}+6` },
+			{ key: `${cmd}+7` },
+			{ key: `${cmd}+8` },
+			{ key: `${cmd}+9` },
 			{ key: `${cmd}+z`, preventDefault: true },
 			{ key: `${cmd}+shift+z`, preventDefault: true },
-			{ key: `${cmd}+/`, preventDefault: false },
+			{ key: `${cmd}+/` },
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
-			{ key: `shift+space`, preventDefault: false },
-			{ key: `ctrl+shift+l`, preventDefault: false },
-			{ key: `ctrl+shift+/`, preventDefault: false },
+			{ key: `shift+space` },
+			{ key: `ctrl+shift+l` },
+			{ key: `ctrl+shift+/` },
 		];
 
 		if (isInsideTable) {
 			if (!range.to) {
-				saveKeys.push({ key: `arrowleft, arrowup`, preventDefault: false });
+				saveKeys.push({ key: `arrowleft, arrowup` });
 			};
 
 			if (range.to == value.length) {
-				saveKeys.push({ key: `arrowright, arrowdown`, preventDefault: false });
+				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
 		};
 
@@ -698,7 +708,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		for (let i = 0; i < 9; ++i) {
-			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
+			saveKeys.push({ key: `${cmd}+${i}` });
 		};
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {

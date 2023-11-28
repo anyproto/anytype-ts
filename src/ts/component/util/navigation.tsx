@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
@@ -117,7 +118,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		keyboard.pageCreate('Navigation');
+		keyboard.onQuickCapture();
 	};
 
 	onGraph () {

@@ -181,6 +181,7 @@ export interface ButtonComponent {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	showDot?: boolean;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 };
 
@@ -233,4 +234,13 @@ export enum BannerType {
 	IsArchived		 = 0,
 	IsTemplate		 = 1,
 	TemplateSelect	 = 2,
+};
+
+export enum ObjectManagerItemInfo {
+	Description 	= 0,
+	FileSize 		= 1,
+};
+
+export enum ObjectManagerPopup {
+	Favorites 	= 0,
 };
