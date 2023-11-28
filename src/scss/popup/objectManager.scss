@@ -10,18 +10,19 @@
         .objectManagerWrapper {
             .controls { margin-bottom: 8px; }
             .items {
-                .row { grid-template-columns: repeat(2, minmax(0, 224px)); grid-gap: 32px; }
+                .row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 32px; }
 
                 .item { margin-bottom: 0; }
                 .item {
                     .icon { margin-right: 14px; }
                     .iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: $colorShapeTertiary; }
-                    .objectClickArea { width: calc(100% - 32px); }
+                    .objectClickArea { width: calc(100% - 30px); }
 
                     .name { @include text-overflow-nw; width: 100%; }
                     .descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorTextSecondary; }
                 }
             }
+            .emptySearch { height: 238px; }
         }
 
         .button { flex-shrink: 0; width: 100%; height: 36px; }
