@@ -35,7 +35,8 @@
 		"popup": 310,
 		"toast": 2500,
 		"route": 250,
-		"keyboard": 500
+		"keyboard": 500,
+		"notification": 200
 	},
 	
 	"fileExtension": {
@@ -85,7 +86,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink"
 	],
 
 	"relationRelationKeys": [

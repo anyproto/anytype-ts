@@ -135,39 +135,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		});
 	};
 
-	onSubmit () {
-		const { close } = this.props;
-		const { isLoading, usecase, iconOption } = this.state;
-
-		if (isLoading) {
-			return;
-		};
-
-		this.setState({ isLoading: true });
-
-		let name = this.checkName(this.refName.getValue());
-		if (!name) {
-			const item = this.getUsecase(usecase);
-
-			if (item) {
-				name = item.name;
-			};
-		};
-
-		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
-			this.setState({ isLoading: false });
-
-			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
-				analytics.event('SelectUsecase', { type: usecase });
-
-				UtilRouter.switchSpace(message.objectId, '', () => close());
-			} else {
-				this.setState({ error: message.error.description });
-			};
-		});
-	};
-
 	checkName (v: string): string {
 		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
 			v = '';
@@ -210,6 +177,46 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	getUsecase (id: I.Usecase) {
 		return this.getUsecaseOptions().find(it => it.id == id);
+	};
+
+	onSubmit () {
+		const { close, param } = this.props;
+		const { isLoading, usecase, iconOption } = this.state;
+		const { data } = param;
+		const { onCreate } = data;
+
+		if (isLoading) {
+			return;
+		};
+
+		this.setState({ isLoading: true });
+
+		let name = this.checkName(this.refName.getValue());
+		if (!name) {
+			const item = this.getUsecase(usecase);
+
+			if (item) {
+				name = item.name;
+			};
+		};
+
+		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
+			this.setState({ isLoading: false });
+
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			if (onCreate) {
+				onCreate(message.objectId);
+			};
+
+			UtilRouter.switchSpace(message.objectId, '', () => close());
+
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
+			analytics.event('SelectUsecase', { type: usecase });
+		});
 	};
 
 });

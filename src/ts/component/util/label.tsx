@@ -29,7 +29,7 @@ class Label extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={id} 
 				className={cn.join(' ')} 
-				dangerouslySetInnerHTML={{ __html: text }} 
+				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
 				onClick={onClick} 
 				onMouseEnter={this.props.onMouseEnter}
 				onMouseLeave={this.props.onMouseLeave}

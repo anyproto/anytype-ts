@@ -29,7 +29,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 	};
 
 	render () {
-		const { id, type, subType, icon, arrow, text, className, color, onClick, dataset } = this.props;
+		const { id, type, subType, icon, arrow, text, className, color, onMouseDown, onClick, dataset } = this.props;
 		const cn = [ 'button', color, className ];
 		const { isLoading } = this.state;
 
@@ -47,14 +47,15 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						ref={node => this.node = node}
 						id={id} 
 						className={cn.join(' ')} 
-						onMouseDown={onClick} 
+						onClick={onClick}
+						onMouseDown={onMouseDown} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
 					>
 						{isLoading ? <Loader /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
-						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
+						<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 						{arrow ? <div className="arrow" /> : ''}
 					</div>
 				);

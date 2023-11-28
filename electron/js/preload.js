@@ -39,9 +39,13 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');
-		name = name.replace('..', '');
+		options = options || {};
 
-		const fp = path.join(tmpPath, name);
+		const fn = path.parse(name).base;
+		const fp = path.join(tmpPath, fn);
+
+		options.mode = 0o666;
+
 		fs.writeFileSync(fp, data, options);
 		return fp;
 	},

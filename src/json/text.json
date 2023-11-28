@@ -125,6 +125,8 @@
 	"pluralBlock": "Block|Blocks",
 	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
+	"pluralLinks": "link from|links from",
+	"pluralBacklinks": "link to|links to",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -532,6 +534,8 @@
 	"blockFeaturedTypeMenuOpenSet": "Open set",
 	"blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
 	"blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
+	"blockFeaturedLinks": "Links from object",
+	"blockFeaturedBacklinks": "Links to object",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",
@@ -673,7 +677,7 @@
 	"popupSettingsImportHtmlTitle": "HTML Import",
 	"popupSettingsImportTextTitle": "Text Import",
 	"popupSettingsImportProtobufTitle": "Any-Block Import",
-	"popupSettingsImportMarkdownTitle": "Markown Import",
+	"popupSettingsImportMarkdownTitle": "Markdown Import",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
@@ -725,6 +729,7 @@
 
 	"popupSearchPlaceholder": "Search for an object...",
 	"popupSearchEmpty": "No Objects found",
+	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
@@ -969,6 +974,12 @@
 	"popupPhraseLabel3": "That's why it's essential to keep your Recovery Phrase safe. As the sole owner, nobody can help you if it's lost.",
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
+
+	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseUpdated": "Updated: %s",
+	"popupUsecaseInstall": "Install",
+	"popupUsecaseMenuLabel": "Install experience to",
+	"popupUsecaseSpaceCreate": "Create new space",
 
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
@@ -1587,6 +1598,22 @@
 	"origin4": "Webclipper",
 	"origin5": "Sharing Extension",
 	"origin6": "Usecase",
-	"origin7": "Built-in"
+	"origin7": "Built-in",
+
+	"emojiCategoryPeople": "Smileys & People",
+	"emojiCategoryNature": "Animals & Nature",
+	"emojiCategoryFoods": "Food & Drink",
+	"emojiCategoryActivity": "Activities",
+	"emojiCategoryPlaces": "Travel & Places",
+	"emojiCategoryObjects": "Objects",
+	"emojiCategorySymbols": "Symbols",
+	"emojiCategoryFlags": "Flags",
+
+	"notification0SuccessTitle": "&quot;%s&quot; was installed",
+	"notification0SuccessText": "Experience was successfully  installed to a new space. You can now open and start using it.",
+	"notification0ErrorTitle": "Something went wrong",
+	"notification0ErrorText": "Oops! &quot;%s&quot; wasn't installed. Please check your internet connection and try again or post a report on forum.",
+
+	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights."
 
 }

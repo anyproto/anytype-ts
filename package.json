@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.36.1-alpha",
+	"version": "0.36.2-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -89,20 +89,23 @@
 	},
 	"dependencies": {
 		"@electron/remote": "^2.0.8",
+		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
+		"@types/emoji-mart": "^3.0.13",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
+		"dompurify": "^3.0.6",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
 		"electron-updater": "^4.6.5",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
-		"emoji-mart": "^3.0.1",
+		"emoji-mart": "^5.5.2",
 		"file-type": "^12.4.2",
 		"findandreplacedomtext": "^0.4.6",
 		"google-protobuf": "^3.14.0",
@@ -137,7 +140,8 @@
 		"read-chunk": "^3.2.0",
 		"sanitize-filename": "^1.6.3",
 		"selection-ranges": "^3.0.3",
-		"sha1": "^1.1.1"
+		"sha1": "^1.1.1",
+		"swiper": "^11.0.3"
 	},
 	"build": {
 		"npmRebuild": true,
@@ -543,7 +547,8 @@
 				"snap",
 				"AppImage",
 				"deb",
-				"rpm"
+				"rpm",
+				"tar.gz"
 			],
 			"description": "Anytype",
 			"publish": [

@@ -348,7 +348,7 @@ html.themeDark {
     /* Footer */
 
     .footer {
-        .iconWrap .bg { background-color: $colorShapeSecondary; }
+        .iconWrap .bg { background-color: $colorShapeSecondary; border-color: $colorShapeSecondary; }
     }
 
     /* Sidebar */
@@ -397,6 +397,23 @@ html.themeDark {
         .name { border-color: $colorTextSecondary; }
         .name:hover { color: $colorTextPrimary; border-color: $colorTextPrimary; }
     }
+
+	/* Notifications */
+
+	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
+	.notifications {
+		.head {
+			.icon { background-color: $colorBgPrimary; border-color: $colorBgSecondary; }
+			.icon:hover { background-color: $colorShapeHighlightMedium; }
+		}
+
+		.notification {	background: $colorBgSecondary; @include shadow; border: 0px; }
+
+		.notification {
+			.icon.delete { border-color: $colorShapeSecondary; background-color: $colorBgSecondary; }
+		}
+	}
 }
 
 html.platformWindows.themeDark, html.platformLinux.themeDark {

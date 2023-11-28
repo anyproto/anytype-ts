@@ -1,4 +1,5 @@
 const { app } = require('electron');
+const { is } = require('electron-util');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
@@ -92,12 +93,26 @@ class UpdateManager {
 		});
 	};
 
+	isAllowed () {
+		const [ major, minor, patch ] = String(process.getSystemVersion() || '').split('.');
+
+		if (is.windows && (major <= 8)) {
+			return false;
+		};
+
+		return true;
+	};
+
 	setChannel (channel) {
 		autoUpdater.channel = channel;
 		this.checkUpdate(false);
 	};
 
 	checkUpdate (auto) {
+		if (!this.isAllowed()) {
+			return;
+		};
+
 		Util.log('info', 'isUpdating: ' + this.isUpdating);
 
 		if (this.isUpdating) {

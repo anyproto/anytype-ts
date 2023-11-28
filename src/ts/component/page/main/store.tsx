@@ -604,9 +604,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onScroll ({ scrollTop }) {
-		const win = $(window);
-		const menus = menuStore.list.filter(it => Constant.menuIds.store.includes(it.id));
-
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
@@ -615,9 +612,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.refFilter.forceUpdate();
 		};
 
-		for (const menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
-		};
+		menuStore.resizeAll();
 	};
 
 	getLimit () {

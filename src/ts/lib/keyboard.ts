@@ -556,8 +556,7 @@ class Keyboard {
 			case 'debugSpace': {
 				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
-						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
-
+						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 						Renderer.send('pathOpen', tmpPath);
 					};
 				});
@@ -773,45 +772,50 @@ class Keyboard {
 
 	onSpaceMenu (shortcut: boolean) {
 		if (menuStore.isOpen('space')) {
+			menuStore.close('space');
 			return;
 		};
 
-		menuStore.closeAll(Constant.menuIds.navigation, () => {
-			menuStore.open('space', {
-				element: '#navigationPanel',
-				className: 'fixed',
-				classNameWrap: 'fromNavigation',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Center,
-				vertical: I.MenuDirection.Top,
-				offsetY: -12,
-				data: {
-					shortcut,
-				}
+		popupStore.close('search', () => {
+			menuStore.closeAll(Constant.menuIds.navigation, () => {
+				menuStore.open('space', {
+					element: '#navigationPanel',
+					className: 'fixed',
+					classNameWrap: 'fromNavigation',
+					type: I.MenuType.Horizontal,
+					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
+					offsetY: -12,
+					data: {
+						shortcut,
+					}
+				});
 			});
 		});
 	};
 
 	onQuickCapture () {
-		const element = '#button-navigation-plus';
-
 		if (menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
 		};
 
-		menuStore.closeAll(Constant.menuIds.navigation, () => {
-			menuStore.open('quickCapture', {
-				element,
-				className: 'fixed',
-				classNameWrap: 'fromNavigation',
-				type: I.MenuType.Horizontal,
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Center,
-				noFlipY: true,
-				offsetY: -20,
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+		const element = '#button-navigation-plus';
+
+		popupStore.close('search', () => {
+			menuStore.closeAll(Constant.menuIds.navigation, () => {
+				menuStore.open('quickCapture', {
+					element,
+					className: 'fixed',
+					classNameWrap: 'fromNavigation',
+					type: I.MenuType.Horizontal,
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
+					noFlipY: true,
+					offsetY: -20,
+					onOpen: () => $(element).addClass('active'),
+					onClose: () => $(element).removeClass('active'),
+				});
 			});
 		});
 	};

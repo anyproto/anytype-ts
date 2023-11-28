@@ -122,6 +122,7 @@ class UtilObject {
 		};
 
 		let { id, spaceId } = object;
+
 		if (identityProfileLink) {
 			id = identityProfileLink;
 			spaceId = accountSpaceId;

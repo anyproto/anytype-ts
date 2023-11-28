@@ -68,7 +68,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						onChange={this.onFilterChange}
 					/>
 				) : ''}
-				<div className="items">
+				<div className="items scrollWrap">
 					{items.map((item: any, i: number) => (
 						<Item key={i} idx={i} {...item} />
 					))}
@@ -84,6 +84,16 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	componentDidUpdate () {
+		const filter = this.refFilter?.getValue();
+
+		if (this.filter != filter) {
+			this.filter = filter;
+			this.n = 0;
+			this.offset = 0;
+			this.load(true);
+			return;
+		};
+
 		this.props.position();
 		this.resize();
 		this.rebind();
@@ -110,15 +120,14 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 
 		const filter = String(this.filter || '');
-		const sorts = [
-			{ relationKey: 'spaceId', type: I.SortType.Desc },
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-
-		let filters: any[] = [
+		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+		];
+		const sorts = [
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		UtilData.search({
@@ -205,12 +214,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.filter = this.refFilter.getValue();
-			this.n = 0;
-			this.offset = 0;
-			this.load(true);
-		}, Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
 	};
 
 	onKeyDown (e: any) {

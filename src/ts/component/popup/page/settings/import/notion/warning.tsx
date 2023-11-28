@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, C, translate, analytics } from 'Lib';
+import { I, C, translate, analytics, UtilCommon } from 'Lib';
 import { commonStore, popupStore } from 'Store';
 import Head from '../../head';
 
@@ -20,10 +20,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi1') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi2') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi3') }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: translate('popupSettingsImportNotionWarningLi4') }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
 					</ol>
 				</div>
 

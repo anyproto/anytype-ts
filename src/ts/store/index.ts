@@ -6,6 +6,7 @@ import { dbStore } from './db';
 import { menuStore } from './menu';
 import { popupStore } from './popup';
 import { extensionStore } from './extension';
+import { notificationStore } from './notification';
 
 export {
 	commonStore,
@@ -16,4 +17,5 @@ export {
 	menuStore,
 	popupStore,
 	extensionStore,
+	notificationStore,
 };
