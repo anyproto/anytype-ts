@@ -158,6 +158,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						cn.push('last');
 					};
 
+					if ([ 'links', 'backlinks' ].includes(relationKey)) {
+						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+						const l = options.length;
+
+						return (
+							<span className="cell" key={i}>
+								{bullet}
+								<div className="cellContent" onClick={e => this.onLinks(e, relationKey)}>
+									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+								</div>
+							</span>
+						);
+					};
+
 					return (
 						<span
 							key={i}
@@ -619,6 +633,46 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	onLinks (e: React.MouseEvent, id: any) {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
+		const object = detailStore.get(rootId, storeId, featuredRelations);
+		const options = object[id].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+
+		const mapper = (it: any) => ({
+			...it,
+			withDescription: true,
+			iconSize: 40,
+			object: {
+				iconEmoji: it.iconEmoji,
+				iconImage: it.iconImage
+			}
+		});
+		const mapped  = options.map(mapper);
+
+		const menuParam = {
+			element: e.currentTarget,
+			title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
+			width: 360,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Bottom,
+			noFlipY: true,
+			data: {
+				options: mapped,
+				forceLetter: true,
+				onSelect: (e: any, item: any) => {
+					UtilObject.openAuto(item);
+				}
+			}
+		};
+
+		menuStore.closeAll([ 'select' ], () => {
+			menuStore.open('select', menuParam);
+		});
 	};
 
 	elementMapper (relation: any, item: any) {
