@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { ObjectType, Cell, Select } from 'Component';
+import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -20,7 +20,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	menuContext: any = null;
 	setId = '';
 	node = null;
-	linksOptions: any = { linksFrom: [], linksTo: [] };
 
 	public static defaultProps = {
 		iconSize: 24,
@@ -41,13 +40,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.elementMapper = this.elementMapper.bind(this);
-		this.getLinksOptions = this.getLinksOptions.bind(this);
 	};
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations', 'backlinks', 'links' ], true);
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 		const object = detailStore.get(rootId, storeId, featuredRelations);
 		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
@@ -110,17 +108,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 
-		const links = [];
-		const lfl = this.linksOptions.linksFrom.length;
-		const ltl = this.linksOptions.linksTo.length;
-
-		if (lfl) {
-			links.push({ id: 'linksFrom', label: `${lfl} ${UtilCommon.plural(lfl, translate('pluralLinkFrom'))}`});
-		};
-		if (ltl) {
-			links.push({ id: 'linksTo', label: `${ltl} ${UtilCommon.plural(ltl, translate('pluralLinkTo'))}`});
-		};
-
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -171,6 +158,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						cn.push('last');
 					};
 
+					if ([ 'links', 'backlinks' ].includes(relationKey)) {
+						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+						const l = options.length;
+
+						return (
+							<span className="cell" key={i}>
+								{bullet}
+								<div className="cellContent" onClick={e => this.onLinks(e, relationKey)}>
+									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+								</div>
+							</span>
+						);
+					};
+
 					return (
 						<span
 							key={i}
@@ -207,15 +208,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						</span>
 					);
 				})}
-
-				{links.map((links: any, i: number) => (
-					<span className="cell" key={i}>
-						{bullet}
-						<div className="cellContent" onClick={e => this.onLinks(e, links.id)}>
-							{links.label}
-						</div>
-					</span>
-				))}
 			</div>
 		);
 	};
@@ -232,7 +224,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		this.init();
-		this.getLinksOptions();
 	};
 
 	componentDidUpdate (): void {
@@ -302,40 +293,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 
 		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
-	};
-
-	getLinksOptions () {
-		const { rootId } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'links', 'backlinks' ], true);
-		const linksFrom = Relation.getArrayValue(object.links);
-		const linksTo = Relation.getArrayValue(object.backlinks);
-		const options: any = {
-			linksFrom: [],
-			linksTo: []
-		};
-
-		const mapper = (it: any) => ({
-			...it,
-			withDescription: true,
-			iconSize: 40,
-			object: {
-				iconEmoji: it.iconEmoji,
-				iconImage: it.iconImage
-			}
-		});
-
-		UtilObject.getByIds(linksFrom, (lfObjects) => {
-			console.log('LF: ', lfObjects)
-			options.linksFrom = lfObjects.map(mapper);
-
-			UtilObject.getByIds(linksTo, (ltObjects) => {
-				options.linksTo = ltObjects.map(mapper);
-
-				this.linksOptions = options;
-				this.forceUpdate();
-			});
-		})
 	};
 
 	onFocus () {
@@ -679,15 +636,33 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onLinks (e: React.MouseEvent, id: any) {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
+		const object = detailStore.get(rootId, storeId, featuredRelations);
+		const options = object[id].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+
+		const mapper = (it: any) => ({
+			...it,
+			withDescription: true,
+			iconSize: 40,
+			object: {
+				iconEmoji: it.iconEmoji,
+				iconImage: it.iconImage
+			}
+		});
+		const mapped  = options.map(mapper);
+
 		const menuParam = {
 			element: e.currentTarget,
+			title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
 			width: 360,
 			horizontal: I.MenuDirection.Left,
 			vertical: I.MenuDirection.Bottom,
 			noFlipY: true,
 			data: {
-				menuLabel: translate(`blockFeatured${id.charAt(0).toUpperCase() + id.slice(1)}`),
-				options: this.linksOptions[id],
+				options: mapped,
 				forceLetter: true,
 				onSelect: (e: any, item: any) => {
 					UtilObject.openAuto(item);

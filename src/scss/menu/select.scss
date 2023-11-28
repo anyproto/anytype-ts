@@ -22,11 +22,6 @@
 		.content { padding: 8px 0px 0px 0px; }
 		.items { height: calc(100% - 34px); }
 	}
-
-	.menu.menuSelect.withLabel {
-		.menuLabel { padding: 12px 16px 0px; @include text-common; font-weight: 600; }
-		.items { height: calc(100% - 34px); }
-	}
 	
 	.menu.menuSelect.skip { width: 320px; }
 	.menu.menuSelect.skip {

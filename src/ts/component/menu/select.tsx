@@ -395,7 +395,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noScroll, menuLabel } = data;
+		const { noScroll } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
@@ -408,9 +408,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			};
 			if (!withFilter || noScroll) {
 				height += 16;
-			};
-			if (menuLabel) {
-				height += 42;
 			};
 
 			if (!items.length) {
@@ -427,7 +424,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
-		menuLabel ? obj.addClass('withLabel') : obj.removeClass('withLabel');
 
 		position();
 	};
