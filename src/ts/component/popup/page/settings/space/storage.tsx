@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Title, ListObjectManager } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon, Action } from 'Lib';
-import { popupStore } from 'Store';
+import { Title, ListObjectManager } from 'Component';
+import { analytics, I, translate, Action } from 'Lib';
 import Constant from 'json/constant.json';
 import Head from '../head';
 
@@ -27,12 +26,6 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
 		];
 
-        const Info = (item: any) => (
-            <React.Fragment>
-                <Label text={String(UtilFile.size(item.sizeInBytes))} />
-            </React.Fragment>
-        );
-
         return (
             <div className="wrap">
                 <Head onPage={this.onBack} name={translate('commonBack')} />
@@ -44,7 +37,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                     rowLength={2}
                     withArchived={true}
                     buttons={buttons}
-                    Info={Info}
+					info={I.ObjectManagerItemInfo.FileSize}
                     iconSize={18}
                     sorts={sorts}
                     filters={filters}

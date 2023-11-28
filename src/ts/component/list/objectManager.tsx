@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch } from 'Component';
-import { UtilData, I, UtilCommon, translate, UtilObject } from 'Lib';
+import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
+import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -12,7 +12,7 @@ interface Props {
     rowLength: number;
     withArchived: boolean;
     buttons: I.ButtonComponent[];
-    Info: (item: any) => any;
+	info?: I.ObjectManagerItemInfo,
     iconSize: number;
     textEmpty: string;
     filters?: I.Filter[];
@@ -20,6 +20,8 @@ interface Props {
     rowHeight?: number;
     resize?: () => void;
     sources?: string[];
+	collectionId?: string;
+	onAfterLoad?: (message: any) => void;
 };
 
 interface State {
@@ -58,7 +60,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { isLoading } = this.state;
-        const { buttons, rowHeight, Info, iconSize } = this.props;
+        const { buttons, rowHeight, iconSize, info } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
 		const filter = this.getFilterValue();
@@ -78,6 +80,25 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         } else {
             buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: this.onSelectAll });
         };
+
+		const Info = (item: any) => {
+			let itemInfo: any = null;
+
+			switch (info) {
+				default:
+				case I.ObjectManagerItemInfo.Description: {
+					itemInfo = <ObjectDescription object={item} />;
+					break;
+				};
+
+				case I.ObjectManagerItemInfo.FileSize: {
+					itemInfo = <Label text={String(UtilFile.size(item.sizeInBytes))} />;
+					break;
+				};
+			};
+
+			return itemInfo;
+		};
 
         const Button = (item: any) => (
             <div className="element" onClick={item.onClick}>
@@ -315,6 +336,18 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         return [ start, end ];
     };
 
+	setSelectedRange (start: number, end: number) {
+		const { subId } = this.props;
+		const records = dbStore.getRecords(subId, '');
+
+		if (end > records.length) {
+			end = records.length;
+		};
+
+		this.selected = this.selected.concat(records.slice(start, end));
+		this.forceUpdate();
+	};
+
     onSelectAll () {
         this.selected.length ? this.selectionClear() : this.selectionAll();
     };
@@ -335,7 +368,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     };
 
     getData () {
-        const { subId, sources, withArchived } = this.props;
+        const { subId, sources, withArchived, collectionId, onAfterLoad } = this.props;
         const filter = this.getFilterValue();
         const filters = [].concat(this.props.filters || []);
 		const sorts = [].concat(this.props.sorts || []);
@@ -351,9 +384,14 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             sorts,
             filters,
             withArchived,
-            sources: sources || []
-        }, () => {
+            sources: sources || [],
+			collectionId: collectionId || ''
+        }, (message) => {
            this.setState({ isLoading: false });
+
+		   if (onAfterLoad) {
+			   onAfterLoad(message);
+		   };
         });
     };
 

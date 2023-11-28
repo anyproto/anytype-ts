@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, Mark } from 'Lib';
+import { I, Mark, UtilCommon } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -146,7 +146,7 @@ class Editable extends React.Component<Props> {
 	};
 
 	setValue (html: string) {
-		this.editable.get(0).innerHTML = html;
+		this.editable.get(0).innerHTML = UtilCommon.sanitize(html);
 	};
 
 	getTextValue (): string {

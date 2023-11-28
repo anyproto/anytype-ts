@@ -915,7 +915,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.ref.refList.scrollToRow(Math.max(0, idx));
 		};
 
-		this.setHover(items[this.ref.n], scroll);
+		const next = items[this.ref.n];
+
+		if (next && (next.isDiv || next.isSection)) {
+			this.ref.n++;
+			this.setActive(items[this.ref.n], scroll);
+		} else {
+			this.setHover(next, scroll);
+		};
 	};
 	
 	setHover (item?: any, scroll?: boolean) {

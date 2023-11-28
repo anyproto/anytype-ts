@@ -107,7 +107,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
 
-		this.refSubmit.setLoading(true);
+		this.refSubmit?.setLoading(true);
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {

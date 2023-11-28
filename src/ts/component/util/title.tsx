@@ -20,7 +20,7 @@ class Title extends React.Component<Props> {
 		return (
 			<div 
 				className={cn.join(' ')} 
-				dangerouslySetInnerHTML={{ __html: text }} 
+				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
 				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);

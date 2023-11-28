@@ -60,9 +60,9 @@ class UtilGraph {
 					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
-					const data = UtilSmile.data(d.iconEmoji);
-					if (data) {
-						src = UtilSmile.srcFromColons(data.colons, data.skin);
+					const code = UtilSmile.getCode(d.iconEmoji);
+					if (code) {
+						src = UtilSmile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
 				} else

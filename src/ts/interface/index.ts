@@ -29,6 +29,8 @@ import {
 	StoreTab,
 	HomePredefinedId,
 	Usecase,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -37,6 +39,7 @@ import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
+import { NotificationType, Notification, NotificationComponent } from './notification';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
@@ -117,6 +120,8 @@ export {
 	ThreadCafe,
 	FilesStatus,
 	BannerType,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
 
 	Progress,
 	ProgressType,
@@ -150,6 +155,10 @@ export {
 
 	RestrictionObject, 
 	RestrictionDataview,
+
+	NotificationType, 
+	Notification,
+	NotificationComponent,
 	
 	PageInfo,
 

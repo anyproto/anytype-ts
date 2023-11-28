@@ -49,6 +49,7 @@ module.exports = {
 			},
 		],
 
+		'@typescript-eslint/no-namespace': 'off',
 		'@typescript-eslint/no-unsafe-member-access': 'off',
 		'@typescript-eslint/no-extra-semi': 'off',
 		'@typescript-eslint/no-empty-function': 'off',
