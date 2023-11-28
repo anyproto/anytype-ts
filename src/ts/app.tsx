@@ -21,7 +21,6 @@ configure({ enforceActions: 'never' });
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
-import 'emoji-mart/css/emoji-mart.css';
 import 'swiper/scss';
 
 import 'scss/common.scss';
@@ -64,6 +63,14 @@ declare global {
 		isWebVersion: boolean;
 		Config: any;
 		Renderer: any;
+	}
+};
+
+declare global {
+	namespace JSX {
+		interface IntrinsicElements {
+			['em-emoji']: any;
+		}
 	}
 };
 
