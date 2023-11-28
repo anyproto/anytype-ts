@@ -125,6 +125,8 @@
 	"pluralBlock": "Block|Blocks",
 	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
+	"pluralLinks": "link from|links from",
+	"pluralBacklinks": "link to|links to",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -532,6 +534,8 @@
 	"blockFeaturedTypeMenuOpenSet": "Open set",
 	"blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
 	"blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
+	"blockFeaturedLinks": "Links from object",
+	"blockFeaturedBacklinks": "Links to object",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",
@@ -725,6 +729,7 @@
 
 	"popupSearchPlaceholder": "Search for an object...",
 	"popupSearchEmpty": "No Objects found",
+	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",

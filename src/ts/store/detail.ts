@@ -215,6 +215,12 @@ class DetailStore {
 				object = this.mapSpace(object);
 				break;
 			};
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image: {
+				object = this.mapFile(object);
+				break;
+			};
 		};
 
 		return object;
@@ -301,6 +307,11 @@ class DetailStore {
 
 		delete(object.spaceAccessibility);
 
+		return object;
+	};
+
+	private mapFile (object) {
+		object.sizeInBytes = Number(object.sizeInBytes) || 0;
 		return object;
 	};
 
