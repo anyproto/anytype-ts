@@ -23,14 +23,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, style, targetObjectId } = content;
-		
-		let object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
-		if (object._empty_) {
-			object = UtilCommon.objectCopy(content);
-			object.sizeInBytes = object.size;
-		};
-
-		const { name, sizeInBytes } = object;
+		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
 
 		let element = null;
 		switch (state) {
@@ -60,8 +53,8 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 				element = (
 					<div className="flex" onMouseDown={this.onOpen}>
 						<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
-						<span className="name">{name}</span>
-						<span className="size">{UtilFile.size(sizeInBytes)}</span>
+						<span className="name">{object.name}</span>
+						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 					</div>
 				);
 				break;
@@ -119,13 +112,9 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	};
 	
 	onOpen (e: any) {
-		if (e.button) {
-			return;
+		if (!e.button) {
+			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
 		};
-
-		const { block } = this.props;
-		
-		UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 	};
 	
 });

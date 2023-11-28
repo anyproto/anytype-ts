@@ -18,6 +18,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		super(props);
 
 		this.scrollTo = this.scrollTo.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -42,7 +43,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (isLocked) {
+		if (readonly) {
 			allowedBlock = false;
 			allowedRelation = false;
 			allowedValue = false;
@@ -66,10 +67,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
-								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
-								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
-								canDrag={allowedBlock && !readonly}
-								canFav={allowedValue && !readonly}
+								readonly={!(allowedValue && !item.isReadonlyValue)}
+								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canDrag={allowedBlock}
+								canFav={allowedValue}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -82,7 +83,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		);
 
 		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={this.onAdd}>
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
@@ -111,9 +112,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.off('scroll').on('scroll', (e: any) => { this.onScroll(); });
-
 		this.selectionPrevent(true);
+
+		scrollWrap.off('scroll').on('scroll', () => this.onScroll());
 	};
 
 	componentDidUpdate () {
