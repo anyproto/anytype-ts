@@ -139,12 +139,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onScroll () {
-		const win = $(window);
-		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
-
-		for (const menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
-		};
+		menuStore.resizeAll();
 	};
 
 	getSections () {
@@ -178,7 +173,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return !config.debug.ho ? !it.isHidden : true;
 		});
 
-		let sections = [ 
+		const sections = [ 
 			{ 
 				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),
@@ -279,7 +274,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			classNameWrap,
 			data: {
 				...data,
-				readonly: Boolean(readonly || root.isLocked() || !allowed),
+				readonly: Boolean(readonly || root?.isLocked() || !allowed),
 				relationId: id,
 				ref: 'menu',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

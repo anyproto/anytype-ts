@@ -314,7 +314,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onType () {
-		const { getId, param } = this.props;
+		const { id, getId, param } = this.props;
 		const { data } = param;
 		const { onTypeChange } = data;
 
@@ -327,7 +327,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 				],
-				onClick: (type) => {
+				onClick: type => {
 					data.typeId = type.id;
 					data.templateId = type.defaultTemplateId || Constant.templateId.blank;
 

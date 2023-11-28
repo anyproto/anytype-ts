@@ -49,6 +49,7 @@
 				.item:hover, .item.active { background: $colorShapePrimary; }
 				.item {
 					.icon { width: 22px; height: 22px; flex-shrink: 0; }
+					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }

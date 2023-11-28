@@ -424,6 +424,14 @@
 		}
 	}
 
+	/* MenuSelect */
+
+	.menu.menuSelect.spaceSelect {
+		.item {
+			.icon.add { border-color: $colorShapeSecondary; }
+		}
+	}
+
 	/* MenuQuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }

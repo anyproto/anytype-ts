@@ -384,10 +384,11 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const lang = this.getLang();
 		
 		if (lang) {
-			this.input.innerHTML = Prism.highlight(value, Prism.languages[lang], lang);
+			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
 		} else {
 			this.input.innerText = value;
 		};
+
 		this.setContent(value);
 	};
 

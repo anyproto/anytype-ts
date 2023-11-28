@@ -8,11 +8,11 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, Encode, Decode,
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -21,7 +21,7 @@ configure({ enforceActions: 'never' });
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
-import 'emoji-mart/css/emoji-mart.css';
+import 'swiper/scss';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';
@@ -34,6 +34,7 @@ import 'scss/list/common.scss';
 import 'scss/widget/common.scss';
 import 'scss/popup/common.scss';
 import 'scss/menu/common.scss';
+import 'scss/notification/common.scss';
 
 import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
@@ -44,6 +45,7 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+
 interface RouteElement { path: string; };
 
 interface State {
@@ -64,6 +66,14 @@ declare global {
 	}
 };
 
+declare global {
+	namespace JSX {
+		interface IntrinsicElements {
+			['em-emoji']: any;
+		}
+	}
+};
+
 const rootStore = {
 	commonStore,
 	authStore,
@@ -72,6 +82,7 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	notificationStore,
 };
 
 if (!window.Electron.isPackaged) {
@@ -86,6 +97,7 @@ if (!window.Electron.isPackaged) {
 		UtilObject,
 		UtilMenu,
 		UtilRouter,
+		UtilSmile,
 		analytics,
 		dispatcher,
 		keyboard,
@@ -191,6 +203,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<Navigation />
+						<ListNotification key="listNotification" />
 
 						<div id="tooltipContainer" />
 						<div id="drag" />
@@ -209,9 +222,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-	};
-
-	componentDidUpdate () {
 	};
 
 	init () {

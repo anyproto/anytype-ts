@@ -84,7 +84,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getSections (): any[] {
-		const { graph, config } = commonStore;
+		const { graph } = commonStore;
 
 		let sections: any[] = [
 			{ 
@@ -99,7 +99,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'link', name: translate('menuGraphSettingsLinks') },
 					{ id: 'relation', name: translate('menuGraphSettingsRelations') },
 					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
-					config.experimental ? { id: 'local', name: translate('menuGraphSettingsLocal') } : null,
+					{ id: 'local', name: translate('menuGraphSettingsLocal') },
 				] 
 			}
 		];

@@ -16,6 +16,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	ref = null;
 	last = '';
 	n = 0;
+	toggled = [];
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -153,6 +154,15 @@ class MenuSearchText extends React.Component<I.Menu> {
 					return false;
 				};
 
+				const parents = $(el).parents('.block.textToggle:not(.isToggled)');
+				if (parents.length) {
+					const parent = $(parents[0]);
+					const id = parents.attr('data-id');
+
+					this.toggled.push(id);
+					parent.addClass('isToggled');
+				};
+
 				const style = window.getComputedStyle(el);
 				if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
 					return false;
@@ -191,6 +201,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 			item.replaceWith(item.html());
 		});
 
+		for (const id of this.toggled) {
+			$(`#block-${id}`).removeClass('isToggled');
+		};
+
+		this.toggled = [];
 		switcher.removeClass('active');
 	};
 

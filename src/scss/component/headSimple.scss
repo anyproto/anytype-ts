@@ -4,7 +4,7 @@
 .headSimple {
 	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
 	.side.left {
-		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: stretch; }
+		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-start; justify-content: stretch; }
 		.titleWrap {
 			> .iconObject { flex-shrink: 0; }
 			> .title { @include text-header1; }

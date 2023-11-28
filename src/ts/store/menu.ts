@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
-
 class MenuStore {
 
     public menuList: I.Menu[] = [];
@@ -219,6 +218,14 @@ class MenuStore {
 
 	checkKey (key: string) {
 		return this.menuList.find(it => it.param.menuKey == key) ? true : false;
+	};
+
+	resizeAll () {
+		const win = $(window);
+
+		this.list.forEach(it => {
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
+		});
 	};
 
 };
