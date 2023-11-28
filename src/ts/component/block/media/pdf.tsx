@@ -42,9 +42,11 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { id, fields, content } = block;
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
-		const object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
+		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
 		const width = Number(fields) || 0;
 		const css: any = {};
+
+		console.log(object);
 
 		let element = null;
 		let pager = null;
