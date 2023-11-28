@@ -663,7 +663,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onSkin (e: any, n: string, id: string) {
-		const { getId, close } = this.props;
+		const { getId, close, param } = this.props;
 		const item = UtilSmile.data.emojis[id];
 
 		if (item.skins.length <= 1) {
@@ -671,6 +671,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		menuStore.open('smileSkin', {
+			...param,
 			type: I.MenuType.Horizontal,
 			element: `#${getId()} #item-${$.escapeSelector(n)}`,
 			vertical: I.MenuDirection.Top,
