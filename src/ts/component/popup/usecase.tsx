@@ -102,7 +102,6 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const object = this.getObject();
 
 		const cb = (spaceId: string) => {
-			this.refButton.setLoading(true);
 			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, () => close());
 		};
 
