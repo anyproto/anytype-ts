@@ -1322,7 +1322,7 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1393,6 +1393,7 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 	request.setNoprogress(noProgress);
 	request.setIsmigration(isMigration);
 	request.setUpdateexistingobjects(updateExisting);
+	request.setIsnewspace(isNewSpace);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
@@ -1414,12 +1415,13 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectImportExperience = (spaceId: string, url: string, title: string, callBack?: (message: any) => void) => {
+const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
 	request.setUrl(url);
 	request.setTitle(title);
+	request.setIsnewspace(isNewSpace);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
