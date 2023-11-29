@@ -4,7 +4,7 @@
 	.block.blockEmbed { padding: 6px 0px; }
 	.block.blockEmbed { 
 		.wrap { padding: 2px 0px; }
-		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 6px; }
+		.wrap.isEditing { padding: 8px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			#input { display: block; }
@@ -13,8 +13,9 @@
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
 		#input { 
-			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
-			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
+			background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; font-family: 'Inter'; padding: 6px 12px; 
+			@include text-common; -webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; 
+			margin-top: 8px; border-radius: 8px;
 		}
 
 		.button.source { position: absolute; top: 10px; right: 10px; display: none; } 
@@ -34,11 +35,12 @@
 		.selectWrap { text-align: left; }
 		.selectWrap {
 			.select { 
-				border: 0px; color: $colorControlActive; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+				border: 0px; color: $colorTextSecondary; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
 				display: none; margin-bottom: 8px;
 			}
 			.select {
 				.name { overflow: visible; }
+				.icon.arrow.light { background-image: url('~img/arrow/select/secondary.svg') !important; }
 			}
 			.select:hover, .select.active { background: none; }
 		}
