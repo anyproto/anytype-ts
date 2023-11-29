@@ -209,7 +209,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	onEdit (): void {
 		const { isEditing } = this.state;
 		const win = $(window);
-		
+
 		this.setEditing(!isEditing);
 
 		if (isEditing) {
@@ -218,7 +218,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		analytics.event('EditWidget');
 
-		const unbind = () => win.off('click.sidebar keydown.sidebar');
+		const unbind = () => win.off('mousedown.sidebar keydown.sidebar');
 		const close = e => {
 			e.stopPropagation();
 
@@ -228,7 +228,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		unbind();
 
-		win.on('click.sidebar', e => {
+		win.on('mousedown.sidebar', e => {
 			if (!$(e.target).parents('.widget').length) {
 				close(e);
 			};
