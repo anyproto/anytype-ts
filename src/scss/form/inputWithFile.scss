@@ -18,12 +18,12 @@
 	#url { height: 20px; line-height: 20px; vertical-align: top; padding: 0px; border: 0px; color: $colorTextPrimary; }
 
 	.icon { width: 20px; height: 20px; margin: 0px 6px 0px 0px; transition: none; vertical-align: top; }
-	.icon.image { background-image: url('~img/icon/menu/action/block/image0.svg'); }
-	.icon.video { background-image: url('~img/icon/menu/action/block/video0.svg'); }
-	.icon.file { background-image: url('~img/icon/menu/action/block/file0.svg'); }
+	.icon.image { background-image: url('~img/icon/menu/action/block/media/image0.svg'); }
+	.icon.video { background-image: url('~img/icon/menu/action/block/media/video0.svg'); }
+	.icon.file { background-image: url('~img/icon/menu/action/block/media/file0.svg'); }
+	.icon.audio { background-image: url('~img/icon/menu/action/block/media/audio0.svg'); }
+	.icon.pdf { background-image: url('~img/icon/menu/action/block/media/pdf0.svg'); }
 	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
-	.icon.audio { background-image: url('~img/icon/menu/action/block/audio0.svg'); }
-	.icon.pdf { background-image: url('~img/icon/menu/action/block/pdf0.svg'); }
 }
 
 .inputWithFile.isReadonly {
