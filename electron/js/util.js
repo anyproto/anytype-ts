@@ -215,11 +215,11 @@ class Util {
 		return [
 			"da-DK", "de-DE", "en-US",
 			"es-ES", "fr-FR", "hi-IN",
-			"id-ID", "it-IT", "nl-NL",
-			"no-NO", "pl-PL", "pt-BR",
-			"ro-RO", "ru-RU", "tr-TR",
-			"uk-UA", "vi-VN", "zh-CN",
-			"zh-TW"
+			"id-ID", "it-IT", "ja-JP",
+			"nl-NL", "no-NO", "pl-PL",
+			"pt-BR", "ro-RO", "ru-RU",
+			"tr-TR", "uk-UA", "vi-VN",
+			"zh-CN", "zh-TW"
 		];
 	};
 
