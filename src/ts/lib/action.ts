@@ -587,7 +587,6 @@ class Action {
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			analytics.event('SelectUsecase', { type: id, middleTime: message.middleTime });
 			blockStore.closeRecentWidgets();
 
 			if (callBack) {
