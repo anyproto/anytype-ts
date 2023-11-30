@@ -1808,7 +1808,7 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 // ---------------------- NOTIFICATION ---------------------- //
 
 const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.NotificationList.Request();
+	const request = new Rpc.Notification.List.Request();
 
 	request.setIncluderead(includeRead);
 	request.setLimit(limit);
