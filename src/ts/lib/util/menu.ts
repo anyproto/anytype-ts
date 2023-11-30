@@ -7,8 +7,8 @@ class UtilMenu {
 
 	mapperBlock (it: any) {
 		it.isBlock = true;
-		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
-		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
+		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
+		it.description = it.lang ? translate(`blockText${it.lang}`) : it.description;
 		return it;
 	};
 	
@@ -63,6 +63,7 @@ class UtilMenu {
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
 		].map(this.mapperBlock).map(it => {
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
+			it.description = translate(`blockText${I.EmbedProcessor[it.id]}`);
 			return it;
 		});
 	};
