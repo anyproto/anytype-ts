@@ -1720,6 +1720,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const length = block.getLength();
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
@@ -1744,9 +1745,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				value: '',
 				options,
 				onSelect: (event: any, item: any) => {
+					const marks = UtilCommon.objectCopy(block.content.marks || []);
+
 					let value = block.content.text;
 					let to = 0;
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 					switch (item.id) {
 						case 'link':
