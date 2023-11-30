@@ -31,7 +31,9 @@
 		"http://localhost:*", 
 		"file://*", 
 		"https://*.youtube.com", 
-		"https://*.vimeocdn.com" 
+		"https://*.vimeocdn.com",
+		"https://*.gstatic.com",
+		"https://*.googleapis.com"
 	],
 
 	"font-src": [ 
@@ -39,7 +41,8 @@
 		"file://*", 
 		"http://localhost:*", 
 		"https://*.youtube.com", 
-		"https://*.vimeocdn.com" 
+		"https://*.vimeocdn.com",
+		"https://*.gstatic.com"
 	],
 
 	"connect-src": [ 
@@ -57,7 +60,10 @@
 		"https://*.googlevideo.com", 
 		"https://*.akamaized.net",
 		"https://*.soundcloud.com",
-		"https://*.sndcdn.com"
+		"https://*.sndcdn.com",
+		"https://*.google.com",
+		"https://*.googleapis.com",
+		"https://*.doubleclick.net"
 	],
 
 	"script-src-elem": [
@@ -69,7 +75,10 @@
 		"https://*.youtube.com",
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
-		"https://*.sndcdn.com"
+		"https://*.sndcdn.com",
+		"https://*.google.com",
+		"https://*.googleapis.com",
+		"https://*.doubleclick.net"
 	],
 
 	"frame-src": [
@@ -77,7 +86,8 @@
 		"http://localhost:*/embed/iframe.html",
 		"https://*.youtube.com",
 		"https://*.vimeo.com",
-		"https://w.soundcloud.com"
+		"https://w.soundcloud.com",
+		"https://*.google.com"
 	],
 
 	"worker-src": [ 
