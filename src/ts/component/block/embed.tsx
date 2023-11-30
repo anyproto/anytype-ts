@@ -410,7 +410,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
 			case I.EmbedProcessor.Youtube:
-			case I.EmbedProcessor.Vimeo: return 'html';
+			case I.EmbedProcessor.Vimeo:
+			case I.EmbedProcessor.GoogleMaps: return 'html';
 		};
 	};
 

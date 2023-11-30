@@ -19,6 +19,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
 	};
 
+	getGoogleMapsHtml (content: string): string {
+		return `<iframe src="${content}" width="640" height="360" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (let i in DOMAINS) {
