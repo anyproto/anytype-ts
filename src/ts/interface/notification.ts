@@ -14,6 +14,14 @@ export enum NotificationStatus {
     Replied	 = 3,
 };
 
+export enum NotificationAction {
+    Retry		 = 0,
+    Report		 = 1,
+    OpenObject	 = 2,
+    OpenSpace	 = 3,
+    Close		 = 4,
+};
+
 export interface Notification {
 	id: string;
 	type: NotificationType;

@@ -89,6 +89,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	onClear () {
+		C.NotificationReply(notificationStore.list.map(it => it.id), I.NotificationAction.Close);
 		notificationStore.clear();
 	};
 

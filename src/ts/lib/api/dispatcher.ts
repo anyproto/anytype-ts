@@ -954,6 +954,7 @@ class Dispatcher {
 				};
 
 				case 'notificationUpdate': {
+					notificationStore.update(Mapper.From.Notification(data.getNotification()));
 					break;
 				};
 

@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable } from 'mobx';
+import { observable, action, computed, makeObservable, set } from 'mobx';
 import { I, M } from 'Lib';
 
 class NotificationStore {
@@ -23,9 +23,15 @@ class NotificationStore {
 	};
 
 	add (item: I.Notification): void {
-		item.id = item.id || String(Math.random()).replace(/\./, '-');
-
 		this.itemList.unshift(new M.Notification(item));
+	};
+
+	update (item: I.Notification): void {
+		const current = this.itemList.find(it => it.id == item.id);
+
+		if (current) {
+			set(current, item);
+		};
 	};
 
 	delete (id: string) {

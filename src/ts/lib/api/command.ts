@@ -1816,6 +1816,15 @@ const NotificationList = (includeRead: boolean, limit: number, callBack?: (messa
 	dispatcher.request(NotificationList.name, request, callBack);
 };
 
+const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.Reply.Request();
+
+	request.setIdList(ids);
+	request.setActiontype(action as number);
+
+	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -2027,4 +2036,5 @@ export {
 	UnsplashDownload,
 
 	NotificationList,
+	NotificationReply,
 };

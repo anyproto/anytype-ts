@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, UtilRouter } from 'Lib';
+import { I, C, UtilRouter } from 'Lib';
 import { notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -94,7 +94,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		this.onDelete(e);
 	};
 
-	onDelete (e: any) {
+	onDelete (e: any): void {
 		e.stopPropagation();
 
 		const { item, resize } = this.props;
@@ -102,6 +102,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		node.addClass('to');
 		this.timeout = window.setTimeout(() => {
+			C.NotificationReply([ item.id ], I.NotificationAction.Close);
+
 			notificationStore.delete(item.id);
 			resize();
 		}, Constant.delay.notification);
