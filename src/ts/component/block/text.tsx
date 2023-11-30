@@ -918,26 +918,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
 			this.timeoutFilter = window.setTimeout(() => {
-				let ret = false;
+				if (!range) {
+					return;
+				};
 
-				keyboard.shortcut('space', e, () => {
-					commonStore.filterSet(0, '');
-					if (menuOpenAdd) {
-						menuStore.close('blockAdd');
-					};
-					if (menuOpenMention) {
-						menuStore.close('blockMention');
-					};
-					ret = true;
-				});
+				const d = range.from - filter.from;
 
-				if (!ret && range) {
-					const d = range.from - filter.from;
-
-					if (d >= 0) {
-						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
-						commonStore.filterSetText(part);
-					};
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					commonStore.filterSetText(part);
 				};
 			}, 30);
 			return;

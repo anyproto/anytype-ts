@@ -79,15 +79,6 @@ class Analytics {
 		this.log(`[Analytics].profile: ${id}`);	
 	};
 
-	device (id: string) {
-		if (!this.instance || !this.isAllowed()) {
-			return;
-		};
-
-		this.instance.setUserProperties({ middlewareDeviceId: id });
-		this.log(`[Analytics].device: ${id}`);	
-	};
-
 	setContext (context: string, id: string) {
 		Storage.set(KEY_CONTEXT, context);
 		Storage.set(KEY_ORIGINAL_ID, id);
