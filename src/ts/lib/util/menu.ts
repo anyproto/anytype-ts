@@ -61,6 +61,7 @@ class UtilMenu {
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
 		].map(this.mapperBlock).map(it => {
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
 			return it;

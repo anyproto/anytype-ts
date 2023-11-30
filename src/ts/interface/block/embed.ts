@@ -7,7 +7,8 @@ export enum EmbedProcessor {
 	Youtube		 = 3,
 	Vimeo		 = 4,
 	Soundcloud	 = 5,
-	GoogleMaps 		 = 6,
+	GoogleMaps 	 = 6,
+	Miro 	 	 = 7,
 };
 
 export interface ContentEmbed {
