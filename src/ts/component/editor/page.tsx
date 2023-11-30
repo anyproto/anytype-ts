@@ -95,6 +95,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			<div 
 				ref={node => this.node = node} 
 				id="editorWrapper"
+				className="editorWrapper"
 			>
 				<Controls 
 					key="editorControls" 
