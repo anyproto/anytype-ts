@@ -80,7 +80,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
-					UtilObject.setIcon(rootId, '', message.hash, () => {
+					UtilObject.setIcon(rootId, '', message.objectId, () => {
 						this.setState({ loading: false });
 					});
 				};

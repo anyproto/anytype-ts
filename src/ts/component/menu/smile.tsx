@@ -590,7 +590,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		Action.openFile(Constant.extension.cover, paths => {
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code && onUpload) {
-					onUpload(message.hash);
+					onUpload(message.objectId);
 				};
 			});
 		});
@@ -828,7 +828,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				onUpload(message.hash);
+				onUpload(message.objectId);
 			};
 		
 			close();

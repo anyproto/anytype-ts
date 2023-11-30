@@ -137,8 +137,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		Action.openFile(Constant.extension.cover, paths => {
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-				if (message.hash) {
-					UtilObject.setIcon(rootId, '', message.hash);
+				if (message.objectId) {
+					UtilObject.setIcon(rootId, '', message.objectId);
 				};
 			});
 		});
@@ -222,7 +222,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				this.onUpload(I.CoverType.Upload, message.hash);
+				this.onUpload(I.CoverType.Upload, message.objectId);
 			};
 		});
 	};
