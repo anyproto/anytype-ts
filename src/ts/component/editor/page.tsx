@@ -95,6 +95,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			<div 
 				ref={node => this.node = node} 
 				id="editorWrapper"
+				className="editorWrapper"
 			>
 				<Controls 
 					key="editorControls" 
@@ -1719,6 +1720,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
+		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
 		const options: any[] = [
@@ -1749,10 +1751,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				value: '',
 				options,
 				onSelect: (event: any, item: any) => {
+					const marks = UtilCommon.objectCopy(block.content.marks || []);
+
 					let value = block.content.text;
 					let to = 0;
-
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 					switch (item.id) {
 						case 'link': {

@@ -263,4 +263,14 @@
 		}
 	}
 
+	.popup.popupObjectManager {
+		.objectManagerWrapper {
+			.items {
+				.item {
+					.iconObject { background-color: $colorShapeTertiary; }
+				}
+			}
+		}
+	}
+
 }
