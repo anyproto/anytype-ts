@@ -4,7 +4,7 @@ import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore, notificationStore } from 'Store';
 import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -144,6 +144,9 @@ class Dispatcher {
 		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
 		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
 		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
+
+		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
+		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
 
 		return t;
 	};
@@ -942,6 +945,15 @@ class Dispatcher {
 					} else {
 						dbStore.groupsAdd(rid, bid, [ group ]);
 					};
+					break;
+				};
+
+				case 'notificationSend': {
+					notificationStore.add(Mapper.From.Notification(data.getNotification()));
+					break;
+				};
+
+				case 'notificationUpdate': {
 					break;
 				};
 
