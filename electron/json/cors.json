@@ -33,7 +33,10 @@
 		"https://*.youtube.com", 
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
-		"https://*.googleapis.com"
+		"https://*.googleapis.com",
+		"https://mirostatic.com",
+		"https://miro.com",
+		"https://*.google.com"
 	],
 
 	"font-src": [ 
@@ -42,7 +45,9 @@
 		"http://localhost:*", 
 		"https://*.youtube.com", 
 		"https://*.vimeocdn.com",
-		"https://*.gstatic.com"
+		"https://*.gstatic.com",
+		"https://mirostatic.com",
+		"https://miro.com"
 	],
 
 	"connect-src": [ 
@@ -63,7 +68,15 @@
 		"https://*.sndcdn.com",
 		"https://*.google.com",
 		"https://*.googleapis.com",
-		"https://*.doubleclick.net"
+		"https://*.doubleclick.net",
+		"https://miro.com",
+		"https://*.miro.com",
+		"https://*.cookielaw.org",
+		"https://*.sentry.io",
+		"https://*.split.io",
+		"https://*.onetrust.com",
+		"https://mirostatic.com",
+		"wss://miro.com"
 	],
 
 	"script-src-elem": [
@@ -78,7 +91,9 @@
 		"https://*.sndcdn.com",
 		"https://*.google.com",
 		"https://*.googleapis.com",
-		"https://*.doubleclick.net"
+		"https://*.doubleclick.net",
+		"https://*.cookielaw.org",
+		"https://mirostatic.com"
 	],
 
 	"frame-src": [
@@ -87,7 +102,9 @@
 		"https://*.youtube.com",
 		"https://*.vimeo.com",
 		"https://w.soundcloud.com",
-		"https://*.google.com"
+		"https://*.google.com",
+		"https://miro.com",
+		"https://*.miro.com"
 	],
 
 	"worker-src": [ 
