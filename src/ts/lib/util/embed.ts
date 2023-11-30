@@ -3,7 +3,8 @@ import { I, UtilCommon } from 'Lib';
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
-DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
+DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com' ];
+DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 
 class UtilEmbed {
 
@@ -22,6 +23,10 @@ class UtilEmbed {
 
 	getGoogleMapsHtml (content: string): string {
 		return `<iframe src="${content}" width="640" height="360" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+	};
+
+	getMiroHtml (content: string): string {
+		return `<iframe src="${content}" width="640" height="360" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -63,6 +68,11 @@ class UtilEmbed {
 					url = `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d${zoomParam}!2d${latlng[1]}!3d${latlng[0]}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1486486434098`;
 				};
 				break;
+			};
+
+			case I.EmbedProcessor.Miro: {
+				url = url.split('?')[0];
+				url = url.replace(/\/board\/?\??/, '/live-embed/');
 			};
 		};
 
