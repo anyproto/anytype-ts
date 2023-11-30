@@ -1805,6 +1805,17 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+// ---------------------- NOTIFICATION ---------------------- //
+
+const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.NotificationList.Request();
+
+	request.setIncluderead(includeRead);
+	request.setLimit(limit);
+
+	dispatcher.request(NotificationList.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -2014,4 +2025,6 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	NotificationList,
 };

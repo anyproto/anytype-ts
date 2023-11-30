@@ -18,6 +18,10 @@ class NotificationStore {
 		return this.itemList;
 	};
 
+	set (list: I.Notification[]): void {
+		this.itemList = list.map(it => new M.Notification(it));
+	};
+
 	add (item: I.Notification): void {
 		item.id = item.id || String(Math.random()).replace(/\./, '-');
 

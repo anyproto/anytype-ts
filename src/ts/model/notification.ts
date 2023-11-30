@@ -4,24 +4,22 @@ import { observable, intercept, makeObservable } from 'mobx';
 class Notification implements I.Notification {
 
 	id = '';
-	type: I.NotificationType = 0;
-	status = false;
-	object = null;
-	subject = null;
+	type: I.NotificationType = I.NotificationType.None;
+	status: I.NotificationStatus = I.NotificationStatus.Created;
+	createTime = 0;
+	isLocal = false;
+	payload = {};
 
 	constructor (props: I.Notification) {
 		this.id = String(props.id || '');
-		this.type = Number(props.type) || 0;
-		this.status = Boolean(props.status);
-		this.object = props.object;
-		this.subject = props.subject;
+		this.type = props.type || I.NotificationType.None;
+		this.status = Number(props.status) || I.NotificationStatus.Created;
+		this.createTime = Number(props.createTime) || 0;
+		this.isLocal = Boolean(props.isLocal);
+		this.payload = props.payload || {};
 
 		makeObservable(this, {
-			id: observable,
-			type: observable,
 			status: observable,
-			object: observable,
-			subject: observable,
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));

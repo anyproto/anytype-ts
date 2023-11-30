@@ -421,3 +421,9 @@ export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
 		},
 	};
 };
+
+export const NotificationList = (response: Rpc.NotificationList.Response) => {
+	return {
+		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+	};
+};
