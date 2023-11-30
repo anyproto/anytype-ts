@@ -434,8 +434,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(this.props.recordId, icon, '');
 	};
 
-	onIconUpload (hash: string) {
-		UtilObject.setIcon(this.props.recordId, '', hash);
+	onIconUpload (objectId: string) {
+		UtilObject.setIcon(this.props.recordId, '', objectId);
 	};
 
 	onCheckbox () {

@@ -190,12 +190,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		});
 	};
 
-	add (hash: string) {
+	add (objectId: string) {
 		const { param } = this.props;
 		const { data } = param;
 
 		let value = Relation.getArrayValue(data.value);
-		value.push(hash);
+		value.push(objectId);
 		value = UtilCommon.arrayUnique(value);
 
 		this.save(value);

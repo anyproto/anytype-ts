@@ -45,7 +45,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 							size={16} 
 							canEdit={canEdit}
 							onSelect={icon => this.onSelect(item, icon)} 
-							onUpload={hash => this.onUpload(item, hash)} 
+							onUpload={objectId => this.onUpload(item, objectId)} 
 							onCheckbox={() => this.onCheckbox(item)} 
 						/>
 					) : ''}
@@ -121,8 +121,8 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		UtilObject.setIcon(item.id, icon, '');
 	};
 
-	onUpload (item: any, hash: string) {
-		UtilObject.setIcon(item.id, '', hash);
+	onUpload (item: any, objectId: string) {
+		UtilObject.setIcon(item.id, '', objectId);
 	};
 
 	onCheckbox (item: any) {

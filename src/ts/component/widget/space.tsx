@@ -41,8 +41,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
 	};
 
 });

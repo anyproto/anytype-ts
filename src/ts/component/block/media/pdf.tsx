@@ -46,8 +46,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const width = Number(fields) || 0;
 		const css: any = {};
 
-		console.log(object);
-
 		let element = null;
 		let pager = null;
 		

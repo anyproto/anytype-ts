@@ -205,8 +205,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -302,14 +302,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.setLoading(true);
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
+	onUpload (type: I.CoverType, objectId: string) {
 		const { rootId } = this.props;
 
 		this.coords.x = 0;
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		UtilObject.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});

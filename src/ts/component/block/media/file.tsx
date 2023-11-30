@@ -25,8 +25,6 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const { state, style, targetObjectId } = content;
 		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
 
-		console.log(object);
-
 		let element = null;
 		switch (state) {
 			default:

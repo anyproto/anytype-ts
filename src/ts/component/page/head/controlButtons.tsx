@@ -16,7 +16,7 @@ interface Props {
 	onLayout?: (e: any) => void;
 	onEdit?: (e: any) => void;
 	onUploadStart?: (e: any) => void;
-	onUpload?: (type: I.CoverType, hash: string) => void;
+	onUpload?: (type: I.CoverType, objectId: string) => void;
 };
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props> {

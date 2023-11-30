@@ -123,8 +123,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -231,10 +231,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.setState({ loading: true });
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
-		const { rootId } = this.props;
-
-		UtilObject.setCover(rootId, type, hash, 0, -0.25, 0, () => {
+	onUpload (type: I.CoverType, objectId: string) {
+		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => {
 			this.setState({ loading: false });
 		});
 	};
