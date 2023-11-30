@@ -24,9 +24,6 @@ export enum FileState {
 
 export interface ContentFile {
 	targetObjectId: string;
-	name: string;
-	mime: string;
-	size: number;
 	style: FileStyle;
 	state: FileState;
 	type: FileType;
