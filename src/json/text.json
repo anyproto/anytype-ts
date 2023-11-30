@@ -462,6 +462,7 @@
 	"blockTextVimeo": "...",
 	"blockTextChart": "...",
 	"blockTextSoundcloud": "...",
+	"blockTextGoogleMaps": "...",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
