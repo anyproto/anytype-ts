@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, ObjectName } from 'Component';
 import { I, UtilObject, keyboard } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
@@ -19,8 +19,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { d, getView, className } = data;
-		const items = this.getItems();
+		const { d, getView, className, items } = data;
 		const view = getView();
 		const { hideIcon } = view;
 		const cn = [ 'day' ];
@@ -88,23 +87,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getSubId, getView, getDateParam, d, m, y } = data;
-		const subId = getSubId();
-		const view = getView();
-
-		if (!view) {
-			return [];
-		};
-
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ])).filter(it => {
-			const value = getDateParam(it[view.groupRelationKey]);
-			return [ value.d, value.m, value.y ].join('-') == [ d, m, y ].join('-');
-		});
 	};
 
 	onMouseEnter (e: any, item: any) {
