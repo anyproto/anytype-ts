@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, ObjectName } from 'Component';
 import { I, UtilObject, keyboard } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
@@ -19,7 +19,8 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { d, getView, className, items } = data;
+		const { d, getView, className } = data;
+		const items = this.getItems();
 		const view = getView();
 		const { hideIcon } = view;
 		const cn = [ 'day' ];
@@ -109,6 +110,16 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 	onCheckbox (item: any) {
 		UtilObject.setDone(item.id, !item.done);
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, block, getView } = data;
+		const view = getView();
+		const subId = dbStore.getSubId(rootId, block.id);
+
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
 	};
 
 });
