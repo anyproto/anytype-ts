@@ -46,7 +46,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case I.NotificationType.Export: {
-				content = <NotificationImport {...this.props} onButton={this.onButton} />;
+				content = <NotificationExport {...this.props} onButton={this.onButton} />;
 				break;
 			};
 

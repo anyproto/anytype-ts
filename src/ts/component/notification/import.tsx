@@ -10,23 +10,17 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 		const { payload, type } = item;
 		const { errorCode, spaceId } = payload;
 		const object = UtilObject.getSpaceviewBySpaceId(spaceId) || {};
+		const lang = errorCode ? 'error' : 'success';
+		const title = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-title`));
+		const text = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-text`));
 
-		let title = '';
-		let text = '';
 		let buttons = [];
-
 		if (errorCode) {
-			title = translate(UtilCommon.toCamelCase(`notification-${type}-error-title`));
-			text = translate(UtilCommon.toCamelCase(`notification-${type}-error-text`));
-
 			buttons = buttons.concat([
 				{ id: 'importRetry', text: 'Retry' },
 				{ id: 'importReport', text: 'Report' },
 			]);
 		} else {
-			title = translate(UtilCommon.toCamelCase(`notification-${type}-success-title`));
-			text = translate(UtilCommon.toCamelCase(`notification-${type}-success-text`));
-
 			buttons = buttons.concat([
 				{ id: 'space', text: 'Go to space' }
 			]);
