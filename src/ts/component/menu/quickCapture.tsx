@@ -285,7 +285,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					return;
 				};
 
-				Storage.setLastUsedTypes(type.id);
+				Storage.addLastUsedType(type.id);
 				UtilObject.openAuto(message.details);
 				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
 			});

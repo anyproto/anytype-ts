@@ -679,7 +679,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				});
 			};
 
-			Storage.setLastUsedTypes(typeId);
+			Storage.addLastUsedType(typeId);
 		});
 	};
 

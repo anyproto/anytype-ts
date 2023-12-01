@@ -246,7 +246,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.onQuickCapture();
+				this.pageCreate({}, 'Shortcut');
 			});
 
 			// Settings
