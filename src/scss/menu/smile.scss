@@ -25,9 +25,9 @@
 			.section { padding: 11px 14px !important; border: 0px; }
 			.section > .name { padding: 0px; margin: 0px; }
 			
-			.row { padding: 0px 12px; }
+			.row { padding: 0px 12px; display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; }
 			
-			.item { width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block; vertical-align: top; padding: 0px; }
+			.item { width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
 			.item::before { display: none; }
 			.item.active { background: $colorShapeHighlightMedium; }
 

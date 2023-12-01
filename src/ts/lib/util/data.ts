@@ -249,6 +249,8 @@ class UtilData {
 						commonStore.redirectSet('');
 					};
 
+					Storage.initLastUsedTypes();
+
 					if (!color) {
 						Storage.set('color', 'orange');
 					};

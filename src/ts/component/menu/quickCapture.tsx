@@ -95,7 +95,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 
 		this.props.position();
-		this.resize();
 		this.rebind();
 	};
 
@@ -285,7 +284,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					return;
 				};
 
-				Storage.setLastUsedTypes(type.id);
+				Storage.addLastUsedType(type.id);
 				UtilObject.openAuto(message.details);
 				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
 			});
@@ -330,7 +329,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 	};
 
-	resize () {
+	beforePosition () {
 		const node = $(this.node);
 
 		node.find('.item').each((i: number, item: any) => {

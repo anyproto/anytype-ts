@@ -445,7 +445,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 			item = detailStore.mapper(item);
 
-			Storage.setLastUsedTypes(item.id);
+			Storage.addLastUsedType(item.id);
 
 			if (onClick) {
 				onClick(item);

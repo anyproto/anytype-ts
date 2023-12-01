@@ -1,5 +1,6 @@
 import { I, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const SPACE_KEYS = [
 	'toggle',
@@ -199,12 +200,31 @@ class Storage {
 		this.set('survey', obj, true);
 	};
 
-	setLastUsedTypes (id: string) {
-		let list = this.getLastUsedTypes();
+	initLastUsedTypes () {
+		const list = this.getLastUsedTypes();
 
-		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
-			list = [];
+		if (!list.length) {
+			const keys = [
+				Constant.typeKey.note,
+				Constant.typeKey.page,
+				Constant.typeKey.task,
+			];
+
+			for (let key of keys) {
+				const type = dbStore.getTypeByKey(key);
+				if (type) {
+					list.push(type.id);
+				};
+			};
+
+			if (list.length) {
+				this.set('lastUsedTypes', list, true);
+			};
 		};
+	};
+
+	addLastUsedType (id: string) {
+		let list = this.getLastUsedTypes();
 
 		if (!id) {
 			return list;
@@ -219,13 +239,14 @@ class Storage {
 	};
 
 	getLastUsedTypes () {
-		const list = this.get('lastUsedTypes') || [];
+		return this.checkArray(this.get('lastUsedTypes') || []);
+	};
 
-		if (('object' != typeof(list)) || !UtilCommon.hasProperty(list, 'length')) {
+	checkArray (a) {
+		if (('object' != typeof(a)) || !UtilCommon.hasProperty(a, 'length')) {
 			return [];
 		};
-
-		return list;
+		return a;
 	};
 
 	logout () {
