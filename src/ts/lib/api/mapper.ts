@@ -43,6 +43,7 @@ export const Mapper = {
 
 		let t = '';
 		if (v == V.IMPORT)	 t = 'import';
+		if (v == V.EXPORT)	 t = 'export';
 		return t;
 	},
 
@@ -500,6 +501,14 @@ export const Mapper = {
 						importType: field.getImporttype(),
 						spaceId: field.getSpaceid(),
 						name: field.getName(),
+					});
+					break;
+				};
+
+				case 'export': {
+					payload = Object.assign(payload, {
+						errorCode: field.getErrorcode(),
+						exportType: field.getExporttype(),
 					});
 					break;
 				};

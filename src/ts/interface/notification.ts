@@ -3,6 +3,7 @@ import { I } from 'Lib';
 export enum NotificationType {
 	None	 = '',
 	Import	 = 'import',
+	Export	 = 'export',
 	Invite	 = 'invite',
 	Usecase	 = 'usecase',
 };

@@ -8,6 +8,7 @@ import Constant from 'json/constant.json';
 
 import NotificationUsecase from './usecase';
 import NotificationImport from './import';
+import NotificationExport from './export';
 import NotificationInvite from './invite';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
@@ -40,6 +41,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case I.NotificationType.Import: {
+				content = <NotificationImport {...this.props} onButton={this.onButton} />;
+				break;
+			};
+
+			case I.NotificationType.Export: {
 				content = <NotificationImport {...this.props} onButton={this.onButton} />;
 				break;
 			};

@@ -991,52 +991,6 @@ class Dispatcher {
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
-
-							let title = '';
-							let text = '';
-							let textConfirm = '';
-							let showPopup = [ I.ProgressType.Export ].includes(type) && [ I.ProgressState.Error, I.ProgressState.Done ].includes(state);
-
-							switch (state) {
-								case I.ProgressState.Error: {
-									textConfirm = translate('dispatcherImportTryAgain');
-
-									switch (type) {
-										case I.ProgressType.Export: { 
-											title = translate('dispatcherExportErrorTitle');
-											text = translate('dispatcherExportErrorText');
-											break; 
-										};
-									};
-									break;
-								};
-
-								case I.ProgressState.Done: {
-									textConfirm = translate('dispatcherImportConfirm');
-
-									switch (type) {
-										case I.ProgressType.Export: {
-											title = translate('dispatcherExportSuccessTitle');
-											text = translate('dispatcherExportSuccessText');
-											break; 
-										};
-									};
-									break;
-								};
-							};
-
-							if (showPopup) {
-								window.setTimeout(() => { 
-									popupStore.open('confirm', { 
-										data: { 
-											title, 
-											text,
-											textConfirm,
-											canCancel: false,
-										} 
-									}); 
-								}, Constant.delay.popup);
-							};
 							break;
 						};
 					};
