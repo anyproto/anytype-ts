@@ -148,6 +148,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			return;
 		};
 	
+		const view = data.view.get();
 		const isBoard = this.param.type == I.ViewType.Board;
 		const isCalendar = this.param.type == I.ViewType.Calendar;
 		const current = data.view.get();
@@ -170,10 +171,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		if (withName) {
 			this.param.name = this.getViewName();
+			view.name = this.param.name;
 		};
-
-		let view = data.view.get();
-		view = Object.assign(view, this.param);
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
@@ -370,10 +369,12 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		if (item.sectionId == 'type') {
 			let withName = false;
+
 			if (this.param.name == Dataview.defaultViewName(this.param.type)) {
 				this.param.name = Dataview.defaultViewName(item.id);
 				withName = true;
 			};
+
 			this.param.type = item.id;
 
 			this.n = -1;
