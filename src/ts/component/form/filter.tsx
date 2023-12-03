@@ -15,6 +15,7 @@ interface Props {
 	tooltipCaption?: string;
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	focusOnMount?: boolean;
 	onClick?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
@@ -58,7 +59,7 @@ class Filter extends React.Component<Props, State> {
 	
 	render () {
 		const { isActive } = this.state;
-		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
+		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder, className, inputClassName, focusOnMount, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
 		const cn = [ 'filter' ];
 
 		if (className) {
@@ -99,6 +100,7 @@ class Filter extends React.Component<Props, State> {
 							id="input"
 							className={inputClassName}
 							value={value}
+							focusOnMount={focusOnMount}
 							onFocus={this.onFocus} 
 							onBlur={this.onBlur} 
 							onChange={this.onChange} 

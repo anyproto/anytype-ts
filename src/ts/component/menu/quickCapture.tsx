@@ -66,6 +66,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						placeholder={translate('menuQuickCaptureSearchObjectTypes')}
 						value={this.filter}
 						onChange={this.onFilterChange}
+						focusOnMount={true}
 					/>
 				) : ''}
 				<div className="items scrollWrap">
@@ -315,12 +316,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		this.isExpanded = true;
 		this.forceUpdate();
-
-		window.setTimeout(() => {
-			if (this.refFilter) {
-				this.refFilter.focus();
-			};
-		}, 15);
 	};
 
 	onOver (e: any, item: any) {
