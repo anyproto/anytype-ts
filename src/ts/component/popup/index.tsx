@@ -7,6 +7,7 @@ import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PopupSettings from './settings';
+import PopupSettingsOnboarding from './settings/onboarding';
 import PopupSearch from './search';
 import PopupHelp from './help';
 import PopupPrompt from './prompt';
@@ -42,20 +43,21 @@ class Popup extends React.Component<I.Popup> {
 		const { className } = param;
 
 		const Components: any = {
-			settings:		 PopupSettings,
-			search:			 PopupSearch,
-			confirm:		 PopupConfirm,
-			prompt:			 PopupPrompt,
-			help:			 PopupHelp,
-			preview:		 PopupPreview,
-			shortcut:		 PopupShortcut,
-			page:			 PopupPage,
-			export:			 PopupExport,
-			migration:		 PopupMigration,
-			pin:			 PopupPin,
-			phrase:			 PopupPhrase,
-			objectManager:	 PopupObjectManager,
-			usecase:		 PopupUsecase,
+			settings:				 PopupSettings,
+			settingsOnboarding:		 PopupSettingsOnboarding,
+			search:					 PopupSearch,
+			confirm:				 PopupConfirm,
+			prompt:					 PopupPrompt,
+			help:					 PopupHelp,
+			preview:				 PopupPreview,
+			shortcut:				 PopupShortcut,
+			page:					 PopupPage,
+			export:					 PopupExport,
+			migration:				 PopupMigration,
+			pin:					 PopupPin,
+			phrase:					 PopupPhrase,
+			objectManager:			 PopupObjectManager,
+			usecase:				 PopupUsecase,
 		};
 		
 		const popupId = this.getId();

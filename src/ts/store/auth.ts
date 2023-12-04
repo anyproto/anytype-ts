@@ -13,7 +13,7 @@ class AuthStore {
 	public phrase = '';
 	public token = '';
 	public threadMap: Map<string, any> = new Map();
-
+	
 	constructor () {
 		makeObservable(this, {
 			walletPathValue: observable,
@@ -58,6 +58,16 @@ class AuthStore {
 
 	get accountSpaceId (): string {
 		return String(this.accountItem?.info?.accountSpaceId || '');
+	};
+
+	get networkConfig () {
+		const obj = Storage.get('popupSettingsOnboarding') || {};
+
+		return {
+			local: Boolean(obj.local),
+			self: Boolean(obj.self),
+			configPath: String(obj.configPath || ''),
+		};
 	};
 
 	walletPathSet (v: string) {

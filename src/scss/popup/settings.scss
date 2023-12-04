@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-	.popupSettings {
+	.popupSettings, .popupSettingsOnboarding {
 		.innerWrap { width: 958px; height: 650px; overflow: hidden; }
 
 		@media (max-width: 990px) {
@@ -582,5 +582,16 @@
 
 	.popupSettings.isSpaceCreate {
 		.innerWrap { width: 684px; height: 406px; }
+	}
+
+	.popupSettingsOnboarding {
+		.innerWrap { width: 684px; height: auto; overflow: visible; }
+		.content > .mainSides {
+			> .side.right { width: 100%; }
+			> .side.right.tabOnboarding {
+				.title { margin: 0px 0px 32px 0px; }
+				.actionItems { margin: 0px 0px 35px 0px }
+			}
+		}
 	}
 }

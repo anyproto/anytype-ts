@@ -716,6 +716,12 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
+	"popupSettingsOnboardingLocalModeTitle": "Local-only Mode",
+	"popupSettingsOnboardingLocalModeText": "Data is stored only on your devices and is not backed-up anywhere",
+	"popupSettingsOnboardingSelfTitle": "Self-hosted Network",
+	"popupSettingsOnboardingSelfText": "Backup storage managed by you. For tech-savvy users only!",
+	"popupSettingsOnboardingNetworkTitle": "Network Configuration File",
+
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
 	"popupNavigationOpen": "Open",

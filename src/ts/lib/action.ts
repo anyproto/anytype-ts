@@ -84,8 +84,8 @@ class Action {
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, 1000000) : commonStore.fileUrl(hash);
-		Renderer.send('download', url);
 
+		Renderer.send('download', url);
 		analytics.event('DownloadMedia', { type, route });
 	};
 
@@ -340,7 +340,8 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { walletPath } = authStore;
+		const { walletPath, networkConfig } = authStore;
+		const { configPath } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
@@ -355,7 +356,7 @@ class Action {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, (message: any) => {
+					C.AccountSelect(accountId, walletPath, configPath, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};
