@@ -529,7 +529,7 @@
 	"blockEmbedLatexPlaceholder": "Enter text in format LaTeX",
 	"blockEmbedLatexTemplate": "Template formula",
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon text'></span>. Click to edit",
-
+	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",

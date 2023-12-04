@@ -5,7 +5,7 @@ import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
-import { I, keyboard, UtilCommon, C, focus, Renderer, translate, UtilEmbed } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
@@ -67,14 +67,13 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				empty = translate('blockEmbedLatexEmpty');
 				break;
 			};
-
-			case I.EmbedProcessor.Mermaid: {
-				break;
-			}; 
 		};
 
 		if (processor != I.EmbedProcessor.Latex) {
+			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
+
 			button = <Button className="source c28" text={translate('blockEmbedSource')} onClick={this.onEdit} />;
+			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
 		};
 
 		return (
