@@ -85,9 +85,10 @@ const rootStore = {
 	notificationStore,
 };
 
+window.$ = $;
+
 if (!window.Electron.isPackaged) {
 	window.Store = rootStore;
-	window.$ = $;
 	window.Lib = {
 		I,
 		C,
