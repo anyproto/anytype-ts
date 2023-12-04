@@ -111,6 +111,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
 						value={filter}
 						onChange={this.onFilterChange} 
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -152,9 +153,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		this.rebind();
 		this.resize();
-		this.focus();
 		this.load(true);
-
 		this.forceUpdate();
 	};
 
@@ -179,7 +178,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		});
 
 		this.resize();
-		this.focus();
 		this.props.setActive();
 	};
 	
@@ -190,14 +188,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			menuStore.closeAll([ 'searchObject' ]);
 		};
 		window.clearTimeout(this.timeoutFilter);
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {
