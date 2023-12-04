@@ -53,8 +53,6 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		this.rebind();
 		this.resize();
 		this.load();
-
-		window.Graph = this;
 	};
 
 	componentDidUpdate () {

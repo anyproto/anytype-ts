@@ -66,8 +66,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.resize();
 		this.load();
 		this.initRootId(this.getRootId());
-
-		window.Graph = this;
 	};
 
 	componentDidUpdate () {
