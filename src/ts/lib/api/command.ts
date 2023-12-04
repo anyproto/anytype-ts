@@ -159,7 +159,7 @@ const AccountCreate = (name: string, avatarPath: string, storePath: string, icon
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setIcon(icon);
-	//request.setNetworkconfigfilepath(networkConfigPath);
+	request.setNetworkconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -175,7 +175,7 @@ const AccountSelect = (id: string, path: string, networkConfigPath: string, call
 
 	request.setId(id);
 	request.setRootpath(path);
-	//request.setNetworkconfigfilepath(networkConfigPath);
+	request.setNetworkconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
