@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
