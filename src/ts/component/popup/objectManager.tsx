@@ -45,7 +45,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 					onAfterLoad={this.onAfterLoad}
 				/>
 
-				<Button text={translate('commonDone')} onClick={this.onClick} />
+				<Button text={translate('commonDone')} className="c36" onClick={this.onClick} />
 			</React.Fragment>
 		);
 	};

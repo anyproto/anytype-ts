@@ -1807,6 +1807,26 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+// ---------------------- NOTIFICATION ---------------------- //
+
+const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.List.Request();
+
+	request.setIncluderead(includeRead);
+	request.setLimit(limit);
+
+	dispatcher.request(NotificationList.name, request, callBack);
+};
+
+const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.Reply.Request();
+
+	request.setIdsList(ids);
+	request.setActiontype(action as number);
+
+	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -2016,4 +2036,7 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	NotificationList,
+	NotificationReply,
 };

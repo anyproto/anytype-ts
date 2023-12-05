@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -228,12 +228,6 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileNodeUsage((message: any) => {
-			if (!message.error.code) {
-				commonStore.spaceStorageSet(message);
-			};
-		});
-
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
@@ -241,6 +235,18 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', space, () => {
 				this.createsSubscriptions(() => {
+					C.NotificationList(false, Constant.limit.notification, (message: any) => {
+						if (!message.error.code) {
+							notificationStore.set(message.list);
+						};
+					});
+
+					C.FileNodeUsage((message: any) => {
+						if (!message.error.code) {
+							commonStore.spaceStorageSet(message);
+						};
+					});
+
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
@@ -252,6 +258,8 @@ class UtilData {
 
 						commonStore.redirectSet('');
 					};
+
+					Storage.initLastUsedTypes();
 
 					if (!color) {
 						Storage.set('color', 'orange');

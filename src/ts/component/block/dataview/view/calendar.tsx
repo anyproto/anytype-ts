@@ -161,9 +161,15 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const { m, y } = this.getDateParam(this.value);
-		const start = UtilDate.timestamp(y, m, 1, 0, 0, 0);
-		const end = UtilDate.timestamp(y, m, Constant.monthDays[m] + (y % 4 === 0 ? 1 : 0), 23, 59, 59);
+		const data = this.getData();
+		if (!data.length) {
+			return;
+		};
+
+		const first = data[0];
+		const last = data[data.length - 1];
+		const start = UtilDate.timestamp(first.y, first.m, first.d, 0, 0, 0);
+		const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(view.filters);

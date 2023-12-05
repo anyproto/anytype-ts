@@ -66,6 +66,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 						placeholder={translate('menuQuickCaptureSearchObjectTypes')}
 						value={this.filter}
 						onChange={this.onFilterChange}
+						focusOnMount={true}
 					/>
 				) : ''}
 				<div className="items scrollWrap">
@@ -95,7 +96,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 
 		this.props.position();
-		this.resize();
 		this.rebind();
 	};
 
@@ -285,7 +285,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					return;
 				};
 
-				Storage.setLastUsedTypes(type.id);
+				Storage.addLastUsedType(type.id);
 				UtilObject.openAuto(message.details);
 				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
 			});
@@ -316,12 +316,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		this.isExpanded = true;
 		this.forceUpdate();
-
-		window.setTimeout(() => {
-			if (this.refFilter) {
-				this.refFilter.focus();
-			};
-		}, 15);
 	};
 
 	onOver (e: any, item: any) {
@@ -330,7 +324,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		};
 	};
 
-	resize () {
+	beforePosition () {
 		const node = $(this.node);
 
 		node.find('.item').each((i: number, item: any) => {

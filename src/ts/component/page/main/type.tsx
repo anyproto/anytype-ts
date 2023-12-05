@@ -386,7 +386,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			UtilObject.openPopup(message.details);
-			Storage.setLastUsedTypes(type.id);
+			Storage.addLastUsedType(type.id);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',
