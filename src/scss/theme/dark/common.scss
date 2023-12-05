@@ -106,18 +106,22 @@ html.themeDark {
     /* Button */
 
 	.button.black { background: $colorControlAccent; color: $colorTextInversion; }
-	.button.black:hover { background: $colorControlActive }
+	.button.black:hover,
+    .button.black.hover { background: $colorControlActive }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
     .button.blank { color: $colorTextPrimary; border-color: $colorShapePrimary; }
-    .button.blank:not(.disabled):hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
+    .button.blank:not(.disabled):hover,
+    .button.blank:not(.disabled).hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
 
 	.button.red,
     .button.red.blank { border-color: $colorShapePrimary; background: none; color: $colorRed; }
     .button.red:hover,
-    .button.red.blank:hover { border-color: #581f0c; background: #311107; }
+    .button.red.hover,
+    .button.red.blank:hover,
+    .button.red.blank.hover { border-color: #581f0c; background: #311107; }
 
     .filter {
         .line { background: $colorShapeSecondary; }
