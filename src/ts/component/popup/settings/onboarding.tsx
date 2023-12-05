@@ -6,15 +6,18 @@ import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
 
+	config: any = {};
+	refMode = null;
+
 	constructor (props: I.Popup) {
 		super(props);
 
 		this.onUpload = this.onUpload.bind(this);
+		this.onSave = this.onSave.bind(this);
 	};
 
 	render () {
-		const { networkConfig } = authStore;
-		const { mode } = networkConfig;
+		const { mode } = this.config;
 		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
@@ -56,6 +59,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							</div>
 							<Select
 								id="networkMode"
+								ref={ref => this.refMode = ref}
 								value={String(mode || '')}
 								options={networkModes}
 								onChange={v => this.onChange('mode', v)}
@@ -76,24 +80,30 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 					</div>
 
 					<div className="buttons">
-						<Button text={translate('commonSave')} />
+						<Button text={translate('commonSave')} onClick={this.onSave} />
 					</div>
 				</div>
 			</div>
 		);
 	};
 
+	componentDidMount(): void {
+		this.config = authStore.networkConfig;
+		this.refMode?.setValue(this.config.mode);
+	};
+
 	onChange (key: string, value: any) {
-		const { networkConfig } = authStore;
-
-		networkConfig[key] = value;
-
-		authStore.networkConfigSet(networkConfig);
+		this.config[key] = value;
 		this.forceUpdate();
 	};
 
 	onUpload () {
 		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
+	};
+
+	onSave () {
+		authStore.networkConfigSet(this.config);
+		this.props.close();
 	};
 	
 });

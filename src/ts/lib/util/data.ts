@@ -852,6 +852,48 @@ class UtilData {
 		});
 	};
 
+	getThreadStatus (rootId: string, key: string) {
+		const { account } = authStore;
+		const { info } = account;
+		const thread = authStore.threadGet(rootId);
+		const { summary } = thread;
+
+		if (!info.networkId) {
+			return I.ThreadStatus.Local;
+		};
+
+		if (!summary) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
+	};
+
+	getNetworkName (): string {
+		const { account } = authStore;
+		const { info } = account;
+
+		let ret = '';
+		switch (info.networkId) {
+			default:
+				ret = translate('menuThreadListSelf');
+				break;
+
+			case Constant.networkId.production:
+				ret = translate('menuThreadListProduction');
+				break;
+
+			case Constant.networkId.development:
+				ret = translate('menuThreadListDevelopment');
+				break;
+
+			case '':
+				ret = translate('menuThreadListLocal');
+				break;
+		};
+		return ret;
+	};
+
 };
 
 export default new UtilData();
