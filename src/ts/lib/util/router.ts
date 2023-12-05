@@ -151,8 +151,6 @@ class UtilRouter {
 
 					UtilData.onInfo(message.info);
 					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
-
-					analytics.event('SwitchSpace');
 				}
 			});
 		});
