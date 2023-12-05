@@ -1607,14 +1607,14 @@
 
 	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights.",
 
-	"notificationImportSuccessTitle": "The imported process is complete!",
-	"notificationImportSuccessText": "You can find the imported objects in the folder you selected.",
-	"notificationImportErrorTitle": "The import wasn't completed",
-	"notificationImportErrorText": "Sorry, but something went wrong during the import process. Please try again or let us know if it doesn't work.",
+	"notificationImportSuccessTitle": "Import complete!",
+	"notificationImportSuccessText": "You can find the imported objects in the selected space.",
+	"notificationImportErrorTitle": "Import failed",
+	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
 
-	"notificationExportSuccessTitle": "The export process is complete!",
+	"notificationExportSuccessTitle": "Export complete!",
 	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
-	"notificationExportErrorTitle": "The export wasn't completed",
-	"notificationExportErrorText": "Sorry, but something went wrong during the export process. Please try again or let us know if it doesn't work."
+	"notificationExportErrorTitle": "Export failed",
+	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work."
 
 }
