@@ -13,8 +13,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	render () {
-		const { storageGet } = this.props
-		const obj = storageGet();
+		const { networkConfig } = authStore;
+		const { mode } = networkConfig;
 		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
@@ -56,7 +56,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							</div>
 							<Select
 								id="networkMode"
-								value={String(obj.mode || '')}
+								value={String(mode || '')}
 								options={networkModes}
 								onChange={v => this.onChange('mode', v)}
 								arrowClassName="black"
@@ -67,7 +67,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 								}}
 							/>
 						</div>
-						{obj.mode == I.NetworkMode.Custom ? (
+						{mode == I.NetworkMode.Custom ? (
 							<div className="item">
 								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
@@ -84,12 +84,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onChange (key: string, value: any) {
-		const { storageGet, storageSet } = this.props;
-		const obj: any = storageGet();
+		const { networkConfig } = authStore;
 
-		obj[key] = value;
+		networkConfig[key] = value;
 
-		storageSet(obj);
+		authStore.networkConfigSet(networkConfig);
 		this.forceUpdate();
 	};
 

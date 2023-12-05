@@ -3,6 +3,11 @@ import { I, M, C, Storage, analytics, Renderer } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
 import { keyboard } from 'Lib';
 
+interface NetworkConfig {
+	mode: I.NetworkMode;
+	path: string;
+};
+
 class AuthStore {
 	
 	public walletPathValue = '';
@@ -60,12 +65,12 @@ class AuthStore {
 		return String(this.accountItem?.info?.accountSpaceId || '');
 	};
 
-	get networkConfig () {
-		const obj = Storage.get('popupSettingsOnboarding') || {};
+	get networkConfig (): NetworkConfig {
+		const obj = Storage.get('networkConfig') || {};
 
 		return {
 			mode: Number(obj.mode) || I.NetworkMode.Default,
-			configPath: String(obj.configPath || ''),
+			path: String(obj.path || ''),
 		};
 	};
 
@@ -88,6 +93,10 @@ class AuthStore {
 	tokenSet (v: string) {
 		this.token = v;
     };
+
+	networkConfigSet (obj: NetworkConfig) {
+		Storage.set('networkConfig', obj, true);
+	};
 
 	accountAdd (account: any) {
 		account.info = account.info || {};

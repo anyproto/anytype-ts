@@ -341,7 +341,7 @@ class Action {
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
 		const { walletPath, networkConfig } = authStore;
-		const { mode, configPath } = networkConfig;
+		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
@@ -356,7 +356,7 @@ class Action {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, mode, configPath, (message: any) => {
+					C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};
