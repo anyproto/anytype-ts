@@ -13,6 +13,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.setHighlight = this.setHighlight.bind(this);
 	};
 
@@ -35,8 +36,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 				<Label text={text} />
 
 				<div ref={ref => this.refButtons = ref} className="buttons">
-					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} /> : ''}
-					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} /> : ''}
+					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} onMouseEnter={this.onMouseEnter} /> : ''}
+					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} onMouseEnter={this.onMouseEnter} /> : ''}
 				</div>
 			</React.Fragment>
 		);
@@ -122,6 +123,13 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		if (onCancel) {
 			onCancel();
 		};
+	};
+
+	onMouseEnter (e: any) {
+		const buttons = $(this.refButtons).find('.button');
+
+		this.n = $(buttons).index(e.currentTarget);
+		this.setHighlight();
 	};
 
 	setHighlight () {
