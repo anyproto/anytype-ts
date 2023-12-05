@@ -18,7 +18,7 @@ export const Mapper = {
 		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
 		if (v == V.RELATION)			 t = I.BlockType.Relation;
 		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-		if (v == V.EMBED)				 t = I.BlockType.Embed;
+		if (v == V.LATEX)				 t = I.BlockType.Embed;
 		if (v == V.TABLE)				 t = I.BlockType.Table;
 		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
 		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
@@ -217,7 +217,7 @@ export const Mapper = {
 			};
 		},
 
-		BlockEmbed: (obj: any) => {
+		BlockLatex: (obj: any) => {
 			return {
 				text: obj.getText(),
 				processor: obj.getProcessor(),
@@ -644,8 +644,8 @@ export const Mapper = {
 			return content;
 		},
 
-		BlockEmbed: (obj: any) => {
-			const content = new Model.Block.Content.Embed();
+		BlockLatex: (obj: any) => {
+			const content = new Model.Block.Content.Latex();
 	
 			content.setText(obj.text);
 			content.setProcessor(obj.processor);

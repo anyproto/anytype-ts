@@ -69,33 +69,42 @@ class UtilData {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
-		const dc = UtilCommon.toCamelCase('block-' + block.type);
-
+		const dc = UtilCommon.toCamelCase(`block-${block.type}`);
 		const c = [];
-		if (block.type == I.BlockType.File) {
-			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
-				c.push(dc);
-			} else {
-				c.push('blockMedia');
 
-				switch (type) {
-					case I.FileType.Image:	 c.push('isImage'); break;
-					case I.FileType.Video:	 c.push('isVideo'); break;
-					case I.FileType.Audio:	 c.push('isAudio'); break;
-					case I.FileType.Pdf:	 c.push('isPdf'); break;
+		switch (block.type) {
+			case I.BlockType.File: {
+				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+					c.push(dc);
+				} else {
+					c.push('blockMedia');
+
+					switch (type) {
+						case I.FileType.Image:	 c.push('isImage'); break;
+						case I.FileType.Video:	 c.push('isVideo'); break;
+						case I.FileType.Audio:	 c.push('isAudio'); break;
+						case I.FileType.Pdf:	 c.push('isPdf'); break;
+					};
 				};
+				break;
 			};
-		} else {
-			c.push(dc);
 
-			switch (block.type) {
-				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
-				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
-				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
-				case I.BlockType.Embed:					 c.push(this.blockEmbedClass(processor)); break;
+			case I.BlockType.Embed: {
+				c.push('blockEmbed');
+				c.push(this.blockEmbedClass(processor));
+				break;
+			};
+
+			default: {
+				c.push(dc);
+				switch (block.type) {
+					case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
+					case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
+					case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+				};
+				break;
 			};
 		};
-
 		return c.join(' ');
 	};
 

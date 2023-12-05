@@ -69,11 +69,13 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 		};
 
+		console.log(block);
+
 		if (processor != I.EmbedProcessor.Latex) {
 			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
 
 			button = <Button className="source c28" text={translate('blockEmbedSource')} onClick={this.onEdit} />;
-			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
+			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
 		};
 
 		return (
@@ -568,7 +570,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
-		C.BlockEmbedSetText(rootId, block.id, value, callBack);
+		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
 	setRange (range: any) {

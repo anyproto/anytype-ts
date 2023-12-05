@@ -105,7 +105,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETEMBED)				 t = 'blockSetEmbed';
+		if (v == V.BLOCKSETLATEX)				 t = 'blockSetEmbed';
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
