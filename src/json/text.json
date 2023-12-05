@@ -720,11 +720,11 @@
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 
 	"networkMode0Title": "Anytype",
-	"networkMode0Text": "Data will be backed up to the external network managed by Anytype.",
+	"networkMode0Text": "Data is backed up to the external network managed by Anytype.",
 	"networkMode1Title": "Local-only",
-	"networkMode1Text": "Data will be stored and synchronized exclusively on your devices within the local network.",
+	"networkMode1Text": "Data is stored exclusively on your devices and synchronizes within the local network.",
 	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Data will be backed up to the external self-hosted network.",
+	"networkMode2Text": "Data is backed up to the external self-hosted network.",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
@@ -1308,7 +1308,7 @@
 	"threadStatus3Tooltip": "Backed up on one node at least",
 	"threadStatus4Tooltip": "Failed to sync, trying again...",
 	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
-	"threadStatus100Tooltip": "Local-only mode",
+	"threadStatus100Tooltip": "Data is stored exclusively on your devices and synchronizes within the local network.",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
