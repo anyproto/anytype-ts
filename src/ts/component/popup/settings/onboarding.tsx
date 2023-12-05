@@ -93,7 +93,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('configPath', paths[0]));
+		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
 	};
 	
 });
