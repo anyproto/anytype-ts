@@ -716,15 +716,15 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
-	"popupSettingsOnboardingModeTitle": "Network Mode",
-	"popupSettingsOnboardingNetworkTitle": "Network Configuration File",
+	"popupSettingsOnboardingModeTitle": "Network",
+	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 
-	"networkMode0Title": "Default",
-	"networkMode0Text": "...",
-	"networkMode1Title": "Local-only Mode",
-	"networkMode1Text": "Data is stored only on your devices and is not backed-up anywhere",
-	"networkMode2Title": "Custom",
-	"networkMode2Text": "...",
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Data will be backed up to the external network managed by Anytype.",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Data will be stored and synchronized exclusively on your devices within the local network.",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Data will be backed up to the external self-hosted network.",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
