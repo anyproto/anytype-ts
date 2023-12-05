@@ -49,10 +49,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
 
+			console.log(bytesLimit, usage);
+
 			bytesUsed += usage;
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
+
+		console.log(progressSegments, bytesUsed);
 
 		if (isRed) {
 			usageCn.push('red');

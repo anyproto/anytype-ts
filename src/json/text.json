@@ -111,6 +111,7 @@
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
+	"commonSetName": "Set of %s",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
