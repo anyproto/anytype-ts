@@ -4,7 +4,7 @@ import raf from 'raf';
 import { Notification, Icon } from 'Component';
 import { notificationStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, UtilSmile, UtilCommon } from 'Lib';
+import { I, C } from 'Lib';
 
 const LIMIT = 5;
 
@@ -55,32 +55,6 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	componentDidMount (): void {
-		/*
-		for (let i = 0; i < 10; ++i) {
-			const icon1 = UtilSmile.randomParam();
-			const icon2 = UtilSmile.randomParam();
-
-			const object = { 
-				name: 'Strategic writing', 
-				iconEmoji: `:${icon1.id}:`, 
-				layout: I.ObjectLayout.Page,
-			};
-
-			const subject = { 
-				name: 'Investors space', 
-				iconEmoji: `:${icon2.id}:`, 
-				layout: I.ObjectLayout.Page,
-			};
-
-			notificationStore.add({ 
-				type: UtilCommon.rand(0, 1), 
-				status: Boolean(UtilCommon.rand(0, 1)), 
-				object,
-				subject,
-			});
-		};
-		*/
-
 		this.resize();
 	};
 
@@ -115,6 +89,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	onClear () {
+		C.NotificationReply(notificationStore.list.map(it => it.id), I.NotificationAction.Close);
 		notificationStore.clear();
 	};
 
