@@ -64,8 +64,7 @@ class AuthStore {
 		const obj = Storage.get('popupSettingsOnboarding') || {};
 
 		return {
-			local: Boolean(obj.local),
-			self: Boolean(obj.self),
+			mode: Number(obj.mode) || I.NetworkMode.Default,
 			configPath: String(obj.configPath || ''),
 		};
 	};

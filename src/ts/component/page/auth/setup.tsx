@@ -146,10 +146,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	select (accountId: string, walletPath: string, animate: boolean) {
 		const { networkConfig } = authStore;
-		const { configPath } = networkConfig;
+		const { mode, configPath } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
-		C.AccountSelect(accountId, walletPath, configPath, (message: any) => {
+		C.AccountSelect(accountId, walletPath, mode, configPath, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};

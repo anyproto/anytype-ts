@@ -17,11 +17,20 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const obj = storageGet();
 		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
-		const cnr = [ 'side', 'right', 'tabOnboarding' ];
+		const networkModes: any[] = ([
+			{ id: I.NetworkMode.Default },
+			{ id: I.NetworkMode.Local },
+			{ id: I.NetworkMode.Custom },
+		] as any[]).map(it => {
+			it.name = translate(`networkMode${it.id}Title`);
+			it.description = translate(`networkMode${it.id}Text`);
+			it.withDescription = true;
+			return it;
+		});
 
 		return (
 			<div className="mainSides">
-				<div id="sideRight" className={cnr.join(' ')}>
+				<div id="sideRight" className="side right tabOnboarding">
 					<Title text={translate('popupSettingsPersonalTitle')} />
 
 					<div className="actionItems">
@@ -43,22 +52,27 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						</div>
 						<div className="item">
 							<div>
-								<Label text={translate('popupSettingsOnboardingLocalModeTitle')} />
-								<Label className="small" text={translate('popupSettingsOnboardingLocalModeText')} />
+								<Label text={translate('popupSettingsOnboardingModeTitle')} />
 							</div>
-							<Switch className="big" value={obj.local} onChange={(e: any, v: boolean) => this.onChange('local', v)} />
+							<Select
+								id="networkMode"
+								value={String(obj.mode || '')}
+								options={networkModes}
+								onChange={v => this.onChange('mode', v)}
+								arrowClassName="black"
+								menuParam={{ 
+									horizontal: I.MenuDirection.Right, 
+									width: 300,
+									className: 'fixed',
+								}}
+							/>
 						</div>
-						<div className="item">
-							<div>
-								<Label text={translate('popupSettingsOnboardingSelfTitle')} />
-								<Label className="small" text={translate('popupSettingsOnboardingSelfText')} />
+						{obj.mode == I.NetworkMode.Custom ? (
+							<div className="item">
+								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
+								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
 							</div>
-							<Switch className="big" value={obj.self} onChange={(e: any, v: boolean) => this.onChange('self', v)} />
-						</div>
-						<div className="item">
-							<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
-							<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
-						</div>
+						) : ''}
 					</div>
 
 					<div className="buttons">
@@ -76,6 +90,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		obj[key] = value;
 
 		storageSet(obj);
+		this.forceUpdate();
 	};
 
 	onUpload () {

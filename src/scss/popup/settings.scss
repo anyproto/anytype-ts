@@ -591,6 +591,10 @@
 			> .side.right.tabOnboarding {
 				.title { margin: 0px 0px 32px 0px; }
 				.actionItems { margin: 0px 0px 35px 0px }
+
+				.select {
+					.descr { display: none; }
+				}
 			}
 		}
 	}

@@ -125,9 +125,9 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	select () {
 		const { account, walletPath, networkConfig } = authStore;
-		const { configPath } = networkConfig;
+		const { mode, configPath } = networkConfig;
 
-		C.AccountSelect(account.id, walletPath, configPath, (message: any) => {
+		C.AccountSelect(account.id, walletPath, mode, configPath, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
