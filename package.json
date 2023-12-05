@@ -534,7 +534,7 @@
 			"deleteAppDataOnUninstall": true
 		},
 		"linux": {
-			"icon": "electron/img/icon512x512.png",
+			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
 				"snap",
