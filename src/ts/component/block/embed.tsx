@@ -69,8 +69,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 		};
 
-		console.log(block);
-
 		if (processor != I.EmbedProcessor.Latex) {
 			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
 
