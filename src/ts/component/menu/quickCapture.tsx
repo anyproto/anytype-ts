@@ -226,7 +226,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		let ret = false;
 
-		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright, tab', e, (pressed: string) => {
 			e.preventDefault();
 
 			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
