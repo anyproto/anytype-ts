@@ -80,8 +80,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.rebind();
 		this.load(true);
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -115,10 +115,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const filter = String(this.filter || '');
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
@@ -205,8 +201,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				items = items.concat(section.children);
 			});
 		} else {
-			items = this.items.filter(it => it.isInstalled && !UtilObject.isSetLayout(it.recommendedLayout)).slice(0, 3).
-			concat([ dbStore.getSetType(), dbStore.getCollectionType() ]).filter(it => it);
+			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 });
 			items.unshift({ id: 'search', icon: 'search', name: '' });
 		};
 		return items;
