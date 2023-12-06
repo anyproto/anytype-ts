@@ -6,6 +6,7 @@ export enum NotificationType {
 	Export	 = 'export',
 	Invite	 = 'invite',
 	Usecase	 = 'usecase',
+	Gallery	 = 'galleryImport',
 };
 
 export enum NotificationStatus {
