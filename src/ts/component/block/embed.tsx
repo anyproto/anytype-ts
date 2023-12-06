@@ -400,6 +400,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const lang = this.getLang();
 		const { withPreview } = this.state;
+		const { block } = this.props;
+		const { processor } = block.content;
 		
 		if (lang) {
 			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
@@ -407,7 +409,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			this.input.innerText = value;
 		};
 
-		if (!withPreview) {
+		if (!withPreview || processor == I.EmbedProcessor.Latex) {
 			this.setContent(value);
 		};
 	};
