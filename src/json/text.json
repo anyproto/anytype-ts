@@ -1613,7 +1613,7 @@
 	"notificationImportErrorTitle": "Import failed",
 	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
 
-	"notificationExportSuccessTitle": "Export complete!",
+	"notificationExportSuccessTitle": "Export completed!",
 	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
