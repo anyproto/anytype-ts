@@ -1,4 +1,5 @@
 import { I, UtilCommon } from 'Lib';
+import Constant from 'json/constant.json';
 
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
@@ -58,14 +59,9 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.GoogleMaps: {
-				const coords = /\@([0-9\.\,\-a-zA-Z]*)/.exec(url);
-
-				if (coords && coords[1]) {
-					const latlng = coords[1].split(',');
-					const zoom = parseFloat(latlng[2].replace('z', ''));
-					const zoomParam = 591657550.500000 / Math.pow(2, zoom);
-
-					url = `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d${zoomParam}!2d${latlng[1]}!3d${latlng[0]}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1486486434098`;
+				const place = url.match(/place\/([^\/]+)/);
+				if (place && place[1]) {
+					url = `https://www.google.com/maps/embed/v1/place?key=${Constant.embed.googleMaps.key}&q=${place[1]}`;
 				};
 				break;
 			};

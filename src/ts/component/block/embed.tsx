@@ -462,6 +462,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				const allowPresentation = [ I.EmbedProcessor.Youtube ];
 				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
 				const allowJs = [ I.EmbedProcessor.Chart ];
+				const allowPopup = [];
 
 				if (allowSameOrigin.includes(processor)) {
 					sandbox.push('allow-same-origin');
@@ -469,6 +470,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 				if (allowPresentation.includes(processor)) {
 					sandbox.push('allow-presentation');
+				};
+
+				if (allowPopup.includes(processor)) {
+					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
