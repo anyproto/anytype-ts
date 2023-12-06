@@ -14,22 +14,29 @@
 	</head>
 	<body>
 		<script type="text/javascript">
+
 			window.addEventListener('message', e => {
-				if (e.origin.match('http://localhost:') || (e.origin === null)) {
-					const body = document.body;
-					const { html, js, theme, libs } = e.data;
-
-					loadLibs(libs, () => {
-						body.innerHTML = html;
-						body.className = theme;
-
-						if (js) {
-							eval(js);
-						};
-
-						resize(e);
-					});
+				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== null)) {
+					return;
 				};
+
+				const body = document.body;
+				const { html, js, theme, libs } = e.data;
+
+				loadLibs(libs, () => {
+					body.innerHTML = html;
+					body.className = theme;
+
+					if (js) {
+						try {
+							eval(js);
+						} catch (e) {
+							console.error(e);
+						};
+					};
+
+					resize(e);
+				});
 			});
 
 			window.addEventListener('resize', resize);

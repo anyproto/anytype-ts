@@ -459,9 +459,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 				const sandbox = [ 'allow-scripts' ];
 				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
+				const allowPresentation = [ I.EmbedProcessor.Youtube ];
+				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
+				const allowJs = [ I.EmbedProcessor.Chart ];
 
 				if (allowSameOrigin.includes(processor)) {
 					sandbox.push('allow-same-origin');
+				};
+
+				if (allowPresentation.includes(processor)) {
+					sandbox.push('allow-presentation');
 				};
 
 				const onLoad = () => {
@@ -469,13 +476,11 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					const env = this.getEnvironmentContent();
 					const data: any = { ...env, theme: commonStore.getThemeClass() };
 
-					if ([ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ].includes(processor)) {
-						if (!text.match(/<iframe/)) {
-							text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
-						};
+					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (processor == I.EmbedProcessor.Chart) {
+					if (allowJs.includes(processor)) {
 						data.js = text;
 					} else {
 						data.html = text;
