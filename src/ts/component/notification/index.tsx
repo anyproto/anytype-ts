@@ -10,6 +10,7 @@ import NotificationUsecase from './usecase';
 import NotificationImport from './import';
 import NotificationExport from './export';
 import NotificationInvite from './invite';
+import NotificationGallery from './gallery';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
 
@@ -33,6 +34,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { id, type } = item;
 		const cn = [ 'notification', className ];
 
+		console.log(item);
+
 		let content = null;
 		switch (type) {
 			case I.NotificationType.Usecase: {
@@ -52,6 +55,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Invite: {
 				content = <NotificationInvite {...this.props} onButton={this.onButton} />;
+				break;
+			};
+
+			case I.NotificationType.Gallery: {
+				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
 				break;
 			};
 		};

@@ -1613,9 +1613,14 @@
 	"notificationImportErrorTitle": "Import failed",
 	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
 
-	"notificationExportSuccessTitle": "Export complete!",
+	"notificationExportSuccessTitle": "Export completed!",
 	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
 	"notificationExportErrorTitle": "Export failed",
-	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work."
+	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
+
+	"notificationGallerySuccessTitle": "\"%s\" was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryErrorTitle": "Something went wrong",
+	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum."
 
 }

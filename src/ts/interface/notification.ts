@@ -6,6 +6,7 @@ export enum NotificationType {
 	Export	 = 'export',
 	Invite	 = 'invite',
 	Usecase	 = 'usecase',
+	Gallery	 = 'galleryImport',
 };
 
 export enum NotificationStatus {
@@ -16,11 +17,7 @@ export enum NotificationStatus {
 };
 
 export enum NotificationAction {
-    Retry		 = 0,
-    Report		 = 1,
-    OpenObject	 = 2,
-    OpenSpace	 = 3,
-    Close		 = 4,
+    Close	 = 0,
 };
 
 export interface Notification {
