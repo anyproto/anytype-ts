@@ -523,7 +523,7 @@
 		"win": {
 			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
-			"icon": "electron/img/icon256x256.png",
+			"icon": "electron/img/icons/256x256.png",
 			"publish": [
 				{
 					"provider": "spaces",
@@ -536,7 +536,7 @@
 			"deleteAppDataOnUninstall": true
 		},
 		"linux": {
-			"icon": "electron/img/icon512x512.png",
+			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
 				"snap",

@@ -55,7 +55,6 @@ input, textarea, select { font-family: 'Inter'; }
 #graphPreview { position: fixed; z-index: 1000; }
 
 html.platformWindows {
-	#drag { -webkit-app-region: no-drag; }
 	body { overflow-y: overlay; }
 }
 
@@ -64,6 +63,8 @@ html.platformLinux {
 }
 
 html.platformWindows, html.platformLinux {
+	#drag { -webkit-app-region: no-drag; }
+
 	::-webkit-scrollbar { width: 10px; height: 6px; }
 	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
