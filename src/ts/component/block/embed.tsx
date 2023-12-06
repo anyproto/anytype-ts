@@ -563,7 +563,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		this.placeholderCheck(this.text);
-		
+
 		if (withPreview) {
 			this.setState({ withPreview: false });
 		};
