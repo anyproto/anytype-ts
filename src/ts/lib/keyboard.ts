@@ -249,7 +249,7 @@ class Keyboard {
 				this.pageCreate({}, 'Shortcut');
 			});
 
-			this.shortcut(`${cmd}+shift+n`, e, () => {
+			this.shortcut(`alt+n`, e, () => {
 				e.preventDefault();
 				this.onQuickCapture();
 			});
