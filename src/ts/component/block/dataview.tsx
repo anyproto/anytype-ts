@@ -243,6 +243,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { isInline, isPopup } = this.props;
+		const view = this.getView();
 
 		this.reloadData();
 		this.init();
@@ -250,7 +251,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.rebind();
 
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
-		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
+		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view.type });
 
 		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
 			Onboarding.start('setSettings', isPopup);

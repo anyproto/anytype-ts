@@ -147,6 +147,12 @@ class Analytics {
 				break;
 			};
 
+			case 'ScreenSet':
+			case 'ScreenCollection': {
+				data.type = I.ViewType[data.type];
+				break;
+			};
+
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
 				data.style = Number(data.style) || 0;
