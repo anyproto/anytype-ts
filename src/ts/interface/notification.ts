@@ -39,7 +39,6 @@ export interface NotificationPayloadImport {
 
 export interface NotificationComponent {
 	item: Notification;
-	className?: string;
 	style?: any;
 	onButton?: (e: any, action: string) => void;
 	resize?: () => void;

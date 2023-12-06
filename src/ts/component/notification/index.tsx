@@ -14,10 +14,6 @@ import NotificationGallery from './gallery';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
 
-	public static defaultProps = {
-		className: '',
-	};
-
 	_isMounted = false;
 	node: any = null;
 	timeout = 0;
@@ -30,11 +26,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	};
 
 	render () {
-		const { item, className, style } = this.props;
+		const { item, style } = this.props;
 		const { id, type } = item;
-		const cn = [ 'notification', className ];
-
-		console.log(item);
 
 		let content = null;
 		switch (type) {
@@ -68,7 +61,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			<div 
 				id={`notification-${id}`}
 				ref={node => this.node = node}
-				className={cn.join(' ')}
+				className="notification"
 				style={style}
 			>
 				<Icon className="delete" onClick={this.onDelete} />
