@@ -13,7 +13,11 @@ import Constant from 'json/constant.json';
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent> {
+interface State {
+	withPreview: boolean
+};
+
+const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
 	range = { start: 0, end: 0 };
@@ -25,7 +29,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	value = null;
 	empty = null;
 	container = null;
-	withPreview = true;
+
+	state = {
+		withPreview: true
+	};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -48,7 +55,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	render () {
 		const { readonly, block } = this.props;
 		const { processor } = block.content;
-		const cn = [ 'wrap', 'resizable', 'focusable', this.withPreview ? 'withPreview' : '', 'c' + block.id ];
+		const { withPreview } = this.state;
+		const cn = [ 'wrap', 'resizable', 'focusable', withPreview ? 'withPreview' : '', 'c' + block.id ];
 
 		let select = null;
 		let empty = '';
@@ -391,6 +399,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const lang = this.getLang();
+		const { withPreview } = this.state;
 		
 		if (lang) {
 			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
@@ -398,7 +407,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			this.input.innerText = value;
 		};
 
-		if (!this.withPreview) {
+		if (!withPreview) {
 			this.setContent(value);
 		};
 	};
@@ -461,6 +470,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const { processor } = block.content;
+		const { withPreview } = this.state;
 		const node = $(this.node);
 		const win = $(window);
 
@@ -553,10 +563,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		this.placeholderCheck(this.text);
-
-		if (this.withPreview) {
-			this.withPreview = false;
-			this.forceUpdate();
+		
+		if (withPreview) {
+			this.setState({ withPreview: false });
 		};
 	};
 
