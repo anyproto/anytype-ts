@@ -1166,7 +1166,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen('', '', [ 'onboarding', 'smile' ])) {
+		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select' ])) {
 			return;
 		};
 
