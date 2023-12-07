@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Title, Label, Select, Button, Switch } from 'Component';
-import { I, UtilMenu, translate, Action } from 'Lib';
+import { Title, Label, Select, Button } from 'Component';
+import { I, UtilMenu, translate, Action, analytics } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -62,7 +62,10 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 								ref={ref => this.refMode = ref}
 								value={String(mode || '')}
 								options={networkModes}
-								onChange={v => this.onChange('mode', v)}
+								onChange={v => {
+									this.onChange('mode', v);
+									analytics.event('SelectNetwork', { type: v, route: 'Onboarding' });
+								}}
 								arrowClassName="black"
 								menuParam={{ 
 									horizontal: I.MenuDirection.Right, 
@@ -98,7 +101,10 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
+		Action.openFile([ 'yml' ], (paths: string[]) => {
+			this.onChange('path', paths[0]);
+			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+		});
 	};
 
 	onSave () {
