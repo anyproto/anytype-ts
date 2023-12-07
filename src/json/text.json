@@ -1637,6 +1637,8 @@
 	"notificationGallerySuccessTitle": "\"%s\" was installed",
 	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
 	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum."
+	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
+	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
+	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"
 }
