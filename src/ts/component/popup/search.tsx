@@ -398,6 +398,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.newFilter &&  
 			this.newFilter.relation && 
 			(this.newFilter.condition != I.FilterCondition.None) && 
+			!menuStore.isOpen('selectCondition') &&
 			(this.newFilter.value === null)
 		) {
 
@@ -517,8 +518,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			return;
 		};
 
-		const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
-
 		if (!this.newFilter) {
 			this.newFilter = {
 				relation: null,
@@ -534,12 +533,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const onCondition = () => {
+			const filter = this.getFilter();
+			const filterReg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+
 			let conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None));
 			if (filter) {
 				conditions = conditions.filter(it => it.name.match(filterReg));
 			};
 
-			this.menuOpen('select', {
+			this.menuOpen('selectCondition', {
+				component: 'select',
 				onOpen,
 				data: {
 					value: conditions.length ? conditions[0].id : '',
