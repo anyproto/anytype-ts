@@ -27,7 +27,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
-		this.onSelfHost = this.onSelfHost.bind(this);
 		this.onForgot = this.onForgot.bind(this);
 	};
 	
@@ -60,13 +59,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						</div>
 					</form>
 				</Frame>
-
-				{config.experimental ? (
-					<div className="animation small bottom" onClick={this.onSelfHost}>
-						<Icon />
-						{translate('authLoginSelfHost')}
-					</div>
-				) : ''}
 			</div>
 		);
 	};
@@ -176,9 +168,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	onCancel () {
 		authStore.logout(true, false);
 		Animation.from(() => UtilRouter.go('/auth/select', { replace: true }));
-	};
-
-	onSelfHost () {
 	};
 
 	onChange () {
