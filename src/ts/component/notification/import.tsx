@@ -9,11 +9,17 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 	render () {
 		const { item, onButton } = this.props;
 		const { payload, type } = item;
-		const { errorCode, spaceId } = payload;
+		const { errorCode, spaceId, importType } = payload;
 		const object = UtilObject.getSpaceviewBySpaceId(spaceId) || {};
 		const lang = errorCode ? 'error' : 'success';
-		const title = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-title`));
-		const text = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-text`));
+
+		let title = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-title`));
+		let text = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-text`));
+
+		if (importType == 0 && errorCode == 5) {
+			title = translate('notificationNotionErrorNoObjectsTitle');
+			text = translate('notificationNotionErrorNoObjectsText');
+		};
 
 		let buttons = [];
 		if (errorCode) {
