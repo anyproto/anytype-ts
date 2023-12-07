@@ -40,7 +40,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
-		this.addWidget = this.addWidget.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 	};
@@ -109,12 +109,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 			if (isEditing) {
 				if (blocks.length <= Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onClick: this.addWidget });
+					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: this.onAdd });
 				};
 
-				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onClick: this.onEdit });
+				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
 			} else {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onClick: this.onEdit });
+				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onMouseDown: this.onEdit });
 			};
 
 			content = (
@@ -206,40 +206,15 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		$(this.node).scrollTop(this.top);
 	};
 
-	onEdit (): void {
-		const { isEditing } = this.state;
-		const win = $(window);
-		
-		this.setEditing(!isEditing);
+	onEdit (e: any): void {
+		e.stopPropagation();
 
-		if (isEditing) {
-			return;
-		};
-
-		analytics.event('EditWidget');
-
-		const unbind = () => win.off('click.sidebar keydown.sidebar');
-		const close = e => {
-			e.stopPropagation();
-
-			this.setEditing(false);
-			unbind();
-		};
-
-		unbind();
-
-		win.on('click.sidebar', e => {
-			if (!$(e.target).parents('.widget').length) {
-				close(e);
-			};
-		});
-
-		win.on('keydown.sidebar', e => {
-			keyboard.shortcut('escape', e, () => close(e));
-		});
+		this.setEditing(!this.state.isEditing);
 	};
 
-	addWidget (): void {
+	onAdd (e: any): void {
+		e.stopPropagation();
+
 		menuStore.open('widget', {
 			element: '#widget-list-add',
 			className: 'fixed',
@@ -449,6 +424,34 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	setEditing (isEditing: boolean) {
 		this.setState({ isEditing });
+
+		if (!isEditing) {
+			return;
+		};
+
+		const win = $(window);
+		const unbind = () => win.off('mousedown.sidebar keydown.sidebar');
+		const close = e => {
+			e.stopPropagation();
+
+			this.setEditing(false);
+			unbind();
+		};
+
+		unbind();
+		analytics.event('EditWidget');
+
+		window.setTimeout(() => {
+			win.on('mousedown.sidebar', e => {
+				if (!$(e.target).parents('.widget').length) {
+					close(e);
+				};
+			});
+
+			win.on('keydown.sidebar', e => {
+				keyboard.shortcut('escape', e, () => close(e));
+			});
+		}, Constant.delay.menu);
 	};
 
 });

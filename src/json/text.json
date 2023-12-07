@@ -111,6 +111,7 @@
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
+	"commonSetName": "Set of %s",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -405,7 +406,7 @@
 	"blockNameBulleted": "Bulleted list",
 	"blockNameNumbered": "Numbered list",
 	"blockNameToggle": "Toggle",
-	"blockNameExisting": "Link to Object",
+	"blockNameExisting": "Add link",
 	"blockNameFile": "File",
 	"blockNameImage": "Picture",
 	"blockNameVideo": "Video",
@@ -729,6 +730,7 @@
 
 	"popupSearchPlaceholder": "What would you like to do?",
 	"popupSearchEmpty": "No Objects found",
+	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
@@ -845,6 +847,7 @@
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
+	"popupShortcutMainBasics19": "Open the Quick Capture menu",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -1448,15 +1451,6 @@
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",
 
-	"dispatcherExportSuccessTitle": "The export process is complete!",
-	"dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
-	"dispatcherImportErrorTitle": "The import wasn't completed",
-	"dispatcherImportErrorText": "Sorry, but something went wrong during the import process. Please try again or let us know if it doesn't work.",
-	"dispatcherExportErrorTitle": "The export wasn't completed",
-	"dispatcherExportErrorText": "Sorry, but something went wrong during the export process. Please try again or let us know if it doesn't work.",
-	"dispatcherImportConfirm": "Ok! I got it!",
-	"dispatcherImportTryAgain": "Try again",
-
 	"onboardingMainGraph": "Onboarding",
 	"onboardingMainGraph11": "<b>Space is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
 
@@ -1590,14 +1584,14 @@
 	"errorAccountRecover109": "Account has been deleted",
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
-	"origin0": "User",
+	"origin0": "None",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
-	"origin3": "Import",
-	"origin4": "Webclipper",
-	"origin5": "Sharing Extension",
-	"origin6": "Usecase",
-	"origin7": "Built-in",
+	"origin3": "Imported object",
+	"origin4": "Web clipper",
+	"origin5": "Mobile sharing extension",
+	"origin6": "Use case",
+	"origin7": "Library installed",
 
 	"emojiCategoryPeople": "Smileys & People",
 	"emojiCategoryNature": "Animals & Nature",
@@ -1613,6 +1607,21 @@
 	"notification0ErrorTitle": "Something went wrong",
 	"notification0ErrorText": "Oops! &quot;%s&quot; wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
-	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights."
+	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights.",
+
+	"notificationImportSuccessTitle": "Import complete!",
+	"notificationImportSuccessText": "You can find the imported objects in the selected space.",
+	"notificationImportErrorTitle": "Import failed",
+	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
+
+	"notificationExportSuccessTitle": "Export completed!",
+	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
+	"notificationExportErrorTitle": "Export failed",
+	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
+
+	"notificationGallerySuccessTitle": "\"%s\" was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryErrorTitle": "Something went wrong",
+	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum."
 
 }

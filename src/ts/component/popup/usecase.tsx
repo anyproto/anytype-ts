@@ -101,9 +101,9 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const { getId, close } = this.props;
 		const object = this.getObject();
 
-		const cb = (spaceId: string) => {
-			this.refButton.setLoading(true);
-			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, () => close());
+		const cb = (spaceId: string, isNew: boolean) => {
+			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew);
+			close();
 		};
 
 		menuStore.open('select', {
@@ -122,11 +122,11 @@ class PopupUsecase extends React.Component<I.Popup> {
 							data: { 
 								page: 'spaceCreate', 
 								isSpace: true,
-								onCreate: cb,
+								onCreate: spaceId => cb(spaceId, true),
 							}, 
 						});
 					} else {
-						cb(item.targetSpaceId);
+						cb(item.targetSpaceId, false);
 					};
 				},
 			}

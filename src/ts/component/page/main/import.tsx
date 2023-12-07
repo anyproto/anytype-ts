@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Loader, Frame, Title, Error } from 'Component';
+import { Loader, Title, Error, Frame } from 'Component';
 import { I, C, UtilCommon, UtilRouter, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 
@@ -36,11 +36,10 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 		const search = this.getSearch();
 
 		C.DownloadManifest(search.source, (message: any) => {
-			keyboard.onBack();
-
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
+				keyboard.onBack();
 				popupStore.open('usecase', { data: { object: message.info } });
 			};
 		});

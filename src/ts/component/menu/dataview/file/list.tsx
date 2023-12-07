@@ -97,6 +97,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					placeholderFocus={translate('commonFilterObjects')}
 					value={filter}
 					onChange={this.onFilterChange} 
+					focusOnMount={true}
 				/>
 
 				{loading ? <Loader /> : (
@@ -137,7 +138,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.focus();
 		this.load(true);
 	};
 
@@ -164,22 +164,13 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
-		this.resize();
-		this.focus();
 
+		this.resize();
 		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {

@@ -39,24 +39,22 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 		);
 
 		return (
-			<div>
-				<Frame>
-					{isLoading ? <Loader /> : ''}
+			<Frame>
+				{isLoading ? <Loader /> : ''}
 
-					<Title text={translate('pageMainUsecaseTitle')} />
-					<Label text={translate('pageMainUsecaseLabel')} />
+				<Title text={translate('pageMainUsecaseTitle')} />
+				<Label text={translate('pageMainUsecaseLabel')} />
 
-					<div className="list">
-						{items.map((item: any, i: number) => (
-							<Case key={i} {...item} />
-						))}
-					</div>
+				<div className="list">
+					{items.map((item: any, i: number) => (
+						<Case key={i} {...item} />
+					))}
+				</div>
 
-					<div className="buttons">
-						<Button color="blank" className="c36" text={translate('commonSkip')} onClick={e => this.onClick(e, I.Usecase.Skip)} />
-					</div>
-				</Frame>
-			</div>
+				<div className="buttons">
+					<Button color="blank" className="c36" text={translate('commonSkip')} onClick={e => this.onClick(e, I.Usecase.Skip)} />
+				</div>
+			</Frame>
 		);
 	};
 

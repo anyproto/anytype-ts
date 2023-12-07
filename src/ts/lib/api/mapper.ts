@@ -38,9 +38,19 @@ export const Mapper = {
 		return t;
 	},
 
+	NotificationPayload (v: number) {
+		const V = Model.Notification.PayloadCase;
+
+		let t = '';
+		if (v == V.IMPORT)			 t = 'import';
+		if (v == V.EXPORT)			 t = 'export';
+		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
+		return t;
+	},
+
 	From: {
 
-		Account: (obj: any): I.Account => {
+		Account: (obj: Model.Account): I.Account => {
 			return {
 				id: obj.getId(),
 				info: obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
@@ -66,8 +76,7 @@ export const Mapper = {
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
-			return {
-			};
+			return {};
 		},
 
 		AccountStatus: (obj: any): I.AccountStatus => {
@@ -475,6 +484,49 @@ export const Mapper = {
 				viewId: obj.getViewid(),
 				groupId: obj.getGroupid(),
 				objectIds: obj.getObjectidsList() || [],
+			};
+		},
+
+		Notification: (obj: any): I.Notification => {
+			const type = Mapper.NotificationPayload(obj.getPayloadCase());
+			const field = obj['get' + UtilCommon.ucFirst(type)]();
+			
+			let payload: any = {};
+
+			switch (type) {
+
+				case 'import':
+				case 'galleryImport': {
+					payload = Object.assign(payload, {
+						processId: field.getProcessid(),
+						errorCode: field.getErrorcode(),
+						spaceId: field.getSpaceid(),
+						name: field.getName(),
+					});
+
+					if (type == 'import') {
+						payload.importType = field.getImporttype();
+					};
+					break;
+				};
+
+				case 'export': {
+					payload = Object.assign(payload, {
+						errorCode: field.getErrorcode(),
+						exportType: field.getExporttype(),
+					});
+					break;
+				};
+
+			};
+
+			return {
+				id: obj.getId(),
+				createTime: obj.getCreatetime(),
+				status: obj.getStatus(),
+				isLocal: obj.getIslocal(),
+				type: type as I.NotificationType,
+				payload,
 			};
 		},
 
