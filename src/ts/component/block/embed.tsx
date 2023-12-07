@@ -13,7 +13,11 @@ import Constant from 'json/constant.json';
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent> {
+interface State {
+	withPreview: boolean
+};
+
+const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
 	range = { start: 0, end: 0 };
@@ -25,6 +29,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	value = null;
 	empty = null;
 	container = null;
+
+	state = {
+		withPreview: true
+	};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -47,7 +55,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	render () {
 		const { readonly, block } = this.props;
 		const { processor } = block.content;
-		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const { withPreview } = this.state;
+		const cn = [ 'wrap', 'resizable', 'focusable', withPreview ? 'withPreview' : '', 'c' + block.id ];
 
 		let select = null;
 		let empty = '';
@@ -69,10 +78,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 		};
 
+		let icon: string = '';
+
 		if (processor != I.EmbedProcessor.Latex) {
 			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
 
-			button = <Button className="source c28" text={translate('blockEmbedSource')} onClick={this.onEdit} />;
+			if (menuItem && menuItem.icon) {
+				icon = menuItem.icon;
+			};
+
+			button = <Button className="source c28" onClick={this.onEdit} />;
 			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
 		};
 
@@ -88,6 +103,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				{select}
 				{button}
 
+				<div className="preview" onClick={() => this.setContent(this.text)}>
+					{icon ? <Icon className={icon} /> : ''}
+				</div>
 				<div id="value" onClick={this.onEdit} />
 				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
 				<div id={this.getContainerId()} />
@@ -381,6 +399,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const lang = this.getLang();
+		const { withPreview } = this.state;
+		const { block } = this.props;
+		const { processor } = block.content;
 		
 		if (lang) {
 			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
@@ -388,7 +409,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			this.input.innerText = value;
 		};
 
-		this.setContent(value);
+		if (!withPreview || processor == I.EmbedProcessor.Latex) {
+			this.setContent(value);
+		};
 	};
 
 	getValue (): string {
@@ -449,6 +472,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const { processor } = block.content;
+		const { withPreview } = this.state;
 		const node = $(this.node);
 		const win = $(window);
 
@@ -546,6 +570,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		this.placeholderCheck(this.text);
+
+		if (withPreview) {
+			this.setState({ withPreview: false });
+		};
 	};
 
 	placeholderCheck (value: string) {
