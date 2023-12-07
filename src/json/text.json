@@ -717,6 +717,16 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
+	"popupSettingsOnboardingModeTitle": "Network",
+	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
+
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Back up to the network managed by Anytype",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Don't back up; sync within local network",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Back up to your self-hosted network",
+
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
 	"popupNavigationOpen": "Open",
@@ -1214,7 +1224,10 @@
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
 	"menuThreadListLastSync": "Last sync",
-	"menuThreadListBackupNode": "Backup node",
+	"menuThreadListProduction": "Anytype Network",
+	"menuThreadListDevelopment": "Anytype Staging",
+	"menuThreadListSelf": "Self-hosted Network",
+	"menuThreadListLocal": "Local only",
 
 	"menuThreadStatusObjectBackedUp": "This Object is backed up",
 	"menuThreadStatusUpdatesRequested": "Updates requested",
@@ -1289,12 +1302,15 @@
 	"threadStatus3": "Synced",
 	"threadStatus4": "Not syncing",
 	"threadStatus5": "Incompatible version",
+	"threadStatus100": "Local-only",
+
 	"threadStatus0Tooltip": "Initializing sync",
 	"threadStatus1Tooltip": "Anytype node is not connected",
 	"threadStatus2Tooltip": "Downloading or uploading data to some node",
 	"threadStatus3Tooltip": "Backed up on one node at least",
 	"threadStatus4Tooltip": "Failed to sync, trying again...",
 	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
+	"threadStatus100Tooltip": "Don't back up; sync within local network",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",

@@ -5,6 +5,8 @@ export enum ThreadStatus {
 	Synced		 = 3,
 	Failed		 = 4,
 	Incompatible = 5,
+
+	Local		 = 100,
 };
 
 export interface FilesStatus {

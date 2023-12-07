@@ -3,6 +3,7 @@
 $colorPrimary: #d4d4d4;
 $colorTextSecondary: #8d8d8d;
 $colorTextTertiary: #505050;
+$colorShapeTertiary: #2b2b2b;
 $colorError: #8a351a;
 
 $colorDark: #060606;
@@ -20,21 +21,21 @@ html.bodyIndex, html.bodyAuth {
 	.navigationPanel { display: none !important; }
 }
 
-html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
+html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.popup { 
 		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: $colorPrimary; }
-	}
-
-	#popupConfirm-innerWrap {
-		.content { text-align: left; }
 
 		.button.disabled { color: $colorTextTertiary }
 
 		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
-		
+
 		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
 		.button.blank:hover { background: $colorButtonBlankHover; }
+	}
+
+	#popupConfirm-innerWrap {
+		.content { text-align: left; }
 
 		h1 { font-size: 18px; margin-bottom: 16px; color: $colorPrimary; }
 		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
@@ -43,9 +44,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		ul.last { margin: 0px; }
 	}
 
-	#popupPhrase-innerWrap {
-		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
-		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
+	#popupSettingsOnboarding-innerWrap {
+		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
+		.label.small { color: $colorTextTertiary; }
+		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
 	}
 
 	.menus {
@@ -87,6 +89,9 @@ html.bodyAuthDeleted {
 	.input { height: 40px; border: solid 1px $colorShapePrimary; }
 
 	.header { width: 100% !important; }
+	.header {
+		.icon:hover { background-color: $colorShapeTertiary; }
+	}
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {

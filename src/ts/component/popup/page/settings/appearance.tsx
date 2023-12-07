@@ -42,18 +42,18 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 				<div className="actionItems">
 					<div className="item">
 						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
-						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => commonStore.autoSidebarSet(v)} />
 					</div>
 
 					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
-						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)}/>
+						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)} />
 					</div>
 
 					{canHideMenu ? (
 						<div className="item">
 							<Label text={translate('electronMenuShowMenu')} />
-							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)}/>
+							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
 						</div>
 					) : ''}
 				</div>
