@@ -534,7 +534,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const onCondition = () => {
-			const conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None) && it.name.match(filterReg));
+			let conditions = Relation.filterConditionsByType(this.newFilter.relation.format).filter(it => (it.id != I.FilterCondition.None));
+			if (filter) {
+				conditions = conditions.filter(it => it.name.match(filterReg));
+			};
 
 			this.menuOpen('select', {
 				onOpen,
