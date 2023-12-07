@@ -25,8 +25,8 @@ class UtilObject {
 		};
 	};
 
-	getSpaceview () {
-		return detailStore.get(Constant.subId.space, blockStore.spaceview);
+	getSpaceview (id?: string) {
+		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
