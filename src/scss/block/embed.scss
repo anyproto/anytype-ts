@@ -35,10 +35,11 @@
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
 		#input { 
-			background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; font-family: 'Inter'; padding: 6px 12px; 
+			background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; 
 			@include text-common; -webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; 
 			margin-top: 8px; border-radius: 8px;
 		}
+		#placeholder { padding: 6px 12px; }
 
 		.icon.source { 
 			position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: none; border-radius: 4px;

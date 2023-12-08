@@ -68,7 +68,7 @@ class Editable extends React.Component<Props> {
 
 			editor = (
 				<div 
-					id="value" 
+					id={id} 
 					className={cne.join(' ')} 
 					contentEditable={true}
 					suppressContentEditableWarning={true}

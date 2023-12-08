@@ -4,7 +4,7 @@ import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
+import { Icon, Label, Editable } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
@@ -30,6 +30,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	value = null;
 	empty = null;
 	container = null;
+	refEditable = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -59,7 +60,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const { text, processor } = block.content;
 		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
-		const isLatex = block.isEmbedLatex();
 
 		if (!text) {
 			cn.push('isEmpty');
@@ -70,10 +70,33 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		let select = null;
-		let empty = '';
 		let button = null;
+		let preview = null;
+		let empty = '';
+		let placeholder = '';
+		let icon = '';
 
 		switch (processor) {
+			default: {
+				const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor) || {};
+
+				button = <Icon className="source" onClick={this.onEdit} />;
+				empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
+				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+				icon = menuItem.icon;
+
+				if (!isShowing) {
+					cn.push('withPreview');
+
+					preview = (
+						<div className="preview" onClick={this.onPreview}>
+							<Icon className={icon} />
+						</div>
+					);
+				};
+				break;
+			};
+
 			case I.EmbedProcessor.Latex: {
 				select = (
 					<div className="selectWrap">
@@ -85,28 +108,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				);
 
 				empty = translate('blockEmbedLatexEmpty');
+				placeholder = translate('blockEmbedLatexPlaceholder');
 				break;
-			};
-		};
-
-		let icon: string = '';
-		let preview = null;
-
-		if (!isLatex) {
-			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
-
-			button = <Icon className="source" onClick={this.onEdit} />;
-			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
-			icon = menuItem?.icon;
-
-			if (!isShowing) {
-				cn.push('withPreview');
-
-				preview = (
-					<div className="preview" onClick={this.onPreview}>
-						<Icon className={icon} />
-					</div>
-				);
 			};
 		};
 
@@ -126,17 +129,17 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				<div id="value" onClick={this.onEdit} />
 				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
 				<div id={this.getContainerId()} />
-				<div 
+				<Editable 
+					ref={ref => this.refEditable = ref}
 					id="input"
-					contentEditable={!readonly}
-					suppressContentEditableWarning={true}
-					placeholder={translate('blockEmbedLatexPlaceholder')}
+					readonly={readonly}
+					placeholder={placeholder}
 					onSelect={this.onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
 					onKeyDown={this.onKeyDownInput}
-					onChange={this.onChange}
+					onInput={this.onChange}
 					onPaste={this.onPaste}
 				/>
 			</div>
@@ -155,9 +158,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.input = node.find('#input').get(0);
 		this.container = node.find(`#${this.getContainerId()}`);
 
-		this.placeholderCheck(this.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
+		this.placeholderCheck(this.text);
 		this.focus();
 	};
 
@@ -167,6 +170,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.text = String(block.content.text || '');
 		this.setValue(this.text);
 		this.setContent(this.text);
+		this.placeholderCheck(this.text);
 		this.rebind();
 		this.focus();
 	};
@@ -611,6 +615,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	placeholderCheck (value: string) {
 		value.trim().length > 0 ? this.empty.hide() : this.empty.show();
+		this.refEditable?.placeholderCheck();
 	};
 
 	onEdit (e: any) {
