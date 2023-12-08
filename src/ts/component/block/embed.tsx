@@ -467,7 +467,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		switch (processor) {
 			case I.EmbedProcessor.Chart: {
 				html = `<canvas id="chart"></canvas>`;
-				libs.push('./chart/chart.umd.js');
+				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
 				break;
 			};
 		};
@@ -516,7 +516,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				const sandbox = [ 'allow-scripts' ];
 				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
-				const allowPresentation = [ I.EmbedProcessor.Youtube ];
+				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
 				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
 				const allowJs = [ I.EmbedProcessor.Chart ];
 				const allowPopup = [];
@@ -555,8 +555,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: './embed/iframe.html',
+						src: this.fixAsarPath('./embed/iframe.html'),
 						frameborder: 0,
+						scrolling: 'no',
 						sandbox: sandbox.join(' '),
 						allowtransparency: true,
 					});
@@ -656,6 +657,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.disableSelection(false);
 			win.off('mouseup.embed');
 		});
+	};
+
+	fixAsarPath (path: string): string {
+		const origin = location.origin;
+		
+		let href = location.href;
+
+		if (origin == 'file://') {
+			href = href.replace('/app.asar/', '/app.asar.unpacked/');
+			href = href.replace('/index.html', '/');
+			path = href + path.replace(/^\.\//, '');
+		};
+		return path;
 	};
 
 });

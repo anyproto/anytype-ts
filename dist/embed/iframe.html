@@ -14,18 +14,19 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-
 			let cachedHtml = '';
+			let path = '';
 
 			window.addEventListener('message', e => {
-				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== null)) {
+				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== 'file://')) {
+					console.error('[origin]', e.origin);
 					return;
 				};
 
 				const body = document.body;
 				const { html, js, theme, libs } = e.data;
 
-				loadLibs(libs, () => {
+				loadLibs(path, libs, () => {
 					if (cachedHtml !== html) {
 						body.innerHTML = html;
 						cachedHtml = html;
@@ -55,7 +56,7 @@
 				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
 			};
 
-			function loadLibs (list, callBack) {
+			function loadLibs (path, list, callBack) {
 				if (!list.length) {
 					if (callBack) {
 						callBack();
@@ -70,7 +71,7 @@
 
 				script.onload = function (e) {
 					if (list.length) {
-						loadScripts(list, callBack);
+						loadLibs(path, list, callBack);
 					} else 
 					if (callBack) {
 						callBack();
@@ -78,7 +79,7 @@
 				};
 
 				script.type = 'text/javascript';
-				script.src = src;
+				script.src = path + src;
 			};
 		</script>
 	</body>

@@ -80,7 +80,7 @@
 	],
 
 	"script-src-elem": [
-		"file:",
+		"file://*",
 		"'unsafe-inline'",
 		"http://localhost:*",
 		"https://sentry.io",
@@ -93,7 +93,8 @@
 		"https://*.googleapis.com",
 		"https://*.doubleclick.net",
 		"https://*.cookielaw.org",
-		"https://mirostatic.com"
+		"https://mirostatic.com",
+		"https://cdn.jsdelivr.net"
 	],
 
 	"frame-src": [
@@ -104,7 +105,8 @@
 		"https://w.soundcloud.com",
 		"https://*.google.com",
 		"https://miro.com",
-		"https://*.miro.com"
+		"https://*.miro.com",
+		"file://*"
 	],
 
 	"worker-src": [ 
