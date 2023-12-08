@@ -4,8 +4,8 @@ import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore, notificationStore } from 'Store';
-import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter } from 'Lib';
+import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -1017,8 +1017,15 @@ class Dispatcher {
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
 
-		if ((id == blockStore.spaceview) && (details.spaceAccountStatus == I.SpaceStatus.Deleted)) {
-			UtilRouter.switchSpace(authStore.accountSpaceId, '');
+		if (details.spaceAccountStatus == I.SpaceStatus.Deleted) {
+			if (id == blockStore.spaceview) {
+				UtilRouter.switchSpace(authStore.accountSpaceId, '');
+			};
+
+			const spaceview = UtilObject.getSpaceview(id);
+			if (spaceview && !spaceview._empty_) {
+				Storage.deleteSpace(spaceview.targetSpaceId);
+			};
 		};
 
 		if (!rootId) {
