@@ -4,7 +4,7 @@ import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
 import { observer } from 'mobx-react';
-import { Icon, Label, Button } from 'Component';
+import { Icon, Label } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
@@ -14,7 +14,8 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 interface State {
-	showContent: boolean;
+	isShowing: boolean;
+	isEditing: boolean;
 };
 
 const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent, State> {
@@ -30,7 +31,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	empty = null;
 	container = null;
 	state = {
-		showContent: false,
+		isShowing: false,
+		isEditing: false,
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -55,12 +57,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	render () {
 		const { readonly, block } = this.props;
 		const { text, processor } = block.content;
-		const { showContent } = this.state;
+		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
-		const isLatex = processor == I.EmbedProcessor.Latex;
+		const isLatex = block.isEmbedLatex();
 
 		if (!text) {
 			cn.push('isEmpty');
+		};
+
+		if (isEditing) {
+			cn.push('isEditing');
 		};
 
 		let select = null;
@@ -93,7 +99,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
 			icon = menuItem?.icon;
 
-			if (!showContent) {
+			if (!isShowing) {
+				cn.push('withPreview');
+
 				preview = (
 					<div className="preview" onClick={this.onPreview}>
 						<Icon className={icon} />
@@ -141,25 +149,37 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const { block } = this.props;
 		const node = $(this.node);
 
-		this.win = $(window);
 		this.text = String(block.content.text || '');
 		this.empty = node.find('#empty');
 		this.value = node.find('#value');
 		this.input = node.find('#input').get(0);
 		this.container = node.find(`#${this.getContainerId()}`);
 
-		const length = this.text.length;
+		this.placeholderCheck(this.text);
 
-		this.setRange({ start: length, end: length });
-		this.setValue(this.text);
+		if (block.isEmbedLatex()) {
+			this.setContent(this.text);
+		};
+
+		this.focus();
 	};
 
 	componentDidUpdate () {
 		const { block } = this.props;
+		const { isEditing, isShowing } = this.state;
 
 		this.text = String(block.content.text || '');
-		this.unbind();
-		this.setValue(this.text);
+
+		if (isEditing) {
+			this.setValue(this.text);
+		};
+
+		if (isShowing) {
+			this.setContent(this.text);
+		};
+
+		this.rebind();
+		this.focus();
 	};
 	
 	componentWillUnmount () {
@@ -169,16 +189,22 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	rebind () {
 		const { block } = this.props;
+		const { isEditing } = this.state;
+		const node = $(this.node);
+		const win = $(window);
 
 		this.unbind();
-		this.win.on(`click.c${block.id}`, (e: any) => {
-			if (!this._isMounted) {
+
+		win.on(`mousedown.c${block.id}`, (e: any) => {
+			if (!this._isMounted || !isEditing) {
 				return;
 			};
 
 			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
 				return;
 			};
+
+			e.stopPropagation();
 
 			menuStore.close('blockLatex');
 			window.clearTimeout(this.timeout);
@@ -189,10 +215,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				menuStore.close('previewLatex');
 			});
 		});
+
+		node.off('unsetEditing').on('unsetEditing', () => this.setEditing(false));
 	};
 
 	unbind () {
-		this.win.off(`click.c${this.props.block.id}`);
+		$(window).off(`mousedown.c${this.props.block.id}`);
 	};
 
 	focus () {
@@ -205,9 +233,19 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
-	setEditing (v: boolean) {
-		const node = $(this.node);
-		v ? node.addClass('isEditing') : node.removeClass('isEditing');
+	setEditing (isEditing: boolean) {
+		if (isEditing) {
+			const length = this.text.length;
+			this.setRange({ start: length, end: length });
+		};
+
+		this.setState({ isEditing });
+
+		console.trace();
+	};
+
+	setShowing (isShowing: boolean) {
+		this.setState({ isShowing });
 	};
 
 	onFocusBlock () {
@@ -217,8 +255,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
-		const cmd = keyboard.cmdKey();
 		const node = $(this.node);
+		const cmd = keyboard.cmdKey();
 		const isEditing = node.hasClass('isEditing');
 
 		if (isEditing) {
@@ -258,7 +296,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const { filter } = commonStore;
 		const range = getRange(this.input);
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			if (range && (range.start == filter.from)) {
 				menuStore.close('blockLatex');
 			};
@@ -271,6 +309,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { block } = this.props;
+		const { isShowing } = this.state;
 		const value = this.getValue();
 
 		if (block.isEmbedLatex()) {
@@ -294,24 +333,23 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		if (!keyboard.isSpecial(e)) {
-			this.setContent(value);
+			if (isShowing || block.isEmbedLatex()) {
+				this.setContent(value);
+			};
 			this.save();
 		};
 	};
 
-	updateRect () {
-		const rect = UtilCommon.getSelectionRect();
-		if (!rect || !menuStore.isOpen('blockLatex')) {
-			return;
-		};
-
-		menuStore.update('blockLatex', { 
-			rect: { ...rect, y: rect.y + this.win.scrollTop() }
-		});
-	};
-
 	onChange () {
-		this.setValue(this.getValue());
+		const { block } = this.props;
+		const { isShowing } = this.state;
+		const value = this.getValue();
+
+		this.setValue(value);
+
+		if (isShowing || block.isEmbedLatex()) {
+			this.setContent(value);
+		};
 	};
 
 	onPaste (e: any) {
@@ -359,12 +397,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { rootId, block } = this.props;
+		const win = $(window);
+
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
 				rect = UtilCommon.getSelectionRect();
 			};
-			return rect ? { ...rect, y: rect.y + this.win.scrollTop() } : null;
+			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
 		const menuParam = {
@@ -390,8 +430,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					if (isTemplate) {
 						text = ' ' + text;
 					};
-					
-					this.setValue(UtilCommon.stringInsert(this.getValue(), text, from, to));
+
+					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
+
+					this.setValue(value);
+					this.setContent(value);
+
 					this.save();
 					this.setRange({ start: to, end: to });
 					this.focus();
@@ -414,8 +458,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		} else {
 			this.input.innerText = value;
 		};
-
-		this.setContent(value);
 	};
 
 	getValue (): string {
@@ -457,6 +499,19 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		return { html, libs };
+	};
+
+	updateRect () {
+		const rect = UtilCommon.getSelectionRect();
+		if (!rect || !menuStore.isOpen('blockLatex')) {
+			return;
+		};
+
+		const win = $(window);
+
+		menuStore.update('blockLatex', { 
+			rect: { ...rect, y: rect.y + win.scrollTop() }
+		});
 	};
 
 	setContent (text: string) {
@@ -584,16 +639,11 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		e.stopPropagation();
-
-		$('.block.blockEmbed .focusable.isEditing').removeClass('isEditing');
-
 		this.setEditing(true);
-		this.focus();
-		this.rebind();
 	};
 
 	onPreview (e: any) {
-
+		this.setShowing(true);
 	};
 
 	save (callBack?: (message: any) => void) {
@@ -618,12 +668,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
+		const win = $(window);
+
 		this.setRange(getRange(this.input));
 		keyboard.disableSelection(true);
 
-		this.win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
+		win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
 			keyboard.disableSelection(false);
-			this.win.off('mouseup.embed');
+			win.off('mouseup.embed');
 		});
 	};
 
