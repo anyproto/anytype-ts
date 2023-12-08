@@ -14,7 +14,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 interface State {
-	withPreview: boolean
+	showContent: boolean;
 };
 
 const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent, State> {
@@ -29,9 +29,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	value = null;
 	empty = null;
 	container = null;
-
 	state = {
-		withPreview: true
+		showContent: false,
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -48,6 +47,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
+		this.onPreview = this.onPreview.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onTemplate = this.onTemplate.bind(this);
 	};
@@ -55,7 +55,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	render () {
 		const { readonly, block } = this.props;
 		const { text, processor } = block.content;
-		const { withPreview } = this.state;
+		const { showContent } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
 		const isLatex = processor == I.EmbedProcessor.Latex;
 
@@ -89,17 +89,13 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		if (!isLatex) {
 			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
 
-			if (withPreview) {
-				cn.push('withPreview');
-			};
-
-			button = <Button className="source c28" onClick={this.onEdit} />;
+			button = <Icon className="source" onClick={this.onEdit} />;
 			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
 			icon = menuItem?.icon;
 
-			if (withPreview) {
+			if (!showContent) {
 				preview = (
-					<div className="preview" onClick={this.onEdit}>
+					<div className="preview" onClick={this.onPreview}>
 						<Icon className={icon} />
 					</div>
 				);
@@ -412,19 +408,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const lang = this.getLang();
-		const { withPreview } = this.state;
-		const { block } = this.props;
-		const { processor } = block.content;
-		
+
 		if (lang) {
 			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
 		} else {
 			this.input.innerText = value;
 		};
 
-		if (!withPreview || processor == I.EmbedProcessor.Latex) {
-			this.setContent(value);
-		};
+		this.setContent(value);
 	};
 
 	getValue (): string {
@@ -459,10 +450,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		switch (processor) {
 			case I.EmbedProcessor.Chart: {
-				html = `
-					<canvas id="chart"></canvas>
-				`;
-
+				html = `<canvas id="chart"></canvas>`;
 				libs.push('./chart/chart.umd.js');
 				break;
 			};
@@ -485,7 +473,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const { processor } = block.content;
-		const { withPreview } = this.state;
 		const node = $(this.node);
 		const win = $(window);
 
@@ -583,10 +570,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		this.placeholderCheck(this.text);
-
-		if (withPreview) {
-			this.setState({ withPreview: false });
-		};
 	};
 
 	placeholderCheck (value: string) {
@@ -607,6 +590,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.setEditing(true);
 		this.focus();
 		this.rebind();
+	};
+
+	onPreview (e: any) {
+
 	};
 
 	save (callBack?: (message: any) => void) {
