@@ -184,7 +184,7 @@ class AuthStore {
 			Renderer.send('logout');
 		};
 
-		analytics.profile('');
+		analytics.profile('', '');
 		analytics.removeContext();
 
 		keyboard.setPinChecked(false);

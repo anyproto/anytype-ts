@@ -211,7 +211,7 @@ class UtilData {
 		commonStore.spaceSet(info.accountSpaceId);
 		commonStore.techSpaceSet(info.techSpaceId);
 
-		analytics.profile(info.analyticsId);
+		analytics.profile(info.analyticsId, info.networkId);
 
 		Sentry.setUser({ id: info.analyticsId });
 	};

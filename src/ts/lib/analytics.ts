@@ -70,13 +70,17 @@ class Analytics {
 		this.log('[Analytics].init');
 	};
 
-	profile (id: string) {
+	profile (id: string, networkId: string) {
 		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
 		this.instance.setUserId(id);
-		this.log(`[Analytics].profile: ${id}`);	
+
+		if (id) {
+			this.instance.setUserProperties({ networkId });
+		};
+		this.log(`[Analytics].profile: ${id} networkId: ${networkId}`);	
 	};
 
 	setContext (context: string, id: string) {
