@@ -450,13 +450,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = block.content;
 
 		switch (processor) {
-			default: break;
+			default: return 'html';
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
-			case I.EmbedProcessor.Youtube:
-			case I.EmbedProcessor.Vimeo:
-			case I.EmbedProcessor.GoogleMaps: return 'html';
 		};
 	};
 
@@ -484,10 +481,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const win = $(window);
-
 		menuStore.update('blockLatex', { 
-			rect: { ...rect, y: rect.y + win.scrollTop() }
+			rect: { ...rect, y: rect.y + $(window).scrollTop() }
 		});
 	};
 
