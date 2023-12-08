@@ -18,7 +18,7 @@
 			#input { margin: 0px; }
 		}
 
-		.preview { display: none; position: relative; height: 240px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
+		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; }
 		.preview {
 			.icon { width: 40px; height: 40px; position: absolute; left: 50%; top: 50%; margin: -20px 0px 0px -20px; }
 			.icon.embedLatex { background-image: url('~img/icon/block/embed/latex.svg'); }

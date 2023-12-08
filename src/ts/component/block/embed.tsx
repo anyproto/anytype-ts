@@ -156,28 +156,17 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.container = node.find(`#${this.getContainerId()}`);
 
 		this.placeholderCheck(this.text);
-
-		if (block.isEmbedLatex()) {
-			this.setContent(this.text);
-		};
-
+		this.setValue(this.text);
+		this.setContent(this.text);
 		this.focus();
 	};
 
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { isEditing, isShowing } = this.state;
 
 		this.text = String(block.content.text || '');
-
-		if (isEditing) {
-			this.setValue(this.text);
-		};
-
-		if (isShowing) {
-			this.setContent(this.text);
-		};
-
+		this.setValue(this.text);
+		this.setContent(this.text);
 		this.rebind();
 		this.focus();
 	};
@@ -240,8 +229,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		this.setState({ isEditing });
-
-		console.trace();
 	};
 
 	setShowing (isShowing: boolean) {
@@ -309,7 +296,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { block } = this.props;
-		const { isShowing } = this.state;
 		const value = this.getValue();
 
 		if (block.isEmbedLatex()) {
@@ -333,23 +319,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		if (!keyboard.isSpecial(e)) {
-			if (isShowing || block.isEmbedLatex()) {
-				this.setContent(value);
-			};
+			this.setContent(value);
 			this.save();
 		};
 	};
 
 	onChange () {
-		const { block } = this.props;
-		const { isShowing } = this.state;
 		const value = this.getValue();
 
 		this.setValue(value);
-
-		if (isShowing || block.isEmbedLatex()) {
-			this.setContent(value);
-		};
+		this.setContent(value);
 	};
 
 	onPaste (e: any) {
@@ -366,7 +345,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.start, range.end));
 		this.setRange({ start: to, end: to });
-		this.focus();
+		this.save();
 	};
 
 	onFocusInput () {
@@ -434,11 +413,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
 
 					this.setValue(value);
-					this.setContent(value);
-
-					this.save();
 					this.setRange({ start: to, end: to });
-					this.focus();
+					this.save();
 				},
 			},
 		};
@@ -447,7 +423,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	};
 
 	setValue (value: string) {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.state.isEditing) {
 			return '';
 		};
 
@@ -519,6 +495,13 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return '';
 		};
 
+		const { isShowing } = this.state;
+		const { block } = this.props;
+
+		if (!isShowing && !block.isEmbedLatex()) {
+			return;
+		};
+
 		this.text = String(text || '');
 
 		if (!this.text) {
@@ -526,7 +509,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
-		const { block } = this.props;
 		const { processor } = block.content;
 		const node = $(this.node);
 		const win = $(window);
