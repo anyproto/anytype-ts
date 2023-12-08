@@ -81,7 +81,7 @@ html.themeDark {
 		@keyframes dots-dark {
 			0% { background-color: $colorBgPrimary; }
 			32% { background-color: $colorBgPrimary; }
-			100% { background-color: rgba(0,0,0,0); }
+			100% { background-color: #fff; }
 		}
 
         .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }

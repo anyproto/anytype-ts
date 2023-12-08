@@ -6,8 +6,7 @@
 
     .popup {
         .innerWrap { background: $colorBgPrimary; box-shadow: 0px 0px 0px 1px $colorBgSecondary inset; }
-
-        #loader { background: $colorBgPrimary; }
+        #loader { background: $colorBgLoader; }
     }
 
     /* PopupSearch */
