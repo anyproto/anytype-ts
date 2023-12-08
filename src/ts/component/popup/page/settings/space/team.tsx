@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Title, Label, Select, Button, IconObject, ObjectName, Filter } from 'Component';
-import { C, I, translate, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
-import { detailStore } from 'Store';
 
 const HEIGHT = 44;
 const LIMIT = 5;

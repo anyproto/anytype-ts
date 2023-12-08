@@ -99,6 +99,7 @@ class Analytics {
 		};
 
 		const converted: any = {};
+
 		let param: any = {};
 
 		// Code mappers for common events
@@ -152,6 +153,10 @@ class Analytics {
 				data.type = I.ViewType[data.type];
 				break;
 			};
+
+			case 'SelectNetwork':
+				data.type = this.networkType(data.type);
+				break;
 
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
@@ -448,6 +453,17 @@ class Analytics {
 
 	embedType (isInline: boolean): string {
 		return isInline ? 'inline' : 'object';
+	};
+
+	networkType (v: any): string {
+		v = Number(v) || 0;
+
+		switch (v) {
+			case I.NetworkMode.Default: return 'Anytype';
+			case I.NetworkMode.Local: return 'LocalOnly';
+			case I.NetworkMode.Custom: return 'SelfHost';
+		};
+		return '';
 	};
 
 	log (...args: any[]) {

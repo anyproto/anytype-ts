@@ -4,31 +4,32 @@ import { Title, Label, Button } from 'Component';
 import { I, UtilCommon, UtilObject, translate } from 'Lib';
 import { commonStore } from 'Store';
 
-const NotificationImport = observer(class NotificationImport extends React.Component<I.NotificationComponent, {}> {
+const NotificationGallery = observer(class NotificationGallery extends React.Component<I.NotificationComponent, {}> {
 
 	render () {
 		const { item, onButton } = this.props;
-		const { payload, type } = item;
-		const { errorCode, spaceId, importType } = payload;
-		const object = UtilObject.getSpaceviewBySpaceId(spaceId) || {};
+		const { payload } = item;
+		const { errorCode, spaceId, name } = payload;
 		const lang = errorCode ? 'error' : 'success';
+		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 
-		let title = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-title`));
-		let text = translate(UtilCommon.toCamelCase(`notification-${type}-${lang}-text`));
-
-		if (importType == 0 && errorCode == 5) {
-			title = translate('notificationNotionErrorNoObjectsTitle');
-			text = translate('notificationNotionErrorNoObjectsText');
-		};
-
+		let title = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-title`));
+		let text = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-text`));
 		let buttons = [];
+
 		if (errorCode) {
+			text = UtilCommon.sprintf(text, name);
+
 			buttons = buttons.concat([
 				{ id: 'importRetry', text: 'Retry' },
 				{ id: 'importReport', text: 'Report' },
 			]);
-		} else 
-		if (spaceId != commonStore.space) {
+		} else {
+			title = UtilCommon.sprintf(title, name);
+			text = UtilCommon.sprintf(text, space.name);
+		};
+
+		if (!errorCode && (spaceId != commonStore.space)) {
 			buttons = buttons.concat([
 				{ id: 'space', text: 'Go to space' }
 			]);
@@ -36,8 +37,8 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(title, object.name)} />
-				<Label text={UtilCommon.sprintf(text, object.name)} />
+				<Title text={title} />
+				<Label text={text} />
 
 				<div className="buttons">
 					{buttons.map((item: any, i: number) => (
@@ -50,4 +51,4 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 	
 });
 
-export default NotificationImport;
+export default NotificationGallery;

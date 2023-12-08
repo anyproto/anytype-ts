@@ -244,3 +244,9 @@ export enum ObjectManagerItemInfo {
 export enum ObjectManagerPopup {
 	Favorites 	= 0,
 };
+
+export enum NetworkMode {
+	Default		 = 0,
+	Local		 = 1,
+	Custom		 = 2,
+};

@@ -508,6 +508,27 @@ class UtilMenu {
 		];
 	};
 
+	getInterfaceLanguages () {
+		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
+
+		for (const id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] });
+		};
+
+		return ret;
+	};
+
+	getSpellingLanguages () {
+		let ret: any[] = [];
+
+		ret = ret.concat(commonStore.languages || []);
+		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret.unshift({ id: '', name: translate('commonDisabled') });
+
+		return ret;
+	};
+
 };
 
 export default new UtilMenu();

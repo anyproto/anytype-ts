@@ -10,12 +10,9 @@ import NotificationUsecase from './usecase';
 import NotificationImport from './import';
 import NotificationExport from './export';
 import NotificationInvite from './invite';
+import NotificationGallery from './gallery';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
-
-	public static defaultProps = {
-		className: '',
-	};
 
 	_isMounted = false;
 	node: any = null;
@@ -29,9 +26,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	};
 
 	render () {
-		const { item, className, style } = this.props;
+		const { item, style } = this.props;
 		const { id, type } = item;
-		const cn = [ 'notification', className ];
 
 		let content = null;
 		switch (type) {
@@ -54,13 +50,18 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				content = <NotificationInvite {...this.props} onButton={this.onButton} />;
 				break;
 			};
+
+			case I.NotificationType.Gallery: {
+				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
+				break;
+			};
 		};
 
 		return (
 			<div 
 				id={`notification-${id}`}
 				ref={node => this.node = node}
-				className={cn.join(' ')}
+				className="notification"
 				style={style}
 			>
 				<Icon className="delete" onClick={this.onDelete} />

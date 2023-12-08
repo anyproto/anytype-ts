@@ -31,6 +31,7 @@ import {
 	Usecase,
 	ObjectManagerItemInfo,
 	ObjectManagerPopup,
+	NetworkMode,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -107,6 +108,7 @@ export {
 	ButtonComponent,
 	HomePredefinedId,
 	Usecase,
+	NetworkMode,
 
 	ImportType,
 	ImportMode,

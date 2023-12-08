@@ -42,8 +42,9 @@ export const Mapper = {
 		const V = Model.Notification.PayloadCase;
 
 		let t = '';
-		if (v == V.IMPORT)	 t = 'import';
-		if (v == V.EXPORT)	 t = 'export';
+		if (v == V.IMPORT)			 t = 'import';
+		if (v == V.EXPORT)			 t = 'export';
+		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
 		return t;
 	},
 
@@ -495,14 +496,18 @@ export const Mapper = {
 
 			switch (type) {
 
-				case 'import': {
+				case 'import':
+				case 'galleryImport': {
 					payload = Object.assign(payload, {
 						processId: field.getProcessid(),
 						errorCode: field.getErrorcode(),
-						importType: field.getImporttype(),
 						spaceId: field.getSpaceid(),
 						name: field.getName(),
 					});
+
+					if (type == 'import') {
+						payload.importType = field.getImporttype();
+					};
 					break;
 				};
 

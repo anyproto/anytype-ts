@@ -6,6 +6,11 @@
 	"protocol": "anytype",
 	"appName": "Anytype",
 
+	"networkId": {
+		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",
+		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD"
+	},
+
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",

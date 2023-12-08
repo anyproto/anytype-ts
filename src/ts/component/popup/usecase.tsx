@@ -102,7 +102,8 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const object = this.getObject();
 
 		const cb = (spaceId: string, isNew: boolean) => {
-			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, () => close());
+			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew);
+			close();
 		};
 
 		menuStore.open('select', {

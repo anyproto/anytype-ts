@@ -278,7 +278,6 @@
 	"authSelectSignup": "Create New Account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
-	"authLoginSelfHost": "Self-host",
 	"authLoginSubmit": "Log In",
 	"authLoginLostPhrase": "I've lost the Phrase",
 	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover Recovery Phrase for you<\/h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
@@ -726,6 +725,16 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
+	"popupSettingsOnboardingModeTitle": "Network",
+	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
+
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Back up to the network managed by Anytype",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Don't back up; sync within local network",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Back up to your self-hosted network",
+
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
 	"popupNavigationOpen": "Open",
@@ -856,6 +865,7 @@
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
+	"popupShortcutMainBasics19": "Open the Quick Capture menu",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -1223,7 +1233,10 @@
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
 	"menuThreadListLastSync": "Last sync",
-	"menuThreadListBackupNode": "Backup node",
+	"menuThreadListProduction": "Anytype Network",
+	"menuThreadListDevelopment": "Anytype Staging",
+	"menuThreadListSelf": "Self-hosted Network",
+	"menuThreadListLocal": "Local only",
 
 	"menuThreadStatusObjectBackedUp": "This Object is backed up",
 	"menuThreadStatusUpdatesRequested": "Updates requested",
@@ -1298,12 +1311,15 @@
 	"threadStatus3": "Synced",
 	"threadStatus4": "Not syncing",
 	"threadStatus5": "Incompatible version",
+	"threadStatus100": "Local-only",
+
 	"threadStatus0Tooltip": "Initializing sync",
 	"threadStatus1Tooltip": "Anytype node is not connected",
 	"threadStatus2Tooltip": "Downloading or uploading data to some node",
 	"threadStatus3Tooltip": "Backed up on one node at least",
 	"threadStatus4Tooltip": "Failed to sync, trying again...",
 	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
+	"threadStatus100Tooltip": "Don't back up; sync within local network",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
@@ -1623,9 +1639,16 @@
 	"notificationImportErrorTitle": "Import failed",
 	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
 
-	"notificationExportSuccessTitle": "Export complete!",
+	"notificationExportSuccessTitle": "Export completed!",
 	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
 	"notificationExportErrorTitle": "Export failed",
-	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work."
+	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
+	"notificationGallerySuccessTitle": "\"%s\" was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryErrorTitle": "Something went wrong",
+	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+
+	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
+	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"
 }
