@@ -579,6 +579,9 @@ class Dispatcher {
 				};
 
 				case 'blockSetLatex': {
+
+					console.log(data);
+
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -1721,14 +1721,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
 			isEmpty && !isInsideTable ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
 			!isInsideTable ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
-			//{ id: 'embed', name: translate('editorPagePasteEmbed') },
 		].filter(it => it);
+
+		const processor = UtilEmbed.getProcessorByUrl(url);
+
+		if (processor !== null) {
+			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
+		};
 
 		menuStore.open('select', { 
 			element: `#block-${focused}`,
@@ -1751,7 +1757,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					let to = 0;
 
 					switch (item.id) {
-						case 'link':
+						case 'link': {
 							if (currentFrom == currentTo) {
 								value = UtilCommon.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -1770,8 +1776,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								focus.apply();
 							});
 							break;
+						};
 
-						case 'object':
+						case 'object': {
 							C.ObjectToBookmark(rootId, url, (message: any) => {
 								if (message.error.code) {
 									return;
@@ -1787,16 +1794,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								});
 							});
 							break;
+						};
 
-						case 'block':
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+						case 'block': {
+							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, (message: any) => {
 								if (!message.error.code) {
 									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
 								};
 							});
 							break;
+						};
 
-						case 'cancel':
+						case 'cancel': {
 							value = UtilCommon.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
@@ -1805,6 +1814,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								focus.apply();
 							});
 							break;
+						};
+
+						case 'embed': {
+							if (processor !== null) {
+								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+									$(`#block-${blockId} .preview`).trigger('click');
+								});
+							};
+							break;
+						};
+
 					};
 				},
 			}

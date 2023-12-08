@@ -7,8 +7,8 @@ class UtilMenu {
 
 	mapperBlock (it: any) {
 		it.isBlock = true;
-		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
-		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
+		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
+		it.description = it.lang ? translate(`blockText${it.lang}`) : it.description;
 		return it;
 	};
 	
@@ -42,15 +42,30 @@ class UtilMenu {
 
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
+			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File' },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image' },
+			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video' },
+			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio' },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		].map(this.mapperBlock);
+	};
+
+	getBlockEmbed () {
+		return [
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+		].map(this.mapperBlock).map(it => {
+			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
+			return it;
+		});
 	};
 
 	getBlockObject () {
@@ -78,8 +93,8 @@ class UtilMenu {
 
 	getBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
 			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
@@ -110,8 +125,8 @@ class UtilMenu {
 	
 	getTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
 		].map(this.mapperBlock);
 	};
 

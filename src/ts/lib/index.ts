@@ -15,6 +15,7 @@ import UtilObject from './util/object';
 import UtilMenu from './util/menu';
 import UtilRouter from './util/router';
 import UtilDate from './util/date';
+import UtilEmbed from './util/embed';
 import UtilGraph from './util/graph';
 
 import { keyboard, Key } from './keyboard';
@@ -97,5 +98,6 @@ export {
 	UtilMenu,
 	UtilRouter,
 	UtilDate,
+	UtilEmbed,
 	UtilGraph,
 };

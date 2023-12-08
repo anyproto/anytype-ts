@@ -419,7 +419,6 @@
 	"blockNameEmbed": "Show as embed",
 	"blockNameRelation": "Relation",
 	"blockNameNewRelation": "New Relation",
-	"blockNameLatex": "LaTeX",
 	"blockNameSimpleTable": "Table 3x3",
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
@@ -449,7 +448,6 @@
 	"blockTextEmbed": "Embed file into the Object",
 	"blockTextRelation": "Meaningful connection between Objects",
 	"blockTextNewRelation": "Meaningful connection between Objects",
-	"blockTextLatex": "Display a math equations",
 	"blockTextSimpleTable": "Create a Simple Table",
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
@@ -519,11 +517,14 @@
 
 	"blockBookmarkError": "There was an error fetching the url",
 
-	"blockLatexPlaceholder": "Enter text in format LaTeX",
-	"blockLatexTemplate": "Template formula",
+	"blockEmbedLatexPlaceholder": "Enter text in format LaTeX",
+	"blockEmbedPlaceholder": "Enter embed code for %s",
+	"blockEmbedLatexTemplate": "Template formula",
+	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon text'></span>. Click to edit",
+	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
+	"blockEmbedSource": "Source",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
-
 
 	"blockFeaturedTypesList": "Object %s: %s",
 	"blockFeaturedQuery": "Query",
@@ -1026,6 +1027,7 @@
 	"menuBlockAddSectionsText": "Text",
 	"menuBlockAddSectionsList": "List",
 	"menuBlockAddSectionsMedia": "Media",
+	"menuBlockAddSectionsEmbed": "Embeds",
 	"menuBlockAddSectionsOther": "Other",
 	"menuBlockAddSectionsObjects": "Objects",
 	"menuBlockAddSectionsRelations": "Relations",
