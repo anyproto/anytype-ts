@@ -318,7 +318,7 @@ html.themeDark {
         .path { border: 0px; line-height: 28px; }
 		.path:hover { background-color: $colorShapeHighlightMedium; color: $colorTextPrimary; }
 
-        .icon.big:hover, .icon.big.hover { background-color: $colorShapeHighlightMedium; }
+        .icon:hover, .icon.hover { background-color: $colorShapeHighlightMedium; }
 
         .tabs { color: $colorTextSecondary; }
         .tabs {

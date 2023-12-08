@@ -52,7 +52,7 @@ const translate = (key: string): string => {
 		data = defaultData; 
 	} else {
 		try { 
-			data = require(`lib/json/lang/${lang}.json`); 
+			data = require(`lib/json/lang/${lang}.json`);
 		} catch(e) {
 			data = defaultData; 
 		};
