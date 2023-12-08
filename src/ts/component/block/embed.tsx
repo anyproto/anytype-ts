@@ -100,7 +100,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				placeholder = translate('blockEmbedLatexPlaceholder');
 				select = (
 					<div className="selectWrap">
-						<div id="select" className="select" onClick={this.onTemplate}>
+						<div id="select" className="select" onMouseDown={this.onTemplate}>
 							<div className="name">{translate('blockEmbedLatexTemplate')}</div>
 							<Icon className="arrow light" />
 						</div>
@@ -185,7 +185,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.unbind();
 
 		win.on(`mousedown.c${block.id}`, (e: any) => {
-			if (!this._isMounted || !isEditing) {
+			if (!this._isMounted || !isEditing || menuStore.isOpen('blockLatex')) {
 				return;
 			};
 
@@ -352,6 +352,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onTemplate (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
@@ -420,7 +423,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	setValue (value: string) {
 		if (!this._isMounted || !this.state.isEditing) {
-			return '';
+			return;
 		};
 
 		const lang = this.getLang();

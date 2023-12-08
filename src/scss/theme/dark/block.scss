@@ -312,6 +312,7 @@
         .select { color: $colorTextPrimary; }
         .wrap.isEditing { background-color: $colorShapeHighlightLight; }
         #input { background: $colorShapeSecondary; border-color: $colorShapeHighlightLight; }
+		#placeholder { color: $colorTextSecondary; }
     }
 
     /* BlockBookmark */

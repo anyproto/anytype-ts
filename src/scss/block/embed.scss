@@ -8,14 +8,14 @@
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			.preview { display: none; }
-			#input, .icon.source { display: block; }
+			.editableWrap, .icon.source { display: block; }
 		}
 		.wrap.withPreview {
 			.preview { display: block; }
 		}
 		.wrap.isEmpty {
 			.preview, .icon.source { display: none; }
-			#input { margin: 0px; }
+			.editableWrap { margin: 0px; }
 		}
 
 		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; }
@@ -34,12 +34,15 @@
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
-		#input { 
-			background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; 
-			@include text-common; -webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; 
-			margin-top: 8px; border-radius: 8px;
+
+		.editableWrap { display: none; margin: 8px 0px 0px 0px; }
+		.editableWrap {
+			#input { 
+				background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; @include text-common; 
+				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
+			}
+			#placeholder { padding: 6px 12px; }
 		}
-		#placeholder { padding: 6px 12px; }
 
 		.icon.source { 
 			position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: none; border-radius: 4px;
