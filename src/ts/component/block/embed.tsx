@@ -7,7 +7,6 @@ import { observer } from 'mobx-react';
 import { Icon, Label, Editable } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
 
 const katex = require('katex');
@@ -18,18 +17,15 @@ interface State {
 	isEditing: boolean;
 };
 
-const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent, State> {
+const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
-	range = { start: 0, end: 0 };
 	text = '';
 	timeout = 0;
 	node = null;
 	win = null;
-	input = null;
 	value = null;
 	empty = null;
-	container = null;
 	refEditable = null;
 	state = {
 		isShowing: false,
@@ -81,11 +77,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor) || {};
 
 				button = <Icon className="source" onClick={this.onEdit} />;
-				empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 				icon = menuItem.icon;
 
-				if (!isShowing) {
+				if (!text) {
+					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
+				};
+
+				if (!isShowing && text) {
 					cn.push('withPreview');
 
 					preview = (
@@ -98,6 +97,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 
 			case I.EmbedProcessor.Latex: {
+				placeholder = translate('blockEmbedLatexPlaceholder');
 				select = (
 					<div className="selectWrap">
 						<div id="select" className="select" onClick={this.onTemplate}>
@@ -107,8 +107,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					</div>
 				);
 
-				empty = translate('blockEmbedLatexEmpty');
-				placeholder = translate('blockEmbedLatexPlaceholder');
+				if (!text) {
+					empty = translate('blockEmbedLatexEmpty');
+				};
 				break;
 			};
 		};
@@ -127,9 +128,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				{button}
 
 				<div id="value" onClick={this.onEdit} />
-				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
+				{empty ? <Label id="empty" className="empty" text={empty} onClick={this.onEdit} /> : ''}
 				<div id={this.getContainerId()} />
 				<Editable 
+					key={`block-${block.id}-editable`}
 					ref={ref => this.refEditable = ref}
 					id="input"
 					readonly={readonly}
@@ -155,24 +157,19 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.text = String(block.content.text || '');
 		this.empty = node.find('#empty');
 		this.value = node.find('#value');
-		this.input = node.find('#input').get(0);
-		this.container = node.find(`#${this.getContainerId()}`);
 
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.placeholderCheck(this.text);
-		this.focus();
 	};
 
 	componentDidUpdate () {
 		const { block } = this.props;
+		const { text } = block.content;
 
-		this.text = String(block.content.text || '');
+		this.text = String(text || '');
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.placeholderCheck(this.text);
 		this.rebind();
-		this.focus();
 	};
 	
 	componentWillUnmount () {
@@ -183,7 +180,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	rebind () {
 		const { block } = this.props;
 		const { isEditing } = this.state;
-		const node = $(this.node);
 		const win = $(window);
 
 		this.unbind();
@@ -202,24 +198,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			menuStore.close('blockLatex');
 			window.clearTimeout(this.timeout);
 
-			this.placeholderCheck(this.getValue());
+			this.placeholderCheck();
 			this.save(() => { 
 				this.setEditing(false);
 				menuStore.close('previewLatex');
 			});
 		});
-
-		node.off('unsetEditing').on('unsetEditing', () => this.setEditing(false));
 	};
 
 	unbind () {
 		$(window).off(`mousedown.c${this.props.block.id}`);
-	};
-
-	focus () {
-		if (this._isMounted && this.range) {
-			setRange(this.input, this.range);
-		};
 	};
 
 	getContainerId () {
@@ -227,12 +215,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	};
 
 	setEditing (isEditing: boolean) {
-		if (isEditing) {
-			const length = this.text.length;
-			this.setRange({ start: length, end: length });
-		};
-
-		this.setState({ isEditing });
+		this.setState({ isEditing }, () => {
+			if (isEditing) {
+				const length = this.text.length;
+				this.setRange({ from: length, to: length });
+			};
+		});
 	};
 
 	setShowing (isShowing: boolean) {
@@ -241,7 +229,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	onFocusBlock () {
 		focus.set(this.props.block.id, { from: 0, to: 0 });
-		this.focus();
+		this.setRange({ from: 0, to: 0 });
 	};
 
 	onKeyDownBlock (e: any) {
@@ -285,10 +273,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { filter } = commonStore;
-		const range = getRange(this.input);
+		const range = this.getRange();
 
 		keyboard.shortcut('backspace', e, () => {
-			if (range && (range.start == filter.from)) {
+			if (range && (range.from == filter.from)) {
 				menuStore.close('blockLatex');
 			};
 		});
@@ -301,20 +289,20 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const value = this.getValue();
+		const range = this.getRange();
 
 		if (block.isEmbedLatex()) {
 			const { filter } = commonStore;
-			const range = getRange(this.input);
-			const symbolBefore = value[range?.start - 1];
+			const symbolBefore = value[range?.from - 1];
 			const menuOpen = menuStore.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
-				commonStore.filterSet(range.start, '');
+				commonStore.filterSet(range.from, '');
 				this.onMenu(e, 'input', false);
 			};
 
 			if (menuOpen) {
-				const d = range.start - filter.from;
+				const d = range.from - filter.from;
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
 					commonStore.filterSetText(part);
@@ -336,19 +324,19 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	};
 
 	onPaste (e: any) {
-		if (!this._isMounted) {
+		e.preventDefault();
+
+		const range = this.getRange();
+		if (!range) {
 			return;
 		};
 
-		e.preventDefault();
-
-		const range = getRange(this.input);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = cb.getData('text/plain');
 		const to = range.end + text.length;
 
-		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.start, range.end));
-		this.setRange({ start: to, end: to });
+		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.from, range.to));
+		this.setRange({ from: to, to });
 		this.save();
 	};
 
@@ -368,9 +356,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
-		const range = getRange(this.input);
+		const range = this.getRange();
+		if (!range) {
+			return;
+		};
 
-		commonStore.filterSet(range?.start, '');
+		commonStore.filterSet(range.from, '');
 		this.onMenu(e, 'select', true);
 	};
 
@@ -410,6 +401,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				blockId: block.id,
 				onSelect: (from: number, to: number, item: any) => {
 					let text = item.symbol || item.comment;
+
 					if (isTemplate) {
 						text = ' ' + text;
 					};
@@ -417,7 +409,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
 
 					this.setValue(value);
-					this.setRange({ start: to, end: to });
+					this.setRange({ from: to, to });
 					this.save();
 				},
 			},
@@ -432,20 +424,22 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const lang = this.getLang();
+		const range = this.getRange();
 
 		if (lang) {
-			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
-		} else {
-			this.input.innerText = value;
+			value = Prism.highlight(value, Prism.languages[lang], lang);
+		};
+
+		this.refEditable.setValue(value);
+		this.placeholderCheck();
+
+		if (range) {
+			this.setRange(range);
 		};
 	};
 
 	getValue (): string {
-		if (!this._isMounted) {
-			return '';
-		};
-
-		return String(this.input.innerText || '');
+		return this.refEditable.getTextValue();
 	};
 
 	getLang () {
@@ -609,12 +603,9 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				break;
 			};
 		};
-
-		this.placeholderCheck(this.text);
 	};
 
-	placeholderCheck (value: string) {
-		value.trim().length > 0 ? this.empty.hide() : this.empty.show();
+	placeholderCheck () {
 		this.refEditable?.placeholderCheck();
 	};
 
@@ -646,8 +637,12 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	setRange (range: any) {
-		this.range = range || { start: 0, end: 0 };
+	getRange () {
+		return UtilCommon.objectCopy(this.refEditable.getRange());
+	};
+
+	setRange (range: I.TextRange) {
+		this.refEditable.setRange(range);
 	};
 
 	onSelect () {
@@ -657,7 +652,6 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const win = $(window);
 
-		this.setRange(getRange(this.input));
 		keyboard.disableSelection(true);
 
 		win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
