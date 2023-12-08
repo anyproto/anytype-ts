@@ -192,6 +192,7 @@
 		"files": [
 			"electron.js",
 			"electron/js/*",
+			"electron/json/*",
 			"electron/env.json",
 			"electron/img/*",
 			"electron/about/*",
