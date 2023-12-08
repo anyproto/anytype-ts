@@ -60,9 +60,28 @@ class UtilEmbed {
 
 			case I.EmbedProcessor.GoogleMaps: {
 				const place = url.match(/place\/([^\/]+)/);
-				if (place && place[1]) {
-					url = `https://www.google.com/maps/embed/v1/place?key=${Constant.embed.googleMaps.key}&q=${place[1]}`;
+				const param = url.match(/\/@([^\/\?]+)/);
+				const search: any = {
+					key: Constant.embed.googleMaps.key,
 				};
+
+				let endpoint = '';
+
+				if (param && param[1]) {
+					const [ lat, lon, zoom ] = param[1].split(',');
+
+					search.center = [ lat, lon ].join(',');
+					search.zoom = parseInt(zoom);
+
+					endpoint = 'view';
+				};
+
+				if (place && place[1]) {
+					search.q = place[1];
+					endpoint = 'place';
+				};
+
+				url = `https://www.google.com/maps/embed/v1/${endpoint}?${new URLSearchParams(search).toString()}`;
 				break;
 			};
 
