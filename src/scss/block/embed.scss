@@ -19,7 +19,7 @@
 
 		.preview { display: none; position: relative; height: 240px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
 		.preview {
-			.icon { width: 60px; height: 60px; background-size: 60px 60px; position: absolute; left: 50%; top: 50%; margin: -30px 0px 0px -30px; }
+			.icon { width: 40px; height: 40px; position: absolute; left: 50%; top: 50%; margin: -20px 0px 0px -20px; }
 			.icon.embedLatex { background-image: url('~img/icon/block/embed/latex.svg'); }
 			.icon.embedMermaid { background-image: url('~img/icon/block/embed/mermaid.svg'); }
 			.icon.embedYoutube { background-image: url('~img/icon/block/embed/youtube.svg'); }
