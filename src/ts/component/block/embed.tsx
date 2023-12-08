@@ -54,9 +54,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	render () {
 		const { readonly, block } = this.props;
-		const { processor } = block.content;
+		const { text, processor } = block.content;
 		const { withPreview } = this.state;
-		const cn = [ 'wrap', 'resizable', 'focusable', withPreview ? 'withPreview' : '', 'c' + block.id ];
+		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const isLatex = processor == I.EmbedProcessor.Latex;
+
+		if (!text) {
+			cn.push('isEmpty');
+		};
 
 		let select = null;
 		let empty = '';
@@ -79,16 +84,26 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		let icon: string = '';
+		let preview = null;
 
-		if (processor != I.EmbedProcessor.Latex) {
+		if (!isLatex) {
 			const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor);
 
-			if (menuItem && menuItem.icon) {
-				icon = menuItem.icon;
+			if (withPreview) {
+				cn.push('withPreview');
 			};
 
 			button = <Button className="source c28" onClick={this.onEdit} />;
 			empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem?.name);
+			icon = menuItem?.icon;
+
+			if (withPreview) {
+				preview = (
+					<div className="preview" onClick={this.onEdit}>
+						<Icon className={icon} />
+					</div>
+				);
+			};
 		};
 
 		return (
@@ -100,12 +115,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
+				{preview}
 				{select}
 				{button}
 
-				<div className="preview" onClick={() => this.setContent(this.text)}>
-					{icon ? <Icon className={icon} /> : ''}
-				</div>
 				<div id="value" onClick={this.onEdit} />
 				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
 				<div id={this.getContainerId()} />

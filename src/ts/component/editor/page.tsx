@@ -1733,7 +1733,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const processor = UtilEmbed.getProcessorByUrl(url);
 
 		if (processor !== null) {
-			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
+			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
 		menuStore.open('select', { 

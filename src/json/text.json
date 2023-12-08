@@ -456,15 +456,6 @@
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
 
-	"blockTextLatex": "Display a math equations",
-	"blockTextMermaid": "...",
-	"blockTextYoutube": "...",
-	"blockTextVimeo": "...",
-	"blockTextChart": "...",
-	"blockTextSoundcloud": "...",
-	"blockTextGoogleMaps": "...",
-	"blockTextMiro": "...",
-
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 

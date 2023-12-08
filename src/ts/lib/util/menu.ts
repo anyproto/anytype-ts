@@ -64,7 +64,6 @@ class UtilMenu {
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
 		].map(this.mapperBlock).map(it => {
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
-			it.description = translate(`blockText${I.EmbedProcessor[it.id]}`);
 			return it;
 		});
 	};
