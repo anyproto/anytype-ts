@@ -6,6 +6,7 @@ import { I, UtilCommon, translate } from 'Lib';
 const NotificationUsecase = observer(class NotificationUsecase extends React.Component<I.NotificationComponent, {}> {
 
 	render () {
+		/*
 		const { item, onButton } = this.props;
 		const { type, status, object } = item;
 
@@ -42,6 +43,8 @@ const NotificationUsecase = observer(class NotificationUsecase extends React.Com
 				</div>
 			</React.Fragment>
 		);
+		*/
+		return <div />;
 	};
 	
 });

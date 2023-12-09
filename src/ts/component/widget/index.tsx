@@ -102,6 +102,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		} else {
 			buttons = (
 				<div className="buttons">
+					{isEditing ? (
+						<div className="iconWrap more">
+							<Icon className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
+						</div>
+					) : ''}
 					{withPlus ? (
 						<div className="iconWrap create">
 							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
@@ -371,8 +376,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			UtilObject.openAuto(created);
-
-			analytics.event('CreateObject', { objectType: typeKey, route: 'widget' });
+			analytics.event('CreateObject', { objectType: typeKey, route: 'Widget' });
 		};
 
 		if (createWithLink) {
@@ -609,7 +613,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		const { block } = this.props;
+		const { block, isEditing } = this.props;
 		const { layout } = block.content;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
@@ -641,7 +645,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 		};
 
-		return allowed;
+		return !isEditing && allowed;
 	};
 
 	getLimit ({ limit, layout }): number {

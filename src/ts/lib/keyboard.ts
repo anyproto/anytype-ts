@@ -246,6 +246,11 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
+				this.pageCreate({}, 'Shortcut');
+			});
+
+			this.shortcut(`alt+shift+n`, e, () => {
+				e.preventDefault();
 				this.onQuickCapture();
 			});
 
@@ -303,16 +308,7 @@ class Keyboard {
 			return;
 		};
 
-		const targetId = '';
-		const position = I.BlockPosition.Bottom;
-		const rootId = '';
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-		
-		if (!rootId) {
-			flags.push(I.ObjectFlag.DeleteEmpty);
-		};
-		
-		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
 			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});

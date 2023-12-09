@@ -19,7 +19,7 @@
 	.body { flex-grow: 1; position: relative; }
 
 	.notification {
-		width: 100%; min-height: 110px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
+		width: 100%; min-height: 70px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
     	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
 		opacity: 1; user-select: none; @include shadow;
 	}
@@ -36,8 +36,9 @@
 		.content { display: none; }
 		.content {
 			.title { @include text-small; font-weight: 600; margin: 0px 0px 2px 0px; }
-			.label { @include text-small; margin: 0px 0px 12px 0px; }
-			.buttons { display: flex; flex-direction: row; gap: 0px 8px; }
+			.label { @include text-small; }
+			.buttons { display: flex; flex-direction: row; gap: 0px 8px; margin: 12px 0px 0px 0px; }
+			.buttons:empty { display: none; }
 			.button { @include text-small; font-weight: 500; }
 
 			.element { display: inline; }

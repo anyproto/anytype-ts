@@ -7,7 +7,7 @@ import { OnboardStage } from 'Component/page/auth/animation/constants';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -70,22 +70,17 @@ class Analytics {
 		this.log('[Analytics].init');
 	};
 
-	profile (id: string) {
+	profile (id: string, networkId: string) {
 		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
 		this.instance.setUserId(id);
-		this.log(`[Analytics].profile: ${id}`);	
-	};
 
-	device (id: string) {
-		if (!this.instance || !this.isAllowed()) {
-			return;
+		if (id) {
+			this.instance.setUserProperties({ networkId });
 		};
-
-		this.instance.setUserProperties({ middlewareDeviceId: id });
-		this.log(`[Analytics].device: ${id}`);	
+		this.log(`[Analytics].profile: ${id} networkId: ${networkId}`);	
 	};
 
 	setContext (context: string, id: string) {
@@ -108,6 +103,7 @@ class Analytics {
 		};
 
 		const converted: any = {};
+
 		let param: any = {};
 
 		// Code mappers for common events
@@ -155,6 +151,16 @@ class Analytics {
 				data.layout = I.ObjectLayout[data.layout];
 				break;
 			};
+
+			case 'ScreenSet':
+			case 'ScreenCollection': {
+				data.type = I.ViewType[data.type];
+				break;
+			};
+
+			case 'SelectNetwork':
+				data.type = this.networkType(data.type);
+				break;
 
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
@@ -451,6 +457,17 @@ class Analytics {
 
 	embedType (isInline: boolean): string {
 		return isInline ? 'inline' : 'object';
+	};
+
+	networkType (v: any): string {
+		v = Number(v) || 0;
+
+		switch (v) {
+			case I.NetworkMode.Default: return 'Anytype';
+			case I.NetworkMode.Local: return 'LocalOnly';
+			case I.NetworkMode.Custom: return 'SelfHost';
+		};
+		return '';
 	};
 
 	log (...args: any[]) {

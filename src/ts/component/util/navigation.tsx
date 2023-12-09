@@ -33,7 +33,7 @@ class Navigation extends React.Component {
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N`, onClick: this.onAdd },
+			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${alt} + Shift + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		];
@@ -56,7 +56,8 @@ class Navigation extends React.Component {
 							<div 
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
-								onClick={item.onClick} 
+								onClick={item.onClick}
+								onContextMenu={item.onContextMenu}
 								className={cn.join(' ')}
 								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
 								onMouseLeave={e => Preview.tooltipHide(false)}
@@ -117,8 +118,8 @@ class Navigation extends React.Component {
 		keyboard.onForward();
 	};
 
-	onAdd () {
-		keyboard.onQuickCapture();
+	onAdd (e: any) {
+		e.altKey ? keyboard.onQuickCapture() : keyboard.pageCreate({}, 'Navigation');
 	};
 
 	onGraph () {

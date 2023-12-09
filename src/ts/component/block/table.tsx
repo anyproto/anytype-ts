@@ -45,6 +45,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
 		this.onCellKeyDown = this.onCellKeyDown.bind(this);
+		this.onCellKeyUp = this.onCellKeyUp.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartRow = this.onDragStartRow.bind(this);
@@ -103,6 +104,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 											onCellEnter={this.onCellEnter}
 											onCellLeave={this.onCellLeave}
 											onCellKeyDown={this.onCellKeyDown}
+											onCellKeyUp={this.onCellKeyUp}
 											onResizeStart={this.onResizeStart}
 											onDragStartRow={this.onDragStartRow}
 											onDragStartColumn={this.onDragStartColumn}
@@ -772,14 +774,21 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let ret = false;
 
-		keyboard.shortcut(`shift+space`, e, (pressed: string) => {
+		keyboard.shortcut(`shift+space`, e, () => {
+			e.preventDefault();
+
 			ret = true;
 			this.onOptions(e, I.BlockType.Text, rowId, columnId, id);
 		});
 
 		if (!ret) {
 			onKeyDown(e, text, marks, range, props);
+			this.framesUpdate();
 		};
+	};
+
+	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
+		this.framesUpdate();
 	};
 
 	setEditing (id: string) {
@@ -1226,10 +1235,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			{ 
 				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
-					C.BlockTableRowSetHeader(rootId, id, v, (message: any) => {
-						this.frames.forEach((it: any) => {
-							this.frameAdd(it.type, it.rowId, it.columnId, it.cellId, it.position);
-						});
+					C.BlockTableRowSetHeader(rootId, id, v, () => {
+						this.framesUpdate();
 
 						if (callBack) {
 							callBack();
@@ -1513,7 +1520,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			obj = frame;
 		};
 
-		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
+		raf(() => {
+			obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
+		});
+	};
+
+	framesUpdate () {
+		this.frames.forEach(it => {
+			this.frameAdd(it.type, it.rowId, it.columnId, it.cellId, it.position);
+		});
 	};
 
 	getClassByPosition (position: I.BlockPosition) {

@@ -1,6 +1,7 @@
 [
 	"electron.js",
 	"electron/js/**/*",
+	"electron/json/*",
 	"electron/env.json",
 	"electron/img/*",
 	"electron/about/*",
@@ -10,6 +11,7 @@
 	"dist/main.js",
 	"dist/main.js.map",
 	"dist/run.js",
+	"dist/embed/**/*",
 	"dist/lib/**/*",
 	"dist/img/**/*",
 	"dist/css/**/*",

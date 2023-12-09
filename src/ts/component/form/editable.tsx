@@ -68,7 +68,7 @@ class Editable extends React.Component<Props> {
 
 			editor = (
 				<div 
-					id="value" 
+					id={id} 
 					className={cne.join(' ')} 
 					contentEditable={true}
 					suppressContentEditableWarning={true}
@@ -166,10 +166,8 @@ class Editable extends React.Component<Props> {
 	setRange (range: I.TextRange) {
 		const el = this.editable.get(0);
 
-		window.setTimeout(() => {
-			el.focus({ preventScroll: true });
-			setRange(el, { start: range.from, end: range.to });
-		}, 15);
+		el.focus({ preventScroll: true });
+		setRange(el, { start: range.from, end: range.to });
 	};
 
 	onInput (e: any) {

@@ -25,8 +25,8 @@ class UtilObject {
 		};
 	};
 
-	getSpaceview () {
-		return detailStore.get(Constant.subId.space, blockStore.spaceview);
+	getSpaceview (id?: string) {
+		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
@@ -229,7 +229,7 @@ class UtilObject {
 					templateId = type.defaultTemplateId || Constant.templateId.blank;
 				};
 
-				Storage.setLastUsedTypes(type.id);
+				Storage.addLastUsedType(type.id);
 			};
 		};
 		

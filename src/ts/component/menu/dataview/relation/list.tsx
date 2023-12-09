@@ -229,15 +229,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onAdd (e: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
-
-		const onAdd = () => {
-			if (data.onAdd) {
-				data.onAdd();
-			};
-		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -251,11 +245,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
-				skipKeys: relations.map(it => it.relationKey).concat(Relation.systemKeysWithoutUser()),
-				onAdd,
+				skipKeys: relations.map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
-						onAdd();
+						if (onAdd) {
+							onAdd();
+						};
 
 						if (onChange) {
 							onChange(message);

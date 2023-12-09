@@ -8,16 +8,16 @@
     .menu { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     .menu {
-        .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph0.svg'); }
+        .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg'); }
 		
-		.icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/header10.svg'); }
-		.icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/header20.svg'); }
-		.icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/header30.svg'); }
-		.icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/quote0.svg'); }
+		.icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/text/header10.svg'); }
+		.icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/text/header20.svg'); }
+		.icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/header30.svg'); }
+		.icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/text/quote0.svg'); }
 		
-        .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted0.svg'); }
-		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered0.svg'); }
-		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle0.svg'); }
+        .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted0.svg'); }
+		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered0.svg'); }
+		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle0.svg'); }
 
 		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
 		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
@@ -75,18 +75,18 @@
         .item.isBig {
             .iconObject { background: $colorShapeTertiary; }
 
-            .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
+            .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph1.svg'); }
             
-            .icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/header11.svg'); }
-            .icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/header21.svg'); }
-            .icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/header31.svg'); }
-            .icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/quote1.svg'); }
+            .icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/text/header11.svg'); }
+            .icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/text/header21.svg'); }
+            .icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/header31.svg'); }
+            .icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/text/quote1.svg'); }
             
-            .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/bulleted1.svg'); }
-            .icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered1.svg'); }
-            .icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle1.svg'); }
+            .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted1.svg'); }
+            .icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered1.svg'); }
+            .icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle1.svg'); }
 
-			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/callout1.svg'); }
+			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout1.svg'); }
         }
 
         .sectionName::before { background-color: $colorShapeSecondary; }

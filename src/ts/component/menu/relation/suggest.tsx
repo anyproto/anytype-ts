@@ -110,7 +110,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={translate('menuRelationSuggestFilterOrCreateRelation')}
 						value={filter}
-						onChange={this.onFilterChange} 
+						onChange={this.onFilterChange}
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -152,9 +153,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		this.rebind();
 		this.resize();
-		this.focus();
 		this.load(true);
-
 		this.forceUpdate();
 	};
 
@@ -179,7 +178,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		});
 
 		this.resize();
-		this.focus();
 		this.rebind();
 	};
 	
@@ -188,14 +186,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		menuStore.closeAll([ 'searchObject' ]);
 		window.clearTimeout(this.timeoutFilter);
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {

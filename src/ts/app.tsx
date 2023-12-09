@@ -52,15 +52,12 @@ interface State {
 
 declare global {
 	interface Window {
-		Electron: any;
-		Store: any;
 		$: any;
-		Lib: any;
-		Graph: any;
+		Electron: any;
+		Anytype: any;
 
 		isWebVersion: boolean;
 		Config: any;
-		Renderer: any;
 		AnytypeGlobalConfig: any;
 	}
 };
@@ -84,31 +81,34 @@ const rootStore = {
 	notificationStore,
 };
 
+window.$ = $;
+
 if (!window.Electron.isPackaged) {
-	window.Store = rootStore;
-	window.$ = $;
-	window.Lib = {
-		I,
-		C,
-		UtilCommon,
-		UtilData,
-		UtilFile,
-		UtilObject,
-		UtilMenu,
-		UtilRouter,
-		UtilSmile,
-		analytics,
-		dispatcher,
-		keyboard,
-		Renderer,
-		Preview,
-		Storage,
-		Animation,
-		Onboarding,
-		Survey,
-		Docs,
-		Encode, 
-		Decode,
+	window.Anytype = {
+		Store: rootStore,
+		Lib: {
+			I,
+			C,
+			UtilCommon,
+			UtilData,
+			UtilFile,
+			UtilObject,
+			UtilMenu,
+			UtilRouter,
+			UtilSmile,
+			analytics,
+			dispatcher,
+			keyboard,
+			Renderer,
+			Preview,
+			Storage,
+			Animation,
+			Onboarding,
+			Survey,
+			Docs,
+			Encode, 
+			Decode,
+		},
 	};
 };
 

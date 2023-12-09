@@ -152,13 +152,15 @@ const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setIcon(icon);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -169,11 +171,13 @@ const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request(AccountRecover.name, request, callBack);
 };
 
-const AccountSelect = (id: string, path: string, callBack?: (message: any) => void) => {
+const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Select.Request();
 
 	request.setId(id);
 	request.setRootpath(path);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -1322,7 +1326,7 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1393,6 +1397,7 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 	request.setNoprogress(noProgress);
 	request.setIsmigration(isMigration);
 	request.setUpdateexistingobjects(updateExisting);
+	request.setIsnewspace(isNewSpace);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
@@ -1414,12 +1419,13 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectImportExperience = (spaceId: string, url: string, title: string, callBack?: (message: any) => void) => {
+const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
 	request.setUrl(url);
 	request.setTitle(title);
+	request.setIsnewspace(isNewSpace);
 
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
@@ -1797,6 +1803,26 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+// ---------------------- NOTIFICATION ---------------------- //
+
+const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.List.Request();
+
+	request.setIncluderead(includeRead);
+	request.setLimit(limit);
+
+	dispatcher.request(NotificationList.name, request, callBack);
+};
+
+const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.Reply.Request();
+
+	request.setIdsList(ids);
+	request.setActiontype(action as number);
+
+	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -2005,4 +2031,7 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	NotificationList,
+	NotificationReply,
 };

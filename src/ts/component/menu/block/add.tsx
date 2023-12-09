@@ -301,6 +301,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: UtilMenu.getBlockText() },
 			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: UtilMenu.getBlockList() },
 			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: UtilMenu.getBlockMedia() },
+			{ id: 'embed', name: translate('menuBlockAddSectionsEmbed'), children: UtilMenu.getBlockEmbed() },
 			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: UtilMenu.getBlockOther() },
 			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: UtilMenu.getBlockObject() },
 		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
@@ -560,6 +561,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					];
 				};
 
+				if (item.type == I.BlockType.Embed) {
+					param.content.processor = item.itemId;
+				};
+
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						if (message.error.code) {
@@ -623,7 +628,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						};
 
 						// Auto-open BlockLatex edit mode
-						if (param.type == I.BlockType.Latex) {
+						if (param.type == I.BlockType.Embed) {
 							window.setTimeout(() => { $(`#block-${newBlockId} #value`).trigger('click'); }, Constant.delay.menu);
 						};
 

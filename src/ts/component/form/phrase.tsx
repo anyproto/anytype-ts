@@ -11,6 +11,7 @@ interface Props {
 	readonly?: boolean;
 	isHidden?: boolean;
 	checkPin?: boolean;
+	onKeyDown?: (e: React.KeyboardEvent) => void;
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
 	onCopy?: () => void;
@@ -50,7 +51,6 @@ class Phrase extends React.Component<Props, State> {
 	node = null;
 	placeholder = null;
 	entry = null;
-	timeout = 0;
 	range = null;
 
 	constructor (props: Props) {
@@ -137,10 +137,6 @@ class Phrase extends React.Component<Props, State> {
 		this.placeholderCheck();
 	};
 
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-	};
-
 	init () {
 		const node = $(this.node);
 
@@ -153,9 +149,9 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: React.KeyboardEvent) {
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-		});
+		const { onKeyDown } = this.props;
+
+		keyboard.shortcut('space, enter', e, () => e.preventDefault());
 
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
@@ -174,24 +170,19 @@ class Phrase extends React.Component<Props, State> {
 		});
 
 		this.placeholderCheck();
+
+		if (onKeyDown) {
+			onKeyDown(e);
+		};
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		window.clearTimeout(this.timeout);
-
-		let ret = false;
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 			this.updateValue();
-
-			ret = true;
 		});
 
 		this.placeholderCheck();
-
-		if (!ret) {
-			this.timeout = window.setTimeout(() => this.updateValue(), Constant.delay.keyboard * 2);
-		};
 	};
 
 	updateValue () {

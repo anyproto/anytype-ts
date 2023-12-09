@@ -10,6 +10,7 @@ class UtilSmile {
 	icons: any[] = [];
 	cache: any = {};
 	data: any = {};
+	aliases: any = {};
 
 	constructor () {
 		init({ data });
@@ -23,6 +24,10 @@ class UtilSmile {
 			for (const skin of item.skins) {
 				this.cache[skin.native] = skin.shortcodes;
 			};
+		};
+
+		for (const k in this.data.aliases) {
+			this.aliases[this.data.aliases[k]] = k;
 		};
 	};
 

@@ -22,17 +22,12 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
-const csp = [
-	`default-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-	`img-src 'self' http://*:* https://*:* data: blob: file://*`,
-	`media-src 'self' http://*:* https://*:* data: blob: file://*`,
-	`style-src 'unsafe-inline' http://localhost:* file://*`,
-	`font-src data: file://* http://localhost:*`,
-	`connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:`,
-	`script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'`,
-	`frame-src chrome-extension://react-developer-tools`,
-	`worker-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-];
+const Cors = require('./electron/json/cors.json');
+const csp = [];
+
+for (let i in Cors) {
+	csp.push([ i ].concat(Cors[i]).join(' '));
+};
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);

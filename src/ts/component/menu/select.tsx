@@ -148,6 +148,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						placeholder={placeholder}
 						onChange={this.onFilterChange}
 						onKeyUp={this.onFilterKeyUp}
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -193,7 +194,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			window.setTimeout(() => { setActive(active, true); }, 15);
 		};
 
-		this.focus();
 		this.resize();
 	};
 

@@ -293,12 +293,26 @@
         .dot { background: $colorShapePrimary !important; }
     }
 
-    /* BlockLatex */
+    /* BlockEmbed */
 
-    .block.blockLatex {
+    .block.blockEmbed {
+		.preview { background-color: $colorShapeHighlightLight; }
+		.preview {
+			.icon.embedLatex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
+			.icon.embedMermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
+			.icon.embedYoutube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
+			.icon.embedVimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
+			.icon.embedGoogleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
+			.icon.embedSoundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
+			.icon.embedChart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
+			.icon.embedMiro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
+			.icon.embedFigma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
+		}
+
         .select { color: $colorTextPrimary; }
-        .wrap.isEditing { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
-        #input { background: $colorShapeSecondary; }
+        .wrap.isEditing { background-color: $colorShapeHighlightLight; }
+        #input { background: $colorShapeSecondary; border-color: $colorShapeHighlightLight; }
+		#placeholder { color: $colorTextSecondary; }
     }
 
     /* BlockBookmark */

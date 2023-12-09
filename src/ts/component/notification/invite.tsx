@@ -29,6 +29,7 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 		);
 	};
 
+	/*
 	componentDidMount(): void {
 		const { item } = this.props;
 		const { object, subject } = item;
@@ -46,6 +47,7 @@ const NotificationInvite = observer(class NotificationInvite extends React.Compo
 		ReactDOM.render(<Element {...object} />, objectEl.get(0));
 		ReactDOM.render(<Element {...subject} />, subjectEl.get(0));
 	};
+	*/
 	
 });
 

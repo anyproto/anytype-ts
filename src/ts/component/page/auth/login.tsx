@@ -25,9 +25,9 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
-		this.onSelfHost = this.onSelfHost.bind(this);
 		this.onForgot = this.onForgot.bind(this);
 	};
 	
@@ -47,7 +47,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<Error text={error} className="animation" />
 
 						<div className="animation">
-							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} isHidden={true} />
+							<Phrase 
+								ref={ref => this.refPhrase = ref} 
+								onChange={this.onChange} 
+								onKeyDown={this.onKeyDownPhrase}
+								isHidden={true} 
+							/>
 						</div>
 						<div className="buttons">
 							<div className="animation">
@@ -60,13 +65,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						</div>
 					</form>
 				</Frame>
-
-				{config.experimental ? (
-					<div className="animation small bottom" onClick={this.onSelfHost}>
-						<Icon />
-						{translate('authLoginSelfHost')}
-					</div>
-				) : ''}
 			</div>
 		);
 	};
@@ -124,9 +122,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { account, walletPath } = authStore;
+		const { account, walletPath, networkConfig } = authStore;
+		const { mode, path } = networkConfig;
 
-		C.AccountSelect(account.id, walletPath, (message: any) => {
+		C.AccountSelect(account.id, walletPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
@@ -168,16 +167,22 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		return this.refPhrase.getValue().length;
 	};
 
-	onKeyDown (e: any) {
+	onKeyDown (e: React.KeyboardEvent) {
 		keyboard.shortcut('enter', e, () => this.onSubmit(e));
+	};
+
+	onKeyDownPhrase (e: React.KeyboardEvent) {
+		const { error } = this.state;
+
+		if (error) {
+			this.refPhrase?.setError(false);
+			this.setState({ error: '' });
+		};
 	};
 	
 	onCancel () {
 		authStore.logout(true, false);
 		Animation.from(() => UtilRouter.go('/auth/select', { replace: true }));
-	};
-
-	onSelfHost () {
 	};
 
 	onChange () {

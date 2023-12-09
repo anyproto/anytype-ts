@@ -786,6 +786,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
+			if (range.to) {
+				let parsed = this.checkMarkOnBackspace(value);
+
+				if (parsed.save) {
+					e.preventDefault();
+
+					value = parsed.value;
+					this.marks = Mark.checkRanges(value, this.marks);
+					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+						onKeyDown(e, value, this.marks, range, this.props);
+					});
+					ret = true;
+				};
+			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
 				const parsed = this.getMarksFromHtml();
 
@@ -918,26 +932,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
 			this.timeoutFilter = window.setTimeout(() => {
-				let ret = false;
+				if (!range) {
+					return;
+				};
 
-				keyboard.shortcut('space', e, () => {
-					commonStore.filterSet(0, '');
-					if (menuOpenAdd) {
-						menuStore.close('blockAdd');
-					};
-					if (menuOpenMention) {
-						menuStore.close('blockMention');
-					};
-					ret = true;
-				});
+				const d = range.from - filter.from;
 
-				if (!ret && range) {
-					const d = range.from - filter.from;
-
-					if (d >= 0) {
-						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
-						commonStore.filterSetText(part);
-					};
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					commonStore.filterSetText(part);
 				};
 			}, 30);
 			return;
@@ -1163,7 +1166,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen('', '', [ 'onboarding', 'smile' ])) {
+		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select' ])) {
 			return;
 		};
 
@@ -1479,6 +1482,35 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 			UtilObject.setDone(objectId, done);
 		});
+	};
+
+	checkMarkOnBackspace (value: string) {
+		const range = this.getRange();
+
+		if (!range || !range.to) {
+			return;
+		};
+
+		let save = false;
+
+		for (const type of [ I.MarkType.Mention, I.MarkType.Emoji ]) {
+			const mark = Mark.getInRange(this.marks, type, range);
+			if (!mark) {
+				continue;
+			};
+
+			value = UtilCommon.stringCut(value, mark.range.from, mark.range.to);
+			this.marks = this.marks.filter(it => {
+				if ((it.type == mark.type) && (it.range.from == mark.range.from) && (it.range.to == mark.range.to)) {
+					return false;
+				};
+				return true;
+			});
+
+			save = true;
+		};
+
+		return { value, save };
 	};
 	
 });

@@ -145,6 +145,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						placeholderFocus={placeholderFocus} 
 						value={filter}
 						onChange={this.onFilterChange} 
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -191,7 +192,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.focus();
 		this.load(true);
 	};
 
@@ -214,7 +214,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		});
 
 		this.resize();
-		this.focus();
 		this.props.setActive();
 	};
 	
@@ -231,14 +230,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	};
-
-	focus () {
-		window.setTimeout(() => {
-			if (this.refFilter) {
-				this.refFilter.focus();
-			};
-		}, 15);
 	};
 
 	getItems () {

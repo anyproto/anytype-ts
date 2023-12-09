@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Select, Switch } from 'Component';
-import { I, translate, UtilCommon, Action, Renderer } from 'Lib';
+import { Title, Label, Select } from 'Component';
+import { I, translate, UtilMenu, Action } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -14,8 +13,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	render () {
 		const { config, interfaceLang } = commonStore;
 		const { languages } = config;
-		const interfaceLanguages = this.getInterfaceLanguages();
-		const spellingLanguages = this.getSpellinngLanguages();
+		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
+		const spellingLanguages = UtilMenu.getSpellingLanguages();
 
 		return (
 			<React.Fragment>
@@ -58,27 +57,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 			</React.Fragment>
 		);
-	};
-
-	getInterfaceLanguages () {
-		const ret: any[] = [];
-		const Locale = require('lib/json/locale.json');
-
-		for (const id of Constant.enabledInterfaceLang) {
-			ret.push({ id, name: Locale[id] });
-		};
-
-		return ret;
-	};
-
-	getSpellinngLanguages () {
-		let ret: any[] = [];
-
-		ret = ret.concat(commonStore.languages || []);
-		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
-		ret.unshift({ id: '', name: translate('commonDisabled') });
-
-		return ret;
 	};
 
 });

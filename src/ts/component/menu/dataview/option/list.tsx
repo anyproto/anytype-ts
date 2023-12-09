@@ -100,6 +100,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -142,7 +143,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const items = this.getItems();
 
 		this._isMounted = true;
-		this.focus();
 		this.rebind();
 		this.resize();
 
@@ -172,14 +172,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {
