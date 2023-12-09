@@ -220,6 +220,23 @@ const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: nu
 	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
 };
 
+const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.NewChallenge.Request();
+
+	request.setAppname(name);
+
+	dispatcher.request(AccountLocalLinkNewChallenge.name, request, callBack);
+};
+
+const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.SolveChallenge.Request();
+
+	request.setChallengeid(id);
+	request.setAnswer(answer);
+
+	dispatcher.request(AccountLocalLinkSolveChallenge.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -1859,6 +1876,9 @@ export {
 	AccountDelete,
 	AccountRevertDeletion,
 	AccountMove,
+
+	AccountLocalLinkNewChallenge,
+	AccountLocalLinkSolveChallenge,
 
 	FileUpload,
 	FileDownload,

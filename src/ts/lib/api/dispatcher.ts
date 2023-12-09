@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore, popupStore } from 'Store';
 import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -90,6 +90,7 @@ class Dispatcher {
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
 		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
+		if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'accountLinkChallenge';
 
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
@@ -215,6 +216,21 @@ class Dispatcher {
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+					break;
+				};
+
+				case 'accountLinkChallenge': {
+					const info = data.getClientinfo();
+					const challenge = data.getChallenge();
+
+					popupStore.open('confirm', {
+						data: {
+							title: 'Challenge',
+							text: challenge,
+						}
+					});
+
+					window.focus();
 					break;
 				};
 

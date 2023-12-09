@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, UtilRouter, UtilData, dispatcher } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { I, C, UtilRouter, UtilData, dispatcher } from 'Lib';
+import { authStore, commonStore, extensionStore } from 'Store';
 import Url from 'json/url.json';
 
 import Util from '../lib/util';
@@ -50,12 +50,17 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				return;
 			};
 
+			/* @ts-ignore */
+			const manifest = chrome.runtime.getManifest();
+
 			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiUkNRbnFkcnYifQ.g22qTAnn7fOD9KB9Z1xQBN3Iy6sSUvPgLSWfQSxcqCw');
 			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
 			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
 
-			UtilData.createsSubscriptions(() => {
-				UtilRouter.go('/create', {});
+			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
+				extensionStore.challengeId = message.challengeId;
+
+				UtilRouter.go('/challenge', {});
 			});
 		});
 	};

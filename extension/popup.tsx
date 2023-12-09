@@ -11,6 +11,7 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 import Extension from 'json/extension.json';
 
 import Index from './popup/index';
+import Challenge from './popup/challenge';
 import Create from './popup/create';
 import Success from './popup/success';
 import Util from './lib/util';
@@ -26,6 +27,7 @@ const Routes = [
 
 const Components = {
 	index: Index,
+	challenge: Challenge,
 	create: Create,
 	success: Success,
 };
@@ -47,25 +49,23 @@ const rootStore = {
 declare global {
 	interface Window {
 		Electron: any;
-		Store: any;
 		$: any;
-		Lib: any;
-		Graph: any;
-
+		Anytype: any;
 		isWebVersion: boolean;
 		AnytypeGlobalConfig: any;
-		Renderer: any;
 	}
 };
 
 window.$ = $;
-window.Store = rootStore;
-window.Lib = {
-	C,
-	UtilCommon,
-	dispatcher,
-	Storage,
-	Animation,
+window.Anytype = {
+	Store: rootStore,
+	Lib: {
+		C,
+		UtilCommon,
+		dispatcher,
+		Storage,
+		Animation,
+	},
 };
 
 class RoutePage extends React.Component<RouteComponentProps> {

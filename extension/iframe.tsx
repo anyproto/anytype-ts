@@ -44,25 +44,24 @@ const rootStore = {
 declare global {
 	interface Window {
 		Electron: any;
-		Store: any;
 		$: any;
-		Lib: any;
-		Graph: any;
-
+		Anytype: any;
 		isWebVersion: boolean;
 		AnytypeGlobalConfig: any;
-		Renderer: any;
 	}
 };
 
 window.$ = $;
-window.Store = rootStore;
-window.Lib = {
-	C,
-	UtilCommon,
-	dispatcher,
-	Storage,
-	Animation,
+window.$ = $;
+window.Anytype = {
+	Store: rootStore,
+	Lib: {
+		C,
+		UtilCommon,
+		dispatcher,
+		Storage,
+		Animation,
+	},
 };
 
 class RoutePage extends React.Component<RouteComponentProps> {

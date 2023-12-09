@@ -1,6 +1,8 @@
 class ExtensionStore {
 
 	public createdObject = null;
+	public challengeId = '';
+	
 
 };
 

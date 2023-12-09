@@ -33,6 +33,19 @@ export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFrom
 	};
 };
 
+export const AccountLocalLinkNewChallenge = (response: Rpc.Account.LocalLink.NewChallenge.Response) => {
+	return {
+		challengeId: response.getChallengeid(),
+	};
+};
+
+export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.SolveChallenge.Response) => {
+	return {
+		token: response.getSessiontoken(),
+		key: response.getAppkey(),
+	};
+};
+
 export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
 	return response.toObject();
 };
