@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type="text/css">
+			body { font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; }
+			.content { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+			.title { font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; }
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="title">Challenge</div>
+			<div id="challenge"></div>
+		</div>
+		
+		<script type="text/javascript">
+			const param = getParam();
+
+			document.getElementById('challenge').innerHTML = param.challenge;
+
+			function getParam () {
+				var a = location.search.replace(/^\?/, '').split('&');
+				var param = {};
+
+				a.forEach((s) => {
+					var kv = s.split('=');
+					param[kv[0]] = kv[1];
+				});
+				return param;
+			};
+		</script>
+	</body>
+</html>
