@@ -13,7 +13,7 @@ window.Electron = {
 	currentWindow: () => ({ windowId: 1 }),
 	Api: () => {},
 };
-window.AnytypeGlobalConfig = { emojiPrefix: Url.emojiPrefix, debug: { mw: true } };
+window.AnytypeGlobalConfig = { emojiPrefix: Url.emojiPrefix, menuBorderBottom: 16, debug: { mw: true } };
 
 let rootId = '';
 let component: any = null;

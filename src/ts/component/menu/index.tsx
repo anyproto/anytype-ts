@@ -448,6 +448,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const borderBottom = window.AnytypeGlobalConfig?.menuBorderBottom || 80;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -568,7 +569,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			x = Math.min(ww - width - BORDER, x);
 
 			y = Math.max(minY, y);
-			y = Math.min(wh - height - 80, y);
+			y = Math.min(wh - height - borderBottom, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
