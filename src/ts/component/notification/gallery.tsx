@@ -19,11 +19,6 @@ const NotificationGallery = observer(class NotificationGallery extends React.Com
 
 		if (errorCode) {
 			text = UtilCommon.sprintf(text, name);
-
-			buttons = buttons.concat([
-				{ id: 'importRetry', text: 'Retry' },
-				{ id: 'importReport', text: 'Report' },
-			]);
 		} else {
 			title = UtilCommon.sprintf(title, name);
 			text = UtilCommon.sprintf(text, space.name);

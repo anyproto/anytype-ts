@@ -1619,13 +1619,6 @@
 	"emojiCategorySymbols": "Symbols",
 	"emojiCategoryFlags": "Flags",
 
-	"notification0SuccessTitle": "&quot;%s&quot; was installed",
-	"notification0SuccessText": "Experience was successfully  installed to a new space. You can now open and start using it.",
-	"notification0ErrorTitle": "Something went wrong",
-	"notification0ErrorText": "Oops! &quot;%s&quot; wasn't installed. Please check your internet connection and try again or post a report on forum.",
-
-	"notification1Text": "<span id='object' class='element'></span> requested to join <span id='subject' class='element'></span> with read-only access rights.",
-
 	"notificationImportSuccessTitle": "Import complete!",
 	"notificationImportSuccessText": "You can find the imported objects in the selected space.",
 	"notificationImportErrorTitle": "Import failed",
