@@ -88,7 +88,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
 		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
-
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
@@ -163,9 +162,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						const l = options.length;
 
 						return (
-							<span className="cell" key={i}>
+							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
 								{bullet}
-								<div className="cellContent" onClick={e => this.onLinks(e, relationKey)}>
+								<div className="cellContent">
 									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 								</div>
 							</span>
@@ -636,10 +635,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onLinks (e: React.MouseEvent, id: any) {
-		const { rootId } = this.props;
+		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[id]);
+		const elementId = Relation.cellId(PREFIX + block.id, 'backlinks', object.id);
 		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
@@ -652,7 +652,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
-				element: e.currentTarget,
+				element: `#${elementId}`,
 				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
 				width: 360,
 				horizontal: I.MenuDirection.Left,
