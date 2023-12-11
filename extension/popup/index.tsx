@@ -16,11 +16,12 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	state = {
 		error: '',
 	};
+	interval: any = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onLogin = this.onLogin.bind(this);
+		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 	};
 
@@ -32,7 +33,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				<Label text="To save in Anytype you need to Pair with the app" />
 
 				<div className="buttons">
-					<Button color="pink" className="c32" text="Pair with app" onClick={this.onLogin} />
+					<Button color="pink" className="c32" text="Pair with app" onClick={this.onOpen} />
 					<Button color="blank" className="c32" text="Download app" onClick={this.onDownload} />
 				</div>
 
@@ -41,35 +42,67 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		);
 	};
 
-	onLogin () {
-		Util.sendMessage({ type: 'getPorts' }, (response) => {
-			console.log('[onLogin]', response);
+	componentDidMount(): void {
+		this.init();
+	};
 
+	init () {
+		Util.sendMessage({ type: 'getPorts' }, response => {
 			if (!response.ports || !response.ports.length) {
-				this.setState({ error: 'Pairing failed' });
+				this.setState({ error: 'Automatic pairing failed, please open the app' });
 				return;
 			};
 
-			/* @ts-ignore */
-			const manifest = chrome.runtime.getManifest();
+			this.login(response.ports[1], response.ports[2]);
+		});
+	};
 
-			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
-			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
+	login (port1: string, port2: string) {
+		/* @ts-ignore */
+		const manifest = chrome.runtime.getManifest();
 
-			const token = Storage.get('token');
-			if (token) {
-				Util.initWithToken(token);
-			} else {
-				C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
-					if (message.error.code) {
-						this.setState({ error: message.error.description });
+		dispatcher.init(`http://127.0.0.1:${port1}`);
+		commonStore.gatewaySet(`http://127.0.0.1:${port2}`);
+
+		const token = Storage.get('token');
+		if (token) {
+			Util.initWithToken(token);
+		} else {
+			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
+
+				extensionStore.challengeId = message.challengeId;
+				UtilRouter.go('/challenge', {});
+			});
+		};
+	};
+
+	onOpen () {
+		let cnt = 0;
+
+		Util.sendMessage({ type: 'launchApp' }, response => {
+			console.log(response);
+
+			this.interval = setInterval(() => {
+				Util.sendMessage({ type: 'getPorts' }, response => {
+					if (!response.ports || !response.ports.length) {
+						cnt++;
+						if (cnt >= 30) {
+							this.setState({ error: 'App open failed' });
+							clearInterval(this.interval);
+
+							console.log('App open try', cnt);
+						};
 						return;
 					};
 
-					extensionStore.challengeId = message.challengeId;
-					UtilRouter.go('/challenge', {});
+					clearInterval(this.interval);
+					this.login(response.ports[1], response.ports[2]);
 				});
-			};
+			}, 1000);
 		});
 	};
 
