@@ -634,12 +634,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
-	onLinks (e: React.MouseEvent, id: any) {
+	onLinks (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId);
-		const value = Relation.getArrayValue(object[id]);
-		const elementId = Relation.cellId(PREFIX + block.id, 'backlinks', object.id);
+		const value = Relation.getArrayValue(object[relationKey]);
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
@@ -653,7 +653,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
 				element: `#${elementId}`,
-				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
+				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', relationKey ].join('-'))),
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,
