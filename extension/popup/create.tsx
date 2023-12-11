@@ -339,7 +339,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			element,
 			horizontal: I.MenuDirection.Center,
 			commonFilter: true,
-			noFlipY: true,
 			onOpen: () => {
 				window.setTimeout(() => { $(element).addClass('isFocused'); });
 			},

@@ -227,6 +227,8 @@ class App extends React.Component<object, State> {
 		UtilRouter.init(history);
 
 		dispatcher.init(UtilCommon.getElectron().getGlobal('serverAddress'));
+		dispatcher.listenEvents();
+
 		keyboard.init();
 
 		this.registerIpcEvents();

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Button, Input } from 'Component';
-import { I, C } from 'Lib';
-import { extensionStore } from 'Store';
+import { Button, Input, Error } from 'Component';
+import { I, C, UtilData, UtilRouter, dispatcher, Storage } from 'Lib';
+import { authStore, extensionStore } from 'Store';
+import Util from '../lib/util';
 
 interface State {
 	error: string;
@@ -11,6 +12,9 @@ interface State {
 const Challenge = observer(class Challenge extends React.Component<I.PageComponent, State> {
 
 	ref: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -19,10 +23,17 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 	};
 
 	render () {
+		const { error } = this.state;
+
 		return (
 			<form className="page pageChallenge" onSubmit={this.onSubmit}>
-				<Input ref={ref => this.ref = ref} />
-				<Button type="input" color="pink" text="Ok" />
+				<Input ref={ref => this.ref = ref} placeholder="Challenge" />
+
+				<div className="buttons">
+					<Button type="input" color="pink" className="c32" text="Authorize" />
+				</div>
+
+				<Error text={error} />
 			</form>
 		);
 	};
@@ -30,8 +41,14 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		C.AccountLocalLinkSolveChallenge(extensionStore.challengeId, this.ref?.getValue(), (message: any) => {
-			console.log(message);
+		C.AccountLocalLinkSolveChallenge(extensionStore.challengeId, this.ref?.getValue().trim(), (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			Storage.set('token', message.token);
+			Util.initWithToken(message.token);
 		});
 	};
 

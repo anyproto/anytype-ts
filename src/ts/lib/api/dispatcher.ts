@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore, popupStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
 import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -35,7 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-		this.listenEvents();
 
 		console.log('[Dispatcher].init Server address: ', address);
 	};
@@ -222,9 +221,10 @@ class Dispatcher {
 				case 'accountLinkChallenge': {
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
-					const win = window.open(`./challenge/index.html?challenge=${challenge}`, '', 'width=320,height=320');
+					const win = window.open('./challenge/index.html', '', 'width=320,height=320');
 
 					win.focus();
+					win.addEventListener('load', () => win.postMessage({ info, challenge }, '*'), false);
 					break;
 				};
 

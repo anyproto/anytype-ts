@@ -2,32 +2,30 @@
 <html>
 	<head>
 		<style type="text/css">
-			body { font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; }
+			* { margin: 0px; }
+
+			html, body { height: 100%; }
+			body { font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px; padding: 16px; }
+
 			.content { display: flex; align-items: center; justify-content: center; flex-direction: column; }
-			.title { font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; }
+			.logo { width: 64px; height: 64px; -webkit-user-select: none; user-select: none; margin: 0px 0px 12px 0px; }
+			.logo img { width: 100% !important; height: 100% !important; }
+			.title { font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; margin: 0px 0px 24px 0px; }
 		</style>
 	</head>
 	<body>
 		<div class="content">
+			<div class="logo">
+				<img src="../img/icon/app/64x64.png" />
+			</div>
 			<div class="title">Challenge</div>
 			<div id="challenge"></div>
 		</div>
 		
 		<script type="text/javascript">
-			const param = getParam();
-
-			document.getElementById('challenge').innerHTML = param.challenge;
-
-			function getParam () {
-				var a = location.search.replace(/^\?/, '').split('&');
-				var param = {};
-
-				a.forEach((s) => {
-					var kv = s.split('=');
-					param[kv[0]] = kv[1];
-				});
-				return param;
-			};
+			window.addEventListener('message', (e) => {
+				document.getElementById('challenge').innerText = e.data.challenge;
+			});
 		</script>
 	</body>
 </html>

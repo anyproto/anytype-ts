@@ -1,3 +1,5 @@
+import { UtilData, UtilRouter, dispatcher } from 'Lib';
+import { authStore } from 'Store';
 import Extension from 'json/extension.json';
 
 class Util {
@@ -35,6 +37,12 @@ class Util {
 	getCurrentTab (callBack: (tab) => void) {
 		/* @ts-ignore */
 		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
+	};
+
+	initWithToken (token: string) {
+		authStore.tokenSet(token);
+		dispatcher.listenEvents();
+		UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
 	};
 	
 };
