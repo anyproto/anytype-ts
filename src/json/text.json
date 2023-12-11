@@ -1442,9 +1442,9 @@
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
-	"spaceDeleteWarningTitle": "Delete '%s' space",
+	"spaceDeleteWarningTitle": "Delete \"%s\" space",
 	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
-	"spaceDeleteToast": "Space '%s' was deleted",
+	"spaceDeleteToast": "Space \"%s\" was deleted",
 
 	"quickOption0": "Exact date",
 	"quickOption1": "Yesterday",
