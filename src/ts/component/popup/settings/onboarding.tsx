@@ -62,10 +62,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 								ref={ref => this.refMode = ref}
 								value={String(mode || '')}
 								options={networkModes}
-								onChange={v => {
-									this.onChange('mode', v);
-									analytics.event('SelectNetwork', { type: v, route: 'Onboarding' });
-								}}
+								onChange={v => this.onChange('mode', v)}
 								arrowClassName="black"
 								menuParam={{ 
 									horizontal: I.MenuDirection.Right, 
@@ -101,13 +98,20 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFile([ 'yml' ], (paths: string[]) => {
-			this.onChange('path', paths[0]);
-			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
-		});
+		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
 	};
 
 	onSave () {
+		const { networkConfig } = authStore;
+
+		if (this.config.mode !== networkConfig.mode) {
+			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
+		};
+
+		if (this.config.path !== networkConfig.path) {
+			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+		};
+
 		authStore.networkConfigSet(this.config);
 		this.props.close();
 	};
