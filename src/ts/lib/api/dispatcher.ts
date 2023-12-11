@@ -222,7 +222,7 @@ class Dispatcher {
 				case 'accountLinkChallenge': {
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
-					const win = window.open(`./extension/challenge.html?challenge=${challenge}`, '', 'width=320,height=320');
+					const win = window.open(`./challenge/index.html?challenge=${challenge}`, '', 'width=320,height=320');
 
 					win.focus();
 					break;
