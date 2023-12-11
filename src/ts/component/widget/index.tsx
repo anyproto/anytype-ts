@@ -316,7 +316,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			details = Dataview.getDetails(rootId, blockId, id, viewId);
-			flags = [ I.ObjectFlag.SelectTemplate ];
+			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
 			isCollection = Dataview.isCollection(rootId, blockId);
@@ -331,7 +331,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					};
 
 					details.layout = type.recommendedLayout;
-					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+					flags = flags.concat([ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ]);
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 

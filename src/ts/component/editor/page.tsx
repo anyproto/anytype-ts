@@ -218,6 +218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		this.close();
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
@@ -256,10 +257,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	close () {
-		const { isPopup, rootId, match } = this.props;
+		if (!this.id) {
+			return;
+		};
+
+		const { isPopup, match } = this.props;
 
 		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
+		if (isPopup && (match.params.id == this.id)) {
 			close = false;
 		};
 		if (keyboard.isCloseDisabled) {
@@ -267,7 +272,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (close) {
-			Action.pageClose(rootId, true);
+			Action.pageClose(this.id, true);
 		};
 	};
 

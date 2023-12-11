@@ -108,6 +108,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			return;
 		};
 
+		this.close();
 		this.id = rootId;
 		this.setState({ isLoading: true });
 		
@@ -139,15 +140,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	close () {
+		if (!this.id) {
+			return;
+		};
+
 		const { isPopup, match } = this.props;
-		const rootId = this.getRootId();
 		
 		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
+		if (isPopup && (match.params.id == this.id)) {
 			close = false;
 		};
 		if (close) {
-			Action.pageClose(rootId, true);
+			Action.pageClose(this.id, true);
 		};
 	};
 
