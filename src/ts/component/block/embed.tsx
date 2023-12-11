@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
+import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
@@ -545,7 +546,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (allowJs.includes(processor)) {
 						data.js = text;
 					} else {
-						data.html = text;
+						data.html = DOMPurify.sanitize(text, { 
+							ADD_TAGS: [ 
+								'iframe',
+							],
+							ADD_ATTR: [
+								'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+							],
+						});
 					};
 
 					iw.postMessage(data, '*');
