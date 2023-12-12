@@ -610,7 +610,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						res.bindFunctions(this.value.get(0));
 					};
 				}).catch(e => {
-					this.setState({ error: e.message, isShowing: false, isEditing: false });
+					this.setState({ error: e.message, isShowing: false });
 				});
 				break;
 			};

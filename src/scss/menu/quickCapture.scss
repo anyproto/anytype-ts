@@ -20,7 +20,7 @@
 		.item {
 			position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; gap: 0px 8px; padding: 0px 14px;
 			background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
-			box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon; max-width: 200px;
+			box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon; max-width: 200px; font-weight: 500;
 		}
 		.item {
 			.icon { margin-right: 0; flex-shrink: 0; }
@@ -39,7 +39,9 @@
 		width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: $colorBgPrimary; padding: 0px; border-radius: 12px; 
 	}
     .menu.menuQuickCapture.expanded {
-		.items { flex-wrap: wrap; gap: 8px; overflow-x: hidden; overflow-y: auto; max-height: 312px; padding: 16px; }
+		.items { 
+			flex-wrap: wrap; gap: 8px; overflow-x: hidden; height: 260px; overflow-y: auto; padding: 16px; align-items: flex-start; flex-direction: column;
+		}
 		.item { box-shadow: none; }
     }
 }
