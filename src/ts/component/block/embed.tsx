@@ -24,9 +24,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	text = '';
 	timeout = 0;
 	node = null;
-	win = null;
-	value = null;
-	empty = null;
 	refEditable = null;
 	state = {
 		isShowing: false,
@@ -54,9 +51,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	render () {
 		const { readonly, block } = this.props;
-		const { text, processor } = block.content;
+		const { processor } = block.content;
 		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const text = String(block.content.text || '').trim();
 
 		if (!text) {
 			cn.push('isEmpty');
@@ -75,7 +73,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				const menuItem = UtilMenu.getBlockEmbed().find(it => it.id == processor) || {};
+				const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 
 				button = <Icon className="source" onClick={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
@@ -128,8 +126,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				{select}
 				{button}
 
+				{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}
 				<div id="value" onClick={this.onEdit} />
-				{empty ? <Label id="empty" className="empty" text={empty} onClick={this.onEdit} /> : ''}
 				<div id={this.getContainerId()} />
 				<Editable 
 					key={`block-${block.id}-editable`}
@@ -151,25 +149,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	componentDidMount () {
 		this._isMounted = true;
-
-		const { block } = this.props;
-		const node = $(this.node);
-
-		this.text = String(block.content.text || '');
-		this.empty = node.find('#empty');
-		this.value = node.find('#value');
-
-		this.setValue(this.text);
-		this.setContent(this.text);
+		this.init();
 	};
 
 	componentDidUpdate () {
-		const { block } = this.props;
-		const { text } = block.content;
-
-		this.text = String(text || '');
-		this.setValue(this.text);
-		this.setContent(this.text);
+		this.init();
 		this.rebind();
 	};
 	
@@ -178,6 +162,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.unbind();
 
 		$(`#d${this.getContainerId()}`).remove();
+	};
+
+	init () {
+		const { block } = this.props;
+
+		this.setText(block.content.text);
+		this.setValue(this.text);
+		this.setContent(this.text);
+		this.rebind();
 	};
 
 	rebind () {
@@ -313,7 +306,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		};
 
-		if (!keyboard.isSpecial(e)) {
+		if (!keyboard.isArrow(e)) {
 			this.setContent(value);
 			this.save();
 		};
@@ -424,6 +417,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		raf(() => menuStore.open('blockLatex', menuParam));
 	};
 
+	setText (text: string) {
+		this.text = String(text || '').trim();
+	};
+
 	setValue (value: string) {
 		if (!this._isMounted || !this.state.isEditing) {
 			return;
@@ -496,20 +493,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { isShowing } = this.state;
 		const { block } = this.props;
+		const node = $(this.node);
+		const value = node.find('#value');
 
 		if (!isShowing && !block.isEmbedLatex()) {
+			value.html('');
 			return;
 		};
 
-		this.text = String(text || '');
+		this.setText(text);
 
 		if (!this.text) {
-			this.value.html('');
+			value.html('');
 			return;
 		};
 
 		const { processor } = block.content;
-		const node = $(this.node);
 		const win = $(window);
 
 		switch (processor) {
@@ -573,7 +572,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					});
 
 					iframe.off('load').on('load', onLoad);
-					this.value.html('').append(iframe);
+					value.html('').append(iframe);
 				} else {
 					onLoad();
 				};
@@ -581,14 +580,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				this.value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(this.text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				}));
 
-				this.value.find('a').each((i: number, item: any) => {
+				value.find('a').each((i: number, item: any) => {
 					item = $(item);
 
 					item.off('click').click((e: any) => {
@@ -603,14 +602,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 			case I.EmbedProcessor.Mermaid: {
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
-					this.value.html(res.svg || this.text);
+					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
-						res.bindFunctions(this.value.get(0));
+						res.bindFunctions(value.get(0));
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
-					this.value.html(error.html());
+					
+					value.html(error.html());
 				});
 				break;
 			};
@@ -628,7 +628,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
+		e.preventDefault();
 		e.stopPropagation();
+
 		this.setEditing(true);
 	};
 
@@ -643,7 +645,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const value = this.getValue();
+		const value = this.getValue().trim();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
