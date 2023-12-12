@@ -4,7 +4,7 @@ import Constant from 'json/constant.json';
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
-DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com' ];
+DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 
 class UtilEmbed {
