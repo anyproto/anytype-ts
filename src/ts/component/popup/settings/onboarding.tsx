@@ -74,7 +74,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							<div className="item">
 								<div onClick={this.onPathClick}>
 									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
-									<Label className="small" text={UtilCommon.shorten(path, 32)} />
+									{path ? <Label className="small" text={UtilCommon.shorten(path, 32)} /> : ''}
 								</div>
 								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
 							</div>
