@@ -535,8 +535,8 @@
 	"blockFeaturedTypeMenuOpenSet": "Open set",
 	"blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
 	"blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
-	"blockFeaturedLinks": "Links from object",
-	"blockFeaturedBacklinks": "Links to object",
+	"blockFeaturedLinks": "Links from this object",
+	"blockFeaturedBacklinks": "Links to this object",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",

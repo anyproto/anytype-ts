@@ -644,17 +644,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: {
-				iconEmoji: it.iconEmoji,
-				iconImage: it.iconImage
-			}
+			object: it
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
 				element: `#${elementId}`,
 				className: 'featuredLinks',
-				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', relationKey ].join('-'))),
+				title: translate(UtilCommon.toCamelCase(`blockFeatured-${relationKey}`)),
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,
