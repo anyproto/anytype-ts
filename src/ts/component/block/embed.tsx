@@ -5,7 +5,7 @@ import raf from 'raf';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Error } from 'Component';
+import { Icon, Label, Editable } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -16,7 +16,6 @@ require('katex/dist/contrib/mhchem');
 interface State {
 	isShowing: boolean;
 	isEditing: boolean;
-	error: string;
 };
 
 const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComponent, State> {
@@ -32,7 +31,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	state = {
 		isShowing: false,
 		isEditing: false,
-		error: '',
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -57,7 +55,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	render () {
 		const { readonly, block } = this.props;
 		const { text, processor } = block.content;
-		const { isShowing, isEditing, error } = this.state;
+		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
 
 		if (!text) {
@@ -133,7 +131,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="value" onClick={this.onEdit} />
 				{empty ? <Label id="empty" className="empty" text={empty} onClick={this.onEdit} /> : ''}
 				<div id={this.getContainerId()} />
-				<Error text={error} />
 				<Editable 
 					key={`block-${block.id}-editable`}
 					ref={ref => this.refEditable = ref}
@@ -179,6 +176,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		$(`#d${this.getContainerId()}`).remove();
 	};
 
 	rebind () {
@@ -315,8 +314,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		if (!keyboard.isSpecial(e)) {
-			this.setState({ error: '' });
-
 			this.setContent(value);
 			this.save();
 		};
@@ -435,7 +432,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const lang = this.getLang();
 		const range = this.getRange();
 
-		if (lang) {
+		if (value && lang) {
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
@@ -612,10 +609,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						res.bindFunctions(this.value.get(0));
 					};
 				}).catch(e => {
-					this.setState({ error: e.message, isShowing: false });
+					const error = $(`#d${this.getContainerId()}`).hide();
+					this.value.html(error.html());
 				});
-
-				$(`#d${this.getContainerId()}`).remove();
 				break;
 			};
 		};
