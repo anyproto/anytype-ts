@@ -53,18 +53,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const canEdit = this.canEdit();
 
-		let check = Relation.checkRelationValue(relation, record[relation.relationKey]);
-		if (relation.relationKey == 'name') {
-			check = true;
-		};
-
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
 			Relation.className(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == 'name' ? 'isName' : ''),
-			(!check ? 'isEmpty' : ''),
+			(!this.checkValue() ? 'isEmpty' : ''),
 		];
 
 		let CellComponent: any = null;
@@ -139,6 +134,18 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
 		};
+	};
+
+	checkValue (): boolean {
+		const { recordId, getRecord } = this.props;
+		const relation = this.getRelation();
+		const record = getRecord(recordId);
+
+		if (relation.relationKey == 'name') {
+			return true;
+		};
+
+		return Relation.checkRelationValue(relation, record[relation.relationKey]);
 	};
 
 	onClick (e: any) {
@@ -459,7 +466,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		if (showTooltip) {
-			Preview.tooltipShow({ text: relation.name, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
+			const text = !this.checkValue() ? translate(`placeholderCell${relation.format}`) : relation.name;
+
+			Preview.tooltipShow({ text, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
 		};
 	};
 	
