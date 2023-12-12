@@ -315,6 +315,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		if (!keyboard.isSpecial(e)) {
+			this.setState({ error: '' });
+
 			this.setContent(value);
 			this.save();
 		};
@@ -612,6 +614,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				}).catch(e => {
 					this.setState({ error: e.message, isShowing: false });
 				});
+
+				$(`#d${this.getContainerId()}`).remove();
 				break;
 			};
 		};
