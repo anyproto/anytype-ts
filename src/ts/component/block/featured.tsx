@@ -653,6 +653,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
 				element: `#${elementId}`,
+				className: 'featuredLinks',
 				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', relationKey ].join('-'))),
 				width: 360,
 				horizontal: I.MenuDirection.Left,
