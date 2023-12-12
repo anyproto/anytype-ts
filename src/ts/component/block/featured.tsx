@@ -161,6 +161,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
 						const l = options.length;
 
+						if (!l) {
+							return null;
+						};
+
 						return (
 							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
 								{bullet}
