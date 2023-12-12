@@ -78,6 +78,9 @@ class UtilEmbed {
 
 				if (place && place[1]) {
 					search.q = place[1];
+
+					delete(search.center);
+
 					endpoint = 'place';
 				};
 
