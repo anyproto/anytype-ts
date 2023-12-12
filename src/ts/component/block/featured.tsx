@@ -205,6 +205,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
 								withLabel={true}
+								withName={true}
 							/>
 						</span>
 					);
