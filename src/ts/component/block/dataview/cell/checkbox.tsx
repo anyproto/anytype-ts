@@ -29,7 +29,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 		return (
 			<React.Fragment>
 				<Icon className={cn.join(' ')} />
-				{withLabel ? <span className="label">{UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name)}</span> : ''}
+				{withLabel ? <span className="label">{relation.name}</span> : ''}
 			</React.Fragment>
 		);
 	};

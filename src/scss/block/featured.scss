@@ -62,6 +62,10 @@
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
+		.cellContent.c-checkbox {
+			.icon { margin-top: -1px; }
+			.label { padding-left: 5px; }
+		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
