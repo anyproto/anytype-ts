@@ -637,6 +637,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onLinks (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return;
+		};
+
 		const object = detailStore.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
@@ -651,7 +657,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			menuStore.open('select', {
 				element: `#${elementId}`,
 				className: 'featuredLinks',
-				title: translate(UtilCommon.toCamelCase(`blockFeatured-${relationKey}`)),
+				title: relation.name,
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,
