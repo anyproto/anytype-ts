@@ -434,7 +434,7 @@
 	"blockTextBulleted": "Simple list",
 	"blockTextNumbered": "Numbered list",
 	"blockTextToggle": "Hide and show content inside",
-	"blockTextExisting": "Link to existing Object",
+	"blockTextExisting": "Create link to another object",
 	"blockTextFile": "Store file in original state",
 	"blockTextImage": "Upload and enrich the page with image",
 	"blockTextVideo": "Upload playable video",
