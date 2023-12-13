@@ -791,11 +791,10 @@ class UtilCommon {
 	};
 
 	fixAsarPath (path: string): string {
-		let href = location.href;
+		let href = window.Electron.dirname(location.href);
 		if (window.Electron.isPackaged) {
 			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			href = href.replace('/index.html', '/');
-			path = href + path.replace(/^\.\//, '');
+			path = href + path.replace(/^\.\//, '/');
 		};
 		return path;
 	};
