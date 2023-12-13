@@ -83,7 +83,7 @@ const rootStore = {
 
 window.$ = $;
 
-if (!window.Electron.isPackaged) {
+if (!UtilCommon.getElectron().isPackaged) {
 	window.Anytype = {
 		Store: rootStore,
 		Lib: {
