@@ -29,7 +29,8 @@
 		"menuRecords": 100,
 		"widgets": 20,
 		"space": 10,
-		"notification": 20
+		"notification": 20,
+		"phrase": { "letter": 8, "word": 12 }
 	},
 
 	"default": {
@@ -84,7 +85,7 @@
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
 		"table":		 [ "select2", "blockColor", "blockBackground" ],
-		"navigation":	 [ "space", "quickCapture" ]
+		"navigation":	 [ "quickCapture" ]
 	},
 
 	"popupPinIds": [ "search" ],

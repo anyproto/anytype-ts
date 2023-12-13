@@ -6,10 +6,8 @@ import { I, C, UtilRouter } from 'Lib';
 import { notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import NotificationUsecase from './usecase';
 import NotificationImport from './import';
 import NotificationExport from './export';
-import NotificationInvite from './invite';
 import NotificationGallery from './gallery';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
@@ -31,11 +29,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		let content = null;
 		switch (type) {
-			case I.NotificationType.Usecase: {
-				content = <NotificationUsecase {...this.props} onButton={this.onButton} />;
-				break;
-			};
-
 			case I.NotificationType.Import: {
 				content = <NotificationImport {...this.props} onButton={this.onButton} />;
 				break;
@@ -43,11 +36,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Export: {
 				content = <NotificationExport {...this.props} onButton={this.onButton} />;
-				break;
-			};
-
-			case I.NotificationType.Invite: {
-				content = <NotificationInvite {...this.props} onButton={this.onButton} />;
 				break;
 			};
 

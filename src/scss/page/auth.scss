@@ -14,7 +14,7 @@ $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
 
-$shadow: 0px 0px 0px 1px #252525 inset;
+$shadow: 0px 0px 0px 1px #252525;
 
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorDark !important; color: $colorTextSecondary; overflow: hidden; }
@@ -48,10 +48,17 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
 		.label.small { color: $colorTextTertiary; }
 		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
+		.select {
+			.name { color: $colorTextInversion !important; }
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+		}
 	}
 
 	.menus {
-		.menu.menuAccountPath { background: $colorPopUp; box-shadow: $shadow; width: 460px; } 
+		.menu.vertical { background: $colorPopUp; box-shadow: $shadow; }
+		.menu.vertical {
+			.item { background: $colorPopUp; }
+		}
 		.menu.menuAccountPath {
 			.label { color: $colorTextSecondary; }
 			.label.path { color: $colorPrimary; }

@@ -22,13 +22,7 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 		};
 
 		let buttons = [];
-		if (errorCode) {
-			buttons = buttons.concat([
-				{ id: 'importRetry', text: 'Retry' },
-				{ id: 'importReport', text: 'Report' },
-			]);
-		} else 
-		if (spaceId != commonStore.space) {
+		if (!errorCode && (spaceId != commonStore.space)) {
 			buttons = buttons.concat([
 				{ id: 'space', text: 'Go to space' }
 			]);
