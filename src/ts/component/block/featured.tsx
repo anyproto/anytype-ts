@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -600,6 +600,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
+		if (relation.format == I.RelationType.Date) {
+			this.onDate(e, relationKey);
+			return;
+		};
+
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
@@ -671,6 +676,34 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					forceLetter: true,
 					onSelect: (e: any, item: any) => {
 						UtilObject.openAuto(item);
+					}
+				}
+			});
+		});
+	};
+
+	onDate (e: React.MouseEvent, relationKey: string) {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = object[relationKey] || UtilDate.now();
+		const element = $(e.currentTarget).find('.cellContent');
+
+		menuStore.closeAll([ 'dataviewCalendar' ], () => {
+			menuStore.open('dataviewCalendar', {
+				element,
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				noFlipX: true,
+				title: relation.name,
+				data: {
+					value,
+					onChange: (v: number) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
 					}
 				}
 			});
