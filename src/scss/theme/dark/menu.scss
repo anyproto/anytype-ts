@@ -432,6 +432,12 @@
 		}
 	}
 
+	.menu.menuSelect.featuredLinks {
+		.item {
+			.iconObject { background-color: $colorShapeHighlightMedium; }
+		}
+	}
+
 	/* MenuQuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }

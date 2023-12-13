@@ -4,7 +4,7 @@
 		<style type="text/css">
 			* { margin: 0px; padding: 0px; }
 
-			html, body { height: 100%; }
+			html, body, #root { height: 100%; }
 
 			body { background-color: #fff; }
 			body.dark { background-color: #171717; }
@@ -13,6 +13,7 @@
 		</style>
 	</head>
 	<body>
+		<div id="root"></div>
 		<script type="text/javascript">
 			let cachedHtml = '';
 
@@ -23,11 +24,12 @@
 				};
 
 				const body = document.body;
+				const root = document.getElementById('root');
 				const { html, js, theme, libs } = e.data;
 
 				loadLibs(libs, () => {
 					if (cachedHtml !== html) {
-						body.innerHTML = html;
+						root.innerHTML = html;
 						cachedHtml = html;
 					};
 
