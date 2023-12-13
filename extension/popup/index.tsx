@@ -43,31 +43,38 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	componentDidMount(): void {
-		this.init();
+		this.getPorts();
 	};
 
-	init () {
+	getPorts () {
 		Util.sendMessage({ type: 'getPorts' }, response => {
 			if (!response.ports || !response.ports.length) {
 				this.setState({ error: 'Automatic pairing failed, please open the app' });
 				return;
 			};
 
-			this.login(response.ports[1], response.ports[2]);
+			this.init(response.ports[1], response.ports[2]);
+			this.login();
 		});
 	};
 
-	login (port1: string, port2: string) {
-		/* @ts-ignore */
-		const manifest = chrome.runtime.getManifest();
+	init (serverPort: string, gatewayPort: string) {
+		dispatcher.init(`http://127.0.0.1:${serverPort}`);
+		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
+	};
 
-		dispatcher.init(`http://127.0.0.1:${port1}`);
-		commonStore.gatewaySet(`http://127.0.0.1:${port2}`);
-
+	login () {
 		const appKey = Storage.get('appKey');
+
 		if (appKey) {
-			Util.initWithKey(appKey);
+			Util.initWithKey(appKey, () => {
+				Storage.delete('appKey');
+				this.login();
+			});
 		} else {
+			/* @ts-ignore */
+			const manifest = chrome.runtime.getManifest();
+
 			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
@@ -92,15 +99,16 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 						cnt++;
 						if (cnt >= 30) {
 							this.setState({ error: 'App open failed' });
-							clearInterval(this.interval);
 
+							clearInterval(this.interval);
 							console.log('App open try', cnt);
 						};
 						return;
 					};
 
 					clearInterval(this.interval);
-					this.login(response.ports[1], response.ports[2]);
+					this.init(response.ports[1], response.ports[2]);
+					this.login();
 				});
 			}, 1000);
 		});

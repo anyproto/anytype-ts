@@ -39,9 +39,16 @@ class Util {
 		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
 	};
 
-	initWithKey (appKey: string) {
+	initWithKey (appKey: string, onError?: (error) => void) {
 		authStore.appKeySet(appKey);
-		UtilData.createSession(() => {
+		UtilData.createSession((message: any) => {
+			if (message.error.code) {
+				if (onError) {
+					onError(message.error);
+				};
+				return;
+			};
+
 			UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
 		});
 	};

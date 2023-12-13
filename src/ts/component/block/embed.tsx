@@ -564,7 +564,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: this.fixAsarPath('./embed/iframe.html'),
+						src: UtilCommon.fixAsarPath('./embed/iframe.html'),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -672,19 +672,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.disableSelection(false);
 			win.off('mouseup.embed');
 		});
-	};
-
-	fixAsarPath (path: string): string {
-		const origin = location.origin;
-		
-		let href = location.href;
-
-		if (origin == 'file://') {
-			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			href = href.replace('/index.html', '/');
-			path = href + path.replace(/^\.\//, '');
-		};
-		return path;
 	};
 
 });

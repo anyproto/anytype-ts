@@ -387,14 +387,11 @@ class UtilData {
 
 	createSession (callBack?: (message: any) => void) {
 		C.WalletCreateSession(authStore.phrase, authStore.appKey, (message: any) => {
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				authStore.tokenSet(message.token);
+				authStore.appTokenSet(message.appToken);
+				dispatcher.listenEvents();
 			};
-
-			authStore.tokenSet(message.token);
-			authStore.appTokenSet(message.appToken);
-
-			dispatcher.listenEvents();
 
 			if (callBack) {
 				callBack(message);

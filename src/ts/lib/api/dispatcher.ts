@@ -221,7 +221,7 @@ class Dispatcher {
 				case 'accountLinkChallenge': {
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
-					const win = window.open('./challenge/index.html', '', 'width=320,height=320');
+					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
 
 					win.focus();
 					win.addEventListener('load', () => win.postMessage({ info, challenge }, '*'), false);
