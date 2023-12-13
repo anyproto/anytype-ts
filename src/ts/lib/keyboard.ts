@@ -769,7 +769,7 @@ class Keyboard {
 
 	onSpaceMenu (shortcut: boolean) {
 		popupStore.close('search', () => {
-			menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.closeAll([ 'quickCapture' ], () => {
 				menuStore.open('space', {
 					element: '#navigationPanel',
 					className: 'fixed',
@@ -795,7 +795,7 @@ class Keyboard {
 		const element = '#button-navigation-plus';
 
 		popupStore.close('search', () => {
-			menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.closeAll([ 'quickCapture', 'space' ], () => {
 				menuStore.open('quickCapture', {
 					element,
 					className: 'fixed',
