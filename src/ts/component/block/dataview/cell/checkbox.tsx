@@ -27,10 +27,9 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 		};
 
 		let label = '';
-
 		if (withLabel) {
 			label = UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name)
-		};
+		} else
 		if (withName) {
 			label = relation.name;
 		};
