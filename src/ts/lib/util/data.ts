@@ -386,8 +386,14 @@ class UtilData {
 	};
 
 	createSession (callBack?: (message: any) => void) {
-		C.WalletCreateSession(authStore.phrase, (message: any) => {
+		C.WalletCreateSession(authStore.phrase, authStore.appKey, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			authStore.tokenSet(message.token);
+			authStore.appTokenSet(message.appToken);
+
 			dispatcher.listenEvents();
 
 			if (callBack) {

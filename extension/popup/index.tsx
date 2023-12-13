@@ -64,9 +64,9 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		dispatcher.init(`http://127.0.0.1:${port1}`);
 		commonStore.gatewaySet(`http://127.0.0.1:${port2}`);
 
-		const token = Storage.get('token');
-		if (token) {
-			Util.initWithToken(token);
+		const appKey = Storage.get('appKey');
+		if (appKey) {
+			Util.initWithKey(appKey);
 		} else {
 			C.AccountLocalLinkNewChallenge(manifest.name, (message: any) => {
 				if (message.error.code) {

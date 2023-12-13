@@ -17,6 +17,8 @@ class AuthStore {
 	public name = '';
 	public phrase = '';
 	public token = '';
+	public appToken = '';
+	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
 	
 	constructor () {
@@ -75,27 +77,35 @@ class AuthStore {
 	};
 
 	walletPathSet (v: string) {
-		this.walletPathValue = v;
+		this.walletPathValue = String(v || '');
     };
 
 	accountPathSet (v: string) {
-		this.accountPathValue = v;
+		this.accountPathValue = String(v || '');
     };
 
 	phraseSet (v: string) {
-		this.phrase = v;
+		this.phrase = String(v || '');
     };
 
 	nameSet (v: string) {
-		this.name = v;
+		this.name = String(v || '');
     };
 
 	tokenSet (v: string) {
-		this.token = v;
+		this.token = String(v || '');
+	};
+
+	appTokenSet (v: string) {
+		this.appToken = String(v || '');
     };
 
 	networkConfigSet (obj: NetworkConfig) {
 		Storage.set('networkConfig', obj, true);
+	};
+
+	appKeySet (v: string) {
+		this.appKey = String(v || '');
 	};
 
 	accountAdd (account: any) {

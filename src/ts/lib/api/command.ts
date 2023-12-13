@@ -79,10 +79,15 @@ const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: a
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-const WalletCreateSession = (mnemonic: string, callBack?: (message: any) => void) => {
+const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
-	request.setMnemonic(mnemonic);
+	if (mnemonic) {
+		request.setMnemonic(mnemonic);
+	} else 
+	if (appKey) {
+		request.setAppkey(appKey);
+	};
 
 	dispatcher.request(WalletCreateSession.name, request, callBack);
 };

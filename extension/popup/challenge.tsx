@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, Input, Error } from 'Component';
-import { I, C, UtilData, UtilRouter, dispatcher, Storage } from 'Lib';
-import { authStore, extensionStore } from 'Store';
+import { I, C, Storage } from 'Lib';
+import { extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -47,8 +47,8 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 				return;
 			};
 
-			Storage.set('token', message.token);
-			Util.initWithToken(message.token);
+			Storage.set('appKey', message.appKey);
+			Util.initWithKey(message.appKey);
 		});
 	};
 

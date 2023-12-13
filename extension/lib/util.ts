@@ -39,10 +39,11 @@ class Util {
 		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
 	};
 
-	initWithToken (token: string) {
-		authStore.tokenSet(token);
-		dispatcher.listenEvents();
-		UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
+	initWithKey (appKey: string) {
+		authStore.appKeySet(appKey);
+		UtilData.createSession(() => {
+			UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
+		});
 	};
 	
 };

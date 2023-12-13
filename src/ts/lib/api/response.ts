@@ -42,7 +42,7 @@ export const AccountLocalLinkNewChallenge = (response: Rpc.Account.LocalLink.New
 export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.SolveChallenge.Response) => {
 	return {
 		token: response.getSessiontoken(),
-		key: response.getAppkey(),
+		appKey: response.getAppkey(),
 	};
 };
 
@@ -118,6 +118,7 @@ export const WalletConvert = (response: Rpc.Wallet.Convert.Response) => {
 export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response) => {
 	return {
 		token: response.getToken(),
+		appToken: response.getApptoken(),
 	};
 };
 
