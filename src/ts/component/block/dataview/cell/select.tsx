@@ -202,7 +202,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const node = $(this.node);
 		const entry = node.find('#entry');
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
 			const range = getRange(entry.get(0));

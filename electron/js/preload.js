@@ -50,6 +50,8 @@ contextBridge.exposeInMainWorld('Electron', {
 		return fp;
 	},
 
+	dirname: fp => path.dirname(fp),
+
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
 	Api: (id, cmd, args) => {

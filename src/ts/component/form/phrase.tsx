@@ -33,9 +33,6 @@ const COLORS = [
 	'lime',
 ];
 
-const LIMIT_WORDS = 12;
-const LIMIT_LETTER = 8;
-
 class Phrase extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
@@ -243,7 +240,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, LIMIT_LETTER)).filter(it => it).slice(0, LIMIT_WORDS);
+		return v.map(it => it.substring(0, Constant.limit.phrase.letter)).filter(it => it).slice(0, Constant.limit.phrase.word);
 	};
 
 	setError (v: boolean) {

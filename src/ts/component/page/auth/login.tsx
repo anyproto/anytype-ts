@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface State {
@@ -104,6 +105,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		
 		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
+		const length = phrase.split(' ').length;
+
+		if (length < Constant.limit.phrase.word) {
+			return;
+		};
 
 		this.refSubmit?.setLoading(true);
 		

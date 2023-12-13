@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
-import { I, UtilMenu, translate, Action, analytics } from 'Lib';
+import { I, UtilMenu, UtilCommon, translate, Action, analytics, Renderer } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -14,10 +14,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 		this.onUpload = this.onUpload.bind(this);
 		this.onSave = this.onSave.bind(this);
+		this.onPathClick = this.onPathClick.bind(this);
 	};
 
 	render () {
-		const { mode } = this.config;
+		const { mode, path } = this.config;
 		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
@@ -54,9 +55,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							/>
 						</div>
 						<div className="item">
-							<div>
-								<Label text={translate('popupSettingsOnboardingModeTitle')} />
-							</div>
+							<Label text={translate('popupSettingsOnboardingModeTitle')} />
 							<Select
 								id="networkMode"
 								ref={ref => this.refMode = ref}
@@ -73,7 +72,10 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						</div>
 						{mode == I.NetworkMode.Custom ? (
 							<div className="item">
-								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
+								<div onClick={this.onPathClick}>
+									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
+									{path ? <Label className="small" text={UtilCommon.shorten(path, 32)} /> : ''}
+								</div>
 								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
 							</div>
 						) : ''}
@@ -90,6 +92,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	componentDidMount(): void {
 		this.config = authStore.networkConfig;
 		this.refMode?.setValue(this.config.mode);
+		this.forceUpdate();
 	};
 
 	onChange (key: string, value: any) {
@@ -114,6 +117,14 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 		authStore.networkConfigSet(this.config);
 		this.props.close();
+	};
+
+	onPathClick () {
+		const { path } = this.config;
+
+		if (path) {
+			Renderer.send('pathOpen', window.Electron.dirname(path));
+		};
 	};
 	
 });
