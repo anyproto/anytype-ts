@@ -175,12 +175,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	rebind () {
 		const { block } = this.props;
-		const { isEditing } = this.state;
+		const { isEditing, isShowing } = this.state;
 		const win = $(window);
+		const node = $(this.node);
 
 		this.unbind();
 
-		win.on(`mousedown.c${block.id}`, (e: any) => {
+		win.on(`mousedown.${block.id}`, (e: any) => {
 			if (!this._isMounted || !isEditing || menuStore.isOpen('blockLatex')) {
 				return;
 			};
@@ -200,10 +201,20 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				menuStore.close('previewLatex');
 			});
 		});
+
+		win.on(`online.${block.id} offline.${block.id}`, () => {
+			if (isShowing && navigator.onLine) {
+				node.find('#receiver').remove('');
+				this.setContent(this.text);
+			};
+		});
 	};
 
 	unbind () {
-		$(window).off(`mousedown.c${this.props.block.id}`);
+		const { block } = this.props;
+		const events = [ 'mousedown', 'online', 'offline' ];
+
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
 
 	getContainerId () {

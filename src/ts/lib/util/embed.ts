@@ -15,19 +15,19 @@ class UtilEmbed {
 	};
 
 	getYoutubeHtml (content: string): string {
-		return `<iframe width="560" height="315" src="${content}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
 	};
 
 	getVimeoHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
 	};
 
 	getGoogleMapsHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen loading="lazy"></iframe>`;
 	};
 
 	getMiroHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
