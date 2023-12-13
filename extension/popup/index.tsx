@@ -59,6 +59,9 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	init (serverPort: string, gatewayPort: string) {
+		extensionStore.serverPort = serverPort;
+		extensionStore.gatewayPort = gatewayPort;
+
 		dispatcher.init(`http://127.0.0.1:${serverPort}`);
 		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
 	};

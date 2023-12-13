@@ -60,7 +60,6 @@ window.Anytype = {
 		UtilCommon,
 		dispatcher,
 		Storage,
-		Animation,
 	},
 };
 
@@ -102,10 +101,7 @@ class Iframe extends React.Component {
 	};
 
 	componentDidMount () {
-		console.log('isIframe', Util.isIframe());
-
 		UtilRouter.init(history);
-		commonStore.configSet({ debug: { mw: true } }, false);
 		
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -119,6 +115,7 @@ class Iframe extends React.Component {
 			return true;
 		});
 
+		/*
 		Util.sendMessage({ type: 'getPorts' }, (response) => {
 			if (!response.ports || !response.ports.length) {
 				return;
@@ -130,6 +127,7 @@ class Iframe extends React.Component {
 
 			UtilRouter.go('/create', {});
 		});
+		*/
 	};
 
 };

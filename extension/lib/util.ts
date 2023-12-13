@@ -1,5 +1,5 @@
-import { UtilData, UtilRouter, dispatcher } from 'Lib';
-import { authStore } from 'Store';
+import { UtilData, UtilRouter } from 'Lib';
+import { authStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
 
 class Util {
@@ -29,7 +29,7 @@ class Util {
 		);
 	};
 
-	sendMessage (msg: any, callBack: (response) => void){
+	sendMessage (msg: any, callBack: (response) => void) {
 		/* @ts-ignore */
 		chrome.runtime.sendMessage(msg, callBack);
 	};
@@ -40,6 +40,8 @@ class Util {
 	};
 
 	initWithKey (appKey: string, onError?: (error) => void) {
+		const { serverPort, gatewayPort } = extensionStore
+
 		authStore.appKeySet(appKey);
 		UtilData.createSession((message: any) => {
 			if (message.error.code) {
@@ -48,6 +50,13 @@ class Util {
 				};
 				return;
 			};
+
+			this.sendMessage({ 
+				type: 'init', 
+				appKey,
+				serverPort,
+				gatewayPort,
+			}, () => {});
 
 			UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
 		});

@@ -8,11 +8,11 @@
 		body.appendChild(iframe);
 	};
 
-	iframe.id = 'anytypeWebclipper-iframe';
+	iframe.id = [ 'anytypeWebclipper', 'iframe', extensionId ].join('-');
 	iframe.src = chrome.runtime.getURL('iframe/index.html');
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-		console.log('Foreground message', msg, sender);
+		console.log('[Foreground]', msg, sender);
 
 		if (sender.id != extensionId) {
 			return;

@@ -2,7 +2,8 @@ class ExtensionStore {
 
 	public createdObject = null;
 	public challengeId = '';
-	
+	public serverPort = '';
+	public gatewayPort = '';
 
 };
 

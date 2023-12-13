@@ -1,6 +1,7 @@
 (() => {
 
 	let ports = [];
+	let isInitMenu = false;
 
 	const native = chrome.runtime.connectNative('com.anytype.desktop');
 
@@ -47,44 +48,51 @@
 		};
 
 		chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-			getActiveTab((currentTab) => {
-				if (!currentTab) {
-					return;
-				};
-
-				if (currentTab && (tabId == currentTab.id) && (undefined !== changeInfo.url)) {
-					sendToTab(currentTab, { type: 'hide' });
+			getActiveTab(tab => {
+				if (tab && (tabId == tab.id) && (undefined !== changeInfo.url)) {
+					sendToTab(tab, { type: 'hide' });
 				};
 			});
 		});
-
-		initMenu();
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+		let res = {};
+
+		console.log('[Background]', msg);
 
 		switch (msg.type) {
 			case 'getPorts': {
-				console.log('PORTS', ports);
-
-				sendResponse({ ports });
+				res = { ports };
 				break;
 			};
+
+			case 'init': {
+				initMenu();
+				sendToActiveTab(msg);
+				break;
+			};
+
 		};
 
+		sendResponse(res);
 		return true;
 	});
 
 	initMenu = () => {
+		if (isInitMenu) {
+			return;
+		};
+
 		chrome.contextMenus.create({
 			id: 'webclipper',
 			title: 'Anytype Web Clipper',
 			contexts: [ 'selection' ]
 		});
 
-		chrome.contextMenus.onClicked.addListener(() => {
-			sendToActiveTab({ type: 'clickMenu' });
-		});
+		chrome.contextMenus.onClicked.addListener(() => sendToActiveTab({ type: 'clickMenu' }));
+
+		isInitMenu = true;
 	};
 
 	getActiveTab = (callBack) => {

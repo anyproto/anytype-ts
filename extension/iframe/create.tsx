@@ -2,15 +2,13 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader } from 'Component';
-import { I, C, UtilData } from 'Lib';
-import { blockStore, commonStore } from 'Store';
+import { I } from 'Lib';
+import { blockStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
 	error: string;
 };
-
-const ROOT_ID = 'bafyreihwzu7hzccsbalfe4ttkd6dr3usp2qlc3hc4xiv6ytbpdp2dqj4d4';
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
@@ -27,7 +25,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { isLoading, error } = this.state;
-		const rootId = ROOT_ID;
+		const rootId = '';
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 
@@ -66,17 +64,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	load () {
-		this.setState({ isLoading: true });
-
-		UtilData.createsSubscriptions(() => {
-			C.ObjectOpen(ROOT_ID, '', commonStore.space, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				this.setState({ isLoading: false });
-			});
-		});
 	};
 
 	getWrapperWidth () {
