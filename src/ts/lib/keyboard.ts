@@ -768,11 +768,6 @@ class Keyboard {
 	};
 
 	onSpaceMenu (shortcut: boolean) {
-		if (menuStore.isOpen('space')) {
-			menuStore.close('space');
-			return;
-		};
-
 		popupStore.close('search', () => {
 			menuStore.closeAll(Constant.menuIds.navigation, () => {
 				menuStore.open('space', {
