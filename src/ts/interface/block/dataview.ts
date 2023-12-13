@@ -201,6 +201,7 @@ export interface Cell {
 	iconSize?: number;
 	placeholder?: string;
 	withLabel?: boolean;
+	withName?: boolean;
 	textLimit?: number;
 	arrayLimit?: number;
 	shortUrl?: boolean;
