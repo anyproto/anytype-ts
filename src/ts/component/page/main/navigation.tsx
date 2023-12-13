@@ -346,8 +346,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		keyboard.shortcut('enter, space', e, () => {
 			const item = items[this.n];
+			const layout = (this.panel == Panel.Center) ? item.layout : I.ObjectLayout.Navigation;
+
 			if (item) {
-				UtilObject.openAuto({ ...item, layout: I.ObjectLayout.Navigation });
+				UtilObject.openAuto({ ...item, layout });
 			};
 		});
 	};
