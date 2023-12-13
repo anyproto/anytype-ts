@@ -26,8 +26,11 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 			cn.push('active');
 		};
 
-		let label = UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name);
+		let label = '';
 
+		if (withLabel) {
+			label = UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name)
+		};
 		if (withName) {
 			label = relation.name;
 		};
@@ -35,7 +38,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 		return (
 			<React.Fragment>
 				<Icon className={cn.join(' ')} />
-				{withLabel ? <span className="label">{label}</span> : ''}
+				{label ? <span className="label">{label}</span> : ''}
 			</React.Fragment>
 		);
 	};
