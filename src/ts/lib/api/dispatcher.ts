@@ -219,12 +219,20 @@ class Dispatcher {
 				};
 
 				case 'accountLinkChallenge': {
+					if (UtilCommon.getElectron().currentWindow().windowId !== 1) {
+						break;
+					};
+
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
 					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
 
 					win.focus();
-					win.addEventListener('load', () => win.postMessage({ info, challenge }, '*'), false);
+					win.addEventListener('load', () => win.postMessage({ 
+						challenge,
+						theme: commonStore.getThemeClass(),
+						lang: commonStore.interfaceLang,
+					}, '*'), false);
 					break;
 				};
 

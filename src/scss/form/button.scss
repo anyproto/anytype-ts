@@ -13,7 +13,7 @@
 }
 
 .button.orange { background: $colorSystemAccent100; color: $colorBgPrimary; }
-.button.orange:not(.disabled):hover, .button.orange:not(.disabled).hover { background: $colorSystemAccent100; }
+.button.orange:not(.disabled):hover, .button.orange:not(.disabled).hover { background: #f09c0e; }
 
 .button.pink { background: #ff6a7b; color: $colorBgPrimary; }
 .button.pink:not(.disabled):hover { background: #e5374b; }
