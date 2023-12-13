@@ -683,16 +683,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onDate (e: React.MouseEvent, relationKey: string) {
-		const { rootId } = this.props;
+		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
 		const relation = dbStore.getRelationByKey(relationKey);
 		const value = object[relationKey] || UtilDate.now();
-		const element = $(e.currentTarget).find('.cellContent');
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
-		menuStore.closeAll([ 'dataviewCalendar' ], () => {
+		menuStore.closeAll(Constant.menuIds.cell, () => {
 			menuStore.open('dataviewCalendar', {
-				element,
+				element: `#${elementId}`,
 				horizontal: I.MenuDirection.Left,
 				offsetY: 4,
 				noFlipX: true,
