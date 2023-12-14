@@ -6,6 +6,7 @@ DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
+DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
 
 class UtilEmbed {
 
@@ -28,6 +29,10 @@ class UtilEmbed {
 
 	getMiroHtml (content: string): string {
 		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
+	};
+
+	getFigmaHtml (content: string): string {
+		return `<iframe src="${content}" width="640" height="360" allowfullscreen></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -91,6 +96,10 @@ class UtilEmbed {
 			case I.EmbedProcessor.Miro: {
 				url = url.split('?')[0];
 				url = url.replace(/\/board\/?\??/, '/live-embed/');
+			};
+
+			case I.EmbedProcessor.Figma: {
+				url = `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
 			};
 		};
 
