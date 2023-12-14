@@ -14,7 +14,6 @@ import Index from './popup/index';
 import Challenge from './popup/challenge';
 import Create from './popup/create';
 import Success from './popup/success';
-import Util from './lib/util';
 
 import './scss/popup.scss';
 
@@ -64,7 +63,6 @@ window.Anytype = {
 		UtilCommon,
 		dispatcher,
 		Storage,
-		Animation,
 	},
 };
 
@@ -110,20 +108,17 @@ class Popup extends React.Component {
 	};
 
 	componentDidMount () {
-		console.log('isPopup', Util.isPopup());
-
 		UtilRouter.init(history);
-		commonStore.configSet({ debug: { mw: true } }, false);
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('Popup message', msg, sender);
+			console.log('[Popup]', msg, sender);
 
 			if (sender.id != Extension.clipper.id) {
 				return false;
 			};
 
-			sendResponse({ type: msg.type, ref: 'popup' });
+			//sendResponse({ type: msg.type, ref: 'popup' });
 			return true;
 		});
 	};

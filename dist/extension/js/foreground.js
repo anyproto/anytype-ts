@@ -8,14 +8,14 @@
 		body.appendChild(iframe);
 	};
 
-	iframe.id = [ 'anytypeWebclipper', 'iframe', extensionId ].join('-');
+	iframe.id = [ 'anytypeWebclipper', 'iframe' ].join('-');
 	iframe.src = chrome.runtime.getURL('iframe/index.html');
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		console.log('[Foreground]', msg, sender);
 
 		if (sender.id != extensionId) {
-			return;
+			return false;
 		};
 
 		switch (msg.type) {
@@ -27,7 +27,7 @@
 				iframe.style.display = 'none';
 				break;
 		};
-
+		
 		sendResponse({});
 		return true;
 	});
@@ -38,9 +38,6 @@
 		};
 
 		const { data } = e;
-
-		console.log('postMessage', data);
-
 		switch (data.type) {
 			case 'clickClose':
 				iframe.style.display = 'none';

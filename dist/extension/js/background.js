@@ -36,7 +36,7 @@
 		console.log('[Native] Disconnected');
 	});
 
-	chrome.runtime.onInstalled.addListener((details) => {
+	chrome.runtime.onInstalled.addListener(details => {
 		if (![ 'install', 'update' ].includes(details.reason)) {
 			return;
 		};
@@ -56,26 +56,30 @@
 		});
 	});
 
+	chrome.tabs.onActivated.addListener(tab => {
+		console.log('[onActivated]', tab);
+
+		chrome.tabs.get(tab.tabId, info => {
+			console.log('[Tab]', info);
+
+			chrome.tabs.sendMessage(tab.tabId, { type: 'HELLO' });
+		});
+	});
+
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-		let res = {};
-
-		console.log('[Background]', msg);
-
 		switch (msg.type) {
 			case 'getPorts': {
-				res = { ports };
+				sendResponse({ ports });
 				break;
 			};
 
 			case 'init': {
 				initMenu();
-				sendToActiveTab(msg);
+				sendToActiveTab({ ports });
 				break;
 			};
 
 		};
-
-		sendResponse(res);
 		return true;
 	});
 
@@ -84,6 +88,8 @@
 			return;
 		};
 
+		isInitMenu = true;
+
 		chrome.contextMenus.create({
 			id: 'webclipper',
 			title: 'Anytype Web Clipper',
@@ -91,27 +97,29 @@
 		});
 
 		chrome.contextMenus.onClicked.addListener(() => sendToActiveTab({ type: 'clickMenu' }));
-
-		isInitMenu = true;
 	};
 
-	getActiveTab = (callBack) => {
-		chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => callBack(tabs.length ? tabs[0] : null));
+	getActiveTab = async () => {
+		const [ tab ] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+		return tab;
 	};
 
-	sendToActiveTab = (msg) => {
-		getActiveTab((tab) => sendToTab(tab, msg));
+	sendToActiveTab = async (msg) => {
+		const tab = await getActiveTab();
+
+		console.log('[sendToActiveTab]', tab, msg);
+
+		await sendToTab(tab, msg);
 	};
 
-	sendToTab = (tab, msg) => {
+	sendToTab = async (tab, msg) => {
 		if (!tab) {
 			return;
 		};
 
-		chrome.tabs.sendMessage(tab.id, msg, (response) => {
-			console.log('[sendToTab]', response);
-			return true;
-		});
+		const response = await chrome.tabs.sendMessage(tab.id, msg);
+
+		console.log('[sendToTab]', tab, msg, response);
 	};
 
 })();

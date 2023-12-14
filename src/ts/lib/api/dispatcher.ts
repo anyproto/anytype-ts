@@ -233,6 +233,8 @@ class Dispatcher {
 						theme: commonStore.getThemeClass(),
 						lang: commonStore.interfaceLang,
 					}, '*'), false);
+
+					window.setTimeout(() => win.close(), 3000);
 					break;
 				};
 

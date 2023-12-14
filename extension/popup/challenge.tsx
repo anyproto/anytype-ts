@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, Input, Error } from 'Component';
-import { I, C, Storage } from 'Lib';
+import { I, C, Storage, UtilRouter } from 'Lib';
 import { extensionStore } from 'Store';
 import Util from '../lib/util';
 
@@ -48,7 +48,7 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 			};
 
 			Storage.set('appKey', message.appKey);
-			Util.initWithKey(message.appKey);
+			Util.authorize(message.appKey, () => UtilRouter.go('/create', {}));
 		});
 	};
 

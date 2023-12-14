@@ -46,31 +46,29 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		this.getPorts();
 	};
 
-	getPorts () {
+	getPorts (onError?: () => void): void {
 		Util.sendMessage({ type: 'getPorts' }, response => {
+			console.log('[Popup] getPorts', response);
+
 			if (!response.ports || !response.ports.length) {
 				this.setState({ error: 'Automatic pairing failed, please open the app' });
+
+				if (onError) {
+					onError();
+				};
 				return;
 			};
 
-			this.init(response.ports[1], response.ports[2]);
+			Util.init(response.ports[1], response.ports[2]);
 			this.login();
 		});
-	};
-
-	init (serverPort: string, gatewayPort: string) {
-		extensionStore.serverPort = serverPort;
-		extensionStore.gatewayPort = gatewayPort;
-
-		dispatcher.init(`http://127.0.0.1:${serverPort}`);
-		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
 	};
 
 	login () {
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
-			Util.initWithKey(appKey, () => {
+			Util.authorize(appKey, () => UtilRouter.go('/create', {}), () => {
 				Storage.delete('appKey');
 				this.login();
 			});
@@ -94,24 +92,16 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		let cnt = 0;
 
 		Util.sendMessage({ type: 'launchApp' }, response => {
-			console.log(response);
-
 			this.interval = setInterval(() => {
-				Util.sendMessage({ type: 'getPorts' }, response => {
-					if (!response.ports || !response.ports.length) {
-						cnt++;
-						if (cnt >= 30) {
-							this.setState({ error: 'App open failed' });
+				this.getPorts(() => {
+					cnt++;
 
-							clearInterval(this.interval);
-							console.log('App open try', cnt);
-						};
-						return;
+					if (cnt >= 30) {
+						this.setState({ error: 'App open failed' });
+
+						clearInterval(this.interval);
+						console.log('App open try', cnt);
 					};
-
-					clearInterval(this.interval);
-					this.init(response.ports[1], response.ports[2]);
-					this.login();
 				});
 			}, 1000);
 		});

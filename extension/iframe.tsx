@@ -7,8 +7,7 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { dispatcher, C, UtilCommon, UtilRouter } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'Store';
-import Extension from 'json/extension.json';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -105,29 +104,25 @@ class Iframe extends React.Component {
 		
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('Iframe message', msg, sender);
+			console.log('[Iframe]', msg, sender);
 
-			if (sender.id != Extension.clipper.id) {
-				return false;
+			switch (msg.type) {
+				case 'init':
+					const { appKey, gatewayPort, serverPort } = msg;
+
+					Util.init(serverPort, gatewayPort);
+					Util.authorize(appKey, () => UtilRouter.go('/create', {}));
+					break;
 			};
 
-			sendResponse({ type: msg.type, ref: 'iframe' });
+			/*
+			let res = null;
+			if (res) {
+				sendResponse({ type: msg.type, ref: 'iframe' });
+			};
+			*/
 			return true;
 		});
-
-		/*
-		Util.sendMessage({ type: 'getPorts' }, (response) => {
-			if (!response.ports || !response.ports.length) {
-				return;
-			};
-
-			authStore.tokenSet('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZWVkIjoiUkNRbnFkcnYifQ.g22qTAnn7fOD9KB9Z1xQBN3Iy6sSUvPgLSWfQSxcqCw');
-			dispatcher.init(`http://127.0.0.1:${response.ports[1]}`);
-			commonStore.gatewaySet(`http://127.0.0.1:${response.ports[2]}`);
-
-			UtilRouter.go('/create', {});
-		});
-		*/
 	};
 
 };

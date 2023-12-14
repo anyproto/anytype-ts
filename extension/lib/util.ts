@@ -1,6 +1,9 @@
-import { UtilData, UtilRouter } from 'Lib';
-import { authStore, extensionStore } from 'Store';
+import { UtilData, dispatcher } from 'Lib';
+import { authStore, commonStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
+
+const INDEX_POPUP = '/popup/index.html';
+const INDEX_IFRAME = '/iframe/index.html'
 
 class Util {
 
@@ -16,17 +19,19 @@ class Util {
 	};
 
 	isPopup () {
-		return (
-			this.isExtension() && 
-			(location.pathname == '/popup/index.html')
-		);
+		return this.isExtension() && (location.pathname == INDEX_POPUP);
 	};
 
 	isIframe () {
-		return (
-			this.isExtension() && 
-			(location.pathname == '/iframe/index.html')
-		);
+		return this.isExtension() && (location.pathname == INDEX_IFRAME);
+	};
+
+	fromPopup (url: string) {
+		return url.match(INDEX_POPUP);
+	};
+
+	fromIframe (url: string) {
+		return url.match(INDEX_IFRAME);
 	};
 
 	sendMessage (msg: any, callBack: (response) => void) {
@@ -39,8 +44,16 @@ class Util {
 		chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => callBack(tabs[0]));
 	};
 
-	initWithKey (appKey: string, onError?: (error) => void) {
-		const { serverPort, gatewayPort } = extensionStore
+	init (serverPort: string, gatewayPort: string) {
+		extensionStore.serverPort = serverPort;
+		extensionStore.gatewayPort = gatewayPort;
+
+		dispatcher.init(`http://127.0.0.1:${serverPort}`);
+		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
+	};
+
+	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
+		const { serverPort, gatewayPort } = extensionStore;
 
 		authStore.appKeySet(appKey);
 		UtilData.createSession((message: any) => {
@@ -51,14 +64,8 @@ class Util {
 				return;
 			};
 
-			this.sendMessage({ 
-				type: 'init', 
-				appKey,
-				serverPort,
-				gatewayPort,
-			}, () => {});
-
-			UtilData.createsSubscriptions(() => UtilRouter.go('/create', {}));
+			this.sendMessage({ type: 'init', appKey, serverPort, gatewayPort }, () => {});
+			UtilData.createsSubscriptions(onSuccess);
 		});
 	};
 	
