@@ -3,17 +3,26 @@
 .menus {
 	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
-		.content { padding: 16px 0px 12px 0px; }
+		.titleWrapper { padding: 8px 16px 0px; }
+		.content { padding: 10px 0px; }
 		.inner { user-select: none; }
 
 		.head { padding: 0px 16px; }
-		.head {
-			.date { color: $colorControlActive; margin-bottom: 6px; }
-			.sides { display: flex; margin-bottom: 10px; }
+		.head, .foot {
+			.sides { display: flex; }
 			.side { width: 50%; }
 			.side.right { text-align: right; }
+		}
+		.head {
+			.date { color: $colorControlActive; margin-bottom: 6px; }
+			.sides { margin-bottom: 10px; }
+			.side.left {
+				.select { margin-left: -4px; }
+			}
+			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
 			.side.right {
-				.select { margin-right: -4px; }
+				.btn { width: 20px; height: 20px; background-size: 20px 20px; background-image: url('~img/arrow/calendarNav.svg'); }
+				.btn.prevMonth { transform: rotateZ(180deg); }
 			}
 		}
 
@@ -21,6 +30,7 @@
 		.foot { padding: 0px 16px; }
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
+			.btn.clear { color: $colorTextSecondary; }
 			.btn:last-child { margin: 0px; }
 			.btn:hover { color: $colorSystemAccent100; }
 		}
@@ -45,9 +55,9 @@
 			background: none; width: 100px; vertical-align: top;
 		}
 
-		.select { border: 0px; padding: 0px; height: 24px; vertical-align: top; @include text-paragraph; font-weight: 500; padding: 2px 20px 2px 4px; }
+		.select { border: 0px; height: 24px; vertical-align: top; @include text-paragraph; font-weight: 400; padding: 2px 4px; }
 		.select {
-			.icon.arrow { background-image: url('~img/arrow/select/big.svg'); }
+			.icon.arrow { display: none; background-image: url('~img/arrow/select/big.svg'); }
 		}
 	}
 

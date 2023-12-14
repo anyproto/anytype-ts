@@ -29,6 +29,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const today = UtilDate.now();
 		const tomorrow = today + 86400;
 
+		const stepMonth = (dir) => {
+			let nY = y;
+			let nM = m + dir;
+
+			if (nM < 1) {
+				nM = 12;
+				nY -= 1;
+			};
+			if (nM > 12) {
+				nM = 1;
+				nY += 1;
+			};
+
+			return UtilDate.timestamp(nY, nM, 1);
+		};
+
 		const days = [];
 		const months = [];
 		const years = [];
@@ -61,21 +77,24 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 									width: 192,
 								}}
 							/>
-						</div>
-						<div className="side right">
-							<Select 
+
+							<Select
 								ref={ref => this.refYear = ref}
-								id="year" 
-								value={String(y || '')} 
-								options={years} 
-								onChange={y => this.setValue(UtilDate.timestamp(y, m, 1), false, false)} 
-								menuParam={{ 
-									classNameWrap, 
+								id="year"
+								value={String(y || '')}
+								options={years}
+								onChange={y => this.setValue(UtilDate.timestamp(y, m, 1), false, false)}
+								menuParam={{
+									classNameWrap,
 									className: 'center',
-									horizontal: I.MenuDirection.Right, 
+									horizontal: I.MenuDirection.Right,
 									width: 144,
 								}}
 							/>
+						</div>
+						<div className="side right">
+							<div className="btn prevMonth" onClick={() => { this.setValue(stepMonth(-1), false, false); }} />
+							<div className="btn nextMonth" onClick={() => { this.setValue(stepMonth(1), false, false); }} />
 						</div>
 					</div>
 
@@ -112,8 +131,15 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				</div>
 				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="sides">
+						<div className="side left">
+							<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
+							<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+						</div>
+						<div className="side right">
+							<div className="btn clear" onClick={() => { this.setValue(null, true, true); }}>{translate('menuCalendarClear')}</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
