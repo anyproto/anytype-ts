@@ -1,16 +1,25 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Button, Tag, Icon } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer } from 'Lib';
-import { menuStore, dbStore, detailStore, popupStore } from 'Store';
+import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer, analytics } from 'Lib';
+import { menuStore, dbStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
 
-class PopupUsecase extends React.Component<I.Popup> {
+interface State {
+	isLoading: boolean;
+	error: string;
+};
+
+class PopupUsecase extends React.Component<I.Popup, State> {
 
 	node = null;
 	swiper = null;
 	refButton = null;
+	state = { 
+		isLoading: false,
+		error: '',
+	};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -21,6 +30,7 @@ class PopupUsecase extends React.Component<I.Popup> {
 	};
 	
 	render () {
+		const { isLoading, error } = this.state;
 		const object = this.getObject();
 		const author = this.getAuthor();
 		const screenshots = object.screenshots || [];
@@ -28,6 +38,8 @@ class PopupUsecase extends React.Component<I.Popup> {
 
 		return (
 			<div ref={ref => this.node = ref}>
+				{isLoading ? <Loader id="loader" /> : ''}
+
 				<div className="titleWrap">
 					<div className="side left">
 						<Title text={object.title} />
@@ -37,6 +49,8 @@ class PopupUsecase extends React.Component<I.Popup> {
 						<Button ref={ref => this.refButton = ref} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
 					</div>
 				</div>
+
+				<Error text={error} />
 
 				<div className="screenWrap">
 					<Swiper 
@@ -75,7 +89,10 @@ class PopupUsecase extends React.Component<I.Popup> {
 	};
 
 	componentDidMount(): void {
+		const object = this.getObject();
+
 		window.setTimeout(() => this.checkArrows(), 10);
+		analytics.event('ScreenGalleryInstall', { name: object.name });
 	};
 
 	onSwiper (swiper) {
@@ -102,7 +119,12 @@ class PopupUsecase extends React.Component<I.Popup> {
 		const object = this.getObject();
 
 		const cb = (spaceId: string, isNew: boolean) => {
-			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, () => close());
+			C.ObjectImportExperience(spaceId, object.downloadLink, object.title, isNew, (message: any) => {
+				if (!message.error.code) {
+					analytics.event('GalleryInstall', { name: object.name });
+				};
+			});
+			close();
 		};
 
 		menuStore.open('select', {
@@ -115,14 +137,18 @@ class PopupUsecase extends React.Component<I.Popup> {
 				noVirtualisation: true, 
 				noScroll: true,
 				onSelect: (e: any, item: any) => {
-					if (item.id == 'add') {
-						popupStore.open('settings', { 
-							className: 'isSpaceCreate',
-							data: { 
-								page: 'spaceCreate', 
-								isSpace: true,
-								onCreate: spaceId => cb(spaceId, true),
-							}, 
+					const isNew = item.id == 'add';
+
+					this.setState({ isLoading: true });
+					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing' });
+
+					if (isNew) {
+						C.WorkspaceCreate({ name: object.title, iconOption: UtilCommon.rand(1, Constant.iconCnt) }, I.Usecase.Empty, (message: any) => {
+							if (!message.error.code) {
+								cb(message.objectId, true);
+							} else {
+								this.setState({ isLoading: false, error: message.error.description });
+							};
 						});
 					} else {
 						cb(item.targetSpaceId, false);
@@ -130,6 +156,8 @@ class PopupUsecase extends React.Component<I.Popup> {
 				},
 			}
 		});
+
+		analytics.event('ClickGalleryInstall', { name: object.name });
 	};
 
 	getSpaceOptions (): any[] {

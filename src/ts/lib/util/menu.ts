@@ -65,7 +65,6 @@ class UtilMenu {
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
 		].map(this.mapperBlock).map(it => {
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
-			it.description = translate(`blockText${I.EmbedProcessor[it.id]}`);
 			return it;
 		});
 	};
@@ -507,6 +506,27 @@ class UtilMenu {
 			{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
 			{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
 		];
+	};
+
+	getInterfaceLanguages () {
+		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
+
+		for (const id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] });
+		};
+
+		return ret;
+	};
+
+	getSpellingLanguages () {
+		let ret: any[] = [];
+
+		ret = ret.concat(commonStore.languages || []);
+		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret.unshift({ id: '', name: translate('commonDisabled') });
+
+		return ret;
 	};
 
 };

@@ -24,7 +24,7 @@ export enum BlockType {
 	Relation			 = 'relation',
 	Featured			 = 'featured',
 	Type				 = 'type',
-	Embed				 = 'embed',
+	Embed				 = 'latex',
 	Table				 = 'table',
 	TableColumn			 = 'tableColumn',
 	TableRow			 = 'tableRow',

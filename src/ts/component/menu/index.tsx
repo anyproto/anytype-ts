@@ -737,9 +737,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					};
 
 					this.ref.n = this.ref.getItems().length - 1;
-					refInput.blur();
 					this.setActive(null, true);
 
+					refInput.blur();
 					ret = true;
 				});
 			} else {
@@ -881,7 +881,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		this.ref.n = n + dir;
 		this.checkIndex();
-
 		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
 	};
 

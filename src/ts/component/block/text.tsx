@@ -786,6 +786,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
+			if (range.to) {
+				let parsed = this.checkMarkOnBackspace(value);
+
+				if (parsed.save) {
+					e.preventDefault();
+
+					value = parsed.value;
+					this.marks = Mark.checkRanges(value, this.marks);
+					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+						onKeyDown(e, value, this.marks, range, this.props);
+					});
+					ret = true;
+				};
+			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
 				const parsed = this.getMarksFromHtml();
 
@@ -1152,7 +1166,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen('', '', [ 'onboarding', 'smile' ])) {
+		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select' ])) {
 			return;
 		};
 
@@ -1468,6 +1482,35 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 			UtilObject.setDone(objectId, done);
 		});
+	};
+
+	checkMarkOnBackspace (value: string) {
+		const range = this.getRange();
+
+		if (!range || !range.to) {
+			return;
+		};
+
+		let save = false;
+
+		for (const type of [ I.MarkType.Mention, I.MarkType.Emoji ]) {
+			const mark = Mark.getInRange(this.marks, type, range);
+			if (!mark) {
+				continue;
+			};
+
+			value = UtilCommon.stringCut(value, mark.range.from, mark.range.to);
+			this.marks = this.marks.filter(it => {
+				if ((it.type == mark.type) && (it.range.from == mark.range.from) && (it.range.to == mark.range.to)) {
+					return false;
+				};
+				return true;
+			});
+
+			save = true;
+		};
+
+		return { value, save };
 	};
 	
 });

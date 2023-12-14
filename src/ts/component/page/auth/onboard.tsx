@@ -266,7 +266,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	accountCreate (callBack?: () => void) {
 		this.refNext.setLoading(true);
 
-		const { name, walletPath } = authStore;
+		const { name, walletPath, networkConfig } = authStore;
+		const { mode, path } = networkConfig;
 
 		C.WalletCreate(walletPath, (message) => {
 			if (message.error.code) {
@@ -284,7 +285,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				const { accountPath, phrase } = authStore;
 
-				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), (message) => {
+				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						this.setError(message.error.description);
 						return;

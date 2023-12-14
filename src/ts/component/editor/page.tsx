@@ -1733,7 +1733,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const processor = UtilEmbed.getProcessorByUrl(url);
 
 		if (processor !== null) {
-			options.push({ id: 'embed', name: translate('editorPagePasteEmbed') });
+			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
 		menuStore.open('select', { 
@@ -1818,7 +1818,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						case 'embed': {
 							if (processor !== null) {
-								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } });
+								this.blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+									$(`#block-${blockId} .preview`).trigger('click');
+								});
 							};
 							break;
 						};

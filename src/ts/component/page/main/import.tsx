@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Loader, Title, Error, Frame } from 'Component';
-import { I, C, UtilCommon, UtilRouter, keyboard } from 'Lib';
+import { Loader, Title, Error, Frame, Button } from 'Component';
+import { I, C, UtilCommon, UtilRouter, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface State {
@@ -27,12 +27,18 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 					<Loader />
 
 					<Error text={error} />
+
+					{error ? (
+						<div className="buttons">
+							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+						</div>
+					) : ''}
 				</Frame>
 			</div>
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		const search = this.getSearch();
 
 		C.DownloadManifest(search.source, (message: any) => {
@@ -43,6 +49,10 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				popupStore.open('usecase', { data: { object: message.info } });
 			};
 		});
+	};
+
+	componentDidUpdate (): void {
+		$(window).trigger('resize');
 	};
 
 	getSearch () {

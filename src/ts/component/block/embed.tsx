@@ -3,28 +3,32 @@ import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
+import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import { Icon, Label, Button } from 'Component';
-import { I, keyboard, UtilCommon, C, focus, Renderer, translate, UtilEmbed } from 'Lib';
+import { Icon, Label, Editable } from 'Component';
+import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
-const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.BlockComponent> {
+interface State {
+	isShowing: boolean;
+	isEditing: boolean;
+};
+
+const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
-	range = { start: 0, end: 0 };
 	text = '';
 	timeout = 0;
 	node = null;
-	win = null;
-	input = null;
-	value = null;
-	empty = null;
-	container = null;
+	refEditable = null;
+	state = {
+		isShowing: false,
+		isEditing: false,
+	};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -40,6 +44,7 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
+		this.onPreview = this.onPreview.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onTemplate = this.onTemplate.bind(this);
 	};
@@ -47,34 +52,65 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	render () {
 		const { readonly, block } = this.props;
 		const { processor } = block.content;
+		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const text = String(block.content.text || '').trim();
+
+		if (!text) {
+			cn.push('isEmpty');
+		};
+
+		if (isEditing) {
+			cn.push('isEditing');
+		};
 
 		let select = null;
-		let empty = '';
 		let button = null;
+		let preview = null;
+		let empty = '';
+		let placeholder = '';
+		let icon = '';
 
 		switch (processor) {
+			default: {
+				const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+
+				button = <Icon className="source" onClick={this.onEdit} />;
+				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+				icon = menuItem.icon;
+
+				if (!text) {
+					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
+				};
+
+				if (!isShowing && text) {
+					cn.push('withPreview');
+
+					preview = (
+						<div className="preview" onClick={this.onPreview}>
+							<Icon className={icon} />
+						</div>
+					);
+				};
+				break;
+			};
+
 			case I.EmbedProcessor.Latex: {
+				placeholder = translate('blockEmbedLatexPlaceholder');
 				select = (
 					<div className="selectWrap">
-						<div id="select" className="select" onClick={this.onTemplate}>
+						<div id="select" className="select" onMouseDown={this.onTemplate}>
 							<div className="name">{translate('blockEmbedLatexTemplate')}</div>
 							<Icon className="arrow light" />
 						</div>
 					</div>
 				);
 
-				empty = translate('blockEmbedLatexEmpty');
+				if (!text) {
+					empty = translate('blockEmbedLatexEmpty');
+				};
 				break;
 			};
-
-			case I.EmbedProcessor.Mermaid: {
-				break;
-			}; 
-		};
-
-		if (processor != I.EmbedProcessor.Latex) {
-			button = <Button className="source c28" text={translate('blockEmbedSource')} onClick={this.onEdit} />;
 		};
 
 		return (
@@ -86,23 +122,25 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
+				{preview}
 				{select}
 				{button}
 
+				{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}
 				<div id="value" onClick={this.onEdit} />
-				<Label id="empty" className="empty" text={empty} onClick={this.onEdit} />
 				<div id={this.getContainerId()} />
-				<div 
+				<Editable 
+					key={`block-${block.id}-editable`}
+					ref={ref => this.refEditable = ref}
 					id="input"
-					contentEditable={!readonly}
-					suppressContentEditableWarning={true}
-					placeholder={translate('blockEmbedLatexPlaceholder')}
+					readonly={readonly}
+					placeholder={placeholder}
 					onSelect={this.onSelect}
 					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
 					onKeyDown={this.onKeyDownInput}
-					onChange={this.onChange}
+					onInput={this.onChange}
 					onPaste={this.onPaste}
 				/>
 			</div>
@@ -111,42 +149,40 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 	componentDidMount () {
 		this._isMounted = true;
-
-		const { block } = this.props;
-		const node = $(this.node);
-
-		this.win = $(window);
-		this.text = String(block.content.text || '');
-		this.empty = node.find('#empty');
-		this.value = node.find('#value');
-		this.input = node.find('#input').get(0);
-		this.container = node.find(`#${this.getContainerId()}`);
-
-		const length = this.text.length;
-
-		this.setRange({ start: length, end: length });
-		this.setValue(this.text);
+		this.init();
 	};
 
 	componentDidUpdate () {
-		const { block } = this.props;
-
-		this.text = String(block.content.text || '');
-		this.unbind();
-		this.setValue(this.text);
+		this.init();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		$(`#d${this.getContainerId()}`).remove();
+	};
+
+	init () {
+		const { block } = this.props;
+
+		this.setText(block.content.text);
+		this.setValue(this.text);
+		this.setContent(this.text);
+		this.rebind();
 	};
 
 	rebind () {
 		const { block } = this.props;
+		const { isEditing, isShowing } = this.state;
+		const win = $(window);
+		const node = $(this.node);
 
 		this.unbind();
-		this.win.on(`click.c${block.id}`, (e: any) => {
-			if (!this._isMounted) {
+
+		win.on(`mousedown.${block.id}`, (e: any) => {
+			if (!this._isMounted || !isEditing || menuStore.isOpen('blockLatex')) {
 				return;
 			};
 
@@ -154,45 +190,59 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				return;
 			};
 
+			e.stopPropagation();
+
 			menuStore.close('blockLatex');
 			window.clearTimeout(this.timeout);
 
-			this.placeholderCheck(this.getValue());
+			this.placeholderCheck();
 			this.save(() => { 
 				this.setEditing(false);
 				menuStore.close('previewLatex');
 			});
 		});
+
+		win.on(`online.${block.id} offline.${block.id}`, () => {
+			if (isShowing && navigator.onLine) {
+				node.find('#receiver').remove('');
+				this.setContent(this.text);
+			};
+		});
 	};
 
 	unbind () {
-		this.win.off(`click.c${this.props.block.id}`);
-	};
+		const { block } = this.props;
+		const events = [ 'mousedown', 'online', 'offline' ];
 
-	focus () {
-		if (this._isMounted && this.range) {
-			setRange(this.input, this.range);
-		};
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
 
 	getContainerId () {
 		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
-	setEditing (v: boolean) {
-		const node = $(this.node);
-		v ? node.addClass('isEditing') : node.removeClass('isEditing');
+	setEditing (isEditing: boolean) {
+		this.setState({ isEditing }, () => {
+			if (isEditing) {
+				const length = this.text.length;
+				this.setRange({ from: length, to: length });
+			};
+		});
+	};
+
+	setShowing (isShowing: boolean) {
+		this.setState({ isShowing });
 	};
 
 	onFocusBlock () {
 		focus.set(this.props.block.id, { from: 0, to: 0 });
-		this.focus();
+		this.setRange({ from: 0, to: 0 });
 	};
 
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
-		const cmd = keyboard.cmdKey();
 		const node = $(this.node);
+		const cmd = keyboard.cmdKey();
 		const isEditing = node.hasClass('isEditing');
 
 		if (isEditing) {
@@ -230,10 +280,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { filter } = commonStore;
-		const range = getRange(this.input);
+		const range = this.getRange();
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (range && (range.start == filter.from)) {
+		keyboard.shortcut('backspace', e, () => {
+			if (range && (range.from == filter.from)) {
 				menuStore.close('blockLatex');
 			};
 		});
@@ -246,20 +296,20 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		const { block } = this.props;
 		const value = this.getValue();
+		const range = this.getRange();
 
 		if (block.isEmbedLatex()) {
 			const { filter } = commonStore;
-			const range = getRange(this.input);
-			const symbolBefore = value[range?.start - 1];
+			const symbolBefore = value[range?.from - 1];
 			const menuOpen = menuStore.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
-				commonStore.filterSet(range.start, '');
+				commonStore.filterSet(range.from, '');
 				this.onMenu(e, 'input', false);
 			};
 
 			if (menuOpen) {
-				const d = range.start - filter.from;
+				const d = range.from - filter.from;
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
 					commonStore.filterSetText(part);
@@ -267,42 +317,34 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 		};
 
-		if (!keyboard.isSpecial(e)) {
+		if (!keyboard.isArrow(e)) {
 			this.setContent(value);
 			this.save();
 		};
 	};
 
-	updateRect () {
-		const rect = UtilCommon.getSelectionRect();
-		if (!rect || !menuStore.isOpen('blockLatex')) {
-			return;
-		};
-
-		menuStore.update('blockLatex', { 
-			rect: { ...rect, y: rect.y + this.win.scrollTop() }
-		});
-	};
-
 	onChange () {
-		this.setValue(this.getValue());
+		const value = this.getValue();
+
+		this.setValue(value);
+		this.setContent(value);
 	};
 
 	onPaste (e: any) {
-		if (!this._isMounted) {
+		e.preventDefault();
+
+		const range = this.getRange();
+		if (!range) {
 			return;
 		};
 
-		e.preventDefault();
-
-		const range = getRange(this.input);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = cb.getData('text/plain');
 		const to = range.end + text.length;
 
-		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.start, range.end));
-		this.setRange({ start: to, end: to });
-		this.focus();
+		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.from, range.to));
+		this.setRange({ from: to, to });
+		this.save();
 	};
 
 	onFocusInput () {
@@ -317,13 +359,19 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 	};
 
 	onTemplate (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!this._isMounted) {
 			return;
 		};
 
-		const range = getRange(this.input);
+		const range = this.getRange();
+		if (!range) {
+			return;
+		};
 
-		commonStore.filterSet(range?.start, '');
+		commonStore.filterSet(range.from, '');
 		this.onMenu(e, 'select', true);
 	};
 
@@ -333,12 +381,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		};
 
 		const { rootId, block } = this.props;
+		const win = $(window);
+
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
 				rect = UtilCommon.getSelectionRect();
 			};
-			return rect ? { ...rect, y: rect.y + this.win.scrollTop() } : null;
+			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
 
 		const menuParam = {
@@ -361,14 +411,16 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				blockId: block.id,
 				onSelect: (from: number, to: number, item: any) => {
 					let text = item.symbol || item.comment;
+
 					if (isTemplate) {
 						text = ' ' + text;
 					};
-					
-					this.setValue(UtilCommon.stringInsert(this.getValue(), text, from, to));
+
+					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
+
+					this.setValue(value);
+					this.setRange({ from: to, to });
 					this.save();
-					this.setRange({ start: to, end: to });
-					this.focus();
 				},
 			},
 		};
@@ -376,28 +428,32 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		raf(() => menuStore.open('blockLatex', menuParam));
 	};
 
+	setText (text: string) {
+		this.text = String(text || '').trim();
+	};
+
 	setValue (value: string) {
-		if (!this._isMounted) {
-			return '';
+		if (!this._isMounted || !this.state.isEditing) {
+			return;
 		};
 
 		const lang = this.getLang();
-		
-		if (lang) {
-			this.input.innerHTML = UtilCommon.sanitize(Prism.highlight(value, Prism.languages[lang], lang));
-		} else {
-			this.input.innerText = value;
+		const range = this.getRange();
+
+		if (value && lang) {
+			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
-		this.setContent(value);
+		this.refEditable.setValue(value);
+		this.placeholderCheck();
+
+		if (range) {
+			this.setRange(range);
+		};
 	};
 
 	getValue (): string {
-		if (!this._isMounted) {
-			return '';
-		};
-
-		return String(this.input.innerText || '');
+		return this.refEditable.getTextValue();
 	};
 
 	getLang () {
@@ -405,13 +461,10 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		const { processor } = block.content;
 
 		switch (processor) {
-			default: break;
+			default: return 'html';
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
-			case I.EmbedProcessor.Youtube:
-			case I.EmbedProcessor.Vimeo:
-			case I.EmbedProcessor.GoogleMaps: return 'html';
 		};
 	};
 
@@ -424,11 +477,8 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 		switch (processor) {
 			case I.EmbedProcessor.Chart: {
-				html = `
-					<canvas id="chart"></canvas>
-				`;
-
-				libs.push('./chart/chart.umd.js');
+				html = `<canvas id="chart"></canvas>`;
+				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
 				break;
 			};
 		};
@@ -436,21 +486,40 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 		return { html, libs };
 	};
 
+	updateRect () {
+		const rect = UtilCommon.getSelectionRect();
+		if (!rect || !menuStore.isOpen('blockLatex')) {
+			return;
+		};
+
+		menuStore.update('blockLatex', { 
+			rect: { ...rect, y: rect.y + $(window).scrollTop() }
+		});
+	};
+
 	setContent (text: string) {
 		if (!this._isMounted) {
 			return '';
 		};
 
-		this.text = String(text || '');
+		const { isShowing } = this.state;
+		const { block } = this.props;
+		const node = $(this.node);
+		const value = node.find('#value');
 
-		if (!this.text) {
-			this.value.html('');
+		if (!isShowing && !block.isEmbedLatex()) {
+			value.html('');
 			return;
 		};
 
-		const { block } = this.props;
+		this.setText(text);
+
+		if (!this.text) {
+			value.html('');
+			return;
+		};
+
 		const { processor } = block.content;
-		const node = $(this.node);
 		const win = $(window);
 
 		switch (processor) {
@@ -460,9 +529,21 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 				const sandbox = [ 'allow-scripts' ];
 				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
+				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
+				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
+				const allowJs = [ I.EmbedProcessor.Chart ];
+				const allowPopup = [];
 
 				if (allowSameOrigin.includes(processor)) {
 					sandbox.push('allow-same-origin');
+				};
+
+				if (allowPresentation.includes(processor)) {
+					sandbox.push('allow-presentation');
+				};
+
+				if (allowPopup.includes(processor)) {
+					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
@@ -470,16 +551,21 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 					const env = this.getEnvironmentContent();
 					const data: any = { ...env, theme: commonStore.getThemeClass() };
 
-					if ([ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ].includes(processor)) {
-						if (!text.match(/<iframe/)) {
-							text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
-						};
+					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (processor == I.EmbedProcessor.Chart) {
+					if (allowJs.includes(processor)) {
 						data.js = text;
 					} else {
-						data.html = text;
+						data.html = DOMPurify.sanitize(text, { 
+							ADD_TAGS: [ 
+								'iframe',
+							],
+							ADD_ATTR: [
+								'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+							],
+						});
 					};
 
 					iw.postMessage(data, '*');
@@ -489,14 +575,15 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: './embed/iframe.html',
+						src: this.fixAsarPath('./embed/iframe.html'),
 						frameborder: 0,
+						scrolling: 'no',
 						sandbox: sandbox.join(' '),
 						allowtransparency: true,
 					});
 
 					iframe.off('load').on('load', onLoad);
-					this.value.html('').append(iframe);
+					value.html('').append(iframe);
 				} else {
 					onLoad();
 				};
@@ -504,14 +591,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			};
 
 			case I.EmbedProcessor.Latex: {
-				this.value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(this.text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				}));
 
-				this.value.find('a').each((i: number, item: any) => {
+				value.find('a').each((i: number, item: any) => {
 					item = $(item);
 
 					item.off('click').click((e: any) => {
@@ -526,21 +613,23 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 
 			case I.EmbedProcessor.Mermaid: {
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
-					this.value.html(res.svg || this.text);
+					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
-						res.bindFunctions(this.value.get(0));
+						res.bindFunctions(value.get(0));
 					};
+				}).catch(e => {
+					const error = $(`#d${this.getContainerId()}`).hide();
+					
+					value.html(error.html());
 				});
 				break;
 			};
 		};
-
-		this.placeholderCheck(this.text);
 	};
 
-	placeholderCheck (value: string) {
-		value.trim().length > 0 ? this.empty.hide() : this.empty.show();
+	placeholderCheck () {
+		this.refEditable?.placeholderCheck();
 	};
 
 	onEdit (e: any) {
@@ -550,13 +639,14 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
+		e.preventDefault();
 		e.stopPropagation();
 
-		$('.block.blockEmbed .focusable.isEditing').removeClass('isEditing');
-
 		this.setEditing(true);
-		this.focus();
-		this.rebind();
+	};
+
+	onPreview (e: any) {
+		this.setShowing(true);
 	};
 
 	save (callBack?: (message: any) => void) {
@@ -566,14 +656,18 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
-		const value = this.getValue();
+		const value = this.getValue().trim();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
-		C.BlockEmbedSetText(rootId, block.id, value, callBack);
+		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	setRange (range: any) {
-		this.range = range || { start: 0, end: 0 };
+	getRange () {
+		return UtilCommon.objectCopy(this.refEditable.getRange());
+	};
+
+	setRange (range: I.TextRange) {
+		this.refEditable.setRange(range);
 	};
 
 	onSelect () {
@@ -581,13 +675,27 @@ const BlockEmbed = observer(class BlockEmbedIndex extends React.Component<I.Bloc
 			return;
 		};
 
-		this.setRange(getRange(this.input));
+		const win = $(window);
+
 		keyboard.disableSelection(true);
 
-		this.win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
+		win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
 			keyboard.disableSelection(false);
-			this.win.off('mouseup.embed');
+			win.off('mouseup.embed');
 		});
+	};
+
+	fixAsarPath (path: string): string {
+		const origin = location.origin;
+		
+		let href = location.href;
+
+		if (origin == 'file://') {
+			href = href.replace('/app.asar/', '/app.asar.unpacked/');
+			href = href.replace('/index.html', '/');
+			path = href + path.replace(/^\.\//, '');
+		};
+		return path;
 	};
 
 });

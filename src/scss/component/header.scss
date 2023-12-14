@@ -51,8 +51,8 @@
 	.sync { -webkit-app-region: no-drag; }
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
-	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon.big:hover, .icon.big.hover { background-color: $colorShapeTertiary; }
+	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
+	.icon:hover, .icon.hover { background-color: $colorShapeTertiary; }
 
 	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
 	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }

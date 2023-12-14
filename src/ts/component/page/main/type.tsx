@@ -386,7 +386,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			UtilObject.openPopup(message.details);
-			Storage.setLastUsedTypes(type.id);
+			Storage.addLastUsedType(type.id);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',
@@ -408,7 +408,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const details = { 
-			name: object.name, 
+			name: UtilCommon.sprintf(translate('commonSetName'), object.name),
 			iconEmoji: object.iconEmoji,
 		};
 

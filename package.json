@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.36.2-alpha",
+	"version": "0.36.11-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -19,7 +19,7 @@
 		"dist:mac": "npm run build:deps && webpack --progress --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
 		"dist:macamd": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
-		"dist:win": "npm run build:deps && webpack --mode=production --node-env=production && electron-builder --windows",
+		"dist:win": "webpack --mode=production --node-env=production && electron-builder --windows",
 		"dist:linux": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64 --x64",
 		"dist:linuxamd": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --x64",
 		"dist:linuxarm": "npm run build:deps && webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64",
@@ -192,6 +192,7 @@
 		"files": [
 			"electron.js",
 			"electron/js/*",
+			"electron/json/*",
 			"electron/env.json",
 			"electron/img/*",
 			"electron/about/*",
@@ -201,6 +202,7 @@
 			"dist/main.js",
 			"dist/main.js.map",
 			"dist/run.js",
+			"dist/embed/**/*",
 			"dist/lib/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",
@@ -523,7 +525,7 @@
 		"win": {
 			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
-			"icon": "electron/img/icon256x256.png",
+			"icon": "electron/img/icons/256x256.png",
 			"publish": [
 				{
 					"provider": "spaces",
@@ -536,7 +538,7 @@
 			"deleteAppDataOnUninstall": true
 		},
 		"linux": {
-			"icon": "electron/img/icon512x512.png",
+			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
 				"snap",

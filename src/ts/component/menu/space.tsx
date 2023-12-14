@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, translate, Action } from 'Lib';
-import { authStore, dbStore, detailStore, popupStore, menuStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics } from 'Lib';
+import { authStore, dbStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -213,6 +213,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			this.onAdd();
 		} else {
 			UtilRouter.switchSpace(item.targetSpaceId);
+			analytics.event('SwitchSpace');
 			this.props.close();
 		};
 	};
@@ -223,10 +224,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			data: { 
 				page: 'spaceCreate', 
 				isSpace: true,
-				onCreate: (id) => UtilRouter.switchSpace(id, ''),
+				onCreate: (id) => {
+					UtilRouter.switchSpace(id, '');
+					analytics.event('SwitchSpace');
+				},
 			}, 
 		});
-
+		
 		this.props.close();
 	};
 

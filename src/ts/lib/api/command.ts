@@ -152,13 +152,15 @@ const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setIcon(icon);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -169,11 +171,13 @@ const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request(AccountRecover.name, request, callBack);
 };
 
-const AccountSelect = (id: string, path: string, callBack?: (message: any) => void) => {
+const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Select.Request();
 
 	request.setId(id);
 	request.setRootpath(path);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
@@ -567,14 +571,14 @@ const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.Te
 
 // ---------------------- BLOCK LATEX ---------------------- //
 
-const BlockEmbedSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockEmbed.SetText.Request();
+const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockLatex.SetText.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
 
-	dispatcher.request(BlockEmbedSetText.name, request, callBack);
+	dispatcher.request(BlockLatexSetText.name, request, callBack);
 };
 
 // ---------------------- BLOCK LINK ---------------------- //
@@ -1807,6 +1811,26 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+// ---------------------- NOTIFICATION ---------------------- //
+
+const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.List.Request();
+
+	request.setIncluderead(includeRead);
+	request.setLimit(limit);
+
+	dispatcher.request(NotificationList.name, request, callBack);
+};
+
+const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
+	const request = new Rpc.Notification.Reply.Request();
+
+	request.setIdsList(ids);
+	request.setActiontype(action as number);
+
+	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -1893,7 +1917,7 @@ export {
 
 	BlockDivListSetStyle,
 
-	BlockEmbedSetText,
+	BlockLatexSetText,
 
 	BlockRelationSetKey,
 
@@ -2016,4 +2040,7 @@ export {
 
 	UnsplashSearch,
 	UnsplashDownload,
+
+	NotificationList,
+	NotificationReply,
 };

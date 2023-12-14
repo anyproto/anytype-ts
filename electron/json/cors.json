@@ -84,7 +84,7 @@
 	],
 
 	"script-src-elem": [
-		"file:",
+		"file://*",
 		"'unsafe-inline'",
 		"http://localhost:*",
 		"https://sentry.io",
@@ -98,7 +98,8 @@
 		"https://*.doubleclick.net",
 		"https://*.cookielaw.org",
 		"https://mirostatic.com",
-		"https://*.figma.com/"
+		"https://*.figma.com/",
+		"https://cdn.jsdelivr.net"
 	],
 
 	"frame-src": [
@@ -110,7 +111,8 @@
 		"https://*.google.com",
 		"https://miro.com",
 		"https://*.miro.com",
-		"https://*.figma.com/"
+		"https://*.figma.com/",
+		"file://*"
 	],
 
 	"worker-src": [ 

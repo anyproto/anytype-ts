@@ -88,13 +88,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
 		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
-
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -162,10 +161,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
 						const l = options.length;
 
+						if (!l) {
+							return null;
+						};
+
 						return (
-							<span className="cell" key={i}>
+							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
 								{bullet}
-								<div className="cellContent" onClick={e => this.onLinks(e, relationKey)}>
+								<div className="cellContent">
 									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 								</div>
 							</span>
@@ -635,25 +638,30 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
-	onLinks (e: React.MouseEvent, id: any) {
-		const { rootId } = this.props;
+	onLinks (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return;
+		};
+
 		const object = detailStore.get(rootId, storeId);
-		const value = Relation.getArrayValue(object[id]);
+		const value = Relation.getArrayValue(object[relationKey]);
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: {
-				iconEmoji: it.iconEmoji,
-				iconImage: it.iconImage
-			}
+			object: it
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
-				element: e.currentTarget,
-				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
+				element: `#${elementId}`,
+				className: 'featuredLinks',
+				title: relation.name,
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,

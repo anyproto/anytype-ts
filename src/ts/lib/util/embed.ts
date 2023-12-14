@@ -1,9 +1,10 @@
 import { I, UtilCommon } from 'Lib';
+import Constant from 'json/constant.json';
 
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
-DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com' ];
+DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
 
@@ -15,19 +16,19 @@ class UtilEmbed {
 	};
 
 	getYoutubeHtml (content: string): string {
-		return `<iframe width="560" height="315" src="${content}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
 	};
 
 	getVimeoHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
 	};
 
 	getGoogleMapsHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen loading="lazy"></iframe>`;
 	};
 
 	getMiroHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
 	};
 
 	getFigmaHtml (content: string): string {
@@ -63,15 +64,32 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.GoogleMaps: {
-				const coords = /\@([0-9\.\,\-a-zA-Z]*)/.exec(url);
-
-				if (coords && coords[1]) {
-					const latlng = coords[1].split(',');
-					const zoom = parseFloat(latlng[2].replace('z', ''));
-					const zoomParam = 591657550.500000 / Math.pow(2, zoom);
-
-					url = `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d${zoomParam}!2d${latlng[1]}!3d${latlng[0]}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1486486434098`;
+				const place = url.match(/place\/([^\/]+)/);
+				const param = url.match(/\/@([^\/\?]+)/);
+				const search: any = {
+					key: Constant.embed.googleMaps.key,
 				};
+
+				let endpoint = '';
+
+				if (param && param[1]) {
+					const [ lat, lon, zoom ] = param[1].split(',');
+
+					search.center = [ lat, lon ].join(',');
+					search.zoom = parseInt(zoom);
+
+					endpoint = 'view';
+				};
+
+				if (place && place[1]) {
+					search.q = place[1];
+
+					delete(search.center);
+
+					endpoint = 'place';
+				};
+
+				url = `https://www.google.com/maps/embed/v1/${endpoint}?${new URLSearchParams(search).toString()}`;
 				break;
 			};
 

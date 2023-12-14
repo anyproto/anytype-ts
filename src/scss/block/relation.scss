@@ -51,12 +51,13 @@
 			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
 			.icon.clear { right: 8px; }
 
-			#entry { line-height: 18px; height: 18px; vertical-align: top; margin: 4px 0px 0px 0px; display: inline-block; }
+			#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
 		}
 
 		.cell.isEditing.c-select {
 			.cellContent { padding: 4px 8px; }
-			.placeholder { padding: 4px 8px; }
+			.placeholder { padding: 6px 8px }
+			#entry { margin-top: 4px; }
 		}
 		.cell.isEditing.c-select.isStatus {
 			.over { width: calc(100% - 26px); }
