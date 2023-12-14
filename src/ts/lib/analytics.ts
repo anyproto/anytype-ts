@@ -56,6 +56,9 @@ class Analytics {
 			includeUtm: true,
 			includeReferrer: true,
 			platform,
+			trackingOptions: {
+    			ipAddress: false,
+			},
 		});
 
 		this.instance.setVersionName(window.Electron.version.app);
