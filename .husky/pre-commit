@@ -5,7 +5,7 @@ npx lint-staged --concurrent false
 # npm run typecheck
 
 # Checking for secrets
-# gitleaks protect --verbose --redact --staged
+gitleaks protect --verbose --redact --staged
 
 # Checking dependencies' licenses
 npx license-checker --production --json --out licenses.json
