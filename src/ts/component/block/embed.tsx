@@ -170,6 +170,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setText(block.content.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
+		this.onScroll();
 		this.rebind();
 	};
 
@@ -208,13 +209,30 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				this.setContent(this.text);
 			};
 		});
+
+		win.on(`scroll.${block.id}`, () => this.onScroll());
 	};
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'mousedown', 'online', 'offline' ];
+		const events = [ 'mousedown', 'online', 'offline', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+	};
+
+	onScroll () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(this.node);
+		const win = $(window);
+		const { wh } = UtilCommon.getWindowDimensions();
+		const st = win.scrollTop();
+		const { top } = node.offset();
+		const bot = top + node.height();
+
+		this.setShowing((bot > st) && (top < st + wh));
 	};
 
 	getContainerId () {
@@ -222,16 +240,20 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setEditing (isEditing: boolean) {
-		this.setState({ isEditing }, () => {
-			if (isEditing) {
-				const length = this.text.length;
-				this.setRange({ from: length, to: length });
-			};
-		});
+		if (this.state.isEditing != isEditing) {
+			this.setState({ isEditing }, () => {
+				if (isEditing) {
+					const length = this.text.length;
+					this.setRange({ from: length, to: length });
+				};
+			});
+		};
 	};
 
 	setShowing (isShowing: boolean) {
-		this.setState({ isShowing });
+		if (this.state.isShowing != isShowing) {
+			this.setState({ isShowing });
+		};
 	};
 
 	onFocusBlock () {
