@@ -4,7 +4,7 @@ import Constant from 'json/constant.json';
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
-DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
+DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
 
@@ -52,8 +52,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = url.replace(/\/watch\/?\??/, '/embed/');
-				url = url.replace('v=', '');
+				url = `https://www.youtube.com/embed/${this.getYoutubeId(url)}`;
 				break;
 			};
 
@@ -104,6 +103,15 @@ class UtilEmbed {
 		};
 
 		return url;
+	};
+
+	getYoutubeId (url: string) {
+		const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+		const match = url.match(regExp);
+
+		return (match && match[2].length === 11)
+		? match[2]
+		: null;
 	};
 
 };
