@@ -235,6 +235,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	setEditing (isEditing: boolean) {
 		if (this.state.isEditing != isEditing) {
+			this.state.isEditing = isEditing;
 			this.setState({ isEditing }, () => {
 				if (isEditing) {
 					const length = this.text.length;
@@ -246,6 +247,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	setShowing (isShowing: boolean) {
 		if (this.state.isShowing != isShowing) {
+			this.state.isShowing = isShowing;
 			this.setState({ isShowing });
 		};
 	};
