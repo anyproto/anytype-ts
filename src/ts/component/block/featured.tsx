@@ -654,7 +654,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: it
+			object: it,
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
