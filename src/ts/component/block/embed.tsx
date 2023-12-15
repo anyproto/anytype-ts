@@ -55,7 +55,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-		const pcn = [ 'preview', menuItem.icon ];
 		const text = String(block.content.text || '').trim();
 
 		if (!text) {
@@ -169,6 +168,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	rebind () {
 		const { block } = this.props;
 		const { isEditing, isShowing } = this.state;
+		const { processor } = block.content;
 		const win = $(window);
 		const node = $(this.node);
 
@@ -202,7 +202,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		win.on(`scroll.${block.id}`, () => this.onScroll());
+		if (this.isAllowedScroll()) {
+			win.on(`scroll.${block.id}`, () => this.onScroll());
+		};
 	};
 
 	unbind () {
@@ -213,7 +215,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.isAllowedScroll()) {
 			return;
 		};
 
@@ -710,6 +712,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			path = href + path.replace(/^\.\//, '');
 		};
 		return path;
+	};
+
+	isAllowedScroll () {
+		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Chart ].includes(this.props.block.content.processor);
 	};
 
 });
