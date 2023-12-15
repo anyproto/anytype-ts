@@ -54,6 +54,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = block.content;
 		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+		const pcn = [ 'preview', menuItem.icon ];
 		const text = String(block.content.text || '').trim();
 
 		if (!text) {
@@ -69,15 +71,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let preview = null;
 		let empty = '';
 		let placeholder = '';
-		let icon = '';
 
 		switch (processor) {
 			default: {
-				const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-
 				button = <Icon className="source" onClick={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-				icon = menuItem.icon;
 
 				if (!text) {
 					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
@@ -85,12 +83,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				if (!isShowing && text) {
 					cn.push('withPreview');
-
-					preview = (
-						<div className="preview" onClick={this.onPreview}>
-							<Icon className={icon} />
-						</div>
-					);
 				};
 				break;
 			};
@@ -122,7 +114,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				{preview}
+				<div className={[ 'preview', menuItem.icon ].join(' ')} onClick={this.onPreview} />
 				{select}
 				{button}
 

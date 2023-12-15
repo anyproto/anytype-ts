@@ -82,7 +82,7 @@ class DragLayer extends React.Component<object, State> {
 			return;
 		};
 
-		this.setState({ rootId: '', type: I.DropType.None, ids: [], width: 0 });
+		//this.setState({ rootId: '', type: I.DropType.None, ids: [], width: 0 });
 	};
 
 	renderContent () {
@@ -101,6 +101,8 @@ class DragLayer extends React.Component<object, State> {
 				items.forEach(block => {
 					const clone = container.find(`#block-${block.id}`).clone();
 
+					wrap.append(clone);
+
 					if (block.isDataview()) {
 						const controls = clone.find('.dataviewControls');
 
@@ -110,7 +112,10 @@ class DragLayer extends React.Component<object, State> {
 						controls.find('#sideRight').remove();
 					};
 
-					wrap.append(clone);
+					if (block.isEmbed()) {
+						clone.find('#value').remove();
+						clone.find('.preview').css({ display: 'block' });
+					};
 				});
 				break;
 			};
