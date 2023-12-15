@@ -105,13 +105,9 @@ class UtilEmbed {
 		return url;
 	};
 
-	getYoutubeId (url: string) {
-		const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-		const match = url.match(regExp);
-
-		return (match && match[2].length === 11)
-		? match[2]
-		: null;
+	getYoutubeId (url: string): string {
+		const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+		return (m && m[2].length) ? m[2] : '';
 	};
 
 };
