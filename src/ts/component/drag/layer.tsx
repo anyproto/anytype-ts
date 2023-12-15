@@ -78,11 +78,9 @@ class DragLayer extends React.Component<object, State> {
 	};
 
 	hide () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			this.setState({ rootId: '', type: I.DropType.None, ids: [], width: 0 });
 		};
-
-		//this.setState({ rootId: '', type: I.DropType.None, ids: [], width: 0 });
 	};
 
 	renderContent () {
