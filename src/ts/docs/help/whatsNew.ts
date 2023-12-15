@@ -53,7 +53,7 @@ export default [
 
 	h3(`Local Graph Mode`),
 	img('./img/help/37/7.png'),
-	text(`When selecting an object in the graph, you’ll have an option in the graph settings menu to toggle on ‘Local Graph’, which will display only the selected object and its linked objects, rather than your entire graph.`),
+	text(`When selecting an object in the graph, you’ll have an option in the graph settings menu to toggle on ${hl('Local Graph')}, which will display only the selected object and its linked objects, rather than your entire graph.`),
 
 	h3(`Widgets can now be created from object 3-dots menu`),
 	video('./img/help/37/8.mp4'),
