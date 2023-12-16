@@ -141,6 +141,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+		this.onScroll();
 	};
 
 	componentDidUpdate () {
@@ -161,7 +162,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setText(block.content.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.onScroll();
 		this.rebind();
 	};
 
@@ -234,22 +234,26 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setEditing (isEditing: boolean) {
-		if (this.state.isEditing != isEditing) {
-			this.state.isEditing = isEditing;
-			this.setState({ isEditing }, () => {
-				if (isEditing) {
-					const length = this.text.length;
-					this.setRange({ from: length, to: length });
-				};
-			});
+		if (this.state.isEditing == isEditing) {
+			return;
 		};
+
+		this.state.isEditing = isEditing;
+		this.setState({ isEditing }, () => {
+			if (isEditing) {
+				const length = this.text.length;
+				this.setRange({ from: length, to: length });
+			};
+		});
 	};
 
 	setShowing (isShowing: boolean) {
-		if (this.state.isShowing != isShowing) {
-			this.state.isShowing = isShowing;
-			this.setState({ isShowing });
+		if (this.state.isShowing == isShowing) {
+			return;
 		};
+
+		this.state.isShowing = isShowing;
+		this.setState({ isShowing });
 	};
 
 	onFocusBlock () {
