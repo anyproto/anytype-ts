@@ -472,6 +472,7 @@ class Keyboard {
 				break;
 			};
 
+			case 'gallery':
 			case 'terms':
 			case 'tutorial':
 			case 'privacy':

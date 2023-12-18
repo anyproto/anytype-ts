@@ -179,6 +179,7 @@
 	"electronMenuReleaseNotes": "What's new",
 	"electronMenuShortcuts": "Shortcuts",
 	"electronMenuCommunity": "Report a Bug",
+	"electronMenuGallery": "ANY Experience Gallery",
 	"electronMenuTutorial": "Help and Tutorials",
 	"electronMenuContact": "Contact Us",
 	"electronMenuTech": "Technical Information",
@@ -1210,6 +1211,7 @@
 	"menuHelpTech": "Technical Information",
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
+	"menuHelpGallery": "ANY Experience Gallery",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
