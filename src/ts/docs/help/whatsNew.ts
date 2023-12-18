@@ -26,7 +26,7 @@ export default [
 	h3(`Introducing: The ANY Experience Gallery`),
 	img('./img/help/37/1.png'),
 	text(`For all of you who’ve longingly admired the various setups others have shared in our ${link('https://community.anytype.io/c/gallery/27/none', 'community showcase')}, or for those of you who’ve created incredible setups of your own that you’ve wished to share, the wait is over.`),
-	text(`Introducing: The ANY Experience gallery, a marketplace of use cases, templates, and setups where any member of our community can upload their own experience, or import an experience created by others. To browse the gallery, ${link('https://gallery.any.coop/', 'click here')} (we’ve kickstarted the process with a few experiences of our own). If you’d like to contribute your own experience to the gallery, you can follow the instructions here.`),
+	text(`Introducing: The ANY Experience gallery, a marketplace of use cases, templates, and setups where any member of our community can upload their own experience, or import an experience created by others. To browse the gallery, ${link('https://gallery.any.coop/', 'click here')} (we’ve kickstarted the process with a few experiences of our own). If you’d like to contribute your own experience to the gallery, you can follow the instructions ${link('https://github.com/orgs/anyproto/discussions/123', 'here')}.`),
 
 	h3(`Embed Blocks`),
 	video('./img/help/37/2.mp4'),

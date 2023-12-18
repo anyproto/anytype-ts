@@ -574,8 +574,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		if (ids.length) {
-
-			keyboard.shortcut('escape', e, (pressed: string) => {
+			keyboard.shortcut('escape', e, () => {
 				if (!menuOpen) {
 					selection.clear();
 				};
