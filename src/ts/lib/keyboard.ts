@@ -622,7 +622,6 @@ class Keyboard {
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ translate('libKeyboardDevice'), window.Electron.version.device ],
 				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
 				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
