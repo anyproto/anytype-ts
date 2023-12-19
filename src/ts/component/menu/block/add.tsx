@@ -311,7 +311,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		]);
 		
 		if (filter && filter.text) {
-			const actions = UtilMenu.getActions({ hasFile: false, hasLink: false });
+			const actions = UtilMenu.getActions({});
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
