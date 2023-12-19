@@ -1,6 +1,6 @@
 import { UtilCommon, translate } from 'Lib';
 import { init } from 'emoji-mart';
-import data from '@emoji-mart/data';
+import data from '@emoji-mart/data/sets/14/apple.json'
 
 const DIV = 65039;
 const CAP = 8419;
