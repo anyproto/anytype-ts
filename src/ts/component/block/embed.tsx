@@ -571,7 +571,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
-					const data: any = { ...env, theme: commonStore.getThemeClass() };
+					const data: any = { ...env };
 
 					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
@@ -597,7 +597,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: this.fixAsarPath('./embed/iframe.html'),
+						src: this.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
