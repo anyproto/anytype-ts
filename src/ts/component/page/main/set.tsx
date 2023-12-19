@@ -22,6 +22,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	id = '';
 	refHeader: any = null;
 	refHead: any = null;
+	refControls: any = null;
 	loading = false;
 	composition = false;
 	timeout = 0;
@@ -62,7 +63,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 					<div className="blocks wrapper">
-						<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 						<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
 
 						{children.map((block: I.Block, i: number) => (
@@ -182,9 +183,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
-
 			if (this.refHead) {
 				this.refHead.forceUpdate();
+			};
+			if (this.refControls) {
+				this.refControls.forceUpdate();
 			};
 
 			this.resize();
