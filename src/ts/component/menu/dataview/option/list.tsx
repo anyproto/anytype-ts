@@ -2,10 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Tag, Filter } from 'Component';
+import { Icon, Tag, Filter, DragBox } from 'Component';
 import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
+import arrayMove from 'array-move';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -29,7 +30,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, canAdd, noFilter } = data;
+		const { filter, canAdd, noFilter, keepSelected } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
@@ -95,7 +96,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		return (
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
-					<Filter 
+					<Filter
+						className="v2"
+						icon="search"
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholder} 
 						value={filter}
@@ -184,6 +187,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	unbind () {
 		$(window).off('keydown.menu');
 		$(`#${this.props.getId()}`).off('click');
+		menuStore.close('dataviewOptionEdit');
 	};
 
 	onKeyDown (e: any) {
@@ -234,6 +238,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { onChange, maxCount } = data;
 
 		let value = Relation.getArrayValue(data.value);
+
+		if (value.includes(id)) {
+			this.onValueRemove(id);
+			return;
+		};
+
 		value.push(id);
 		value = UtilCommon.arrayUnique(value);
 
@@ -245,6 +255,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
+		menuStore.updateData(this.props.id, { value });
+		onChange(value);
+	};
+
+	onValueRemove (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		const value = Relation.getArrayValue(data.value);
+		const idx = value.indexOf(id);
+
+		value.splice(idx, 1);
 		menuStore.updateData(this.props.id, { value });
 		onChange(value);
 	};
@@ -317,7 +339,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper } = data;
+		const { canAdd, filterMapper, keepSelected } = data;
 		const relation = data.relation.get();
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
@@ -345,18 +367,20 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
-		items = items.filter(it => !value.includes(it.id));
+		if (!keepSelected) {
+			items = items.filter(it => !value.includes(it.id));
+		};
 
 		return items.concat(ret);
 	};
 
 	resize () {
 		const { getId, position, param } = this.props;
-		const { data } = param;
+		const { data, title } = param;
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = noFilter ? 16 : 58;
+		const offset = noFilter ? 16 : 50;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });

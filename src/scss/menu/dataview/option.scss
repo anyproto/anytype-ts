@@ -56,4 +56,15 @@
 			.icon.more { display: none; }
 		}
 	}
+
+	.menu.menuDataviewOptionList.featuredRelation {
+		.titleWrapper { padding-bottom: 0; }
+		.item {
+			.icon.chk { right: 8px; }
+		}
+		.item:hover, .item.hover {
+			.buttons { display: block; }
+			.icon.chk { display: none; }
+		}
+	}
 }

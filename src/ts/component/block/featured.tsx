@@ -5,6 +5,7 @@ import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
+import { observable } from 'mobx';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -605,6 +606,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
+		if (relation.format == I.RelationType.Tag || relation.format == I.RelationType.Status) {
+			this.onTagOrStatus(e, relationKey);
+			return;
+		};
+
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
@@ -706,6 +712,41 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						C.ObjectSetDetails(rootId, details);
 					}
 				}
+			});
+		});
+	};
+
+	onTagOrStatus (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = object[relationKey];
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewOptionList', {
+				element: `#${elementId}`,
+				className: 'featuredRelation',
+				horizontal: I.MenuDirection.Left,
+				noFlipY: true,
+				offsetY: 4,
+				title: relation.name,
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					value,
+					relation: observable.box(relation),
+					maxCount: relation.maxCount,
+					canAdd: true,
+					keepSelected: true,
+					onChange: (v) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+					}
+				},
 			});
 		});
 	};
