@@ -56,6 +56,10 @@ html.printMedia {
 	.blocks {
 		#button-block-add { display: none; }
 
+		.block {
+			.icon.dnd { display: none; }
+		}
+
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
