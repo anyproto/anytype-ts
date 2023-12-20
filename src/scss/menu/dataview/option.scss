@@ -44,11 +44,38 @@
 			.icon.chk { right: 32px; }
 		}
 	}
-	
+
+	.menu.menuDataviewOptionEdit { width: 256px; }
 	.menu.menuDataviewOptionEdit {
+		.content { padding-top: 12px; }
 		.filter { margin-bottom: 8px; }
 		.item:hover::before { background: $colorShapeHighlightMedium; }
 		.item.active::before { z-index: 1; }
+
+		.section.colorPicker { padding: 8px 16px 0px; }
+		.section.colorPicker {
+			.items { width: 224px; display: flex; flex-wrap: wrap; gap: 8px; }
+			.items {
+				.item.color { width: 38px; height: 38px; border-radius: 50%; position: relative; }
+				.item.color::before { display: none; }
+				.item.hover, .item:hover { box-shadow: 0 0 0 3px $colorShapeHighlightMedium; }
+
+				.item.color-black { background: $colorTextPrimary; }
+				.item.color-grey { background: $colorControlActive; }
+				.item.color-yellow { background: $colorYellow; }
+				.item.color-orange { background: $colorOrange; }
+				.item.color-red { background: $colorRed; }
+				.item.color-pink { background: $colorPink; }
+				.item.color-purple { background: $colorPurple; }
+				.item.color-blue { background: $colorBlue; }
+				.item.color-ice { background: $colorIce; }
+				.item.color-teal { background: $colorTeal; }
+				.item.color-lime { background: $colorLime; }
+
+				.icon.tick { position: absolute; left: 50%; top: 50%; margin: -10px 0 0 -10px; width: 20px; height: 20px; background-image: url('~img/icon/tick.svg'); }
+			}
+		}
+		.section.colorPicker:after { margin: 16px 0px 0px 0px; }
 	}
 
 	.menu.menuDataviewOptionList.fromFilter {

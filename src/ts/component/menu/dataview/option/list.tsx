@@ -376,7 +376,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 	resize () {
 		const { getId, position, param } = this.props;
-		const { data, title } = param;
+		const { data } = param;
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);

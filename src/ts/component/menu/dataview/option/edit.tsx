@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
 import { I, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
-import { Filter, MenuItemVertical } from 'Component';
+import { Filter, MenuItemVertical, Icon } from 'Component';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -20,14 +20,23 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { option } = data;
 		const sections = this.getSections();
 
+		const Color = (item: any) => (
+			<div
+				id={`item-${item.id}`}
+				className={[ 'item', 'color', `color-${item.className}` ].join(' ')}
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onMouseEnter(e, item)}
+			>
+				{this.color == item.value ? <Icon className="tick" /> : ''}
+			</div>
+		);
+
 		const Section = (item: any) => (
-			<div className="section">
+			<div className={[ 'section', item.className ? item.className : '' ].join(' ')}>
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
-							action.inner = <div className={`inner isTag textColor textColor-${action.className}`} />;
-							action.icon = 'color';
-							action.checkbox = action.value == this.color;
+							return <Color key={i} {...action} />;
 						};
 
 						return (
@@ -49,7 +58,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					ref={ref => this.refName = ref}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'textColor-' + this.color}
+					className={'v2 textColor-' + this.color}
 					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
@@ -101,7 +110,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
-			{ children: colors },
+			{ children: colors, className: 'colorPicker' },
 			{ 
 				children: [
 					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
