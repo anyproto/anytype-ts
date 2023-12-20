@@ -216,8 +216,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				};
 
 				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Pmf);
 				Survey.check(I.SurveyType.Object);
+				//Survey.check(I.SurveyType.Pmf);
 			}, Constant.delay.popup);
 		};
 	};
