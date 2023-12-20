@@ -4,7 +4,7 @@ import Colors from 'json/colors.json';
 
 const bgColor = {
 	'': '#000',
-	dark: '#fff',
+	dark: '#252525',
 };
 
 class UtilGraph {
@@ -40,6 +40,9 @@ class UtilGraph {
 			case I.ObjectLayout.Human: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
+				} else
+				if (d.iconOption) {
+					src = this.gradientIcon(d.iconOption, false);
 				};
 				break;
 			};
