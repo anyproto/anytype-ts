@@ -45,6 +45,7 @@
 		.cellContent.c-select {
 			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
 			.tagItem:last-child { margin-right: 0px; }
+			.tagItem.isStatus { line-height: 16px; }
 			.more { margin: 0px; vertical-align: middle; }
 		} 
 
