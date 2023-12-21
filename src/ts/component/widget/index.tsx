@@ -292,6 +292,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const { viewId } = block.content;
 		const object = this.getObject();
+
+		if (!object) {
+			return;
+		};
+
 		const { id, layout } = object;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
