@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Emoji } from 'emoji-mart';
 import { commonStore, menuStore } from 'Store';
 import { UtilSmile } from 'Lib';
 import { observer } from 'mobx-react';
@@ -56,7 +55,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 				if (asImage) {
 					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
-					element = <em-emoji set="apple" shortcodes={code}></em-emoji>;
+					element = <em-emoji shortcodes={code}></em-emoji>;
 				};
 			};
 		} else 
