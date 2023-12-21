@@ -1292,13 +1292,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	onCopy () {
 		const { rootId, block } = this.props;
+		const length = block.getLength();
 
-		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
+		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
 			UtilCommon.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
-					range: { from: 0, to: 0 },
+					range: { from: 0, to: length },
 					blocks: [ block ],
 				},
 			});
