@@ -56,7 +56,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 				if (asImage) {
 					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
-					element = <em-emoji shortcodes={code}></em-emoji>;
+					element = <em-emoji set="apple" shortcodes={code}></em-emoji>;
 				};
 			};
 		} else 
