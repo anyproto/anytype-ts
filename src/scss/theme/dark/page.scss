@@ -146,6 +146,7 @@
     .items {
         .item { border-color: $colorShapePrimary; }
         .item {
+			.iconObject { background: $colorShapeTertiary; }
             .descr { color: $colorTextSecondary; }
         }
     }
