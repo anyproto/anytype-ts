@@ -9,6 +9,7 @@ import { Icon, Label, Editable } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
+import Theme from 'json/theme.json';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -634,6 +635,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
+				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid || {};
+
+				mermaid.mermaidAPI.initialize({
+					theme: 'base',
+					themeVariables: theme,
+				});
+
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
 					value.html(res.svg || this.text);
 
