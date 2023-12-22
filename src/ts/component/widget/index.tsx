@@ -297,10 +297,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const { id, layout } = object;
 		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content || {};
-		const isSetOrCollection = UtilObject.isSetLayout(layout);
+		if (!child) {
+			return;
+		};
+
+		const { targetBlockId } = child.content;
+		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty ];
@@ -310,21 +313,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let isCollection = false;
 
 		if (isSetOrCollection) {
-			const rootId = this.ref.getRootId();
-			const blockId = 'dataview';
-			const view = Dataview.getView(rootId, blockId);
-			const typeId = Dataview.getTypeId(rootId, blockId, id, viewId);
-			const type = dbStore.getTypeById(typeId);
-
-			if (!type) {
+			const rootId = this.ref?.getRootId();
+			if (!rootId) {
 				return;
 			};
 
-			details = Dataview.getDetails(rootId, blockId, id, viewId);
+			const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
+			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id, viewId);
+			const type = dbStore.getTypeById(typeId);
+
+			if (!view || !type) {
+				return;
+			};
+
+			details = Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId);
 			flags = [ I.ObjectFlag.SelectTemplate ];
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
-			isCollection = Dataview.isCollection(rootId, blockId);
+			isCollection = Dataview.isCollection(rootId, Constant.blockId.dataview);
 		} else {
 			switch (targetBlockId) {
 				default:
@@ -377,7 +383,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(id, [ created.id ]);
+				C.ObjectCollectionAdd(object.id, [ created.id ]);
 			};
 
 			UtilObject.openAuto(created);
@@ -385,7 +391,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};
