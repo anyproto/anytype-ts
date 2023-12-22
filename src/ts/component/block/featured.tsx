@@ -596,7 +596,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { isPopup, rootId, readonly } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
-		if (readonly) {
+		if (readonly || relation.isReadonlyValue) {
 			return;
 		};
 
