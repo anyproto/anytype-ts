@@ -632,6 +632,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
 
 		let allowed = true;
+
 		if (isRecent || !layoutWithPlus) {
 			allowed = false;
 		};
