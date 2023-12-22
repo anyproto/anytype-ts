@@ -532,7 +532,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (this.coll > current.children.length || current.children[this.coll].itemId == ID_BLANK) {
+		if ((this.coll > current.children.length) || (current.children[this.coll].itemId == ID_BLANK)) {
 			this.coll = 0;
 		};
 
@@ -557,7 +557,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		// Arrow right
-		if (this.coll > current.children.length - 1 || current.children[this.coll].itemId == ID_BLANK) {
+		if ((this.coll > current.children.length - 1) || (current.children[this.coll].itemId == ID_BLANK)) {
 			this.coll = 0;
 			this.onArrowVertical(dir);
 			return;
@@ -590,7 +590,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
-		if (id == ID_BLANK) return;
+		if (id == ID_BLANK) {
+			return;
+		}
 		
 		const { param, storageSet } = this.props;
 		const { data } = param;
@@ -626,7 +628,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
-		if (id == ID_BLANK) return;
+		if (id == ID_BLANK) {
+			return;
+		}
 
 		const { close } = this.props;
 		const win = $(window);
