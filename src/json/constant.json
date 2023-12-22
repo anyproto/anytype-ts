@@ -29,7 +29,8 @@
 		"menuRecords": 100,
 		"widgets": 20,
 		"space": 10,
-		"notification": 20
+		"notification": 20,
+		"phrase": { "letter": 8, "word": 12 }
 	},
 
 	"default": {
@@ -84,7 +85,7 @@
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
 		"table":		 [ "select2", "blockColor", "blockBackground" ],
-		"navigation":	 [ "space", "quickCapture" ]
+		"navigation":	 [ "quickCapture" ]
 	},
 
 	"popupPinIds": [ "search" ],
@@ -107,7 +108,10 @@
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+	"graphRelationKeys":	 [ 
+		"id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", 
+		"isDeleted", "isArchived", "isFavorite", "identityProfileLink"
+	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
 	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "createdDate" ],
 

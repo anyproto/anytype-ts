@@ -4,7 +4,7 @@ import Colors from 'json/colors.json';
 
 const bgColor = {
 	'': '#000',
-	dark: '#fff',
+	dark: '#252525',
 };
 
 class UtilGraph {

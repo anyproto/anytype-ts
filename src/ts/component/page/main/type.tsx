@@ -20,6 +20,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	id = '';
 	refHeader: any = null;
 	refHead: any = null;
+	refControls: any = null;
 	refListPreview: any = null;
 	timeout = 0;
 	page = 0;
@@ -123,7 +124,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
-					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
+					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple ref={ref => this.refHead = ref} type="Type" rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (
@@ -263,6 +264,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (this.refHead) {
 				this.refHead.forceUpdate();
 			};
+			if (this.refControls) {
+				this.refControls.forceUpdate();
+			};
+
+			
 		});
 	};
 

@@ -472,6 +472,7 @@ class Keyboard {
 				break;
 			};
 
+			case 'gallery':
 			case 'terms':
 			case 'tutorial':
 			case 'privacy':
@@ -600,7 +601,6 @@ class Keyboard {
 		C.AppGetVersion((message: any) => {
 			let url = Url.contact;
 
-			url = url.replace(/\%25device\%25/g, window.Electron.version.device);
 			url = url.replace(/\%25os\%25/g, window.Electron.version.os);
 			url = url.replace(/\%25version\%25/g, window.Electron.version.app);
 			url = url.replace(/\%25build\%25/g, message.details);
@@ -621,7 +621,6 @@ class Keyboard {
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ translate('libKeyboardDevice'), window.Electron.version.device ],
 				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
 				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
@@ -768,13 +767,8 @@ class Keyboard {
 	};
 
 	onSpaceMenu (shortcut: boolean) {
-		if (menuStore.isOpen('space')) {
-			menuStore.close('space');
-			return;
-		};
-
 		popupStore.close('search', () => {
-			menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.closeAll([ 'quickCapture' ], () => {
 				menuStore.open('space', {
 					element: '#navigationPanel',
 					className: 'fixed',
@@ -800,7 +794,7 @@ class Keyboard {
 		const element = '#button-navigation-plus';
 
 		popupStore.close('search', () => {
-			menuStore.closeAll(Constant.menuIds.navigation, () => {
+			menuStore.closeAll([ 'quickCapture', 'space' ], () => {
 				menuStore.open('quickCapture', {
 					element,
 					className: 'fixed',
@@ -1028,10 +1022,11 @@ class Keyboard {
 	};
 	
 	isSpecial (e: any): boolean {
-		return [ 
-			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, 
-			Key.alt, Key.meta, Key.up, Key.down, Key.left, Key.right,
-		].includes(this.eventKey(e));
+		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
+	};
+
+	isArrow (e: any): boolean {
+		return [ Key.up, Key.down, Key.left, Key.right ].includes(this.eventKey(e));
 	};
 
 	withCommand (e: any): boolean {

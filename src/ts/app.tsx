@@ -333,13 +333,15 @@ class App extends React.Component<object, State> {
 				authStore.phraseSet(phrase);
 
 				UtilData.createSession(() => {
-					authStore.accountSet(account);
 					keyboard.setPinChecked(isPinChecked);
 					commonStore.redirectSet(route || redirect || '');
-					commonStore.configSet(account.config, false);
 
-					UtilData.onInfo(account.info);
-					UtilData.onAuth({}, cb);
+					if (account) {
+						authStore.accountSet(account);
+						commonStore.configSet(account.config, false);
+						UtilData.onInfo(account.info);
+						UtilData.onAuth({}, cb);
+					};
 				});
 
 				win.off('unload').on('unload', (e: any) => {

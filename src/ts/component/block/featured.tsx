@@ -93,7 +93,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -160,6 +160,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					if ([ 'links', 'backlinks' ].includes(relationKey)) {
 						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
 						const l = options.length;
+
+						if (!l) {
+							return null;
+						};
 
 						return (
 							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
@@ -637,6 +641,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onLinks (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return;
+		};
+
 		const object = detailStore.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
@@ -644,16 +654,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: {
-				iconEmoji: it.iconEmoji,
-				iconImage: it.iconImage
-			}
+			object: it,
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
 				element: `#${elementId}`,
-				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', relationKey ].join('-'))),
+				className: 'featuredLinks',
+				title: relation.name,
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,

@@ -151,6 +151,7 @@ class MenuManager {
 
 					Separator,
 
+					{ label: Util.translate('electronMenuGallery'), click: () => Util.send(this.win, 'commandGlobal', 'gallery') },
 					{ label: Util.translate('electronMenuCommunity'), click: () => Util.send(this.win, 'commandGlobal', 'community') },
 					{ label: Util.translate('electronMenuTutorial'), click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
 					{ label: Util.translate('electronMenuContact'), click: () => Util.send(this.win, 'commandGlobal', 'contact') },

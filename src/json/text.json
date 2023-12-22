@@ -179,6 +179,7 @@
 	"electronMenuReleaseNotes": "What's new",
 	"electronMenuShortcuts": "Shortcuts",
 	"electronMenuCommunity": "Report a Bug",
+	"electronMenuGallery": "ANY Experience Gallery",
 	"electronMenuTutorial": "Help and Tutorials",
 	"electronMenuContact": "Contact Us",
 	"electronMenuTech": "Technical Information",
@@ -434,7 +435,7 @@
 	"blockTextBulleted": "Simple list",
 	"blockTextNumbered": "Numbered list",
 	"blockTextToggle": "Hide and show content inside",
-	"blockTextExisting": "Link to existing Object",
+	"blockTextExisting": "Create link to another object",
 	"blockTextFile": "Store file in original state",
 	"blockTextImage": "Upload and enrich the page with image",
 	"blockTextVideo": "Upload playable video",
@@ -526,7 +527,6 @@
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
-	"blockFeaturedTypesList": "Object %s: %s",
 	"blockFeaturedQuery": "Query",
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
@@ -535,8 +535,6 @@
 	"blockFeaturedTypeMenuOpenSet": "Open set",
 	"blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
 	"blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
-	"blockFeaturedLinks": "Links from object",
-	"blockFeaturedBacklinks": "Links to object",
 
 	"blockTableRow": "Row",
 	"blockTableColumn": "Column",
@@ -1213,6 +1211,7 @@
 	"menuHelpTech": "Technical Information",
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
+	"menuHelpGallery": "ANY Experience Gallery",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
@@ -1545,11 +1544,13 @@
 	"onboardingSpaceSelectTitle": "Meet Multiple Spaces",
 	"onboardingSpaceSelectDescription": "Click your profile icon to access the space selector. Switch between spaces or create new ones here.",
 
+	"onboardingQuickCaptureTitle": "Create objects with different types",
+	"onboardingQuickCaptureDescription": "Right-click the <span class=\"highlight\">\"Plus\"</span> button to use recent types. In this menu, you can select existing types, install from Anytype Library, or create new ones.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
-	"libKeyboardDevice": "Device",
 	"libKeyboardOSVersion": "OS version",
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",

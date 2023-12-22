@@ -34,6 +34,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	uiHidden = false;
 	width = 0;
 	refHeader: any = null;
+	refControls: any = null;
 	dir = 0;
 
 	state = {
@@ -98,6 +99,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				className="editorWrapper"
 			>
 				<Controls 
+					ref={ref => this.refControls = ref} 
 					key="editorControls" 
 					{...this.props} 
 					resize={this.resizePage} 
@@ -250,6 +252,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (onOpen) {
 				onOpen();
+			};
+
+			if (this.refControls) {
+				this.refControls.forceUpdate();
 			};
 
 			window.setTimeout(() => this.resizePage(), 15);
@@ -579,8 +585,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		if (ids.length) {
-
-			keyboard.shortcut('escape', e, (pressed: string) => {
+			keyboard.shortcut('escape', e, () => {
 				if (!menuOpen) {
 					selection.clear();
 				};

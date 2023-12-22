@@ -18,9 +18,10 @@
 		.item {
 			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
 
-			.iconObject { flex-shrink: 0; }
-			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
+			.iconObject { flex-shrink: 0; background: $colorShapeTertiary; border-radius: 10px; }
+			.iconObject.isTask { background: none; }
 
+			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
 			.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
 			.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: $colorTextSecondary; }
 

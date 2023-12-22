@@ -66,4 +66,13 @@
 			.clickable { align-items: center; gap: 0px 12px; }
 		}
 	}
+
+	/* Links, Backlinks */
+	.menu.menuSelect.featuredLinks {
+		.titleWrapper { padding-bottom: 0px; }
+		.item {
+			.info { width: 100%; }
+			.iconObject { margin: 0px; background-color: $colorShapeHighlightMedium; }
+		}
+	}
 }
