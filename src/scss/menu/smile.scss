@@ -5,7 +5,7 @@
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; }
 		.wrap { display: flex; flex-direction: column; }
-		.ReactVirtualized__List { padding: 0px; }
+		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
 		.head { color: $colorControlActive; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; }
 		.head {
