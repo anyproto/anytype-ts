@@ -112,6 +112,7 @@
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
+	"commonClear": "Clear",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -1002,7 +1003,6 @@
 
 	"menuCalendarToday": "Today",
 	"menuCalendarTomorrow": "Tomorrow",
-	"menuCalendarClear": "Clear",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
