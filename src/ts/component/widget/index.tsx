@@ -58,7 +58,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
-		const withPlus = this.isPlusAllowed(object);
+		const withPlus = this.isPlusAllowed();
 
 		const props = {
 			...this.props,
@@ -292,10 +292,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const { viewId } = block.content;
 		const object = this.getObject();
-		const { id, layout } = object;
+
+		if (!object) {
+			return;
+		};
+
 		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content || {};
-		const isSetOrCollection = UtilObject.isSetLayout(layout);
+		if (!child) {
+			return;
+		};
+
+		const { targetBlockId } = child.content;
+		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty ];
@@ -305,21 +313,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let isCollection = false;
 
 		if (isSetOrCollection) {
-			const rootId = this.ref.getRootId();
-			const blockId = 'dataview';
-			const view = Dataview.getView(rootId, blockId);
-			const typeId = Dataview.getTypeId(rootId, blockId, id, viewId);
-			const type = dbStore.getTypeById(typeId);
-
-			if (!type) {
+			const rootId = this.ref?.getRootId();
+			if (!rootId) {
 				return;
 			};
 
-			details = Dataview.getDetails(rootId, blockId, id, viewId);
-			flags = [ I.ObjectFlag.SelectTemplate ];
+			const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
+			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id, viewId);
+			const type = dbStore.getTypeById(typeId);
+
+			if (!view || !type) {
+				return;
+			};
+
+			details = Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId);
+			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
-			isCollection = Dataview.isCollection(rootId, blockId);
+			isCollection = Dataview.isCollection(rootId, Constant.blockId.dataview);
 		} else {
 			switch (targetBlockId) {
 				default:
@@ -331,7 +342,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					};
 
 					details.layout = type.recommendedLayout;
-					flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+					flags = flags.concat([ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ]);
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 
@@ -372,7 +383,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(id, [ created.id ]);
+				C.ObjectCollectionAdd(object.id, [ created.id ]);
 			};
 
 			UtilObject.openAuto(created);
@@ -380,7 +391,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};
@@ -608,18 +619,23 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
-	isPlusAllowed (object: any): boolean {
-		if (!object) {
+	isPlusAllowed (): boolean {
+		const object = this.getObject();
+		const { block, isEditing } = this.props;
+
+		if (!object || isEditing) {
 			return false;
 		};
 
-		const { block, isEditing } = this.props;
+		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+			return false;
+		};
+
 		const { layout } = block.content;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
-		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 
 		let allowed = true;
 
@@ -627,25 +643,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			allowed = false;
 		};
 
-		if (isSetOrCollection && this.ref) {
-			const { id } = object;
-			const rootId = this.ref.getRootId();
-			const blockId = 'dataview';
-			const typeId = Dataview.getTypeId(rootId, blockId, id);
+		if (UtilObject.isSetLayout(object.layout) && this.ref) {
+			const rootId = this.ref?.getRootId();
+			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
-			const restrictedTypeKeys = [
-				Constant.typeKey.video,
-				Constant.typeKey.audio,
-				Constant.typeKey.file,
-				Constant.typeKey.image
-			];
 
-			if (type && restrictedTypeKeys.includes(type.uniqueKey)) {
+			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
 				allowed = false;
 			};
 		};
 
-		return !isEditing && allowed;
+		return allowed;
 	};
 
 	getLimit ({ limit, layout }): number {
