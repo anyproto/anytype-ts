@@ -1886,6 +1886,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				event.params.fileType = param.content.type;
 			};
 
+			if (param.type == I.BlockType.Embed) {
+				event.params.processor = param.content.processor;
+			};
+
 			if (param.type == I.BlockType.Dataview) {
 				event.id = param.content.isCollection ? 'Collection' : 'Set';
 			};

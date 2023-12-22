@@ -583,10 +583,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							focus.apply();
 						});
 
-						analytics.event('CreateBlock', { 
-							middleTime: message.middleTime, 
-							type: param.type, 
-						});
+						analytics.event('CreateBlock', { middleTime: message.middleTime, type: param.type });
 					});
 				} else
 				if ((item.type == I.BlockType.Text) && ![ I.TextStyle.Code, I.TextStyle.Callout ].includes(item.itemId)) {
