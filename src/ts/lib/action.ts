@@ -5,10 +5,11 @@ import Constant from 'json/constant.json';
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
-		const { profile } = blockStore;
+		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
-		if (rootId == profile) {
+		// Prevent closing of system objects
+		if ([ root, widgets ].includes(rootId)) {
 			return;
 		};
 
