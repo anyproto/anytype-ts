@@ -881,7 +881,12 @@ class UtilData {
 
 	getThreadStatus (rootId: string, key: string) {
 		const { account } = authStore;
-		const { info } = account;
+
+		if (!account) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		const { info } = account || {};
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 
