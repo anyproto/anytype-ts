@@ -332,8 +332,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
+
+			if (!url) {
+				return;
+			};
+
 			const scheme = UtilCommon.getScheme(url);
 			const isInside = scheme == Constant.protocol;
+			const isLocal = scheme == 'file';
 
 			let route = '';
 			let target;
@@ -351,17 +357,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				type = I.PreviewType.Link;
 			};
 
-			Preview.previewShow({
-				target,
-				type,
-				element,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks: this.marks,
-				onChange: this.setMarks,
-			});
+			if (!isLocal) {
+				Preview.previewShow({
+					target,
+					type,
+					element,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					marks: this.marks,
+					onChange: this.setMarks,
+				});
+			};
 
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();

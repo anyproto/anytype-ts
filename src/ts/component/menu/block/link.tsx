@@ -242,8 +242,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-		const isUrl = UtilCommon.matchUrl(filter) || filter.match(new RegExp(regProtocol));
+		const regDomain = /^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/i;
+		const isLocal = filter.match(/^file:/);
+		const isUrl = UtilCommon.matchUrl(filter) || filter.match(new RegExp(regDomain)) || isLocal;
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		const buttons: any[] = [
