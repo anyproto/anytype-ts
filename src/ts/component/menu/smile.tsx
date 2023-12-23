@@ -27,7 +27,7 @@ const ID_RECENT = 'recent';
 const ID_BLANK = 'blank';
 
 const BLANK_ITEM = {
-	itemId:ID_BLANK
+	itemId: ID_BLANK
 };
 
 class MenuSmile extends React.Component<I.Menu, State> {
