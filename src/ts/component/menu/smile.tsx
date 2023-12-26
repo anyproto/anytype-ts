@@ -23,6 +23,7 @@ const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;
 const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
+
 const ID_RECENT = 'recent';
 const ID_BLANK = 'blank';
 
@@ -365,11 +366,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
-		const fillRowWithBlank = (rowChildren) => {
-			const len = rowChildren.length;
+		const fillRowWithBlankChildren = row => {
+			const len = row.children.length;
+
 			if ((len > 0) && (len < LIMIT_ROW)) {
-				rowChildren.push(...new Array(LIMIT_ROW - len).fill(BLANK_ITEM));
-			}
+				row.children.push(...new Array(LIMIT_ROW - len).fill({ itemId: ID_BLANK }));
+			};
+
+			return row;
 		};
 
 		if (length && (length <= LIMIT_SEARCH)) {
@@ -405,16 +409,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 			n++;
 			if ((n == LIMIT_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_ROW))) {
-				fillRowWithBlank(row.children);
-				ret.push(row);
+				ret.push(fillRowWithBlankChildren(row));
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
 		if (row.children.length < LIMIT_ROW) {
-			fillRowWithBlank(row.children);
-			ret.push(row);
+			ret.push(fillRowWithBlankChildren(row));
 		};
 
 		return ret;
