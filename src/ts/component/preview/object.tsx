@@ -352,12 +352,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								<div className="heading">
 									<IconObject size={size} iconSize={iconSize} object={object} />
 									<div className="name">{name}</div>
-									<div className="description">{description}</div>
-									<div className="featured">
-										<ObjectType object={type} />
-										<div className="bullet" />
-										{author.name}
-									</div>
+									<div className="featured" />
 								</div>
 
 								<div className="blocks">
