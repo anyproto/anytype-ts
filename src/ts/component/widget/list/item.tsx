@@ -57,7 +57,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		};
 		
 		let inner = (
-			<div className="inner">
+			<div className="inner" onMouseDown={this.onClick}>
 				<IconObject 
 					id={iconKey}
 					key={iconKey}
@@ -114,7 +114,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className={[ 'item', (canDrag ? 'canDrag' : '') ].join(' ')}
 				key={object.id}
-				onMouseDown={this.onClick}
 				onContextMenu={e => this.onContext(e, false)}
 				style={style}
 			>
