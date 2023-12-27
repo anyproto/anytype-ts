@@ -330,6 +330,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		menuParam = Object.assign(menuParam, {
 			data: {
+				noScroll: true,
+				noVirtualisation: true,
 				filter: '',
 				options: options,
 				onSwitch: (e: any, item: any) => {
