@@ -830,7 +830,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (range.to && (range.from == range.to) && (range.to == value.length)) {
+			if ((range.from == range.to) && (range.to == value.length)) {
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
