@@ -92,6 +92,9 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
+	Util.log('info', 'CreateWindow: ' + deeplinkingUrl + ' ' + JSON.stringify(process.argv));
+
+
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	mainWindow.on('close', (e) => {
@@ -189,5 +192,11 @@ app.on('activate', () => {
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
+
 	deeplinkingUrl = url;
+
+	if (mainWindow) {
+		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+		mainWindow.show();
+	};
 });
