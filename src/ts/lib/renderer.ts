@@ -9,12 +9,13 @@ class Renderer {
 		const winId = Number(window.Electron.currentWindow().windowId) || 0;
 
 		args.shift();
-		args = args.map(it => {
-			if ('undefined' == typeof(it)) {
+		args = args.map((it: any) => {
+			if (('undefined' == typeof(it)) || (it === null)) {
 				it = '';
 			};
 			return it;
 		});
+
 		window.Electron.Api(winId, cmd, UtilCommon.objectCopy(args));
 	};
 
