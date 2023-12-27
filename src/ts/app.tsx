@@ -292,13 +292,14 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, route, account, phrase, languages, isPinChecked } = data;
+		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
+		const route = String(data.route || redirect || '');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -334,7 +335,7 @@ class App extends React.Component<object, State> {
 
 				UtilData.createSession(() => {
 					keyboard.setPinChecked(isPinChecked);
-					commonStore.redirectSet(route || redirect || '');
+					commonStore.redirectSet(route);
 
 					if (account) {
 						authStore.accountSet(account);
@@ -357,7 +358,7 @@ class App extends React.Component<object, State> {
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(route || redirect || '');
+				commonStore.redirectSet(route);
 				Renderer.send('keytarGet', accountId);
 
 				cb();
