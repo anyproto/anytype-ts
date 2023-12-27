@@ -3,7 +3,6 @@
 const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
-const os = require('os');
 const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
@@ -95,12 +94,6 @@ nativeTheme.on('updated', () => {
 function createWindow () {
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
-	if (process.env.ELECTRON_DEV_EXTENSIONS) {
-		BrowserWindow.addDevToolsExtension(
-			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
-		);
-	};
-
 	mainWindow.on('close', (e) => {
 		Util.log('info', 'closeMain: ' + app.isQuiting);
 
@@ -141,6 +134,8 @@ function createWindow () {
 			console.error('[Api] method not defined:', cmd);
 		};
 	});
+
+	
 };
 
 app.on('ready', () => {
@@ -194,9 +189,5 @@ app.on('activate', () => {
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
-
-	if (mainWindow) {
-		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
-		mainWindow.show();
-	};
+	deeplinkingUrl = url;
 });

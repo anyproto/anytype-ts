@@ -357,7 +357,7 @@ class App extends React.Component<object, State> {
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(redirect || '');
+				commonStore.redirectSet(route || redirect || '');
 				Renderer.send('keytarGet', accountId);
 
 				cb();
