@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { UtilObject, UtilCommon, UtilRouter, I, C, translate, keyboard, Preview, analytics } from 'Lib';
+import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 

@@ -314,8 +314,6 @@
 	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Show Recovery Phrase",
 
-	"usecase0Title": "Empty",
-	"usecase0Label": "Just a blank canvas",
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
 	"usecase3Title": "Bookshelf",
@@ -324,9 +322,8 @@
 	"usecase4Label": "Keep your daily notes and self-reflections secure and private",
 	"usecase5Title": "Strategic Writing",
 	"usecase5Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
-
-	"pageMainUsecaseTitle": "How would you like to start?",
-	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
+	"usecase6Title": "Empty",
+	"usecase6Label": "Just a blank canvas",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 

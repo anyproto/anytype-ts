@@ -432,6 +432,12 @@
 		}
 	}
 
+	.menu.menuSelect.withFullDescripion {
+		.item.withDescription {
+			.iconObject { background-color: $colorShapeHighlightMedium; }
+		}
+	}
+
 	.menu.menuSelect.featuredLinks {
 		.item {
 			.iconObject { background-color: $colorShapeHighlightMedium; }

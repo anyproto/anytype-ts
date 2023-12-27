@@ -411,7 +411,6 @@ class Analytics {
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
-			'main/usecase':		 'ScreenUsecase',
 		};
 
 		return map[key] || '';
