@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface State {
@@ -45,7 +45,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
-				keyboard.onBack();
+				UtilObject.openHome('route');
 				popupStore.open('usecase', { data: { object: message.info } });
 			};
 		});
