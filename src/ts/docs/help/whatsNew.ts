@@ -28,7 +28,7 @@ export default [
 
 	bullet(`Fixed a bug that caused inline sets to be blank on creation.`),
 	bullet(`${hl('file://')} scheme is now properly working for links. Thanks, ${link('https://community.anytype.io/t/12820', 'Filip')}!`),
-	bullet(`Fixed a bug preventing renaming inline set or collection. Thanks, ${link('https://community.anytype.io/t/cannot-rename-an-inline-set-or-collection/12796', 'Shampra')}!`),
+	bullet(`Fixed a bug preventing renaming inline sets or collections. Thanks, ${link('https://community.anytype.io/t/cannot-rename-an-inline-set-or-collection/12796', 'Shampra')}!`),
 	bullet(`Emoji popup is no longer scrollable. Thanks, ${link('https://community.anytype.io/t/emoji-pop-up-become-scrollable-0-36-24-beta-and-later/12793', 'PavloUA')}!`),
 
 	h2(`💻 Tech:`),
