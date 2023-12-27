@@ -404,6 +404,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
 	h1(`2023: Ready, Set... Declutter 😎`),
 	text(`Welcome to the first release of the new year! After some major refactoring work in the last quarter of 2022, we're pleased to deliver an update that we hope will allow you to clear the clutter from your account and start the new year with a clean, productive slate.`),
 
@@ -462,7 +463,6 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	/*
 	h1(`September: Preparation and Polish 💅`),
 
 	text(`Throughout September, our backend and platform teams have been occupied with refactoring relations aka the &quot;Relations as an Object&quot; project. This effort, though not visible in this month's release, is essential to unblocking long-awaited features such as Relations deletion/modification and in-line Sets (we promise, it's coming!).`),
