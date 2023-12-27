@@ -18,7 +18,7 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	h1(`Patch 0.37.2`),
+	title(`Patch 0.37.2`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
