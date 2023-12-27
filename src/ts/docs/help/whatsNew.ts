@@ -18,7 +18,27 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`A Winter Wonderland of Fresh Features ☃️`),
+	h1(`Patch 0.37.2`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	bullet(`Restrictions to add templates to Note type have been removed.`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`Fixed a bug that caused inline sets to be blank on creation.`),
+	bullet(`${hl('file://')} scheme is now properly working for links. Thanks, ${link('https://community.anytype.io/t/12820', 'Filip')}!`),
+	bullet(`Fixed a bug preventing renaming inline set or collection. Thanks, ${link('https://community.anytype.io/t/cannot-rename-an-inline-set-or-collection/12796', 'Shampra')}!`),
+	bullet(`Emoji popup is no longer scrollable. Thanks, ${link('https://community.anytype.io/t/emoji-pop-up-become-scrollable-0-36-24-beta-and-later/12793', 'PavloUA')}!`),
+
+	h2(`💻 Tech:`),
+	bullet(`Inter font has been updated to version 4.0. Thanks, ${link('https://github.com/Linerly', 'Linerly')}!`),
+	bullet(`Katex has been updated to 0.16.9 to fix crash when entering special symbols. Thanks, ${link('https://community.anytype.io/t/uncaught-katex-error-when-pasting-special-symbols-in-latex-block/12164', 'Jannis')}!`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`A Winter Wonderland of Fresh Features ☃️`),
 	text(`Happy festive season, Anytypers! We’re excited to be bidding 2023 farewell with another huge release that addresses some long standing community requests, gives you greater control over your data management, and unlocks the possibility to share your pre-created templates and use cases with other Anytypers. Let’s jump in!`),
 
 	h2(`💎 Highlights of this Release:`),
@@ -71,12 +91,11 @@ export default [
 	h3(`Updated Emoji Library`),
 	text(`The emoji library has been updated to include additional emojis.`),
 
-	h2(`⚡ Tech:`),
+	h2(`💻 Tech:`),
 	bullet(`Fixed application icons in Linux builds. Thanks, ${link('https://github.com/D-Brox', 'D-Brox')}!`),
 	bullet(`Closed possible XSS attack vectors in block content. Thanks, ${link('https://github.com/dragosrotaru', 'dragosrotaru')}!`),
 
-	h2(`🐛 Fixes:`),
-
+	h2(`🐛 Bug Fixes:`),
 	bullet(`Fixed: Calendar view now properly loads objects outside of current month. Thanks, ${link('https://community.anytype.io/t/objects-only-appear-in-their-months/12401', 'edion86')}!`),
 	bullet(`Fixed: Emojis & Mentions can now be easily deleted with backspace. Thanks, ${link('https://community.anytype.io/t/deleting-and-typing-with-emojis-via-ctrl-e-takes-awhile/2710', 'whereisj9')}!`),
 	bullet(`Fixed: Space key can now be used properly in @mention searches. Thanks, ${link('https://community.anytype.io/t/allow-using-spaces-in-object-name-during-linking-with/8373', 'dzshch')}!`),
