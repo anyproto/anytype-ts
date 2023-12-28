@@ -25,7 +25,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
-							action.inner = <div className={`inner isTag textColor textColor-${action.className}`} />;
+							action.inner = <div className={`inner isMultiSelect textColor textColor-${action.className}`} />;
 							action.icon = 'color';
 							action.checkbox = action.value == this.color;
 						};

@@ -24,7 +24,7 @@
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
-.cell.isEditing.c-select.isStatus {
+.cell.isEditing.c-select.isSelect {
 	.icon.clear { display: block; }
 	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }

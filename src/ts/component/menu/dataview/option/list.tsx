@@ -319,7 +319,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const isStatus = relation.format == I.RelationType.Status;
+		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
@@ -338,7 +338,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 			if (canAdd && !check.length) {
 				let addItemNameKey = 'menuDataviewOptionListCreateOption';
-				if (isStatus) {
+				if (isSelect) {
 					addItemNameKey = 'menuDataviewOptionListSetStatus';
 				};
 				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
