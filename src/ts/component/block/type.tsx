@@ -219,8 +219,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		} else {
 			this.onChange(item.id);
 		};
-
-		Storage.addLastUsedType(item.id);
 	};
 
 	onObjectTo (layout: I.ObjectLayout) {

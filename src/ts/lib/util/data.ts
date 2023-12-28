@@ -268,8 +268,6 @@ class UtilData {
 						commonStore.redirectSet('');
 					};
 
-					Storage.initLastUsedTypes();
-
 					if (!color) {
 						Storage.set('color', 'orange');
 					};
@@ -309,6 +307,11 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+				],
+				sorts: [
+					{ relationKey: 'spaceId', type: I.SortType.Desc },
+					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -439,7 +442,6 @@ class UtilData {
 		items = items.concat(dbStore.getTypes().filter(it => {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
-		items = this.sortByLastUsedTypes(items);
 
 		if (limit) {
 			items = items.slice(0, limit);
