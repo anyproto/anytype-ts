@@ -30,7 +30,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, canAdd, noFilter, keepSelected } = data;
+		const { filter, canAdd, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
@@ -187,7 +187,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	unbind () {
 		$(window).off('keydown.menu');
 		$(`#${this.props.getId()}`).off('click');
-		menuStore.close('dataviewOptionEdit');
 	};
 
 	onKeyDown (e: any) {
@@ -339,7 +338,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper, keepSelected } = data;
+		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
@@ -365,10 +364,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 				};
 				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
 			};
-		};
-
-		if (!keepSelected) {
-			items = items.filter(it => !value.includes(it.id));
 		};
 
 		return items.concat(ret);

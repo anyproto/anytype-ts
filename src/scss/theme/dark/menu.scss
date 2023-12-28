@@ -215,7 +215,7 @@
 
         .section.colorPicker {
             .items {
-                .item.hover, .item:hover { box-shadow: 0 0 0 1px $colorBgPrimary, 0 0 0 3px $colorShapePrimary; }
+                .item.hover, .item:hover { box-shadow: 0px 0px 0px 1px $colorBgPrimary, 0px 0px 0px 3px $colorShapePrimary; }
 
                 .item.color-grey { background: $colorControlActive; }
                 .item.color-yellow { background: $colorYellow; }

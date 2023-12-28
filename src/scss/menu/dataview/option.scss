@@ -58,7 +58,7 @@
 			.items {
 				.item.color { width: 38px; height: 38px; border-radius: 50%; position: relative;; }
 				.item.color::before { display: none; }
-				.item.hover, .item:hover { box-shadow: 0 0 0 1px $colorBgPrimary, 0 0 0 3px $colorShapePrimary; }
+				.item.hover, .item:hover { box-shadow: 0px 0px 0px 1px $colorBgPrimary, 0px 0px 0px 3px $colorShapePrimary; }
 
 				.item.color-grey { background: $colorControlActive; }
 				.item.color-yellow { background: $colorYellow; }
@@ -71,7 +71,7 @@
 				.item.color-teal { background: $colorTeal; }
 				.item.color-lime { background: $colorLime; }
 
-				.icon.tick { position: absolute; left: 50%; top: 50%; margin: -10px 0 0 -10px; width: 20px; height: 20px; background-image: url('~img/icon/tick.svg'); }
+				.icon.tick { position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px; width: 20px; height: 20px; background-image: url('~img/icon/tick.svg'); }
 			}
 		}
 		.section.colorPicker:after { margin: 16px 0px 0px 0px; }
@@ -84,7 +84,7 @@
 	}
 
 	.menu.menuDataviewOptionList.featuredRelation {
-		.titleWrapper { padding-bottom: 0; }
+		.titleWrapper { padding-bottom: 0px; }
 		.item {
 			.icon.chk { right: 8px; }
 		}
