@@ -21,30 +21,10 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data, classNameWrap } = param;
 		const { value } = data;
 		const items = this.getData();
-
-		const d = Number(UtilDate.date('j', value));
-		const m = Number(UtilDate.date('n', value));
-		const y = Number(UtilDate.date('Y', value));
+		const { d, m, y } = UtilDate.getCalendarDateParam(value);
 
 		const today = UtilDate.now();
 		const tomorrow = today + 86400;
-
-		const stepMonth = (dir) => {
-			let nY = y;
-			let nM = m + dir;
-
-			if (nM < 1) {
-				nM = 12;
-				nY -= 1;
-			};
-			if (nM > 12) {
-				nM = 1;
-				nY += 1;
-			};
-
-			return UtilDate.timestamp(nY, nM, 1);
-		};
-
 		const days = [];
 		const months = [];
 		const years = [];
@@ -93,8 +73,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							/>
 						</div>
 						<div className="side right">
-							<div className="btn prevMonth" onClick={() => { this.setValue(stepMonth(-1), false, false); }} />
-							<div className="btn nextMonth" onClick={() => { this.setValue(stepMonth(1), false, false); }} />
+							<div className="btn prevMonth" onClick={() => this.setValue(this.stepMonth(value, -1), false, false)} />
+							<div className="btn nextMonth" onClick={() => this.setValue(this.stepMonth(value, 1), false, false)} />
 						</div>
 					</div>
 
@@ -133,11 +113,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				<div className="foot">
 					<div className="sides">
 						<div className="side left">
-							<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
-							<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true)}>{translate('menuCalendarToday')}</div>
+							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('menuCalendarTomorrow')}</div>
 						</div>
 						<div className="side right">
-							<div className="btn clear" onClick={() => { this.setValue(null, true, true); }}>{translate('commonClear')}</div>
+							<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
 						</div>
 					</div>
 				</div>
@@ -149,9 +129,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-
-		const m = Number(UtilDate.date('n', value));
-		const y = Number(UtilDate.date('Y', value));
+		const { m, y } = UtilDate.getCalendarDateParam(value);
 
 		this.refMonth.setValue(m);
 		this.refYear.setValue(y);
@@ -181,6 +159,24 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value } = data;
 		
 		return UtilDate.getCalendarMonth(value);
+	};
+
+	stepMonth (value: number, dir: number) {
+		const { m, y } = UtilDate.getCalendarDateParam(value);
+
+		let nY = y;
+		let nM = m + dir;
+
+		if (nM < 1) {
+			nM = 12;
+			nY -= 1;
+		};
+		if (nM > 12) {
+			nM = 1;
+			nY += 1;
+		};
+
+		return UtilDate.timestamp(nY, nM, 1);
 	};
 	
 });

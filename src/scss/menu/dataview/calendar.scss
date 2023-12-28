@@ -4,7 +4,7 @@
 	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
-		.content { padding: 10px 0px; }
+		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
 		.inner { user-select: none; }
 
 		.head { padding: 0px 16px; }
