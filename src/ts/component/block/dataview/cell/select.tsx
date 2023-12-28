@@ -323,7 +323,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any) {
-		const { id, canEdit } = this.props;
+		const { id, canEdit, menuClassName, menuClassNameWrap } = this.props;
 
 		if (!canEdit) {
 			return;
@@ -334,6 +334,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 
 		menuStore.open('dataviewOptionEdit', { 
 			element: `#${id} #item-${item.id}`,
+			className: menuClassName,
+			classNameWrap: menuClassNameWrap,
 			offsetY: 4,
 			data: {
 				option: item,
