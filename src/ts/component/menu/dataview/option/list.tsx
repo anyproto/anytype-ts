@@ -57,7 +57,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			let content = null;
 			if (item.id == 'add') {
 				content = (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+					<div 
+						id="item-add" 
+						className="item add" 
+						style={param.style}
+						onClick={e => this.onClick(e, item)} 
+						onMouseEnter={e => this.onOver(e, item)}
+					>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -67,12 +73,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
-						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={e => this.onOver(e, item)}>
+						<div className="clickable" onClick={e => this.onClick(e, item)}>
 							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
 						</div>
 						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+							<Icon className="more" onClick={e => this.onEdit(e, item)} />
 						</div>
 						{active ? <Icon className="chk" /> : ''}
 					</div>
