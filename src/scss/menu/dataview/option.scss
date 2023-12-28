@@ -47,7 +47,7 @@
 
 	.menu.menuDataviewOptionEdit { width: 256px; }
 	.menu.menuDataviewOptionEdit {
-		.content { padding-top: 12px; }
+		.content { padding-top: 12px; overflow: visible; max-height: unset; }
 		.filter { margin-bottom: 8px; }
 		.item:hover::before { background: $colorShapeHighlightMedium; }
 		.item.active::before { z-index: 1; }

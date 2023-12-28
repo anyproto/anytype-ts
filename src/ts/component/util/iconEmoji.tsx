@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Emoji } from 'emoji-mart';
 import { commonStore, menuStore } from 'Store';
 import { UtilSmile } from 'Lib';
 import { observer } from 'mobx-react';

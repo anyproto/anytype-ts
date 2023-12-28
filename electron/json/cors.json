@@ -36,7 +36,8 @@
 		"https://*.googleapis.com",
 		"https://mirostatic.com",
 		"https://miro.com",
-		"https://*.google.com"
+		"https://*.google.com",
+		"https://*.figma.com/"
 	],
 
 	"font-src": [ 
@@ -47,7 +48,8 @@
 		"https://*.vimeocdn.com",
 		"https://*.gstatic.com",
 		"https://mirostatic.com",
-		"https://miro.com"
+		"https://miro.com",
+		"https://*.figma.com/"
 	],
 
 	"connect-src": [ 
@@ -76,7 +78,9 @@
 		"https://*.split.io",
 		"https://*.onetrust.com",
 		"https://mirostatic.com",
-		"wss://miro.com"
+		"wss://miro.com",
+		"https://*.figma.com/",
+		"wss://*.figma.com/"
 	],
 
 	"script-src-elem": [
@@ -94,6 +98,7 @@
 		"https://*.doubleclick.net",
 		"https://*.cookielaw.org",
 		"https://mirostatic.com",
+		"https://*.figma.com/",
 		"https://cdn.jsdelivr.net"
 	],
 
@@ -106,6 +111,7 @@
 		"https://*.google.com",
 		"https://miro.com",
 		"https://*.miro.com",
+		"https://*.figma.com/",
 		"file://*"
 	],
 

@@ -152,7 +152,7 @@
 			.block { height: 100%; border: 0px !important; padding: 0px; margin: 0px; color: $colorTextPrimary; }
 			.block {
 				.selectable { flex-grow: 1; }
-				.wrapContent, .wrap, .flex, .dropTarget, #value { height: 100%; }
+				.wrapContent, .wrap, .flex, .dropTarget { height: 100%; }
 
 				.wrapMenu { display: none; }
 				.wrapContent { width: 100%; display: flex; flex-direction: column;  }
@@ -162,12 +162,7 @@
 				.markers { padding: 9px 0px 9px 9px; }
 				.wrap { display: table; }
 
-				.editableWrap { display: table; }
-				#value { display: table-cell; }
-
-				#value, .placeholder { padding: 9px 20px 9px 0px; }
 				.focusable.isFocused { background: none; }
-				.placeholder { display: none !important; }
 			}
 
 			.icon.menu { width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; }
@@ -183,6 +178,22 @@
 			}
 
 			.block.blockText { @include text-common; }
+			.block.blockText {
+				> .wrapContent {
+					> .selectable {
+						> .dropTarget {
+							> .flex {
+								> .editableWrap { display: table; }
+								> .editableWrap {
+									#value { display: table-cell; height: 100%; }
+									.placeholder { display: none !important; }
+									#value, .placeholder { padding: 9px 20px 9px 0px; }
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 

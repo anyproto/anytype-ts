@@ -330,6 +330,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		menuParam = Object.assign(menuParam, {
 			data: {
+				noScroll: true,
+				noVirtualisation: true,
 				filter: '',
 				options: options,
 				onSwitch: (e: any, item: any) => {
@@ -1556,6 +1558,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const parent = blockStore.getLeaf(rootId, element.parentId);
+		if (!parent) {
+			return;
+		};
+
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
