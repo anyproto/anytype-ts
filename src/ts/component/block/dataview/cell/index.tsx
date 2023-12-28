@@ -14,8 +14,6 @@ import CellFile from './file';
 
 interface Props extends I.Cell {
 	elementId?: string;
-	menuClassName?: string;
-	menuClassNameWrap?: string;
 	showTooltip?: boolean;
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;

@@ -46,6 +46,7 @@
 	}
 	
 	.menu.menuDataviewOptionEdit {
+		.content { overflow: visible; max-height: unset; }
 		.filter { margin-bottom: 8px; }
 		.item:hover::before { background: $colorShapeHighlightMedium; }
 		.item.active::before { z-index: 1; }
