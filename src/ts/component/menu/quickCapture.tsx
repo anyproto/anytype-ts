@@ -174,7 +174,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[1].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
+			sections[1].children.push({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
 		};
 
 		sections = sections.filter((section: any) => {
