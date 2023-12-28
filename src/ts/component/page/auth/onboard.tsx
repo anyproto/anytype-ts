@@ -297,11 +297,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					UtilData.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
+
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
-					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.Skip });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 
 					C.WorkspaceSetInfo(commonStore.space, { name }, () => {
-						Action.importUsecase(commonStore.space, I.Usecase.Skip, callBack);
+						Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
 					});
 				});
 			});

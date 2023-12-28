@@ -4,8 +4,9 @@ import Constant from 'json/constant.json';
 const DOMAINS: any  = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
-DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.com/maps' ];
+DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
+DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
 
 class UtilEmbed {
 
@@ -30,6 +31,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
 	};
 
+	getFigmaHtml (content: string): string {
+		return `<iframe src="${content}" width="640" height="360" allowfullscreen></iframe>`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (let i in DOMAINS) {
@@ -47,8 +52,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = url.replace(/\/watch\/?\??/, '/embed/');
-				url = url.replace('v=', '');
+				url = `https://www.youtube.com/embed/${this.getYoutubeId(url)}`;
 				break;
 			};
 
@@ -92,9 +96,18 @@ class UtilEmbed {
 				url = url.split('?')[0];
 				url = url.replace(/\/board\/?\??/, '/live-embed/');
 			};
+
+			case I.EmbedProcessor.Figma: {
+				url = `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+			};
 		};
 
 		return url;
+	};
+
+	getYoutubeId (url: string): string {
+		const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+		return (m && m[2].length) ? m[2] : '';
 	};
 
 };

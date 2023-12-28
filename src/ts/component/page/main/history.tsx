@@ -170,8 +170,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
 
-		sideLeft.off('scroll').scroll(() => { this.onScrollLeft(); });
-		sideRight.off('scroll').scroll(() => { this.onScrollRight(); });
+		sideLeft.off('scroll').on('scroll', () => this.onScrollLeft());
+		sideRight.off('scroll').on('scroll', () => this.onScrollRight());
 
 		blockStore.updateNumbers(rootId);
 
@@ -230,21 +230,32 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onScrollRight () {
+		const { isPopup } = this.props;
 		const { versions } = this.state;
-		const win = $(window);
 		const node = $(this.node);
+		const container = UtilCommon.getPageContainer(isPopup);
+
 		const sideRight = node.find('#body > #sideRight');
 		const wrap = sideRight.find('.wrap');
 		const sections = wrap.find('.section');
+		const { wh } = UtilCommon.getWindowDimensions();
+
+		let offset = { top: 0, left: 0 };
+
+		if (isPopup && container.length) {
+			offset = container.offset();
+		};
 
 		this.scrollRight = sideRight.scrollTop();
-		if (this.scrollRight >= wrap.height() - win.height()) {
+
+		if (this.scrollRight >= wrap.height() - wh) {
 			this.loadList(versions[versions.length - 1].id);
 		};
 
 		sections.each((i: number, item: any) => {
 			item = $(item);
-			const top = item.offset().top;
+
+			const top = item.offset().top - offset.top;
 			
 			let clone = sideRight.find('.section.fix.c' + i);
 			if (top < 0) {

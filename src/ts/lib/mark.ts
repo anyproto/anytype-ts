@@ -637,7 +637,6 @@ class Mark {
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
 		};
-		
 		return attr;
 	};
 

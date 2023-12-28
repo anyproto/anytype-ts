@@ -23,7 +23,13 @@ const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;
 const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
+
 const ID_RECENT = 'recent';
+const ID_BLANK = 'blank';
+
+const BLANK_ITEM = {
+	itemId: ID_BLANK
+};
 
 class MenuSmile extends React.Component<I.Menu, State> {
 
@@ -86,7 +92,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				const Item = (item: any) => {
 					const str = `:${item.itemId}::skin-tone-${item.skin}:`;
 					return (
-						<div 
+						item.itemId == ID_BLANK ? <div className="item" /> : <div 
 							id={'item-' + item.id} 
 							className="item" 
 							onMouseEnter={e => this.onMouseEnter(e, item)}
@@ -360,6 +366,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
+		const fillRowWithBlankChildren = row => {
+			const len = row.children.length;
+
+			if ((len > 0) && (len < LIMIT_ROW)) {
+				row.children.push(...new Array(LIMIT_ROW - len).fill({ itemId: ID_BLANK }));
+			};
+
+			return row;
+		};
+
 		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
 				{ 
@@ -393,14 +409,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 			n++;
 			if ((n == LIMIT_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_ROW))) {
-				ret.push(row);
+				ret.push(fillRowWithBlankChildren(row));
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
 		if (row.children.length < LIMIT_ROW) {
-			ret.push(row);
+			ret.push(fillRowWithBlankChildren(row));
 		};
 
 		return ret;
@@ -518,7 +534,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (this.coll > current.children.length) {
+		if ((this.coll > current.children.length) || (current.children[this.coll].itemId == ID_BLANK)) {
 			this.coll = 0;
 		};
 
@@ -543,7 +559,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		// Arrow right
-		if (this.coll > current.children.length - 1) {
+		if ((this.coll > current.children.length - 1) || (current.children[this.coll].itemId == ID_BLANK)) {
 			this.coll = 0;
 			this.onArrowVertical(dir);
 			return;
@@ -576,6 +592,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
+		if (id == ID_BLANK) {
+			return;
+		}
+		
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
@@ -610,6 +630,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
+		if (id == ID_BLANK) {
+			return;
+		}
+
 		const { close } = this.props;
 		const win = $(window);
 		const item = UtilSmile.data.emojis[id];

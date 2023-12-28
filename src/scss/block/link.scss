@@ -112,7 +112,7 @@
 
 			.cardName { flex-wrap: nowrap; vertical-align: top; max-width: 100%; }
 			.cardName {
-				.name { @include text-overflow-nw; line-height: 19px; border-bottom: 0.075em solid; border-color: inherit; }
+				.name { @include text-overflow-nw; line-height: 19px; border-color: inherit; }
 			}
 
 			.cardDescription { @include text-small; }

@@ -4,7 +4,7 @@
 .pageMainImport {
 	.wrapper { width: 704px; margin: 0px auto; }
 	.wrapper {
-		.frame { position: absolute; }
+		.frame { position: absolute; text-align: center; }
 		.title { @include text-header3; }
 	}
 }
