@@ -21,7 +21,7 @@
 
 		.cell.first .bullet { display: none; }
 
-		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
+		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; cursor: default; }
 		.cellContent.disabled { opacity: 1; }
 
 		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: $colorShapeHighlightMedium; }
