@@ -52,8 +52,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			);
 		};
 
-		console.log(columns);
-
 		const Row = (item: any) => {
 			const cn = [ 'row' ];
 
