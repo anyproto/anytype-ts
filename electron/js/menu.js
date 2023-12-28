@@ -1,9 +1,6 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
-const userPath = app.getPath('userData');
-const logPath = path.join(userPath, 'logs');
-
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
@@ -53,8 +50,8 @@ class MenuManager {
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: Util.translate('electronMenuDirectory'), click: () => { shell.openPath(userPath); } },
-					{ label: Util.translate('electronMenuLogs'), click: () => { shell.openPath(logPath); } },
+					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
+					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
 
 					Separator,
 					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },

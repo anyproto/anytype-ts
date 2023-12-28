@@ -7,10 +7,11 @@ const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
-
-const userPath = app.getPath('userData');
-const logPath = path.join(userPath, 'logs');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
+
+if (is.development) {
+	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
+};
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -19,8 +20,10 @@ const MenuManager = require('./electron/js/menu.js');
 const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
-
 const Cors = require('./electron/json/cors.json');
+
+const userPath = Util.userPath();
+const logPath = Util.logPath();
 const csp = [];
 
 for (let i in Cors) {
