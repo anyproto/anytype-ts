@@ -322,7 +322,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				fill = (callBack: () => void) => {
 					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
-					callBack();
+
+					C.BlockTableRowListFill(rootId, [ rowId ], () => {
+						C.BlockTableColumnListFill(rootId, [ columnId ], callBack);
+					});
 				};
 				break;
 			};
