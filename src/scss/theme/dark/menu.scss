@@ -276,6 +276,8 @@
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
         .day:hover { background: #f9d77e; color: #ad8620 !important; }
+        .day.th { color: $colorControlActive !important; }
+        .day.th:hover { background: none; }
         .day.active { color: $colorOrange; }
     }
 
@@ -446,6 +448,12 @@
 	.menu.menuSelect.spaceSelect {
 		.item {
 			.icon.add { border-color: $colorShapeSecondary; }
+		}
+	}
+
+	.menu.menuSelect.withFullDescripion {
+		.item.withDescription {
+			.iconObject { background-color: $colorShapeHighlightMedium; }
 		}
 	}
 

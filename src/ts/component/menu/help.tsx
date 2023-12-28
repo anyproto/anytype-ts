@@ -72,6 +72,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ id: 'shortcut', caption: 'Ctrl+Space' },
 			{ id: 'hints' },
 			{ isDiv: true },
+			{ id: 'gallery' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
@@ -117,6 +118,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'gallery':
 			case 'terms':
 			case 'tutorial':
 			case 'privacy':

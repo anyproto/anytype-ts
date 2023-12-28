@@ -99,15 +99,17 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 							<div className="dropTarget">
 								<div className="flex">
 									<div className="markers" />
-									<div
-										id="value"
-										className={cv.join(' ')}
-										contentEditable={!readonly}
-										suppressContentEditableWarning={true}
-										onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
-										onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
-										onDragStart={(e: any) => { e.preventDefault(); }}
-									/>
+									<div className="editableWrap">
+										<div
+											id="value"
+											className={cv.join(' ')}
+											contentEditable={!readonly}
+											suppressContentEditableWarning={true}
+											onFocus={e => onCellFocus(e, row.id, column.id, cellId)}
+											onBlur={e => onCellBlur(e, row.id, column.id, cellId)}
+											onDragStart={e => e.preventDefault()}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>

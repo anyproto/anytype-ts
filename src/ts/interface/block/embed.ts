@@ -9,6 +9,7 @@ export enum EmbedProcessor {
 	Soundcloud	 = 5,
 	GoogleMaps 	 = 6,
 	Miro 	 	 = 7,
+	Figma 	 	 = 8,
 };
 
 export interface ContentEmbed {

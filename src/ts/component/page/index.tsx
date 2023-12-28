@@ -29,7 +29,6 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
-import PageMainUsecase from './main/usecase';
 import PageMainImport from './main/import';
 
 const Components = {
@@ -57,7 +56,6 @@ const Components = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
-	'main/usecase':			 PageMainUsecase,
 	'main/import':			 PageMainImport,
 };
 
@@ -73,7 +71,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = this.isMain() && !this.isMainUsecase();
+		const showSidebar = this.isMain();
 
 		if (account) {
 			const { status } = account || {};
@@ -216,8 +214,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				};
 
 				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Pmf);
 				Survey.check(I.SurveyType.Object);
+				//Survey.check(I.SurveyType.Pmf);
 			}, Constant.delay.popup);
 		};
 	};
@@ -294,11 +292,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	isMainRelation () {
 		const { action } = this.getMatchParams();
 		return this.isMain() && (action == 'relation');
-	};
-
-	isMainUsecase () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'usecase');
 	};
 
 	getClass (prefix: string) {

@@ -188,6 +188,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							{bullet}
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
+								placeholder={relation.name}
 								elementId={id}
 								rootId={rootId}
 								subId={rootId}
@@ -208,6 +209,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
+								withLabel={true}
+								withName={true}
 							/>
 						</span>
 					);
@@ -665,7 +668,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: it
+			object: it,
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {

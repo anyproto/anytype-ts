@@ -60,7 +60,7 @@
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
-	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
+	.icon.lock { width: 8px; height: 20px; background-size: 100%; background-color: none; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 }
 .header.withSidebar {
 	.icon.toggle { display: none; }
@@ -129,7 +129,7 @@
 }
 
 .popup {
-	.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
+	.header { position: sticky; padding: 0px; top: 0px !important; }
 	.header {
 		.side.left { padding-left: 14px !important; }
 		.side.left {

@@ -110,11 +110,20 @@
 
 	.block.blockText.textTitle { padding: 6px 0px 0px 0px !important; @include text-title; }
 	.block.blockText.textTitle {
-		.placeholder { color: $colorControlActive; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
-		#value { -webkit-user-modify: read-write-plaintext-only; }
+		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
+		> .wrapContent {
+			> .selectable {
+				> .dropTarget { padding: 0px; }
+				> .dropTarget {
+					> .flex {
+						> .editableWrap {
+							.placeholder { color: $colorControlActive; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
+						}
+					}
+				}
+			}
+		}
 	}
-	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 0px; }
-	.block.blockText.textTitle > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	/* Description */
 

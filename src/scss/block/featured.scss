@@ -21,7 +21,7 @@
 
 		.cell.first .bullet { display: none; }
 
-		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
+		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; cursor: default; }
 		.cellContent.disabled { opacity: 1; }
 
 		.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: $colorShapeHighlightMedium; }
@@ -39,7 +39,7 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: middle; }
+			.more { vertical-align: middle; background: none; }
 		}
 
 		.cellContent.c-select {
@@ -47,7 +47,7 @@
 			.tagItem:last-child { margin-right: 0px; }
 			.tagItem.isStatus { line-height: 16px; }
 			.more { margin: 0px; vertical-align: middle; }
-		} 
+		}
 
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
@@ -63,6 +63,10 @@
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
+		.cellContent.c-checkbox {
+			.icon { margin-top: -1px; }
+			.label { padding-left: 5px; }
+		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 

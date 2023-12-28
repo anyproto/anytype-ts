@@ -17,23 +17,25 @@
 		<script type="text/javascript">
 			let cachedHtml = '';
 
+			const param = getParam();
+			const body = document.body;
+			const root = document.getElementById('root');
+
+			body.className = param.theme;
+
 			window.addEventListener('message', e => {
 				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== 'file://')) {
 					console.error('[origin]', e.origin);
 					return;
 				};
 
-				const body = document.body;
-				const root = document.getElementById('root');
-				const { html, js, theme, libs } = e.data;
+				const { html, js, libs } = e.data;
 
 				loadLibs(libs, () => {
 					if (cachedHtml !== html) {
 						root.innerHTML = html;
 						cachedHtml = html;
 					};
-
-					body.className = theme;
 
 					if (js) {
 						try {
@@ -81,6 +83,17 @@
 
 				script.type = 'text/javascript';
 				script.src = src;
+			};
+
+			function getParam () {
+				const a = location.search.replace(/^\?/, '').split('&');
+				const param = {};
+
+				a.forEach((s) => {
+					const kv = s.split('=');
+					param[kv[0]] = kv[1];
+				});
+				return param;
 			};
 		</script>
 	</body>

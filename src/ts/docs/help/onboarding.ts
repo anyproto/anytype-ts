@@ -388,13 +388,22 @@ export default {
 		{
 			items: [
 				{
+					name: translate('onboardingQuickCaptureTitle'),
+					description: translate('onboardingQuickCaptureDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-plus',
+					}
+				},
+				{
 					name: translate('onboardingSpaceSelectTitle'),
 					description: translate('onboardingSpaceSelectDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-profile',
+					}
 				},
 			],
 
 			param: {
-				element: '#navigationPanel #button-navigation-profile',
 				classNameWrap: 'fixed',
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
