@@ -165,7 +165,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 						
 						case 'position':
-							onEdit(e);
+							if (onEdit) {
+								onEdit(e);
+							};
 							break;
 
 						case 'remove':
