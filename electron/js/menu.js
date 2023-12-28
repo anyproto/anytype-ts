@@ -195,7 +195,7 @@ class MenuManager {
 				label: Util.translate('electronMenuDebug'),
 				submenu: [
 					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
-					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
+					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
 				]
 			});
 		//};
