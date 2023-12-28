@@ -95,13 +95,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<div className="animation">
 							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
 						</div>
-						<div className="animation">
-							<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
-						</div>
+						{!phraseVisible ? (
+							<div className="animation">
+								<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
+							</div>
+						) : ''}
 					</React.Fragment>
 				);
 
-				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+				if (!phraseVisible) {
+					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+				};
 
 				if (config.experimental) {
 					footer = (
