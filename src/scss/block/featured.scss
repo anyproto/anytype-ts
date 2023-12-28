@@ -39,14 +39,14 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: middle; }
+			.more { vertical-align: middle; background: none; }
 		}
 
 		.cellContent.c-select {
 			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
 			.tagItem:last-child { margin-right: 0px; }
 			.more { margin: 0px; vertical-align: middle; }
-		} 
+		}
 
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
@@ -62,6 +62,10 @@
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
+		.cellContent.c-checkbox {
+			.icon { margin-top: -1px; }
+			.label { padding-left: 5px; }
+		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
