@@ -137,7 +137,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 							<div className="btn" onClick={() => { this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
 						</div>
 						<div className="side right">
-							<div className="btn clear" onClick={() => { this.setValue(null, true, true); }}>{translate('menuCalendarClear')}</div>
+							<div className="btn clear" onClick={() => { this.setValue(null, true, true); }}>{translate('commonClear')}</div>
 						</div>
 					</div>
 				</div>
