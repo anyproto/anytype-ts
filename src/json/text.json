@@ -112,6 +112,7 @@
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
+	"commonClear": "Clear",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",

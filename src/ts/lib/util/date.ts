@@ -24,9 +24,7 @@ class UtilDate {
 
 	today () {
 		const t = this.now();
-		const d = Number(this.date('d', t));
-		const m = Number(this.date('n', t));
-		const y = Number(this.date('Y', t));
+		const { d, m, y } = this.getCalendarDateParam(t);
 
 		return this.timestamp(y, m, d);
 	};
@@ -268,9 +266,16 @@ class UtilDate {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
+	getCalendarDateParam (t: number) {
+		return {
+			d: Number(this.date('j', t)),
+			m: Number(this.date('n', t)),
+			y: Number(this.date('Y', t)),
+		};
+	};
+
 	getCalendarMonth (value: number) {
-		const m = Number(this.date('n', value));
-		const y = Number(this.date('Y', value));
+		const { m, y } = this.getCalendarDateParam(value);
 		const md = Constant.monthDays;
 		
 		// February

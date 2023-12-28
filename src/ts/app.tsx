@@ -97,6 +97,7 @@ if (!window.Electron.isPackaged) {
 			UtilMenu,
 			UtilRouter,
 			UtilSmile,
+			UtilDate,
 			analytics,
 			dispatcher,
 			keyboard,
