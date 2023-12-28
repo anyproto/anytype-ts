@@ -1069,6 +1069,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const range = this.getRange();
 		const el = $(`#block-${block.id}`);
 
+		if (!range) {
+			return;
+		};
+
 		let value = this.getValue();
 		value = UtilCommon.stringCut(value, range.from - 1, range.from);
 
