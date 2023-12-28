@@ -212,6 +212,23 @@
 
     .menu.menuDataviewOptionEdit {
 		.item:hover::before { background: $colorShapeHighlightMedium; }
+
+        .section.colorPicker {
+            .items {
+                .item.hover, .item:hover { box-shadow: 0 0 0 1px $colorBgPrimary, 0 0 0 3px $colorShapePrimary; }
+
+                .item.color-grey { background: $colorControlActive; }
+                .item.color-yellow { background: $colorYellow; }
+                .item.color-orange { background: $colorOrange; }
+                .item.color-red { background: $colorRed; }
+                .item.color-pink { background: $colorPink; }
+                .item.color-purple { background: $colorPurple; }
+                .item.color-blue { background: $colorBlue; }
+                .item.color-ice { background: $colorIce; }
+                .item.color-teal { background: $colorTeal; }
+                .item.color-lime { background: $colorLime; }
+            }
+        }
 	}
 
     /* MenuSearchObject */
