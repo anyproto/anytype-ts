@@ -327,9 +327,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const relation = data.relation.get();
 		const isStatus = relation.format == I.RelationType.Status;
 		const value = Relation.getArrayValue(data.value);
+		const ret = [];
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
-		const ret = [];
 		let check = [];
 
 		if (filterMapper) {
@@ -343,11 +343,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
-				let addItemNameKey = 'menuDataviewOptionListCreateOption';
-				if (isStatus) {
-					addItemNameKey = 'menuDataviewOptionListSetStatus';
-				};
-				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
+				ret.unshift({ 
+					id: 'add', 
+					name: UtilCommon.sprintf(isStatus ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+				});
 			};
 		};
 
