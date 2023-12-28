@@ -2,9 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
+import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
-import { menuStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
@@ -154,7 +154,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
 	};
 
-
 	onClick (e: any, item: any) {
 		if (item.isBgColor) {
 			this.color = item.value;
@@ -162,7 +161,16 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			this.forceUpdate();
 		} else
 		if (item.id == 'remove') {
-			this.remove();
+			popupStore.open('confirm', {
+				data: {
+					title: translate('popupRelationValueRemoveTitle'),
+					text: translate('popupRelationValueRemoveText'),
+					textConfirm: translate('commonDelete'),
+					onConfirm: () => {
+						this.remove();
+					}
+				}
+			});
 		};
 	};
 
@@ -177,18 +185,18 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { data } = param;
 		const { option, onChange } = data;
 		const relation = data.relation.get();
-		
+
 		let value = Relation.getArrayValue(data.value);
 		value = value.filter(it => it != option.id);
 
 		C.RelationListRemoveOption([ option.id ], false);
 
 		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { 
-			value: value, 
+		menuStore.updateData('dataviewOptionList', {
+			value: value,
 			relation: observable.box(relation),
 		});
-		
+
 		onChange(value);
 		close();
 	};

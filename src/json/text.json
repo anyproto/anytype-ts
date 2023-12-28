@@ -989,6 +989,9 @@
 	"popupUsecaseMenuLabel": "Install experience to",
 	"popupUsecaseSpaceCreate": "Create new space",
 
+	"popupRelationValueRemoveTitle": "Are you sure?",
+	"popupRelationValueRemoveText": "Deleting relation values can affect your objects. Once confirmed, the action cannot be undone.",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
