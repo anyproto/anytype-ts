@@ -125,6 +125,7 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 
+	ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
 		const win = BrowserWindow.fromId(id);
