@@ -7,7 +7,8 @@ import { OnboardStage } from 'Component/page/auth/animation/constants';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
+	'processor',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -56,6 +57,9 @@ class Analytics {
 			includeUtm: true,
 			includeReferrer: true,
 			platform,
+			trackingOptions: {
+    			ipAddress: false,
+			},
 		});
 
 		this.instance.setVersionName(window.Electron.version.app);
@@ -70,13 +74,17 @@ class Analytics {
 		this.log('[Analytics].init');
 	};
 
-	profile (id: string) {
+	profile (id: string, networkId: string) {
 		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
 		this.instance.setUserId(id);
-		this.log(`[Analytics].profile: ${id}`);	
+
+		if (id) {
+			this.instance.setUserProperties({ networkId });
+		};
+		this.log(`[Analytics].profile: ${id} networkId: ${networkId}`);	
 	};
 
 	setContext (context: string, id: string) {
@@ -99,6 +107,7 @@ class Analytics {
 		};
 
 		const converted: any = {};
+
 		let param: any = {};
 
 		// Code mappers for common events
@@ -153,31 +162,53 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectNetwork':
+				data.type = this.networkType(data.type);
+				break;
+
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
 				data.style = Number(data.style) || 0;
 
-				if (data.type == I.BlockType.Text) {
-					data.style = I.TextStyle[data.style];
-				} else
-				if (data.type == I.BlockType.Div) {
-					data.style = I.DivStyle[data.style];
-				} else
-				if (data.type == I.BlockType.Dataview) {
-					data.style = I.ViewType[data.style];
-				} else
-				if (data.type == I.BlockType.File) {
-					if (undefined !== data.params?.fileType) {
-						data.fileType = Number(data.params.fileType) || 0;
-						data.type = I.FileType[data.fileType];
-					};
-					if (data.style == I.FileStyle.Auto) {
-						data.style = I.FileStyle.Embed;
+				switch (data.type) {
+					case I.BlockType.Text: {
+						data.style = I.TextStyle[data.style];
+						break;
 					};
 
-					data.style = I.FileStyle[data.style];
-				} else {
-					delete(data.style);
+					case I.BlockType.Div: {
+						data.style = I.DivStyle[data.style];
+						break;
+					};
+
+					case I.BlockType.Dataview: {
+						data.style = I.ViewType[data.style];
+						break;
+					};
+
+					case I.BlockType.File: {
+						if (undefined !== data.params?.fileType) {
+							data.fileType = Number(data.params.fileType) || 0;
+							data.type = I.FileType[data.fileType];
+						};
+						if (data.style == I.FileStyle.Auto) {
+							data.style = I.FileStyle.Embed;
+						} else {
+							data.style = I.FileStyle[data.style];
+						};
+						break;
+					};
+
+					case I.BlockType.Embed: {
+						data.processor = I.EmbedProcessor[Number(data.params.processor) || 0];
+						delete(data.style);
+						break;
+					};
+
+					default: {
+						delete(data.style);
+						break;
+					};
 				};
 				break;
 			};
@@ -380,7 +411,6 @@ class Analytics {
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
-			'main/usecase':		 'ScreenUsecase',
 		};
 
 		return map[key] || '';
@@ -448,6 +478,17 @@ class Analytics {
 
 	embedType (isInline: boolean): string {
 		return isInline ? 'inline' : 'object';
+	};
+
+	networkType (v: any): string {
+		v = Number(v) || 0;
+
+		switch (v) {
+			case I.NetworkMode.Default: return 'Anytype';
+			case I.NetworkMode.Local: return 'LocalOnly';
+			case I.NetworkMode.Custom: return 'SelfHost';
+		};
+		return '';
 	};
 
 	log (...args: any[]) {

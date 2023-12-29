@@ -25,8 +25,8 @@ class UtilObject {
 		};
 	};
 
-	getSpaceview () {
-		return detailStore.get(Constant.subId.space, blockStore.spaceview);
+	getSpaceview (id?: string) {
+		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
@@ -390,10 +390,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [
-			I.ObjectLayout.Note,
-			I.ObjectLayout.Bookmark,
-		].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [ I.ObjectLayout.Bookmark ].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

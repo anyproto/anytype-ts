@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -88,13 +88,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
 		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
-
 		const setOfString = [];
 		const tl = types.length;
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -162,10 +161,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
 						const l = options.length;
 
+						if (!l) {
+							return null;
+						};
+
 						return (
-							<span className="cell" key={i}>
+							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
 								{bullet}
-								<div className="cellContent" onClick={e => this.onLinks(e, relationKey)}>
+								<div className="cellContent">
 									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 								</div>
 							</span>
@@ -184,6 +187,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							{bullet}
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
+								placeholder={relation.name}
 								elementId={id}
 								rootId={rootId}
 								subId={rootId}
@@ -204,6 +208,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
+								withLabel={true}
 							/>
 						</span>
 					);
@@ -590,7 +595,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { isPopup, rootId, readonly } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
-		if (readonly) {
+		if (readonly || relation.isReadonlyValue) {
+			return;
+		};
+
+		if (relation.format == I.RelationType.Date) {
+			this.onDate(e, relationKey);
 			return;
 		};
 
@@ -632,25 +642,30 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
-	onLinks (e: React.MouseEvent, id: any) {
-		const { rootId } = this.props;
+	onLinks (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		if (!relation) {
+			return;
+		};
+
 		const object = detailStore.get(rootId, storeId);
-		const value = Relation.getArrayValue(object[id]);
+		const value = Relation.getArrayValue(object[relationKey]);
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: {
-				iconEmoji: it.iconEmoji,
-				iconImage: it.iconImage
-			}
+			object: it,
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', {
-				element: e.currentTarget,
-				title: translate(UtilCommon.toCamelCase([ 'blockFeatured', id ].join('-'))),
+				element: `#${elementId}`,
+				className: 'featuredLinks',
+				title: relation.name,
 				width: 360,
 				horizontal: I.MenuDirection.Left,
 				vertical: I.MenuDirection.Bottom,
@@ -666,6 +681,34 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
+	onDate (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = Number(object[relationKey] || UtilDate.now());
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewCalendar', {
+				element: `#${elementId}`,
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				noFlipX: true,
+				title: relation.name,
+				data: {
+					value,
+					onChange: (v: number) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+					}
+				}
+			});
+		});
+	};
+
 	elementMapper (relation: any, item: any) {
 		item = UtilCommon.objectCopy(item);
 
@@ -675,8 +718,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				item.name = UtilCommon.shorten(item.name);
 				break;
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status:
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select:
 				item.text = UtilCommon.shorten(item.text);
 				break;
 		};

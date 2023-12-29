@@ -13,26 +13,34 @@ class UtilDate {
 
 	timestamp (y?: number, m?: number, d?: number, h?: number, i?: number, s?: number): number {
 		y = Number(y) || 0;
-		m = Number(m) || 0;
+		m = (Number(m) || 0) - 1;
 		d = Number(d) || 0;
 		h = Number(h) || 0;
 		i = Number(i) || 0;
 		s = Number(s) || 0;
 
-		return Math.floor(new Date(y, m - 1, d, h, i, s, 0).getTime() / 1000);
+		let t: Date = null;
+
+		if ((y >= 0) && (y < 1000)) { 
+			t = new Date(y + 1000, m, d, h, i, s, 0);
+  			t.setUTCFullYear(t.getFullYear() - 1000); 
+		} else {
+			t = new Date(y, m, d, h, i, s, 0)
+		};
+
+		return Math.floor(t.getTime() / 1000);
 	};
 
 	today () {
 		const t = this.now();
-		const d = Number(this.date('d', t));
-		const m = Number(this.date('n', t));
-		const y = Number(this.date('Y', t));
+		const { d, m, y } = this.getCalendarDateParam(t);
 
 		return this.timestamp(y, m, d);
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {
 		const [ date, time ] = String(value || '').split(' ');
+
 		let d: any = 0;
 		let m: any = 0;
 		let y: any = 0;
@@ -268,9 +276,16 @@ class UtilDate {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
+	getCalendarDateParam (t: number) {
+		return {
+			d: Number(this.date('j', t)),
+			m: Number(this.date('n', t)),
+			y: Number(this.date('Y', t)),
+		};
+	};
+
 	getCalendarMonth (value: number) {
-		const m = Number(this.date('n', value));
-		const y = Number(this.date('Y', value));
+		const { m, y } = this.getCalendarDateParam(value);
 		const md = Constant.monthDays;
 		
 		// February

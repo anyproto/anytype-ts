@@ -48,7 +48,7 @@ class Dataview {
 		});
 
 		const ret = relations.filter(it => it).map(relation => {
-			const vr = (view.relations || []).find(it => it.relationKey == relation.relationKey) || {};
+			const vr = (view.relations || []).filter(it => it).find(it => it.relationKey == relation.relationKey) || {};
 
 			if (relation.relationKey == 'name') {
 				vr.isVisible = true;
@@ -132,6 +132,8 @@ class Dataview {
 		const meta: any = { offset };
 		const filters = UtilCommon.objectCopy(view.filters).concat(param.filters || []);
 		const sorts = UtilCommon.objectCopy(view.sorts).concat(param.sorts || []);
+
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() });
 
 		if (viewChange) {
 			meta.viewId = newViewId;

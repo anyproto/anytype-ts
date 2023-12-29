@@ -110,6 +110,14 @@ class Storage {
 		this.set('space', obj, true);
 	};
 
+	deleteSpace (id: string) {
+		const obj = this.getSpace();
+
+		delete(obj[id]);
+
+		this.setSpace(obj);
+	};
+
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
 		if (!obj || UtilCommon.hasProperty(obj, 'length')) {

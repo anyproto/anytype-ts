@@ -3,13 +3,16 @@
 .menus {
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; padding-bottom: 0px; }
+		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
-		.ReactVirtualized__List { padding: 0px; }
+		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
-		.head { color: $colorControlActive; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; }
+		.head { 
+			color: $colorControlActive; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; 
+			display: flex; flex-direction: row; gap: 0px 16px;
+		}
 		.head {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
+			.btn { display: inline-block; vertical-align: top; transition: $transitionAllCommon; }
 			.btn:last-child { margin-right: 0px; }
 			.btn:hover { color: $colorTextPrimary; }
 		}
@@ -77,7 +80,7 @@
 
 			.dropzone { 
 				height: 292px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
-				justify-content: center; flex-direction: column; gap: 6px 0px;
+				justify-content: center; flex-direction: column; gap: 6px 0px; padding: 16px; text-align: center;
 			}
 			.dropzone.isDraggingOver { background: $colorSystemDropZone; }
 

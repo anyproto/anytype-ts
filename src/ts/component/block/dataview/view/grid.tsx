@@ -233,12 +233,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const x = cell.position().left;
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
+		const sw = scroll.width();
 		const container = $(UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page'));
 		const ww = container.width();
+		const rx = x - sx + width;
 
 		content.css({ left: 0, right: 'auto' });
 
-		if (x - sx + width >= ww - 92) {
+		if ((rx >= ww - 92) || (rx > sw)) {
 			content.css({ left: 'auto', right: 0 });
 		};
 	};

@@ -85,7 +85,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								recordId=""
 								readonly={true} 
 								arrayLimit={4}
-								withLabel={true}
+								withName={true}
 								placeholder={translate('commonUncategorized')}
 							/>
 						</div>
@@ -167,12 +167,12 @@ const Column = observer(class Column extends React.Component<Props> {
 				filter.value = value;
 				break;
 
-			case I.RelationType.Status:
+			case I.RelationType.Select:
 				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
 				filter.value = value ? value : null;
 				break;
 
-			case I.RelationType.Tag:
+			case I.RelationType.MultiSelect:
 				value = Relation.getArrayValue(value);
 				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
 				filter.value = value.length ? value : null;

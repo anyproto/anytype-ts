@@ -371,11 +371,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			if (onChange) {
-				onChange(this.value, () => { menuStore.close(MENU_ID); });
+				onChange(this.value, () => menuStore.close(MENU_ID));
 			};
 		});
 	};

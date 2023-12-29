@@ -79,17 +79,9 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	getStatus () {
-		const { rootId } = this.props;
-		const thread = authStore.threadGet(rootId);
-		const { summary } = thread;
-
-		if (!summary) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		return (thread.summary || {}).status || I.ThreadStatus.Unknown;
+		return UtilData.getThreadStatus(this.props.rootId, 'summary');
 	};
-	
+
 });
 
 export default Sync;

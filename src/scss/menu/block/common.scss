@@ -65,35 +65,42 @@
 			.iconObject { background-color: $colorShapeTertiary; }
 		}
 		.item.isBig {
-			.icon.textParagraph { background-image: url('~img/icon/menu/action/block/paragraph1.svg'); }
+			.icon.textParagraph { background-image: url('~img/icon/menu/action/block/text/paragraph1.svg'); }
+			.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/text/header11.svg'); }
+			.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/text/header21.svg'); }
+			.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/text/header31.svg'); }
+			.icon.textQuote { background-image: url('~img/icon/menu/action/block/text/quote1.svg'); }
+			.icon.textCallout { background-image: url('~img/icon/menu/action/block/text/callout1.svg'); }
+			.icon.textBulleted { background-image: url('~img/icon/menu/action/block/text/bulleted1.svg'); }
+			.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/text/checkbox1.svg'); }
+			.icon.textNumbered { background-image: url('~img/icon/menu/action/block/text/numbered1.svg'); }
+			.icon.textToggle { background-image: url('~img/icon/menu/action/block/text/toggle1.svg'); }
 			
-			.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/header11.svg'); }
-			.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/header21.svg'); }
-			.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/header31.svg'); }
-			.icon.textQuote { background-image: url('~img/icon/menu/action/block/quote1.svg'); }
-			.icon.textCallout { background-image: url('~img/icon/menu/action/block/callout1.svg'); }
-			
-			.icon.textBulleted { background-image: url('~img/icon/menu/action/block/bulleted1.svg'); }
-			.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/checkbox1.svg'); }
-			.icon.textNumbered { background-image: url('~img/icon/menu/action/block/numbered1.svg'); }
-			.icon.textToggle { background-image: url('~img/icon/menu/action/block/toggle1.svg'); }
-			
+			.icon.mediaFile { background-image: url('~img/icon/menu/action/block/media/file1.svg'); }
+			.icon.mediaImage { background-image: url('~img/icon/menu/action/block/media/image1.svg'); }
+			.icon.mediaVideo { background-image: url('~img/icon/menu/action/block/media/video1.svg'); }
+			.icon.mediaAudio { background-image: url('~img/icon/menu/action/block/media/audio1.svg'); }
+			.icon.mediaPdf { background-image: url('~img/icon/menu/action/block/media/pdf1.svg'); }
+
+			.icon.divLine { background-image: url('~img/icon/menu/action/block/div/line1.svg'); }
+			.icon.divDot { background-image: url('~img/icon/menu/action/block/div/dot1.svg'); }
+
+			.icon.embedLatex { background-image: url('~img/icon/menu/action/block/embed/latex.svg'); }
+			.icon.embedMermaid { background-image: url('~img/icon/menu/action/block/embed/mermaid.svg'); }
+			.icon.embedYoutube { background-image: url('~img/icon/menu/action/block/embed/youtube.svg'); }
+			.icon.embedVimeo { background-image: url('~img/icon/menu/action/block/embed/vimeo.svg'); }
+			.icon.embedGoogleMaps { background-image: url('~img/icon/menu/action/block/embed/googleMaps.svg'); }
+			.icon.embedSoundcloud { background-image: url('~img/icon/menu/action/block/embed/soundcloud.svg'); }
+			.icon.embedChart { background-image: url('~img/icon/menu/action/block/embed/chart.svg'); }
+			.icon.embedMiro { background-image: url('~img/icon/menu/action/block/embed/miro.svg'); }
+			.icon.embedFigma { background-image: url('~img/icon/menu/action/block/embed/figma.svg'); }
+
 			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
-			.icon.file { background-image: url('~img/icon/menu/action/block/file1.svg'); }
-			.icon.image { background-image: url('~img/icon/menu/action/block/image1.svg'); }
-			.icon.video { background-image: url('~img/icon/menu/action/block/video1.svg'); }
-			.icon.audio { background-image: url('~img/icon/menu/action/block/audio1.svg'); }
-			.icon.pdf { background-image: url('~img/icon/menu/action/block/pdf1.svg'); }
 			.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark1.svg'); }
 			.icon.code { background-image: url('~img/icon/menu/action/block/code1.svg'); }
-			
-			.icon.div-line { background-image: url('~img/icon/menu/action/block/line1.svg'); }
-			.icon.dot { background-image: url('~img/icon/menu/action/block/dot1.svg'); }
-
 			.icon.table { background-image: url('~img/icon/menu/action/block/table1.svg'); }
 			.icon.tableOfContents { background-image: url('~img/icon/menu/action/block/tableOfContents1.svg'); }
 			.icon.relation { background-image: url('~img/icon/menu/action/block/relation1.svg'); }
-			.icon.latex { background-image: url('~img/icon/menu/action/block/latex1.svg'); }
 			.icon.set { background-image: url('~img/icon/menu/action/block/set1.svg'); }
 			.icon.collection { background-image: url('~img/icon/menu/action/block/collection1.svg'); }
 		}

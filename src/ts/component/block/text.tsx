@@ -332,8 +332,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
+
+			if (!url) {
+				return;
+			};
+
 			const scheme = UtilCommon.getScheme(url);
 			const isInside = scheme == Constant.protocol;
+			const isLocal = scheme == 'file';
 
 			let route = '';
 			let target;
@@ -824,7 +830,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (range.to && (range.from == range.to) && (range.to == value.length)) {
+			if ((range.from == range.to) && (range.to == value.length)) {
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
@@ -1063,6 +1069,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const range = this.getRange();
 		const el = $(`#block-${block.id}`);
 
+		if (!range) {
+			return;
+		};
+
 		let value = this.getValue();
 		value = UtilCommon.stringCut(value, range.from - 1, range.from);
 
@@ -1292,13 +1302,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	onCopy () {
 		const { rootId, block } = this.props;
+		const length = block.getLength();
 
-		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
+		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
 			UtilCommon.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
-					range: { from: 0, to: 0 },
+					range: { from: 0, to: length },
 					blocks: [ block ],
 				},
 			});

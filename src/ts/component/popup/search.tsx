@@ -656,8 +656,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				break;
 
 			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
+			case I.RelationType.Select: 
+			case I.RelationType.MultiSelect: 
 				break;
 
 			case I.RelationType.Date:

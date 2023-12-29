@@ -36,6 +36,15 @@ class UtilData {
 		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
 
+	blockEmbedClass (v: I.EmbedProcessor): string {
+		let c = '';
+		switch (v) {
+			case I.EmbedProcessor.Latex: c = 'isLatex'; break;
+			default: c = 'isDefault'; break;
+		};
+		return c;
+	};
+
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
@@ -59,33 +68,43 @@ class UtilData {
 
 	blockClass (block: any) {
 		const { content } = block;
-		const { style, type, state } = content;
-		const dc = UtilCommon.toCamelCase('block-' + block.type);
-
+		const { style, type, processor } = content;
+		const dc = UtilCommon.toCamelCase(`block-${block.type}`);
 		const c = [];
-		if (block.type == I.BlockType.File) {
-			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
-				c.push(dc);
-			} else {
-				c.push('blockMedia');
 
-				switch (type) {
-					case I.FileType.Image:	 c.push('isImage'); break;
-					case I.FileType.Video:	 c.push('isVideo'); break;
-					case I.FileType.Audio:	 c.push('isAudio'); break;
-					case I.FileType.Pdf:	 c.push('isPdf'); break;
+		switch (block.type) {
+			case I.BlockType.File: {
+				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+					c.push(dc);
+				} else {
+					c.push('blockMedia');
+
+					switch (type) {
+						case I.FileType.Image:	 c.push('isImage'); break;
+						case I.FileType.Video:	 c.push('isVideo'); break;
+						case I.FileType.Audio:	 c.push('isAudio'); break;
+						case I.FileType.Pdf:	 c.push('isPdf'); break;
+					};
 				};
+				break;
 			};
-		} else {
-			c.push(dc);
 
-			switch (block.type) {
-				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
-				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
-				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+			case I.BlockType.Embed: {
+				c.push('blockEmbed');
+				c.push(this.blockEmbedClass(processor));
+				break;
+			};
+
+			default: {
+				c.push(dc);
+				switch (block.type) {
+					case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
+					case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
+					case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+				};
+				break;
 			};
 		};
-
 		return c.join(' ');
 	};
 
@@ -192,7 +211,7 @@ class UtilData {
 		commonStore.spaceSet(info.accountSpaceId);
 		commonStore.techSpaceSet(info.techSpaceId);
 
-		analytics.profile(info.analyticsId);
+		analytics.profile(info.analyticsId, info.networkId);
 
 		Sentry.setUser({ id: info.analyticsId });
 	};
@@ -321,6 +340,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
+					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -824,6 +844,8 @@ class UtilData {
 	};
 
 	graphFilters () {
+		const { space, techSpace } = commonStore;
+
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -831,7 +853,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
 		];
 
 		if (templateType) {
@@ -856,6 +878,53 @@ class UtilData {
 		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
 			analytics.event('CreateObject', { route, objectType: typeId });
 		});
+	};
+
+	getThreadStatus (rootId: string, key: string) {
+		const { account } = authStore;
+
+		if (!account) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		const { info } = account || {};
+		const thread = authStore.threadGet(rootId);
+		const { summary } = thread;
+
+		if (!info.networkId) {
+			return I.ThreadStatus.Local;
+		};
+
+		if (!summary) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
+	};
+
+	getNetworkName (): string {
+		const { account } = authStore;
+		const { info } = account;
+
+		let ret = '';
+		switch (info.networkId) {
+			default:
+				ret = translate('menuThreadListSelf');
+				break;
+
+			case Constant.networkId.production:
+				ret = translate('menuThreadListProduction');
+				break;
+
+			case Constant.networkId.development:
+				ret = translate('menuThreadListDevelopment');
+				break;
+
+			case '':
+				ret = translate('menuThreadListLocal');
+				break;
+		};
+		return ret;
 	};
 
 };

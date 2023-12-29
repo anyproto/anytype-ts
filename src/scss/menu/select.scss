@@ -52,6 +52,10 @@
 		.content { overflow: hidden; max-height: unset; }
 	}
 
+	.menu.menuSelect.noVirtualisation {
+		.items { padding: 8px 0px; }
+	}
+
 	.menu.menuSelect.spaceSelect { width: 280px; }
 	.menu.menuSelect.spaceSelect {
 		.content { padding: 8px 0px; }
@@ -64,6 +68,15 @@
 			.iconObject, .icon { margin: 0px; }
 			.iconObject.isSpaceView { border-radius: 8px !important; }
 			.clickable { align-items: center; gap: 0px 12px; }
+		}
+	}
+
+	/* Links, Backlinks */
+	.menu.menuSelect.featuredLinks {
+		.titleWrapper { padding-bottom: 0px; }
+		.item {
+			.info { width: 100%; }
+			.iconObject { margin: 0px; background-color: $colorShapeHighlightMedium; }
 		}
 	}
 }

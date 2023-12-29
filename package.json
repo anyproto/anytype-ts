@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.36.5-alpha",
+	"version": "0.37.3",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -59,7 +59,7 @@
 		"@typescript-eslint/parser": "^5.46.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^25.0.0",
+		"electron": "^28.1.0",
 		"electron-builder": "^24.6.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -85,7 +85,7 @@
 		"webpack-dev-server": "^4.13.1"
 	},
 	"dependencies": {
-		"@electron/remote": "^2.0.8",
+		"@electron/remote": "^2.1.1",
 		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
@@ -112,11 +112,12 @@
 		"install": "^0.13.0",
 		"jquery": "^3.5.1",
 		"js-htmlencode": "^0.3.0",
-		"katex": "^0.16.8",
+		"katex": "^0.16.9",
 		"keytar": "^7.7.0",
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
+		"mermaid": "^10.6.0",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
@@ -170,6 +171,7 @@
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
+			"dist/embed/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
@@ -190,6 +192,7 @@
 		"files": [
 			"electron.js",
 			"electron/js/*",
+			"electron/json/*",
 			"electron/env.json",
 			"electron/img/*",
 			"electron/about/*",
@@ -199,6 +202,7 @@
 			"dist/main.js",
 			"dist/main.js.map",
 			"dist/run.js",
+			"dist/embed/**/*",
 			"dist/lib/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",

@@ -206,10 +206,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const { block } = this.props;
 
 		this.onViewSet(view);
-
-		window.setTimeout(() => {
-			$(`#button-${block.id}-settings`).trigger('click');
-		}, 50);
+		window.setTimeout(() => { $(`#button-${block.id}-settings`).trigger('click'); }, 50);
 	};
 
 	onViewCopy (view) {

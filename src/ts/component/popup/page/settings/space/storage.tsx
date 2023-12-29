@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager } from 'Component';
-import { analytics, I, translate, Action } from 'Lib';
+import { I, translate, Action } from 'Lib';
 import Constant from 'json/constant.json';
 import Head from '../head';
 

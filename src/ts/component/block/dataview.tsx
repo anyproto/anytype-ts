@@ -377,9 +377,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			const filters = [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
-			];
+			const filters = [];
+
 			if (this.searchIds) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
@@ -908,6 +907,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
+				allowedLink: true,
+				allowedOpen: true,
 			}
 		});
 	};

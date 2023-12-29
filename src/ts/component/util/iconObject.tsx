@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -89,44 +89,25 @@ const FontSize = {
 	128: 72,
 };
 
-const File = {
-	other: require('img/icon/file/other.svg').default,
-	image: require('img/icon/file/image.svg').default,
-	video: require('img/icon/file/video.svg').default,
-	text: require('img/icon/file/text.svg').default,
-	archive: require('img/icon/file/archive.svg').default,
-	audio: require('img/icon/file/audio.svg').default,
-	pdf: require('img/icon/file/pdf.svg').default,
-	presentation: require('img/icon/file/presentation.svg').default,
-	table: require('img/icon/file/table.svg').default,
+const File = {};
+const Relation: any = { small: {}, big: {} };
+
+for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf', 'presentation', 'table' ]) {
+	File[key] = require(`img/icon/file/${key}.svg`).default;
 };
 
-const Relation: any = { small: {}, big: {} };
-Relation.small[I.RelationType.LongText] = require('img/icon/relation/small/longText.svg').default;
-Relation.small[I.RelationType.ShortText] = require('img/icon/relation/small/shortText.svg').default;
-Relation.small[I.RelationType.Number] = require('img/icon/relation/small/number.svg').default;
-Relation.small[I.RelationType.Status] = require('img/icon/relation/small/status.svg').default;
-Relation.small[I.RelationType.Date] = require('img/icon/relation/small/date.svg').default;
-Relation.small[I.RelationType.File] = require('img/icon/relation/small/file.svg').default;
-Relation.small[I.RelationType.Checkbox] = require('img/icon/relation/small/checkbox.svg').default;
-Relation.small[I.RelationType.Url] = require('img/icon/relation/small/url.svg').default;
-Relation.small[I.RelationType.Email] = require('img/icon/relation/small/email.svg').default;
-Relation.small[I.RelationType.Phone] = require('img/icon/relation/small/phone.svg').default;
-Relation.small[I.RelationType.Tag] = require('img/icon/relation/small/tag.svg').default;
-Relation.small[I.RelationType.Object] = require('img/icon/relation/small/object.svg').default;
+for (let i in I.RelationType) {
+	const it = Number(i);
 
-Relation.big[I.RelationType.LongText] = require('img/icon/relation/big/longText.svg').default;
-Relation.big[I.RelationType.ShortText] = require('img/icon/relation/big/shortText.svg').default;
-Relation.big[I.RelationType.Number] = require('img/icon/relation/big/number.svg').default;
-Relation.big[I.RelationType.Status] = require('img/icon/relation/big/status.svg').default;
-Relation.big[I.RelationType.Date] = require('img/icon/relation/big/date.svg').default;
-Relation.big[I.RelationType.File] = require('img/icon/relation/big/file.svg').default;
-Relation.big[I.RelationType.Checkbox] = require('img/icon/relation/big/checkbox.svg').default;
-Relation.big[I.RelationType.Url] = require('img/icon/relation/big/url.svg').default;
-Relation.big[I.RelationType.Email] = require('img/icon/relation/big/email.svg').default;
-Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg').default;
-Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg').default;
-Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg').default;
+	if (isNaN(Number(it)) || [ I.RelationType.Icon, I.RelationType.Relations ].includes(it)) {
+		continue;
+	};
+
+	const key = UtilCommon.toCamelCase(I.RelationType[i]);
+
+	Relation.small[i] = require(`img/icon/relation/small/${key}.svg`).default;
+	Relation.big[i] = require(`img/icon/relation/big/${key}.svg`).default;
+};
 
 const Ghost = require('img/icon/ghost.svg').default;
 

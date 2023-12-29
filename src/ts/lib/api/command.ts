@@ -152,13 +152,15 @@ const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setIcon(icon);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -169,11 +171,13 @@ const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request(AccountRecover.name, request, callBack);
 };
 
-const AccountSelect = (id: string, path: string, callBack?: (message: any) => void) => {
+const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Select.Request();
 
 	request.setId(id);
 	request.setRootpath(path);
+	request.setNetworkmode(mode as number);
+	request.setNetworkcustomconfigfilepath(networkConfigPath);
 
 	dispatcher.request(AccountSelect.name, request, callBack);
 };

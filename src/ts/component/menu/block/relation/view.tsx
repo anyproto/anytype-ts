@@ -67,7 +67,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
-								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
+								canEdit={allowedRelation && !item.isReadonlyRelation && !readonly}
 								canDrag={allowedBlock && !readonly}
 								canFav={allowedValue && !readonly}
 								isFeatured={section.id == 'featured'}
@@ -166,7 +166,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey])) {
+			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey]) && (it.scope === I.RelationScope.Type)) {
 				return false;
 			};
 
