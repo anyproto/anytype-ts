@@ -343,7 +343,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	setError (error: string) {
-		this.refNext.setLoading(false);
+		this.refNext?.setLoading(false);
 		this.setState({ error });
 	};
 
