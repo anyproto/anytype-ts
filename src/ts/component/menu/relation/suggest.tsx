@@ -268,13 +268,18 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const systemKeys = Relation.systemKeys();
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.spaceId == space));
+		const library = items.filter(it => (it.spaceId == space) && !systemKeys.includes(it.relationKey));
+		const system = items.filter(it => systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
+			{ id: 'system', name: translate('menuRelationSuggestMyRelations'), children: system },
 		];
+
+		console.log(system);
 
 		if (filter) {
 			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
