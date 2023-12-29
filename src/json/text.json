@@ -1219,6 +1219,7 @@
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Relation...",
 	"menuRelationSuggestMyRelations": "My Relations",
+	"menuRelationSuggestSystem": "System Relations",
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
 	"menuThreadListLastSync": "Last sync",
