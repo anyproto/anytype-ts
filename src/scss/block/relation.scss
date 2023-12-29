@@ -41,7 +41,7 @@
 		
 		.cell.c-select { padding: 4px 8px; }
 		.cell.c-select {
-			.tagItem, .itemWrap { margin: 3px 6px 3px 0px; } 
+			.over { flex-wrap: wrap; }
 			.empty { line-height: 24px; }
 		}
 

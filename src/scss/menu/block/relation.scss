@@ -101,8 +101,7 @@
 
 			.cell.c-select { padding: 5px 8px; }
 			.cell.c-select {
-				.tagItem, .itemWrap { margin: 2px 6px 3px 0px; } 
-				.over { overflow: visible !important; width: 100%; }
+				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 6px; }
 			}
 
 			.cell.isEditing { padding: 0px; }
