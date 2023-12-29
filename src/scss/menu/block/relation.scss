@@ -129,10 +129,16 @@
 			.cell.isEditing.c-phone, 
 			.cell.isEditing.c-email,
 			.cell.isEditing.c-date,
-			.cell.isEditing.c-object
+			.cell.isEditing.c-object,
+			.cell.isEditing.c-longText, 
+			.cell.isEditing.c-file
 			{
 				.cellContent { padding: 5px 8px !important; }
 				.placeholder { padding: 5px 8px; }
+			}
+
+			.cell.isEditing.c-object {
+				.cellContent, .placeholder { padding: 6px 8px 0px 8px !important; }
 			}
 
 			.cell.c-shortText {
@@ -149,10 +155,6 @@
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
 				.cellContent span:empty { height: 22px; }
-			}
-
-			.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-				.cellContent { padding: 5px 8px; }
 			}
 		}
 		.item:hover {
