@@ -907,6 +907,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
+				allowedLink: true,
+				allowedOpen: true,
 			}
 		});
 	};

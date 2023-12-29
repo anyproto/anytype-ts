@@ -153,7 +153,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				let option: any = null;
 
 				switch (relation.format) {
-					case I.RelationType.Tag:
+					case I.RelationType.MultiSelect:
 						value = Relation.getArrayValue(value);
 						if (value.length) {
 							option = detailStore.get(Constant.subId.option, value[0]);
@@ -161,7 +161,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						};
 						break;
 
-					case I.RelationType.Status:
+					case I.RelationType.Select:
 						option = detailStore.get(Constant.subId.option, value);
 						bgColor = option?.color;
 						break;

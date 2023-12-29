@@ -18,7 +18,6 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
-	withName?: boolean;
 };
 
 const Cell = observer(class Cell extends React.Component<Props> {
@@ -71,8 +70,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				CellComponent = CellText;
 				break;
 
-			case I.RelationType.Status:	
-			case I.RelationType.Tag:
+			case I.RelationType.Select:	
+			case I.RelationType.MultiSelect:
 				CellComponent = CellSelect;
 				break;
 				
@@ -274,8 +273,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				break;
 			};
 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: {
+			case I.RelationType.Select: 
+			case I.RelationType.MultiSelect: {
 				param = Object.assign(param, {
 					width: width,
 					commonFilter: true,
