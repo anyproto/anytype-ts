@@ -166,7 +166,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey])) {
+			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey]) && (it.scope === I.RelationScope.Type)) {
 				return false;
 			};
 
