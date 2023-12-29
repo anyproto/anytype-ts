@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-import { observable } from 'mobx';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -609,7 +609,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
-			this.onTagOrStatus(e, relationKey);
+			this.onCellSelect(e, relationKey);
 			return;
 		};
 
@@ -718,7 +718,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
-	onTagOrStatus (e: React.MouseEvent, relationKey: string) {
+	onCellSelect (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
@@ -734,6 +734,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				noFlipY: true,
 				offsetY: 4,
 				title: relation.name,
+				onClose: () => {
+					menuStore.closeAll();
+				},
 				data: {
 					rootId: rootId,
 					blockId: block.id,
@@ -741,7 +744,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					relation: observable.box(relation),
 					maxCount: relation.maxCount,
 					canAdd: true,
-					keepSelected: true,
 					onChange: (v) => {
 						const details = [
 							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
