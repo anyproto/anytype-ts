@@ -25,6 +25,7 @@ export enum ViewType {
 	Gallery	 = 2,
 	Board	 = 3,
 	Calendar = 4,
+	Graph	 = 5,
 };
 
 export enum SortType { 
@@ -200,9 +201,12 @@ export interface Cell {
 	iconSize?: number;
 	placeholder?: string;
 	withLabel?: boolean;
+	withName?: boolean;
 	textLimit?: number;
 	arrayLimit?: number;
 	shortUrl?: boolean;
+	menuClassName?: string;
+	menuClassNameWrap?: string;
 	getView?(): View;
 	getRecord(id: string): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;

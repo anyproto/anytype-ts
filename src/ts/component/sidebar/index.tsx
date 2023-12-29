@@ -22,7 +22,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
     ox = 0;
 	oy = 0;
 	sx = 0;
-    refFooter: React.Ref<HTMLUnknownElement> = null;
+	refList = null;
 	frame = 0;
 	width = 0;
 	movedX = false;
@@ -61,7 +61,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					</div>
 
 					<div className="body">
-						<ListWidget {...this.props} />
+						<ListWidget ref={ref => this.refList = ref} {...this.props} />
 					</div>
 				</div>
 

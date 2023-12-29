@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilObject, UtilCommon, translate } from 'Lib';
+import { I, Relation, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -85,7 +85,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								recordId=""
 								readonly={true} 
 								arrayLimit={4}
-								withLabel={true}
+								withName={true}
 								placeholder={translate('commonUncategorized')}
 							/>
 						</div>
@@ -167,12 +167,12 @@ const Column = observer(class Column extends React.Component<Props> {
 				filter.value = value;
 				break;
 
-			case I.RelationType.Status:
+			case I.RelationType.Select:
 				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
 				filter.value = value ? value : null;
 				break;
 
-			case I.RelationType.Tag:
+			case I.RelationType.MultiSelect:
 				value = Relation.getArrayValue(value);
 				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
 				filter.value = value.length ? value : null;
@@ -191,8 +191,8 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		UtilData.searchSubscribe({
 			subId,
-			filters,
-			sorts,
+			filters: filters.map(it => Dataview.filterMapper(view, it)),
+			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			limit,

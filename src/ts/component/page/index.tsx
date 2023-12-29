@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate, UtilRouter } from 'Lib';
-import { Sidebar } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
+import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -29,7 +29,7 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
-import PageMainUsecase from './main/usecase';
+import PageMainImport from './main/import';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -56,7 +56,7 @@ const Components = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
-	'main/usecase':			 PageMainUsecase,
+	'main/import':			 PageMainImport,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -71,7 +71,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = this.isMain() && !this.isMainUsecase();
+		const showSidebar = this.isMain();
 
 		if (account) {
 			const { status } = account || {};
@@ -80,7 +80,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)}</div>;
+			return (
+				<Frame>
+					<Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+				</Frame>
+			);
 		};
 
 		const wrap = (
@@ -203,19 +207,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
-		if (isPopup) {
-			return;
-		};
-		
-		window.setTimeout(() => {
-			if (!isMain) {
-				return;
-			};
+		if (!isPopup) {
+			window.setTimeout(() => {
+				if (!isMain) {
+					return;
+				};
 
-			Survey.check(I.SurveyType.Register);
-			Survey.check(I.SurveyType.Pmf);
-			Survey.check(I.SurveyType.Object);
-		}, Constant.delay.popup);
+				Survey.check(I.SurveyType.Register);
+				Survey.check(I.SurveyType.Object);
+				//Survey.check(I.SurveyType.Pmf);
+			}, Constant.delay.popup);
+		};
 	};
 
 	dashboardOnboardingCheck () {
@@ -290,11 +292,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	isMainRelation () {
 		const { action } = this.getMatchParams();
 		return this.isMain() && (action == 'relation');
-	};
-
-	isMainUsecase () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'usecase');
 	};
 
 	getClass (prefix: string) {

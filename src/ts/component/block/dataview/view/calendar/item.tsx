@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, translate } from 'Lib';
-import { dbStore, detailStore, menuStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
+import { menuStore, blockStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	d: number;
 	m: number;
 	y: number;
-	getSubId?: () => string;
-	getDateParam?: (t: number) => { d: number; m: number; y: number; };
+	items: any[];
 };
 
 const LIMIT = 4;
@@ -95,14 +94,11 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	getItems () {
-		const { getSubId, getView, getDateParam, d, m, y } = this.props;
-		const subId = getSubId();
+		const { getView, d, m, y, items } = this.props;
 		const view = getView();
+		const current = [ d, m, y ].join('-');
 
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ])).filter(it => {
-			const value = getDateParam(it[view.groupRelationKey]);
-			return [ value.d, value.m, value.y ].join('-') == [ d, m, y ].join('-');
-		});
+		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
 	onOpen (item: any) {
@@ -133,7 +129,6 @@ const Item = observer(class Item extends React.Component<Props> {
 				noFlipX: true,
 				data: {
 					...this.props,
-					items: this.getItems(),
 				}
 			});
 		});

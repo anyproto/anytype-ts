@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -150,8 +151,6 @@ class UtilRouter {
 
 					UtilData.onInfo(message.info);
 					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
-
-					analytics.event('SwitchSpace');
 				}
 			});
 		});

@@ -24,13 +24,13 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 			<React.Fragment>
 				<div className="side left">
 					<Icon
-						className="toggle big"
+						className="toggle"
 						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center" />

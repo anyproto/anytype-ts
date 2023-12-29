@@ -100,7 +100,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		let ret = false;
 
-		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+y, ${cmd}+v, ${cmd}+x`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+y, ${cmd}+v, ${cmd}+x`, e, () => {
 			ret = true;
 		});
 
@@ -137,7 +137,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
 				ref: 'block',
-				skipKeys: Relation.systemKeysWithoutUser(),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], (message: any) => {
 						if (message.error.code) {

@@ -67,7 +67,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
-								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
+								canEdit={allowedRelation && !item.isReadonlyRelation && !readonly}
 								canDrag={allowedBlock && !readonly}
 								canFav={allowedValue && !readonly}
 								isFeatured={section.id == 'featured'}
@@ -139,12 +139,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onScroll () {
-		const win = $(window);
-		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
-
-		for (const menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
-		};
+		menuStore.resizeAll();
 	};
 
 	getSections () {
@@ -171,14 +166,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey])) {
+			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey]) && (it.scope === I.RelationScope.Type)) {
 				return false;
 			};
 
 			return !config.debug.ho ? !it.isHidden : true;
 		});
 
-		let sections = [ 
+		const sections = [ 
 			{ 
 				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),
@@ -252,7 +247,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId).concat(Relation.systemKeysWithoutUser()),
+				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -279,7 +274,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			classNameWrap,
 			data: {
 				...data,
-				readonly: Boolean(readonly || root.isLocked() || !allowed),
+				readonly: Boolean(readonly || root?.isLocked() || !allowed),
 				relationId: id,
 				ref: 'menu',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

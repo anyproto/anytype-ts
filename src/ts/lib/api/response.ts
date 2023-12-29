@@ -108,6 +108,12 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 	};
 };
 
+export const ObjectImport = (response: any) => {
+	return {
+		collectionId: response.getCollectionid(),
+	};
+};
+
 export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
 	return {
 		objectId: response.getObjectid(),
@@ -393,5 +399,31 @@ export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
 export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	return {
 		hash: response.getHash(),
+	};
+};
+
+export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
+	const info = response.getInfo();
+
+	return {
+		info: {
+			id: info.getId(),
+			schema: info.getSchema(),
+			name: info.getName(),
+			author: info.getAuthor(),
+			license: info.getLicense(),
+			title: info.getTitle(),
+			description: info.getDescription(),
+			downloadLink: info.getDownloadlink(),
+			size: info.getFilesize(),
+			screenshots: info.getScreenshotsList() || [],
+			categories: info.getCategoriesList() || [],
+		},
+	};
+};
+
+export const NotificationList = (response: Rpc.Notification.List.Response) => {
+	return {
+		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
 	};
 };

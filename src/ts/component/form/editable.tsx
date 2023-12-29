@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, Mark } from 'Lib';
+import { I, Mark, UtilCommon } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -68,7 +68,7 @@ class Editable extends React.Component<Props> {
 
 			editor = (
 				<div 
-					id="value" 
+					id={id} 
 					className={cne.join(' ')} 
 					contentEditable={true}
 					suppressContentEditableWarning={true}
@@ -146,7 +146,7 @@ class Editable extends React.Component<Props> {
 	};
 
 	setValue (html: string) {
-		this.editable.get(0).innerHTML = html;
+		this.editable.get(0).innerHTML = UtilCommon.sanitize(html);
 	};
 
 	getTextValue (): string {
@@ -166,10 +166,8 @@ class Editable extends React.Component<Props> {
 	setRange (range: I.TextRange) {
 		const el = this.editable.get(0);
 
-		window.setTimeout(() => {
-			el.focus({ preventScroll: true });
-			setRange(el, { start: range.from, end: range.to });
-		}, 15);
+		el.focus({ preventScroll: true });
+		setRange(el, { start: range.from, end: range.to });
 	};
 
 	onInput (e: any) {

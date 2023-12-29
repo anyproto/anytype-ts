@@ -22,7 +22,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	render () {
 		const { 
 			readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
-			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
+			onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 		} = this.props;
 
 		if (!row || !column) {
@@ -39,9 +39,10 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		};
 
 		const Handle = (item: any) => {
+			const cn = [ 'handle' ];
+
 			let onDragStart = null;
 			let onClick = null;
-			const cn = [ 'handle' ];
 			let canDrag = true;
 
 			switch (item.type) {
@@ -98,15 +99,17 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 							<div className="dropTarget">
 								<div className="flex">
 									<div className="markers" />
-									<div
-										id="value"
-										className={cv.join(' ')}
-										contentEditable={!readonly}
-										suppressContentEditableWarning={true}
-										onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
-										onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
-										onDragStart={(e: any) => { e.preventDefault(); }}
-									/>
+									<div className="editableWrap">
+										<div
+											id="value"
+											className={cv.join(' ')}
+											contentEditable={!readonly}
+											suppressContentEditableWarning={true}
+											onFocus={e => onCellFocus(e, row.id, column.id, cellId)}
+											onBlur={e => onCellBlur(e, row.id, column.id, cellId)}
+											onDragStart={e => e.preventDefault()}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -119,9 +122,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			<div
 				id={`cell-${cellId}`}
 				className={cn.join(' ')}
-				onClick={(e: any) => { onCellClick(e, row.id, column.id, cellId); }}
-				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
-				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
+				onClick={e => onCellClick(e, row.id, column.id, cellId)}
+				onMouseEnter={e => onCellEnter(e, row.id, column.id, cellId)}
+				onMouseLeave={e => onCellLeave(e, row.id, column.id, cellId)}
 				onMouseDown={this.onMouseDown}
 				{...UtilCommon.dataProps({ 'column-id': column.id })}
 			>
@@ -137,6 +140,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						className="noPlus"
 						onKeyDown={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyDown(e, row.id, column.id, cellId, text, marks, range, props);
+						}}
+						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
+							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
 						onUpdate={() => { onCellUpdate(cellId); }}
 						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}

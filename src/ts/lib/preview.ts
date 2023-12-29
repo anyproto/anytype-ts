@@ -261,7 +261,7 @@ class Preview {
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
 		const { ww } = UtilCommon.getWindowDimensions();
-		const y = 16;
+		const y = 32;
 
 		let sw = 0;
 		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {

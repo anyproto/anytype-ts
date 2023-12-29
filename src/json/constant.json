@@ -6,6 +6,11 @@
 	"protocol": "anytype",
 	"appName": "Anytype",
 
+	"networkId": {
+		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",
+		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD"
+	},
+
 	"platforms": {
 		"win32": 	"Windows",
 		"darwin":	"Mac",
@@ -16,10 +21,16 @@
 	"iconCnt": 16,
 	"fontCode": "plex",
 
+	"embed": {
+		"googleMaps": { "key": "AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o" }
+	},
+
 	"limit": {
 		"menuRecords": 100,
 		"widgets": 20,
-		"space": 10
+		"space": 10,
+		"notification": 20,
+		"phrase": { "letter": 8, "word": 12 }
 	},
 
 	"default": {
@@ -35,7 +46,8 @@
 		"popup": 310,
 		"toast": 2500,
 		"route": 250,
-		"keyboard": 500
+		"keyboard": 500,
+		"notification": 200
 	},
 	
 	"extension": {
@@ -43,7 +55,13 @@
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
-		"pdf": [ "pdf" ]
+		"pdf": [ "pdf" ],
+		"import": {
+			"1": [ "zip", "md" ],
+			"3": [ "zip", "pb", "json" ],
+			"4": [ "zip", "html", "htm", "mhtml" ],
+			"5": [ "zip", "txt" ]
+		}
 	},
 
 	"menuIds": {
@@ -66,7 +84,8 @@
 		"store":		 [ "typeSuggest", "relationSuggest" ],
 		"widget":		 [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
-		"table":		 [ "select2", "blockColor", "blockBackground" ]
+		"table":		 [ "select2", "blockColor", "blockBackground" ],
+		"navigation":	 [ "quickCapture" ]
 	},
 
 	"popupPinIds": [ "search" ],
@@ -78,7 +97,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink"
 	],
 
 	"relationRelationKeys": [
@@ -89,7 +108,10 @@
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+	"graphRelationKeys":	 [ 
+		"id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", 
+		"isDeleted", "isArchived", "isFavorite", "identityProfileLink"
+	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
 	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "createdDate" ],
 
@@ -326,11 +348,11 @@
 	"enabledInterfaceLang": [
 		"da-DK", "de-DE", "en-US",
 		"es-ES", "fr-FR", "hi-IN",
-		"id-ID", "it-IT", "nl-NL",
-		"no-NO", "pl-PL", "pt-BR",
-		"ro-RO", "ru-RU", "tr-TR",
-		"uk-UA", "vi-VN", "zh-CN",
-		"zh-TW"
+		"id-ID", "it-IT", "ja-JP",
+		"nl-NL", "no-NO", "pl-PL",
+		"pt-BR", "ro-RO", "ru-RU",
+		"tr-TR", "uk-UA", "vi-VN",
+		"zh-CN", "zh-TW"
 	],
 
 	"spellingLang": {

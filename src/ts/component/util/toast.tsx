@@ -141,9 +141,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 <div className="inner">
                     <div className="message">
                         {textObject}
-                        {textAction ? <span dangerouslySetInnerHTML={{ __html: textAction }} /> : ''}
+                        {textAction ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textAction) }} /> : ''}
                         {textOrigin}
-						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: textActionTo }} /> : ''}
+						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textActionTo) }} /> : ''}
                         {textTarget}
                     </div>
 
@@ -168,7 +168,6 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 	};
 
     onClick (e: any, item: any) {
-       
 		switch (item.action) {
             case 'open': {
                 this.onOpen(e);
@@ -182,7 +181,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
 			case 'undoArchive': {
 				if (item.data) {
-          Action.restore(item.data);
+					Action.restore(item.data);
 				};
 				break;
 			};

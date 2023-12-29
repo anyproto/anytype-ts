@@ -33,11 +33,9 @@
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; flex: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
-			.inner { 
-				position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; 
-			}
+			.inner { position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
 			.line { 
-				height: 100%; width: 2px; background: $colorControlActive; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
+				height: 100%; width: 2px; background: $colorShapeSecondary; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
 				border-radius: 2px;
 			}
 		}
@@ -100,3 +98,29 @@
 	.block > .wrapContent > .selectable.isSelectionSelected::after { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }
+
+@import "./bookmark.scss";
+@import "./cover.scss";
+@import "./dataview.scss";
+@import "./dataview/cell.scss";
+@import "./dataview/view/board.scss";
+@import "./dataview/view/common.scss";
+@import "./dataview/view/gallery.scss";
+@import "./dataview/view/grid.scss";
+@import "./dataview/view/list.scss";
+@import "./dataview/view/calendar.scss";
+@import "./dataview/view/graph.scss";
+@import "./div.scss";
+@import "./featured.scss";
+@import "./file.scss";
+@import "./iconPage.scss";
+@import "./iconUser.scss";
+@import "./layout.scss";
+@import "./link.scss";
+@import "./media.scss";
+@import "./relation.scss";
+@import "./table.scss";
+@import "./tableOfContents.scss";
+@import "./text.scss";
+@import "./type.scss";
+@import "./embed.scss";

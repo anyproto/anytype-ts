@@ -242,27 +242,21 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-		const buttons: any[] = [
-			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' }
-		];
+		const regDomain = /^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/i;
+		const isLocal = filter.match(/^file:/);
+		const isUrl = UtilCommon.matchUrl(filter) || filter.match(new RegExp(regDomain)) || isLocal;
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
-		if (items.length) {
-			buttons.push({ isDiv: true });
-		};
+		const buttons: any[] = [
+			isUrl ? { id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link' } : null,
+			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
+			items.length ? { isDiv: true } : null,
+		].filter(it => it);
 
-		if (UtilCommon.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
-			buttons.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link' });
-		};
-
-		const sections: any[] = [];
-
-		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
-
-		if (items.length) {
-			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: items });
-		};
+		const sections: any[] = [
+			{ id: I.MarkType.Link, name: '', children: buttons },
+			items.length ? { id: I.MarkType.Object, name: translate('commonObjects'), children: items } : null,
+		].filter(it => it);
 
 		return UtilMenu.sectionsMap(sections);
 	};

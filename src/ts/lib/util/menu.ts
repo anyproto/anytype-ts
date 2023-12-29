@@ -7,8 +7,8 @@ class UtilMenu {
 
 	mapperBlock (it: any) {
 		it.isBlock = true;
-		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
-		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
+		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
+		it.description = it.lang ? translate(`blockText${it.lang}`) : it.description;
 		return it;
 	};
 	
@@ -42,15 +42,37 @@ class UtilMenu {
 
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
+			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File' },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image' },
+			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video' },
+			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio' },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		].map(this.mapperBlock);
+	};
+
+	getBlockEmbed () {
+		const { config } = commonStore;
+		const ret = [
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
+			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.Embed, id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' });
+		};
+
+		return ret.map(this.mapperBlock).map(it => {
+			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
+			return it;
+		});
 	};
 
 	getBlockObject () {
@@ -78,8 +100,8 @@ class UtilMenu {
 
 	getBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
 			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
@@ -110,8 +132,8 @@ class UtilMenu {
 	
 	getTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
 		].map(this.mapperBlock);
 	};
 
@@ -224,13 +246,16 @@ class UtilMenu {
 	};
 
 	getViews () {
+		const { config } = commonStore;
+
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
-		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			config.experimental ? { id: I.ViewType.Graph } : null,
+		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -273,8 +298,8 @@ class UtilMenu {
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
-			{ id: I.RelationType.Status },
-			{ id: I.RelationType.Tag },
+			{ id: I.RelationType.Select },
+			{ id: I.RelationType.MultiSelect },
 			{ id: I.RelationType.Date },
 			{ id: I.RelationType.File },
 			{ id: I.RelationType.Checkbox },
@@ -398,6 +423,7 @@ class UtilMenu {
 		const { space } = commonStore;
 		const { spaceview } = blockStore;
 		const templateType = dbStore.getTemplateType();
+		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
 			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
@@ -411,8 +437,6 @@ class UtilMenu {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
-				menuStore.closeAll();
-
 				if (openRoute) {
 					UtilObject.openHome('route');
 				};
@@ -424,10 +448,9 @@ class UtilMenu {
 		menuStore.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds: [ 'searchObject' ],
-			onOpen: (context: any) => {
-				menuContext = context;
-			},
+			subIds,
+			onOpen: context => menuContext = context,
+			onClose: () => menuStore.closeAll(subIds),
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -440,7 +463,7 @@ class UtilMenu {
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll([ 'searchObject' ]);
+						menuStore.closeAll(subIds);
 						return;
 					};
 
@@ -457,7 +480,7 @@ class UtilMenu {
 										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
-									onSelect: (el: any) => onSelect(el, true),
+									onSelect: el => onSelect(el, true),
 								}
 							});
 							break;
@@ -489,6 +512,27 @@ class UtilMenu {
 			{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
 			{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
 		];
+	};
+
+	getInterfaceLanguages () {
+		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
+
+		for (const id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] });
+		};
+
+		return ret;
+	};
+
+	getSpellingLanguages () {
+		let ret: any[] = [];
+
+		ret = ret.concat(commonStore.languages || []);
+		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret.unshift({ id: '', name: translate('commonDisabled') });
+
+		return ret;
 	};
 
 };

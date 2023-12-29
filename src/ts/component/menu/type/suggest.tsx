@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, Storage } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -111,6 +111,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
 						value={filter}
 						onChange={this.onFilterChange} 
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -152,9 +153,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		this.rebind();
 		this.resize();
-		this.focus();
 		this.load(true);
-
 		this.forceUpdate();
 	};
 
@@ -179,7 +178,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		});
 
 		this.resize();
-		this.focus();
 		this.props.setActive();
 	};
 	
@@ -190,14 +188,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			menuStore.closeAll([ 'searchObject' ]);
 		};
 		window.clearTimeout(this.timeoutFilter);
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {
@@ -274,6 +264,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = UtilData.sortByLastUsedTypes(this.items);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -440,10 +431,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		e.stopPropagation();
 
 		const cb = (item: any) => {
-			close(); 
+			close();
+
+			item = detailStore.mapper(item);
+
+			Storage.addLastUsedType(item.id);
 
 			if (onClick) {
-				onClick(detailStore.mapper(item));
+				onClick(item);
 			};
 		};
 

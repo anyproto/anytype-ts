@@ -86,7 +86,7 @@
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
 	"commonMoveTo": "Move to",
-	"commonLinkTo": "Link to",
+	"commonLinkTo": "Add link to object",
 	"commonUpload": "Upload",
 	"commonDownload": "Download",
 	"commonAscending": "Ascending",
@@ -111,6 +111,8 @@
 	"commonTemplates": "Templates",
 	"commonSkip": "Skip",
 	"commonCreateNew": "Create new",
+	"commonSetName": "Set of %s",
+	"commonClear": "Clear",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -125,6 +127,8 @@
 	"pluralBlock": "Block|Blocks",
 	"pluralType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
+	"pluralLinks": "link from|links from",
+	"pluralBacklinks": "link to|links to",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -176,6 +180,7 @@
 	"electronMenuReleaseNotes": "What's new",
 	"electronMenuShortcuts": "Shortcuts",
 	"electronMenuCommunity": "Report a Bug",
+	"electronMenuGallery": "ANY Experience Gallery",
 	"electronMenuTutorial": "Help and Tutorials",
 	"electronMenuContact": "Contact Us",
 	"electronMenuTech": "Technical Information",
@@ -219,7 +224,7 @@
 	"relationName0": "Text",
 	"relationName1": "Short text",
 	"relationName2": "Number",
-	"relationName3": "Status",
+	"relationName3": "Select",
 	"relationName4": "Date",
 	"relationName5": "File & Media",
 	"relationName6": "Checkbox",
@@ -227,7 +232,7 @@
 	"relationName8": "Email",
 	"relationName9": "Phone",
 	"relationName10": "Icon",
-	"relationName11": "Tag",
+	"relationName11": "Multi-select",
 	"relationName100": "Object",
 	"relationName101": "Relations",
 	"relationCheckboxLabel0": "%s is unchecked",
@@ -240,6 +245,7 @@
 	"viewName2": "Gallery",
 	"viewName3": "Kanban",
 	"viewName4": "Calendar",
+	"viewName5": "Graph",
 
 	"progress0": "Copying files %s\/%s",
 	"progress1": "Import in progress",
@@ -274,7 +280,6 @@
 	"authSelectSignup": "Create New Account",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
-	"authLoginSelfHost": "Self-host",
 	"authLoginSubmit": "Log In",
 	"authLoginLostPhrase": "I've lost the Phrase",
 	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover Recovery Phrase for you<\/h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
@@ -310,8 +315,6 @@
 	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Show Recovery Phrase",
 
-	"usecase0Title": "Empty",
-	"usecase0Label": "Just a blank canvas",
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
 	"usecase3Title": "Bookshelf",
@@ -320,9 +323,8 @@
 	"usecase4Label": "Keep your daily notes and self-reflections secure and private",
 	"usecase5Title": "Strategic Writing",
 	"usecase5Label": "Structure and present your thoughts effectively. A dedicated dashboard for your writings",
-
-	"pageMainUsecaseTitle": "How would you like to start?",
-	"pageMainUsecaseLabel": "We'll load some Templates to get you started",
+	"usecase6Title": "Empty",
+	"usecase6Label": "Just a blank canvas",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
@@ -402,7 +404,7 @@
 	"blockNameBulleted": "Bulleted list",
 	"blockNameNumbered": "Numbered list",
 	"blockNameToggle": "Toggle",
-	"blockNameExisting": "Link to Object",
+	"blockNameExisting": "Add link",
 	"blockNameFile": "File",
 	"blockNameImage": "Picture",
 	"blockNameVideo": "Video",
@@ -416,7 +418,6 @@
 	"blockNameEmbed": "Show as embed",
 	"blockNameRelation": "Relation",
 	"blockNameNewRelation": "New Relation",
-	"blockNameLatex": "LaTeX",
 	"blockNameSimpleTable": "Table 3x3",
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
@@ -432,7 +433,7 @@
 	"blockTextBulleted": "Simple list",
 	"blockTextNumbered": "Numbered list",
 	"blockTextToggle": "Hide and show content inside",
-	"blockTextExisting": "Link to existing Object",
+	"blockTextExisting": "Create link to another object",
 	"blockTextFile": "Store file in original state",
 	"blockTextImage": "Upload and enrich the page with image",
 	"blockTextVideo": "Upload playable video",
@@ -446,7 +447,6 @@
 	"blockTextEmbed": "Embed file into the Object",
 	"blockTextRelation": "Meaningful connection between Objects",
 	"blockTextNewRelation": "Meaningful connection between Objects",
-	"blockTextLatex": "Display a math equations",
 	"blockTextSimpleTable": "Create a Simple Table",
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
@@ -516,13 +516,15 @@
 
 	"blockBookmarkError": "There was an error fetching the url",
 
-	"blockLatexPlaceholder": "Enter text in format LaTeX",
-	"blockLatexTemplate": "Template formula",
+	"blockEmbedLatexPlaceholder": "Enter text in format LaTeX",
+	"blockEmbedPlaceholder": "Enter embed code for %s",
+	"blockEmbedLatexTemplate": "Template formula",
+	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
+	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
+	"blockEmbedSource": "Source",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
-
-	"blockFeaturedTypesList": "Object %s: %s",
 	"blockFeaturedQuery": "Query",
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
@@ -665,9 +667,14 @@
 	"popupSettingsImportTitle": "Import",
 	"popupSettingsImportText": "Choose application or format of data source",
 	"popupSettingsImportOk": "Import data",
-
+	"popupSettingsImportNotionTitle": "Notion Import",
 	"popupSettingsImportCsvTitle": "CSV Import",
 	"popupSettingsImportCsvText": "Select a <b>Zip archive or CSV file<\/b> (.csv) to complete the import",
+	"popupSettingsImportFavouriteTitle": "Selected objects will appear in your Favorites widget",
+	"popupSettingsImportHtmlTitle": "HTML Import",
+	"popupSettingsImportTextTitle": "Text Import",
+	"popupSettingsImportProtobufTitle": "Any-Block Import",
+	"popupSettingsImportMarkdownTitle": "Markdown Import",
 
 	"popupSettingsExportTitle": "Export Space",
 	"popupSettingsExportText": "Choose application or format of data source",
@@ -706,6 +713,16 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
+	"popupSettingsOnboardingModeTitle": "Network",
+	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
+
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Back up to the network managed by Anytype",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Don't back up; sync within local network",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Back up to your self-hosted network",
+
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
 	"popupNavigationOpen": "Open",
@@ -719,6 +736,7 @@
 
 	"popupSearchPlaceholder": "Search for an object...",
 	"popupSearchEmpty": "No Objects found",
+	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
@@ -835,6 +853,7 @@
 	"popupShortcutMainBasics16": "Zoom in",
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
+	"popupShortcutMainBasics19": "Open the Quick Capture menu",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -964,6 +983,12 @@
 	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
+	"popupUsecaseAuthor": "Made by @%s",
+	"popupUsecaseUpdated": "Updated: %s",
+	"popupUsecaseInstall": "Install",
+	"popupUsecaseMenuLabel": "Install experience to",
+	"popupUsecaseSpaceCreate": "Create new space",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
@@ -998,6 +1023,7 @@
 	"menuBlockAddSectionsText": "Text",
 	"menuBlockAddSectionsList": "List",
 	"menuBlockAddSectionsMedia": "Media",
+	"menuBlockAddSectionsEmbed": "Embeds",
 	"menuBlockAddSectionsOther": "Other",
 	"menuBlockAddSectionsObjects": "Objects",
 	"menuBlockAddSectionsRelations": "Relations",
@@ -1039,8 +1065,6 @@
 	"menuBlockMoreMoveTo": "Move to",
 	"menuBlockMoreVersionHistory": "Version History",
 	"menuBlockMoreExport": "Export",
-	"menuBlockMoreDuplicateObject": "Duplicate Object",
-	"menuBlockMoreDuplicateTemplate": "Duplicate Template",
 	"menuBlockMoreCopyLink": "Copy link",
 	"menuBlockMoreReloadFromSource": "Reload from Source",
 	"menuBlockMoreCreateObject": "Create Object",
@@ -1049,6 +1073,7 @@
 	"menuBlockMoreLockPage": "Lock page",
 	"menuBlockMoreInstall": "Install",
 	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
+	"menuBlockMoreCreateWidget": "Create Widget",
 
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
@@ -1184,6 +1209,7 @@
 	"menuHelpTech": "Technical Information",
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
+	"menuHelpGallery": "ANY Experience Gallery",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
@@ -1193,10 +1219,14 @@
 
 	"menuRelationSuggestFilterOrCreateRelation": "Filter or create a Relation...",
 	"menuRelationSuggestMyRelations": "My Relations",
+	"menuRelationSuggestSystem": "System Relations",
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
 	"menuThreadListLastSync": "Last sync",
-	"menuThreadListBackupNode": "Backup node",
+	"menuThreadListProduction": "Anytype Network",
+	"menuThreadListDevelopment": "Anytype Staging",
+	"menuThreadListSelf": "Self-hosted Network",
+	"menuThreadListLocal": "Local only",
 
 	"menuThreadStatusObjectBackedUp": "This Object is backed up",
 	"menuThreadStatusUpdatesRequested": "Updates requested",
@@ -1235,6 +1265,9 @@
 	"menuPreviewLatexExample": "Example: %s",
 	"menuSelectEmpty": "No options found",
 
+	"menuQuickCaptureSearchObjectTypes": "Search object types...",
+	"menuQuickCaptureGroups": "Lists",
+
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
 
@@ -1268,12 +1301,15 @@
 	"threadStatus3": "Synced",
 	"threadStatus4": "Not syncing",
 	"threadStatus5": "Incompatible version",
+	"threadStatus100": "Local-only",
+
 	"threadStatus0Tooltip": "Initializing sync",
 	"threadStatus1Tooltip": "Anytype node is not connected",
 	"threadStatus2Tooltip": "Downloading or uploading data to some node",
 	"threadStatus3Tooltip": "Backed up on one node at least",
 	"threadStatus4Tooltip": "Failed to sync, trying again...",
 	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
+	"threadStatus100Tooltip": "Don't back up; sync within local network",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
@@ -1349,6 +1385,7 @@
 	"placeholderCell7": "Add link",
 	"placeholderCell8": "Add email",
 	"placeholderCell9": "Add phone",
+	"placeholderCell10": "Add emoji",
 	"placeholderCell11": "Select tags",
 	"placeholderCell100": "Select objects",
 
@@ -1392,6 +1429,7 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
+	"widgetCreate": "Create new object",
 
 	"phrasePlaceholder": "Please enter your Recovery Phrase here",
 
@@ -1403,9 +1441,9 @@
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
-	"spaceDeleteWarningTitle": "Delete '%s' space",
+	"spaceDeleteWarningTitle": "Delete \"%s\" space",
 	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
-	"spaceDeleteToast": "Space '%s' was deleted",
+	"spaceDeleteToast": "Space \"%s\" was deleted",
 
 	"quickOption0": "Exact date",
 	"quickOption1": "Yesterday",
@@ -1428,17 +1466,6 @@
 	"deletedBannerRestore": "Restore",
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",
-
-	"dispatcherImportSuccessTitle": "The import process is complete!",
-	"dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
-	"dispatcherExportSuccessTitle": "The export process is complete!",
-	"dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
-	"dispatcherImportErrorTitle": "The import wasn't completed",
-	"dispatcherImportErrorText": "Sorry, but something went wrong during the import process. Please try again or let us know if it doesn't work.",
-	"dispatcherExportErrorTitle": "The export wasn't completed",
-	"dispatcherExportErrorText": "Sorry, but something went wrong during the export process. Please try again or let us know if it doesn't work.",
-	"dispatcherImportConfirm": "Ok! I got it!",
-	"dispatcherImportTryAgain": "Try again",
 
 	"onboardingMainGraph": "Onboarding",
 	"onboardingMainGraph11": "<b>Space is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
@@ -1517,11 +1544,13 @@
 	"onboardingSpaceSelectTitle": "Meet Multiple Spaces",
 	"onboardingSpaceSelectDescription": "Click your profile icon to access the space selector. Switch between spaces or create new ones here.",
 
+	"onboardingQuickCaptureTitle": "Create objects with different types",
+	"onboardingQuickCaptureDescription": "Right-click the <span class=\"highlight\">\"Plus\"</span> button to use recent types. In this menu, you can select existing types, install from Anytype Library, or create new ones.",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
 
-	"libKeyboardDevice": "Device",
 	"libKeyboardOSVersion": "OS version",
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
@@ -1573,13 +1602,39 @@
 	"errorAccountRecover109": "Account has been deleted",
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
-	"origin0": "User",
+	"origin0": "None",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
-	"origin3": "Import",
-	"origin4": "Webclipper",
-	"origin5": "Sharing Extension",
-	"origin6": "Usecase",
-	"origin7": "Built-in"
+	"origin3": "Imported object",
+	"origin4": "Web clipper",
+	"origin5": "Mobile sharing extension",
+	"origin6": "Use case",
+	"origin7": "Library installed",
 
+	"emojiCategoryPeople": "Smileys & People",
+	"emojiCategoryNature": "Animals & Nature",
+	"emojiCategoryFoods": "Food & Drink",
+	"emojiCategoryActivity": "Activities",
+	"emojiCategoryPlaces": "Travel & Places",
+	"emojiCategoryObjects": "Objects",
+	"emojiCategorySymbols": "Symbols",
+	"emojiCategoryFlags": "Flags",
+
+	"notificationImportSuccessTitle": "Import complete!",
+	"notificationImportSuccessText": "You can find the imported objects in the selected space.",
+	"notificationImportErrorTitle": "Import failed",
+	"notificationImportErrorText": "Sorry, but something went wrong during the import. Please try again, and let us know if it doesn't work.",
+
+	"notificationExportSuccessTitle": "Export completed!",
+	"notificationExportSuccessText": "You can find the exported objects in the folder you selected.",
+	"notificationExportErrorTitle": "Export failed",
+	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
+
+	"notificationGallerySuccessTitle": "\"%s\" was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryErrorTitle": "Something went wrong",
+	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+
+	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
+	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"
 }

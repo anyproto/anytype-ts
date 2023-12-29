@@ -248,7 +248,7 @@ class DbStore {
 
 		ids.forEach((id: string) => {
 			const subId = this.getSubId(rootId, [ blockId, id ].join('-'));
-			dbStore.recordsClear(subId, '');
+			this.recordsClear(subId, '');
 		});
 
 		this.groupsSet(rootId, blockId, groups.filter(it => !ids.includes(it.id)));
@@ -288,13 +288,17 @@ class DbStore {
 		return this.getTypeByKey(Constant.typeKey.type);
 	};
 
+	getBookmarkType () {
+		return this.getTypeByKey(Constant.typeKey.bookmark);
+	};
+
 	getTypes () {
-		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
+		return this.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {
-		return dbStore.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+		return this.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -302,7 +306,7 @@ class DbStore {
 		const subId = Constant.subId.space;
 		const { spaceview } = blockStore;
 
-		let items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+		let items = this.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
 
 		items = items.filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok));
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));

@@ -4,6 +4,7 @@ import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import Text from 'json/text.json';
+import DOMPurify from 'dompurify';
 
 class UtilCommon {
 
@@ -595,7 +596,7 @@ class UtilCommon {
 		
 		a.forEach((s) => {
 			const [ key, value ] = s.split('=');
-			param[key] = value;
+			param[key] = decodeURIComponent(value);
 		});
 		return param;
 	};
@@ -708,7 +709,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),
+						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
@@ -767,6 +768,19 @@ class UtilCommon {
 		const id = this.toCamelCase(`error-${command}${code}`);
 
 		return Text[id] ? translate(id) : description;
+	};
+
+	sanitize (s: string): string {
+		return DOMPurify.sanitize(String(s || ''), { 
+			ADD_TAGS: [ 
+				'b', 'br', 'a', 'ul', 'li', 'h1', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color',
+				'bgcolor', 'mention', 'emoji', 'obj', 'span', 'p', 'name', 'smile', 'img', 'search'
+			],
+			ADD_ATTR: [
+				'contenteditable'
+			],
+			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+		});
 	};
 
 };

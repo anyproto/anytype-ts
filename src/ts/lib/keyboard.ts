@@ -246,7 +246,12 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-				this.pageCreate('Shortcut');
+				this.pageCreate({}, 'Shortcut');
+			});
+
+			this.shortcut(`alt+shift+n`, e, () => {
+				e.preventDefault();
+				this.onQuickCapture();
 			});
 
 			// Settings
@@ -296,24 +301,14 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (route: string) {
+	pageCreate (details: any, route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
 			return;
 		};
 
-		const targetId = '';
-		const position = I.BlockPosition.Bottom;
-		const rootId = '';
-		const details: any = {};
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-		
-		if (!rootId) {
-			flags.push(I.ObjectFlag.DeleteEmpty);
-		};
-		
-		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
 			UtilObject.openAuto({ id: message.targetId });
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
@@ -477,6 +472,7 @@ class Keyboard {
 				break;
 			};
 
+			case 'gallery':
 			case 'terms':
 			case 'tutorial':
 			case 'privacy':
@@ -505,7 +501,7 @@ class Keyboard {
 			};
 
 			case 'create': {
-				this.pageCreate('MenuSystem');
+				this.pageCreate({}, 'MenuSystem');
 				break;
 			};
 
@@ -557,7 +553,7 @@ class Keyboard {
 			case 'debugSpace': {
 				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 
 						Renderer.send('pathOpen', tmpPath);
 					};
@@ -605,7 +601,6 @@ class Keyboard {
 		C.AppGetVersion((message: any) => {
 			let url = Url.contact;
 
-			url = url.replace(/\%25device\%25/g, window.Electron.version.device);
 			url = url.replace(/\%25os\%25/g, window.Electron.version.os);
 			url = url.replace(/\%25version\%25/g, window.Electron.version.app);
 			url = url.replace(/\%25build\%25/g, message.details);
@@ -626,7 +621,6 @@ class Keyboard {
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ translate('libKeyboardDevice'), window.Electron.version.device ],
 				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
 				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
@@ -773,21 +767,47 @@ class Keyboard {
 	};
 
 	onSpaceMenu (shortcut: boolean) {
-		if (menuStore.isOpen('space')) {
+		popupStore.close('search', () => {
+			menuStore.closeAll([ 'quickCapture' ], () => {
+				menuStore.open('space', {
+					element: '#navigationPanel',
+					className: 'fixed',
+					classNameWrap: 'fromNavigation',
+					type: I.MenuType.Horizontal,
+					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
+					offsetY: -12,
+					data: {
+						shortcut,
+					}
+				});
+			});
+		});
+	};
+
+	onQuickCapture () {
+		if (menuStore.isOpen('quickCapture')) {
+			menuStore.close('quickCapture');
 			return;
 		};
 
-		menuStore.open('space', {
-			element: '#navigationPanel',
-			className: 'fixed',
-			classNameWrap: 'fromNavigation',
-			type: I.MenuType.Horizontal,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			offsetY: -12,
-			data: {
-				shortcut,
-			}
+		const element = '#button-navigation-plus';
+
+		popupStore.close('search', () => {
+			menuStore.closeAll([ 'quickCapture', 'space' ], () => {
+				menuStore.open('quickCapture', {
+					element,
+					className: 'fixed',
+					classNameWrap: 'fromNavigation',
+					type: I.MenuType.Horizontal,
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
+					noFlipY: true,
+					offsetY: -20,
+					onOpen: () => $(element).addClass('active'),
+					onClose: () => $(element).removeClass('active'),
+				});
+			});
 		});
 	};
 
@@ -883,6 +903,8 @@ class Keyboard {
 	};
 
 	setPinChecked (v: boolean) {
+		v = Boolean(v);
+
 		if (this.isPinChecked === v) {
 			return;
 		};
@@ -1002,10 +1024,11 @@ class Keyboard {
 	};
 	
 	isSpecial (e: any): boolean {
-		return [ 
-			Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, 
-			Key.alt, Key.meta, Key.up, Key.down, Key.left, Key.right,
-		].includes(this.eventKey(e));
+		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
+	};
+
+	isArrow (e: any): boolean {
+		return [ Key.up, Key.down, Key.left, Key.right ].includes(this.eventKey(e));
 	};
 
 	withCommand (e: any): boolean {

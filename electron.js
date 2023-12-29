@@ -3,15 +3,15 @@
 const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
-const os = require('os');
 const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
-
-const userPath = app.getPath('userData');
-const logPath = path.join(userPath, 'logs');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
+
+if (is.development) {
+	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
+};
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -20,18 +20,15 @@ const MenuManager = require('./electron/js/menu.js');
 const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
+const Cors = require('./electron/json/cors.json');
 
-const csp = [
-	`default-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-	`img-src 'self' http://*:* https://*:* data: blob: file://*`,
-	`media-src 'self' http://*:* https://*:* data: blob: file://*`,
-	`style-src 'unsafe-inline' http://localhost:* file://*`,
-	`font-src data: file://* http://localhost:*`,
-	`connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:`,
-	`script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'`,
-	`frame-src chrome-extension://react-developer-tools`,
-	`worker-src 'self' 'unsafe-eval' blob: http://localhost:*`,
-];
+const userPath = Util.userPath();
+const logPath = Util.logPath();
+const csp = [];
+
+for (let i in Cors) {
+	csp.push([ i ].concat(Cors[i]).join(' '));
+};
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);
@@ -98,13 +95,10 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
-	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
+	Util.log('info', 'CreateWindow: ' + deeplinkingUrl + ' ' + JSON.stringify(process.argv));
 
-	if (process.env.ELECTRON_DEV_EXTENSIONS) {
-		BrowserWindow.addDevToolsExtension(
-			path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0')
-		);
-	};
+
+	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	mainWindow.on('close', (e) => {
 		Util.log('info', 'closeMain: ' + app.isQuiting);
@@ -131,6 +125,7 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 
+	ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
 		const win = BrowserWindow.fromId(id);
@@ -146,6 +141,8 @@ function createWindow () {
 			console.error('[Api] method not defined:', cmd);
 		};
 	});
+
+	
 };
 
 app.on('ready', () => {
@@ -199,6 +196,8 @@ app.on('activate', () => {
 
 app.on('open-url', (e, url) => {
 	e.preventDefault();
+
+	deeplinkingUrl = url;
 
 	if (mainWindow) {
 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));

@@ -8,11 +8,11 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, Encode, Decode,
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -21,175 +21,22 @@ configure({ enforceActions: 'never' });
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
-import 'emoji-mart/css/emoji-mart.css';
+import 'swiper/scss';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';
 import 'scss/font.scss';
-
-import 'scss/component/cover.scss';
-import 'scss/component/deleted.scss';
-import 'scss/component/dragbox.scss';
-import 'scss/component/dragLayer.scss';
-import 'scss/component/dotIndicator.scss';
-import 'scss/component/editor.scss';
-import 'scss/component/emptySearch.scss';
-import 'scss/component/error.scss';
-import 'scss/component/footer.scss';
-import 'scss/component/frame.scss';
-import 'scss/component/header.scss';
-import 'scss/component/headSimple.scss';
-import 'scss/component/icon.scss';
-import 'scss/component/iconObject.scss';
-import 'scss/component/loader.scss';
-import 'scss/component/pager.scss';
-import 'scss/component/progress.scss';
-import 'scss/component/selection.scss';
-import 'scss/component/sidebar.scss';
-import 'scss/component/sync.scss';
-import 'scss/component/tag.scss';
-import 'scss/component/title.scss';
-import 'scss/component/toast.scss';
-import 'scss/component/tooltip.scss';
-import 'scss/component/navigation.scss';
-
-import 'scss/component/preview/common.scss';
-import 'scss/component/preview/link.scss';
-import 'scss/component/preview/object.scss';
-
-import 'scss/component/media/audio.scss';
-import 'scss/component/media/video.scss';
-
-import 'scss/component/hightlight.scss';
-import 'scss/component/progressBar.scss';
-
-import 'scss/page/auth.scss';
-import 'scss/page/main/edit.scss';
-import 'scss/page/main/graph.scss';
-import 'scss/page/main/history.scss';
-import 'scss/page/main/media.scss';
-import 'scss/page/main/navigation.scss';
-import 'scss/page/main/relation.scss';
-import 'scss/page/main/set.scss';
-import 'scss/page/main/space.scss';
-import 'scss/page/main/store.scss';
-import 'scss/page/main/type.scss';
-import 'scss/page/main/archive.scss';
-import 'scss/page/main/graph.scss';
-import 'scss/page/main/navigation.scss';
-import 'scss/page/main/block.scss';
-import 'scss/page/main/empty.scss';
-import 'scss/page/main/usecase.scss';
-
-import 'scss/block/bookmark.scss';
+import 'scss/component/common.scss';
+import 'scss/page/common.scss';
 import 'scss/block/common.scss';
-import 'scss/block/cover.scss';
-import 'scss/block/dataview.scss';
-import 'scss/block/dataview/cell.scss';
-import 'scss/block/dataview/view/board.scss';
-import 'scss/block/dataview/view/common.scss';
-import 'scss/block/dataview/view/gallery.scss';
-import 'scss/block/dataview/view/grid.scss';
-import 'scss/block/dataview/view/list.scss';
-import 'scss/block/dataview/view/calendar.scss';
-import 'scss/block/div.scss';
-import 'scss/block/featured.scss';
-import 'scss/block/file.scss';
-import 'scss/block/iconPage.scss';
-import 'scss/block/iconUser.scss';
-import 'scss/block/latex.scss';
-import 'scss/block/layout.scss';
-import 'scss/block/link.scss';
-import 'scss/block/media.scss';
-import 'scss/block/relation.scss';
-import 'scss/block/table.scss';
-import 'scss/block/tableOfContents.scss';
-import 'scss/block/text.scss';
-import 'scss/block/type.scss';
-
-import 'scss/form/button.scss';
-import 'scss/form/drag.scss';
-import 'scss/form/filter.scss';
-import 'scss/form/input.scss';
-import 'scss/form/inputWithFile.scss';
-import 'scss/form/inputWithLabel.scss';
-import 'scss/form/phrase.scss';
-import 'scss/form/pin.scss';
-import 'scss/form/select.scss';
-import 'scss/form/switch.scss';
-import 'scss/form/textarea.scss';
-
-import 'scss/list/object.scss';
-import 'scss/list/widget.scss';
-import 'scss/list/previewObject.scss';
-import 'scss/list/objectManager.scss';
-
+import 'scss/form/common.scss';
+import 'scss/list/common.scss';
 import 'scss/widget/common.scss';
-import 'scss/widget/space.scss';
-import 'scss/widget/list.scss';
-import 'scss/widget/tree.scss';
-
 import 'scss/popup/common.scss';
-import 'scss/popup/confirm.scss';
-import 'scss/popup/export.scss';
-import 'scss/popup/help.scss';
-import 'scss/popup/page.scss';
-import 'scss/popup/preview.scss';
-import 'scss/popup/prompt.scss';
-import 'scss/popup/search.scss';
-import 'scss/popup/settings.scss';
-import 'scss/popup/shortcut.scss';
-import 'scss/popup/migration.scss';
-import 'scss/popup/pin.scss';
-import 'scss/popup/phrase.scss';
-
 import 'scss/menu/common.scss';
-import 'scss/menu/button.scss';
-import 'scss/menu/common.scss';
-import 'scss/menu/help.scss';
-import 'scss/menu/onboarding.scss';
-import 'scss/menu/relation.scss';
-import 'scss/menu/select.scss';
-import 'scss/menu/smile.scss';
-import 'scss/menu/thread.scss';
-import 'scss/menu/type.scss';
-import 'scss/menu/widget.scss';
-import 'scss/menu/space.scss';
-
-import 'scss/menu/account/path.scss';
-
-import 'scss/menu/search/object.scss';
-import 'scss/menu/search/text.scss';
-
-import 'scss/menu/preview/object.scss';
-
-import 'scss/menu/block/common.scss';
-import 'scss/menu/block/context.scss';
-import 'scss/menu/block/cover.scss';
-import 'scss/menu/block/icon.scss';
-import 'scss/menu/block/latex.scss';
-import 'scss/menu/block/link.scss';
-import 'scss/menu/block/linkSettings.scss';
-import 'scss/menu/block/mention.scss';
-import 'scss/menu/block/relation.scss';
-
-import 'scss/menu/dataview/calendar.scss';
-import 'scss/menu/dataview/common.scss';
-import 'scss/menu/dataview/create/bookmark.scss';
-import 'scss/menu/dataview/file.scss';
-import 'scss/menu/dataview/filter.scss';
-import 'scss/menu/dataview/group.scss';
-import 'scss/menu/dataview/object.scss';
-import 'scss/menu/dataview/option.scss';
-import 'scss/menu/dataview/relation.scss';
-import 'scss/menu/dataview/sort.scss';
-import 'scss/menu/dataview/source.scss';
-import 'scss/menu/dataview/text.scss';
-import 'scss/menu/dataview/view.scss';
-import 'scss/menu/dataview/template.scss';
+import 'scss/notification/common.scss';
 
 import 'scss/media/print.scss';
-
 import 'scss/theme/dark/common.scss';
 
 import Constant from 'json/constant.json';
@@ -198,6 +45,7 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+
 interface RouteElement { path: string; };
 
 interface State {
@@ -206,15 +54,20 @@ interface State {
 
 declare global {
 	interface Window {
-		Electron: any;
-		Store: any;
 		$: any;
-		Lib: any;
-		Graph: any;
+		Electron: any;
+		Anytype: any;
 
 		isWebVersion: boolean;
 		Config: any;
-		Renderer: any;
+	}
+};
+
+declare global {
+	namespace JSX {
+		interface IntrinsicElements {
+			['em-emoji']: any;
+		}
 	}
 };
 
@@ -226,31 +79,39 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	notificationStore,
 };
 
-window.Store = rootStore;
 window.$ = $;
-window.Lib = {
-	I,
-	C,
-	UtilCommon,
-	UtilData,
-	UtilFile,
-	UtilObject,
-	UtilMenu,
-	UtilRouter,
-	analytics,
-	dispatcher,
-	keyboard,
-	Renderer,
-	Preview,
-	Storage,
-	Animation,
-	Onboarding,
-	Survey,
-	Docs,
-	Encode, 
-	Decode,
+
+if (!window.Electron.isPackaged) {
+	window.Anytype = {
+		Store: rootStore,
+		Lib: {
+			I,
+			C,
+			UtilCommon,
+			UtilData,
+			UtilFile,
+			UtilObject,
+			UtilMenu,
+			UtilRouter,
+			UtilSmile,
+			UtilDate,
+			analytics,
+			dispatcher,
+			keyboard,
+			Renderer,
+			Preview,
+			Storage,
+			Animation,
+			Onboarding,
+			Survey,
+			Docs,
+			Encode, 
+			Decode,
+		},
+	};
 };
 
 /*
@@ -343,6 +204,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<Navigation />
+						<ListNotification key="listNotification" />
 
 						<div id="tooltipContainer" />
 						<div id="drag" />
@@ -361,9 +223,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-	};
-
-	componentDidUpdate () {
 	};
 
 	init () {
@@ -434,13 +293,14 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, route, account, phrase, languages, isPinChecked } = data;
+		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
+		const route = String(data.route || redirect || '');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -475,13 +335,15 @@ class App extends React.Component<object, State> {
 				authStore.phraseSet(phrase);
 
 				UtilData.createSession(() => {
-					authStore.accountSet(account);
 					keyboard.setPinChecked(isPinChecked);
-					commonStore.redirectSet(route || redirect || '');
-					commonStore.configSet(account.config, false);
+					commonStore.redirectSet(route);
 
-					UtilData.onInfo(account.info);
-					UtilData.onAuth({}, cb);
+					if (account) {
+						authStore.accountSet(account);
+						commonStore.configSet(account.config, false);
+						UtilData.onInfo(account.info);
+						UtilData.onAuth({}, cb);
+					};
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -497,7 +359,7 @@ class App extends React.Component<object, State> {
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(redirect || '');
+				commonStore.redirectSet(route);
 				Renderer.send('keytarGet', accountId);
 
 				cb();

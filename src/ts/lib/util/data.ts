@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -36,6 +36,15 @@ class UtilData {
 		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
 
+	blockEmbedClass (v: I.EmbedProcessor): string {
+		let c = '';
+		switch (v) {
+			case I.EmbedProcessor.Latex: c = 'isLatex'; break;
+			default: c = 'isDefault'; break;
+		};
+		return c;
+	};
+
 	styleIcon (type: I.BlockType, v: number): string {
 		let icon = '';
 		switch (type) {
@@ -59,33 +68,43 @@ class UtilData {
 
 	blockClass (block: any) {
 		const { content } = block;
-		const { style, type, state } = content;
-		const dc = UtilCommon.toCamelCase('block-' + block.type);
-
+		const { style, type, processor } = content;
+		const dc = UtilCommon.toCamelCase(`block-${block.type}`);
 		const c = [];
-		if (block.type == I.BlockType.File) {
-			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
-				c.push(dc);
-			} else {
-				c.push('blockMedia');
 
-				switch (type) {
-					case I.FileType.Image:	 c.push('isImage'); break;
-					case I.FileType.Video:	 c.push('isVideo'); break;
-					case I.FileType.Audio:	 c.push('isAudio'); break;
-					case I.FileType.Pdf:	 c.push('isPdf'); break;
+		switch (block.type) {
+			case I.BlockType.File: {
+				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+					c.push(dc);
+				} else {
+					c.push('blockMedia');
+
+					switch (type) {
+						case I.FileType.Image:	 c.push('isImage'); break;
+						case I.FileType.Video:	 c.push('isVideo'); break;
+						case I.FileType.Audio:	 c.push('isAudio'); break;
+						case I.FileType.Pdf:	 c.push('isPdf'); break;
+					};
 				};
+				break;
 			};
-		} else {
-			c.push(dc);
 
-			switch (block.type) {
-				case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
-				case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
-				case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+			case I.BlockType.Embed: {
+				c.push('blockEmbed');
+				c.push(this.blockEmbedClass(processor));
+				break;
+			};
+
+			default: {
+				c.push(dc);
+				switch (block.type) {
+					case I.BlockType.Text:					 c.push(this.blockTextClass(style)); break;
+					case I.BlockType.Layout:				 c.push(this.blockLayoutClass(style)); break;
+					case I.BlockType.Div:					 c.push(this.blockDivClass(style)); break;
+				};
+				break;
 			};
 		};
-
 		return c.join(' ');
 	};
 
@@ -192,8 +211,7 @@ class UtilData {
 		commonStore.spaceSet(info.accountSpaceId);
 		commonStore.techSpaceSet(info.techSpaceId);
 
-		analytics.device(info.deviceId);
-		analytics.profile(info.analyticsId);
+		analytics.profile(info.analyticsId, info.networkId);
 
 		Sentry.setUser({ id: info.analyticsId });
 	};
@@ -219,12 +237,6 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.FileNodeUsage((message: any) => {
-			if (!message.error.code) {
-				commonStore.spaceStorageSet(message);
-			};
-		});
-
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
@@ -232,6 +244,18 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', space, () => {
 				this.createsSubscriptions(() => {
+					C.NotificationList(false, Constant.limit.notification, (message: any) => {
+						if (!message.error.code) {
+							notificationStore.set(message.list);
+						};
+					});
+
+					C.FileNodeUsage((message: any) => {
+						if (!message.error.code) {
+							commonStore.spaceStorageSet(message);
+						};
+					});
+
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
@@ -243,6 +267,8 @@ class UtilData {
 
 						commonStore.redirectSet('');
 					};
+
+					Storage.initLastUsedTypes();
 
 					if (!color) {
 						Storage.set('color', 'orange');
@@ -312,6 +338,10 @@ class UtilData {
 				keys: Constant.optionRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+				],
+				sorts: [
+					{ relationKey: 'createdDate', type: I.SortType.Asc },
+					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -396,40 +426,34 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, withDefault } = param || {};
+		const { withSet, withBookmark, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const bookmark = dbStore.getTypeByKey(Constant.typeKey.bookmark);
-		const collection = dbStore.getTypeByKey(Constant.typeKey.collection);
-		const set = dbStore.getTypeByKey(Constant.typeKey.set);
-		const task = dbStore.getTypeByKey(Constant.typeKey.task);
-		const page = dbStore.getTypeByKey(Constant.typeKey.page);
-		const note = dbStore.getTypeByKey(Constant.typeKey.note);
+		const skipLayouts = UtilObject.getSetLayouts();
+
+		if (!withBookmark) {
+			skipLayouts.push(I.ObjectLayout.Bookmark);
+		};
 
 		let items: any[] = [];
 
-		if (!withDefault) {
-			const skipIds = [ bookmark, collection, set, task, page, note ].filter(it => it).map(it => it.id);
+		items = items.concat(dbStore.getTypes().filter(it => {
+			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+		}));
+		items = this.sortByLastUsedTypes(items);
 
-			items = items.concat(dbStore.getTypes().filter(it => {
-				return pageLayouts.includes(it.recommendedLayout) && !skipIds.includes(it.id) && (it.spaceId == space);
-			}));
-			items.sort(this.sortByName);
-		};
-
-		if (withBookmark) {
-			items.unshift(bookmark);
-		};
-
-		if (withCollection) {
-			items.unshift(collection);
+		if (limit) {
+			items = items.slice(0, limit);
 		};
 
 		if (withSet) {
-			items.unshift(set);
+			items.push(dbStore.getSetType());
 		};
 
-		items = [ note, page, task ].concat(items);
+		if (withCollection) {
+			items.push(dbStore.getCollectionType());
+		};
+
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {
@@ -540,6 +564,24 @@ class UtilData {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByLastUsedTypes (items: any[]) {
+		const lastUsedTypes = Storage.getLastUsedTypes();
+
+		return items.sort((c1: any, c2: any) => {
+			const idx1 = lastUsedTypes.indexOf(c1.id);
+			const idx2 = lastUsedTypes.indexOf(c2.id);
+			const is1 = idx1 >= 0;
+			const is2 = idx2 >= 0;
+
+			if (!is1 && is2) return 1;
+			if (is1 && !is2) return -1;
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
@@ -802,6 +844,8 @@ class UtilData {
 	};
 
 	graphFilters () {
+		const { space, techSpace } = commonStore;
+
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -809,7 +853,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
 		];
 
 		if (templateType) {
@@ -834,6 +878,53 @@ class UtilData {
 		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
 			analytics.event('CreateObject', { route, objectType: typeId });
 		});
+	};
+
+	getThreadStatus (rootId: string, key: string) {
+		const { account } = authStore;
+
+		if (!account) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		const { info } = account || {};
+		const thread = authStore.threadGet(rootId);
+		const { summary } = thread;
+
+		if (!info.networkId) {
+			return I.ThreadStatus.Local;
+		};
+
+		if (!summary) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
+	};
+
+	getNetworkName (): string {
+		const { account } = authStore;
+		const { info } = account;
+
+		let ret = '';
+		switch (info.networkId) {
+			default:
+				ret = translate('menuThreadListSelf');
+				break;
+
+			case Constant.networkId.production:
+				ret = translate('menuThreadListProduction');
+				break;
+
+			case Constant.networkId.development:
+				ret = translate('menuThreadListDevelopment');
+				break;
+
+			case '':
+				ret = translate('menuThreadListLocal');
+				break;
+		};
+		return ret;
 	};
 
 };

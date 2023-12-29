@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Popup } from 'Component';
 import { popupStore } from 'Store';

@@ -32,13 +32,12 @@ class UtilFile {
 
 		for (let i = UtilCommon.objectLength(UNITS); i >= 1; --i) {
 			const n = v / Math.pow(SIZE_UNIT, i - 1);
-			if ((n >= 1) || (i == 1)) {
+			if ((n >= 0.9) || (i == 1)) {
 				ret = n;
 				unit = UNITS[i];
 				break;
 			};
 		};
-
 		return UtilCommon.formatNumber(Number(UtilCommon.sprintf(`%0.2f`, ret))) + unit;
 	};
 
@@ -103,7 +102,12 @@ class UtilFile {
 		};
 
 		for (const k in Constant.extension) {
-			if (Constant.extension[k].indexOf(e) >= 0) {
+			const el = Constant.extension[k];
+			if (!UtilCommon.hasProperty(el, 'length')) {
+				continue;
+			};
+
+			if (el.includes(e)) {
 				icon = k;
 				break;
 			};

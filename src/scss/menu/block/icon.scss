@@ -2,29 +2,29 @@
 
 .menus {
 	.menu {
-		.icon.textParagraph { background-image: url('~img/icon/menu/action/block/paragraph0.svg'); }
-		.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/header10.svg'); }
-		.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/header20.svg'); }
-		.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/header30.svg'); }
-		.icon.textQuote { background-image: url('~img/icon/menu/action/block/quote0.svg'); }
-		.icon.textCallout { background-image: url('~img/icon/menu/action/block/callout0.svg'); }
-		
-		.icon.textBulleted { background-image: url('~img/icon/menu/action/block/bulleted0.svg'); }
-		.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/checkbox0.svg'); }
-		.icon.textNumbered { background-image: url('~img/icon/menu/action/block/numbered0.svg'); }
-		.icon.textToggle { background-image: url('~img/icon/menu/action/block/toggle0.svg'); }
+		.icon.textParagraph { background-image: url('~img/icon/menu/action/block/text/paragraph0.svg'); }
+		.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/text/header10.svg'); }
+		.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/text/header20.svg'); }
+		.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/text/header30.svg'); }
+		.icon.textQuote { background-image: url('~img/icon/menu/action/block/text/quote0.svg'); }
+		.icon.textCallout { background-image: url('~img/icon/menu/action/block/text/callout0.svg'); }
+		.icon.textBulleted { background-image: url('~img/icon/menu/action/block/text/bulleted0.svg'); }
+		.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/text/checkbox0.svg'); }
+		.icon.textNumbered { background-image: url('~img/icon/menu/action/block/text/numbered0.svg'); }
+		.icon.textToggle { background-image: url('~img/icon/menu/action/block/text/toggle0.svg'); }
+
+		.icon.divLine { background-image: url('~img/icon/menu/action/block/div/line0.svg'); }
+		.icon.divDot { background-image: url('~img/icon/menu/action/block/div/dot0.svg'); }
+
+		.icon.mediaFile { background-image: url('~img/icon/menu/action/block/media/file0.svg'); }
+		.icon.mediaImage { background-image: url('~img/icon/menu/action/block/media/image0.svg'); }
+		.icon.mediaVideo { background-image: url('~img/icon/menu/action/block/media/video0.svg'); }
 		
 		.icon.existing { background-image: url('~img/icon/menu/action/block/existing0.svg'); }
 		.icon.linkTo { background-image: url('~img/icon/menu/action/block/linkto0.svg'); }
 		.icon.unlink { background-image: url('~img/icon/menu/action/block/unlink0.svg'); }
-		.icon.file { background-image: url('~img/icon/menu/action/block/file0.svg'); }
-		.icon.image { background-image: url('~img/icon/menu/action/block/image0.svg'); }
-		.icon.video { background-image: url('~img/icon/menu/action/block/video0.svg'); }
 		.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
 		.icon.code { background-image: url('~img/icon/menu/action/block/code0.svg'); }
-		
-		.icon.div-line { background-image: url('~img/icon/menu/action/block/line0.svg'); }
-		.icon.dot { background-image: url('~img/icon/menu/action/block/dot0.svg'); }
 
 		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
 		.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
@@ -83,6 +83,7 @@
 		.icon.unlink { background-image: url('~img/icon/menu/action/unlink0.svg'); }
 		.icon.store { background-image: url('~img/icon/menu/action/store0.svg'); }
 		.icon.pencil { background-image: url('~img/icon/menu/action/pencil0.svg'); }
+		.icon.createWidget { background-image: url('~img/icon/menu/action/createWidget0.svg'); }
 
 		.icon.coverChange { background-image: url('~img/icon/cover/change.svg'); }
 		.icon.coverPosition { background-image: url('~img/icon/cover/position.svg'); }

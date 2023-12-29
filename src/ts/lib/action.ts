@@ -1,14 +1,15 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
-		const { profile } = blockStore;
+		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
-		if (rootId == profile) {
+		// Prevent closing of system objects
+		if ([ root, widgets ].includes(rootId)) {
 			return;
 		};
 
@@ -84,8 +85,8 @@ class Action {
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, 1000000) : commonStore.fileUrl(hash);
-		Renderer.send('download', url);
 
+		Renderer.send('download', url);
 		analytics.event('DownloadMedia', { type, route });
 	};
 
@@ -340,7 +341,8 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { walletPath } = authStore;
+		const { walletPath, networkConfig } = authStore;
+		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
@@ -350,12 +352,12 @@ class Action {
 
 				const { accountId, spaceId } = message;
 
-				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
+				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, (message: any) => {
+					C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};
@@ -425,8 +427,19 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
+			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (!message.error.code) {
+					if (message.collectionId) {
+						window.setTimeout(() => {
+							popupStore.open('objectManager', { 
+								data: { 
+									collectionId: message.collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, Constant.delay.popup + 10);
+					};
+
 					analytics.event('Import', { middleTime: message.middleTime, type });
 				};
 
@@ -475,7 +488,6 @@ class Action {
 		const range = UtilCommon.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
-		const text: string[] = [];
 
 		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
 
@@ -489,10 +501,6 @@ class Action {
 		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
-
-			if (it.type == I.BlockType.Text) {
-				text.push(String(it.content.text || ''));
-			};
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = dbStore.getViews(rootId, it.id);
@@ -581,12 +589,47 @@ class Action {
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			analytics.event('SelectUsecase', { type: id, middleTime: message.middleTime });
 			blockStore.closeRecentWidgets();
 
 			if (callBack) {
 				callBack();
 			};
+		});
+	};
+
+	setIsFavorite (objectIds: string[], v: boolean, route: string) {
+		C.ObjectListSetIsFavorite(objectIds, v, () => {
+			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+		});
+	};
+
+	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
+		const object = detailStore.get(rootId, objectId);
+
+		let layout = I.WidgetLayout.Link;
+
+		if (object && !object._empty_) {
+			if (UtilObject.isFileOrSystemLayout(object.layout)) {
+				layout = I.WidgetLayout.Link;
+			} else 
+			if (UtilObject.isSetLayout(object.layout)) {
+				layout = I.WidgetLayout.Compact;
+			} else
+			if (UtilObject.isPageLayout(object.layout)) {
+				layout = I.WidgetLayout.Tree;
+			};
+		};
+
+		const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+		const newBlock = { 
+			type: I.BlockType.Link,
+			content: { 
+				targetBlockId: objectId, 
+			},
+		};
+
+		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
+			analytics.event('AddWidget', { type: layout });
 		});
 	};
 

@@ -29,6 +29,9 @@ import {
 	StoreTab,
 	HomePredefinedId,
 	Usecase,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
+	NetworkMode,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -37,6 +40,7 @@ import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
+import { NotificationType, NotificationStatus, NotificationAction, NotificationPayloadImport, Notification, NotificationComponent } from './notification';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
@@ -67,7 +71,7 @@ import { FileType, FileState, FileStyle, ContentFile } from './block/file';
 import { BookmarkState, ContentBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv } from './block/div';
 import { ContentRelation } from './block/relation';
-import { ContentLatex } from './block/latex';
+import { EmbedProcessor, ContentEmbed } from './block/embed';
 import { BlockComponentTable, ContentTableRow } from './block/table';
 import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
 
@@ -104,6 +108,7 @@ export {
 	ButtonComponent,
 	HomePredefinedId,
 	Usecase,
+	NetworkMode,
 
 	ImportType,
 	ImportMode,
@@ -117,6 +122,8 @@ export {
 	ThreadCafe,
 	FilesStatus,
 	BannerType,
+	ObjectManagerItemInfo,
+	ObjectManagerPopup,
 
 	Progress,
 	ProgressType,
@@ -150,6 +157,13 @@ export {
 
 	RestrictionObject, 
 	RestrictionDataview,
+
+	NotificationType, 
+	NotificationStatus,
+	Notification,
+	NotificationPayloadImport,
+	NotificationComponent,
+	NotificationAction,
 	
 	PageInfo,
 
@@ -209,7 +223,8 @@ export {
 
 	ContentRelation, 
 
-	ContentLatex,
+	EmbedProcessor,
+	ContentEmbed,
 
 	BlockComponentTable,
 	ContentTableRow, 

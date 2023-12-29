@@ -69,13 +69,13 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			<React.Fragment>
 				<div className="side left">
 					<Icon
-						className="toggle big"
+						className="toggle"
 						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 
@@ -84,8 +84,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} /> : ''}
-					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} /> : ''}
+					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation" onClick={this.onRelation} /> : ''}
+					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>
 		);

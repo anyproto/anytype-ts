@@ -1,11 +1,13 @@
 import { I, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const SPACE_KEYS = [
 	'toggle',
 	'lastOpened',
 	'scroll',
 	'defaultType',
+	'lastUsedTypes',
 ];
 
 class Storage {
@@ -108,6 +110,14 @@ class Storage {
 		this.set('space', obj, true);
 	};
 
+	deleteSpace (id: string) {
+		const obj = this.getSpace();
+
+		delete(obj[id]);
+
+		this.setSpace(obj);
+	};
+
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
 		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
@@ -196,6 +206,55 @@ class Storage {
 		const obj = this.get('survey') || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
 		this.set('survey', obj, true);
+	};
+
+	initLastUsedTypes () {
+		const list = this.getLastUsedTypes();
+
+		if (!list.length) {
+			const keys = [
+				Constant.typeKey.note,
+				Constant.typeKey.page,
+				Constant.typeKey.task,
+			];
+
+			for (let key of keys) {
+				const type = dbStore.getTypeByKey(key);
+				if (type) {
+					list.push(type.id);
+				};
+			};
+
+			if (list.length) {
+				this.set('lastUsedTypes', list, true);
+			};
+		};
+	};
+
+	addLastUsedType (id: string) {
+		let list = this.getLastUsedTypes();
+
+		if (!id) {
+			return list;
+		};
+
+		list.unshift(id);
+		list = list.slice(0, 50);
+		list = [ ...new Set(list) ];
+
+		this.set('lastUsedTypes', list, true);
+		return list;
+	};
+
+	getLastUsedTypes () {
+		return this.checkArray(this.get('lastUsedTypes') || []);
+	};
+
+	checkArray (a) {
+		if (('object' != typeof(a)) || !UtilCommon.hasProperty(a, 'length')) {
+			return [];
+		};
+		return a;
 	};
 
 	logout () {

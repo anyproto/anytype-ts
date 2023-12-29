@@ -24,7 +24,7 @@
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
-.cell.isEditing.c-select.isStatus {
+.cell.isEditing.c-select.isSelect {
 	.icon.clear { display: block; }
 	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }
@@ -51,9 +51,12 @@
 	}
 }
 
+.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
 	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
+
+	.label { line-height: 20px; }
 }
 .cellContent.c-checkbox.canEdit {
 	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
@@ -82,6 +85,12 @@
 	.element {
 		.flex { align-items: center; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+	}
+}
+.cellContent.c-object.canEdit {
+	.element { cursor: grab; }
+	.element {
+		.icon.objectRemove { cursor: default; }
 	}
 }
 
@@ -116,10 +125,13 @@
 .cell.isEditing.c-select {
 	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
-	.itemWrap.isDraggable { cursor: grab; }
-
 	.itemWrap {
 		.tagItem { margin: 0px !important; }
+	}
+
+	.itemWrap.isDraggable { cursor: grab; }
+	.itemWrap.isDraggable {
+		#remove { cursor: default; }
 	}
 }
 

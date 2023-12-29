@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical } from 'Component';
+import { Filter, MenuItemVertical, Label } from 'Component';
 import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
@@ -33,7 +33,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, disabled, placeholder, noVirtualisation } = data;
+		const { filter, value, disabled, placeholder, noVirtualisation, forceLetter, menuLabel } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -80,6 +80,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						onClick={e => this.onClick(e, item)} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={item.style}
+						forceLetter={forceLetter}
 					/>
 				);
 			};
@@ -147,7 +148,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						placeholder={placeholder}
 						onChange={this.onFilterChange}
 						onKeyUp={this.onFilterKeyUp}
+						focusOnMount={true}
 					/>
+				) : ''}
+
+				{menuLabel ? (
+					<Label className="menuLabel" text={menuLabel} />
 				) : ''}
 				
 				{!items.length ? (
@@ -188,7 +194,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			window.setTimeout(() => { setActive(active, true); }, 15);
 		};
 
-		this.focus();
 		this.resize();
 	};
 
@@ -218,6 +223,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		if (this.n == -1) {
 			this.focus();
 		};
+
 		this.resize();
 	};
 	
@@ -389,7 +395,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noScroll } = data;
+		const { noScroll, noVirtualisation } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
@@ -418,6 +424,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
+		noVirtualisation ? obj.addClass('noVirtualisation') : obj.removeClass('noVirtualisation');
 
 		position();
 	};

@@ -34,7 +34,7 @@ export enum RelationType {
 	LongText	 = 0, 
 	ShortText	 = 1, 
 	Number		 = 2, 
-	Status		 = 3, 
+	Select		 = 3, 
 	Date		 = 4, 
 	File		 = 5,
 	Checkbox	 = 6, 
@@ -42,7 +42,7 @@ export enum RelationType {
 	Email		 = 8,
 	Phone		 = 9,
 	Icon		 = 10,
-	Tag			 = 11,
+	MultiSelect	 = 11,
 	Object		 = 100,
 	Relations	 = 101,
 };

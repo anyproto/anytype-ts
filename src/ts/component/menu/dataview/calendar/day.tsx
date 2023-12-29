@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard } from 'Lib';
+import { I, UtilObject, keyboard, UtilDate } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -90,19 +90,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		$(window).off('keydown.menu');
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getSubId, getView, getDateParam, d, m, y } = data;
-		const subId = getSubId();
-		const view = getView();
-
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ])).filter(it => {
-			const value = getDateParam(it[view.groupRelationKey]);
-			return [ value.d, value.m, value.y ].join('-') == [ d, m, y ].join('-');
-		});
-	};
-
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -123,6 +110,18 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 	onCheckbox (item: any) {
 		UtilObject.setDone(item.id, !item.done);
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, block, getView, d, m, y } = data;
+		const view = getView();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
+		const current = [ d, m, y ].join('-');
+
+		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
 });

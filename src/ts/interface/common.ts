@@ -119,12 +119,13 @@ export enum EdgeType {
 };
 
 export enum Usecase {
-	Empty		 = 0,
-	Skip		 = 1,
+	None		 = 0,
+	GetStarted	 = 1,
 	Personal	 = 2,
     Knowledge	 = 3,
     Notes		 = 4,
 	Strategic 	 = 5,
+	Empty		 = 6,
 };
 
 export enum HomePredefinedId {
@@ -181,6 +182,7 @@ export interface ButtonComponent {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	showDot?: boolean;
 	onClick?(e: any): void;
+	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 };
 
@@ -233,4 +235,19 @@ export enum BannerType {
 	IsArchived		 = 0,
 	IsTemplate		 = 1,
 	TemplateSelect	 = 2,
+};
+
+export enum ObjectManagerItemInfo {
+	Description 	= 0,
+	FileSize 		= 1,
+};
+
+export enum ObjectManagerPopup {
+	Favorites 	= 0,
+};
+
+export enum NetworkMode {
+	Default		 = 0,
+	Local		 = 1,
+	Custom		 = 2,
 };

@@ -44,6 +44,9 @@ class Sidebar {
 		if (stored) {
 			this.set(stored);
 		} else {
+			commonStore.autoSidebarSet(true);
+			commonStore.isSidebarFixedSet(true);
+
 			const { wh } = UtilCommon.getWindowDimensions();
 			const height = this.getMaxHeight();
 			const y = wh / 2 - height / 2;
@@ -57,9 +60,6 @@ class Sidebar {
 			});
 
 			this.resizePage();
-
-			commonStore.autoSidebarSet(true);
-			commonStore.isSidebarFixedSet(false);
 		};
 	};
 
