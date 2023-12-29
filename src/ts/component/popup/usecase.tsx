@@ -34,7 +34,7 @@ class PopupUsecase extends React.Component<I.Popup, State> {
 		const object = this.getObject();
 		const author = this.getAuthor();
 		const screenshots = object.screenshots || [];
-		const categories = object.categories || [];
+		const categories = (object.categories || []).slice(0, 10);
 
 		return (
 			<div ref={ref => this.node = ref}>
@@ -61,7 +61,7 @@ class PopupUsecase extends React.Component<I.Popup, State> {
 					>
 						{screenshots.map((url: string, i: number) => (
 							<SwiperSlide key={i}>
-								<div className="screen" style={{ backgroundImage: `url('${url}')` }} />
+								<img className="screen" src={url} />
 							</SwiperSlide>
 						))}
 					</Swiper>

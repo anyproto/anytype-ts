@@ -87,7 +87,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 					};
 
 					if (isArchived) {
-						archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
+						archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 					};
 
 					element = (

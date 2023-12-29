@@ -903,6 +903,8 @@ class Keyboard {
 	};
 
 	setPinChecked (v: boolean) {
+		v = Boolean(v);
+
 		if (this.isPinChecked === v) {
 			return;
 		};

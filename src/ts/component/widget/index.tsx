@@ -290,7 +290,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { block } = this.props;
-		const { viewId } = block.content;
+		const { viewId, layout } = block.content;
 		const object = this.getObject();
 
 		if (!object) {
@@ -306,11 +306,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 
 		let details: any = {};
-		let flags: I.ObjectFlag[] = [ I.ObjectFlag.DeleteEmpty ];
+		let flags: I.ObjectFlag[] = [];
 		let typeKey: string = '';
 		let templateId: string = '';
 		let createWithLink: boolean = false;
 		let isCollection = false;
+
+		if (layout != I.WidgetLayout.Tree) {
+			flags.push(I.ObjectFlag.DeleteEmpty);
+		};
 
 		if (isSetOrCollection) {
 			const rootId = this.ref?.getRootId();

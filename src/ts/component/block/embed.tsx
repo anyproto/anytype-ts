@@ -729,7 +729,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	isAllowedScroll () {
-		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Chart ].includes(this.props.block.content.processor);
+		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
 	};
 
 });

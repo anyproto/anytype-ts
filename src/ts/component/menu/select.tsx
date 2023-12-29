@@ -395,7 +395,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noScroll } = data;
+		const { noScroll, noVirtualisation } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
@@ -424,6 +424,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
+		noVirtualisation ? obj.addClass('noVirtualisation') : obj.removeClass('noVirtualisation');
 
 		position();
 	};

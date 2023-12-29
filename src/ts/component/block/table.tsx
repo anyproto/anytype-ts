@@ -322,7 +322,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				fill = (callBack: () => void) => {
 					blockIds = this.getBlockIds(type, rowId, columnId, cellId);
-					callBack();
+					C.BlockTableRowListFill(rootId, [ rowId ], callBack);
 				};
 				break;
 			};
@@ -330,6 +330,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		menuParam = Object.assign(menuParam, {
 			data: {
+				noScroll: true,
+				noVirtualisation: true,
 				filter: '',
 				options: options,
 				onSwitch: (e: any, item: any) => {
