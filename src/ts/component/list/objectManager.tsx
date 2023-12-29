@@ -18,9 +18,9 @@ interface Props {
     filters?: I.Filter[];
 	sorts?: I.Sort[];
     rowHeight?: number;
-    resize?: () => void;
     sources?: string[];
 	collectionId?: string;
+	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
 };
 
@@ -230,8 +230,9 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     componentDidMount () {
         const { resize } = this.props;
+
         this._isMounted = true;
-        this.getData();
+        this.load();
 
         if (resize) {
             resize();
@@ -283,7 +284,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     onFilterChange () {
         window.clearTimeout(this.timeout);
-        this.timeout = window.setTimeout(() => this.getData(), Constant.delay.keyboard);
+        this.timeout = window.setTimeout(() => this.load(), Constant.delay.keyboard);
     };
 
     onFilterClear () {
@@ -328,6 +329,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const { subId } = this.props;
         const records = dbStore.getRecords(subId, '');
         const indexes = this.selected.map(id => records.findIndex(it => it == id));
+
         return indexes.filter(idx => idx >= 0);
     };
 
@@ -367,7 +369,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         this.top = scrollTop;
     };
 
-    getData () {
+    load () {
         const { subId, sources, withArchived, collectionId, onAfterLoad } = this.props;
         const filter = this.getFilterValue();
         const filters = [].concat(this.props.filters || []);

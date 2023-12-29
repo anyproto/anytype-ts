@@ -264,16 +264,18 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	getSections () {
-		const { space } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const systemKeys = Relation.systemKeys();
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.spaceId == space));
+		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
+		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
+			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
 		];
 
 		if (filter) {
