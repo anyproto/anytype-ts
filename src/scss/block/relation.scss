@@ -39,7 +39,7 @@
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
 		.cell.canEdit:hover { background: $colorShapeHighlightLight; }
 		
-		.cell.c-select { padding: 4px 8px; }
+		.cell.c-select { padding: 8px; line-height: 18px; }
 		.cell.c-select {
 			.empty { line-height: 24px; }
 		}
@@ -60,8 +60,7 @@
 		}
 
 		.cell.isEditing.c-select {
-			.cellContent { padding: 2px 6px; }
-			.placeholder { padding: 6px 8px }
+			.cellContent, .placeholder  { padding: 6px 8px; }
 			#entry { margin-top: 2px; }
 		}
 		.cell.isEditing.c-select.isSelect {
@@ -82,13 +81,15 @@
 		}
 
 		.cell.c-object {
-			.element { margin-top: 1px; margin-bottom: 1px; background: none !important; }
+			.element { background: none !important; }
 		}
 
-		.cell.isEditing.c-object, 
+		.cell.isEditing.c-object {
+			.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
+		}
+
 		.cell.isEditing.c-file {
-			.cellContent { padding: 5px 8px !important; }
-			.placeholder { padding: 5px 8px; }
+			.cellContent, .placeholder { padding: 5px 8px !important; }
 		}
 
 		.cell.isEditing.c-longText {

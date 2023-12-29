@@ -116,8 +116,7 @@
 
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
-				.cellContent { padding: 5px 8px; }
-				.placeholder { padding: 5px 8px; }
+				.cellContent, .placeholder { padding: 5px 8px 1px 8px; }
 			}
 			.cell.isEditing.c-select.isSelect {
 				.over { width: calc(100% - 26px); }
@@ -129,7 +128,6 @@
 			.cell.isEditing.c-phone, 
 			.cell.isEditing.c-email,
 			.cell.isEditing.c-date,
-			.cell.isEditing.c-object,
 			.cell.isEditing.c-longText, 
 			.cell.isEditing.c-file
 			{
@@ -138,20 +136,17 @@
 			}
 
 			.cell.isEditing.c-object {
-				.cellContent, .placeholder { padding: 6px 8px 0px 8px !important; }
+				.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
 			}
 
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
 
-			.cell.c-object, .cell.c-file {
-				.columns { column-count: 2; }
-			}
-
 			.cell.c-longText {
 				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
 			}
+
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
 				.cellContent span:empty { height: 22px; }
