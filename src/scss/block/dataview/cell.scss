@@ -24,7 +24,7 @@
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
-.cell.isEditing.c-select.isStatus {
+.cell.isEditing.c-select.isSelect {
 	.icon.clear { display: block; }
 	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }
@@ -51,9 +51,12 @@
 	}
 }
 
+.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
 	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
+
+	.label { line-height: 20px; }
 }
 .cellContent.c-checkbox.canEdit {
 	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }

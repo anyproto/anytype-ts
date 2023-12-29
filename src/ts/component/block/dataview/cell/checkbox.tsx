@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'Component';
+import { Icon, Label } from 'Component';
 import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -37,7 +37,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 		return (
 			<React.Fragment>
 				<Icon className={cn.join(' ')} />
-				{label ? <span className="label">{label}</span> : ''}
+				{label ? <Label text={label} /> : ''}
 			</React.Fragment>
 		);
 	};

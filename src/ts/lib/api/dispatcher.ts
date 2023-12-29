@@ -22,7 +22,7 @@ const SORT_IDS = [
 	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
+const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText' ];
 
 class Dispatcher {
 

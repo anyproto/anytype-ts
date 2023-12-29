@@ -100,7 +100,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const ItemRelation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
+				<div className="clickable" onClick={e => this.onRelationEdit(e, item.id)}>
 					<Icon className={[ 'relation', Relation.className(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
