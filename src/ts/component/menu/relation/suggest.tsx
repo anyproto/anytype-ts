@@ -279,7 +279,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		if (filter) {
-			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
 			sections = sections.concat([
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
