@@ -787,6 +787,7 @@ class UtilCommon {
 			ADD_ATTR: [
 				'contenteditable'
 			],
+			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
 

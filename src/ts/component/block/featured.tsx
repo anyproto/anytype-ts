@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -187,6 +187,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							{bullet}
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
+								placeholder={relation.name}
 								elementId={id}
 								rootId={rootId}
 								subId={rootId}
@@ -207,6 +208,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
+								withLabel={true}
 							/>
 						</span>
 					);
@@ -596,7 +598,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { isPopup, rootId, readonly } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
-		if (readonly) {
+		if (readonly || relation.isReadonlyValue) {
+			return;
+		};
+
+		if (relation.format == I.RelationType.Date) {
+			this.onDate(e, relationKey);
 			return;
 		};
 
@@ -654,7 +661,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			...it,
 			withDescription: true,
 			iconSize: 40,
-			object: it
+			object: it,
 		}));
 
 		menuStore.closeAll([ 'select' ], () => {
@@ -677,6 +684,34 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
+	onDate (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = Number(object[relationKey] || UtilDate.now());
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewCalendar', {
+				element: `#${elementId}`,
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				noFlipX: true,
+				title: relation.name,
+				data: {
+					value,
+					onChange: (v: number) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+					}
+				}
+			});
+		});
+	};
+
 	elementMapper (relation: any, item: any) {
 		item = UtilCommon.objectCopy(item);
 
@@ -686,8 +721,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				item.name = UtilCommon.shorten(item.name);
 				break;
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status:
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select:
 				item.text = UtilCommon.shorten(item.text);
 				break;
 		};

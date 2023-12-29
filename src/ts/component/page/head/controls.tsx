@@ -21,6 +21,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	node: any = null;
+	refButtons = null;
 	state = {
 		loading: false,
 	};
@@ -65,6 +66,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			>
 				{loading ? <Loader /> : ''}
 				<ControlButtons 
+					ref={ref => this.refButtons = ref}
 					rootId={rootId} 
 					readonly={readonly}
 					onIcon={this.onIcon} 
@@ -85,6 +87,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		this.props.resize();
+		this.refButtons?.forceUpdate();
 	};
 
 	componentWillUnmount () {

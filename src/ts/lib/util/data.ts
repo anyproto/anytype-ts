@@ -340,6 +340,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
+					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -846,6 +847,8 @@ class UtilData {
 	};
 
 	graphFilters () {
+		const { space, techSpace } = commonStore;
+
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -853,7 +856,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
 		];
 
 		if (templateType) {
@@ -882,7 +885,12 @@ class UtilData {
 
 	getThreadStatus (rootId: string, key: string) {
 		const { account } = authStore;
-		const { info } = account;
+
+		if (!account) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		const { info } = account || {};
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 

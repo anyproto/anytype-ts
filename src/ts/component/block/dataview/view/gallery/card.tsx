@@ -65,6 +65,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								tooltipX={I.MenuDirection.Left}
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
+								withName={true}
 							/>
 						);
 					})}

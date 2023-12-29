@@ -71,7 +71,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			return (
 				<tr className={cn.join(' ')}>
 					<td className="cell">
-						<div className="cellContent isName" onClick={(e: any) => { UtilObject.openEvent(e, item); }}>
+						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
@@ -100,7 +100,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 										name = UtilFile.name(object);
 									};
 
-									onClick = (e: any) => UtilObject.openEvent(e, object);
+									onClick = () => UtilObject.openPopup(object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />

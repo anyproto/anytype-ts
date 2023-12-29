@@ -86,6 +86,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 
 		const scheme = UtilCommon.getScheme(url);
 		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
+			this.setState({ loading: false });
 			return;
 		};
 

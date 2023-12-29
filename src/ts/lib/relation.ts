@@ -10,7 +10,7 @@ class Relation {
 
 	public className (v: I.RelationType): string {
 		let c = this.typeName(v);
-		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].indexOf(v) >= 0) {
 			c = 'select ' + this.selectClassName(v);
 		};
 		return 'c-' + c;
@@ -51,8 +51,8 @@ class Relation {
 				break;
 
 			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
+			case I.RelationType.Select: 
+			case I.RelationType.MultiSelect: 
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
 					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
@@ -212,9 +212,9 @@ class Relation {
 				break;
 			};
 
-			case I.RelationType.Status:
+			case I.RelationType.Select:
 			case I.RelationType.File:
-			case I.RelationType.Tag:
+			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
 				value = this.getArrayValue(UtilCommon.objectCopy(value));
@@ -243,9 +243,9 @@ class Relation {
 				break;
 			};
 
-			case I.RelationType.Status:
+			case I.RelationType.Select:
 			case I.RelationType.File:
-			case I.RelationType.Tag:
+			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
 				ret = value.length ? true : false;
@@ -344,7 +344,7 @@ class Relation {
 
 		switch (type) {
 			default: {
-				formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
+				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
 				break;
 			};
 
@@ -362,11 +362,11 @@ class Relation {
 			const f1 = c1.format;
 			const f2 = c2.format;
 
-			if ((f1 == I.RelationType.Status) && (f2 != I.RelationType.Status)) return -1;
-			if ((f1 != I.RelationType.Status) && (f2 == I.RelationType.Status)) return 1;
+			if ((f1 == I.RelationType.Select) && (f2 != I.RelationType.Select)) return -1;
+			if ((f1 != I.RelationType.Select) && (f2 == I.RelationType.Select)) return 1;
 
-			if ((f1 == I.RelationType.Tag) && (f2 != I.RelationType.Tag)) return -1;
-			if ((f1 != I.RelationType.Tag) && (f2 == I.RelationType.Tag)) return 1;
+			if ((f1 == I.RelationType.MultiSelect) && (f2 != I.RelationType.MultiSelect)) return -1;
+			if ((f1 != I.RelationType.MultiSelect) && (f2 == I.RelationType.MultiSelect)) return 1;
 
 			if ((f1 == I.RelationType.Checkbox) && (f2 != I.RelationType.Checkbox)) return -1;
 			if ((f1 != I.RelationType.Checkbox) && (f2 == I.RelationType.Checkbox)) return 1;

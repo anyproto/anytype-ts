@@ -95,13 +95,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<div className="animation">
 							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
 						</div>
-						<div className="animation">
-							<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
-						</div>
+						{!phraseVisible ? (
+							<div className="animation">
+								<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
+							</div>
+						) : ''}
 					</React.Fragment>
 				);
 
-				more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+				if (!phraseVisible) {
+					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
+				};
 
 				if (config.experimental) {
 					footer = (
@@ -297,11 +301,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					UtilData.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
+
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
-					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.Skip });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 
 					C.WorkspaceSetInfo(commonStore.space, { name }, () => {
-						Action.importUsecase(commonStore.space, I.Usecase.Skip, callBack);
+						Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
 					});
 				});
 			});
@@ -338,7 +343,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	setError (error: string) {
-		this.refNext.setLoading(false);
+		this.refNext?.setLoading(false);
 		this.setState({ error });
 	};
 

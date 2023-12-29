@@ -96,6 +96,7 @@ if (!UtilCommon.getElectron().isPackaged) {
 			UtilMenu,
 			UtilRouter,
 			UtilSmile,
+			UtilDate,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -293,13 +294,14 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, route, account, phrase, languages, isPinChecked } = data;
+		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
+		const route = String(data.route || redirect || '');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -334,13 +336,15 @@ class App extends React.Component<object, State> {
 				authStore.phraseSet(phrase);
 
 				UtilData.createSession(() => {
-					authStore.accountSet(account);
 					keyboard.setPinChecked(isPinChecked);
-					commonStore.redirectSet(route || redirect || '');
-					commonStore.configSet(account.config, false);
+					commonStore.redirectSet(route);
 
-					UtilData.onInfo(account.info);
-					UtilData.onAuth({}, cb);
+					if (account) {
+						authStore.accountSet(account);
+						commonStore.configSet(account.config, false);
+						UtilData.onInfo(account.info);
+						UtilData.onAuth({}, cb);
+					};
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -356,7 +360,7 @@ class App extends React.Component<object, State> {
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(redirect || '');
+				commonStore.redirectSet(route);
 				Renderer.send('keytarGet', accountId);
 
 				cb();

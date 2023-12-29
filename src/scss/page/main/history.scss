@@ -15,7 +15,7 @@
 		.section {
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
-		.section.fix { position: fixed; right: 0px; top: 0px; background: $colorBgPrimary; width: 253px; }
+		.section.fix { position: sticky; right: 0px; top: 0px; background: $colorBgPrimary; width: 253px; }
 
 		.wrap { position: relative; }
 

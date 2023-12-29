@@ -382,11 +382,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { noFilter, canAdd } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		
+
 		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
-		if (!canAdd) {
-			height = Math.max(180, height);
-		};
+
+		height = Math.max(canAdd ? 44 : 180, height);
 
 		obj.css({ height });
 		position();

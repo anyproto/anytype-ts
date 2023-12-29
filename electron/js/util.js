@@ -6,7 +6,6 @@ const path = require('path');
 const fs = require('fs');
 const sanitize = require('sanitize-filename');
 const protocol = 'anytype';
-const userPath = app.getPath('userData');
 const ConfigManager = require('./config.js');
 
 log.transports.rendererConsole.level = 'error';
@@ -75,6 +74,14 @@ class Util {
 		return path.join(this.electronPath(), 'img');
 	};
 
+	userPath () {
+		return app.getPath('userData');
+	};
+
+	logPath () {
+		return path.join(this.userPath(), 'logs');
+	};
+
 	dataPath () {
 		const { channel } = ConfigManager.config;
 		const dataPath = [];
@@ -83,7 +90,7 @@ class Util {
 			this.mkDir(process.env.DATA_PATH);
 			dataPath.push(process.env.DATA_PATH);
 		} else {
-			dataPath.push(userPath);
+			dataPath.push(this.userPath());
 
 			if (is.development) {
 				dataPath.push('dev');

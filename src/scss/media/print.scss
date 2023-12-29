@@ -56,6 +56,10 @@ html.printMedia {
 	.blocks {
 		#button-block-add { display: none; }
 
+		.block {
+			.icon.dnd { display: none; }
+		}
+
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
@@ -89,6 +93,10 @@ html.printMedia {
 
 		.block.blockBookmark {
 			.inner { box-shadow: 0px 0px; }
+		}
+
+		.block.blockRelation {
+			.info { width: auto; }
 		}
 	}
 

@@ -150,31 +150,31 @@ search.active { background: orange !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
-.isTag.archive { color: $colorTextSecondary; background: $colorShapeTertiary; }
-.isTag.tagColor-default { color: $colorTextPrimary !important; background: $colorBgPrimary !important; box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
-.isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
-.isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
-.isTag.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
-.isTag.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
-.isTag.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
-.isTag.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
-.isTag.tagColor-blue { color: $colorBlue !important; background: #dce1fb !important; }
-.isTag.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
-.isTag.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
-.isTag.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
+.isMultiSelect.archive { color: $colorTextSecondary; background: $colorShapeTertiary; }
+.isMultiSelect.tagColor-default { color: $colorTextPrimary !important; background: $colorBgPrimary !important; box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
+.isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
+.isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
+.isMultiSelect.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
+.isMultiSelect.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
+.isMultiSelect.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
+.isMultiSelect.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
+.isMultiSelect.tagColor-blue { color: $colorBlue !important; background: #dce1fb !important; }
+.isMultiSelect.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
+.isMultiSelect.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
+.isMultiSelect.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
 
-.isStatus.tagColor-default { color: $colorTextPrimary !important; }
-.isStatus.tagColor-black { color: $colorTextPrimary !important; }
-.isStatus.tagColor-grey { color: $colorControlActive !important; }
-.isStatus.tagColor-yellow { color: $colorYellow !important; }
-.isStatus.tagColor-orange { color: $colorOrange !important; }
-.isStatus.tagColor-red { color: $colorRed !important; }
-.isStatus.tagColor-pink { color: $colorPink !important; }
-.isStatus.tagColor-purple { color: $colorPurple !important; }
-.isStatus.tagColor-blue { color: $colorBlue !important; }
-.isStatus.tagColor-ice { color: $colorIce !important; }
-.isStatus.tagColor-teal { color: $colorTeal !important; }
-.isStatus.tagColor-lime { color: $colorLime !important; }
+.isSelect.tagColor-default { color: $colorTextPrimary !important; }
+.isSelect.tagColor-black { color: $colorTextPrimary !important; }
+.isSelect.tagColor-grey { color: $colorControlActive !important; }
+.isSelect.tagColor-yellow { color: $colorYellow !important; }
+.isSelect.tagColor-orange { color: $colorOrange !important; }
+.isSelect.tagColor-red { color: $colorRed !important; }
+.isSelect.tagColor-pink { color: $colorPink !important; }
+.isSelect.tagColor-purple { color: $colorPurple !important; }
+.isSelect.tagColor-blue { color: $colorBlue !important; }
+.isSelect.tagColor-ice { color: $colorIce !important; }
+.isSelect.tagColor-teal { color: $colorTeal !important; }
+.isSelect.tagColor-lime { color: $colorLime !important; }
 
 .brokenMedia { 
 	@include text-common; position: relative; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorShapeSecondary; 

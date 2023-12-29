@@ -352,7 +352,7 @@ class CommonStore {
 		return String(ret || '');
 	};
 
-	setThemeClass() {
+	setThemeClass () {
 		const head = $('head');
 		const c = this.getThemeClass();
 

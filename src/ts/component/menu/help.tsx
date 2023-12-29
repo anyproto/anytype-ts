@@ -72,6 +72,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ id: 'shortcut', caption: 'Ctrl+Space' },
 			{ id: 'hints' },
 			{ isDiv: true },
+			{ id: 'gallery' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
@@ -90,11 +91,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
-		const rootId = keyboard.getRootId();
-		const isPopup = keyboard.isPopup();
-		const isEditor = keyboard.isMainEditor();
 		const isGraph = keyboard.isMainGraph();
-		const isSet = keyboard.isMainSet();
 		const isStore = keyboard.isMainStore();
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
@@ -117,6 +114,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'gallery':
 			case 'terms':
 			case 'tutorial':
 			case 'privacy':

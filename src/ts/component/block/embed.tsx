@@ -54,6 +54,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = block.content;
 		const { isShowing, isEditing } = this.state;
 		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 		const text = String(block.content.text || '').trim();
 
 		if (!text) {
@@ -69,15 +70,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let preview = null;
 		let empty = '';
 		let placeholder = '';
-		let icon = '';
 
 		switch (processor) {
 			default: {
-				const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-
 				button = <Icon className="source" onClick={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-				icon = menuItem.icon;
 
 				if (!text) {
 					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
@@ -85,12 +82,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				if (!isShowing && text) {
 					cn.push('withPreview');
-
-					preview = (
-						<div className="preview" onClick={this.onPreview}>
-							<Icon className={icon} />
-						</div>
-					);
 				};
 				break;
 			};
@@ -122,7 +113,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				{preview}
+				<div className={[ 'preview', menuItem.icon ].join(' ')} onClick={this.onPreview} />
 				{select}
 				{button}
 
@@ -150,6 +141,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+		this.onScroll();
 	};
 
 	componentDidUpdate () {
@@ -175,12 +167,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	rebind () {
 		const { block } = this.props;
-		const { isEditing } = this.state;
+		const { isEditing, isShowing } = this.state;
+		const { processor } = block.content;
 		const win = $(window);
+		const node = $(this.node);
 
 		this.unbind();
 
-		win.on(`mousedown.c${block.id}`, (e: any) => {
+		win.on(`mousedown.${block.id}`, (e: any) => {
 			if (!this._isMounted || !isEditing || menuStore.isOpen('blockLatex')) {
 				return;
 			};
@@ -200,10 +194,39 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				menuStore.close('previewLatex');
 			});
 		});
+
+		win.on(`online.${block.id} offline.${block.id}`, () => {
+			if (isShowing && navigator.onLine) {
+				node.find('#receiver').remove('');
+				this.setContent(this.text);
+			};
+		});
+
+		if (this.isAllowedScroll()) {
+			win.on(`scroll.${block.id}`, () => this.onScroll());
+		};
 	};
 
 	unbind () {
-		$(window).off(`mousedown.c${this.props.block.id}`);
+		const { block } = this.props;
+		const events = [ 'mousedown', 'online', 'offline', 'scroll' ];
+
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+	};
+
+	onScroll () {
+		if (!this._isMounted || !this.isAllowedScroll()) {
+			return;
+		};
+
+		const node = $(this.node);
+		const win = $(window);
+		const { wh } = UtilCommon.getWindowDimensions();
+		const st = win.scrollTop();
+		const { top } = node.offset();
+		const bot = top + node.height();
+
+		this.setShowing((bot > st) && (top < st + wh));
 	};
 
 	getContainerId () {
@@ -211,6 +234,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setEditing (isEditing: boolean) {
+		if (this.state.isEditing == isEditing) {
+			return;
+		};
+
+		this.state.isEditing = isEditing;
 		this.setState({ isEditing }, () => {
 			if (isEditing) {
 				const length = this.text.length;
@@ -220,6 +248,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setShowing (isShowing: boolean) {
+		if (this.state.isShowing == isShowing) {
+			return;
+		};
+
+		this.state.isShowing = isShowing;
 		this.setState({ isShowing });
 	};
 
@@ -517,9 +550,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				let text = this.text;
 
 				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
+				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
 				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro ];
+				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
 				const allowJs = [ I.EmbedProcessor.Chart ];
 				const allowPopup = [];
 
@@ -538,7 +571,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
-					const data: any = { ...env, theme: commonStore.getThemeClass() };
+					const data: any = { ...env };
 
 					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
@@ -564,7 +597,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: UtilCommon.fixAsarPath('./embed/iframe.html'),
+						src: UtilCommon.fixAsarPath('./embed/iframe.html?theme=${commonStore.getThemeClass()}'),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -672,6 +705,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.disableSelection(false);
 			win.off('mouseup.embed');
 		});
+	};
+
+	isAllowedScroll () {
+		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
 	};
 
 });

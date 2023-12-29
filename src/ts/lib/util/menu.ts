@@ -53,7 +53,8 @@ class UtilMenu {
 	};
 
 	getBlockEmbed () {
-		return [
+		const { config } = commonStore;
+		const ret = [
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
@@ -62,7 +63,13 @@ class UtilMenu {
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
 			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
-		].map(this.mapperBlock).map(it => {
+		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.Embed, id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' });
+		};
+
+		return ret.map(this.mapperBlock).map(it => {
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
 			return it;
 		});
@@ -291,8 +298,8 @@ class UtilMenu {
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
 			{ id: I.RelationType.Number },
-			{ id: I.RelationType.Status },
-			{ id: I.RelationType.Tag },
+			{ id: I.RelationType.Select },
+			{ id: I.RelationType.MultiSelect },
 			{ id: I.RelationType.Date },
 			{ id: I.RelationType.File },
 			{ id: I.RelationType.Checkbox },

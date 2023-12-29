@@ -185,9 +185,9 @@ class AuthStore {
 
 	logout (mainWindow: boolean, removeData: boolean) {
 		if (mainWindow) {
-			C.WalletCloseSession(this.token, () => {
-				this.tokenSet('');
-				C.AccountStop(removeData);
+			C.AccountStop(removeData, () => {
+				C.WalletCloseSession(this.token)
+                this.tokenSet('');
 			});
 
 			analytics.event('LogOut');
