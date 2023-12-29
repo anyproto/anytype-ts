@@ -18,7 +18,6 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
-	withName?: boolean;
 };
 
 const Cell = observer(class Cell extends React.Component<Props> {

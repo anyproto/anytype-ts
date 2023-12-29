@@ -74,8 +74,9 @@
 				.name { text-decoration: underline; }
 			}
 
+			.cellContent.c-checkbox { display: inline-flex; }
 			.cellContent.c-checkbox {
-				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
+				.icon.checkbox { width: 20px; height: 20px; }
 			}
 			.cellContent.c-checkbox.canEdit { cursor: default !important; }
 

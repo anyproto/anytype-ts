@@ -85,7 +85,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								recordId=""
 								readonly={true} 
 								arrayLimit={4}
-								withLabel={true}
+								withName={true}
 								placeholder={translate('commonUncategorized')}
 							/>
 						</div>
