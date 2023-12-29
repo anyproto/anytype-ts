@@ -94,8 +94,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		switch (relation.format) {
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status: {
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select: {
 				Item = (element: any) => {
 					return (
 						<div 

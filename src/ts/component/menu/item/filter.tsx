@@ -83,8 +83,8 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				break;
 			};
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status: {
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select: {
 				list = Relation.getOptions(value);
 
 				if (list.length) {

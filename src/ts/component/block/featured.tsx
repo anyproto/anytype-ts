@@ -722,8 +722,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				item.name = UtilCommon.shorten(item.name);
 				break;
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status:
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select:
 				item.text = UtilCommon.shorten(item.text);
 				break;
 		};

@@ -325,7 +325,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const isStatus = relation.format == I.RelationType.Status;
+		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
 		const ret = [];
 
@@ -345,7 +345,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
-					name: UtilCommon.sprintf(isStatus ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+					name: UtilCommon.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
 				});
 			};
 		};
