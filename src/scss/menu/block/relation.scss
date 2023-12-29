@@ -100,8 +100,11 @@
 			}
 
 			.cell.c-select { padding: 5px 8px; }
-			.cell.c-select {
-				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 6px; }
+
+			.cell.c-select, 
+			.cell.c-object, 
+			.cell.c-file {
+				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
 			}
 
 			.cell.isEditing { padding: 0px; }
@@ -130,10 +133,6 @@
 			{
 				.cellContent { padding: 5px 8px !important; }
 				.placeholder { padding: 5px 8px; }
-			}
-
-			.cell.c-object {
-				.element { margin-top: 1px; margin-bottom: 1px; }
 			}
 
 			.cell.c-shortText {

@@ -41,8 +41,13 @@
 		
 		.cell.c-select { padding: 4px 8px; }
 		.cell.c-select {
-			.over { flex-wrap: wrap; }
 			.empty { line-height: 24px; }
+		}
+
+		.cell.c-select, 
+		.cell.c-object, 
+		.cell.c-file {
+			.over { flex-wrap: wrap; }
 		}
 
 		.cell.isEditing { padding: 0px; }
@@ -55,9 +60,9 @@
 		}
 
 		.cell.isEditing.c-select {
-			.cellContent { padding: 4px 8px; }
+			.cellContent { padding: 2px 6px; }
 			.placeholder { padding: 6px 8px }
-			#entry { margin-top: 4px; }
+			#entry { margin-top: 2px; }
 		}
 		.cell.isEditing.c-select.isSelect {
 			.over { width: calc(100% - 26px); }
@@ -79,18 +84,16 @@
 		.cell.c-object {
 			.element { margin-top: 1px; margin-bottom: 1px; background: none !important; }
 		}
-		.cell.isEditing.c-object {
-			.cellContent { padding: 6px 8px 3px 8px !important; }
-			.placeholder { padding: 5px 8px 3px 8px; }
+
+		.cell.isEditing.c-object, 
+		.cell.isEditing.c-file {
+			.cellContent { padding: 5px 8px !important; }
+			.placeholder { padding: 5px 8px; }
 		}
 
 		.cell.isEditing.c-longText {
-			.cellContent { box-shadow: 0px 0px; visibility: hidden; }
+			.cellContent { box-shadow: 0px 0px; visibility: hidden; border: 0px; padding: 5px 8px; }
 			.cellContent span:empty { height: 22px; }
-		}
-
-		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-			.cellContent { box-shadow: 0px 0px; border: 0px; padding: 5px 8px; }
 		}
 	}
 
