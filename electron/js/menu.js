@@ -1,9 +1,6 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
-const userPath = app.getPath('userData');
-const logPath = path.join(userPath, 'logs');
-
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
 
@@ -53,8 +50,8 @@ class MenuManager {
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: Util.translate('electronMenuDirectory'), click: () => { shell.openPath(userPath); } },
-					{ label: Util.translate('electronMenuLogs'), click: () => { shell.openPath(logPath); } },
+					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
+					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
 
 					Separator,
 					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
@@ -131,7 +128,7 @@ class MenuManager {
 					{ label: Util.translate('electronMenuZoomOut'), accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
 					{ label: Util.translate('electronMenuZoomDefault'), accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
 					{
-						label: Util.translate('electronMenuFullscreen'), accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
+						label: Util.translate('electronMenuFullscreen'), accelerator: (is.macos ? 'Cmd+Ctrl+F' : 'Ctrl+Alt+F'), type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
 					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
@@ -151,6 +148,7 @@ class MenuManager {
 
 					Separator,
 
+					{ label: Util.translate('electronMenuGallery'), click: () => Util.send(this.win, 'commandGlobal', 'gallery') },
 					{ label: Util.translate('electronMenuCommunity'), click: () => Util.send(this.win, 'commandGlobal', 'community') },
 					{ label: Util.translate('electronMenuTutorial'), click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
 					{ label: Util.translate('electronMenuContact'), click: () => Util.send(this.win, 'commandGlobal', 'contact') },
@@ -197,7 +195,7 @@ class MenuManager {
 				label: Util.translate('electronMenuDebug'),
 				submenu: [
 					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
-					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
+					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
 				]
 			});
 		//};

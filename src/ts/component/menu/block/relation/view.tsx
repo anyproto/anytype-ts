@@ -67,7 +67,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
-								readonly={!(allowedValue && !item.isReadonlyValue)}
+								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
 								canDrag={allowedBlock}
 								canFav={allowedValue}
@@ -167,7 +167,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey])) {
+			if ((readonly || it.isReadonlyValue) && Relation.isEmpty(object[it.relationKey]) && (it.scope === I.RelationScope.Type)) {
 				return false;
 			};
 
@@ -248,7 +248,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId).concat(Relation.systemKeysWithoutUser()),
+				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},

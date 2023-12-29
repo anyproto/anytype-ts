@@ -4,6 +4,7 @@ import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, UtilData, translate, UtilDate } from 'Lib';
+import Constant from 'json/constant.json';
 
 const MENU_ID = 'threadStatus';
 
@@ -23,16 +24,18 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { account } = authStore;
+		const { info } = account;
 		const thread = authStore.threadGet(rootId);
 		const accounts = thread.accounts || [];
-		const cafe = thread.cafe || {};
-		const status = cafe.status || I.ThreadStatus.Unknown;
+		const status = UtilData.getThreadStatus(rootId, 'cafe');
+		const networkName = UtilData.getNetworkName();
 
 		const Item = (item: any) => (
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
+				onMouseEnter={() => this.onMouseEnter(item.id, false)}
 			>
 				<IconObject object={{ ...item, layout: I.ObjectLayout.Human }} />
 				<div className="info">
@@ -59,10 +62,12 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				>
 					<Icon className="cafe" />
 					<div className="info">
-						<div className="name">{translate('menuThreadListBackupNode')}</div>
-						<div className={[ 'description', UtilData.threadColor(status) ].join(' ')}>
-							{translate(`threadStatus${status}`)}
-						</div>
+						<div className="name">{networkName}</div>
+						{info.networkId ? (
+							<div className={[ 'description', UtilData.threadColor(status) ].join(' ')}>
+								{translate(`threadStatus${status}`)}
+							</div>
+						) : ''}
 					</div>
 				</div>
 				{(accounts || []).map((item: I.ThreadAccount, i: number) => (
@@ -74,8 +79,15 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 
 	componentDidMount () {
 		const { getId } = this.props;
+		const { account } = authStore;
+		const { info } = account;
+
+		if (!info.networkId) {
+			return;
+		};
+
 		const obj = $(`#${getId()}`);
-		
+
 		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
 			window.clearTimeout(this.timeoutMenu);
@@ -90,13 +102,13 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 			}, 1000);
 		};
 
-		obj.off('mouseenter').on('mouseenter', () => { clear(); });
+		obj.off('mouseenter').on('mouseenter', () => clear());
 		obj.off('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
 
 			if (status.length) {
-				status.off('mouseenter').on('mouseenter', () => { clear(); });
-				status.off('mouseleave').on('mouseleave', leave);
+				status.off('mouseenter').on('mouseenter', () => clear());
+				status.off('mouseleave').on('mouseleave', () => leave());
 			};
 
 			leave();
@@ -112,6 +124,13 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 
 	onMouseEnter (id: string, isCafe: boolean) {
 		if (!id) {
+			return;
+		};
+
+		const { account } = authStore;
+		const { info } = account;
+
+		if (!info.networkId) {
 			return;
 		};
 

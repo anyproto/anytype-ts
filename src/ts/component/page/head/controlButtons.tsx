@@ -42,6 +42,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && !root.isObjectCollection();
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
 		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
@@ -164,7 +165,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 						
 						case 'position':
-							onEdit(e);
+							if (onEdit) {
+								onEdit(e);
+							};
 							break;
 
 						case 'remove':

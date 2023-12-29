@@ -3,6 +3,11 @@ import { I, M, C, Storage, analytics, Renderer } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
 import { keyboard } from 'Lib';
 
+interface NetworkConfig {
+	mode: I.NetworkMode;
+	path: string;
+};
+
 class AuthStore {
 	
 	public walletPathValue = '';
@@ -13,7 +18,7 @@ class AuthStore {
 	public phrase = '';
 	public token = '';
 	public threadMap: Map<string, any> = new Map();
-
+	
 	constructor () {
 		makeObservable(this, {
 			walletPathValue: observable,
@@ -60,6 +65,15 @@ class AuthStore {
 		return String(this.accountItem?.info?.accountSpaceId || '');
 	};
 
+	get networkConfig (): NetworkConfig {
+		const obj = Storage.get('networkConfig') || {};
+
+		return {
+			mode: Number(obj.mode) || I.NetworkMode.Default,
+			path: String(obj.path || ''),
+		};
+	};
+
 	walletPathSet (v: string) {
 		this.walletPathValue = v;
     };
@@ -79,6 +93,10 @@ class AuthStore {
 	tokenSet (v: string) {
 		this.token = v;
     };
+
+	networkConfigSet (obj: NetworkConfig) {
+		Storage.set('networkConfig', obj, true);
+	};
 
 	accountAdd (account: any) {
 		account.info = account.info || {};
@@ -157,16 +175,16 @@ class AuthStore {
 
 	logout (mainWindow: boolean, removeData: boolean) {
 		if (mainWindow) {
-			C.WalletCloseSession(this.token, () => {
-				this.tokenSet('');
-				C.AccountStop(removeData);
+			C.AccountStop(removeData, () => {
+				C.WalletCloseSession(this.token)
+                this.tokenSet('');
 			});
 
 			analytics.event('LogOut');
 			Renderer.send('logout');
 		};
 
-		analytics.profile('');
+		analytics.profile('', '');
 		analytics.removeContext();
 
 		keyboard.setPinChecked(false);

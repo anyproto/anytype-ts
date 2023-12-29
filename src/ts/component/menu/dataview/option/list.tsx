@@ -57,7 +57,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			let content = null;
 			if (item.id == 'add') {
 				content = (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+					<div 
+						id="item-add" 
+						className="item add" 
+						style={param.style}
+						onClick={e => this.onClick(e, item)} 
+						onMouseEnter={e => this.onOver(e, item)}
+					>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -67,12 +73,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
-						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={e => this.onOver(e, item)}>
+						<div className="clickable" onClick={e => this.onClick(e, item)}>
 							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
 						</div>
 						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+							<Icon className="more" onClick={e => this.onEdit(e, item)} />
 						</div>
 						{active ? <Icon className="chk" /> : ''}
 					</div>
@@ -100,6 +106,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
+						focusOnMount={true}
 					/>
 				) : ''}
 
@@ -142,7 +149,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const items = this.getItems();
 
 		this._isMounted = true;
-		this.focus();
 		this.rebind();
 		this.resize();
 
@@ -172,14 +178,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refFilter) {
-				this.refFilter.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {
@@ -327,11 +325,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const isStatus = relation.format == I.RelationType.Status;
+		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
+		const ret = [];
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
-		const ret = [];
 		let check = [];
 
 		if (filterMapper) {
@@ -345,11 +343,10 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
-				let addItemNameKey = 'menuDataviewOptionListCreateOption';
-				if (isStatus) {
-					addItemNameKey = 'menuDataviewOptionListSetStatus';
-				};
-				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
+				ret.unshift({ 
+					id: 'add', 
+					name: UtilCommon.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+				});
 			};
 		};
 

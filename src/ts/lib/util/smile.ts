@@ -1,6 +1,6 @@
 import { UtilCommon, translate } from 'Lib';
 import { init } from 'emoji-mart';
-import data from '@emoji-mart/data';
+import data from 'json/emoji.json';
 
 const DIV = 65039;
 const CAP = 8419;
@@ -10,6 +10,7 @@ class UtilSmile {
 	icons: any[] = [];
 	cache: any = {};
 	data: any = {};
+	aliases: any = {};
 
 	constructor () {
 		init({ data });
@@ -23,6 +24,10 @@ class UtilSmile {
 			for (const skin of item.skins) {
 				this.cache[skin.native] = skin.shortcodes;
 			};
+		};
+
+		for (const k in this.data.aliases) {
+			this.aliases[this.data.aliases[k]] = k;
 		};
 	};
 

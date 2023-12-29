@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 import BlockContentLayout from './content/layout';
 import BlockContentLink from './content/link';
-import BlockContentLatex from './content/latex';
+import BlockContentEmbed from './content/embed';
 import BlockContentRelation from './content/relation';
 import BlockContentDiv from './content/div';
 import BlockContentBookmark from './content/bookmark';
@@ -16,7 +16,7 @@ import BlockContentWidget from './content/widget';
 const ContentModel = {
 	layout:		 BlockContentLayout,
 	link:		 BlockContentLink,
-	latex:		 BlockContentLatex,
+	embed:		 BlockContentEmbed,
 	relation:	 BlockContentRelation,
 	div:		 BlockContentDiv,
 	bookmark:	 BlockContentBookmark,
@@ -79,7 +79,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex() || this.isTable();
+		return this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isEmbed() || this.isTable();
 	};
 
 	canHaveColor (): boolean {
@@ -358,8 +358,12 @@ class Block implements I.Block {
 		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
 	};
 
-	isLatex (): boolean {
-		return this.type == I.BlockType.Latex;
+	isEmbed (): boolean {
+		return this.type == I.BlockType.Embed;
+	};
+
+	isEmbedLatex (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Latex);
 	};
 	
 	isText (): boolean {

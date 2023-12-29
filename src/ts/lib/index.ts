@@ -15,6 +15,7 @@ import UtilObject from './util/object';
 import UtilMenu from './util/menu';
 import UtilRouter from './util/router';
 import UtilDate from './util/date';
+import UtilEmbed from './util/embed';
 import UtilGraph from './util/graph';
 
 import { keyboard, Key } from './keyboard';
@@ -52,7 +53,7 @@ const translate = (key: string): string => {
 		data = defaultData; 
 	} else {
 		try { 
-			data = require(`lib/json/lang/${lang}.json`); 
+			data = require(`lib/json/lang/${lang}.json`);
 		} catch(e) {
 			data = defaultData; 
 		};
@@ -97,5 +98,6 @@ export {
 	UtilMenu,
 	UtilRouter,
 	UtilDate,
+	UtilEmbed,
 	UtilGraph,
 };

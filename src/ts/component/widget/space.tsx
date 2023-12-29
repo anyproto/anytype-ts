@@ -10,6 +10,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		super(props);
 
 		this.onOpenSettings = this.onOpenSettings.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 	};
 
@@ -24,6 +25,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					forceLetter={true} 
 					size={36}
 					canEdit={true} 
+					onSelect={this.onSelect}
 					onUpload={this.onUpload}
 					menuParam={{ className: 'fixed' }}
 				/>
@@ -39,6 +41,10 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		e.stopPropagation();
 
 		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
+	};
+
+	onSelect () {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
 	};
 
 	onUpload (objectId: string) {

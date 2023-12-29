@@ -37,16 +37,21 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	render () {
-		const { param, setHover, getSize } = this.props;
+		const { param, setHover } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
+
 		const view = getView();
 		if (!view) {
 			return null;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
 		const item = view.getFilter(itemId);
+		if (!item) {
+			return null;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
 		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
@@ -89,8 +94,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		switch (relation.format) {
 
-			case I.RelationType.Tag:
-			case I.RelationType.Status: {
+			case I.RelationType.MultiSelect:
+			case I.RelationType.Select: {
 				Item = (element: any) => {
 					return (
 						<div 

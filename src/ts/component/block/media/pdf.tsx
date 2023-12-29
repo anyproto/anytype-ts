@@ -7,6 +7,9 @@ import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 import Constant from 'json/constant.json';
 
+import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
+import 'react-pdf/dist/cjs/Page/TextLayer.css';
+
 pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface State {
@@ -111,7 +114,8 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 						>
 							<Page 
 								pageNumber={page} 
-								loading={<Loader />} 
+								loading={<Loader />}
+								dpi={300}
 								onRenderSuccess={this.onPageRender}
 							/>
 						</Document>

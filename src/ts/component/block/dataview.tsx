@@ -243,6 +243,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { isInline, isPopup } = this.props;
+		const view = this.getView();
 
 		this.reloadData();
 		this.init();
@@ -250,7 +251,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.rebind();
 
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
-		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
+		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view.type });
 
 		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
 			Onboarding.start('setSettings', isPopup);
@@ -376,9 +377,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setState({ loading: true });
 			};
 
-			const filters = [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
-			];
+			const filters = [];
+
 			if (this.searchIds) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
@@ -679,7 +679,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				});
 			};
 
-			Storage.setLastUsedTypes(typeId);
+			Storage.addLastUsedType(typeId);
 		});
 	};
 
@@ -907,6 +907,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
+				allowedLink: true,
+				allowedOpen: true,
 			}
 		});
 	};

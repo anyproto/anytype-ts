@@ -5,10 +5,11 @@ import Constant from 'json/constant.json';
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
-		const { profile } = blockStore;
+		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
-		if (rootId == profile) {
+		// Prevent closing of system objects
+		if ([ root, widgets ].includes(rootId)) {
 			return;
 		};
 
@@ -84,7 +85,7 @@ class Action {
 		};
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
-		
+
 		Renderer.send('download', url);
 		analytics.event('DownloadMedia', { type, route });
 	};
@@ -340,7 +341,8 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { walletPath } = authStore;
+		const { walletPath, networkConfig } = authStore;
+		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
@@ -350,12 +352,12 @@ class Action {
 
 				const { accountId, spaceId } = message;
 
-				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, (message: any) => {
+				C.ObjectImport(spaceId, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, false, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, (message: any) => {
+					C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};
@@ -425,7 +427,7 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, (message: any) => {
+			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (!message.error.code) {
 					if (message.collectionId) {
 						window.setTimeout(() => {

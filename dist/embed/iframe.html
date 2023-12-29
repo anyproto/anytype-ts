@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type="text/css">
+			* { margin: 0px; padding: 0px; }
+
+			html, body, #root { height: 100%; }
+
+			body { background-color: #fff; }
+			body.dark { background-color: #171717; }
+
+			iframe { width: 100% !important; height: 100% !important; }
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="text/javascript">
+			let cachedHtml = '';
+
+			const param = getParam();
+			const body = document.body;
+			const root = document.getElementById('root');
+
+			body.className = param.theme;
+
+			window.addEventListener('message', e => {
+				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== 'file://')) {
+					console.error('[origin]', e.origin);
+					return;
+				};
+
+				const { html, js, libs } = e.data;
+
+				loadLibs(libs, () => {
+					if (cachedHtml !== html) {
+						root.innerHTML = html;
+						cachedHtml = html;
+					};
+
+					if (js) {
+						try {
+							eval(js);
+						} catch (e) {
+							console.error(e);
+						};
+					};
+
+					resize(e);
+				});
+			});
+
+			window.addEventListener('resize', resize);
+
+			window.onerror = function (message, url, lineNumber) {  
+				return true;
+			};
+
+			function resize (e) {
+				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+			};
+
+			function loadLibs (list, callBack) {
+				if (!list.length) {
+					if (callBack) {
+						callBack();
+					};
+					return;
+				};
+
+				const src = list.shift();
+				const script = document.createElement('script');
+
+				document.head.appendChild(script);
+
+				script.onload = function (e) {
+					if (list.length) {
+						loadLibs(list, callBack);
+					} else 
+					if (callBack) {
+						callBack();
+					};
+				};
+
+				script.type = 'text/javascript';
+				script.src = src;
+			};
+
+			function getParam () {
+				const a = location.search.replace(/^\?/, '').split('&');
+				const param = {};
+
+				a.forEach((s) => {
+					const kv = s.split('=');
+					param[kv[0]] = kv[1];
+				});
+				return param;
+			};
+		</script>
+	</body>
+</html>

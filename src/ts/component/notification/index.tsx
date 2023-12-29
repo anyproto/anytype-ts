@@ -1,20 +1,16 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I } from 'Lib';
+import { I, C, UtilRouter } from 'Lib';
 import { notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import NotificationUsecase from './usecase';
-import NotificationInvite from './invite';
+import NotificationImport from './import';
+import NotificationExport from './export';
+import NotificationGallery from './gallery';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
-
-	public static defaultProps = {
-		className: '',
-	};
 
 	_isMounted = false;
 	node: any = null;
@@ -28,19 +24,23 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	};
 
 	render () {
-		const { item, className, style } = this.props;
+		const { item, style } = this.props;
 		const { id, type } = item;
-		const cn = [ 'notification', className ];
 
 		let content = null;
 		switch (type) {
-			case I.NotificationType.Usecase: {
-				content = <NotificationUsecase {...this.props} onButton={this.onButton} />;
+			case I.NotificationType.Import: {
+				content = <NotificationImport {...this.props} onButton={this.onButton} />;
 				break;
 			};
 
-			case I.NotificationType.Invite: {
-				content = <NotificationInvite {...this.props} onButton={this.onButton} />;
+			case I.NotificationType.Export: {
+				content = <NotificationExport {...this.props} onButton={this.onButton} />;
+				break;
+			};
+
+			case I.NotificationType.Gallery: {
+				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
 				break;
 			};
 		};
@@ -49,7 +49,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			<div 
 				id={`notification-${id}`}
 				ref={node => this.node = node}
-				className={cn.join(' ')}
+				className="notification"
 				style={style}
 			>
 				<Icon className="delete" onClick={this.onDelete} />
@@ -77,14 +77,19 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		e.stopPropagation();
 
 		const { item } = this.props;
+		const { payload } = item;
 
 		switch (action) {
+			case 'space': {
+				UtilRouter.switchSpace(payload.spaceId);
+				break;
+			};
 		};
 
 		this.onDelete(e);
 	};
 
-	onDelete (e: any) {
+	onDelete (e: any): void {
 		e.stopPropagation();
 
 		const { item, resize } = this.props;
@@ -92,6 +97,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		node.addClass('to');
 		this.timeout = window.setTimeout(() => {
+			C.NotificationReply([ item.id ], I.NotificationAction.Close);
+
 			notificationStore.delete(item.id);
 			resize();
 		}, Constant.delay.notification);

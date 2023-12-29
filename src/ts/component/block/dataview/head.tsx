@@ -91,8 +91,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.setValue();
 
 		if (this.state.isEditing && this.ref) {
-			const l = this.getValue().length;
-			this.ref.setRange(this.range || { from: l, to: l });
+			window.setTimeout(() => { 
+				const l = this.getValue().length;
+				this.ref.setRange(this.range || { from: l, to: l });
+			}, 15);
 		};
 	};
 
@@ -235,13 +237,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		const { getTarget } = this.props;
 		const object = getTarget();
-		const length = this.getValue().length;
 
 		switch (item.id) {
 			case 'editTitle': {
-				this.setState({ isEditing: true }, () => {
-					this.ref.setRange({ from: length, to: length });
-				});
+				this.setState({ isEditing: true });
 				break;
 			};
 
@@ -323,9 +322,12 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { block, getTarget } = this.props;
 		const { targetObjectId } = block.content;
 		const object = getTarget();
+
+		if (!targetObjectId) {
+			return;
+		};
 		
 		let value = this.getValue();
-
 		if (value == object.name) {
 			return;
 		};
@@ -335,12 +337,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		if (targetObjectId) {
-			UtilObject.setName(targetObjectId, this.getValue());
+			UtilObject.setName(targetObjectId, value);
 		};
 		
-		if (this.ref) {
-			this.ref.placeholderHide();
-		};
+		this.ref?.placeholderCheck();
 	};
 
 	onIconSelect (icon: string) {

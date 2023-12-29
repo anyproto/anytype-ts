@@ -99,7 +99,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			};
 
 			if (isArchived) {
-				archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
+				archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 			};
 
 			if (cardStyle == I.LinkCardStyle.Text) {

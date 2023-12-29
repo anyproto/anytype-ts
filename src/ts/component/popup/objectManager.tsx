@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, ListObjectManager } from 'Component';
-import { analytics, C, I, keyboard, translate } from 'Lib';
+import { C, I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupObjectManager = observer(class PopupObjectManager extends React.Component<I.Popup> {
@@ -21,10 +21,12 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 		const subId = [ getId(), 'data' ].join('-');
 
 		let title = '';
+		let button = translate('commonDone');
 
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
 				title = translate('popupSettingsImportFavouriteTitle');
+				button = translate('commonAddToFavorites');
 				break;
 			};
 		};
@@ -45,7 +47,7 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 					onAfterLoad={this.onAfterLoad}
 				/>
 
-				<Button text={translate('commonDone')} onClick={this.onClick} />
+				<Button text={button} className="c36" onClick={this.onClick} />
 			</React.Fragment>
 		);
 	};

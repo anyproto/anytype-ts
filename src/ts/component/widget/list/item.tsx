@@ -27,6 +27,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	constructor (props: Props) {
 		super(props);
 
+		this.onClick = this.onClick.bind(this);
+		this.onContext = this.onContext.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
@@ -55,7 +57,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		};
 		
 		let inner = (
-			<div className="inner">
+			<div className="inner" onMouseDown={this.onClick}>
 				<IconObject 
 					id={iconKey}
 					key={iconKey}
@@ -72,7 +74,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					}}
 				/>
 
-				<div className="info" onMouseDown={e => this.onClick(e)}>
+				<div className="info">
 					<ObjectName object={object} />
 					{descr}
 				</div>
@@ -135,7 +137,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		this.resize();
 	};
 
-	onClick = (e: React.MouseEvent): void => {
+	onClick (e: React.MouseEvent) {
 		if (e.button) {
 			return;
 		};
@@ -150,7 +152,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		analytics.event('OpenSidebarObject');
 	};
 
-	onContext = (e: React.SyntheticEvent, withElement: boolean): void => {
+	onContext (e: React.SyntheticEvent, withElement: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
 

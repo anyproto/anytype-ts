@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore, commonStore, dbStore } from 'Store';
+import { detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -80,6 +80,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					value={filter}
 					onFocus={this.onFilterFocus} 
 					onChange={this.onFilterChange} 
+					focusOnMount={true}
 				/>
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
@@ -96,7 +97,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		this._isMounted = true;
 		this.rebind();
-		this.focus();
 
 		menu.off('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
@@ -114,14 +114,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		menuStore.clearTimeout();
 	};
 
-	focus () {
-		window.setTimeout(() => {
-			if (this.refFilter) {
-				this.refFilter.focus();
-			};
-		}, 15);
-	};
-	
 	onFilterFocus (e: any) {
 		menuStore.closeAll(Constant.menuIds.action);
 		this.props.setActive();

@@ -6,15 +6,16 @@ import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, 
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface State {
-	filter: string;
-	page: number;
-	isLoading: boolean;
-};
-
 enum Tab {
 	Gallery	 = 0,
 	Upload	 = 1,
+};
+
+interface State {
+	filter: string;
+	page: number;
+	tab: Tab;
+	isLoading: boolean;
 };
 
 const LIMIT_RECENT = 18;
@@ -22,7 +23,13 @@ const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;
 const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
+
 const ID_RECENT = 'recent';
+const ID_BLANK = 'blank';
+
+const BLANK_ITEM = {
+	itemId: ID_BLANK
+};
 
 class MenuSmile extends React.Component<I.Menu, State> {
 
@@ -32,6 +39,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		filter: '',
 		page: 0,
 		isLoading: false,
+		tab: Tab.Gallery,
 	};
 
 	refFilter: any = null;
@@ -43,11 +51,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	timeoutFilter = 0;
 	cache: any = null;
 	groupCache: any[] = [];
-	aliases = {};
 	row: number = -1;
-	n: number = 0;
+	coll: number = 0;
 	active: any = null;
-	tab: Tab = Tab.Gallery;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -66,14 +72,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	render () {
-		const { filter, isLoading } = this.state;
+		const { filter, isLoading, tab } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { noHead, noGallery, noUpload, noRemove } = data;
 
 		let content = null;
 
-		switch (this.tab) {
+		switch (tab) {
 			case Tab.Gallery: {
 				if (!this.cache) {
 					break;
@@ -86,7 +92,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				const Item = (item: any) => {
 					const str = `:${item.itemId}::skin-tone-${item.skin}:`;
 					return (
-						<div 
+						item.itemId == ID_BLANK ? <div className="item" /> : <div 
 							id={'item-' + item.id} 
 							className="item" 
 							onMouseEnter={e => this.onMouseEnter(e, item)}
@@ -139,7 +145,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							ref={ref => this.refFilter = ref}
 							value={filter}
 							className={!noHead ? 'withHead' : ''} 
-							onChange={(e: any) => { this.onKeyUp(e, false); }} 
+							onChange={e => this.onKeyUp(e, false)} 
+							focusOnMount={true}
 						/>
 						
 						<div className="items">
@@ -227,7 +234,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					</div>
 				) : ''}
 				
-				<div className={[ 'body', Tab[this.tab].toLowerCase() ].join(' ')}>
+				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
 					{content}
 				</div>
 			</div>
@@ -240,35 +247,22 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { storageGet, param } = this.props;
 		const { data } = param;
 		const { noGallery } = data;
+		const items = this.getItems();
+
+		this.rebind();
+
+		this.skin = Number(storageGet().skin) || 1;
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		if (noGallery) {
 			this.onTab(Tab.Upload);
-		};
-
-		this.skin = Number(storageGet().skin) || 1;
-		this.aliases = {};
-
-		for (const k in UtilSmile.data.aliases) {
-			this.aliases[UtilSmile.data.aliases[k]] = k;
-		};
-
-		if (!this.cache) {
-			const items = this.getItems();
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT_SECTION,
-				keyMapper: i => (items[i] || {}).id,
-			});
+		} else {
 			this.forceUpdate();
 		};
-
-		window.setTimeout(() => {
-			if (this.refFilter) {
-				this.refFilter.focus();
-			};
-		}, 15);
-
-		this.rebind();
 	};
 	
 	componentDidUpdate () {
@@ -285,10 +279,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		window.clearTimeout(this.timeoutMenu);
 		window.clearTimeout(this.timeoutFilter);
 
@@ -296,10 +286,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		menuStore.close('smileSkin');
 
 		this.unbind();
-
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	rebind () {
@@ -380,6 +366,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
+		const fillRowWithBlankChildren = row => {
+			const len = row.children.length;
+
+			if ((len > 0) && (len < LIMIT_ROW)) {
+				row.children.push(...new Array(LIMIT_ROW - len).fill({ itemId: ID_BLANK }));
+			};
+
+			return row;
+		};
+
 		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
 				{ 
@@ -413,14 +409,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 			n++;
 			if ((n == LIMIT_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_ROW))) {
-				ret.push(row);
+				ret.push(fillRowWithBlankChildren(row));
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
 		if (row.children.length < LIMIT_ROW) {
-			ret.push(row);
+			ret.push(fillRowWithBlankChildren(row));
 		};
 
 		return ret;
@@ -512,8 +508,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			const element = node.find(`#item-${$.escapeSelector(this.active.id)}`);
 
 			element.addClass('active');
-
-			Preview.tooltipShow({ text: (this.aliases[this.active.itemId] || this.active.itemId), element });
+			Preview.tooltipShow({ text: (UtilSmile.aliases[this.active.itemId] || this.active.itemId), element });
 		};
 	};
 
@@ -539,11 +534,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (this.n > current.children.length) {
-			this.n = 0;
+		if ((this.coll > current.children.length) || (current.children[this.coll].itemId == ID_BLANK)) {
+			this.coll = 0;
 		};
 
-		this.setActive(current.children[this.n], this.row);
+		this.setActive(current.children[this.coll], this.row);
 	};
 
 	onArrowHorizontal (dir: number) {
@@ -551,26 +546,26 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		this.n += dir;
+		this.coll += dir;
 
 		const rows = this.getItems();
 		const current = rows[this.row];
 
 		// Arrow left
-		if (this.n < 0) {
-			this.n = LIMIT_ROW - 1;
+		if (this.coll < 0) {
+			this.coll = LIMIT_ROW - 1;
 			this.onArrowVertical(dir);
 			return;
 		};
 
 		// Arrow right
-		if (this.n > current.children.length - 1) {
-			this.n = 0;
+		if ((this.coll > current.children.length - 1) || (current.children[this.coll].itemId == ID_BLANK)) {
+			this.coll = 0;
 			this.onArrowVertical(dir);
 			return;
 		};
 
-		this.setActive(current.children[this.n], this.row);
+		this.setActive(current.children[this.coll], this.row);
 	};
 
 	onRandom () {
@@ -597,6 +592,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
+		if (id == ID_BLANK) {
+			return;
+		}
+		
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
@@ -618,7 +617,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.row = item.position.row;
-			this.n = item.position.n;
+			this.coll = item.position.n;
 			this.setActive(item);
 		};
 	};
@@ -626,11 +625,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onMouseLeave () {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(null);
-			this.n = 0;
+			this.coll = 0;
 		};
 	};
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
+		if (id == ID_BLANK) {
+			return;
+		}
+
 		const { close } = this.props;
 		const win = $(window);
 		const item = UtilSmile.data.emojis[id];
@@ -731,7 +734,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		this.refList.scrollToRow(Math.max(0, idx));
 		this.row = Math.max(0, idx);
-		this.n = -1;
+		this.coll = 0;
 	};
 
 	getGroupCache () {
@@ -740,6 +743,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const items = this.getItems();
+
 		let t = 0;
 		let last = null;
 
@@ -788,10 +792,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
-
-		zone.addClass('isDraggingOver');
+		$(this.node).find('.dropzone').addClass('isDraggingOver');
 	};
 	
 	onDragLeave (e: any) {
@@ -799,10 +800,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const node = $(this.node);
-		const zone = node.find('.dropzone');
-
-		zone.removeClass('isDraggingOver');
+		$(this.node).find('.dropzone').removeClass('isDraggingOver');
 	};
 	
 	onDrop (e: any) {
@@ -825,6 +823,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
 			this.setState({ isLoading: false });
+			
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
@@ -836,10 +835,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onTab (tab: Tab) {
-		this.tab = tab;
-		this.forceUpdate();
+		this.setState({ tab });
 	};
-	
+
 };
 
 export default MenuSmile;

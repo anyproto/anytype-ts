@@ -129,7 +129,6 @@ const Item = observer(class Item extends React.Component<Props> {
 				noFlipX: true,
 				data: {
 					...this.props,
-					items: this.getItems(),
 				}
 			});
 		});

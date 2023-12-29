@@ -67,10 +67,6 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
-								// {
-								// 	key: translate('menuThreadStatusDirectInteractionStatus'),
-								// 	value: translate(item.online ? 'menuThreadStatusOnline' : 'menuThreadStatusOffline'),
-								// },
 								{
 									key: translate('menuThreadStatusUpdatesRequested'),
 									value: (item.lastPulled ? UtilDate.timeAgo(item.lastPulled) : translate('menuThreadStatusNoInteraction')),

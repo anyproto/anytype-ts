@@ -66,8 +66,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.resize();
 		this.load();
 		this.initRootId(this.getRootId());
-
-		window.Graph = this;
 	};
 
 	componentDidUpdate () {
@@ -127,6 +125,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			for (const edge of this.data.edges) {
 				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
 				if (idx >= 0) {
+					const double = this.data.edges[idx];
+
+					if ((edge.type == I.EdgeType.Link) && (double.type == I.EdgeType.Relation)) {
+						edge.type = double.type;
+						edge.name = double.name;
+					};
+
 					edge.isDouble = true;
 					this.data.edges.splice(idx, 1);
 				};
