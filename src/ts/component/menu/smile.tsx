@@ -534,11 +534,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if ((this.coll > current.children.length) || (current.children[this.coll].itemId == ID_BLANK)) {
+		const child = current.children[this.coll];
+
+		if ((this.coll > current.children.length) || (child && (child.itemId == ID_BLANK))) {
 			this.coll = 0;
 		};
 
-		this.setActive(current.children[this.coll], this.row);
+		this.setActive(child, this.row);
 	};
 
 	onArrowHorizontal (dir: number) {
