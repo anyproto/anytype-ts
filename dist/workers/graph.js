@@ -217,11 +217,17 @@ updateForces = () => {
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
+		updateOrphans();
+
+		nodes = nodes.filter(d => !d.linkCnt);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
+		updateOrphans();
+
+		nodes = nodes.filter(d => !d.relationCnt);
 	};
 
 	// Filte local only edges
@@ -305,7 +311,11 @@ updateTheme = ({ theme }) => {
 
 updateOrphans = () => {
 	nodes = nodes.map(d => {
-		d.isOrphan = !!!edges.find(it => (it.source == d.id) || (it.target == d.id));
+		const edgeList = edges.filter(it => (it.source == d.id) || (it.target == d.id));
+		
+		d.isOrphan = !edgeList.length;
+		d.linkCnt = edgeList.filter(it => it.type == EdgeType.Link).length;
+		d.relationCnt = edgeList.filter(it => it.type == EdgeType.Relation).length;
 		return d;
 	});
 };
