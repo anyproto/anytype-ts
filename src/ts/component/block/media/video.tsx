@@ -75,7 +75,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 							onPlay={this.onPlay}
 							onPause={this.onPause}
 						/>
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -195,7 +195,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const win = $(window);
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -208,7 +207,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		wrap.css({ width: (w * 100) + '%', height: h });
 	};
-	
+
 	onResizeStart (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
