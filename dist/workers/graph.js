@@ -173,6 +173,8 @@ image = ({ src, bitmap }) => {
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
 
+	updateOrphans();
+
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
 	.force('charge', d3.forceManyBody())
@@ -210,6 +212,8 @@ updateForces = () => {
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
 
+	updateOrphans();
+
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
@@ -231,13 +235,7 @@ updateForces = () => {
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
-	// Recalculate orphans
-	nodes = nodes.map(d => {
-		d.sourceCnt = edges.filter(it => it.source == d.id).length;
-		d.targetCnt = edges.filter(it => it.target == d.id).length;
-		d.isOrphan = !d.sourceCnt && !d.targetCnt;
-		return d;
-	});
+	//updateOrphans();
 
 	// Filter orphans
 	if (!settings.orphan) {
@@ -303,6 +301,13 @@ updateSettings = (param) => {
 updateTheme = ({ theme }) => {
 	initTheme(theme);
 	redraw();
+};
+
+updateOrphans = () => {
+	nodes = nodes.map(d => {
+		d.isOrphan = !!!edges.find(it => (it.source == d.id) || (it.target == d.id));
+		return d;
+	});
 };
 
 draw = (t) => {
