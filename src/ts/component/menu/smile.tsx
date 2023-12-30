@@ -514,6 +514,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onArrowVertical (dir: number) {
 		const rows = this.getItems();
+		console.log('dir',dir);
 
 		this.row += dir;
 
@@ -534,11 +535,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const child = current.children[this.coll];
+		const firstBlankIndex = current.children.findIndex((item: any) => item.itemId == ID_BLANK);
 
-		if ((this.coll > current.children.length) || (child && (child.itemId == ID_BLANK))) {
-			this.coll = 0;
-		};
+		if (firstBlankIndex > -1) {
+			this.coll = firstBlankIndex - 1;
+		}
+
+		const child = current.children[this.coll];
 
 		this.setActive(child, this.row);
 	};
@@ -547,9 +550,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (this.row == -1) {
 			return;
 		};
-
+		
 		this.coll += dir;
-
+		
 		const rows = this.getItems();
 		const current = rows[this.row];
 
