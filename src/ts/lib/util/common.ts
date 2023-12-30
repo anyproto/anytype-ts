@@ -628,9 +628,23 @@ class UtilCommon {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 
-	matchUrl (url: string) {
-		const reg = new RegExp(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
-		return url.match(reg);
+	matchUrl (s: string): string {
+		const m = String(s || '').match(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		return m && m.length ? m[0] : '';
+	};
+
+	matchLocalPath (s: string): string {
+		s = String(s || '');
+
+		const rw = new RegExp(/^(?:[a-zA-Z]:|\\\\[a-zA-Z0-9_.$-]+\\[a-zA-Z0-9_.$-]+)(\\(?:[^\\/:*?"<>|\r\n]+\\?)*)/gi);
+		const ru = new RegExp(/^\/(?:[^\/\0]+\/)*[^\/\0]+$/);
+
+		let m = s.match(rw);
+		if (!m) {
+			m = s.match(ru);
+		};
+
+		return m && m.length ? m[0] : '';
 	};
 
 	getDataTransferFiles (items: any[]): any[] {
