@@ -1683,8 +1683,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			isLocal = true;
 		};
 
-		console.log('URL', url);
-		
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			this.onPasteUrl(url, isLocal, props);
 			return;
