@@ -549,9 +549,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (this.row == -1) {
 			return;
 		};
-		
+
 		this.coll += dir;
-		
+
 		const rows = this.getItems();
 		const current = rows[this.row];
 
