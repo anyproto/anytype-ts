@@ -630,7 +630,12 @@ class UtilCommon {
 
 	matchUrl (s: string): string {
 		const m = String(s || '').match(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
-		return m && m.length ? m[0] : '';
+		return (m && m.length) ? m[0] : '';
+	};
+
+	matchDomain (s: string): string {
+		const m = String(s || '').match(/^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/gi);
+		return (m && m.length) ? m[0] : '';
 	};
 
 	matchLocalPath (s: string): string {
@@ -644,7 +649,7 @@ class UtilCommon {
 			m = s.match(ru);
 		};
 
-		return m && m.length ? m[0] : '';
+		return (m && m.length) ? m[0] : '';
 	};
 
 	getDataTransferFiles (items: any[]): any[] {

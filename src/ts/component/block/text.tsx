@@ -339,7 +339,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			const scheme = UtilCommon.getScheme(url);
 			const isInside = scheme == Constant.protocol;
-			const isLocal = scheme == 'file';
 
 			let route = '';
 			let target;
