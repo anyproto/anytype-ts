@@ -636,8 +636,8 @@ class UtilCommon {
 	matchLocalPath (s: string): string {
 		s = String(s || '');
 
-		const rw = new RegExp(/^(?:[a-zA-Z]:|\\\\[a-zA-Z0-9_.$-]+\\[a-zA-Z0-9_.$-]+)(\\(?:[^\\/:*?"<>|\r\n]+\\?)*)/gi);
-		const ru = new RegExp(/^\/(?:[^\/\0]+\/)*[^\/\0]+$/);
+		const rw = new RegExp(/^(?:[a-zA-Z]:|[\\\/]{2}[^\\\/]+[\\\/]+[^\\\/]+)\\(?:[\p{L}\p{N}\s\._-]+\\)*[\p{L}\p{N}\s\._-]+(?:\.[\p{L}\p{N}\s_-]+)?$/ugi);
+		const ru = new RegExp(/^(\/[\p{L}\p{N}\s\._-]+)+\/?$/u);
 
 		let m = s.match(rw);
 		if (!m) {
