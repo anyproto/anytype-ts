@@ -23,7 +23,7 @@
 			.editableWrap { margin: 0px; }
 		}
 
-		.valueWrap { position: relative; display: inline-block; }
+		.valueWrap { position: relative; display: inline-block; width: 100%; }
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 
 		.preview { 
