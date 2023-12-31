@@ -4,8 +4,6 @@
 		<style type="text/css">
 			* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
-			html, body, #root { height: 100%; }
-
 			body { background-color: #fff; }
 			body.dark { background-color: #171717; }
 
@@ -28,7 +26,7 @@
 
 		<script type="text/javascript">
 			let cachedHtml = '';
-			let scrollHeight = 0;
+			let height = 0;
 
 			const param = getParam();
 			const body = document.body;
@@ -89,7 +87,9 @@
 			};
 
 			function resize () {
-				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+				requestAnimationFrame(() => {
+					window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+				});
 			};
 
 			function insertHtml (html) {

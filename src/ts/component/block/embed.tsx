@@ -856,12 +856,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	resize () {
-		const node = $(this.node);
-		const iframe = node.find('#receiver');
-
-		if (iframe.length) {
-			iframe.css({ height: 'auto' });
-		};
 	};
 
 });
