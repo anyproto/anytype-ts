@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script src="../js/jquery.js"></script>
 		<style type="text/css">
 			* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
@@ -14,6 +15,8 @@
 				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
+			#root { font-size: 0px; }
+
 			.twitter-tweet { margin: 0px !important; display: inline-flex !important; }
 
 			body.align1 .twitter-tweet { justify-content: center; }
@@ -25,116 +28,115 @@
 		<div id="scripts"></div>
 
 		<script type="text/javascript">
-			let cachedHtml = '';
-			let height = 0;
+			$(() => {
+				const win = $(window);
+				const body = $('body');
+				const root = $('#root');
+				const scripts = $('#scripts');
+				const param = getParam();
+				const allowedOrigins = [
+					'//localhost:',
+					'file://',
+				];
 
-			const param = getParam();
-			const body = document.body;
-			const root = document.getElementById('root');
-			const scripts = document.getElementById('scripts');
-			const allowedOrigins = [
-				'//localhost:',
-				'file://',
-			];
+				let cachedHtml = '';
+				let height = 0;
 
-			window.addEventListener('message', e => {
-				if (!allowedOrigins.some(it => e.origin.match(it))) {
-					return;
-				};
+				win.off('message resize');
 
-				const { html, js, libs, className, allowResize, align, processor } = e.data;
-				const insertBeforeLoad = [ 9, 11 ].includes(processor);
+				win.on('message', e => {
+					const oe = e.originalEvent;
+					if (!allowedOrigins.some(it => oe.origin.match(it))) {
+						return;
+					};
 
-				scripts.innerHTML = '';
-				body.className = '';
+					const { html, js, libs, className, allowResize, align, processor } = oe.data;
+					const insertBeforeLoad = [ 9, 11 ].includes(processor);
 
-				if (param.theme) {
-					body.classList.add(param.theme);
-				};
-				if (className) {
-					body.classList.add(className);
-				};
-				body.classList.add(`align${align}`);
+					scripts.html('');
 
-				if (insertBeforeLoad) {
-					insertHtml(html);
-				};
+					if (param.theme) {
+						body.addClass(param.theme);
+					};
+					if (className) {
+						body.addClass(className);
+					};
+					body.addClass(`align${align}`);
 
-				loadLibs(libs, () => {
-					if (!insertBeforeLoad) {
+					if (insertBeforeLoad) {
 						insertHtml(html);
 					};
 
-					if (js) {
-						try {
-							eval(js);
-						} catch (e) {
-							console.error(e);
+					loadLibs(libs, () => {
+						if (!insertBeforeLoad) {
+							insertHtml(html);
+						};
+
+						if (js) {
+							try {
+								eval(js);
+							} catch (e) {
+								console.error(e);
+							};
+						};
+
+						resize();
+						if (allowResize) {
+							setInterval(resize, 500);
+						};
+					});
+				});
+
+				win.on('resize', resize);
+
+				function resize () {
+					window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+				};
+
+				function insertHtml (html) {
+					if (cachedHtml !== html) {
+						root.html(html);
+						cachedHtml = html;
+					};
+				};
+
+				function loadLibs (list, callBack) {
+					if (!list.length) {
+						if (callBack) {
+							callBack();
+						};
+						return;
+					};
+
+					const src = list.shift();
+					const script = document.createElement('script');
+
+					scripts.append(script);
+
+					script.onload = function (e) {
+						if (list.length) {
+							loadLibs(list, callBack);
+						} else 
+						if (callBack) {
+							callBack();
 						};
 					};
 
-					resize();
-					if (allowResize) {
-						setInterval(resize, 500);
-					};
-				});
+					script.type = 'text/javascript';
+					script.src = src;
+				};
+
+				function getParam () {
+					const a = location.search.replace(/^\?/, '').split('&');
+					const param = {};
+
+					a.forEach((s) => {
+						const kv = s.split('=');
+						param[kv[0]] = kv[1];
+					});
+					return param;
+				};
 			});
-
-			window.addEventListener('resize', resize);
-
-			window.onerror = function (message, url, lineNumber) {  
-				return true;
-			};
-
-			function resize () {
-				requestAnimationFrame(() => {
-					window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
-				});
-			};
-
-			function insertHtml (html) {
-				if (cachedHtml !== html) {
-					root.innerHTML = html;
-					cachedHtml = html;
-				};
-			};
-
-			function loadLibs (list, callBack) {
-				if (!list.length) {
-					if (callBack) {
-						callBack();
-					};
-					return;
-				};
-
-				const src = list.shift();
-				const script = document.createElement('script');
-
-				scripts.appendChild(script);
-
-				script.onload = function (e) {
-					if (list.length) {
-						loadLibs(list, callBack);
-					} else 
-					if (callBack) {
-						callBack();
-					};
-				};
-
-				script.type = 'text/javascript';
-				script.src = src;
-			};
-
-			function getParam () {
-				const a = location.search.replace(/^\?/, '').split('&');
-				const param = {};
-
-				a.forEach((s) => {
-					const kv = s.split('=');
-					param[kv[0]] = kv[1];
-				});
-				return param;
-			};
 		</script>
 	</body>
 </html>
