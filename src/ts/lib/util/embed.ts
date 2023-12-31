@@ -51,15 +51,11 @@ class UtilEmbed {
 				break;
 			};
 		};
-
-		console.log('getProcessorByUrl', url, p);
 		return p;
 	};
 
 	getParsedUrl (url: string): string {
 		const processor = this.getProcessorByUrl(url);
-
-		console.log('getParsedUrl', url, processor);
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
@@ -145,6 +141,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Miro, 
 			I.EmbedProcessor.Figma,
 			I.EmbedProcessor.Twitter,
+			I.EmbedProcessor.Reddit,
 		].includes(p);
 	};
 
@@ -167,7 +164,9 @@ class UtilEmbed {
 	};
 
 	allowJs (p: I.EmbedProcessor) {
-		return [ I.EmbedProcessor.Chart ].includes(p);
+		return [ 
+			I.EmbedProcessor.Chart,
+		].includes(p);
 	};
 
 	allowPopup (p: I.EmbedProcessor) {
@@ -175,7 +174,10 @@ class UtilEmbed {
 	};
 
 	allowResize (p: I.EmbedProcessor) {
-		return [ I.EmbedProcessor.Twitter ].includes(p);
+		return [ 
+			I.EmbedProcessor.Twitter,
+			I.EmbedProcessor.Reddit,
+		].includes(p);
 	};
 
 };

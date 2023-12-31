@@ -76,7 +76,8 @@
 	.block.blockEmbed.isMiro .preview { background-image: url('~img/icon/block/embed/miro.svg'); }
 	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
 
-	.block.blockEmbed.isTwitter {
+	.block.blockEmbed.isTwitter,
+	.block.blockEmbed.isReddit {
 		iframe { width: 100%; aspect-ratio: unset; }
 	}
 

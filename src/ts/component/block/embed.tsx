@@ -509,12 +509,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	getEnvironmentContent (): { html: string; libs: string[], className: string } {
+	getEnvironmentContent (): { html: string; libs: string[]} {
 		const { block } = this.props;
 		const { processor } = block.content;
+		const libs = [];
 
 		let html = '';
-		let libs = [];
 
 		switch (processor) {
 			case I.EmbedProcessor.Chart: {
@@ -528,12 +528,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				break;
 			};
 
+			case I.EmbedProcessor.Reddit: {
+				libs.push('https://embed.reddit.com/widgets.js');
+				break;
+			};
 		};
 
 		return { 
 			html, 
 			libs, 
-			className: UtilData.blockEmbedClass(processor),
 		};
 	};
 
@@ -596,7 +599,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
-					const data: any = { ...env, allowResize, align: block.hAlign };
+					const data: any = { 
+						...env, 
+						allowResize, 
+						align: block.hAlign, 
+						processor,
+						className: UtilData.blockEmbedClass(processor),
+					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));

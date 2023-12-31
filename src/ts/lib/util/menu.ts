@@ -72,6 +72,7 @@ class UtilMenu {
 
 				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
 				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
+				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
 			]);
 		};
 

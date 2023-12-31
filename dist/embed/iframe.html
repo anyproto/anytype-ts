@@ -12,7 +12,7 @@
 			body.align1 { text-align: center; }
 			body.align2 { text-align: right; }
 
-			body:not(.isTwitter) {
+			body:not(.isTwitter):not(.isReddit) {
 				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
@@ -24,6 +24,8 @@
 	</head>
 	<body>
 		<div id="root"></div>
+		<div id="scripts"></div>
+
 		<script type="text/javascript">
 			let cachedHtml = '';
 			let scrollHeight = 0;
@@ -31,34 +33,38 @@
 			const param = getParam();
 			const body = document.body;
 			const root = document.getElementById('root');
+			const scripts = document.getElementById('scripts');
 			const allowedOrigins = [
 				'//localhost:',
 				'file://',
 			];
-
-			body.className = '';
-
-			if (param.theme) {
-				body.classList.add(param.theme);
-			};
 
 			window.addEventListener('message', e => {
 				if (!allowedOrigins.some(it => e.origin.match(it))) {
 					return;
 				};
 
-				const { html, js, libs, className, allowResize, align } = e.data;
+				const { html, js, libs, className, allowResize, align, processor } = e.data;
+				const insertBeforeLoad = [ 9, 11 ].includes(processor);
 
+				scripts.innerHTML = '';
+				body.className = '';
+
+				if (param.theme) {
+					body.classList.add(param.theme);
+				};
 				if (className) {
 					body.classList.add(className);
 				};
-
 				body.classList.add(`align${align}`);
 
+				if (insertBeforeLoad) {
+					insertHtml(html);
+				};
+
 				loadLibs(libs, () => {
-					if (cachedHtml !== html) {
-						root.innerHTML = html;
-						cachedHtml = html;
+					if (!insertBeforeLoad) {
+						insertHtml(html);
 					};
 
 					if (js) {
@@ -86,6 +92,13 @@
 				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
 			};
 
+			function insertHtml (html) {
+				if (cachedHtml !== html) {
+					root.innerHTML = html;
+					cachedHtml = html;
+				};
+			};
+
 			function loadLibs (list, callBack) {
 				if (!list.length) {
 					if (callBack) {
@@ -97,7 +110,7 @@
 				const src = list.shift();
 				const script = document.createElement('script');
 
-				document.body.appendChild(script);
+				scripts.appendChild(script);
 
 				script.onload = function (e) {
 					if (list.length) {

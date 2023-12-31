@@ -38,7 +38,8 @@
 		"https://miro.com",
 		"https://*.google.com",
 		"https://*.figma.com/",
-		"https://*.openstreetmap.org"
+		"https://*.openstreetmap.org",
+		"https://www.redditstatic.com"
 	],
 
 	"font-src": [ 
@@ -83,7 +84,8 @@
 		"https://*.figma.com/",
 		"wss://*.figma.com/",
 		"https://*.twitter.com",
-		"https://*.twimg.com"
+		"https://*.twimg.com",
+		"https://*.reddit.com"
 	],
 
 	"script-src-elem": [
@@ -104,7 +106,9 @@
 		"https://*.figma.com/",
 		"https://cdn.jsdelivr.net",
 		"https://platform.twitter.com",
-		"https://*.openstreetmap.org"
+		"https://*.openstreetmap.org",
+		"https://embed.reddit.com",
+		"https://www.redditstatic.com"
 	],
 
 	"frame-src": [
@@ -119,7 +123,8 @@
 		"https://*.figma.com/",
 		"file://*",
 		"https://platform.twitter.com",
-		"https://*.openstreetmap.org"
+		"https://*.openstreetmap.org",
+		"https://embed.reddit.com"
 	],
 
 	"worker-src": [ 
@@ -127,5 +132,11 @@
 		"'unsafe-eval'", 
 		"blob:", 
 		"http://localhost:*" 
+	],
+
+	"manifest-src": [ 
+		"'self'", 
+		"http://localhost:*",
+		"https://*.redditstatic.com"
 	]
 }
