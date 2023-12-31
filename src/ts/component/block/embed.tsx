@@ -52,7 +52,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	render () {
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
-		const { content, fields } = block;
+		const { content, fields, hAlign } = block;
 		const { processor } = content;
 		const { width } = fields || {};
 		const canResize = ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(processor);
