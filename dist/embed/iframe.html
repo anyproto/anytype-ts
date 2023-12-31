@@ -10,6 +10,8 @@
 			body.dark { background-color: #171717; }
 
 			iframe { width: 100% !important; height: 100% !important; }
+
+			.twitter-tweet { max-width: unset !important; margin: 0px !important; height: 100%; }
 		</style>
 	</head>
 	<body>
@@ -25,7 +27,7 @@
 
 			window.addEventListener('message', e => {
 				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== 'file://')) {
-					console.error('[origin]', e.origin);
+					console.error('[origin]', e.origin, e.data);
 					return;
 				};
 
@@ -70,7 +72,7 @@
 				const src = list.shift();
 				const script = document.createElement('script');
 
-				document.head.appendChild(script);
+				document.body.appendChild(script);
 
 				script.onload = function (e) {
 					if (list.length) {

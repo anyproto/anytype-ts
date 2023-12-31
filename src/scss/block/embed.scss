@@ -66,6 +66,20 @@
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; }
 	}
 
+	.block.blockEmbed.isLatex .preview { background-image: url('~img/icon/block/embed/latex.svg'); }
+	.block.blockEmbed.isMermaid .preview { background-image: url('~img/icon/block/embed/mermaid.svg'); }
+	.block.blockEmbed.isYoutube .preview { background-image: url('~img/icon/block/embed/youtube.svg'); }
+	.block.blockEmbed.isVimeo .preview { background-image: url('~img/icon/block/embed/vimeo.svg'); }
+	.block.blockEmbed.isGoogleMaps .preview { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
+	.block.blockEmbed.isSoundcloudd .preview { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
+	.block.blockEmbed.isChart .preview { background-image: url('~img/icon/block/embed/chart.svg'); }
+	.block.blockEmbed.isMiro .preview { background-image: url('~img/icon/block/embed/miro.svg'); }
+	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
+
+	.block.blockEmbed.isTwitter {
+		iframe { width: auto; }
+	}
+
 	.block.blockEmbed.isReadonly {
 		.icon.resize { display: none; }
 	}

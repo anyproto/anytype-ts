@@ -55,21 +55,24 @@ class UtilMenu {
 	getBlockEmbed () {
 		const { config } = commonStore;
 		const ret = [
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
-			{ type: I.BlockType.Embed, id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+			{ id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
+			{ id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
+			{ id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
+			{ id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
+			{ id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
+			{ id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
+			{ id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
+			{ id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+
+			{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
 		];
 
 		if (config.experimental) {
-			ret.push({ type: I.BlockType.Embed, id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' });
+			ret.push({ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' });
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
+			it.type = I.BlockType.Embed;
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
 			return it;
 		});

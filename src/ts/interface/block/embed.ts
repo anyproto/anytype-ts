@@ -10,6 +10,8 @@ export enum EmbedProcessor {
 	GoogleMaps 	 = 6,
 	Miro 	 	 = 7,
 	Figma 	 	 = 8,
+
+	Twitter		 = 9,
 };
 
 export interface ContentEmbed {

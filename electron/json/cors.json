@@ -80,7 +80,9 @@
 		"https://mirostatic.com",
 		"wss://miro.com",
 		"https://*.figma.com/",
-		"wss://*.figma.com/"
+		"wss://*.figma.com/",
+		"https://*.twitter.com",
+		"https://cdn.syndication.twimg.com"
 	],
 
 	"script-src-elem": [
@@ -99,7 +101,8 @@
 		"https://*.cookielaw.org",
 		"https://mirostatic.com",
 		"https://*.figma.com/",
-		"https://cdn.jsdelivr.net"
+		"https://cdn.jsdelivr.net",
+		"https://platform.twitter.com"
 	],
 
 	"frame-src": [
@@ -112,7 +115,8 @@
 		"https://miro.com",
 		"https://*.miro.com",
 		"https://*.figma.com/",
-		"file://*"
+		"file://*",
+		"https://platform.twitter.com"
 	],
 
 	"worker-src": [ 

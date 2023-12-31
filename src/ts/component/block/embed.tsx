@@ -126,7 +126,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onFocus={this.onFocusBlock}
 			>
 				<div className="valueWrap resizable" style={css}>
-					<div className={[ 'preview', menuItem.icon ].join(' ')} onClick={this.onPreview} />
+					<div className="preview" onClick={this.onPreview} />
 					<div id="value" onClick={this.onEdit} />
 					<div id={this.getContainerId()} />
 
@@ -520,6 +520,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
 				break;
 			};
+
+			case I.EmbedProcessor.Twitter: {
+				libs.push('https://platform.twitter.com/widgets.js');
+				break;
+			};
+
 		};
 
 		return { html, libs };
@@ -567,7 +573,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				let text = this.text;
 
 				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
+				const allowSameOrigin = [ 
+					I.EmbedProcessor.Youtube, 
+					I.EmbedProcessor.Vimeo, 
+					I.EmbedProcessor.Soundcloud, 
+					I.EmbedProcessor.GoogleMaps, 
+					I.EmbedProcessor.Miro, 
+					I.EmbedProcessor.Figma,
+					I.EmbedProcessor.Twitter,
+				];
 				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
 				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
 				const allowJs = [ I.EmbedProcessor.Chart ];
