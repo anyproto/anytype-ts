@@ -9,6 +9,8 @@ DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
 DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 
+const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
+
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
@@ -17,27 +19,27 @@ class UtilEmbed {
 	};
 
 	getYoutubeHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+		return `<iframe src="${content}"  ${IFRAME_PARAM} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>`;
 	};
 
 	getVimeoHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+		return `<iframe src="${content}"  ${IFRAME_PARAM} allow="autoplay; fullscreen; picture-in-picture"></iframe>`;
 	};
 
 	getGoogleMapsHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen loading="lazy"></iframe>`;
+		return `<iframe src="${content}" ${IFRAME_PARAM} loading="lazy"></iframe>`;
 	};
 
 	getMiroHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" ${IFRAME_PARAM} allow="fullscreen; clipboard-read; clipboard-write"></iframe>`;
 	};
 
 	getFigmaHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
 	getOpenStreetMapHtml (content: string): string {
-		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
