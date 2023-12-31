@@ -41,6 +41,7 @@
 
 				let cachedHtml = '';
 				let height = 0;
+				let blockId = '';
 
 				win.off('message resize');
 
@@ -53,6 +54,7 @@
 					const { html, js, libs, className, allowResize, align, processor } = oe.data;
 					const insertBeforeLoad = [ 9, 11 ].includes(processor);
 
+					blockId = oe.data.blockId;
 					scripts.html('');
 
 					if (param.theme) {
@@ -90,7 +92,7 @@
 				win.on('resize', resize);
 
 				function resize () {
-					window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+					window.parent.postMessage({ height: document.documentElement.scrollHeight, blockId }, '*');
 				};
 
 				function insertHtml (html) {

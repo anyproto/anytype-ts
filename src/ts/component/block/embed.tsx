@@ -605,6 +605,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						align: block.hAlign, 
 						processor,
 						className: UtilData.blockEmbedClass(processor),
+						blockId: block.id,
 					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<iframe/)) {
@@ -629,8 +630,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (allowResize) {
 						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 							const oe = e.originalEvent as any;
+							const { height, blockId } = oe.data;
 
-							iframe.css({ height: oe.data.height });
+							if (blockId == block.id) {
+								iframe.css({ height });
+							};
 						});
 					};
 				};
