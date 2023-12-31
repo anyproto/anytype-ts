@@ -873,6 +873,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
 		};
+
+		if (menuStore.isOpen('selectPasteUrl')) {
+			menuStore.close('selectPasteUrl');
+		};
 		
 		onKeyDown(e, value, this.marks, range, this.props);
 	};
