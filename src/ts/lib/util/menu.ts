@@ -71,6 +71,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
 
 				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
+				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
 			]);
 		};
 

@@ -7,6 +7,7 @@ DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
+DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/export\/embed.html' ];
 
 class UtilEmbed {
 

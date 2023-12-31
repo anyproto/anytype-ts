@@ -37,7 +37,8 @@
 		"https://mirostatic.com",
 		"https://miro.com",
 		"https://*.google.com",
-		"https://*.figma.com/"
+		"https://*.figma.com/",
+		"https://*.openstreetmap.org"
 	],
 
 	"font-src": [ 
@@ -102,7 +103,8 @@
 		"https://mirostatic.com",
 		"https://*.figma.com/",
 		"https://cdn.jsdelivr.net",
-		"https://platform.twitter.com"
+		"https://platform.twitter.com",
+		"https://*.openstreetmap.org"
 	],
 
 	"frame-src": [
@@ -116,7 +118,8 @@
 		"https://*.miro.com",
 		"https://*.figma.com/",
 		"file://*",
-		"https://platform.twitter.com"
+		"https://platform.twitter.com",
+		"https://*.openstreetmap.org"
 	],
 
 	"worker-src": [ 
