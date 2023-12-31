@@ -38,8 +38,6 @@ class Filter extends React.Component<Props, State> {
 		tooltipY: I.MenuDirection.Bottom,
 	};
 
-	private defaultPlaceholder = translate('commonFilterClick');
-
 	state = {
 		isActive: false,
 	};
@@ -60,7 +58,7 @@ class Filter extends React.Component<Props, State> {
 	
 	render () {
 		const { isActive } = this.state;
-		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder = this.defaultPlaceholder, className, inputClassName, focusOnMount, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
+		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder = translate('commonFilterClick'), className, inputClassName, focusOnMount, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
 		const cn = [ 'filter' ];
 
 		if (className) {

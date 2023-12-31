@@ -59,17 +59,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
-		const Tabs = [
-			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
-			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
-		];
-
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
 		const length = items.length;
+		const tabs = [
+			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
+		];
 
 		let title = '';
 		let placeholder = '';
@@ -215,7 +214,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className={[ 'wrapper', this.tab, this.view ].join(' ')}
 			>
-				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
+				<Header component="mainStore" {...this.props} tabs={tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
 
 				<div className="body">
 					<div className="items">
