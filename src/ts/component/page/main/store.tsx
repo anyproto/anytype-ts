@@ -18,10 +18,7 @@ enum View {
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
-const Tabs = [
-	{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
-	{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
-];
+
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
@@ -61,6 +58,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		if (!this.cache) {
 			return null;
 		};
+
+		const Tabs = [
+			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
+		];
 
 		const { isPopup } = this.props;
 		const views = this.getViews();
