@@ -6,7 +6,8 @@ DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
-DOMAINS[I.EmbedProcessor.Miro] = [ 'figma.com' ];
+DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
+DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 
 class UtilEmbed {
 
@@ -32,7 +33,11 @@ class UtilEmbed {
 	};
 
 	getFigmaHtml (content: string): string {
-		return `<iframe src="${content}" width="640" height="360" allowfullscreen></iframe>`;
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+	};
+
+	getOpenStreetMapHtml (content: string): string {
+		return `<iframe src="${content}" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -44,11 +49,15 @@ class UtilEmbed {
 				break;
 			};
 		};
+
+		console.log('getProcessorByUrl', url, p);
 		return p;
 	};
 
 	getParsedUrl (url: string): string {
 		const processor = this.getProcessorByUrl(url);
+
+		console.log('getParsedUrl', url, processor);
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
@@ -93,13 +102,28 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Miro: {
-				url = url.split('?')[0];
-				url = url.replace(/\/board\/?\??/, '/live-embed/');
+				const a = url.split('?');
+				if (a.length) {
+					url = a[0].replace(/\/board\/?\??/, '/live-embed/');
+				};
+				break;
 			};
 
 			case I.EmbedProcessor.Figma: {
 				url = `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+				break;
 			};
+
+			case I.EmbedProcessor.OpenStreetMap: {
+				const coords = url.match(/#map=([-0-9\.\/]+)/);
+
+				if (coords && coords.length) {
+					const [ zoom, lat, lon ] = coords[1].split('/');
+					url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent([ lon, lat, lon, lat ].join(','))}&amp;layer=mapnik`;
+				};
+				break;
+			};
+
 		};
 
 		return url;
@@ -108,6 +132,48 @@ class UtilEmbed {
 	getYoutubeId (url: string): string {
 		const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
 		return (m && m[2].length) ? m[2] : '';
+	};
+
+	allowSameOrigin (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Youtube, 
+			I.EmbedProcessor.Vimeo, 
+			I.EmbedProcessor.Soundcloud, 
+			I.EmbedProcessor.GoogleMaps, 
+			I.EmbedProcessor.Miro, 
+			I.EmbedProcessor.Figma,
+			I.EmbedProcessor.Twitter,
+		].includes(p);
+	};
+
+	allowPresentation (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Youtube, 
+			I.EmbedProcessor.Vimeo,
+		].includes(p);
+	};
+
+	allowEmbedUrl (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Youtube, 
+			I.EmbedProcessor.Vimeo, 
+			I.EmbedProcessor.GoogleMaps, 
+			I.EmbedProcessor.Miro, 
+			I.EmbedProcessor.Figma,
+			I.EmbedProcessor.OpenStreetMap,
+		].includes(p);
+	};
+
+	allowJs (p: I.EmbedProcessor) {
+		return [ I.EmbedProcessor.Chart ].includes(p);
+	};
+
+	allowPopup (p: I.EmbedProcessor) {
+		return [].includes(p);
+	};
+
+	allowResize (p: I.EmbedProcessor) {
+		return [ I.EmbedProcessor.Twitter ].includes(p);
 	};
 
 };

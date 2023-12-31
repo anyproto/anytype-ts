@@ -575,34 +575,21 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
+				const sandbox = [ 'allow-scripts' ];
+				const allowResize = UtilEmbed.allowResize(processor);
+
 				let iframe = node.find('iframe');
 				let text = this.text;
 
-				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ 
-					I.EmbedProcessor.Youtube, 
-					I.EmbedProcessor.Vimeo, 
-					I.EmbedProcessor.Soundcloud, 
-					I.EmbedProcessor.GoogleMaps, 
-					I.EmbedProcessor.Miro, 
-					I.EmbedProcessor.Figma,
-					I.EmbedProcessor.Twitter,
-				].includes(processor);
-				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ].includes(processor);
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ].includes(processor);
-				const allowJs = [ I.EmbedProcessor.Chart ].includes(processor);
-				const allowPopup = [].includes(processor);
-				const allowResize = [ I.EmbedProcessor.Twitter ].includes(processor);
-
-				if (allowSameOrigin) {
+				if (UtilEmbed.allowSameOrigin(processor)) {
 					sandbox.push('allow-same-origin');
 				};
 
-				if (allowPresentation) {
+				if (UtilEmbed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (allowPopup) {
+				if (UtilEmbed.allowPopup(processor)) {
 					sandbox.push('allow-popups');
 				};
 
@@ -611,11 +598,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					const env = this.getEnvironmentContent();
 					const data: any = { ...env, allowResize, align: block.hAlign };
 
-					if (allowEmbedUrl && !text.match(/<iframe/)) {
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (allowJs) {
+					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
 						data.html = DOMPurify.sanitize(text, { 
