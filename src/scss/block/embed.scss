@@ -8,7 +8,7 @@
 	}
 
 	.block.blockEmbed { 
-		.wrap { padding: 2px 0px; }
+		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
 		.wrap.isEditing { padding: 8px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
@@ -23,7 +23,7 @@
 			.editableWrap { margin: 0px; }
 		}
 
-		.valueWrap { position: relative; display: inline-block; width: 100%; }
+		.valueWrap { position: relative; width: 100%; }
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 
 		.preview { 
@@ -82,6 +82,14 @@
 
 	.block.blockEmbed.isReadonly {
 		.icon.resize { display: none; }
+	}
+
+	.block.blockEmbed.align1 { 
+		.wrap { align-items: center; }
+	}
+
+	.block.blockEmbed.align2 { 
+		.wrap { align-items: flex-end; }
 	}
 
 	.block.blockEmbed:hover {

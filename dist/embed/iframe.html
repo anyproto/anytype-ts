@@ -16,7 +16,10 @@
 				iframe { width: 100% !important; height: 100% !important; }
 			}
 
-			.twitter-tweet { margin: 0px !important; display: inline-block; }
+			.twitter-tweet { margin: 0px !important; display: inline-flex !important; }
+
+			body.align1 .twitter-tweet { justify-content: center; }
+			body.align2 .twitter-tweet { justify-content: flex-end; }
 		</style>
 	</head>
 	<body>
