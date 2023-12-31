@@ -77,7 +77,7 @@
 	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
 
 	.block.blockEmbed.isTwitter {
-		iframe { width: auto; }
+		iframe { width: 100%; aspect-ratio: unset; }
 	}
 
 	.block.blockEmbed.isReadonly {

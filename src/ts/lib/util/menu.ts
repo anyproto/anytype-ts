@@ -54,7 +54,8 @@ class UtilMenu {
 
 	getBlockEmbed () {
 		const { config } = commonStore;
-		const ret = [
+
+		let ret = [
 			{ id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
 			{ id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
 			{ id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
@@ -63,12 +64,14 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
 			{ id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
 			{ id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
-
-			{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
 		];
 
 		if (config.experimental) {
-			ret.push({ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' });
+			ret = ret.concat([
+				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
+
+				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
+			]);
 		};
 
 		return ret.map(this.mapperBlock).map(it => {

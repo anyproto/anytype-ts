@@ -6,7 +6,7 @@ import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -507,7 +507,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	getEnvironmentContent (): { html: string; libs: string[] } {
+	getEnvironmentContent (): { html: string; libs: string[], className: string } {
 		const { block } = this.props;
 		const { processor } = block.content;
 
@@ -528,7 +528,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		};
 
-		return { html, libs };
+		return { 
+			html, 
+			libs, 
+			className: UtilData.blockEmbedClass(processor),
+		};
 	};
 
 	updateRect () {
@@ -581,34 +585,35 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					I.EmbedProcessor.Miro, 
 					I.EmbedProcessor.Figma,
 					I.EmbedProcessor.Twitter,
-				];
-				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
-				const allowJs = [ I.EmbedProcessor.Chart ];
-				const allowPopup = [];
+				].includes(processor);
+				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ].includes(processor);
+				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ].includes(processor);
+				const allowJs = [ I.EmbedProcessor.Chart ].includes(processor);
+				const allowPopup = [].includes(processor);
+				const allowResize = [ I.EmbedProcessor.Twitter ].includes(processor);
 
-				if (allowSameOrigin.includes(processor)) {
+				if (allowSameOrigin) {
 					sandbox.push('allow-same-origin');
 				};
 
-				if (allowPresentation.includes(processor)) {
+				if (allowPresentation) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (allowPopup.includes(processor)) {
+				if (allowPopup) {
 					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
-					const data: any = { ...env };
+					const data: any = { ...env, allowResize, align: block.hAlign };
 
-					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
+					if (allowEmbedUrl && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (allowJs.includes(processor)) {
+					if (allowJs) {
 						data.js = text;
 					} else {
 						data.html = DOMPurify.sanitize(text, { 
@@ -622,7 +627,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					iw.postMessage(data, '*');
-					win.off(`message.${block.id}`).on(`message.${block.id}`, () => {});
+
+					if (allowResize) {
+						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
+							const oe = e.originalEvent as any;
+
+							iframe.css({ height: oe.data.height });
+						});
+					};
 				};
 
 				if (!iframe.length) {

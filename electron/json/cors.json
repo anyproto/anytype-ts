@@ -82,7 +82,7 @@
 		"https://*.figma.com/",
 		"wss://*.figma.com/",
 		"https://*.twitter.com",
-		"https://cdn.syndication.twimg.com"
+		"https://*.twimg.com"
 	],
 
 	"script-src-elem": [
