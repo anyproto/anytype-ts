@@ -222,6 +222,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		if (this.isAllowedScroll()) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
+
+		win.on(`resize.${block.id}`, () => this.resize());
 	};
 
 	unbind () {
@@ -855,6 +857,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	isAllowedScroll () {
 		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
+	};
+
+	resize () {
+		const node = $(this.node);
+		const iframe = node.find('#receiver');
+
+		if (iframe.length) {
+			iframe.css({ height: 'auto' });
+		};
 	};
 
 });

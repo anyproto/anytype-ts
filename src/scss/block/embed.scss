@@ -63,7 +63,7 @@
 			cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); z-index: 2; transition: $transitionAllCommon;
 		}
 
-		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; }
+		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
 	}
 
 	.block.blockEmbed.isLatex .preview { background-image: url('~img/icon/block/embed/latex.svg'); }
