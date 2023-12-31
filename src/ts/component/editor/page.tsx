@@ -1753,7 +1753,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
-		menuStore.open('select', { 
+		menuStore.open('selectPasteUrl', { 
+			component: 'select',
 			element: `#block-${focused}`,
 			offsetX: Constant.size.blockMenu,
 			onOpen: () => {
