@@ -557,6 +557,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
+					const sanitizeParam: any = { 
+						ADD_TAGS: [ 'iframe' ],
+						ADD_ATTR: [
+							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+						],
+					};
+
 					const data: any = { 
 						...UtilEmbed.getEnvironmentContent(processor), 
 						allowIframeResize, 
@@ -567,22 +574,27 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<iframe/)) {
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					};
+
+					if (processor == I.EmbedProcessor.Telegram) {
+						const m = text.match(/post="([^"]+)"/);
+						const isValidSrc = text.match(/src="https:\/\/telegram.org([^"]+)"/);
+
+						if (m && m.length && isValidSrc) {
+							sanitizeParam.FORCE_BODY = true;
+							sanitizeParam.ADD_TAGS.push('script');
+						};
 					};
 
 					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, { 
-							ADD_TAGS: [ 
-								'iframe',
-							],
-							ADD_ATTR: [
-								'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
-							],
-						});
+						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
+
+					console.log(data);
 
 					iw.postMessage(data, '*');
 

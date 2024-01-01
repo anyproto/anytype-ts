@@ -8,6 +8,7 @@ DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
 DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
 DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
+DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -40,6 +41,11 @@ class UtilEmbed {
 
 	getOpenStreetMapHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
+	getTelegramHtml (content: string): string {
+		const post = content.replace(/^https:\/\/t.me\//, '');
+		return `<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -185,6 +191,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
+			I.EmbedProcessor.Telegram,
 		].includes(p);
 	};
 
@@ -203,6 +210,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Miro, 
 			I.EmbedProcessor.Figma,
 			I.EmbedProcessor.OpenStreetMap,
+			I.EmbedProcessor.Telegram,
 		].includes(p);
 	};
 
@@ -222,6 +230,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Facebook,
 			I.EmbedProcessor.Instagram,
+			I.EmbedProcessor.Telegram,
 		].includes(p);
 	};
 

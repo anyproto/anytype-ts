@@ -75,6 +75,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
 				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
 				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
+				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
 			]);
 		};
 
