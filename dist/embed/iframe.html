@@ -6,12 +6,14 @@
 			* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
 			body { background-color: #fff; }
-			body.dark { background-color: #171717; }
+			html.dark body { background-color: #171717; }
 
-			body.align1 { text-align: center; }
-			body.align2 { text-align: right; }
+			html.align1 body { text-align: center; }
+			html.align2 body { text-align: right; }
 
-			body:not(.allowIframeResize) {
+			html:not(.allowIframeResize) { height: 100%; }
+			html:not(.allowIframeResize) {
+				body, #root { height: 100%; }
 				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
@@ -20,8 +22,8 @@
 			.twitter-tweet, .instagram-media { margin: 0px !important; display: inline-flex !important; }
 			.gist-file { margin: 0px !important; }
 
-			body.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
-			body.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
+			html.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
+			html.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
 		</style>
 	</head>
 	<body>
@@ -31,6 +33,7 @@
 		<script type="text/javascript">
 			$(() => {
 				const win = $(window);
+				const htmlEl = $('html');
 				const head = $('head');
 				const body = $('body');
 				const root = $('#root');
@@ -62,18 +65,18 @@
 					useRootHeight = oe.data.useRootHeight;
 
 					scripts.html('');
-					body.attr({ class: '' });
+					htmlEl.attr({ class: '' });
 
 					if (param.theme) {
-						body.addClass(param.theme);
+						htmlEl.addClass(param.theme);
 					};
 					if (className) {
-						body.addClass(className);
+						htmlEl.addClass(className);
 					};
 					if (allowIframeResize) {
-						body.addClass('allowIframeResize');
+						htmlEl.addClass('allowIframeResize');
 					};
-					body.addClass(`align${align}`);
+					htmlEl.addClass(`align${align}`);
 
 					if (allowIframeResize) {
 						setInterval(resize, 300);
