@@ -272,6 +272,8 @@ class UtilEmbed {
 
 	useRootHeight (p: I.EmbedProcessor) {
 		return [ 
+			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
 		].includes(p);
 	};
