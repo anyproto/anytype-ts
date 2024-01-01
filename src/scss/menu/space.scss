@@ -23,7 +23,7 @@
 			.icon.settings { background-image: url('~img/icon/menu/space/settings.svg'); }
 		}
 
-		.items { display: flex; flex-direction: row; flex-wrap: wrap; }
+		.items { display: grid; }
 		.items {
 			.item { 
 				width: 112px; border-radius: 8px; padding: 8px; transition: all 0.2s $easeInQuint; 
