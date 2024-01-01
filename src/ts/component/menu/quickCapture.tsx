@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action, Storage } from 'Lib';
-import { commonStore, dbStore, detailStore } from 'Store';
+import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
+import { commonStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuQuickCapture extends React.Component<I.Menu> {
@@ -27,15 +27,28 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 	render () {
 		const items = this.getItems();
+		const { type } = commonStore;
 
 		const Item = (item: any) => {
+			const cn = [];
+
 			let icon = null;
 			let name = null;
 
-			if ([ 'search', 'add' ].includes(item.id)) {
-				icon = <Icon className={item.id} />;
+			if (item.id == type) {
+				cn.push('isDefault');
+			};
+
+			if (!item.isSection) {
+				cn.push('item');
+
+				if ([ 'search', 'add' ].includes(item.id)) {
+					icon = <Icon className={item.id} />;
+				} else {
+					icon = <IconObject object={item} />;
+				};
 			} else {
-				icon = <IconObject object={item} />;
+				cn.push('label');
 			};
 
 			if (item.id != 'search') {
@@ -45,10 +58,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			return (
 				<div
 					id={`item-${item.id}`}
-					className={item.isSection ? 'label' : 'item'}
+					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onOver(e, item)}
-					onMouseLeave={() => this.props.setHover()}
+					onMouseLeave={e => this.onOut(e, item)}
 				>
 					{icon}
 					{name}
@@ -158,9 +171,14 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	getSections () {
-		const { space } = commonStore;
+		const { space, type } = commonStore;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.spaceId == space));
+		const library = items.filter(it => (it.spaceId == space)).map((it, i) => {
+			if (this.isExpanded && (it.id == type)) {
+				it.tooltip = translate('commonDefaultType');
+			};
+			return it;
+		});
 		const librarySources = library.map(it => it.sourceObject);
 		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
 
@@ -176,7 +194,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[1].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
+			sections[1].children.unshift({ 
+				id: 'add', 
+				name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
+			});
 		};
 
 		sections = sections.filter((section: any) => {
@@ -202,7 +223,20 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			});
 		} else {
 			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 });
-			items.unshift({ id: 'search', icon: 'search', name: '' });
+			
+			items = items.map((it, i) => {
+				it.tooltip = translate('commonNewObject');
+				it.caption = String(i + 1);
+				return it;
+			});
+
+			items.unshift({ 
+				id: 'search', 
+				icon: 'search', 
+				name: '', 
+				tooltip: translate('menuQuickCaptureTooltipSearch'),
+				caption: '0',
+			});
 		};
 		return items;
 	};
@@ -314,9 +348,23 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item);
+		if (keyboard.isMouseDisabled) {
+			return;
 		};
+
+		this.props.setActive(item);
+
+		if (item.tooltip) {
+			const node = $(this.node);
+			const element = node.find(`#item-${item.id}`);
+			const t = Preview.tooltipCaption(item.tooltip, item.caption);
+
+			Preview.tooltipShow({ text: t, element });
+		};
+	};
+
+	onOut (e: any, item: any) {
+		Preview.tooltipHide();
 	};
 
 	beforePosition () {
