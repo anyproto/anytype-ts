@@ -621,7 +621,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: UtilCommon.fixAsarPath('./embed/iframe.html?theme=${commonStore.getThemeClass()}'),
+						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
