@@ -792,8 +792,8 @@ class UtilCommon {
 	sanitize (s: string): string {
 		return DOMPurify.sanitize(String(s || ''), { 
 			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color',
-				'bgcolor', 'mention', 'emoji', 'obj', 'span', 'p', 'name', 'smile', 'img', 'search'
+				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
+				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
 			],
 			ADD_ATTR: [
 				'contenteditable'
