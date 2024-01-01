@@ -135,7 +135,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 		];
 		const sorts = [
-			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -164,8 +164,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
-			UtilData.sortByLastUsedTypes(this.items);
-
 			this.forceUpdate();
 		});
 	};
@@ -194,7 +192,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[1].children.unshift({ 
+			sections[1].children.push({ 
 				id: 'add', 
 				name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 			});
@@ -314,7 +312,6 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					return;
 				};
 
-				Storage.addLastUsedType(type.id);
 				UtilObject.openAuto(message.details);
 				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
 			});
