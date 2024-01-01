@@ -2,20 +2,21 @@ import $ from 'jquery';
 import { I, UtilCommon, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
-const Tags = [ 
-	'strike', 
-	'kbd', 
-	'italic', 
-	'bold', 
-	'underline', 
-	'lnk', 
-	'color', 
-	'bgcolor', 
-	'mention', 
-	'emoji', 
-	'obj',
-	'latex',
-];
+const Tags = {};
+Tags[I.MarkType.Strike]		 = 'markupStrike';
+Tags[I.MarkType.Code]		 = 'markupCode';
+Tags[I.MarkType.Italic]		 = 'markupItalic';
+Tags[I.MarkType.Bold]		 = 'markupBold';
+Tags[I.MarkType.Underline]	 = 'markupUnderline';
+Tags[I.MarkType.Link]		 = 'markupLink';
+Tags[I.MarkType.Color]		 = 'markupColor';
+Tags[I.MarkType.BgColor]	 = 'markupBgcolor';
+Tags[I.MarkType.Mention]	 = 'markupMention';
+Tags[I.MarkType.Emoji]		 = 'markupEmoji';
+Tags[I.MarkType.Object]		 = 'markupObject';
+Tags[I.MarkType.Latex]		 = 'markupLatex';
+
+const LCTags = Object.values(Tags).map(it => String(it).toLowerCase());
 
 const Patterns = {
 	'-→': '⟶',
@@ -391,7 +392,7 @@ class Mark {
 		// Remove inner tags from mentions and emoji
 		const obj = $(`<div>${html}</div>`);
 		
-		obj.find('mention').removeAttr('class').each((i: number, item: any) => {
+		obj.find(this.getTag(I.MarkType.Mention)).removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('name').html());
 		});
@@ -408,18 +409,19 @@ class Mark {
 			const face = String(item.attr('face') || '').toLowerCase();
 
 			if (face == Constant.fontCode) {
-				item.replaceWith(`<kbd>${html}</kbd>`);
+				const tag = this.getTag(I.MarkType.Code);
+				item.replaceWith(`<${tag}>${html}</${tag}>`);
 			} else {
 				item.html(html);
 			};
 		});
 
-		obj.find('emoji').removeAttr('class').html(' ');
+		obj.find(this.getTag(I.MarkType.Emoji)).removeAttr('class').html(' ');
 		return obj;
 	};
 	
 	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
+		const rh = new RegExp(`<(\/)?(${Object.values(Tags).join('|')})(?:([^>]*)>|>)`, 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
@@ -443,8 +445,8 @@ class Mark {
 		// Fix browser markup bug
 		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {
 			let r = '';
-			if (p == 'i') r = 'italic';
-			if (p == 'b') r = 'bold';
+			if (p == 'i') r = this.getTag(I.MarkType.Italic);
+			if (p == 'b') r = this.getTag(I.MarkType.Bold);
 			p = r ? s.replace(p, r) : '';
 			text = text.replace(s, p);
 			return '';
@@ -467,7 +469,11 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = Tags.indexOf(p2);
+			const type = LCTags.indexOf(p2);
+
+			if (type < 0) {
+				return;
+			};
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
@@ -534,8 +540,8 @@ class Mark {
 
 				if (check) {
 					marks = this.adjust(marks, from, -p2.length * 2);
-
 					marks.push({ type: item.type, range: { from, to }, param: '' });
+
 					text = text.replace(s, replace);
 					adjustMarks = true;
 				};
@@ -691,6 +697,10 @@ class Mark {
 		} else {
 			return Overlap.Right;
 		};
+	};
+
+	getTag (t: I.MarkType) {
+		return Tags[t];
 	};
 	
 };

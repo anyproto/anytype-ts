@@ -59,6 +59,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		return (
 			<div 
 				ref={node => this.node = node}
+				id={`editor-controls-${rootId}`}
 				className={cn.join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 

@@ -228,8 +228,6 @@ class UtilObject {
 				if (!templateId) {
 					templateId = type.defaultTemplateId || Constant.templateId.blank;
 				};
-
-				Storage.addLastUsedType(type.id);
 			};
 		};
 		

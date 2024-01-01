@@ -440,7 +440,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				options: [
-					{ id: 'newObject', name: translate('pageMainGraphNewObject') },
+					{ id: 'newObject', name: translate('commonNewObject') },
 				],
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {

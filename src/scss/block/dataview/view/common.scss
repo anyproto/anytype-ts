@@ -28,7 +28,7 @@
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: $colorTextPrimary; }
 				.cellContent {
-					.more { margin-top: 1px; vertical-align: top; height: 18px; }
+					.more { vertical-align: top; height: 18px; }
 				}
 
 				.cellContent.isName { @include text-paragraph; color: $colorTextPrimary; display: flex; gap: 0px 6px; position: relative; }
@@ -46,7 +46,7 @@
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 40%; margin-bottom: 0px; @include text-small; }
+					.tagItem { margin-bottom: 0px; @include text-small; }
 					.over { height: 18px; }
 				}
 
@@ -64,9 +64,6 @@
 				.cellContent.c-object, 
 				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
-					.wrap.overLimit {
-						.element { max-width: 40%; }
-					}
 				}
 			}
 		}

@@ -108,7 +108,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 									<div className="cell add">
 										<div className="btn" onClick={e => onRecordAdd(e, 1)}>
 											<Icon className="plus" />
-											<div className="name">{translate('blockDataviewNew')}</div>
+											<div className="name">{translate('commonNewObject')}</div>
 										</div>
 									</div>
 								</div>
