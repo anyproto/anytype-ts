@@ -272,6 +272,7 @@ class UtilEmbed {
 
 	useRootHeight (p: I.EmbedProcessor) {
 		return [ 
+			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
