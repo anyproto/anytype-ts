@@ -98,6 +98,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.initVideo();
 	};
 	
 	componentDidUpdate () {
@@ -108,32 +109,38 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		this._isMounted = false;
 		this.unbind();
 	};
+
+	initVideo () {
+		const node = $(this.node);
+		const video = node.find('video');
+
+		if (!video.length) {
+			return;
+		};
+
+		this.div = 16 / 9;
+		this.onResizeInit();
+
+		video.on('canplay', (e: any) => {
+			const el = video.get(0);
+
+			this.div = el.videoWidth / el.videoHeight;
+			this.onResizeInit();
+		});
+	};
 	
 	rebind () {
 		if (!this._isMounted) {
 			return;
 		};
 		
-		const node = $(this.node);
-		const video = node.find('video');
-		const el = video.get(0);
-		
 		this.unbind();
 		
+		const node = $(this.node);
 		node.on('resizeStart', (e: any, oe: any) => this.onResizeStart(oe, true));
 		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
 		node.on('resizeEnd', (e: any, oe: any) => this.onResizeEnd(oe, true));
 		node.on('resizeInit', (e: any, oe: any) => this.onResizeInit());
-		
-		if (video.length) {
-			this.div = 16 / 9;
-			this.onResizeInit();
-
-			video.on('canplay', (e: any) => {
-				this.div = el.videoWidth / el.videoHeight;
-				this.onResizeInit();
-			});
-		};
 	};
 	
 	unbind () {
@@ -300,12 +307,12 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	
 	getHeight (p: number) {
 		const { block } = this.props;
-		const el = $('#selectable-' + block.id);
+		const el = $(`#selectable-${block.id}`);
 		
 		if (!el.length) {
 			return 0;
 		};
-		
+
 		const rect = el.get(0).getBoundingClientRect() as DOMRect;
 		return Math.floor(p * rect.width / (this.div || 1));
 	};

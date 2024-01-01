@@ -13,7 +13,8 @@
 		"data:", 
 		"blob:", 
 		"file://*",
-		"https://*.sndcdn.com"
+		"https://*.sndcdn.com",
+		"https://scontent.cdninstagram.com"
 	],
 
 	"media-src": [ 
@@ -23,12 +24,14 @@
 		"data:", 
 		"blob:", 
 		"file://*", 
-		"https://*.googlevideo.com" 
+		"https://*.googlevideo.com",
+		"https://scontent.cdninstagram.com"
 	],
 
 	"style-src": [ 
 		"'unsafe-inline'", 
 		"http://localhost:*", 
+		"data:",
 		"file://*", 
 		"https://*.youtube.com", 
 		"https://*.vimeocdn.com",
@@ -37,7 +40,13 @@
 		"https://mirostatic.com",
 		"https://miro.com",
 		"https://*.google.com",
-		"https://*.figma.com/"
+		"https://*.figma.com/",
+		"https://*.openstreetmap.org",
+		"https://www.redditstatic.com",
+		"https://*.fbcdn.net",
+		"https://static.cdninstagram.com",
+		"https://telegram.org",
+		"https://github.githubassets.com"
 	],
 
 	"font-src": [ 
@@ -49,7 +58,11 @@
 		"https://*.gstatic.com",
 		"https://mirostatic.com",
 		"https://miro.com",
-		"https://*.figma.com/"
+		"https://*.figma.com",
+		"https://*.twimg.com",
+		"https://*.fbcdn.net",
+		"https://static.cdninstagram.com",
+		"https://telegram.org"
 	],
 
 	"connect-src": [ 
@@ -82,7 +95,11 @@
 		"https://*.figma.com/",
 		"wss://*.figma.com/",
 		"https://*.twitter.com",
-		"https://*.twimg.com"
+		"https://*.twimg.com",
+		"https://*.reddit.com",
+		"https://www.instagram.com",
+		"https://t.me",
+		"https://gist.github.com"
 	],
 
 	"script-src-elem": [
@@ -102,7 +119,16 @@
 		"https://mirostatic.com",
 		"https://*.figma.com/",
 		"https://cdn.jsdelivr.net",
-		"https://platform.twitter.com"
+		"https://platform.twitter.com",
+		"https://*.openstreetmap.org",
+		"https://embed.reddit.com",
+		"https://www.redditstatic.com",
+		"https://*.fbcdn.net",
+		"https://www.instagram.com",
+		"https://static.cdninstagram.com",
+		"https://telegram.org",
+		"https://oauth.tg.dev",
+		"https://gist.github.com"
 	],
 
 	"frame-src": [
@@ -116,7 +142,12 @@
 		"https://*.miro.com",
 		"https://*.figma.com/",
 		"file://*",
-		"https://platform.twitter.com"
+		"https://platform.twitter.com",
+		"https://*.openstreetmap.org",
+		"https://embed.reddit.com",
+		"https://www.facebook.com",
+		"https://www.instagram.com",
+		"https://t.me"
 	],
 
 	"worker-src": [ 
@@ -124,5 +155,11 @@
 		"'unsafe-eval'", 
 		"blob:", 
 		"http://localhost:*" 
+	],
+
+	"manifest-src": [ 
+		"'self'", 
+		"http://localhost:*",
+		"https://*.redditstatic.com"
 	]
 }

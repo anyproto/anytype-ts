@@ -52,10 +52,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	render () {
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
-		const { content, fields } = block;
+		const { content, fields, hAlign } = block;
 		const { processor } = content;
 		const { width } = fields || {};
-		const canResize = ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(processor);
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 		const text = String(content.text || '').trim();
@@ -79,7 +78,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let empty = '';
 		let placeholder = '';
 
-		if (canResize) {
+		if (UtilEmbed.allowBlockResize(processor)) {
 			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
 		};
 
@@ -92,7 +91,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
 				};
 
-				if (!isShowing && text) {
+				if (!isShowing && text && !UtilEmbed.allowAutoRender(processor)) {
 					cn.push('withPreview');
 				};
 				break;
@@ -185,6 +184,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	rebind () {
 		const { block } = this.props;
+		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
@@ -219,9 +219,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		if (this.isAllowedScroll()) {
+		if (UtilEmbed.allowScroll(processor)) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
+
+		win.on(`resize.${block.id}`, () => this.resize());
 	};
 
 	unbind () {
@@ -232,7 +234,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		if (!this._isMounted || !this.isAllowedScroll()) {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		if (!this._isMounted || !UtilEmbed.allowScroll(processor) || UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
@@ -242,6 +247,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const st = win.scrollTop();
 		const { top } = node.offset();
 		const bot = top + node.height();
+
+		console.log('setShowing');
 
 		this.setShowing((bot > st) && (top < st + wh));
 	};
@@ -476,7 +483,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const lang = this.getLang();
+		const { block } = this.props;
+		const { processor } = block.content;
+		const lang = UtilEmbed.getLang(processor);
 		const range = this.getRange();
 
 		if (value && lang) {
@@ -493,46 +502,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	getValue (): string {
 		return this.refEditable.getTextValue();
-	};
-
-	getLang () {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		switch (processor) {
-			default: return 'html';
-			case I.EmbedProcessor.Latex: return 'latex';
-			case I.EmbedProcessor.Mermaid: return 'yaml';
-			case I.EmbedProcessor.Chart: return 'js';
-		};
-	};
-
-	getEnvironmentContent (): { html: string; libs: string[], className: string } {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		let html = '';
-		let libs = [];
-
-		switch (processor) {
-			case I.EmbedProcessor.Chart: {
-				html = `<canvas id="chart"></canvas>`;
-				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Twitter: {
-				libs.push('https://platform.twitter.com/widgets.js');
-				break;
-			};
-
-		};
-
-		return { 
-			html, 
-			libs, 
-			className: UtilData.blockEmbedClass(processor),
-		};
 	};
 
 	updateRect () {
@@ -553,10 +522,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { isShowing } = this.state;
 		const { block } = this.props;
+		const { processor } = block.content;
 		const node = $(this.node);
 		const value = node.find('#value');
 
-		if (!isShowing && !block.isEmbedLatex()) {
+		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
 			value.html('');
 			return;
 		};
@@ -568,71 +538,84 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { processor } = block.content;
 		const win = $(window);
 
 		switch (processor) {
 			default: {
+				const sandbox = [ 'allow-scripts' ];
+				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
+
 				let iframe = node.find('iframe');
 				let text = this.text;
+				let allowScript = false;
 
-				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ 
-					I.EmbedProcessor.Youtube, 
-					I.EmbedProcessor.Vimeo, 
-					I.EmbedProcessor.Soundcloud, 
-					I.EmbedProcessor.GoogleMaps, 
-					I.EmbedProcessor.Miro, 
-					I.EmbedProcessor.Figma,
-					I.EmbedProcessor.Twitter,
-				].includes(processor);
-				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ].includes(processor);
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ].includes(processor);
-				const allowJs = [ I.EmbedProcessor.Chart ].includes(processor);
-				const allowPopup = [].includes(processor);
-				const allowResize = [ I.EmbedProcessor.Twitter ].includes(processor);
-
-				if (allowSameOrigin) {
+				if (UtilEmbed.allowSameOrigin(processor)) {
 					sandbox.push('allow-same-origin');
 				};
 
-				if (allowPresentation) {
+				if (UtilEmbed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (allowPopup) {
+				if (UtilEmbed.allowPopup(processor)) {
 					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
-					const env = this.getEnvironmentContent();
-					const data: any = { ...env, allowResize, align: block.hAlign };
+					const sanitizeParam: any = { 
+						ADD_TAGS: [ 'iframe' ],
+						ADD_ATTR: [
+							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+						],
+					};
 
-					if (allowEmbedUrl && !text.match(/<iframe/)) {
+					const data: any = { 
+						...UtilEmbed.getEnvironmentContent(processor), 
+						allowIframeResize, 
+						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
+						useRootHeight: UtilEmbed.useRootHeight(processor),
+						align: block.hAlign,
+						processor,
+						className: UtilData.blockEmbedClass(processor),
+						blockId: block.id,
+					};
+
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (allowJs) {
+					if (processor == I.EmbedProcessor.Telegram) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
+					};
+
+					if (processor == I.EmbedProcessor.GithubGist) {
+						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+					};
+
+					if (allowScript) {
+						sanitizeParam.FORCE_BODY = true;
+						sanitizeParam.ADD_TAGS.push('script');
+					};
+
+					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, { 
-							ADD_TAGS: [ 
-								'iframe',
-							],
-							ADD_ATTR: [
-								'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
-							],
-						});
+						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
 					iw.postMessage(data, '*');
 
-					if (allowResize) {
+					if (allowIframeResize) {
 						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 							const oe = e.originalEvent as any;
+							const { height, blockId } = oe.data;
 
-							iframe.css({ height: oe.data.height });
+							if (blockId == block.id) {
+								iframe.css({ height });
+							};
 						});
 					};
 				};
@@ -844,7 +827,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const origin = location.origin;
 		
 		let href = location.href;
-
 		if (origin == 'file://') {
 			href = href.replace('/app.asar/', '/app.asar.unpacked/');
 			href = href.replace('/index.html', '/');
@@ -853,8 +835,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		return path;
 	};
 
-	isAllowedScroll () {
-		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
+	resize () {
 	};
 
 });

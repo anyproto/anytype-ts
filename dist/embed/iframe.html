@@ -1,123 +1,185 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script src="../js/jquery.js"></script>
 		<style type="text/css">
-			* { margin: 0px; padding: 0px; }
-
-			html, body, #root { height: 100%; }
+			* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
 			body { background-color: #fff; }
-			body.dark { background-color: #171717; }
+			html.dark body { background-color: #171717; }
 
-			body.align1 { text-align: center; }
-			body.align2 { text-align: right; }
+			html.align1 body { text-align: center; }
+			html.align2 body { text-align: right; }
 
-			body:not(.isTwitter) {
-				iframe { width: 100% !important; height: 100% !important; }
+			html:not(.allowIframeResize) { height: 100%; }
+			html:not(.allowIframeResize) {
+				body, #root { height: 100%; }
+				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
-			.twitter-tweet { margin: 0px !important; display: inline-block; }
+			#root { font-size: 0px; }
+
+			.twitter-tweet, .instagram-media { margin: 0px !important; display: inline-flex !important; }
+			.gist-file { margin: 0px !important; }
+
+			html.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
+			html.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
 		</style>
 	</head>
 	<body>
 		<div id="root"></div>
+		<div id="scripts"></div>
+
 		<script type="text/javascript">
-			let cachedHtml = '';
+			$(() => {
+				const win = $(window);
+				const htmlEl = $('html');
+				const head = $('head');
+				const body = $('body');
+				const root = $('#root');
+				const scripts = $('#scripts');
+				const param = getParam();
+				const allowedOrigins = [
+					'//localhost:',
+					'file://',
+				];
 
-			const param = getParam();
-			const body = document.body;
-			const root = document.getElementById('root');
-			const allowedOrigins = [
-				'//localhost:',
-				'file://',
-			];
+				let processor = 0;
+				let useRootHeight = false;
+				let cachedHtml = '';
+				let height = 0;
+				let blockId = '';
 
-			body.className = '';
+				win.off('message resize');
 
-			if (param.theme) {
-				body.classList.add(param.theme);
-			};
-
-			window.addEventListener('message', e => {
-				if (!allowedOrigins.some(it => e.origin.match(it))) {
-					return;
-				};
-
-				const { html, js, libs, className, allowResize, align } = e.data;
-
-				if (className) {
-					body.classList.add(className);
-				};
-
-				body.classList.add(`align${align}`);
-
-				loadLibs(libs, () => {
-					if (cachedHtml !== html) {
-						root.innerHTML = html;
-						cachedHtml = html;
+				win.on('message', e => {
+					const oe = e.originalEvent;
+					if (!allowedOrigins.some(it => oe.origin.match(it))) {
+						return;
 					};
 
-					if (js) {
-						try {
-							eval(js);
-						} catch (e) {
-							console.error(e);
+					const { html, js, libs, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
+
+					blockId = oe.data.blockId;
+					processor = oe.data.processor;
+					useRootHeight = oe.data.useRootHeight;
+
+					scripts.html('');
+					htmlEl.attr({ class: '' });
+
+					if (param.theme) {
+						htmlEl.addClass(param.theme);
+					};
+					if (className) {
+						htmlEl.addClass(className);
+					};
+					if (allowIframeResize) {
+						htmlEl.addClass('allowIframeResize');
+					};
+					htmlEl.addClass(`align${align}`);
+
+					if (allowIframeResize) {
+						setInterval(resize, 300);
+					};
+
+					// Github Gist
+					if (processor == 15) {
+						loadGithubGist(html);
+					} else {
+						if (insertBeforeLoad) {
+							insertHtml(html);
+						};
+
+						loadLibs(libs, () => {
+							if (!insertBeforeLoad) {
+								insertHtml(html);
+							};
+
+							if (js) {
+								try {
+									eval(js);
+								} catch (e) {
+									console.error(e);
+								};
+							};
+
+							resize();
+						});
+					};
+				});
+
+				win.on('resize', resize);
+
+				function resize () {
+					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					window.parent.postMessage({ height, blockId }, '*');
+				};
+
+				function insertHtml (html) {
+					if (cachedHtml !== html) {
+						root.html(html);
+						cachedHtml = html;
+					};
+				};
+
+				function loadLibs (list, callBack) {
+					if (!list.length) {
+						if (callBack) {
+							callBack();
+						};
+						return;
+					};
+
+					const src = list.shift();
+					const script = document.createElement('script');
+
+					scripts.append(script);
+					script.onload = function (e) {
+						if (list.length) {
+							loadLibs(list, callBack);
+						} else 
+						if (callBack) {
+							callBack();
 						};
 					};
 
-					resize();
-					if (allowResize) {
-						setInterval(resize, 500);
+					script.type = 'text/javascript';
+					script.src = src;
+				};
+
+				function getParam () {
+					const a = location.search.replace(/^\?/, '').split('&');
+					const param = {};
+
+					a.forEach((s) => {
+						const kv = s.split('=');
+						param[kv[0]] = kv[1];
+					});
+					return param;
+				};
+
+				function loadGithubGist (html) {
+					const m = html.match(/src="([^"]+)"/); 
+					if (!m || (m.length < 1)) {
+						return;
 					};
-				});
+
+					$.ajax({
+						url: m[1].replace(/\.js$/, '.json'),
+						dataType: 'jsonp',
+						timeout: 1000,
+						success: (data) => {
+							if (!head.find('#gist-css').length) {
+								head.append(`<link id="gist-css" href="${data.stylesheet}" rel="stylesheet">`);
+							};
+
+							root.html(data.div);
+							resize();
+						}
+					});
+				};
+
 			});
-
-			window.addEventListener('resize', resize);
-
-			window.onerror = function (message, url, lineNumber) {  
-				return true;
-			};
-
-			function resize () {
-				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
-			};
-
-			function loadLibs (list, callBack) {
-				if (!list.length) {
-					if (callBack) {
-						callBack();
-					};
-					return;
-				};
-
-				const src = list.shift();
-				const script = document.createElement('script');
-
-				document.body.appendChild(script);
-
-				script.onload = function (e) {
-					if (list.length) {
-						loadLibs(list, callBack);
-					} else 
-					if (callBack) {
-						callBack();
-					};
-				};
-
-				script.type = 'text/javascript';
-				script.src = src;
-			};
-
-			function getParam () {
-				const a = location.search.replace(/^\?/, '').split('&');
-				const param = {};
-
-				a.forEach((s) => {
-					const kv = s.split('=');
-					param[kv[0]] = kv[1];
-				});
-				return param;
-			};
 		</script>
 	</body>
 </html>

@@ -86,6 +86,12 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
 
 				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
+				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
+				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
+				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
+				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
+				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
+				{ id: I.EmbedProcessor.GithubGist, icon: 'githubGist', name: 'Github Gist' },
 			]);
 		};
 
