@@ -534,8 +534,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if ((this.coll > current.children.length) || (current.children[this.coll].itemId == ID_BLANK)) {
-			this.coll = 0;
+		const firstBlank = current.children.findIndex(it => it.itemId == ID_BLANK);
+		if ((firstBlank >= 0) && (firstBlank <= this.coll)) {
+			this.coll = firstBlank - 1;
 		};
 
 		this.setActive(current.children[this.coll], this.row);

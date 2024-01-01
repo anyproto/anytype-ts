@@ -4,11 +4,6 @@
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
 	.block.blockText {
 		.placeholder { display: none; }
-
-		kbd { 
-			display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 2px 4px;
-		}
-
 		.disabled { color: $colorControlActive; opacity: 1 !important; }
 
 		smile {
@@ -17,44 +12,47 @@
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
-		emoji { display: inline; user-select: all; }
-		emoji * { user-select: all; }
-		emoji {
+		markupCode { 
+			display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 2px 4px;
+		}
+
+		markupEmoji { display: inline; user-select: all; }
+		markupEmoji * { user-select: all; }
+		markupEmoji {
 			smile img { vertical-align: top; }
 		}
 
-		lnk { position: relative; }
-		lnk, obj { color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; }
-		lnk.disabled, obj.disabled { border-width: 0px; }
+		markupLink { position: relative; }
+		markupLink, markupObject { color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; }
+		markupLink.disabled, markupObject.disabled { border-width: 0px; }
 
-		mention { display: inline; user-select: all !important; position: relative; cursor: default; }
-		mention * { user-select: text !important; }
-		mention {
+		markupMention { display: inline; user-select: all !important; position: relative; cursor: default; }
+		markupMention * { user-select: text !important; }
+		markupMention {
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
 			name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
 		}
-		mention.disabled {
+		markupMention.disabled {
 			name { border-width: 0px; }
 		}
-		mention.withImage {
+		markupMention.withImage {
 			smile { display: inline; }
 			.space { display: inline; }
 		}
-		mention.withImage.c24 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }
-		mention.withImage.c26 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }
-		mention.withImage.c28 name bgcolor:first-child { margin-left: -27px; padding-left: 27px; }
-		mention.withImage.c32 name bgcolor:first-child { margin-left: -34px; padding-left: 34px; }
-		
-		mention:hover {
+		markupMention.withImage.c24 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+		markupMention.withImage.c26 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+		markupMention.withImage.c28 name markupBgcolor:first-child { margin-left: -27px; padding-left: 27px; }
+		markupMention.withImage.c32 name markupBgcolor:first-child { margin-left: -34px; padding-left: 34px; }
+		markupMention:hover {
 			name::before { border-color: $colorTextPrimary; }
 		}
 
-		bold { font-weight: 600; }
-		italic { font-style: italic; }
-		strike { text-decoration: line-through; }
-		underline { border-bottom: 0.05em solid; }
+		markupBold { font-weight: 600; }
+		markupItalic { font-style: italic; }
+		markupStrike { text-decoration: line-through; }
+		markupUnderline { border-bottom: 0.05em solid; }
 		
 		.markers { display: flex; padding: 1px 0px; }
 		.markers {

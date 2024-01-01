@@ -392,8 +392,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.initCacheCard();
 		this.isDraggingCard = true;
 
-		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, record); });
-		win.on('dragend.board', (e: any) => { this.onDragEndCard(e, record); });
+		win.on('drag.board', e => this.onDragMoveCard(e, record));
+		win.on('dragend.board', e => this.onDragEndCard(e, record));
 	};
 
 	onDragMoveCard (e: any, record: any) {
@@ -438,6 +438,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	onDragEndCard (e: any, record: any) {
 		const current = this.cache[record.id];
+
+		if (!current) {
+			return;
+		};
 
 		this.onDragEndCommon(e);
 		this.cache = {};
@@ -577,7 +581,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + 4 });
+			view.css({ width: width < maxWidth ? maxWidth : width + margin / 2 + size.margin + 4 });
 		} else 
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');

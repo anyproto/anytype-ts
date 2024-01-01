@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile, Loader, Error, Pager } from 'Component';
+import { InputWithFile, Loader, Error, Pager, Icon } from 'Component';
 import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -23,6 +23,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		pages: 0,
 		page: 1,
 	};
+	_isMounted = false;
 	node: any = null;
 	height = 0;
 
@@ -121,6 +122,8 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 						</Document>
 
 						{pager}
+
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -138,6 +141,46 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				{element}
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		this._isMounted = true;
+		this.rebind();
+	};
+
+	componentDidUpdate () {
+		this.rebind();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		
+		this.unbind();
+		node.on('resizeStart', (e: any, oe: any) => this.onResizeStart(oe, true));
+		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
+		node.on('resizeEnd', (e: any, oe: any) => this.onResizeEnd(oe, true));
+		node.on('resizeInit', (e: any, oe: any) => this.onResizeInit());
+	};
+
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const video = node.find('video');
+		
+		node.off('resizeInit resizeStart resizeMove resizeEnd');
+		video.off('canplay');
 	};
 	
 	onKeyDown (e: any) {
@@ -198,6 +241,112 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		if (!keyboard.withCommand(e)) {
 			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.Image });
 		};
+	};
+
+	onResizeInit () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const wrap = node.find('.wrap');
+		
+		if (wrap.length) {
+			wrap.css({ width: (this.getWidth(true, 0) * 100) + '%' });
+		};
+	};
+
+	onResizeStart (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { dataset, block } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
+		
+		focus.set(block.id, { from: 0, to: 0 });
+		win.off('mousemove.media mouseup.media');
+		
+		if (selection) {
+			selection.hide();
+		};
+
+		$(`#block-${block.id}`).addClass('isResizing');
+
+		keyboard.disableSelection(true);
+		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
+		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
+	};
+	
+	onResizeMove (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const wrap = node.find('.wrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+		
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		wrap.css({ width: (w * 100) + '%' });
+	};
+	
+	onResizeEnd (e: any, checkMax: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const node = $(this.node);
+		const wrap = node.find('.wrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+		
+		const win = $(window);
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		$(`#block-${block.id}`).removeClass('isResizing');
+
+		win.off('mousemove.media mouseup.media');
+		keyboard.disableSelection(false);
+		
+		this.height = 0;
+
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { width: w } },
+		]);
+	};
+
+	getWidth (checkMax: boolean, v: number): number {
+		const { block } = this.props;
+		const { id, fields } = block;
+		const width = Number(fields.width) || 1;
+		const el = $(`#selectable-${id}`);
+
+		if (!el.length) {
+			return width;
+		};
+		
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		
+		return Math.min(1, Math.max(0, w / rect.width));
 	};
 
 });
