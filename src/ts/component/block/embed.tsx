@@ -594,8 +594,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
-					console.log(data);
-
 					iw.postMessage(data, '*');
 
 					if (allowIframeResize) {
