@@ -5,8 +5,8 @@ import raf from 'raf';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
+import { Icon, Label, Editable, Dimmer } from 'Component';
+import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -50,12 +50,20 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { readonly, block } = this.props;
-		const { processor } = block.content;
 		const { isShowing, isEditing } = this.state;
-		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const { readonly, block } = this.props;
+		const { content, fields } = block;
+		const { processor } = content;
+		const { width } = fields || {};
+		const canResize = ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(processor);
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-		const text = String(block.content.text || '').trim();
+		const text = String(content.text || '').trim();
+		const css: any = {};
+
+		if (width) {
+			css.width = (width * 100) + '%';
+		};
 
 		if (!text) {
 			cn.push('isEmpty');
@@ -66,14 +74,18 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		let select = null;
-		let button = null;
-		let preview = null;
+		let source = null;
+		let resize = null;
 		let empty = '';
 		let placeholder = '';
 
+		if (canResize) {
+			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
+		};
+
 		switch (processor) {
 			default: {
-				button = <Icon className="source" onClick={this.onEdit} />;
+				source = <Icon className="source" onClick={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 
 				if (!text) {
@@ -113,13 +125,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div className={[ 'preview', menuItem.icon ].join(' ')} onClick={this.onPreview} />
-				{select}
-				{button}
+				<div className="valueWrap resizable" style={css}>
+					<div className="preview" onClick={this.onPreview} />
+					<div id="value" onClick={this.onEdit} />
+					<div id={this.getContainerId()} />
 
-				{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}
-				<div id="value" onClick={this.onEdit} />
-				<div id={this.getContainerId()} />
+					{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}					
+					{select}
+					{source}
+					{resize}
+
+					<Dimmer />
+				</div>
+
 				<Editable 
 					key={`block-${block.id}-editable`}
 					ref={ref => this.refEditable = ref}
@@ -168,7 +186,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	rebind () {
 		const { block } = this.props;
 		const { isEditing, isShowing } = this.state;
-		const { processor } = block.content;
 		const win = $(window);
 		const node = $(this.node);
 
@@ -490,7 +507,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	getEnvironmentContent (): { html: string; libs: string[] } {
+	getEnvironmentContent (): { html: string; libs: string[], className: string } {
 		const { block } = this.props;
 		const { processor } = block.content;
 
@@ -503,9 +520,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
 				break;
 			};
+
+			case I.EmbedProcessor.Twitter: {
+				libs.push('https://platform.twitter.com/widgets.js');
+				break;
+			};
+
 		};
 
-		return { html, libs };
+		return { 
+			html, 
+			libs, 
+			className: UtilData.blockEmbedClass(processor),
+		};
 	};
 
 	updateRect () {
@@ -550,34 +577,43 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				let text = this.text;
 
 				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
-				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
-				const allowJs = [ I.EmbedProcessor.Chart ];
-				const allowPopup = [];
+				const allowSameOrigin = [ 
+					I.EmbedProcessor.Youtube, 
+					I.EmbedProcessor.Vimeo, 
+					I.EmbedProcessor.Soundcloud, 
+					I.EmbedProcessor.GoogleMaps, 
+					I.EmbedProcessor.Miro, 
+					I.EmbedProcessor.Figma,
+					I.EmbedProcessor.Twitter,
+				].includes(processor);
+				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ].includes(processor);
+				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ].includes(processor);
+				const allowJs = [ I.EmbedProcessor.Chart ].includes(processor);
+				const allowPopup = [].includes(processor);
+				const allowResize = [ I.EmbedProcessor.Twitter ].includes(processor);
 
-				if (allowSameOrigin.includes(processor)) {
+				if (allowSameOrigin) {
 					sandbox.push('allow-same-origin');
 				};
 
-				if (allowPresentation.includes(processor)) {
+				if (allowPresentation) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (allowPopup.includes(processor)) {
+				if (allowPopup) {
 					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const env = this.getEnvironmentContent();
-					const data: any = { ...env };
+					const data: any = { ...env, allowResize, align: block.hAlign };
 
-					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
+					if (allowEmbedUrl && !text.match(/<iframe/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (allowJs.includes(processor)) {
+					if (allowJs) {
 						data.js = text;
 					} else {
 						data.html = DOMPurify.sanitize(text, { 
@@ -591,7 +627,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					iw.postMessage(data, '*');
-					win.off(`message.${block.id}`).on(`message.${block.id}`, () => {});
+
+					if (allowResize) {
+						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
+							const oe = e.originalEvent as any;
+
+							iframe.css({ height: oe.data.height });
+						});
+					};
 				};
 
 				if (!iframe.length) {
@@ -705,6 +748,96 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.disableSelection(false);
 			win.off('mouseup.embed');
 		});
+	};
+
+	onResizeStart (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { dataset, block } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
+		const node = $(this.node);
+		
+		focus.set(block.id, { from: 0, to: 0 });
+		win.off('mousemove.embed mouseup.embed');
+		
+		if (selection) {
+			selection.hide();
+		};
+
+		keyboard.disableSelection(true);
+		$(`#block-${block.id}`).addClass('isResizing');
+		win.on('mousemove.embed', e => this.onResizeMove(e, checkMax));
+		win.on('mouseup.embed', e => this.onResizeEnd(e, checkMax));
+	};
+	
+	onResizeMove (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const wrap = node.find('.valueWrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		wrap.css({ width: (w * 100) + '%' });
+	};
+
+	onResizeEnd (e: any, checkMax: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const node = $(this.node);
+		const wrap = node.find('.valueWrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+
+		const win = $(window);
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		win.off('mousemove.embed mouseup.embed');
+		$(`#block-${block.id}`).removeClass('isResizing');
+		keyboard.disableSelection(false);
+		
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { width: w } },
+		]);
+	};
+
+	getWidth (checkMax: boolean, v: number): number {
+		const { block } = this.props;
+		const { id, fields } = block;
+		const width = Number(fields.width) || 1;
+		const el = $(`#selectable-${id}`);
+
+		if (!el.length) {
+			return width;
+		};
+		
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		
+		return Math.min(1, Math.max(0, w / rect.width));
 	};
 
 	fixAsarPath (path: string): string {

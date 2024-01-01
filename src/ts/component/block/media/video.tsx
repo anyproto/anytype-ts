@@ -33,15 +33,15 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
-		
-		const { width } = fields;
-		let element = null;
+		const { width } = fields || {};
 		const css: any = {};
-		
+
 		if (width) {
 			css.width = (width * 100) + '%';
 			css.height = this.getHeight(width);
 		};
+
+		let element = null;
 		
 		switch (state) {
 			default:
@@ -75,7 +75,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 							onPlay={this.onPlay}
 							onPause={this.onPause}
 						/>
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -195,7 +195,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const win = $(window);
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -208,7 +207,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		wrap.css({ width: (w * 100) + '%', height: h });
 	};
-	
+
 	onResizeStart (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -220,7 +219,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(this.node);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
@@ -230,7 +228,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		};
 
 		keyboard.disableSelection(true);
-		node.addClass('isResizing');
+		$(`#block-${block.id}`).addClass('isResizing');
 		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
 		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
 	};
@@ -276,7 +274,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.off('mousemove.media mouseup.media');
-		node.removeClass('isResizing');
+		$(`#block-${block.id}`).removeClass('isResizing');
 		keyboard.disableSelection(false);
 		
 		C.BlockListSetFields(rootId, [
@@ -287,11 +285,9 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
 		const { id, fields } = block;
-		
-		let { width } = fields;
-		width = Number(width) || 1;
-		
-		const el = $('#selectable-' + id);
+		const width = Number(fields.width) || 1;
+		const el = $(`#selectable-${id}`);
+
 		if (!el.length) {
 			return width;
 		};

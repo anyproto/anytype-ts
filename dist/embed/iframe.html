@@ -9,7 +9,14 @@
 			body { background-color: #fff; }
 			body.dark { background-color: #171717; }
 
-			iframe { width: 100% !important; height: 100% !important; }
+			body.align1 { text-align: center; }
+			body.align2 { text-align: right; }
+
+			body:not(.isTwitter) {
+				iframe { width: 100% !important; height: 100% !important; }
+			}
+
+			.twitter-tweet { margin: 0px !important; display: inline-block; }
 		</style>
 	</head>
 	<body>
@@ -20,16 +27,29 @@
 			const param = getParam();
 			const body = document.body;
 			const root = document.getElementById('root');
+			const allowedOrigins = [
+				'//localhost:',
+				'file://',
+			];
 
-			body.className = param.theme;
+			body.className = '';
+
+			if (param.theme) {
+				body.classList.add(param.theme);
+			};
 
 			window.addEventListener('message', e => {
-				if (!e.origin.match(/\/\/localhost:/) && (e.origin !== 'file://')) {
-					console.error('[origin]', e.origin);
+				if (!allowedOrigins.some(it => e.origin.match(it))) {
 					return;
 				};
 
-				const { html, js, libs } = e.data;
+				const { html, js, libs, className, allowResize, align } = e.data;
+
+				if (className) {
+					body.classList.add(className);
+				};
+
+				body.classList.add(`align${align}`);
 
 				loadLibs(libs, () => {
 					if (cachedHtml !== html) {
@@ -45,7 +65,10 @@
 						};
 					};
 
-					resize(e);
+					resize();
+					if (allowResize) {
+						setInterval(resize, 500);
+					};
 				});
 			});
 
@@ -55,7 +78,7 @@
 				return true;
 			};
 
-			function resize (e) {
+			function resize () {
 				window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
 			};
 
@@ -70,7 +93,7 @@
 				const src = list.shift();
 				const script = document.createElement('script');
 
-				document.head.appendChild(script);
+				document.body.appendChild(script);
 
 				script.onload = function (e) {
 					if (list.length) {
