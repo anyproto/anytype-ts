@@ -109,6 +109,7 @@ if (!window.Electron.isPackaged) {
 			Survey,
 			Encode, 
 			Decode,
+			translate,
 		},
 	};
 };

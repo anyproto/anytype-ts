@@ -31,11 +31,10 @@ enum Size { Icon = 0, Small = 1, Full = 2 };
 class InputWithFile extends React.Component<Props, State> {
 
 	public static defaultProps = {
-		textUrl: translate('inputWithFileTextUrl'),
 		withFile: true,
 		canResize: true,
 	};
-	
+
 	_isMounted = false;
 	node: any = null;
 	state = {
@@ -56,7 +55,7 @@ class InputWithFile extends React.Component<Props, State> {
 	
 	render () {
 		const { focused, size } = this.state;
-		const { icon, textUrl, textFile, withFile, readonly } = this.props;
+		const { icon, textUrl = translate('inputWithFileTextUrl'), textFile, withFile, readonly } = this.props;
 		const cn = [ 'inputWithFile', 'resizable' ];		
 		const or = ` ${translate('commonOr')} `;
 		const onBlur = focused ? this.onBlur : null;

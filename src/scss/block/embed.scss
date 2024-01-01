@@ -2,8 +2,13 @@
 
 .blocks {
 	.block.blockEmbed { padding: 6px 0px; }
+	.block.blockEmbed.isResizing * { cursor: nwse-resize; }
+	.block.blockEmbed.isResizing {
+		.dimmer { display: block; }
+	}
+
 	.block.blockEmbed { 
-		.wrap { padding: 2px 0px; }
+		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
 		.wrap.isEditing { padding: 8px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
@@ -17,6 +22,9 @@
 			.preview, .icon.source { display: none; }
 			.editableWrap { margin: 0px; }
 		}
+
+		.valueWrap { position: relative; width: 100%; }
+		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 
 		.preview { 
 			display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; 
@@ -34,10 +42,9 @@
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
-
 		#value svg { max-width: 100% !important; }
 
-		.editableWrap { display: none; margin: 8px 0px 0px 0px; }
+		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
 			#input { 
 				background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; @include text-common; 
@@ -47,15 +54,47 @@
 		}
 
 		.icon.source { 
-			position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: none; border-radius: 4px;
-			background-color: rgba(37, 37, 37, 0.35); background-image: url('~img/icon/block/edit.svg'); 
+			position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; opacity: 0; border-radius: 4px;
+			background-color: rgba(37, 37, 37, 0.35); background-image: url('~img/icon/block/edit.svg'); transition: $transitionAllCommon;
 		}
 
-		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; }
+		.icon.resize { 
+			position: absolute; z-index: 1; opacity: 0; cursor: default; width: 20px; height: 20px; right: 0px; bottom: 0px; 
+			cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); z-index: 2; transition: $transitionAllCommon;
+		}
+
+		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
+	}
+
+	.block.blockEmbed.isLatex .preview { background-image: url('~img/icon/block/embed/latex.svg'); }
+	.block.blockEmbed.isMermaid .preview { background-image: url('~img/icon/block/embed/mermaid.svg'); }
+	.block.blockEmbed.isYoutube .preview { background-image: url('~img/icon/block/embed/youtube.svg'); }
+	.block.blockEmbed.isVimeo .preview { background-image: url('~img/icon/block/embed/vimeo.svg'); }
+	.block.blockEmbed.isGoogleMaps .preview { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
+	.block.blockEmbed.isSoundcloudd .preview { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
+	.block.blockEmbed.isChart .preview { background-image: url('~img/icon/block/embed/chart.svg'); }
+	.block.blockEmbed.isMiro .preview { background-image: url('~img/icon/block/embed/miro.svg'); }
+	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
+
+	.block.blockEmbed.isTwitter,
+	.block.blockEmbed.isReddit {
+		iframe { width: 100%; aspect-ratio: unset; }
+	}
+
+	.block.blockEmbed.isReadonly {
+		.icon.resize { display: none; }
+	}
+
+	.block.blockEmbed.align1 { 
+		.wrap { align-items: center; }
+	}
+
+	.block.blockEmbed.align2 { 
+		.wrap { align-items: flex-end; }
 	}
 
 	.block.blockEmbed:hover {
-		.icon.source { display: block; } 
+		.icon.source, .icon.resize { opacity: 1; }
 	}
 
 	.block.blockEmbed.isLatex {
