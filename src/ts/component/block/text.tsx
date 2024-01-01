@@ -339,7 +339,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			const scheme = UtilCommon.getScheme(url);
 			const isInside = scheme == Constant.protocol;
-			const isLocal = scheme == 'file';
 
 			let route = '';
 			let target;
@@ -873,6 +872,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
+		};
+
+		if (menuStore.isOpen('selectPasteUrl')) {
+			menuStore.close('selectPasteUrl');
 		};
 		
 		onKeyDown(e, value, this.marks, range, this.props);

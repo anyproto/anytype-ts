@@ -37,12 +37,7 @@ class UtilData {
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
-		let c = '';
-		switch (v) {
-			case I.EmbedProcessor.Latex: c = 'isLatex'; break;
-			default: c = 'isDefault'; break;
-		};
-		return c;
+		return `is${I.EmbedProcessor[v]}`;
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {

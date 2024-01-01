@@ -173,6 +173,8 @@ image = ({ src, bitmap }) => {
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
 
+	updateOrphans();
+
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
 	.force('charge', d3.forceManyBody())
@@ -210,14 +212,22 @@ updateForces = () => {
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
 
+	updateOrphans();
+
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
+		updateOrphans();
+
+		nodes = nodes.filter(d => !d.linkCnt);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
+		updateOrphans();
+
+		nodes = nodes.filter(d => !d.relationCnt);
 	};
 
 	// Filte local only edges
@@ -231,13 +241,7 @@ updateForces = () => {
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
-	// Recalculate orphans
-	nodes = nodes.map(d => {
-		d.sourceCnt = edges.filter(it => it.source == d.id).length;
-		d.targetCnt = edges.filter(it => it.target == d.id).length;
-		d.isOrphan = !d.sourceCnt && !d.targetCnt;
-		return d;
-	});
+	//updateOrphans();
 
 	// Filter orphans
 	if (!settings.orphan) {
@@ -303,6 +307,17 @@ updateSettings = (param) => {
 updateTheme = ({ theme }) => {
 	initTheme(theme);
 	redraw();
+};
+
+updateOrphans = () => {
+	nodes = nodes.map(d => {
+		const edgeList = edges.filter(it => (it.source == d.id) || (it.target == d.id));
+		
+		d.isOrphan = !edgeList.length;
+		d.linkCnt = edgeList.filter(it => it.type == EdgeType.Link).length;
+		d.relationCnt = edgeList.filter(it => it.type == EdgeType.Relation).length;
+		return d;
+	});
 };
 
 draw = (t) => {

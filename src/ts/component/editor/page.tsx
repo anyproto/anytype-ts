@@ -1674,11 +1674,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 
 		const block = blockStore.getLeaf(rootId, focused);
-		const match = UtilCommon.matchUrl(data.text);
-		const url = match && match[0];
 		
+		let url = UtilCommon.matchUrl(data.text);
+		let isLocal = false;
+
+		if (!url) {
+			url = UtilCommon.matchLocalPath(data.text);
+			isLocal = true;
+		};
+
 		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
-			this.onPasteUrl(url, props);
+			this.onPasteUrl(url, isLocal, props);
 			return;
 		};
 		
@@ -1715,7 +1721,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onPasteUrl (url: string, props: any) {
+	onPasteUrl (url: string, isLocal: boolean, props: any) {
 		const { isInsideTable } = props;
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
@@ -1732,21 +1738,23 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+		const processor = UtilEmbed.getProcessorByUrl(url);
+		const canObject = isEmpty && !isInsideTable && !isLocal;
+		const canBlock = !isInsideTable && !isLocal;
 
 		const options: any[] = [
 			{ id: 'link', name: translate('editorPagePasteLink') },
-			isEmpty && !isInsideTable ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
-			!isInsideTable ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
+			canObject ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
+			canBlock ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
 		].filter(it => it);
-
-		const processor = UtilEmbed.getProcessorByUrl(url);
 
 		if (processor !== null) {
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
-		menuStore.open('select', { 
+		menuStore.open('selectPasteUrl', { 
+			component: 'select',
 			element: `#block-${focused}`,
 			offsetX: Constant.size.blockMenu,
 			onOpen: () => {
@@ -1775,10 +1783,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								to = currentTo;
 							};
 
+							let param = url;
+							if (isLocal) {
+								param = `file://${url}`;
+							};
+
 							marks.push({
 								type: I.MarkType.Link,
 								range: { from: currentFrom, to },
-								param: url,
+								param,
 							});
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {

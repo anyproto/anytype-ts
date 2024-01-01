@@ -5,6 +5,8 @@ import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, ana
 import { authStore, dbStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
+const ITEM_WIDTH = 112;
+
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	node: any = null;
@@ -240,13 +242,15 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	beforePosition () {
-		const { getId } = this.props;
-		const obj = $(`#${getId()}`);
+		const node = $(this.node);
+		const obj = node.find('.items');
 		const { ww } = UtilCommon.getWindowDimensions();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
+		const items = this.getItems();
+		const cols = Math.min(items.length, Math.floor((ww - sw - 64) / ITEM_WIDTH));
 
-		obj.css({ maxWidth: ww - sw - 32 });
+		obj.css({ gridTemplateColumns: `repeat(${cols}, 1fr)` });
 	};
 	
 });
