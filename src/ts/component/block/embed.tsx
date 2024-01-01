@@ -55,7 +55,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { content, fields, hAlign } = block;
 		const { processor } = content;
 		const { width } = fields || {};
-		const canResize = ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(processor);
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 		const text = String(content.text || '').trim();
@@ -79,7 +78,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let empty = '';
 		let placeholder = '';
 
-		if (canResize) {
+		if (UtilEmbed.allowBlockResize(processor)) {
 			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
 		};
 
@@ -92,7 +91,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
 				};
 
-				if (!isShowing && text) {
+				if (!isShowing && text && !UtilEmbed.allowAutoRender(processor)) {
 					cn.push('withPreview');
 				};
 				break;
@@ -185,6 +184,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	rebind () {
 		const { block } = this.props;
+		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
@@ -219,7 +219,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		if (this.isAllowedScroll()) {
+		if (UtilEmbed.allowScroll(processor)) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
@@ -234,7 +234,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		if (!this._isMounted || !this.isAllowedScroll()) {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		if (!this._isMounted || !UtilEmbed.allowScroll(processor) || UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
@@ -244,6 +247,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const st = win.scrollTop();
 		const { top } = node.offset();
 		const bot = top + node.height();
+
+		console.log('setShowing');
 
 		this.setShowing((bot > st) && (top < st + wh));
 	};
@@ -517,10 +522,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { isShowing } = this.state;
 		const { block } = this.props;
+		const { processor } = block.content;
 		const node = $(this.node);
 		const value = node.find('#value');
 
-		if (!isShowing && !block.isEmbedLatex()) {
+		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
 			value.html('');
 			return;
 		};
@@ -532,7 +538,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { processor } = block.content;
 		const win = $(window);
 
 		switch (processor) {
@@ -828,10 +833,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			path = href + path.replace(/^\.\//, '');
 		};
 		return path;
-	};
-
-	isAllowedScroll () {
-		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
 	};
 
 	resize () {

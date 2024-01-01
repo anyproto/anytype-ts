@@ -166,9 +166,11 @@
 						dataType: 'jsonp',
 						timeout: 1000,
 						success: (data) => {
-							head.append(`<link href="${data.stylesheet}" rel="stylesheet">`);
-							root.append(data.div);
+							if (!head.find('#gist-css').length) {
+								head.append(`<link id="gist-css" href="${data.stylesheet}" rel="stylesheet">`);
+							};
 
+							root.html(data.div);
 							resize();
 						}
 					});

@@ -229,8 +229,30 @@ class UtilEmbed {
 		return [].includes(p);
 	};
 
+	allowBlockResize (p: I.EmbedProcessor) {
+		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(p);
+	};
+
 	allowIframeResize (p: I.EmbedProcessor) {
 		return [ 
+			I.EmbedProcessor.Twitter,
+			I.EmbedProcessor.Reddit,
+			I.EmbedProcessor.Facebook,
+			I.EmbedProcessor.Instagram,
+			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.GithubGist,
+		].includes(p);
+	};
+
+	allowScroll (p: I.EmbedProcessor) {
+		return ![ 
+			I.EmbedProcessor.Latex,
+		].includes(p);
+	};
+
+	allowAutoRender (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Latex,
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Facebook,
