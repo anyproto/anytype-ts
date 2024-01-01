@@ -478,7 +478,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const lang = this.getLang();
+		const { block } = this.props;
+		const { processor } = block.content;
+		const lang = UtilEmbed.getLang(processor);
 		const range = this.getRange();
 
 		if (value && lang) {
@@ -495,49 +497,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	getValue (): string {
 		return this.refEditable.getTextValue();
-	};
-
-	getLang () {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		switch (processor) {
-			default: return 'html';
-			case I.EmbedProcessor.Latex: return 'latex';
-			case I.EmbedProcessor.Mermaid: return 'yaml';
-			case I.EmbedProcessor.Chart: return 'js';
-		};
-	};
-
-	getEnvironmentContent (): { html: string; libs: string[]} {
-		const { block } = this.props;
-		const { processor } = block.content;
-		const libs = [];
-
-		let html = '';
-
-		switch (processor) {
-			case I.EmbedProcessor.Chart: {
-				html = `<canvas id="chart"></canvas>`;
-				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Twitter: {
-				libs.push('https://platform.twitter.com/widgets.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Reddit: {
-				libs.push('https://embed.reddit.com/widgets.js');
-				break;
-			};
-		};
-
-		return { 
-			html, 
-			libs, 
-		};
 	};
 
 	updateRect () {
@@ -598,9 +557,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
-					const env = this.getEnvironmentContent();
 					const data: any = { 
-						...env, 
+						...UtilEmbed.getEnvironmentContent(processor), 
 						allowResize, 
 						align: block.hAlign, 
 						processor,

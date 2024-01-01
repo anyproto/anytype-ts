@@ -132,6 +132,48 @@ class UtilEmbed {
 		return (m && m[2].length) ? m[2] : '';
 	};
 
+	getEnvironmentContent (processor: I.EmbedProcessor): { html: string; libs: string[]} {
+		const libs = [];
+
+		let html = '';
+		switch (processor) {
+			case I.EmbedProcessor.Chart: {
+				html = `<canvas id="chart"></canvas>`;
+				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
+				break;
+			};
+
+			case I.EmbedProcessor.Twitter: {
+				libs.push('https://platform.twitter.com/widgets.js');
+				break;
+			};
+
+			case I.EmbedProcessor.Reddit: {
+				libs.push('https://embed.reddit.com/widgets.js');
+				break;
+			};
+
+			case I.EmbedProcessor.Instagram: {
+				libs.push('https://www.instagram.com/embed.js');
+				break;
+			};
+		};
+
+		return { 
+			html, 
+			libs, 
+		};
+	};
+
+	getLang (processor: I.EmbedProcessor) {
+		switch (processor) {
+			default: return 'html';
+			case I.EmbedProcessor.Latex: return 'latex';
+			case I.EmbedProcessor.Mermaid: return 'yaml';
+			case I.EmbedProcessor.Chart: return 'js';
+		};
+	};
+
 	allowSameOrigin (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Youtube, 
@@ -142,6 +184,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Figma,
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
+			I.EmbedProcessor.Instagram,
 		].includes(p);
 	};
 
@@ -178,6 +221,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Facebook,
+			I.EmbedProcessor.Instagram,
 		].includes(p);
 	};
 

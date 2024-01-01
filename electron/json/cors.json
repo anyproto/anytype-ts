@@ -13,7 +13,8 @@
 		"data:", 
 		"blob:", 
 		"file://*",
-		"https://*.sndcdn.com"
+		"https://*.sndcdn.com",
+		"https://scontent.cdninstagram.com"
 	],
 
 	"media-src": [ 
@@ -23,7 +24,8 @@
 		"data:", 
 		"blob:", 
 		"file://*", 
-		"https://*.googlevideo.com" 
+		"https://*.googlevideo.com",
+		"https://scontent.cdninstagram.com"
 	],
 
 	"style-src": [ 
@@ -41,7 +43,8 @@
 		"https://*.figma.com/",
 		"https://*.openstreetmap.org",
 		"https://www.redditstatic.com",
-		"https://*.fbcdn.net"
+		"https://*.fbcdn.net",
+		"https://static.cdninstagram.com"
 	],
 
 	"font-src": [ 
@@ -55,7 +58,8 @@
 		"https://miro.com",
 		"https://*.figma.com",
 		"https://*.twimg.com",
-		"https://*.fbcdn.net"
+		"https://*.fbcdn.net",
+		"https://static.cdninstagram.com"
 	],
 
 	"connect-src": [ 
@@ -113,7 +117,9 @@
 		"https://*.openstreetmap.org",
 		"https://embed.reddit.com",
 		"https://www.redditstatic.com",
-		"https://*.fbcdn.net"
+		"https://*.fbcdn.net",
+		"https://www.instagram.com",
+		"https://static.cdninstagram.com"
 	],
 
 	"frame-src": [
@@ -130,7 +136,8 @@
 		"https://platform.twitter.com",
 		"https://*.openstreetmap.org",
 		"https://embed.reddit.com",
-		"https://www.facebook.com"
+		"https://www.facebook.com",
+		"https://www.instagram.com"
 	],
 
 	"worker-src": [ 

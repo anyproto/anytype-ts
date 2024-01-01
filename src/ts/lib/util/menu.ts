@@ -74,6 +74,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
 				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
 				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
+				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
 			]);
 		};
 
