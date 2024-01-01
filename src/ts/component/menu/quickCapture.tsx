@@ -173,7 +173,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	getSections () {
 		const { space, type } = commonStore;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.spaceId == space)).map(it => {
+		const library = items.filter(it => (it.spaceId == space)).map((it, i) => {
 			if (this.isExpanded && (it.id == type)) {
 				it.tooltip = translate('commonDefaultType');
 			};
@@ -194,7 +194,10 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 			]);
 
-			sections[1].children.unshift({ id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter) });
+			sections[1].children.unshift({ 
+				id: 'add', 
+				name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
+			});
 		};
 
 		sections = sections.filter((section: any) => {
@@ -220,7 +223,20 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			});
 		} else {
 			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 });
-			items.unshift({ id: 'search', icon: 'search', name: '' });
+			
+			items = items.map((it, i) => {
+				it.tooltip = translate('commonNewObject');
+				it.caption = String(i + 1);
+				return it;
+			});
+
+			items.unshift({ 
+				id: 'search', 
+				icon: 'search', 
+				name: '', 
+				tooltip: translate('menuQuickCaptureTooltipSearch'),
+				caption: '0',
+			});
 		};
 		return items;
 	};
@@ -341,8 +357,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		if (item.tooltip) {
 			const node = $(this.node);
 			const element = node.find(`#item-${item.id}`);
+			const t = Preview.tooltipCaption(item.tooltip, item.caption);
 
-			Preview.tooltipShow({ text: item.tooltip, element });
+			Preview.tooltipShow({ text: t, element });
 		};
 	};
 

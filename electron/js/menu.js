@@ -119,7 +119,7 @@ class MenuManager {
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
-					{ label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
+					{ label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
 
 					Separator,
 
@@ -357,7 +357,7 @@ class MenuManager {
 			Separator,
 
 			{ 
-				label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { 
+				label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { 
 					this.winShow();
 					Util.send(this.win, 'commandGlobal', 'create'); 
 				} 
