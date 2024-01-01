@@ -314,9 +314,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		};
 
 		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-
-		console.log(p, rect.width, this.div);
-
 		return Math.floor(p * rect.width / (this.div || 1));
 	};
 	
