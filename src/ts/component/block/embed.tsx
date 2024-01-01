@@ -538,7 +538,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts' ];
-				const allowResize = UtilEmbed.allowResize(processor);
+				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('iframe');
 				let text = this.text;
@@ -559,7 +559,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
 					const data: any = { 
 						...UtilEmbed.getEnvironmentContent(processor), 
-						allowResize, 
+						allowIframeResize, 
+						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
 						align: block.hAlign,
 						processor,
 						className: UtilData.blockEmbedClass(processor),
@@ -585,7 +586,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					iw.postMessage(data, '*');
 
-					if (allowResize) {
+					if (allowIframeResize) {
 						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
 							const oe = e.originalEvent as any;
 							const { height, blockId } = oe.data;

@@ -216,11 +216,19 @@ class UtilEmbed {
 		return [].includes(p);
 	};
 
-	allowResize (p: I.EmbedProcessor) {
+	allowIframeResize (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Facebook,
+			I.EmbedProcessor.Instagram,
+		].includes(p);
+	};
+
+	insertBeforeLoad (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.Twitter,
+			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
 		].includes(p);
 	};

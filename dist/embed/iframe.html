@@ -11,7 +11,7 @@
 			body.align1 { text-align: center; }
 			body.align2 { text-align: right; }
 
-			body:not(.allowResize) {
+			body:not(.allowIframeResize) {
 				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
@@ -51,8 +51,7 @@
 						return;
 					};
 
-					const { html, js, libs, className, allowResize, processor, align } = oe.data;
-					const insertBeforeLoad = [ 9, 11, 13 ].includes(processor);
+					const { html, js, libs, className, allowIframeResize, insertBeforeLoad, processor, align } = oe.data;
 
 					blockId = oe.data.blockId;
 					scripts.html('');
@@ -64,8 +63,8 @@
 					if (className) {
 						body.addClass(className);
 					};
-					if (allowResize) {
-						body.addClass('allowResize');
+					if (allowIframeResize) {
+						body.addClass('allowIframeResize');
 					};
 					body.addClass(`align${align}`);
 
@@ -87,7 +86,7 @@
 						};
 
 						resize();
-						if (allowResize) {
+						if (allowIframeResize) {
 							setInterval(resize, 300);
 						};
 					});
