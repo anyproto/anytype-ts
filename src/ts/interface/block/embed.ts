@@ -14,6 +14,7 @@ export enum EmbedProcessor {
 	Twitter			 = 9,
 	OpenStreetMap	 = 10,
 	Reddit			 = 11,
+	Facebook		 = 12,
 };
 
 export interface ContentEmbed {

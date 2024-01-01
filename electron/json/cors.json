@@ -29,6 +29,7 @@
 	"style-src": [ 
 		"'unsafe-inline'", 
 		"http://localhost:*", 
+		"data:",
 		"file://*", 
 		"https://*.youtube.com", 
 		"https://*.vimeocdn.com",
@@ -39,7 +40,8 @@
 		"https://*.google.com",
 		"https://*.figma.com/",
 		"https://*.openstreetmap.org",
-		"https://www.redditstatic.com"
+		"https://www.redditstatic.com",
+		"https://*.fbcdn.net"
 	],
 
 	"font-src": [ 
@@ -51,8 +53,9 @@
 		"https://*.gstatic.com",
 		"https://mirostatic.com",
 		"https://miro.com",
-		"https://*.figma.com/",
-		"https://*.twimg.com"
+		"https://*.figma.com",
+		"https://*.twimg.com",
+		"https://*.fbcdn.net"
 	],
 
 	"connect-src": [ 
@@ -109,7 +112,8 @@
 		"https://platform.twitter.com",
 		"https://*.openstreetmap.org",
 		"https://embed.reddit.com",
-		"https://www.redditstatic.com"
+		"https://www.redditstatic.com",
+		"https://*.fbcdn.net"
 	],
 
 	"frame-src": [
@@ -125,7 +129,8 @@
 		"file://*",
 		"https://platform.twitter.com",
 		"https://*.openstreetmap.org",
-		"https://embed.reddit.com"
+		"https://embed.reddit.com",
+		"https://www.facebook.com"
 	],
 
 	"worker-src": [ 

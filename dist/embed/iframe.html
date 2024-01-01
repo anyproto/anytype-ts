@@ -11,7 +11,7 @@
 			body.align1 { text-align: center; }
 			body.align2 { text-align: right; }
 
-			body:not(.isTwitter):not(.isReddit) {
+			body:not(.allowResize) {
 				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
 			}
 
@@ -62,6 +62,9 @@
 					};
 					if (className) {
 						body.addClass(className);
+					};
+					if (allowResize) {
+						body.addClass('allowResize');
 					};
 					body.addClass(`align${align}`);
 

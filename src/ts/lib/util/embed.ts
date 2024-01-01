@@ -177,6 +177,7 @@ class UtilEmbed {
 		return [ 
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
+			I.EmbedProcessor.Facebook,
 		].includes(p);
 	};
 
