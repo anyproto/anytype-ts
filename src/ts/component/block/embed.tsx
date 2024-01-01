@@ -248,8 +248,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { top } = node.offset();
 		const bot = top + node.height();
 
-		console.log('setShowing');
-
 		this.setShowing((bot > st) && (top < st + wh));
 	};
 
