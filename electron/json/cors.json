@@ -51,7 +51,8 @@
 		"https://*.gstatic.com",
 		"https://mirostatic.com",
 		"https://miro.com",
-		"https://*.figma.com/"
+		"https://*.figma.com/",
+		"https://*.twimg.com"
 	],
 
 	"connect-src": [ 

@@ -392,8 +392,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.initCacheCard();
 		this.isDraggingCard = true;
 
-		win.on('drag.board', (e: any) => { this.onDragMoveCard(e, record); });
-		win.on('dragend.board', (e: any) => { this.onDragEndCard(e, record); });
+		win.on('drag.board', e => this.onDragMoveCard(e, record));
+		win.on('dragend.board', e => this.onDragEndCard(e, record));
 	};
 
 	onDragMoveCard (e: any, record: any) {
@@ -438,6 +438,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	onDragEndCard (e: any, record: any) {
 		const current = this.cache[record.id];
+
+		if (!current) {
+			return;
+		};
 
 		this.onDragEndCommon(e);
 		this.cache = {};
