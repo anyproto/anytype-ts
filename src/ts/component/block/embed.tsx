@@ -5,8 +5,8 @@ import raf from 'raf';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed } from 'Lib';
+import { Icon, Label, Editable, Dimmer } from 'Component';
+import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -50,12 +50,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { readonly, block } = this.props;
-		const { processor } = block.content;
 		const { isShowing, isEditing } = this.state;
-		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id ];
+		const { readonly, block } = this.props;
+		const { content, fields, hAlign } = block;
+		const { processor } = content;
+		const { width } = fields || {};
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-		const text = String(block.content.text || '').trim();
+		const text = String(content.text || '').trim();
+		const css: any = {};
+
+		if (width) {
+			css.width = (width * 100) + '%';
+		};
 
 		if (!text) {
 			cn.push('isEmpty');
@@ -66,21 +73,25 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		let select = null;
-		let button = null;
-		let preview = null;
+		let source = null;
+		let resize = null;
 		let empty = '';
 		let placeholder = '';
 
+		if (UtilEmbed.allowBlockResize(processor)) {
+			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
+		};
+
 		switch (processor) {
 			default: {
-				button = <Icon className="source" onClick={this.onEdit} />;
+				source = <Icon className="source" onClick={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 
 				if (!text) {
 					empty = UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name);
 				};
 
-				if (!isShowing && text) {
+				if (!isShowing && text && !UtilEmbed.allowAutoRender(processor)) {
 					cn.push('withPreview');
 				};
 				break;
@@ -113,13 +124,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div className={[ 'preview', menuItem.icon ].join(' ')} onClick={this.onPreview} />
-				{select}
-				{button}
+				<div className="valueWrap resizable" style={css}>
+					<div className="preview" onClick={this.onPreview} />
+					<div id="value" onClick={this.onEdit} />
+					<div id={this.getContainerId()} />
 
-				{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}
-				<div id="value" onClick={this.onEdit} />
-				<div id={this.getContainerId()} />
+					{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}					
+					{select}
+					{source}
+					{resize}
+
+					<Dimmer />
+				</div>
+
 				<Editable 
 					key={`block-${block.id}-editable`}
 					ref={ref => this.refEditable = ref}
@@ -167,8 +184,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	rebind () {
 		const { block } = this.props;
-		const { isEditing, isShowing } = this.state;
 		const { processor } = block.content;
+		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
 
@@ -202,9 +219,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		if (this.isAllowedScroll()) {
+		if (UtilEmbed.allowScroll(processor)) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
+
+		win.on(`resize.${block.id}`, () => this.resize());
 	};
 
 	unbind () {
@@ -215,7 +234,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		if (!this._isMounted || !this.isAllowedScroll()) {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		if (!this._isMounted || !UtilEmbed.allowScroll(processor) || UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
@@ -459,7 +481,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const lang = this.getLang();
+		const { block } = this.props;
+		const { processor } = block.content;
+		const lang = UtilEmbed.getLang(processor);
 		const range = this.getRange();
 
 		if (value && lang) {
@@ -476,36 +500,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	getValue (): string {
 		return this.refEditable.getTextValue();
-	};
-
-	getLang () {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		switch (processor) {
-			default: return 'html';
-			case I.EmbedProcessor.Latex: return 'latex';
-			case I.EmbedProcessor.Mermaid: return 'yaml';
-			case I.EmbedProcessor.Chart: return 'js';
-		};
-	};
-
-	getEnvironmentContent (): { html: string; libs: string[] } {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		let html = '';
-		let libs = [];
-
-		switch (processor) {
-			case I.EmbedProcessor.Chart: {
-				html = `<canvas id="chart"></canvas>`;
-				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
-				break;
-			};
-		};
-
-		return { html, libs };
 	};
 
 	updateRect () {
@@ -526,10 +520,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { isShowing } = this.state;
 		const { block } = this.props;
+		const { processor } = block.content;
 		const node = $(this.node);
 		const value = node.find('#value');
 
-		if (!isShowing && !block.isEmbedLatex()) {
+		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
 			value.html('');
 			return;
 		};
@@ -541,57 +536,86 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { processor } = block.content;
 		const win = $(window);
 
 		switch (processor) {
 			default: {
+				const sandbox = [ 'allow-scripts' ];
+				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
+
 				let iframe = node.find('iframe');
 				let text = this.text;
+				let allowScript = false;
 
-				const sandbox = [ 'allow-scripts' ];
-				const allowSameOrigin = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.Soundcloud, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
-				const allowPresentation = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo ];
-				const allowEmbedUrl = [ I.EmbedProcessor.Youtube, I.EmbedProcessor.Vimeo, I.EmbedProcessor.GoogleMaps, I.EmbedProcessor.Miro, I.EmbedProcessor.Figma ];
-				const allowJs = [ I.EmbedProcessor.Chart ];
-				const allowPopup = [];
-
-				if (allowSameOrigin.includes(processor)) {
+				if (UtilEmbed.allowSameOrigin(processor)) {
 					sandbox.push('allow-same-origin');
 				};
 
-				if (allowPresentation.includes(processor)) {
+				if (UtilEmbed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (allowPopup.includes(processor)) {
+				if (UtilEmbed.allowPopup(processor)) {
 					sandbox.push('allow-popups');
 				};
 
 				const onLoad = () => {
 					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
-					const env = this.getEnvironmentContent();
-					const data: any = { ...env };
+					const sanitizeParam: any = { 
+						ADD_TAGS: [ 'iframe' ],
+						ADD_ATTR: [
+							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+						],
+					};
 
-					if (allowEmbedUrl.includes(processor) && !text.match(/<iframe/)) {
+					const data: any = { 
+						...UtilEmbed.getEnvironmentContent(processor), 
+						allowIframeResize, 
+						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
+						useRootHeight: UtilEmbed.useRootHeight(processor),
+						align: block.hAlign,
+						processor,
+						className: UtilData.blockEmbedClass(processor),
+						blockId: block.id,
+					};
+
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
-					if (allowJs.includes(processor)) {
+					if (processor == I.EmbedProcessor.Telegram) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
+					};
+
+					if (processor == I.EmbedProcessor.GithubGist) {
+						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+					};
+
+					if (allowScript) {
+						sanitizeParam.FORCE_BODY = true;
+						sanitizeParam.ADD_TAGS.push('script');
+					};
+
+					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, { 
-							ADD_TAGS: [ 
-								'iframe',
-							],
-							ADD_ATTR: [
-								'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
-							],
-						});
+						data.html = DOMPurify.sanitize(text, sanitizeParam);
 					};
 
 					iw.postMessage(data, '*');
-					win.off(`message.${block.id}`).on(`message.${block.id}`, () => {});
+
+					if (allowIframeResize) {
+						win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
+							const oe = e.originalEvent as any;
+							const { height, blockId } = oe.data;
+
+							if (blockId == block.id) {
+								iframe.css({ height });
+							};
+						});
+					};
 				};
 
 				if (!iframe.length) {
@@ -707,8 +731,98 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		});
 	};
 
-	isAllowedScroll () {
-		return ![ I.EmbedProcessor.Latex ].includes(this.props.block.content.processor);
+	onResizeStart (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { dataset, block } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
+		const node = $(this.node);
+		
+		focus.set(block.id, { from: 0, to: 0 });
+		win.off('mousemove.embed mouseup.embed');
+		
+		if (selection) {
+			selection.hide();
+		};
+
+		keyboard.disableSelection(true);
+		$(`#block-${block.id}`).addClass('isResizing');
+		win.on('mousemove.embed', e => this.onResizeMove(e, checkMax));
+		win.on('mouseup.embed', e => this.onResizeEnd(e, checkMax));
+	};
+	
+	onResizeMove (e: any, checkMax: boolean) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(this.node);
+		const wrap = node.find('.valueWrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		wrap.css({ width: (w * 100) + '%' });
+	};
+
+	onResizeEnd (e: any, checkMax: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { rootId, block } = this.props;
+		const { id } = block;
+		const node = $(this.node);
+		const wrap = node.find('.valueWrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+
+		const win = $(window);
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		
+		win.off('mousemove.embed mouseup.embed');
+		$(`#block-${block.id}`).removeClass('isResizing');
+		keyboard.disableSelection(false);
+		
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { width: w } },
+		]);
+	};
+
+	getWidth (checkMax: boolean, v: number): number {
+		const { block } = this.props;
+		const { id, fields } = block;
+		const width = Number(fields.width) || 1;
+		const el = $(`#selectable-${id}`);
+
+		if (!el.length) {
+			return width;
+		};
+		
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
+		
+		return Math.min(1, Math.max(0, w / rect.width));
+	};
+
+
+	resize () {
 	};
 
 });

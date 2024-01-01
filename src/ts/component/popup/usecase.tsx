@@ -108,7 +108,7 @@ class PopupUsecase extends React.Component<I.Popup, State> {
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
 		const idx = this.swiper.activeIndex;
-		const length = this.swiper.slides.length;
+		const length = (this.swiper.slides || []).length;
 
 		!idx ? arrowLeft.addClass('hide') : arrowLeft.removeClass('hide');
 		idx >= length - 1 ? arrowRight.addClass('hide') : arrowRight.removeClass('hide');

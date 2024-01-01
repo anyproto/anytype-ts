@@ -68,6 +68,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 					onKeyUp={onKeyUp}  
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
+					onMouseEnter={() => { $(`#editor-controls-${rootId}`).addClass('hover'); }}
+					onMouseLeave={() => { $(`#editor-controls-${rootId}`).removeClass('hover'); }}
 				/>
 			</div>
 		);

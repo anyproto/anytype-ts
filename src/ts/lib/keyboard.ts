@@ -64,6 +64,8 @@ class Keyboard {
 			};
 
 			menuStore.closeAll([ 'blockContext' ]);
+
+			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
 		doc.off('mouseleave.common').on('mouseleave.common', () => {

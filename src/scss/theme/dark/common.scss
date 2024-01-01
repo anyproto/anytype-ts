@@ -384,7 +384,7 @@ html.themeDark {
     /* Cells */
 
     .cellContent {
-        .more { background-color: $colorShapeSecondary; color: $colorTextSecondary; }
+        .more { color: $colorTextSecondary; }
     }
 
     .cell.isEditing {

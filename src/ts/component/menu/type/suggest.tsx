@@ -218,6 +218,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const filter = String(data.filter || '');
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },
+			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -264,7 +265,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			};
 
 			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
-			this.items = UtilData.sortByLastUsedTypes(this.items);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -433,12 +433,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const cb = (item: any) => {
 			close();
 
-			item = detailStore.mapper(item);
-
-			Storage.addLastUsedType(item.id);
-
 			if (onClick) {
-				onClick(item);
+				onClick(detailStore.mapper(item));
 			};
 		};
 

@@ -30,7 +30,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	items: any = [];
 	refFilter: any = null;
 	refList: any = null;
-	n = -1;
+	n = 0;
 	timeoutFilter = 0;
 	offset = 0;
 
@@ -267,7 +267,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	reload () {
-		this.n = -1;
+		this.n = 0;
 		this.offset = 0;
 		this.load(true);
 	};

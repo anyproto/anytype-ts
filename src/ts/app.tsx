@@ -109,6 +109,7 @@ if (!UtilCommon.getElectron().isPackaged) {
 			Docs,
 			Encode, 
 			Decode,
+			translate,
 		},
 	};
 };
