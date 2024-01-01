@@ -314,7 +314,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const items = node.find('lnk');
+		const items = node.find(Mark.getTag(I.MarkType.Link));
 
 		if (!items.length) {
 			return;
@@ -386,7 +386,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const items = node.find('obj');
+		const items = node.find(Mark.getTag(I.MarkType.Object));
 
 		if (!items.length) {
 			return;
@@ -464,7 +464,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const items = node.find('mention');
+		const items = node.find(Mark.getTag(I.MarkType.Mention));
 		
 		if (!items.length) {
 			return;
@@ -566,7 +566,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const items = node.find('emoji');
+		const items = node.find(Mark.getTag(I.MarkType.Emoji));
 		
 		if (!items.length) {
 			return;
