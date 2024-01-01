@@ -9,6 +9,21 @@ class UtilMenu {
 		it.isBlock = true;
 		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
 		it.description = it.lang ? translate(`blockText${it.lang}`) : it.description;
+		it.aliases = it.aliases || [];
+
+		if (it.lang) {
+			const nameKey = `blockName${it.lang}`;
+			const descriptionKey = `blockText${it.lang}`;
+
+			it.name = translate(nameKey);
+			it.description = translate(descriptionKey);
+
+			if (commonStore.interfaceLang != Constant.default.interfaceLang) {
+				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
+				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
+				it.aliases = UtilCommon.arrayUnique(it.aliases);
+			};
+		};
 		return it;
 	};
 	
