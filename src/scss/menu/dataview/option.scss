@@ -1,47 +1,29 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewOptionList {
-		.content { overflow: visible !important; padding: 0px; }
-		.items { height: 100%; }
-
-		.item.add {
-			.name { @include text-overflow-nw; width: calc(100% - 24px); }
-		}
-
-		.item { display: flex; height: 28px; align-items: center; }
-		.item {
-			.tagItem { vertical-align: top; }
-			.clickable { line-height: 18px; }
-			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
-		}
-		
-		.item.hover {
-			.clickable { margin-right: 6px; }
-			.buttons { display: block; }
-		}
-	}
-
-
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
-		.content { transition: none; padding-bottom: 0px; }
+		.content { overflow: visible; transition: none; padding: 0px; max-height: unset; }
 		.content {
 			.wrap { height: 100%; display: flex; flex-direction: column; }
+			.wrap.noFilter {
+				.items { height: 100%; }
+			}
+
+			.items { height: calc(100% - 34px); }
 		}
 
-		.items { height: calc(100% - 34px); }
-		.wrap.noFilter {
-			.items { height: 100%; }
-		}
-
-		.item { display: flex; height: 28px; }
 		.item {
 			.clickable { width: calc(100% - 20px); }
+			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
 		}
-		.item:hover {
-			.clickable { width: calc(100% - 40px); }
+		.item:hover, .item.hover {
+			.clickable { width: calc(100% - 24px); }
+			.buttons { display: block; }
 			.icon.chk { right: 32px; }
+		}
+		.item.add {
+			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}
 	}
 

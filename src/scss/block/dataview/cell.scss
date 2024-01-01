@@ -45,10 +45,7 @@
 	.name { display: inline-block; vertical-align: top; }
 	.empty { vertical-align: top; display: none; }
 
-	.more { 
-		background: $colorShapeTertiary; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
-		@include text-small; color: $colorTextSecondary;
-	}
+	.more { display: inline-block; vertical-align: middle; @include text-small; color: $colorTextSecondary; }
 }
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
@@ -64,7 +61,7 @@
 
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
-	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; }
+	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
 	.element {
 		.iconObject { flex-shrink: 0; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
@@ -73,17 +70,15 @@
 }
 
 .cellContent.c-select {
-	.over { display: inline-block; vertical-align: top; width: 100%; }
-	.tagItem { margin: 0px 8px 8px 0px; vertical-align: top; }
-	.tagItem:last-child { margin-right: 0px; }
 	.more { height: 18px; }
 }
 
 .cellContent.c-object {
-	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
+	.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element:last-child { margin-right: 0px; }
 	.element {
-		.flex { align-items: center; }
+		.iconObject { margin: 0px; }
+		.flex { align-items: center; gap: 0px 4px; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 }
@@ -101,6 +96,12 @@
 
 .cellContent.c-link {
 	.icon.user { margin-right: 5px; }
+}
+
+.cellContent.c-select,
+.cellContent.c-object,
+.cellContent.c-file {
+	.over { display: inline-flex; vertical-align: top; width: 100%; gap: 4px 8px; align-items: flex-start; }
 }
 
 .cell.isEditing.c-shortText, 
@@ -123,7 +124,7 @@
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 4px 0px; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
 		.tagItem { margin: 0px !important; }
@@ -136,7 +137,7 @@
 }
 
 .cell.isEditing.c-object {
-	.itemWrap { margin: 0px 8px 2px 0px; max-width: 100%; }
+	.itemWrap { margin: 0px 8px 4px 0px; max-width: 100%; }
 	.itemWrap:empty { margin: 0px; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {

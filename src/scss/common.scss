@@ -104,7 +104,7 @@ html.platformWindows, html.platformLinux {
 .editableWrap { position: relative; }
 
 a { color: $colorTextPrimary; }
-search { background: yellow !important; color: $colorTextPrimary !important; border-radius: 2px; }
+search { background: yellow !important; color: $colorTextPrimary !important; border-radius: 2px; display: inline; }
 search.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: $colorSystemDropZone !important; }

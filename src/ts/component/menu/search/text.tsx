@@ -6,8 +6,8 @@ import { I, UtilCommon, keyboard, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 const SKIP = [ 
-	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 
-	'underline', 'lnk', 'emoji', 'obj',
+	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
+	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
 ];
 
 class MenuSearchText extends React.Component<I.Menu> {

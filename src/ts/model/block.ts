@@ -79,7 +79,16 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isEmbed() || this.isTable();
+		return (
+			this.isTextParagraph() || 
+			this.isTextQuote() || 
+			this.isTextHeader() || 
+			this.isFileImage() || 
+			this.isFileVideo() || 
+			this.isFilePdf() || 
+			this.isEmbed() || 
+			this.isTable()
+		);
 	};
 
 	canHaveColor (): boolean {

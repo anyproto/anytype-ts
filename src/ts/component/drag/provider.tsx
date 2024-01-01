@@ -124,6 +124,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDropCommon (e: any) {
+		e.preventDefault();
+
 		if (this.commonDropPrevented) {
 			this.clearState();
 			return;
