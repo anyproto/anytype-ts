@@ -44,7 +44,7 @@
 		#value:empty { display: none; }
 		#value svg { max-width: 100% !important; }
 
-		.editableWrap { display: none; margin: 8px 0px 0px 0px; }
+		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
 			#input { 
 				background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; @include text-common; 

@@ -93,7 +93,8 @@
 		"wss://*.figma.com/",
 		"https://*.twitter.com",
 		"https://*.twimg.com",
-		"https://*.reddit.com"
+		"https://*.reddit.com",
+		"https://www.instagram.com"
 	],
 
 	"script-src-elem": [

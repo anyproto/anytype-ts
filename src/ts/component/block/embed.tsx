@@ -560,7 +560,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					const data: any = { 
 						...UtilEmbed.getEnvironmentContent(processor), 
 						allowResize, 
-						align: block.hAlign, 
+						align: block.hAlign,
 						processor,
 						className: UtilData.blockEmbedClass(processor),
 						blockId: block.id,
@@ -804,7 +804,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const origin = location.origin;
 		
 		let href = location.href;
-
 		if (origin == 'file://') {
 			href = href.replace('/app.asar/', '/app.asar.unpacked/');
 			href = href.replace('/index.html', '/');

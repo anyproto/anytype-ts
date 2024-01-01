@@ -51,7 +51,7 @@
 						return;
 					};
 
-					const { html, js, libs, className, allowResize, align, processor } = oe.data;
+					const { html, js, libs, className, allowResize, processor, align } = oe.data;
 					const insertBeforeLoad = [ 9, 11, 13 ].includes(processor);
 
 					blockId = oe.data.blockId;
@@ -88,7 +88,7 @@
 
 						resize();
 						if (allowResize) {
-							setInterval(resize, 500);
+							setInterval(resize, 300);
 						};
 					});
 				});
