@@ -18,6 +18,7 @@
 			#root { font-size: 0px; }
 
 			.twitter-tweet, .instagram-media { margin: 0px !important; display: inline-flex !important; }
+			.gist-file { margin: 0px !important; }
 
 			body.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
 			body.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
@@ -30,6 +31,7 @@
 		<script type="text/javascript">
 			$(() => {
 				const win = $(window);
+				const head = $('head');
 				const body = $('body');
 				const root = $('#root');
 				const scripts = $('#scripts');
@@ -39,6 +41,8 @@
 					'file://',
 				];
 
+				let processor = 0;
+				let useRootHeight = false;
 				let cachedHtml = '';
 				let height = 0;
 				let blockId = '';
@@ -51,9 +55,12 @@
 						return;
 					};
 
-					const { html, js, libs, className, allowIframeResize, insertBeforeLoad, processor, align } = oe.data;
+					const { html, js, libs, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
 
 					blockId = oe.data.blockId;
+					processor = oe.data.processor;
+					useRootHeight = oe.data.useRootHeight;
+
 					scripts.html('');
 					body.attr({ class: '' });
 
@@ -68,34 +75,41 @@
 					};
 					body.addClass(`align${align}`);
 
-					if (insertBeforeLoad) {
-						insertHtml(html);
+					if (allowIframeResize) {
+						setInterval(resize, 300);
 					};
 
-					loadLibs(libs, () => {
-						if (!insertBeforeLoad) {
+					// Github Gist
+					if (processor == 15) {
+						loadGithubGist(html);
+					} else {
+						if (insertBeforeLoad) {
 							insertHtml(html);
 						};
 
-						if (js) {
-							try {
-								eval(js);
-							} catch (e) {
-								console.error(e);
+						loadLibs(libs, () => {
+							if (!insertBeforeLoad) {
+								insertHtml(html);
 							};
-						};
 
-						resize();
-						if (allowIframeResize) {
-							setInterval(resize, 300);
-						};
-					});
+							if (js) {
+								try {
+									eval(js);
+								} catch (e) {
+									console.error(e);
+								};
+							};
+
+							resize();
+						});
+					};
 				});
 
 				win.on('resize', resize);
 
 				function resize () {
-					window.parent.postMessage({ height: document.documentElement.scrollHeight, blockId }, '*');
+					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					window.parent.postMessage({ height, blockId }, '*');
 				};
 
 				function insertHtml (html) {
@@ -117,7 +131,6 @@
 					const script = document.createElement('script');
 
 					scripts.append(script);
-
 					script.onload = function (e) {
 						if (list.length) {
 							loadLibs(list, callBack);
@@ -141,6 +154,26 @@
 					});
 					return param;
 				};
+
+				function loadGithubGist (html) {
+					const m = html.match(/src="([^"]+)"/); 
+					if (!m || (m.length < 1)) {
+						return;
+					};
+
+					$.ajax({
+						url: m[1].replace(/\.js$/, '.json'),
+						dataType: 'jsonp',
+						timeout: 1000,
+						success: (data) => {
+							head.append(`<link href="${data.stylesheet}" rel="stylesheet">`);
+							root.append(data.div);
+
+							resize();
+						}
+					});
+				};
+
 			});
 		</script>
 	</body>

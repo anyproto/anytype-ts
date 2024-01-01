@@ -45,7 +45,8 @@
 		"https://www.redditstatic.com",
 		"https://*.fbcdn.net",
 		"https://static.cdninstagram.com",
-		"https://telegram.org"
+		"https://telegram.org",
+		"https://github.githubassets.com"
 	],
 
 	"font-src": [ 
@@ -97,7 +98,8 @@
 		"https://*.twimg.com",
 		"https://*.reddit.com",
 		"https://www.instagram.com",
-		"https://t.me"
+		"https://t.me",
+		"https://gist.github.com"
 	],
 
 	"script-src-elem": [
@@ -125,7 +127,8 @@
 		"https://www.instagram.com",
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
-		"https://oauth.tg.dev"
+		"https://oauth.tg.dev",
+		"https://gist.github.com"
 	],
 
 	"frame-src": [

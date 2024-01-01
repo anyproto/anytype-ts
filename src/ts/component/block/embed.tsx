@@ -542,6 +542,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				let iframe = node.find('iframe');
 				let text = this.text;
+				let allowScript = false;
 
 				if (UtilEmbed.allowSameOrigin(processor)) {
 					sandbox.push('allow-same-origin');
@@ -568,6 +569,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						...UtilEmbed.getEnvironmentContent(processor), 
 						allowIframeResize, 
 						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
+						useRootHeight: UtilEmbed.useRootHeight(processor),
 						align: block.hAlign,
 						processor,
 						className: UtilData.blockEmbedClass(processor),
@@ -580,12 +582,17 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					if (processor == I.EmbedProcessor.Telegram) {
 						const m = text.match(/post="([^"]+)"/);
-						const isValidSrc = text.match(/src="https:\/\/telegram.org([^"]+)"/);
 
-						if (m && m.length && isValidSrc) {
-							sanitizeParam.FORCE_BODY = true;
-							sanitizeParam.ADD_TAGS.push('script');
-						};
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
+					};
+
+					if (processor == I.EmbedProcessor.GithubGist) {
+						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+					};
+
+					if (allowScript) {
+						sanitizeParam.FORCE_BODY = true;
+						sanitizeParam.ADD_TAGS.push('script');
 					};
 
 					if (UtilEmbed.allowJs(processor)) {

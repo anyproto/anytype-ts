@@ -48,6 +48,10 @@ class UtilEmbed {
 		return `<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script>`;
 	};
 
+	getGithubGistHtml (content: string): string {
+		return `<script src="${content}.js"></script>`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (let i in DOMAINS) {
@@ -211,6 +215,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Figma,
 			I.EmbedProcessor.OpenStreetMap,
 			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.GithubGist,
 		].includes(p);
 	};
 
@@ -231,6 +236,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Facebook,
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.GithubGist,
 		].includes(p);
 	};
 
@@ -239,6 +245,12 @@ class UtilEmbed {
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
+		].includes(p);
+	};
+
+	useRootHeight (p: I.EmbedProcessor) {
+		return [ 
+			I.EmbedProcessor.GithubGist,
 		].includes(p);
 	};
 
