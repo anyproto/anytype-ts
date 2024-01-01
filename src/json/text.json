@@ -12,6 +12,7 @@
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
 	"commonDefault": "Default",
+	"commonDefaultType": "Default type",
 	"commonSoon": "Soon",
 	"commonTitle": "anytype",
 	"commonSearch": "Search",
@@ -113,6 +114,7 @@
 	"commonCreateNew": "Create new",
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
+	"commonNewObject": "New Object",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -168,7 +170,6 @@
 	"electronMenuPrint": "Print",
 	"electronMenuWindow": "Window",
 	"electronMenuNewWindow": "New window",
-	"electronMenuNewObject": "New Object",
 	"electronMenuSearchObject": "Search Object",
 	"electronMenuMinimise": "Minimise",
 	"electronMenuZoomIn": "Zoom in",
@@ -328,8 +329,6 @@
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
-	"pageMainGraphNewObject": "New Object",
-
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
 	"pageMainStoreTypes": "Types",
@@ -351,7 +350,6 @@
 
 	"pageMainTypeOwner": "Owner",
 	"pageMainTypeRecommendedLayout": "Recommended layout",
-	"pageMainTypeNewObject": "New Object",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
@@ -458,7 +456,6 @@
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 
-	"blockDataviewNew": "New Object",
 	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
@@ -1177,7 +1174,6 @@
 	"menuDataviewViewEditDuplicateView": "Duplicate view",
 	"menuDataviewViewEditRemoveView": "Remove view",
 	"menuDataviewViewSettings": "View settings",
-	"menuDataviewViewDefaultType": "Default type",
 	"menuDataviewViewDefaultTemplate": "Default template",
 	"menuDataviewViewFilter": "Filter",
 	"menuDataviewViewSort": "Sort",
@@ -1267,6 +1263,7 @@
 
 	"menuQuickCaptureSearchObjectTypes": "Search object types...",
 	"menuQuickCaptureGroups": "Lists",
+	"menuQuickCaptureTooltipSearch": "Search types",
 
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",

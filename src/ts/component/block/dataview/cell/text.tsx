@@ -21,6 +21,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	range: any = null;
 	ref = null;
 	value: any = null;
+	isComposition = true;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -33,6 +34,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -120,6 +123,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 						onSelect={this.onSelect}
+						
 					/>
 				);
 			};
@@ -131,6 +135,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					onKeyUp={this.onKeyUp} 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionEnd={this.onCompositionEnd}
 				/>
 			);
 		} else {
@@ -348,18 +354,20 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		this.setValue(value);
 
-		keyboard.shortcut('enter, escape', e, () => {
-			e.preventDefault();
+		if (!this.isComposition) {
+			keyboard.shortcut('enter, escape', e, () => {
+				e.preventDefault();
 
-			if (onChange) {
-				onChange(value, () => {
-					menuStore.closeAll(Constant.menuIds.cell);
+				if (onChange) {
+					onChange(value, () => {
+						menuStore.closeAll(Constant.menuIds.cell);
 
-					this.range = null;
-					this.setEditing(false);
-				});
-			};
-		});
+						this.range = null;
+						this.setEditing(false);
+					});
+				};
+			});
+		};
 	};
 
 	onKeyUpDate (e: any, value: any) {
@@ -371,13 +379,15 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
+		if (!this.isComposition) {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
 
-			if (onChange) {
-				onChange(this.value, () => menuStore.close(MENU_ID));
-			};
-		});
+				if (onChange) {
+					onChange(this.value, () => menuStore.close(MENU_ID));
+				};
+			});
+		};
 	};
 
 	onFocus (e: any) {
@@ -441,6 +451,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const record = getRecord(recordId);
 
 		UtilObject.setDone(recordId, !record.done, () => this.forceUpdate());
+	};
+
+	onCompositionStart () {
+		this.isComposition = true;
+	};
+
+	onCompositionEnd () {
+		this.isComposition = false;
 	};
 
 });

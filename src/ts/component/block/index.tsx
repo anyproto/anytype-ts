@@ -69,7 +69,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, onMouseEnter, onMouseLeave } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -352,6 +352,8 @@ const Block = observer(class Block extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={css}
 				{...UtilCommon.dataProps({ id })}
+				onMouseEnter={onMouseEnter} 
+				onMouseLeave={onMouseLeave}
 			>
 				<div className="wrapMenu">
 					<Icon 

@@ -307,7 +307,6 @@ class DbStore {
 		const { spaceview } = blockStore;
 
 		let items = this.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
-
 		items = items.filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok));
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 

@@ -242,13 +242,12 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const regDomain = /^([a-z]+:\/\/)?([\w-]+\.)+[\w-]+(:\d+)?(\/[^?\s]*)?(\?[^#\s]*)?(#.*)?$/i;
-		const isLocal = filter.match(/^file:/);
-		const isUrl = UtilCommon.matchUrl(filter) || filter.match(new RegExp(regDomain)) || isLocal;
+		const isLocal = filter.match(/^file:/) || UtilCommon.matchLocalPath(filter);
+		const isUrl = UtilCommon.matchUrl(filter) || UtilCommon.matchDomain(filter);
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		const buttons: any[] = [
-			isUrl ? { id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link' } : null,
+			isUrl || isLocal ? { id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal } : null,
 			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
 			items.length ? { isDiv: true } : null,
 		].filter(it => it);
@@ -352,7 +351,12 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { filter, onChange } = data;
 
 		if (item.itemId == 'link') {
-			onChange(I.MarkType.Link, filter);
+			let url = filter;
+			if (item.isLocal && url && !url.match(/^file:/)) {
+				url = `file://${url}`;
+			};
+
+			onChange(I.MarkType.Link, url);
 		} else
 		if (item.itemId == 'add') {
 			const type = dbStore.getTypeById(commonStore.type);

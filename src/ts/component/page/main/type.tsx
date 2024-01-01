@@ -345,7 +345,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const options = [];
 
 		if (allowedObject) {
-			options.push({ id: 'object', name: translate('pageMainTypeNewObject') });
+			options.push({ id: 'object', name: translate('commonNewObject') });
 		};
 
 		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
@@ -396,7 +396,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			UtilObject.openPopup(message.details);
-			Storage.addLastUsedType(type.id);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',

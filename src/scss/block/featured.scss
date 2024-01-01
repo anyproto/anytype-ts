@@ -39,13 +39,12 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: middle; background: none; }
+			.more { vertical-align: middle; }
 			.label { display: inline; vertical-align: middle; }
 		}
 
 		.cellContent.c-select {
-			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
-			.tagItem:last-child { margin-right: 0px; }
+			.over { display: inline-flex; gap: 6px; align-items: center; }
 			.more { margin: 0px; vertical-align: middle; }
 		}
 

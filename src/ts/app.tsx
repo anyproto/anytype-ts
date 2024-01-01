@@ -110,6 +110,7 @@ if (!window.Electron.isPackaged) {
 			Docs,
 			Encode, 
 			Decode,
+			translate,
 		},
 	};
 };
