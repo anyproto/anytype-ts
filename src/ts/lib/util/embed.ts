@@ -9,6 +9,7 @@ DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
 DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
+DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -50,6 +51,19 @@ class UtilEmbed {
 
 	getGithubGistHtml (content: string): string {
 		return `<script src="${content}.js"></script>`;
+	};
+
+	getCodepenHtml (content: string): string {
+		const a = new URL(content);
+		const p = a.pathname.split('/');
+
+		if (!p.length) {
+			return '';
+		};
+
+		console.log(p);
+
+		return `<p class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="${p[3]}" data-user="${p[1]}"></p>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -129,6 +143,13 @@ class UtilEmbed {
 					const [ zoom, lat, lon ] = coords[1].split('/');
 					url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent([ lon, lat, lon, lat ].join(','))}&amp;layer=mapnik`;
 				};
+				break;
+			};
+
+			case I.EmbedProcessor.Codepen: {
+				const a = new URL(url);
+				console.log(a);
+				//https://codepen.io/uiswarup/pen/JjojQby
 				break;
 			};
 
@@ -222,6 +243,7 @@ class UtilEmbed {
 			I.EmbedProcessor.OpenStreetMap,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
