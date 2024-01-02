@@ -418,7 +418,7 @@ class UtilData {
 
 		const diff = needle.length - (to - from);
 		const text = UtilCommon.stringInsert(block.content.text, needle, from, to);
-		const marks = Mark.adjust(block.content.marks, 0, diff);
+		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
