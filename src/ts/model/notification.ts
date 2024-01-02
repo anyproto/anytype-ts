@@ -1,4 +1,4 @@
-import { I, UtilCommon, translate } from 'Lib';
+import { I, UtilCommon, UtilObject, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 import Errors from 'json/error.json';
 
@@ -31,7 +31,8 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode } = this.payload;
+		const { importType, errorCode, name, spaceId } = this.payload;
+		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 		const lang = errorCode ? 'error' : 'success';
 
 		this.title = translate(UtilCommon.toCamelCase(`notification-${this.type}-${lang}-title`));
@@ -41,6 +42,26 @@ class Notification implements I.Notification {
 			if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
 				this.title = translate('notificationNotionErrorNoObjectsTitle');
 				this.text = translate('notificationNotionErrorNoObjectsText');
+			};
+		};
+
+		switch (this.type) {
+			case I.NotificationType.Import: {
+				if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
+					this.title = translate('notificationNotionErrorNoObjectsTitle');
+					this.text = translate('notificationNotionErrorNoObjectsText');
+				};
+				break;
+			};
+
+			case I.NotificationType.Gallery: {
+				if (errorCode) {
+					this.text = UtilCommon.sprintf(this.text, name);
+				} else {
+					this.title = UtilCommon.sprintf(this.title, name);
+					this.text = UtilCommon.sprintf(this.text, space.name);
+				};
+				break;
 			};
 		};
 	};

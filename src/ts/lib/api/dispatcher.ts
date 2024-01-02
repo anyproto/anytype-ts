@@ -957,7 +957,7 @@ class Dispatcher {
 
 					if ((windowId == 1) && !window.Electron.isFocused()) {
 						new window.Notification(item.title, { body: item.text }).onclick = () => { 
-							window.focus();
+							window.Electron.focus();
 						};
 					};
 					break;
