@@ -94,7 +94,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const width = node.width();
 		const height = node.height();
 	
-		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
+		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
