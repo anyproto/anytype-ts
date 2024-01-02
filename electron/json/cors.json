@@ -46,7 +46,9 @@
 		"https://*.fbcdn.net",
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
-		"https://github.githubassets.com"
+		"https://github.githubassets.com",
+		"https://*.bilibili.com",
+		"https://s1.hdslb.com"
 	],
 
 	"font-src": [ 
@@ -99,7 +101,14 @@
 		"https://*.reddit.com",
 		"https://www.instagram.com",
 		"https://t.me",
-		"https://gist.github.com"
+		"https://gist.github.com",
+		"https://*.bilibili.com",
+		"https://*.bilibili.tv",
+		"https://*.bilivideo.cn:*",
+		"https://*.bilivideo.com",
+		"https://*.hdslb.com",
+		"wss://*.bilibili.com:*",
+		"wss://*.biliapi.net"
 	],
 
 	"script-src-elem": [
@@ -128,7 +137,8 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://oauth.tg.dev",
-		"https://gist.github.com"
+		"https://gist.github.com",
+		"https://*.hdslb.com"
 	],
 
 	"frame-src": [
@@ -147,7 +157,8 @@
 		"https://embed.reddit.com",
 		"https://www.facebook.com",
 		"https://www.instagram.com",
-		"https://t.me"
+		"https://t.me",
+		"https://*.bilibili.com"
 	],
 
 	"worker-src": [ 
