@@ -93,6 +93,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
 				{ id: I.EmbedProcessor.GithubGist, icon: 'githubGist', name: 'Github Gist' },
 				{ id: I.EmbedProcessor.Codepen, icon: 'codepen', name: 'Codepen' },
+				{ id: I.EmbedProcessor.Bilibili, icon: 'bilibili', name: 'Bilibili' },
 			]);
 		};
 

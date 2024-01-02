@@ -1,7 +1,7 @@
 import { I, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-const DOMAINS: any  = {};
+const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
@@ -10,13 +10,14 @@ DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
 DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
 DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
+DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`)
+		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : '';
 	};
 
@@ -61,14 +62,16 @@ class UtilEmbed {
 			return '';
 		};
 
-		console.log(p);
-
 		return `<p class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="${p[3]}" data-user="${p[1]}"></p>`;
+	};
+
+	getBilibiliHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
-		for (let i in DOMAINS) {
+		for (const i in DOMAINS) {
 			const reg = new RegExp(DOMAINS[i].join('|'), 'gi');
 			if (url.match(reg)) {
 				p = Number(i);
@@ -146,10 +149,23 @@ class UtilEmbed {
 				break;
 			};
 
-			case I.EmbedProcessor.Codepen: {
-				const a = new URL(url);
-				console.log(a);
-				//https://codepen.io/uiswarup/pen/JjojQby
+			case I.EmbedProcessor.Bilibili: {
+				const { pathname, searchParams } = new URL(url);
+				if (!pathname) {
+					break;
+				};
+
+				const a = pathname.split('/');
+				if (a.length < 3) {
+					return;
+				};
+
+				const bvid = pathname.split('/')[2];
+				const [ p = 1, t = 0 ] = [ searchParams.get('p'), searchParams.get('t') ];
+
+				if (bvid) {
+					url = `https://player.bilibili.com/player.html?bvid=${bvid}&p=${p}&t=${t}&high_quality=1&autoplay=0`;
+				};
 				break;
 			};
 
@@ -210,6 +226,7 @@ class UtilEmbed {
 		};
 	};
 
+	// Allow to use same origin in iframe sandbox
 	allowSameOrigin (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Youtube, 
@@ -223,16 +240,20 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
+	// Allow to use presentation mode in iframe sandbox
 	allowPresentation (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Youtube, 
 			I.EmbedProcessor.Vimeo,
+			I.EmbedProcessor.Bilibili
 		].includes(p);
 	};
 
+	// Allow url embedding
 	allowEmbedUrl (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Youtube, 
@@ -244,23 +265,28 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
+	// Pass block data as js code
 	allowJs (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
+	// Allow to use popup mode in iframe sandbox
 	allowPopup (p: I.EmbedProcessor) {
-		return [].includes(p);
+		return [ I.EmbedProcessor.Bilibili ].includes(p);
 	};
 
+	// Allow block resizing
 	allowBlockResize (p: I.EmbedProcessor) {
 		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(p);
 	};
 
+	// Use iframe height instead of fixed aspect ratio
 	allowIframeResize (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Twitter,
@@ -273,12 +299,14 @@ class UtilEmbed {
 		].includes(p);
 	};
 
+	// Render blocks on scroll
 	allowScroll (p: I.EmbedProcessor) {
 		return ![ 
 			I.EmbedProcessor.Latex,
 		].includes(p);
 	};
 
+	// Render blocks on mount
 	allowAutoRender (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Latex,
@@ -289,9 +317,11 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
+	// Insert html content before loading libs
 	insertBeforeLoad (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Twitter,
@@ -301,6 +331,7 @@ class UtilEmbed {
 		].includes(p);
 	};
 
+	// Use root height instead of iframe scroll height
 	useRootHeight (p: I.EmbedProcessor) {
 		return [ 
 			I.EmbedProcessor.Twitter,

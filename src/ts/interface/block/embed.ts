@@ -19,6 +19,7 @@ export enum EmbedProcessor {
 	Telegram		 = 14,
 	GithubGist		 = 15,
 	Codepen			 = 16,
+	Bilibili		 = 17,
 };
 
 export interface ContentEmbed {
