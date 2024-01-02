@@ -512,8 +512,6 @@ class App extends React.Component<object, State> {
 	};
 
 	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {
-		console.log(e, misspelledWord, dictionarySuggestions);
-
 		if (!misspelledWord) {
 			return;
 		};
