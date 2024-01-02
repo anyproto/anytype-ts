@@ -55,7 +55,7 @@ class UtilEmbed {
 
 	getBilibiliHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	}
+	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
