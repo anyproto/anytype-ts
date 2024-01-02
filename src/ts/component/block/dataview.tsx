@@ -659,6 +659,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				dbStore.recordsSet(subId, '', records);
 			};
 
+			if ([ I.ViewType.Graph ].includes(view.type)) {
+				const refGraph = this.refView?.refGraph;
+				if (refGraph) {
+					refGraph.addNewNode(object.id, '', null, () => {
+						refGraph.setRootId(object.id);
+					});
+				};
+			};
+
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				UtilObject.openPopup(object);
 			} else {

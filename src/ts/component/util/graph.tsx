@@ -393,7 +393,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						this.edges.push(this.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.send('onSetEdges', { edges: this.edges });
 					} else {
-						this.addNewNode(targetId, target => this.send('onAddNode', { target, sourceId }));
+						this.addNewNode(targetId, sourceId, null);
 					};
 				},
 				onSelect: (itemId: string) => {
@@ -449,12 +449,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 								UtilObject.openPopup({ id: message.targetId }, {
-									onClose: () => {
-										this.addNewNode(message.targetId, target => {
-											target = Object.assign(target, { x: data.x, y: data.y });
-											this.send('onAddNode', { target });
-										});
-									}
+									onClose: () => this.addNewNode(message.targetId, '', data),
 								});
 
 								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
@@ -499,12 +494,20 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		UtilObject.openAuto(this.nodes.find(d => d.id == id));
 	};
 
-	addNewNode (id: string, cb: (target: any) => void) {
+	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
 		UtilObject.getById(id, (object: any) => {
 			object = this.nodeMapper(object);
 
+			if (param) {
+				object = Object.assign(object, param);
+			};
+
 			this.nodes.push(object);
-			cb(object);
+			this.send('onAddNode', { target: object, sourceId });
+
+			if (callBack) {
+				callBack(object);
+			};
 		});
 	};
 
