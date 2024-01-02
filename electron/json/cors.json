@@ -102,7 +102,8 @@
 		"https://www.instagram.com",
 		"https://t.me",
 		"https://gist.github.com",
-		"https://codepen.io"
+		"https://codepen.io",
+		"https://www.facebook.com"
 	],
 
 	"script-src-elem": [
