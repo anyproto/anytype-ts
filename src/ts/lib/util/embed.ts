@@ -1,7 +1,7 @@
 import { I, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-const DOMAINS: any  = {};
+const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
@@ -9,13 +9,14 @@ DOMAINS[I.EmbedProcessor.Miro] = [ 'miro.com' ];
 DOMAINS[I.EmbedProcessor.Figma] = [ 'figma.com' ];
 DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
+DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`)
+		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : '';
 	};
 
@@ -52,9 +53,13 @@ class UtilEmbed {
 		return `<script src="${content}.js"></script>`;
 	};
 
+	getBilibiliHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	}
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
-		for (let i in DOMAINS) {
+		for (const i in DOMAINS) {
 			const reg = new RegExp(DOMAINS[i].join('|'), 'gi');
 			if (url.match(reg)) {
 				p = Number(i);
@@ -132,6 +137,16 @@ class UtilEmbed {
 				break;
 			};
 
+			case I.EmbedProcessor.Bilibili: {
+				const { pathname, searchParams } = new URL(url);
+				const bvid = pathname.split('/')[2];
+				const [ p = 1, t = 0 ] = [ searchParams.get('p'), searchParams.get('t') ];
+				if (bvid) {
+					url = `https://player.bilibili.com/player.html?bvid=${bvid}&p=${p}&t=${t}&high_quality=1&autoplay=0`;
+				};
+				break;
+			};
+
 		};
 
 		return url;
@@ -196,6 +211,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
@@ -203,6 +219,7 @@ class UtilEmbed {
 		return [ 
 			I.EmbedProcessor.Youtube, 
 			I.EmbedProcessor.Vimeo,
+			I.EmbedProcessor.Bilibili
 		].includes(p);
 	};
 
@@ -216,6 +233,7 @@ class UtilEmbed {
 			I.EmbedProcessor.OpenStreetMap,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
@@ -241,6 +259,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
@@ -259,6 +278,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Bilibili,
 		].includes(p);
 	};
 
