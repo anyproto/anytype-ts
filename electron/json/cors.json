@@ -46,7 +46,9 @@
 		"https://*.fbcdn.net",
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
-		"https://github.githubassets.com"
+		"https://github.githubassets.com",
+		"https://cpwebassets.codepen.io",
+		"https://cdnjs.cloudflare.com"
 	],
 
 	"font-src": [ 
@@ -99,7 +101,8 @@
 		"https://*.reddit.com",
 		"https://www.instagram.com",
 		"https://t.me",
-		"https://gist.github.com"
+		"https://gist.github.com",
+		"https://codepen.io"
 	],
 
 	"script-src-elem": [
@@ -128,7 +131,10 @@
 		"https://static.cdninstagram.com",
 		"https://telegram.org",
 		"https://oauth.tg.dev",
-		"https://gist.github.com"
+		"https://gist.github.com",
+		"https://cpwebassets.codepen.io",
+		"https://codepen.io",
+		"https://cdnjs.cloudflare.com"
 	],
 
 	"frame-src": [
@@ -147,7 +153,9 @@
 		"https://embed.reddit.com",
 		"https://www.facebook.com",
 		"https://www.instagram.com",
-		"https://t.me"
+		"https://t.me",
+		"https://codepen.io",
+		"https://cdpn.io"
 	],
 
 	"worker-src": [ 

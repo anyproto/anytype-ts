@@ -167,6 +167,11 @@ class UtilEmbed {
 				libs.push('https://www.instagram.com/embed.js');
 				break;
 			};
+
+			case I.EmbedProcessor.Codepen: {
+				libs.push('https://cpwebassets.codepen.io/assets/embed/ei.js');
+				break;
+			};
 		};
 
 		return { 
@@ -196,6 +201,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
@@ -241,6 +247,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
@@ -259,6 +266,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
@@ -267,6 +275,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Instagram,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
@@ -276,6 +285,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
+			I.EmbedProcessor.Codepen,
 		].includes(p);
 	};
 
