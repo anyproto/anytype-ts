@@ -459,6 +459,8 @@
 	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
+	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
 	"blockDataviewSearch": "Search",
 

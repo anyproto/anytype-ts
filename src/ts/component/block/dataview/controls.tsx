@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
@@ -49,6 +49,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
 		const cmd = keyboard.cmdSymbol();
+		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -163,7 +164,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 								<Button
 									id={`button-${block.id}-add-record`}
 									className="addRecord c28"
-									tooltip={translate('blockDataviewCreateNew')}
+									tooltip={tooltip}
 									text={translate('commonNew')}
 									onClick={e => onRecordAdd(e, -1)}
 								/>
