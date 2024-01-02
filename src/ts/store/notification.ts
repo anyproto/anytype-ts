@@ -15,7 +15,7 @@ class NotificationStore {
     };
 
     get list (): I.Notification[] {
-		return this.itemList;
+		return this.itemList || [];
 	};
 
 	set (list: I.Notification[]): void {
@@ -23,7 +23,7 @@ class NotificationStore {
 	};
 
 	add (item: I.Notification): void {
-		this.itemList.unshift(new M.Notification(item));
+		this.itemList.unshift(item);
 	};
 
 	update (item: I.Notification): void {

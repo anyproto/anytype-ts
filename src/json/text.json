@@ -1629,10 +1629,10 @@
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
-	"notificationGallerySuccessTitle": "\"%s\" was installed",
-	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
-	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryImportSuccessTitle": "\"%s\" was installed",
+	"notificationGalleryImportSuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryImportErrorTitle": "Something went wrong",
+	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"

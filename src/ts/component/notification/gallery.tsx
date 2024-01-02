@@ -10,11 +10,9 @@ const NotificationGallery = observer(class NotificationGallery extends React.Com
 		const { item, onButton } = this.props;
 		const { payload } = item;
 		const { errorCode, spaceId, name } = payload;
-		const lang = errorCode ? 'error' : 'success';
 		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 
-		let title = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-title`));
-		let text = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-text`));
+		let { title, text } = item;
 		let buttons = [];
 
 		if (errorCode) {
