@@ -88,9 +88,14 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { getView } = this.props;
+		const { getView, getSearchIds } = this.props;
 		const view = getView();
+		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+
+		if (searchIds) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		this.setLoading(true);
 
