@@ -244,7 +244,7 @@ class UtilEmbed {
 	};
 
 	allowPopup (p: I.EmbedProcessor) {
-		return [].includes(p);
+		return [ I.EmbedProcessor.Bilibili ].includes(p);
 	};
 
 	allowBlockResize (p: I.EmbedProcessor) {
