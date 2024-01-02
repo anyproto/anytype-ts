@@ -511,8 +511,10 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onSpellcheck (e: any, param: any) {
-		if (!param.misspelledWord) {
+	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {
+		console.log(e, misspelledWord, dictionarySuggestions);
+
+		if (!misspelledWord) {
 			return;
 		};
 
@@ -521,34 +523,60 @@ class App extends React.Component<object, State> {
 		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const { focused, range } = focus.state;
-		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it }));
-		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
-		const value = String(obj.get(0).innerText || '');
+		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
+		const element = $(document.elementFromPoint(x, y));
+		const isInput = element.is('input');
+		const isTextarea = element.is('textarea');
+		const isEditable = element.is('.editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		menuStore.open('select', {
+			className: 'fromBlock',
+			classNameWrap: 'fromPopup',
 			recalcRect: () => { 
-				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 			},
-			onOpen: () => { menuStore.close('blockContext'); },
-			onClose: () => { keyboard.disableContextOpen(false); },
+			onOpen: () => menuStore.close('blockContext'),
+			onClose: () => keyboard.disableContextOpen(false),
 			data: {
 				options,
 				onSelect: (e: any, item: any) => {
 					raf(() => {
-						focus.apply();
-
 						switch (item.id) {
 							default: {
-								blockStore.updateContent(rootId, focused, { text: value });
-								UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								if (focused) {
+									focus.apply();
+
+									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
+									const value = String(obj.get(0).innerText || '');
+
+									blockStore.updateContent(rootId, focused, { text: value });
+									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								} else 
+								if (isInput || isTextarea || isEditable) {
+									let value = '';
+									if (isInput || isTextarea) {
+										value = String(element.val());
+									} else 
+									if (isEditable) {
+										value = String((element.get(0) as any).innerText || '');
+									};
+;
+									value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
+
+									if (isInput || isTextarea) {
+										element.val(value);
+									} else 
+									if (isEditable) {
+										element.text(value);
+									};
+								};
 								break;
 							};
 
 							case 'add-to-dictionary': {
-								Renderer.send('spellcheckAdd', param.misspelledWord);
+								Renderer.send('spellcheckAdd', misspelledWord);
 								break;
 							};
 
