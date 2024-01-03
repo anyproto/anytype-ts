@@ -201,11 +201,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
 			const d = w - this.width;
 
+			if (d === 0) {
+				return;
+			};
+
 			if (d < 0) {
 				if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
 					sidebar.close();
 				} else {
-					sidebar.setWidth(w);
+					sidebar.set({ width: w, isClosed: false });
 				};
 			};
 
@@ -214,7 +218,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					sidebar.open(Constant.size.sidebar.width.min);
 				} else 
 				if (w > Constant.size.sidebar.width.close) {
-					sidebar.setWidth(w);
+					sidebar.set({ width: w, isClosed: false });
 				};
 			};
 

@@ -266,11 +266,8 @@ class Sidebar {
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
 		this.setStyle({ width: 0 });
-
-		this.removeAnimation(() => {
-			$(window).trigger('resize');
-			this.set({ isClosed: true });
-		});
+		this.set({ isClosed: true });
+		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	open (width?: number): void {
@@ -281,10 +278,8 @@ class Sidebar {
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
 		this.setStyle({ width });
-		this.removeAnimation(() => {
-			$(window).trigger('resize');
-			this.set({ isClosed: false });
-		});
+		this.set({ isClosed: false });
+		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	toggleOpenClose () {
@@ -432,10 +427,6 @@ class Sidebar {
 		this.save();
 		this.resizePage();
 		this.setStyle(this.data);
-	};
-
-	setWidth (width: number, force?: boolean): void {
-		this.set({ width }, force);
 	};
 
 	public setAnimating (v: boolean) {
