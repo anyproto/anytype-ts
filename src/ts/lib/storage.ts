@@ -18,16 +18,6 @@ class Storage {
 		this.storage = localStorage;
 	};
 
-	parse (s: string) {
-		if (!s) {
-			return;
-		};
-
-		let ret = '';
-		try { ret = JSON.parse(s); } catch (e) { /**/ };
-		return ret;
-	};
-
 	get (key: string): any {
 		const o = String(this.storage[key] || '');
 
@@ -218,7 +208,7 @@ class Storage {
 				Constant.typeKey.task,
 			];
 
-			for (let key of keys) {
+			for (const key of keys) {
 				const type = dbStore.getTypeByKey(key);
 				if (type) {
 					list.push(type.id);
@@ -267,6 +257,16 @@ class Storage {
 		];
 
 		keys.forEach(key => this.delete(key));
+	};
+
+	parse (s: string) {
+		if (!s) {
+			return;
+		};
+
+		let ret = '';
+		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		return ret;
 	};
 	
 };
