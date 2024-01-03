@@ -92,7 +92,7 @@
 			> .sides { gap: 0px 16px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; width: 100%; }
 			> .sides {
 				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; display: flex; flex-direction: row; align-items: center; }
-				> .side.left { flex-grow: 1; padding-left: 14px; }
+				> .side.left { flex-grow: 1; padding-left: 14px; max-width: 100%; }
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
 				> .side.right {
 					.filter { color: $colorTextPrimary; padding: 0px; }
