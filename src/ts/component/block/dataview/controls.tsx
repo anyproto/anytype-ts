@@ -264,7 +264,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
-		const node = $(this.node);
 
 		const param: any = { 
 			element,
@@ -272,12 +271,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			offsetY: 10,
 			noFlipY: true,
 			onOpen: () => {
-				node.addClass('active');
 				obj.addClass('active');
+				this.toggleHoverArea(true);
 			},
 			onClose: () => {
-				node.removeClass('active');
 				obj.removeClass('active');
+				this.toggleHoverArea(false);
 			},
 			onBack: (id) => {
 				menuStore.replace(id, component, { ...param, noAnimation: true });
@@ -417,11 +416,14 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup, isInline } = this.props;
+		const { block, isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
+		const obj = $(`#block-${block.id}`);
+		const hoverArea = obj.find('.hoverArea');
 
 		this.refFilter.setActive(true);
+		this.toggleHoverArea(true);
 
 		if (!isInline) {
 			this.refFilter.focus();
@@ -454,8 +456,17 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.refFilter.setActive(false);
 		this.refFilter.setValue('');
 		this.refFilter.blur();
+		this.toggleHoverArea(false);
 
 		this.props.onFilterChange('');
+	};
+
+	toggleHoverArea (v: boolean) {
+		const { block } = this.props;
+		const obj = $(`#block-${block.id}`);
+		const hoverArea = obj.find('.hoverArea');
+
+		v ? hoverArea.addClass('active') : hoverArea.removeClass('active');
 	};
 
 	resize () {

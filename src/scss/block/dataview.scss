@@ -253,11 +253,6 @@
 			.icon.plus:hover { background-color: transparent; }
 		}
 		.dataviewControls::after { display: none !important; }
-		.dataviewControls.active {
-			> .sides {
-				> .side.right { opacity: 1; }
-			}
-		}
 
 		.dataviewSelection {
 			.side.left { @include text-paragraph; }
