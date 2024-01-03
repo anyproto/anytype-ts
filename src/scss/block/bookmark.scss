@@ -28,8 +28,8 @@
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
-		.inner.vertical { display: flex; flex-direction: column-reverse; }
-		.inner.vertical {
+		.inner.isVertical { display: flex; flex-direction: column-reverse; }
+		.inner.isVertical {
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 0px; border-bottom: 0.05em solid $colorShapeSecondary; }
 		}
@@ -40,7 +40,7 @@
 			.side.right { width: 28%; min-height: 90px; display: block; position: relative; overflow: hidden; }
 		}
 
-		.inner.withImage.vertical {
+		.inner.withImage.isVertical {
 			.side.left { width: 100%; }
 			.side.right { width: 100%; }
 		}

@@ -28,7 +28,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { className } = this.props;
+		const { block, className } = this.props;
 		const cn = [ 'viewContent', className ];
 
 		return (
@@ -41,6 +41,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						key="graph"
 						{...this.props} 
 						ref={ref => this.refGraph = ref} 
+						id={block.id}
 						rootId="" 
 						data={this.data}
 					/>

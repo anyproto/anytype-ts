@@ -362,7 +362,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			UtilCommon.textStyle(name, { border: 0.4 });
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-			rect.width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
+			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
 	};
 

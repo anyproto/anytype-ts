@@ -69,7 +69,7 @@
 			.iconObject { position: absolute; left: 16px; top: 15px; background-color: $colorShapeTertiary; border-radius: 10px; }
 		}
 
-		.linkCard.c48.withIcon.withCover.vertical {
+		.linkCard.c48.withIcon.withCover.isVertical {
 			.sides { min-height: 62px; }
 			.side.left { padding: 24px 16px 16px 16px; z-index: 10; }
 			.iconObject { top: -32px; transform: none; }
@@ -81,18 +81,18 @@
 			.side.right { width: 28%; display: block; border: 1px solid $colorShapeSecondary; border-left: 0px; }
 		}
 
-		.linkCard.vertical { display: block; }
-		.linkCard.vertical {
+		.linkCard.isVertical { display: block; }
+		.linkCard.isVertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid $colorShapeSecondary; border-bottom: 0px; }
 		}
 
-		.linkCard.withCover.vertical {
+		.linkCard.withCover.isVertical {
 			.side.left { border-radius: 0px 0px 12px 12px !important; }
 		}
 
-		.linkCard.withCover.vertical.text { padding-top: 0px; }
+		.linkCard.withCover.isVertical.text { padding-top: 0px; }
 	}
 
 	.block.blockLink.text {

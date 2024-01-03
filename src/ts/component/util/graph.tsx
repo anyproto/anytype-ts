@@ -9,6 +9,7 @@ import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
+	id?: string;
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
@@ -39,19 +40,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	render () {
-		const { isPopup } = this.props;
-		const id = [ 'graph' ];
-
-		if (isPopup) {
-			id.push('popup');
-		};
-
 		return (
 			<div 
 				ref={node => this.node = node} 
 				id="graphWrapper"
 			>
-				<div id={id.join('-')} />
+				<div id={this.getId()} />
 			</div>
 		);
 	};
@@ -86,14 +80,27 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
 
+	getId (): string {
+		const { id, isPopup } = this.props;
+		const ret = [ 'graph' ];
+
+		if (id) {
+			ret.push(id);
+		};
+		if (isPopup) {
+			ret.push('popup');
+		};
+		return ret.join('-');
+	};
+
 	init () {
-		const { data, isPopup, rootId } = this.props;
+		const { data, rootId } = this.props;
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
-		const elementId = `#graph${isPopup ? '-popup' : ''}`;
+		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
-	
+
 		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);

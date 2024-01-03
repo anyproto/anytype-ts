@@ -1343,6 +1343,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
+			const { block, getWrapperWidth } = this.props;
+			const node = $(this.node);
+			const obj = $(`#block-${block.id}`);
+
+			node.width() <= getWrapperWidth() / 2 ? obj.addClass('isVertical') : obj.removeClass('isVertical');
+
 			if (this.refControls && this.refControls.resize) {
 				this.refControls.resize();
 			};

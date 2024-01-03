@@ -268,6 +268,12 @@
 		}
 	}
 
+	.block.blockDataview.isInline.isVertical {
+		.dataviewControls {
+			> .sides { flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+		}
+	}
+
 	.block.blockDataview.showMenu {
 		.dataviewHead {
 			.icon.source { opacity: 1; }
