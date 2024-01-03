@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
+import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, Storage, UtilCommon, Preview, translate } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate } from 'Lib';
 
-class Navigation extends React.Component {
+const Navigation = observer(class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
@@ -104,10 +104,7 @@ class Navigation extends React.Component {
 
 	rebind () {
 		this.unbind();
-
-		const win = $(window);
-		win.on('resize.navigation', () => this.resize());
-		win.on('sidebarResize.navigation', () => this.forceUpdate());
+		$(window).on('resize.navigation sidebarResize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -170,6 +167,6 @@ class Navigation extends React.Component {
 		};
 	};
 	
-};
+});
 
 export default Navigation;

@@ -154,6 +154,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				<DragProvider>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
+					<Navigation />
 
 					<Page {...this.props} />
 				</DragProvider>
@@ -214,7 +215,6 @@ class App extends React.Component<object, State> {
 						<PreviewIndex />
 						<Progress />
 						<Toast />
-						<Navigation />
 						<ListNotification key="listNotification" />
 
 						<Switch>
