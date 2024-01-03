@@ -237,6 +237,10 @@
 			}
 		}
 
+		.viewContent.viewGraph {
+			canvas { background: $colorBgPrimary; }
+		}
+
 		.content {
 			.scrollWrap { background: $colorBgPrimary; }
 		}

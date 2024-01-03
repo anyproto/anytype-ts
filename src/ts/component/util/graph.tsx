@@ -9,6 +9,7 @@ import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
+	id?: string;
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
@@ -39,19 +40,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	render () {
-		const { isPopup } = this.props;
-		const id = [ 'graph' ];
-
-		if (isPopup) {
-			id.push('popup');
-		};
-
 		return (
 			<div 
 				ref={node => this.node = node} 
 				id="graphWrapper"
 			>
-				<div id={id.join('-')} />
+				<div id={this.getId()} />
 			</div>
 		);
 	};
@@ -86,15 +80,28 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
 
+	getId (): string {
+		const { id, isPopup } = this.props;
+		const ret = [ 'graph' ];
+
+		if (id) {
+			ret.push(id);
+		};
+		if (isPopup) {
+			ret.push('popup');
+		};
+		return ret.join('-');
+	};
+
 	init () {
-		const { data, isPopup, rootId } = this.props;
+		const { data, rootId } = this.props;
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
-		const elementId = `#graph${isPopup ? '-popup' : ''}`;
+		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
-	
-		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
+
+		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
@@ -393,7 +400,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						this.edges.push(this.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.send('onSetEdges', { edges: this.edges });
 					} else {
-						this.addNewNode(targetId, target => this.send('onAddNode', { target, sourceId }));
+						this.addNewNode(targetId, sourceId, null);
 					};
 				},
 				onSelect: (itemId: string) => {
@@ -449,12 +456,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 								UtilObject.openPopup({ id: message.targetId }, {
-									onClose: () => {
-										this.addNewNode(message.targetId, target => {
-											target = Object.assign(target, { x: data.x, y: data.y });
-											this.send('onAddNode', { target });
-										});
-									}
+									onClose: () => this.addNewNode(message.targetId, '', data),
 								});
 
 								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
@@ -499,12 +501,20 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		UtilObject.openAuto(this.nodes.find(d => d.id == id));
 	};
 
-	addNewNode (id: string, cb: (target: any) => void) {
+	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
 		UtilObject.getById(id, (object: any) => {
 			object = this.nodeMapper(object);
 
+			if (param) {
+				object = Object.assign(object, param);
+			};
+
 			this.nodes.push(object);
-			cb(object);
+			this.send('onAddNode', { target: object, sourceId });
+
+			if (callBack) {
+				callBack(object);
+			};
 		});
 	};
 

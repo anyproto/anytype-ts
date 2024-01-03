@@ -62,10 +62,9 @@ class WindowManager {
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
-		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
-
-		Api.setSpellingLang(win, languages);
-		Api.setZoom(win, zoom);
+		win.webContents.on('context-menu', (e, param) => {
+			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
+		});
 
 		if (hideMenuBar) {
 			win.setMenuBarVisibility(false);

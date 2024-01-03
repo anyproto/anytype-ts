@@ -11,4 +11,8 @@
 			canvas.move { cursor: move; }
 		}
     }
+
+	.block.blockDataview.isInline {
+		.viewContent.viewGraph { height: 500px; }
+	}
 }

@@ -144,8 +144,6 @@ function createWindow () {
 			console.error('[Api] method not defined:', cmd);
 		};
 	});
-
-	
 };
 
 app.on('ready', () => {

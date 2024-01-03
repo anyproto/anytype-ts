@@ -659,6 +659,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				dbStore.recordsSet(subId, '', records);
 			};
 
+			if ([ I.ViewType.Graph ].includes(view.type)) {
+				const refGraph = this.refView?.refGraph;
+				if (refGraph) {
+					refGraph.addNewNode(object.id, '', null, () => {
+						refGraph.setRootId(object.id);
+					});
+				};
+			};
+
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				UtilObject.openPopup(object);
 			} else {
@@ -1334,6 +1343,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
+			const { block, getWrapperWidth } = this.props;
+
+			if (getWrapperWidth) {
+				const node = $(this.node);
+				const obj = $(`#block-${block.id}`);
+
+				node.width() <= getWrapperWidth() / 2 ? obj.addClass('isVertical') : obj.removeClass('isVertical');
+			};
+
 			if (this.refControls && this.refControls.resize) {
 				this.refControls.resize();
 			};
