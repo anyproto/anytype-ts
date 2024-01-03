@@ -136,11 +136,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onDragMove (e: React.MouseEvent) {
-		const win = $(window);
-
 		raf.cancel(this.frame);
-
 		this.frame = raf(() => {
+			const win = $(window);
+
 			sidebar.set({
 				x: e.pageX - this.ox - win.scrollLeft(),
 				y: e.pageY - this.oy - win.scrollTop(),

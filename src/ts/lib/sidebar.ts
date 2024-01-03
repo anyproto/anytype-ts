@@ -336,9 +336,7 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (UtilCommon.objectLength(set)) {
-			this.set(set, true);
-		};
+		this.set(set);
 	};
 
 	resizePage () {
@@ -472,6 +470,10 @@ class Sidebar {
 		};
 		if (snap == I.MenuDirection.Right) {
 			cn.push('right');
+		};
+
+		if (this.isDragging) {
+			cn.push('active');
 		};
 
 		if (isClosed) {
