@@ -179,7 +179,7 @@ class Sidebar {
 				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))
 			) {
 				css.top = y;
-				css.height = height;
+				css.height = this.limitHeight(height);
 				css.transform = `translate3d(0px,0px,0px)`;
 			} else {
 				css.top = 0;
