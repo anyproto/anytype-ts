@@ -6,7 +6,7 @@ import Errors from 'json/error.json';
 import Text from 'json/text.json';
 import DOMPurify from 'dompurify';
 
-const TEST_HTML = /<[a-z][\s\S]*>/i;
+const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
 
