@@ -247,8 +247,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { ww } = UtilCommon.getWindowDimensions();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
-		const items = this.getItems();
-		const cols = Math.min(items.length, Math.floor((ww - sw - 64) / ITEM_WIDTH));
+		const cols = Math.min(4, Math.floor((ww - sw - 64) / ITEM_WIDTH));
 
 		obj.css({ gridTemplateColumns: `repeat(${cols}, 1fr)` });
 	};
