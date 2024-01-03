@@ -6,6 +6,8 @@ import Errors from 'json/error.json';
 import Text from 'json/text.json';
 import DOMPurify from 'dompurify';
 
+const TEST_HTML = /<[a-z][\s\S]*>/i;
+
 class UtilCommon {
 
 	sprintf (...args: any[]) {
@@ -790,7 +792,13 @@ class UtilCommon {
 	};
 
 	sanitize (s: string): string {
-		return DOMPurify.sanitize(String(s || ''), { 
+		s = String(s || '');
+
+		if (!TEST_HTML.test(s)) {
+			return s;
+		};
+
+		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: [ 
 				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
 				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
