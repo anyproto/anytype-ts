@@ -962,6 +962,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
 				};
 
+				if (isNew) {
+					this.refControls?.refHead?.setEditing(true);
+				};
+
 				if (isInline) {
 					Onboarding.start(isCollection ? 'inlineCollection' : 'inlineSet', isPopup, false, {
 						parseParam: param => ({

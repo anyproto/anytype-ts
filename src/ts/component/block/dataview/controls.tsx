@@ -18,6 +18,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	refFilter = null;
+	refHead = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -62,7 +63,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		let head = null;
 		if (isInline) {
 			cn.push('isInline');
-			head = <Head {...this.props} />;
+			head = <Head ref={ref => this.refHead = ref} {...this.props} />;
 		};
 
 		const buttons = [
