@@ -123,3 +123,11 @@
 		.katex .base { margin-top: 2px; margin-bottom: 2px; }
 	}
 }
+
+html.isSelecting {
+	.blocks {
+		.block.blockEmbed {
+			.dimmer { display: block; }
+		}
+	}
+}
