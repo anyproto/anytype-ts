@@ -124,7 +124,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, true);
+		this.exit(win, '', true);
 	};
 
 	updateCancel (win) {
