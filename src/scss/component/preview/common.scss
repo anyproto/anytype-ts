@@ -12,7 +12,7 @@
 		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorShapeSecondary; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
-		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
+		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; cursor: default; }
 		.item:hover { color: $colorTextPrimary; }
 		.item:last-child { margin: 0px; }
 	}
