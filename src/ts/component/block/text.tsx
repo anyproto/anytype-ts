@@ -424,9 +424,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const object = detailStore.get(rootId, param, []);
 			
 			let tt = '';
-			if (object.isArchived) {
-				tt = translate('commonArchived');
-			};
 			if (object.isDeleted) {
 				tt = translate('commonDeletedObject');
 			};
@@ -436,7 +433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (!param || element.hasClass('disabled')) {
+			if (!param || object.isDeleted) {
 				return;
 			};
 
@@ -447,6 +444,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
+				object,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
