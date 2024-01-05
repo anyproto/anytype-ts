@@ -326,7 +326,7 @@ class UtilDate {
 	};
 
 	/**
-	 * Checks wether a given year is a leap year.
+	 * Checks whether a given year is a leap year.
 	 * @remarks A given year is considered a leap year, if it's divisible by 4, but not divisible by 100, unless also divisible by 400.
 	 * 
 	 * @param year - the year to check.
