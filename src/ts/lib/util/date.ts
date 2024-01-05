@@ -65,7 +65,7 @@ class UtilDate {
 		m = Math.min(12, Math.max(1, m));
 
 		let maxDays = Constant.monthDays[m];
-		if ((m == 2) && (y % 4 === 0)) {
+		if ((m == 2) && (this.isLeapYear(y))) {
 			maxDays = 29;
 		};
 		d = Math.min(maxDays, Math.max(1, d));
@@ -286,10 +286,10 @@ class UtilDate {
 
 	getCalendarMonth (value: number) {
 		const { m, y } = this.getCalendarDateParam(value);
-		const md = Constant.monthDays;
+		const md = {...Constant.monthDays};
 		
 		// February
-		if (y % 4 === 0) {
+		if (this.isLeapYear(y)) {
 			md[2] = 29;
 		};
 		
@@ -323,6 +323,26 @@ class UtilDate {
 		};
 
 		return days;
+	};
+
+	/**
+	 * Checks wether a given year is a leap year.
+	 * @remarks A given year is considered a leap year, if it's divisible by 4, but not divisible by 100, unless also divisible by 400.
+	 * 
+	 * @param year - the year to check.
+	 * @returns True, if the given year is considered a leap year.
+	 */
+	isLeapYear (year: number): boolean {
+		if (year % 4 !== 0) {
+			return false;
+		}
+		if (year % 400 === 0) {
+			return true;
+		}
+		if (year % 100 === 0) {
+			return false;
+		}
+		return true;
 	};
 
 };
