@@ -198,46 +198,37 @@ class Storage {
 		this.set('survey', obj, true);
 	};
 
-	initLastUsedTypes () {
-		const list = this.getLastUsedTypes();
-
-		if (!list.length) {
-			const keys = [
-				Constant.typeKey.note,
-				Constant.typeKey.page,
-				Constant.typeKey.task,
-			];
-
-			for (const key of keys) {
-				const type = dbStore.getTypeByKey(key);
-				if (type) {
-					list.push(type.id);
-				};
-			};
-
-			if (list.length) {
-				this.set('lastUsedTypes', list, true);
-			};
-		};
-	};
-
-	addLastUsedType (id: string) {
-		let list = this.getLastUsedTypes();
+	addPinnedType (id: string) {
+		const list = this.getPinnedTypes();
 
 		if (!id) {
 			return list;
 		};
 
 		list.unshift(id);
-		list = list.slice(0, 50);
-		list = [ ...new Set(list) ];
-
-		this.set('lastUsedTypes', list, true);
+		this.setPinnedTypes(list);
 		return list;
 	};
 
-	getLastUsedTypes () {
-		return this.checkArray(this.get('lastUsedTypes') || []);
+	removePinnedType (id: string) {
+		const list = this.getPinnedTypes();
+
+		if (!id) {
+			return list;
+		};
+
+		this.setPinnedTypes(list.filter(it => it != id));
+		return list;
+	};
+
+	setPinnedTypes (list: string[]) {
+		list = list.slice(0, 50);
+
+		this.set('pinnedTypes', this.checkArray([ ...new Set(list) ]), true);
+	};
+
+	getPinnedTypes () {
+		return this.checkArray(this.get('pinnedTypes') || []);
 	};
 
 	checkArray (a) {

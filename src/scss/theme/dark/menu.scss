@@ -449,7 +449,7 @@
 	/* MenuQuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }
-	.menuQuickCapture.expanded { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.menuQuickCapture.isExpanded { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 	.menuQuickCapture {
 		.item { background-color: $colorShapeTertiary; }
 		.item.hover:before { background: $colorShapeHighlightMedium; }

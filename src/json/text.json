@@ -1265,7 +1265,11 @@
 
 	"menuQuickCaptureSearchObjectTypes": "Search object types...",
 	"menuQuickCaptureGroups": "Lists",
+	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureOpenType": "Open type",
+	"menuQuickCapturePin": "Pin on top",
+	"menuQuickCaptureUnpin": "Unpin",
 
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
