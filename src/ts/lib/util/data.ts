@@ -251,6 +251,7 @@ class UtilData {
 						};
 					});
 
+					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {

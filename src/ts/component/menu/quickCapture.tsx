@@ -237,10 +237,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 		} else {
 			const pinned = Storage.getPinnedTypes();
-			const pinnedItems = pinned.map(id => dbStore.getTypeById(id)).filter(it => it)
+			const pinnedItems = pinned.map(id => dbStore.getTypeById(id)).filter(it => it);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinned.includes(it.id));
-			items = items.slice(0, 5 - pinned.length);
+			items = items.slice(0, 5 - pinnedItems.length);
 			items.push(dbStore.getSetType());
 			items.push(dbStore.getCollectionType());
 			items = [].concat(pinnedItems, items);

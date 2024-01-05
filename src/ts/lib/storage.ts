@@ -7,7 +7,7 @@ const SPACE_KEYS = [
 	'lastOpened',
 	'scroll',
 	'defaultType',
-	'lastUsedTypes',
+	'pinnedTypes',
 ];
 
 class Storage {
@@ -196,6 +196,29 @@ class Storage {
 		const obj = this.get('survey') || {};
 		obj[type] = Object.assign(obj[type] || {}, param);
 		this.set('survey', obj, true);
+	};
+
+	initPinnedTypes () {
+		const list = this.getPinnedTypes();
+
+		if (list.length) {
+			return;
+		};
+
+		const keys = [
+			Constant.typeKey.note,
+			Constant.typeKey.page,
+			Constant.typeKey.task,
+		];
+
+		for (const key of keys) {
+			const type = dbStore.getTypeByKey(key);
+			if (type) {
+				list.push(type.id);
+			};
+		};
+
+		this.setPinnedTypes(list);
 	};
 
 	addPinnedType (id: string) {
