@@ -399,8 +399,9 @@ class UtilMenu {
 				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
-				} else 
-				if (c.aliases && c.aliases.length) {
+				};
+
+				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
 							c._sortWeight_ = getWeight(alias);
@@ -408,12 +409,14 @@ class UtilMenu {
 							break;
 						};
 					};
-				} else
-				if (c.name && c.name.match(regC)) {
+				};
+
+				if (!ret && c.name && c.name.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.name);
-				} else 
-				if (c.description && c.description.match(regC)) {
+				};
+
+				if (!ret && c.description && c.description.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.description);
 				};
