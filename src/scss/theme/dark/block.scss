@@ -256,9 +256,9 @@
     /* BlockText */
 
     .block.blockText {
-        kbd { background: $colorShapeHighlightMedium; color: $colorSystemAccent100; }
-		lnk, obj { border-color: $colorTextSecondary; }
-		lnk:hover, obj:hover { border-color: $colorTextPrimary; }
+        markupcode { background: $colorShapeHighlightMedium; color: $colorSystemAccent100; }
+		markuplink, markupobject { border-color: $colorTextSecondary; }
+		markuplink:hover, markupobject:hover { border-color: $colorTextPrimary; }
     }
 
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
