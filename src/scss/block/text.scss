@@ -6,15 +6,15 @@
 		.placeholder { display: none; }
 		.disabled { color: $colorControlActive; opacity: 1 !important; }
 
+		/* Markup */
+
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
 		}
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
-		markupcode { 
-			display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 2px 4px;
-		}
+		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 1px 4px; }
 
 		markupemoji { display: inline; user-select: all; }
 		markupemoji * { user-select: all; }

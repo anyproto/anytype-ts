@@ -2,10 +2,14 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-class MenuQuickCapture extends React.Component<I.Menu> {
+interface State {
+	isExpanded: boolean;
+};
+
+class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	n = 0;
 	node: any = null;
@@ -16,8 +20,9 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	timeoutFilter = 0;
 	items: any[] = [];
 	offset = 0;
-
-	isExpanded: boolean = false;
+	state = {
+		isExpanded: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -26,6 +31,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	render () {
+		const { isExpanded } = this.state;
 		const items = this.getItems();
 		const { type } = commonStore;
 
@@ -60,6 +66,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
+					onContextMenu={e => this.onContextMneu(e, item)}
 					onMouseEnter={e => this.onOver(e, item)}
 					onMouseLeave={e => this.onOut(e, item)}
 				>
@@ -71,7 +78,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 
 		return (
 			<div ref={node => this.node = node} className="wrap">
-				{this.isExpanded ? (
+				{isExpanded ? (
 					<Filter
 						ref={ref => this.refFilter = ref}
 						icon="search"
@@ -169,47 +176,56 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	getSections () {
+		const { isExpanded } = this.state;
 		const { space, type } = commonStore;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space)).map((it, i) => {
-			if (this.isExpanded && (it.id == type)) {
+			if (isExpanded && (it.id == type)) {
 				it.tooltip = translate('commonDefaultType');
 			};
 			return it;
 		});
-		const librarySources = library.map(it => it.sourceObject);
-		const groupKeys = [ Constant.typeKey.set, Constant.typeKey.collection ];
 
-		let sections: any[] = [
-			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: library.filter(it => groupKeys.includes(it.uniqueKey)) },
-			{ id: 'objects', name: translate('commonObjects'), children: library.filter(it => !groupKeys.includes(it.uniqueKey)) },
-		];
+		const librarySources = library.map(it => it.sourceObject);
+		const pinned = Storage.getPinnedTypes().map(id => dbStore.getTypeById(id)).filter(it => it);
+		const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout));
+		const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout));
 
 		if (this.filter) {
-			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
-
-			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-			]);
-
-			sections[1].children.push({ 
+			objects.push({ 
 				id: 'add', 
 				name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 			});
 		};
 
-		sections = sections.filter((section: any) => {
+		const sections: any[] = [
+			{ id: 'groups', name: translate('menuQuickCaptureGroups'), children: groups },
+			{ id: 'objects', name: translate('commonObjects'), children: objects },
+		];
+
+		if (pinned.length) {
+			sections.unshift({ id: 'pinned', name: translate('menuQuickCapturePinned'), children: pinned });
+		};
+
+		if (this.filter) {
+			sections.push({ 
+				id: 'store', name: translate('commonAnytypeLibrary'), 
+				children: items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id)),
+			});
+		};
+
+		return sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
-
-		return sections;
 	};
 
 	getItems () {
+		const { isExpanded } = this.state;
+
 		let items: any[] = [];
 
-		if (this.isExpanded) {
+		if (isExpanded) {
 			const sections = this.getSections();
 
 			sections.forEach((section: any, i: number) => {
@@ -220,7 +236,15 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 				items = items.concat(section.children);
 			});
 		} else {
-			items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 });
+			const pinned = Storage.getPinnedTypes();
+			const pinnedItems = pinned.map(id => dbStore.getTypeById(id)).filter(it => it);
+
+			items = UtilData.getObjectTypesForNewObject().filter(it => !pinned.includes(it.id));
+			items = items.slice(0, 5 - pinnedItems.length);
+			items.push(dbStore.getSetType());
+			items.push(dbStore.getCollectionType());
+			items = [].concat(pinnedItems, items);
+			items = items.filter(it => it);
 			
 			items = items.map((it, i) => {
 				it.tooltip = translate('commonNewObject');
@@ -245,6 +269,7 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e: any) {
+		const { isExpanded } = this.state;
 		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
 		const length = items.length;
@@ -272,12 +297,8 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 			ret = true;
 		});
 
-		if (!this.isExpanded) {
+		if (!isExpanded) {
 			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
-				if (this.isExpanded) {
-					return;
-				};
-
 				e.preventDefault();
 
 				const n = Number(pressed);
@@ -335,13 +356,72 @@ class MenuQuickCapture extends React.Component<I.Menu> {
 		close();
 	};
 
+	onContextMneu (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (!this.state.isExpanded) {
+			return;
+		};
+
+		const { getId, param } = this.props;
+		const { className, classNameWrap } = param;
+		const isPinned = Storage.getPinnedTypes().includes(item.id);
+		const canDefault = !UtilObject.getSetLayouts().includes(item.recommendedLayout);
+
+		const options = [
+			{ id: 'open', name: translate('menuQuickCaptureOpenType') },
+			{ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) },
+			canDefault ? { id: 'default', name: translate('commonSetDefault') } : null,
+			{ isDiv: true },
+			{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${item.id}`,
+			vertical: I.MenuDirection.Top,
+			offsetY: -4,
+			className,
+			classNameWrap,
+			data: {
+				options,
+				onSelect: (event: any, element: any) => {
+					switch (element.id) {
+
+						case 'open': {
+							UtilObject.openAuto(item);
+							break;
+						};
+
+						case 'pin': {
+							isPinned ? Storage.removePinnedType(item.id) : Storage.addPinnedType(item.id);
+							this.forceUpdate();
+							break;
+						};
+
+						case 'default': {
+							commonStore.typeSet(item.uniqueKey);
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+							this.forceUpdate();
+							break;
+						};
+
+						case 'remove': {
+							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+								Action.uninstall(item, true);
+							};
+							break;
+						};
+
+					};
+				}
+			}
+		});
+	};
+
 	onExpand () {
-		const { getId } = this.props;
-
-		$(`#${getId()}`).addClass('expanded');
-
-		this.isExpanded = true;
-		this.forceUpdate();
+		$(`#${this.props.getId()}`).addClass('isExpanded');
+		this.setState({ isExpanded: true });
 	};
 
 	onOver (e: any, item: any) {
