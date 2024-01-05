@@ -107,7 +107,7 @@ class UtilMenu {
 	getBlockObject () {
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
 		let i = 0;
@@ -365,7 +365,7 @@ class UtilMenu {
 		const getWeight = (s: string) => {
 			let w = 0;
 			if (s.toLowerCase() == f.toLowerCase()) {
-				w = 10000;
+				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
@@ -400,6 +400,15 @@ class UtilMenu {
 				if (c.skipFilter) {
 					ret = true;
 				} else 
+				if (c.aliases && c.aliases.length) {
+					for (const alias of c.aliases) {
+						if (alias.match(regC)) {
+							c._sortWeight_ = getWeight(alias);
+							ret = true;
+							break;
+						};
+					};
+				} else
 				if (c.name && c.name.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.name);
@@ -407,15 +416,8 @@ class UtilMenu {
 				if (c.description && c.description.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.description);
-				} else
-				if (c.aliases && c.aliases.length) {
-					for (const alias of c.aliases) {
-						if (alias.match(regC)) {
-							ret = true;
-							break;
-						};
-					};
 				};
+				
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
