@@ -30,15 +30,6 @@
 			display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; 
 			background-size: 40px; background-position: center; background-repeat: no-repeat;
 		}
-		.preview.embedLatex { background-image: url('~img/icon/block/embed/latex.svg'); }
-		.preview.embedMermaid { background-image: url('~img/icon/block/embed/mermaid.svg'); }
-		.preview.embedYoutube { background-image: url('~img/icon/block/embed/youtube.svg'); }
-		.preview.embedVimeo { background-image: url('~img/icon/block/embed/vimeo.svg'); }
-		.preview.embedGoogleMaps { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
-		.preview.embedSoundcloud { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
-		.preview.embedChart { background-image: url('~img/icon/block/embed/chart.svg'); }
-		.preview.embedMiro { background-image: url('~img/icon/block/embed/miro.svg'); }
-		.preview.embedFigma { background-image: url('~img/icon/block/embed/figma.svg'); }
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
@@ -64,6 +55,11 @@
 		}
 
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
+
+		.excalidraw { position: static; }
+		.excalidraw {
+			.scroll-back-to-content { position: absolute; }
+		}
 	}
 
 	.block.blockEmbed.isLatex .preview { background-image: url('~img/icon/block/embed/latex.svg'); }
