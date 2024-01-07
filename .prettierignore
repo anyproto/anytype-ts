@@ -45,3 +45,7 @@ dist/extension/js/main.js
 dist/extension/js/main.js.map
 dist/anytypeHelper
 dist/anytypeHelper.exe
+dist/css/theme/dark/prism.css
+dist/workers/lib
+dist/workers/pdf.min.js
+dist/workers/onboard.js
