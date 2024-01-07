@@ -27,7 +27,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	
 	_isMounted = false;
 	text = '';
-	timeout = 0;
+	timeoutChange = 0;
 	node = null;
 	refEditable = null;
 	state = {
@@ -178,6 +178,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.unbind();
 
 		$(`#d${this.getContainerId()}`).remove();
+
+		window.clearTimeout(this.timeoutChange);
 	};
 
 	init () {
@@ -211,7 +213,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				e.stopPropagation();
 
 				menuStore.close('blockLatex');
-				window.clearTimeout(this.timeout);
 
 				this.placeholderCheck();
 				this.save(() => { 
@@ -410,8 +411,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	onBlurInput () {
 		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
-
 		this.save();
 	};
 
@@ -702,8 +701,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						initialData={data} 
 						width={w} 
 						height={w}
-						onChange={(elements, state) => {
-							console.log("Elements :", elements, "State : ", state);
+						onChange={(elements) => {
+							window.clearTimeout(this.timeoutChange);
+							this.timeoutChange = window.setTimeout(() => {
+								this.text = JSON.stringify(elements);
+								this.setValue(this.text);
+								this.save();
+							}, 50);
 						}}
 					/>
 				);
