@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
@@ -7,44 +9,48 @@ import { popupStore } from 'Store';
 interface Props extends I.HeaderComponent {
 	text: string;
 	layout: I.ObjectLayout;
-};
+}
 
-const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<Props, {}> {
+const HeaderMainEmpty = observer(
+	class HeaderMainEmpty extends React.Component<Props, {}> {
+		constructor(props: Props) {
+			super(props);
 
-	constructor (props: Props) {
-		super(props);
-		
-		this.onOpen = this.onOpen.bind(this);
-	};
+			this.onOpen = this.onOpen.bind(this);
+		}
 
-	render () {
-		const cmd = keyboard.cmdSymbol();
+		render() {
+			const cmd = keyboard.cmdSymbol();
 
-		return (
-			<React.Fragment>
-				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
-				</div>
+			return (
+				<React.Fragment>
+					<div className="side left">
+						<Icon
+							className="toggle"
+							tooltip={translate('sidebarToggle')}
+							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+							tooltipY={I.MenuDirection.Bottom}
+							onClick={() => sidebar.toggleExpandCollapse()}
+						/>
+						<Icon
+							className="expand"
+							tooltip={translate('commonOpenObject')}
+							onClick={this.onOpen}
+						/>
+					</div>
 
-				<div className="side center" />
-				<div className="side right" />
-			</React.Fragment>
-		);
-	};
+					<div className="side center" />
+					<div className="side right" />
+				</React.Fragment>
+			);
+		}
 
-	onOpen () {
-		popupStore.closeAll(null, () => {
-			UtilObject.openRoute({ layout: this.props.layout });
-		});
-	};
-
-});
+		onOpen() {
+			popupStore.closeAll(null, () => {
+				UtilObject.openRoute({ layout: this.props.layout });
+			});
+		}
+	}
+);
 
 export default HeaderMainEmpty;

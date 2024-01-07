@@ -1,3 +1,5 @@
+/** @format */
+
 $(() => {
 	var param = getParam();
 	var closeButton = $('#close');
@@ -16,10 +18,10 @@ $(() => {
 	versionButton.on('click', e => {
 		e.preventDefault();
 
-		var handler = (e) => {
+		var handler = e => {
 			e.preventDefault();
 			e.clipboardData.setData('text/plain', versionText);
-			
+
 			document.removeEventListener('copy', handler, true);
 		};
 
@@ -29,15 +31,17 @@ $(() => {
 		copyIcon.addClass('active');
 
 		clearTimeout(timeout);
-		setTimeout(() => { copyIcon.removeClass('active'); }, 2000);
+		setTimeout(() => {
+			copyIcon.removeClass('active');
+		}, 2000);
 	});
 
 	$.ajax({
 		url: `../../dist/lib/json/lang/${param.lang}.json`,
 		method: 'GET',
 		contentType: 'application/json',
-		success: (data) => {
-			versionText = [ data.electronAboutVersion, param.version ].join(' ');
+		success: data => {
+			versionText = [data.electronAboutVersion, param.version].join(' ');
 			closeButton.text(data.commonClose);
 
 			$('#description').text(data.electronAboutDescription);
@@ -45,5 +49,4 @@ $(() => {
 			$('#version').text(versionText);
 		},
 	});
-
 });

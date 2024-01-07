@@ -1,95 +1,229 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
-		.titleWrapper { padding: 8px 16px 0px; }
-		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
-		.inner { user-select: none; }
+		width: 276px;
+	}
+	.menu.menuDataviewCalendar {
+		.titleWrapper {
+			padding: 8px 16px 0px;
+		}
+		.content {
+			padding: 10px 0px;
+			overflow: visible;
+			max-height: unset;
+		}
+		.inner {
+			user-select: none;
+		}
 
-		.head { padding: 0px 16px; }
-		.head, .foot {
-			.sides { display: flex; }
-			.side { width: 50%; }
-			.side.right { text-align: right; }
+		.head {
+			padding: 0px 16px;
+		}
+		.head,
+		.foot {
+			.sides {
+				display: flex;
+			}
+			.side {
+				width: 50%;
+			}
+			.side.right {
+				text-align: right;
+			}
 		}
 		.head {
-			.date { color: $colorControlActive; margin-bottom: 6px; }
-			.sides { margin-bottom: 10px; }
+			.date {
+				color: $colorControlActive;
+				margin-bottom: 6px;
+			}
+			.sides {
+				margin-bottom: 10px;
+			}
 			.side.left {
-				.select { margin-left: -4px; }
+				.select {
+					margin-left: -4px;
+				}
 			}
-			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
 			.side.right {
-				.btn { width: 20px; height: 20px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); }
-				.btn.prevMonth { transform: rotateZ(180deg); }
+				display: flex;
+				gap: 0 8px;
+				justify-content: flex-end;
+			}
+			.side.right {
+				.btn {
+					width: 20px;
+					height: 20px;
+					background-size: 20px;
+					background-image: url('~img/arrow/calendarNav.svg');
+				}
+				.btn.prevMonth {
+					transform: rotateZ(180deg);
+				}
 			}
 		}
 
-		.body { padding: 0px 16px; }
-		.foot { padding: 0px 16px; }
+		.body {
+			padding: 0px 16px;
+		}
 		.foot {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn.clear { color: $colorTextSecondary; }
-			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorSystemAccent100; }
+			padding: 0px 16px;
+		}
+		.foot {
+			.btn {
+				display: inline-block;
+				vertical-align: top;
+				margin-right: 16px;
+				transition: $transitionAllCommon;
+			}
+			.btn.clear {
+				color: $colorTextSecondary;
+			}
+			.btn:last-child {
+				margin: 0px;
+			}
+			.btn:hover {
+				color: $colorSystemAccent100;
+			}
 		}
 
-		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; 
+		.day {
+			display: inline-block;
+			vertical-align: top;
+			width: 28px;
+			height: 28px;
+			line-height: 28px;
+			text-align: center;
+			margin-right: 8px;
 			border-radius: 4px;
 		}
-		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
-
-		.day.th { color: $colorControlActive; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorControlActive !important; }
-		
-		.day.active { color: $colorSystemAccent100; }
-		.day.other { color: $colorControlActive; }
-		
-		.line { margin: 8px 16px 11px 16px; }
-		
-		.input { 
-			height: 28px; border-radius: 4px; border: solid 1px $colorShapePrimary; margin-bottom: 10px; padding: 0px 10px;
-			background: none; width: 100px; vertical-align: top;
+		.day:nth-child(7n + 7) {
+			margin: 0px;
+		}
+		.day:hover {
+			background: $colorSystemAccent25;
+			color: $colorSystemAccent100 !important;
 		}
 
-		.select { border: 0px; height: 24px; vertical-align: top; @include text-paragraph; padding: 2px 4px; }
+		.day.th {
+			color: $colorControlActive;
+			cursor: default;
+		}
+		.day.th:hover {
+			background: none;
+			font-weight: 400;
+			color: $colorControlActive !important;
+		}
+
+		.day.active {
+			color: $colorSystemAccent100;
+		}
+		.day.other {
+			color: $colorControlActive;
+		}
+
+		.line {
+			margin: 8px 16px 11px 16px;
+		}
+
+		.input {
+			height: 28px;
+			border-radius: 4px;
+			border: solid 1px $colorShapePrimary;
+			margin-bottom: 10px;
+			padding: 0px 10px;
+			background: none;
+			width: 100px;
+			vertical-align: top;
+		}
+
 		.select {
-			.icon.arrow { display: none; }
+			border: 0px;
+			height: 24px;
+			vertical-align: top;
+			@include text-paragraph;
+			padding: 2px 4px;
+		}
+		.select {
+			.icon.arrow {
+				display: none;
+			}
 		}
 	}
 
 	.menu.menuDataviewCalendarDay {
-		.content { padding: 8px 4px 4px 4px; max-height: unset; overflow: visible; }
-		
-		.day { display: flex; flex-direction: column; }
+		.content {
+			padding: 8px 4px 4px 4px;
+			max-height: unset;
+			overflow: visible;
+		}
+
 		.day {
-			.number { @include text-paragraph; text-align: right; position: relative; z-index: 1; padding: 0px 8px; flex-shrink: 0; }
+			display: flex;
+			flex-direction: column;
+		}
+		.day {
 			.number {
-				.inner { display: inline-block; }
+				@include text-paragraph;
+				text-align: right;
+				position: relative;
+				z-index: 1;
+				padding: 0px 8px;
+				flex-shrink: 0;
+			}
+			.number {
+				.inner {
+					display: inline-block;
+				}
 			}
 		}
 		.day.active {
-			.number { padding: 0px; color: $colorTextInversion; }
 			.number {
-				.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
+				padding: 0px;
+				color: $colorTextInversion;
+			}
+			.number {
+				.inner {
+					background-color: $colorSystemAccent100;
+					border-radius: 12px;
+					padding: 0px 7px;
+					align-self: flex-end;
+				}
 			}
 		}
 		.day.other {
-			.number { color: $colorTextSecondary; }
+			.number {
+				color: $colorTextSecondary;
+			}
 		}
 
-		.items { overflow-y: auto; flex-grow: 1; height: calc(100% - 24px); max-height: 250px; }
 		.items {
-			.item { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-overflow-nw; margin: 0px 0px 2px 0px; 
-				padding: 0px 8px; border-radius: 4px;
+			overflow-y: auto;
+			flex-grow: 1;
+			height: calc(100% - 24px);
+			max-height: 250px;
+		}
+		.items {
+			.item {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 0px 4px;
+				@include text-overflow-nw;
+				margin: 0px 0px 2px 0px;
+				padding: 0px 8px;
+				border-radius: 4px;
 			}
 			.item {
-				.iconObject { flex-shrink: 0; }
-				.name { @include text-overflow-nw; @include text-small; }
+				.iconObject {
+					flex-shrink: 0;
+				}
+				.name {
+					@include text-overflow-nw;
+					@include text-small;
+				}
 			}
 		}
 	}

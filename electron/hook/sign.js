@@ -1,9 +1,11 @@
+/** @format */
+
 const Util = require('./util.js');
 
 exports.default = async function (context) {
 	if (process.env.ELECTRON_SKIP_NOTARIZE) {
 		return;
-	};
+	}
 
 	const cmd = [
 		`AzureSignTool.exe sign`,

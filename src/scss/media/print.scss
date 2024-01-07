@@ -1,116 +1,226 @@
+/** @format */
+
 html.printMedia {
-	@page { size: A4; margin: 0px 1.5cm; }
-	@page:first { margin-top: 0px; }
+	@page {
+		size: A4;
+		margin: 0px 1.5cm;
+	}
+	@page:first {
+		margin-top: 0px;
+	}
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; }
+	body {
+		margin: 0px;
+		-webkit-print-color-adjust: exact;
+	}
 
-	#navigationPanel { display: none !important; }
-	#selection * { user-select: text; }
-	#sidebar { display: none; }
-	.sidebarDummy { display: none; }
-	.progress { display: none; }
-	.toast { display: none !important; }
-	.overPopup { overflow: visible !important; }
+	#navigationPanel {
+		display: none !important;
+	}
+	#selection * {
+		user-select: text;
+	}
+	#sidebar {
+		display: none;
+	}
+	.sidebarDummy {
+		display: none;
+	}
+	.progress {
+		display: none;
+	}
+	.toast {
+		display: none !important;
+	}
+	.overPopup {
+		overflow: visible !important;
+	}
 
-	#drag, #previewLink, .menu, 
-	.controlButtons, 
-	.header, .footer 
-	{ display: none !important; }
+	#drag,
+	#previewLink,
+	.menu,
+	.controlButtons,
+	.header,
+	.footer {
+		display: none !important;
+	}
 
-	#page.isFull { width: 100% !important; }
+	#page.isFull {
+		width: 100% !important;
+	}
 
-	.focusable.isFocused { background: none !important; }
-	.focusable.isFocused::before { display: none; }
+	.focusable.isFocused {
+		background: none !important;
+	}
+	.focusable.isFocused::before {
+		display: none;
+	}
 
 	.popups {
-		.popup { position: relative; }
-		.dimmer { display: none !important; }
-	}
-	
-	#editorWrapper { width: 100% !important; padding-left: 48px; }
-	#editorWrapper {
-		#editorSize { display: none !important; }
+		.popup {
+			position: relative;
+		}
+		.dimmer {
+			display: none !important;
+		}
 	}
 
-	.pageMainEdit #bodyWrapper { padding: 0px !important; }
-	.pageMainType, .pageMainRelation {
-		.wrapper { padding: 2cm 0px; }
+	#editorWrapper {
+		width: 100% !important;
+		padding-left: 48px;
+	}
+	#editorWrapper {
+		#editorSize {
+			display: none !important;
+		}
+	}
+
+	.pageMainEdit #bodyWrapper {
+		padding: 0px !important;
+	}
+	.pageMainType,
+	.pageMainRelation {
+		.wrapper {
+			padding: 2cm 0px;
+		}
 		.wrapper {
 			.head {
-				.side.center { margin: 0px; }
-				.side.right { display: none; }
-			}	
+				.side.center {
+					margin: 0px;
+				}
+				.side.right {
+					display: none;
+				}
+			}
 		}
 	}
 
 	.popupPage {
-		.innerWrap { 
-			width: 100% !important; height: auto !important; margin: 0px !important; left: 0px; top: 0px; 
-			border-radius: 0px; box-shadow: 0px 0px; overflow: visible; position: static;
+		.innerWrap {
+			width: 100% !important;
+			height: auto !important;
+			margin: 0px !important;
+			left: 0px;
+			top: 0px;
+			border-radius: 0px;
+			box-shadow: 0px 0px;
+			overflow: visible;
+			position: static;
 		}
 	}
 
-	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; border-radius: 0px; }
+	.block.blockCover {
+		left: 0px !important;
+		top: 0px !important;
+		width: 100%;
+		border-radius: 0px;
+	}
 
-	.blocks { width: 100%; }
 	.blocks {
-		#button-block-add { display: none; }
+		width: 100%;
+	}
+	.blocks {
+		#button-block-add {
+			display: none;
+		}
 
 		.block {
-			.icon.dnd { display: none; }
-		}
-
-		.block.blockMedia {
-			.icon.play { display: none; }
-		}
-
-		.block.blockText {
-			.placeholder { display: none !important; }
-		}
-		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
-
-		.block.blockDataview.isInline {
-			.content {
-				.scroll { width: 100% !important; margin: 0px !important; padding-left: 0px !important; }
+			.icon.dnd {
+				display: none;
 			}
 		}
 
-		.block.blockTable { width: 100% !important; margin: 0px !important; }
+		.block.blockMedia {
+			.icon.play {
+				display: none;
+			}
+		}
+
+		.block.blockText {
+			.placeholder {
+				display: none !important;
+			}
+		}
+		.block.blockText.textCode
+			> .wrapContent
+			> .selectable
+			> .dropTarget
+			#value {
+			white-space: pre-wrap;
+			overflow-x: visible;
+		}
+
+		.block.blockDataview.isInline {
+			.content {
+				.scroll {
+					width: 100% !important;
+					margin: 0px !important;
+					padding-left: 0px !important;
+				}
+			}
+		}
+
 		.block.blockTable {
-			.scrollWrap > .inner { width: 100% !important; }
-			.row { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; }
+			width: 100% !important;
+			margin: 0px !important;
+		}
+		.block.blockTable {
+			.scrollWrap > .inner {
+				width: 100% !important;
+			}
+			.row {
+				grid-template-columns: repeat(
+					auto-fill,
+					minmax(150px, 1fr)
+				) !important;
+			}
 		}
 
 		.block.blockDataview {
 			.viewContent.viewGallery {
-				.card { box-shadow: 0px 0px; }
+				.card {
+					box-shadow: 0px 0px;
+				}
 			}
 		}
 
 		.block.blockLink.card {
-			.linkCard { box-shadow: 0px 0px; }
+			.linkCard {
+				box-shadow: 0px 0px;
+			}
 		}
 
 		.block.blockBookmark {
-			.inner { box-shadow: 0px 0px; }
+			.inner {
+				box-shadow: 0px 0px;
+			}
 		}
 
 		.block.blockRelation {
-			.info { width: auto; }
+			.info {
+				width: auto;
+			}
 		}
 	}
 
 	.editor {
-		.blockLast { display: none; }
+		.blockLast {
+			display: none;
+		}
 	}
 }
 
 html.printMedia.withPopup {
-	.page.isFull { display: none !important; }
+	.page.isFull {
+		display: none !important;
+	}
 }
 
 @media (max-width: 500px) {
 	html.printMedia.save {
-		#editorWrapper { width: 100% !important; margin: 0px 16px; }
+		#editorWrapper {
+			width: 100% !important;
+			margin: 0px 16px;
+		}
 	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 import { I, Relation, UtilCommon, UtilFile, UtilSmile } from 'Lib';
 import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
@@ -8,79 +10,78 @@ const bgColor = {
 };
 
 class UtilGraph {
-
-	imageSrc (d: any) {
+	imageSrc(d: any) {
 		let src = '';
 
 		switch (d.layout) {
 			case I.ObjectLayout.Relation: {
-				src = `img/icon/relation/big/${Relation.typeName(d.relationFormat)}.svg`;
+				src = `img/icon/relation/big/${Relation.typeName(
+					d.relationFormat
+				)}.svg`;
 				break;
-			};
+			}
 
 			case I.ObjectLayout.Task: {
 				src = `img/icon/graph/task.svg`;
 				break;
-			};
+			}
 
 			case I.ObjectLayout.File: {
 				src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				break;
-			};
+			}
 
 			case I.ObjectLayout.Image: {
 				if (d.id) {
 					src = commonStore.imageUrl(d.id, 100);
 				} else {
 					src = `img/icon/file/${UtilFile.icon(d)}.svg`;
-				};
+				}
 				break;
-			};
-				
+			}
+
 			case I.ObjectLayout.Human: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
-				};
+				}
 				break;
-			};
+			}
 
 			case I.ObjectLayout.Note: {
 				break;
-			};
+			}
 
 			case I.ObjectLayout.Bookmark: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
-				};
+				}
 				break;
-			};
-				
+			}
+
 			default: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
-				} else
-				if (d.iconEmoji) {
+				} else if (d.iconEmoji) {
 					const code = UtilSmile.getCode(d.iconEmoji);
 					if (code) {
 						src = UtilSmile.srcFromColons(code);
-					};
+					}
 					src = src.replace(/^.\//, '');
-				} else
-				if (d.iconOption) {
+				} else if (d.iconOption) {
 					src = this.gradientIcon(d.iconOption, true);
-				};
+				}
 				break;
-			};
-		};
+			}
+		}
 
 		return src;
-	};
+	}
 
-	gradientIcon (iconOption: number, small?: boolean) {
+	gradientIcon(iconOption: number, small?: boolean) {
 		const option: any = Colors.gradientIcons.options[iconOption - 1];
 		if (!option) {
 			return;
-		};
+		}
 
 		const theme = commonStore.getThemeClass();
 		const { from, to } = option.colors;
@@ -103,7 +104,7 @@ class UtilGraph {
 		if (small) {
 			ctx.fillStyle = bgColor[theme];
 			ctx.fillRect(0, 0, w, w);
-		};
+		}
 
 		ctx.fillStyle = grd;
 		ctx.beginPath();
@@ -111,8 +112,7 @@ class UtilGraph {
 		ctx.fill();
 
 		return canvas.toDataURL();
-	};
-
-};
+	}
+}
 
 export default new UtilGraph();

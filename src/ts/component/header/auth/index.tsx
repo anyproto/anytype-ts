@@ -1,16 +1,17 @@
+/** @format */
+
 import * as React from 'react';
 import { Icon } from 'Component';
 import { popupStore } from 'Store';
 
 class HeaderAuthIndex extends React.Component {
-	
-	constructor (props: any) {
+	constructor(props: any) {
 		super(props);
 
 		this.onSettings = this.onSettings.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		return (
 			<React.Fragment>
 				<div className="side left" />
@@ -20,13 +21,11 @@ class HeaderAuthIndex extends React.Component {
 				</div>
 			</React.Fragment>
 		);
-	};
+	}
 
-	onSettings () {
-		popupStore.open('settingsOnboarding', { 
-		});
-	};
-	
-};
+	onSettings() {
+		popupStore.open('settingsOnboarding', {});
+	}
+}
 
 export default HeaderAuthIndex;

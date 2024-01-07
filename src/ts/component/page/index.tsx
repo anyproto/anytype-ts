@@ -1,8 +1,24 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
+import {
+	I,
+	Onboarding,
+	UtilCommon,
+	Storage,
+	analytics,
+	keyboard,
+	sidebar,
+	Survey,
+	Preview,
+	Highlight,
+	UtilObject,
+	translate,
+	UtilRouter,
+} from 'Lib';
 import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -32,336 +48,370 @@ import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 
 const Components = {
-	'index/index':			 PageAuthSelect,
+	'index/index': PageAuthSelect,
 
-	'auth/select':			 PageAuthSelect,
-	'auth/login':			 PageAuthLogin,
-	'auth/pin-check':		 PageAuthPinCheck,
-	'auth/setup':			 PageAuthSetup,
-	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/onboard':			 PageAuthOnboard,
-	'auth/deleted':			 PageAuthDeleted,
+	'auth/select': PageAuthSelect,
+	'auth/login': PageAuthLogin,
+	'auth/pin-check': PageAuthPinCheck,
+	'auth/setup': PageAuthSetup,
+	'auth/account-select': PageAuthAccountSelect,
+	'auth/onboard': PageAuthOnboard,
+	'auth/deleted': PageAuthDeleted,
 
-	'main/blank':			 PageMainBlank,		
-	'main/empty':			 PageMainEmpty,		
-	'main/edit':			 PageMainEdit,
-	'main/history':			 PageMainHistory,
-	'main/set':				 PageMainSet,
-	'main/type':			 PageMainType,
-	'main/media':			 PageMainMedia,
-	'main/relation':		 PageMainRelation,
-	'main/store':			 PageMainStore,
-	'main/graph':			 PageMainGraph,
-	'main/navigation':		 PageMainNavigation,
-	'main/create':			 PageMainCreate,
-	'main/archive':			 PageMainArchive,
-	'main/block':			 PageMainBlock,
-	'main/import':			 PageMainImport,
+	'main/blank': PageMainBlank,
+	'main/empty': PageMainEmpty,
+	'main/edit': PageMainEdit,
+	'main/history': PageMainHistory,
+	'main/set': PageMainSet,
+	'main/type': PageMainType,
+	'main/media': PageMainMedia,
+	'main/relation': PageMainRelation,
+	'main/store': PageMainStore,
+	'main/graph': PageMainGraph,
+	'main/navigation': PageMainNavigation,
+	'main/create': PageMainCreate,
+	'main/archive': PageMainArchive,
+	'main/block': PageMainBlock,
+	'main/import': PageMainImport,
 };
 
-const Page = observer(class Page extends React.Component<I.PageComponent> {
+const Page = observer(
+	class Page extends React.Component<I.PageComponent> {
+		_isMounted = false;
+		refChild: any = null;
+		frame = 0;
 
-	_isMounted = false;
-	refChild: any = null;
-	frame = 0;
+		render() {
+			const { isPopup } = this.props;
+			const { config, theme } = commonStore;
+			const { account } = authStore;
+			const { page, action } = this.getMatchParams();
+			const path = [page, action].join('/');
+			const showSidebar = this.isMain();
 
-	render () {
-		const { isPopup } = this.props;
-		const { config, theme } = commonStore;
-		const { account } = authStore;
-		const { page, action } = this.getMatchParams();
-		const path = [ page, action ].join('/');
-		const showSidebar = this.isMain();
+			if (account) {
+				const { status } = account || {};
+				const { type } = status || {};
+			}
 
-		if (account) {
-			const { status } = account || {};
-			const { type } = status || {};
-		};
+			const Component = Components[path];
+			if (!Component) {
+				return (
+					<Frame>
+						<Label
+							text={UtilCommon.sprintf(
+								translate('pageMainIndexComponentNotFound'),
+								path
+							)}
+						/>
+					</Frame>
+				);
+			}
 
-		const Component = Components[path];
-		if (!Component) {
-			return (
-				<Frame>
-					<Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
-				</Frame>
-			);
-		};
-
-		const wrap = (
-			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={ref => this.refChild = ref} {...this.props} />
-			</div>
-		);
-
-		let content = null;
-		if (isPopup || !showSidebar) {
-			content = wrap;
-		} else {
-			content = (
-				<div className="pageFlex">
-					<Sidebar key="sidebar" {...this.props} />
-					<div id="sidebarDummyLeft" className="sidebarDummy left" />
-					{wrap}
-					<div id="sidebarDummyRight" className="sidebarDummy right" />
+			const wrap = (
+				<div id="page" className={'page ' + this.getClass('page')}>
+					<Component
+						ref={ref => (this.refChild = ref)}
+						{...this.props}
+					/>
 				</div>
 			);
-		};
-		return content;
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-		this.init();
-	};
 
-	componentDidUpdate () {
-		this.init();
-	};
-	
-	componentWillUnmount () {
-		const { isPopup } = this.props;
+			let content = null;
+			if (isPopup || !showSidebar) {
+				content = wrap;
+			} else {
+				content = (
+					<div className="pageFlex">
+						<Sidebar key="sidebar" {...this.props} />
+						<div
+							id="sidebarDummyLeft"
+							className="sidebarDummy left"
+						/>
+						{wrap}
+						<div
+							id="sidebarDummyRight"
+							className="sidebarDummy right"
+						/>
+					</div>
+				);
+			}
+			return content;
+		}
 
-		this._isMounted = false;
-		this.unbind();
+		componentDidMount() {
+			this._isMounted = true;
+			this.init();
+		}
 
-		if (!isPopup) {
-			popupStore.closeAll();
-		};
+		componentDidUpdate() {
+			this.init();
+		}
 
-		menuStore.closeAll();
-		Preview.tooltipHide(true);
-		Preview.previewHide(true);
-	};
+		componentWillUnmount() {
+			const { isPopup } = this.props;
 
-	getMatch () {
-		const { match, matchPopup, isPopup } = this.props;
-		return (isPopup ? matchPopup : match) || { params: {} };
-	};
+			this._isMounted = false;
+			this.unbind();
 
-	getMatchParams () {
-		const match = this.getMatch();
-		const page = String(match?.params?.page || 'index');
-		const action = String(match?.params?.action || 'index');
-		const id = String(match?.params?.id || '');
-		const spaceId = String(match?.params?.spaceId || '');
+			if (!isPopup) {
+				popupStore.closeAll();
+			}
 
-		return { page, action, id, spaceId };
-	};
+			menuStore.closeAll();
+			Preview.tooltipHide(true);
+			Preview.previewHide(true);
+		}
 
-	getRootId () {
-		const { id } = this.getMatchParams();
-		const home = UtilObject.getSpaceDashboard();
+		getMatch() {
+			const { match, matchPopup, isPopup } = this.props;
+			return (isPopup ? matchPopup : match) || { params: {} };
+		}
 
-		return id || home?.id;
-	};
+		getMatchParams() {
+			const match = this.getMatch();
+			const page = String(match?.params?.page || 'index');
+			const action = String(match?.params?.action || 'index');
+			const id = String(match?.params?.id || '');
+			const spaceId = String(match?.params?.spaceId || '');
 
-	init () {
-		const { account } = authStore;
-		const { isPopup } = this.props;
-		const match = this.getMatch();
-		const { page, action } = this.getMatchParams();
-		const isIndex = this.isIndex();
-		const isAuth = this.isAuth();
-		const isMain = this.isMain();
-		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.get('pin');
-		const win = $(window);
-		const path = [ page, action ].join('/');
-		const Component = Components[path];
-		const routeParam = { replace: true };
+			return { page, action, id, spaceId };
+		}
 
-		Preview.tooltipHide(true);
-		Preview.previewHide(true);
+		getRootId() {
+			const { id } = this.getMatchParams();
+			const home = UtilObject.getSpaceDashboard();
 
-		if (!Component) {
-			return;
-		};
+			return id || home?.id;
+		}
 
-		if (isMain && !account) {
-			UtilRouter.go('/', routeParam);
-			return;
-		};
+		init() {
+			const { account } = authStore;
+			const { isPopup } = this.props;
+			const match = this.getMatch();
+			const { page, action } = this.getMatchParams();
+			const isIndex = this.isIndex();
+			const isAuth = this.isAuth();
+			const isMain = this.isMain();
+			const isPinCheck = this.isAuthPinCheck();
+			const pin = Storage.get('pin');
+			const win = $(window);
+			const path = [page, action].join('/');
+			const Component = Components[path];
+			const routeParam = { replace: true };
 
-		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilRouter.go('/auth/pin-check', routeParam);
-			return;
-		};
+			Preview.tooltipHide(true);
+			Preview.previewHide(true);
 
-		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilRouter.go('/auth/deleted', routeParam);
-			return;
-		};
-
-		this.setBodyClass();
-		this.resize();
-		this.event();
-		this.unbind();
-
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
-
-		if (!isPopup) {
-			keyboard.setMatch(match);
-		};
-
-		this.dashboardOnboardingCheck();
-		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
-		Highlight.showAll();
-		
-		if (!isPopup) {
-			window.setTimeout(() => {
-				if (!isMain) {
-					return;
-				};
-
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Object);
-				//Survey.check(I.SurveyType.Pmf);
-			}, Constant.delay.popup);
-		};
-	};
-
-	dashboardOnboardingCheck () {
-		const home = UtilObject.getSpaceDashboard();
-		const { id } = this.getMatchParams();
-		const isPopup = keyboard.isPopup();
-
-		if (!home || !id || (home.id != id) || isPopup) {
-			return;
-		};
-
-		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
-			return;
-		};
-
-		if (!Onboarding.isCompleted('dashboard')) {
-			Onboarding.start('dashboard', false, false);
-		} else
-		if (!Onboarding.isCompleted('navigation') && !$('#navigationPanel').hasClass('hide')) {
-			Onboarding.start('navigation', false, false);
-		};
-	};
-
-	unbind () {
-		const { isPopup } = this.props;
-		$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
-	};
-	
-	event () {
-		const { page, action, id } = this.getMatchParams();
-		const params = { page, action, id: undefined };
-		const isMainType = this.isMainType();
-		const isMainRelation = this.isMainRelation();
-
-		if (isMainType || isMainRelation) {
-			params.id = id;
-		};
-
-		analytics.event('page', { params });
-	};
-
-	isIndex () {
-		const { page } = this.getMatchParams();
-		return page == 'index';
-	};
-
-	isAuth () {
-		const { page } = this.getMatchParams();
-		return page == 'auth';
-	};
-
-	isAuthPinCheck () {
-		const { action } = this.getMatchParams();
-		return this.isAuth() && (action == 'pin-check');
-	};
-
-	isMain () {
-		const { page } = this.getMatchParams();
-		return page == 'main';
-	};
-
-	isMainIndex () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'index');
-	};
-
-	isMainType () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'type');
-	};
-
-	isMainRelation () {
-		const { action } = this.getMatchParams();
-		return this.isMain() && (action == 'relation');
-	};
-
-	getClass (prefix: string) {
-		const { isPopup } = this.props;
-		const { page } = this.getMatchParams();
-		
-		return [ 
-			UtilCommon.toCamelCase([ prefix, page ].join('-')),
-			this.getId(prefix),
-			(isPopup ? 'isPopup' : 'isFull'),
-		].join(' ');
-	};
-	
-	setBodyClass () {
-		const { isPopup } = this.props;
-	
-		if (isPopup) {
-			return;
-		};
-
-		const { config } = commonStore;
-		const platform = UtilCommon.getPlatform();
-		const cn = [ 
-			this.getClass('body'), 
-			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
-		];
-		const obj = $('html');
-
-		if (config.debug.ui) {
-			cn.push('debug');
-		};
-
-		obj.attr({ class: cn.join(' ') });
-		commonStore.setThemeClass();
-	};
-
-	getId (prefix: string) {
-		const match = this.getMatch();
-		const page = match.params.page || 'index';
-		const action = match.params.action || 'index';
-
-		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
-	};
-
-	storageGet () {
-		return Storage.get(this.getId('page')) || {};
-	};
-
-	storageSet (data) {
-		Storage.set(this.getId('page'), data);
-	};
-	
-	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
-			if (!this._isMounted) {
+			if (!Component) {
 				return;
-			};
+			}
 
-			if (this.refChild && this.refChild.resize) {
-				this.refChild.resize();			
-			};
+			if (isMain && !account) {
+				UtilRouter.go('/', routeParam);
+				return;
+			}
 
-			sidebar.resizePage();
-		});
-	};
-	
-});
+			if (
+				pin &&
+				!keyboard.isPinChecked &&
+				!isPinCheck &&
+				!isAuth &&
+				!isIndex
+			) {
+				UtilRouter.go('/auth/pin-check', routeParam);
+				return;
+			}
+
+			if (
+				isMain &&
+				(authStore.accountIsDeleted() || authStore.accountIsPending())
+			) {
+				UtilRouter.go('/auth/deleted', routeParam);
+				return;
+			}
+
+			this.setBodyClass();
+			this.resize();
+			this.event();
+			this.unbind();
+
+			win.on('resize.page' + (isPopup ? 'Popup' : ''), () =>
+				this.resize()
+			);
+
+			if (!isPopup) {
+				keyboard.setMatch(match);
+			}
+
+			this.dashboardOnboardingCheck();
+			Onboarding.start(
+				UtilCommon.toCamelCase([page, action].join('-')),
+				isPopup
+			);
+			Highlight.showAll();
+
+			if (!isPopup) {
+				window.setTimeout(() => {
+					if (!isMain) {
+						return;
+					}
+
+					Survey.check(I.SurveyType.Register);
+					Survey.check(I.SurveyType.Object);
+					//Survey.check(I.SurveyType.Pmf);
+				}, Constant.delay.popup);
+			}
+		}
+
+		dashboardOnboardingCheck() {
+			const home = UtilObject.getSpaceDashboard();
+			const { id } = this.getMatchParams();
+			const isPopup = keyboard.isPopup();
+
+			if (!home || !id || home.id != id || isPopup) {
+				return;
+			}
+
+			if (
+				[I.HomePredefinedId.Graph, I.HomePredefinedId.Last].includes(
+					home.id
+				)
+			) {
+				return;
+			}
+
+			if (!Onboarding.isCompleted('dashboard')) {
+				Onboarding.start('dashboard', false, false);
+			} else if (
+				!Onboarding.isCompleted('navigation') &&
+				!$('#navigationPanel').hasClass('hide')
+			) {
+				Onboarding.start('navigation', false, false);
+			}
+		}
+
+		unbind() {
+			const { isPopup } = this.props;
+			$(window).off('resize.page' + (isPopup ? 'Popup' : ''));
+		}
+
+		event() {
+			const { page, action, id } = this.getMatchParams();
+			const params = { page, action, id: undefined };
+			const isMainType = this.isMainType();
+			const isMainRelation = this.isMainRelation();
+
+			if (isMainType || isMainRelation) {
+				params.id = id;
+			}
+
+			analytics.event('page', { params });
+		}
+
+		isIndex() {
+			const { page } = this.getMatchParams();
+			return page == 'index';
+		}
+
+		isAuth() {
+			const { page } = this.getMatchParams();
+			return page == 'auth';
+		}
+
+		isAuthPinCheck() {
+			const { action } = this.getMatchParams();
+			return this.isAuth() && action == 'pin-check';
+		}
+
+		isMain() {
+			const { page } = this.getMatchParams();
+			return page == 'main';
+		}
+
+		isMainIndex() {
+			const { action } = this.getMatchParams();
+			return this.isMain() && action == 'index';
+		}
+
+		isMainType() {
+			const { action } = this.getMatchParams();
+			return this.isMain() && action == 'type';
+		}
+
+		isMainRelation() {
+			const { action } = this.getMatchParams();
+			return this.isMain() && action == 'relation';
+		}
+
+		getClass(prefix: string) {
+			const { isPopup } = this.props;
+			const { page } = this.getMatchParams();
+
+			return [
+				UtilCommon.toCamelCase([prefix, page].join('-')),
+				this.getId(prefix),
+				isPopup ? 'isPopup' : 'isFull',
+			].join(' ');
+		}
+
+		setBodyClass() {
+			const { isPopup } = this.props;
+
+			if (isPopup) {
+				return;
+			}
+
+			const { config } = commonStore;
+			const platform = UtilCommon.getPlatform();
+			const cn = [
+				this.getClass('body'),
+				UtilCommon.toCamelCase(['platform', platform].join('-')),
+			];
+			const obj = $('html');
+
+			if (config.debug.ui) {
+				cn.push('debug');
+			}
+
+			obj.attr({ class: cn.join(' ') });
+			commonStore.setThemeClass();
+		}
+
+		getId(prefix: string) {
+			const match = this.getMatch();
+			const page = match.params.page || 'index';
+			const action = match.params.action || 'index';
+
+			return UtilCommon.toCamelCase([prefix, page, action].join('-'));
+		}
+
+		storageGet() {
+			return Storage.get(this.getId('page')) || {};
+		}
+
+		storageSet(data) {
+			Storage.set(this.getId('page'), data);
+		}
+
+		resize() {
+			if (this.frame) {
+				raf.cancel(this.frame);
+			}
+
+			this.frame = raf(() => {
+				if (!this._isMounted) {
+					return;
+				}
+
+				if (this.refChild && this.refChild.resize) {
+					this.refChild.resize();
+				}
+
+				sidebar.resizePage();
+			});
+		}
+	}
+);
 
 export default Page;

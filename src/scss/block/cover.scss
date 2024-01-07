@@ -1,84 +1,234 @@
-@import "~scss/_vars";
+/** @format */
 
-.block.blockCover { position: absolute; left: 16px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
+@import '~scss/_vars';
+
 .block.blockCover {
-	.wrapMenu { display: none; }
-	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
-	
-	.loaderWrapper { 
-		position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; 
-		border-radius: 0px !important; display: none; pointer-events: none;
+	position: absolute;
+	left: 16px;
+	height: 312px;
+	width: calc(100% - 32px);
+	border-radius: 4px;
+	overflow: hidden;
+}
+.block.blockCover {
+	.wrapMenu {
+		display: none;
+	}
+	.wrapContent {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+	}
+
+	.loaderWrapper {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		background: $colorBgLoader;
+		z-index: 10;
+		border-radius: 0px !important;
+		display: none;
+		pointer-events: none;
 	}
 	.loaderWrapper {
-		.loader { 
-			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorBgPrimary; border-left: 2px solid $colorTextPrimary; 
+		.loader {
+			left: auto;
+			top: 16px;
+			right: 16px;
+			margin: 0px;
+			border-color: $colorBgPrimary;
+			border-left: 2px solid $colorTextPrimary;
 		}
 	}
 
-	.wrap { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; overflow: hidden; }
-	.wrap.isDragging, .wrap.isEditing { cursor: grab; }
-	
-	.wrap.isEditing {
-		.controlButtons { opacity: 1; }
-	} 
-	.wrap.isDragging {
-		.elements { opacity: 0.5; }
+	.wrap {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
 	}
-	
-	.wrap.isDraggingOver { opacity: 0.5; }
-	
-	.cover { position: absolute; left: 0px; top: 0px; transform-origin: 0px 0px; }
-	img.cover { background-color: transparent; height: auto; }
+	.wrap.isDragging,
+	.wrap.isEditing {
+		cursor: grab;
+	}
 
-	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
-	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
-	
-	.author { @include text-small; color: $colorBgPrimary; position: absolute; right: 16px; bottom: 16px; z-index: 3; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);  }
-	.author a { color: $colorBgPrimary; }
+	.wrap.isEditing {
+		.controlButtons {
+			opacity: 1;
+		}
+	}
+	.wrap.isDragging {
+		.elements {
+			opacity: 0.5;
+		}
+	}
+
+	.wrap.isDraggingOver {
+		opacity: 0.5;
+	}
+
+	.cover {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		transform-origin: 0px 0px;
+	}
+	img.cover {
+		background-color: transparent;
+		height: auto;
+	}
 
 	.elements {
-		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
+		width: 704px;
+		height: 100%;
+		position: absolute;
+		left: 50%;
+		margin-left: -352px;
+		bottom: 0px;
+		z-index: 1;
+		opacity: 0;
+	}
+	.elements:hover,
+	.elements.hover,
+	.elements.active {
+		opacity: 1;
+	}
+
+	.author {
+		@include text-small;
+		color: $colorBgPrimary;
+		position: absolute;
+		right: 16px;
+		bottom: 16px;
+		z-index: 3;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	}
+	.author a {
+		color: $colorBgPrimary;
+	}
+
+	.elements {
+		.controlButtons {
+			position: absolute;
+			left: 0px;
+			bottom: 18px;
+			width: 100%;
+		}
 		.controlButtons.small {
-			.btn { padding: 0px 6px; }
 			.btn {
-				.icon { margin: 0px; }
-				.txt { display: none; }
+				padding: 0px 6px;
+			}
+			.btn {
+				.icon {
+					margin: 0px;
+				}
+				.txt {
+					display: none;
+				}
 			}
 		}
-		
-		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
+
 		.dragWrap {
-			.input-drag { width: 96px; }
-			.number { width: calc(100% - 106px); white-space: nowrap; }
+			width: 160px;
+			position: absolute;
+			left: 50%;
+			top: 8px;
+			margin-left: -80px;
+			display: flex;
+			z-index: 1;
 		}
-	
-		.btn { 
-			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; display: inline-block;
-			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background $transitionCommon;
+		.dragWrap {
+			.input-drag {
+				width: 96px;
+			}
+			.number {
+				width: calc(100% - 106px);
+				white-space: nowrap;
+			}
 		}
-		.btn:last-child { margin: 0px; }
-
-		.btn.white { background: rgba(255,255,255,0.7); }
-		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
-		
-		.btn.black { color: $colorBgPrimary; background: rgba(0,0,0,0.5); line-height: 22px; }
-		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
-
-		.btn.withIcon { padding: 0px 8px 0px 6px; line-height: 26px; }
 
 		.btn {
-			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }
-			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
-			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
-			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
-			.icon.relation { background-image: url('~img/icon/add/relation1.svg'); }
+			font-weight: 500;
+			font-size: 14px;
+			height: 28px;
+			line-height: 28px;
+			display: inline-block;
+			padding: 0px 8px;
+			border-radius: 6px;
+			margin-right: 8px;
+			white-space: nowrap;
+			transition: background $transitionCommon;
 		}
-		
-		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
+		.btn:last-child {
+			margin: 0px;
+		}
+
+		.btn.white {
+			background: rgba(255, 255, 255, 0.7);
+		}
+		.btn.white:hover,
+		.btn.white.hover {
+			background: rgba(255, 255, 255, 0.9);
+		}
+
+		.btn.black {
+			color: $colorBgPrimary;
+			background: rgba(0, 0, 0, 0.5);
+			line-height: 22px;
+		}
+		.btn.black:hover,
+		.btn.black.active {
+			background: rgba(0, 0, 0, 0.7);
+		}
+
+		.btn.withIcon {
+			padding: 0px 8px 0px 6px;
+			line-height: 26px;
+		}
+
+		.btn {
+			.icon {
+				width: 20px;
+				height: 20px;
+				margin: 0px 4px 0px 0px;
+				vertical-align: middle;
+			}
+			.icon.icon {
+				background-image: url('~img/icon/add/icon1.svg');
+			}
+			.icon.addCover {
+				background-image: url('~img/icon/add/cover1.svg');
+			}
+			.icon.layout {
+				background-image: url('~img/icon/add/layout1.svg');
+			}
+			.icon.relation {
+				background-image: url('~img/icon/add/relation1.svg');
+			}
+		}
+
 		.btn.drag {
-			.icon { background-size: 16px 16px; background-image: url('~img/icon/cover/drag.svg'); }
+			position: absolute;
+			cursor: grab;
+			width: 210px;
+			top: 50%;
+			left: 50%;
+			margin: -12px 0px 0px -105px;
+		}
+		.btn.drag {
+			.icon {
+				background-size: 16px 16px;
+				background-image: url('~img/icon/cover/drag.svg');
+			}
 		}
 	}
 }
 
-.block.blockCover > .wrapContent > .selectable { height: 100%; }
+.block.blockCover > .wrapContent > .selectable {
+	height: 100%;
+}

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
 import { I, UtilCommon, translate } from 'Lib';
@@ -7,69 +9,78 @@ import Head from '../head';
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
 	onExport: (type: I.ExportType, param: any) => void;
-};
+}
 
-const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex extends React.Component<Props> {
+const PopupSettingsPageExportIndex = observer(
+	class PopupSettingsPageExportIndex extends React.Component<Props> {
+		render() {
+			const { onPage } = this.props;
+			const items = this.getItems();
 
-	render () {
-		const { onPage } = this.props;
-		const items = this.getItems();
+			const Item = (item: any) => {
+				return (
+					<div
+						className={['item', item.id].join(' ')}
+						onClick={() => this.onClick(item.id)}
+					>
+						<Icon className={`import-${item.id}`} />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+			};
 
-		const Item = (item: any) => {
 			return (
-				<div className={[ 'item', item.id ].join(' ')} onClick={() => this.onClick(item.id)} >
-					<Icon className={`import-${item.id}`} />
-					<div className="name">{item.name}</div>
-				</div>
+				<React.Fragment>
+					<Head
+						onPage={() => onPage('spaceIndex')}
+						name={translate('commonBack')}
+					/>
+					<Title text={translate('popupSettingsExportTitle')} />
+					<Label
+						className="description"
+						text={translate('popupSettingsExportText')}
+					/>
+
+					<div className="items">
+						{items.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				</React.Fragment>
 			);
-		};
+		}
 
-		return (
-			<React.Fragment>
-				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
-				<Title text={translate('popupSettingsExportTitle')} />
-				<Label className="description" text={translate('popupSettingsExportText')} />
+		onClick(id: string) {
+			const { onPage } = this.props;
+			const items = this.getItems();
+			const item = items.find(it => it.id == id);
+			const fn = UtilCommon.toCamelCase('onExport-' + item.id);
 
-				<div className="items">
-					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
-			</React.Fragment>
-		);
-	};
+			if (item.skipPage && this[fn]) {
+				this[fn]();
+			} else {
+				onPage(UtilCommon.toCamelCase('export-' + item.id));
+			}
+		}
 
-	onClick (id: string) {
-		const { onPage } = this.props;
-		const items = this.getItems();
-		const item = items.find(it => it.id == id);
-		const fn = UtilCommon.toCamelCase('onExport-' + item.id);
+		getItems(): any[] {
+			return [
+				{ id: 'markdown', name: 'Markdown' },
+				{ id: 'protobuf', name: 'Any-Block' },
+			];
+		}
 
-		if (item.skipPage && this[fn]) {
-			this[fn]();
-		} else {
-			onPage(UtilCommon.toCamelCase('export-' + item.id));
-		};
-	};
+		onExportCommon(type: I.ExportType, options?: any) {
+			const { close, onExport } = this.props;
 
-	getItems (): any[] {
-		return [
-			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'protobuf', name: 'Any-Block' },
-		];
-	};
+			onExport(type, options);
+			close();
+		}
 
-	onExportCommon (type: I.ExportType, options?: any) {
-		const { close, onExport } = this.props;
-
-		onExport(type, options);
-		close();
-	};
-
-	onExportProtobuf () {
-		this.onExportCommon(I.ExportType.Protobuf);
-	};
-
-});
+		onExportProtobuf() {
+			this.onExportCommon(I.ExportType.Protobuf);
+		}
+	}
+);
 
 export default PopupSettingsPageExportIndex;

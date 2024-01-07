@@ -1,65 +1,67 @@
+/** @format */
+
 import { I } from 'Lib';
 
 export interface PageInfo {
 	id: string;
 	snippet: string;
-	details: any;	
+	details: any;
 	text?: string;
 	hasInboundLinks?: boolean;
-};
+}
 
 export enum BlockType {
-	Empty				 = '',
-	Page				 = 'page',
-	Dataview			 = 'dataview',
-	Layout				 = 'layout',
-	Text				 = 'text',
-	File				 = 'file',
-	Bookmark			 = 'bookmark',
-	IconPage			 = 'iconPage',
-	IconUser			 = 'iconUser',
-	Div					 = 'div',
-	Link				 = 'link',
-	Cover				 = 'cover',
-	Relation			 = 'relation',
-	Featured			 = 'featured',
-	Type				 = 'type',
-	Embed				 = 'latex',
-	Table				 = 'table',
-	TableColumn			 = 'tableColumn',
-	TableRow			 = 'tableRow',
-	TableOfContents		 = 'tableOfContents',
-	Widget		 		 = 'widget',
-};
+	Empty = '',
+	Page = 'page',
+	Dataview = 'dataview',
+	Layout = 'layout',
+	Text = 'text',
+	File = 'file',
+	Bookmark = 'bookmark',
+	IconPage = 'iconPage',
+	IconUser = 'iconUser',
+	Div = 'div',
+	Link = 'link',
+	Cover = 'cover',
+	Relation = 'relation',
+	Featured = 'featured',
+	Type = 'type',
+	Embed = 'latex',
+	Table = 'table',
+	TableColumn = 'tableColumn',
+	TableRow = 'tableRow',
+	TableOfContents = 'tableOfContents',
+	Widget = 'widget',
+}
 
 export enum BlockPosition {
-	None	 = 0,
-	Top		 = 1,
-	Bottom	 = 2,
-	Left	 = 3,
-	Right	 = 4,
-	Inner	 = 5,
-	Replace	 = 6,
+	None = 0,
+	Top = 1,
+	Bottom = 2,
+	Left = 3,
+	Right = 4,
+	Inner = 5,
+	Replace = 6,
 	InnerFirst = 7,
-};
+}
 
 export enum BlockSplitMode {
 	Bottom = 0,
 	Top = 1,
 	Inner = 2,
-};
+}
 
 export enum BlockHAlign {
-	Left	 = 0,
-	Center	 = 1,
-	Right	 = 2,
-};
+	Left = 0,
+	Center = 1,
+	Right = 2,
+}
 
 export enum BlockVAlign {
-	Top		 = 0,
-	Middle	 = 1,
-	Bottom	 = 2,
-};
+	Top = 0,
+	Middle = 1,
+	Bottom = 2,
+}
 
 export interface BlockComponent {
 	dataset?: I.Dataset;
@@ -74,9 +76,26 @@ export interface BlockComponent {
 	index?: any;
 	className?: string;
 	setLoading?(v: boolean): void;
-	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
-	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;
+	onKeyDown?(
+		e: any,
+		text: string,
+		marks: I.Mark[],
+		range: I.TextRange,
+		props: any
+	): void;
+	onKeyUp?(
+		e: any,
+		text: string,
+		marks: I.Mark[],
+		range: I.TextRange,
+		props: any
+	): void;
+	onMenuAdd?(
+		id: string,
+		text: string,
+		range: I.TextRange,
+		marks: I.Mark[]
+	): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onPaste?(e: any, props: any): void;
@@ -86,12 +105,12 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
-};
+}
 
 export interface BlockStructure {
 	parentId: string;
 	childrenIds: string[];
-};
+}
 
 export interface Block {
 	id?: string;
@@ -104,7 +123,7 @@ export interface Block {
 	bgColor?: string;
 	content: any;
 	childrenIds?: string[];
-	
+
 	getLength?(): number;
 	getTargetObjectId?(): string;
 	isSystem?(): boolean;
@@ -209,4 +228,4 @@ export interface Block {
 	isTextCode?(): boolean;
 	isTextQuote?(): boolean;
 	isTextCallout?(): boolean;
-};
+}

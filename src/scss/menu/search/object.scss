@@ -1,39 +1,77 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuSearchObject { width: 360px; }
 	.menu.menuSearchObject {
-		.content { transition: none; padding: 8px 0px 0px 0px; max-height: unset; }
-		.wrap { height: 100%; display: flex; flex-direction: column; }
+		width: 360px;
+	}
+	.menu.menuSearchObject {
+		.content {
+			transition: none;
+			padding: 8px 0px 0px 0px;
+			max-height: unset;
+		}
+		.wrap {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
 		.wrap.withLabel {
-			.ReactVirtualized__List { padding-top: 0px; }
+			.ReactVirtualized__List {
+				padding-top: 0px;
+			}
 		}
 		.wrap.withFilter {
-			.emptySearch { height: calc(100% - 44px); }
-			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
+			.emptySearch {
+				height: calc(100% - 44px);
+			}
+			.loaderWrapper {
+				top: 44px;
+				height: calc(100% - 44px);
+			}
 		}
 
-		.items { height: 100%; }
+		.items {
+			height: 100%;
+		}
 		.item {
-			.name { @include text-overflow-nw; width: 100%; }
+			.name {
+				@include text-overflow-nw;
+				width: 100%;
+			}
 		}
 
-		.filter { flex-shrink: 0; }
+		.filter {
+			flex-shrink: 0;
+		}
 	}
 
-	.menu.menuSearchObject.single { width: 224px; }
+	.menu.menuSearchObject.single {
+		width: 224px;
+	}
 	.menu.menuSearchObject.single {
 		.item {
-			.name { margin: 0px; }
-			.caption { display: none; }
+			.name {
+				margin: 0px;
+			}
+			.caption {
+				display: none;
+			}
 		}
 	}
 
-	.menu.menuSearchObject.big { width: 360px; }
 	.menu.menuSearchObject.big {
-		.content { height: 360px; }
+		width: 360px;
+	}
+	.menu.menuSearchObject.big {
+		.content {
+			height: 360px;
+		}
 		.item {
-			.iconObject { background: $colorShapeTertiary; }
+			.iconObject {
+				background: $colorShapeTertiary;
+			}
 		}
 	}
 }

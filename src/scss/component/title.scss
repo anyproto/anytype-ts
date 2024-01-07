@@ -1,3 +1,7 @@
-@import "~scss/_vars";
+/** @format */
 
-.title { @include text-title; }
+@import '~scss/_vars';
+
+.title {
+	@include text-title;
+}

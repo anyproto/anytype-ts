@@ -1,66 +1,168 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px; }
+		.ReactVirtualized__List {
+			padding: 8px 0px;
+		}
 
-		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
-		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.innerWrap { width: 600px; overflow: hidden; }
-		#loader { top: 55px; height: calc(100% - 55px); }
+		.content {
+			height: 432px;
+			overflow: visible;
+			transition: none;
+			transform: translate3d(0px, 0px, 0px);
+		}
+		.wrap {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		.innerWrap {
+			width: 600px;
+			overflow: hidden;
+		}
+		#loader {
+			top: 55px;
+			height: calc(100% - 55px);
+		}
 
-		.head { 
-			border-bottom: 1px solid $colorShapeSecondary; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
+		.head {
+			border-bottom: 1px solid $colorShapeSecondary;
+			padding: 0px 20px;
+			display: flex;
+			align-items: center;
+			flex-direction: row;
+			gap: 0px 12px;
 			flex-shrink: 0;
 		}
 		.head {
-			.iconObject { margin-right: 6px; }
-			
-			.icon { width: 18px; height: 18px; }
-			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.iconObject {
+				margin-right: 6px;
+			}
 
-			.filter { width: 100%; padding: 0px; }
+			.icon {
+				width: 18px;
+				height: 18px;
+			}
+			.icon.search {
+				background-image: url('~img/icon/popup/search/search.svg');
+			}
+
 			.filter {
-				.inner { height: auto; }
-				.input { 
-					padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
+				width: 100%;
+				padding: 0px;
+			}
+			.filter {
+				.inner {
+					height: auto;
 				}
-				.placeholder { @include text-paragraph; font-weight: 500; }
-				.line { display: none; }
+				.input {
+					padding: 0px;
+					height: 54px;
+					vertical-align: middle;
+					width: calc(100% - 32px);
+					vertical-align: top;
+					@include text-paragraph;
+					font-weight: 500;
+				}
+				.placeholder {
+					@include text-paragraph;
+					font-weight: 500;
+				}
+				.line {
+					display: none;
+				}
 			}
 		}
 
-		.items { height: 100%; flex-grow: 1; }
 		.items {
-			.pad { height: 12px; }
+			height: 100%;
+			flex-grow: 1;
+		}
+		.items {
+			.pad {
+				height: 12px;
+			}
 
-			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: $colorTextSecondary; }
+			.sectionName {
+				@include text-small;
+				height: 26px;
+				line-height: 18px;
+				padding: 5px 20px;
+				font-weight: 500;
+				color: $colorTextSecondary;
+			}
 
-			.item { 
-				position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap; display: flex; gap: 0px 10px; 
+			.item {
+				position: relative;
+				height: 48px;
+				line-height: 22px;
+				padding: 13px 20px;
+				white-space: nowrap;
+				display: flex;
+				gap: 0px 10px;
 				align-items: center;
 			}
 			.item {
-				.icon { width: 20px; height: 20px; flex-shrink: 0; }
-				.icon.plus { background-image: url('~img/icon/popup/search/plus.svg'); }
-				.icon.relation { background-image: url('~img/icon/menu/action/relation0.svg'); }
-
-				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
-				.name { 
-					@include text-overflow-nw; font-weight: 500; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 1; 
-					width: calc(66% - 30px); 
+				.icon {
+					width: 20px;
+					height: 20px;
+					flex-shrink: 0;
 				}
-				.caption { @include text-small; @include text-overflow-nw; color: $colorTextSecondary; flex-shrink: 0; width: 33%; flex-grow: 0; text-align: right; }
+				.icon.plus {
+					background-image: url('~img/icon/popup/search/plus.svg');
+				}
+				.icon.relation {
+					background-image: url('~img/icon/menu/action/relation0.svg');
+				}
+
+				.iconObject {
+					transition: $transitionAllCommon;
+					vertical-align: top;
+					flex-shrink: 0;
+					flex-grow: 0;
+				}
+				.name {
+					@include text-overflow-nw;
+					font-weight: 500;
+					line-height: 18px;
+					display: inline-block;
+					vertical-align: top;
+					flex-shrink: 0;
+					flex-grow: 1;
+					width: calc(66% - 30px);
+				}
 				.caption {
-					.label { 
-						padding: 0px 2px; border-radius: 4px; background: $colorShapeHighlightMedium; display: inline-block; vertical-align: middle; min-width: 18px; 
-						text-align: center; margin-right: 4px;
+					@include text-small;
+					@include text-overflow-nw;
+					color: $colorTextSecondary;
+					flex-shrink: 0;
+					width: 33%;
+					flex-grow: 0;
+					text-align: right;
+				}
+				.caption {
+					.label {
+						padding: 0px 2px;
+						border-radius: 4px;
+						background: $colorShapeHighlightMedium;
+						display: inline-block;
+						vertical-align: middle;
+						min-width: 18px;
+						text-align: center;
+						margin-right: 4px;
 					}
-					.label:last-child { margin: 0px; }
+					.label:last-child {
+						margin: 0px;
+					}
 				}
 			}
 
-			.item.active { background-color: $colorShapeHighlightMedium; }
+			.item.active {
+				background-color: $colorShapeHighlightMedium;
+			}
 		}
 	}
 }

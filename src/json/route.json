@@ -1,6 +1,8 @@
+/** @format */
+
 [
-	{ "path": "/" },
-	{ "path": "/:page/:action/:id?" },
-	{ "path": "/:page/:action/:id?/block/:blockId?" },
-	{ "path": "/:page/:action/:id?/spaceId/:spaceId?" }
-]
+	{ path: '/' },
+	{ path: '/:page/:action/:id?' },
+	{ path: '/:page/:action/:id?/block/:blockId?' },
+	{ path: '/:page/:action/:id?/spaceId/:spaceId?' },
+];

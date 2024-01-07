@@ -1,16 +1,16 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class Sort implements I.Sort {
-
 	id = '';
 	relationKey = '';
 	type: I.SortType = I.SortType.Asc;
 	includeTime = false;
 	customOrder: string[] = [];
 
-	constructor (props: I.Sort) {
-
+	constructor(props: I.Sort) {
 		this.id = String(props.id || '');
 		this.relationKey = String(props.relationKey || '');
 		this.type = Number(props.type) || I.SortType.Asc;
@@ -25,8 +25,7 @@ class Sort implements I.Sort {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default Sort;

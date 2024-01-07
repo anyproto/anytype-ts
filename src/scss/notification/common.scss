@@ -1,70 +1,170 @@
-@import "~scss/_vars";
+/** @format */
 
-@mixin shadow { box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
-@mixin border { border: 1px solid $colorShapeSecondary; }
+@import '~scss/_vars';
 
-.notifications { 
-	position: fixed; right: 12px; bottom: 54px; z-index: 200; width: 384px; display: flex; flex-direction: column;
+@mixin shadow {
+	box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
+}
+@mixin border {
+	border: 1px solid $colorShapeSecondary;
+}
+
+.notifications {
+	position: fixed;
+	right: 12px;
+	bottom: 54px;
+	z-index: 200;
+	width: 384px;
+	display: flex;
+	flex-direction: column;
 }
 .notifications {
-
-	.head { display: none; flex-direction: row; justify-content: flex-end; align-items: center; margin: 0px 0px 14px 0px; gap: 0px 8px; flex-shrink: 0; }
 	.head {
-		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: $colorBgPrimary; @include border; transition: $transitionAllCommon; }
-		.icon:hover { background-color: $colorShapeHighlightLight; }
-		.icon.hide { background-image: url('~img/icon/notification/hide.svg'); background-size: 12px 8px; }
-		.icon.clear { background-image: url('~img/icon/notification/delete.svg'); background-size: 10px; }
+		display: none;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		margin: 0px 0px 14px 0px;
+		gap: 0px 8px;
+		flex-shrink: 0;
+	}
+	.head {
+		.icon {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background-color: $colorBgPrimary;
+			@include border;
+			transition: $transitionAllCommon;
+		}
+		.icon:hover {
+			background-color: $colorShapeHighlightLight;
+		}
+		.icon.hide {
+			background-image: url('~img/icon/notification/hide.svg');
+			background-size: 12px 8px;
+		}
+		.icon.clear {
+			background-image: url('~img/icon/notification/delete.svg');
+			background-size: 10px;
+		}
 	}
 
-	.body { flex-grow: 1; position: relative; }
-
-	.notification {
-		width: 100%; min-height: 70px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
-    	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
-		opacity: 1; user-select: none; @include shadow;
+	.body {
+		flex-grow: 1;
+		position: relative;
 	}
 
-	.notification.from, .notification.to { opacity: 0; transform-origin: 50% 50%; transform: scale3d(0.75, 0.75, 1); }
+	.notification {
+		width: 100%;
+		min-height: 70px;
+		background: $colorBgPrimary;
+		border-radius: 12px;
+		@include border;
+		position: absolute;
+		bottom: 0px;
+		padding: 16px;
+		transform-origin: 50% 0%;
+		transition-timing-function: ease-in-out;
+		transition-duration: 0.2s;
+		transition-property: transform, opacity, bottom;
+		opacity: 1;
+		user-select: none;
+		@include shadow;
+	}
+
+	.notification.from,
+	.notification.to {
+		opacity: 0;
+		transform-origin: 50% 50%;
+		transform: scale3d(0.75, 0.75, 1);
+	}
 
 	.notification {
-		.icon.delete { 
-			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: $colorBgPrimary; 
-			@include border; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
-			background-size: 10px; transition: $transitionAllCommon; opacity: 0;
+		.icon.delete {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			position: absolute;
+			background-color: $colorBgPrimary;
+			@include border;
+			top: -8px;
+			left: -8px;
+			background-image: url('~img/icon/notification/delete.svg');
+			background-size: 10px;
+			transition: $transitionAllCommon;
+			opacity: 0;
 		}
 
-		.content { display: none; }
 		.content {
-			.title { @include text-small; font-weight: 600; margin: 0px 0px 2px 0px; }
-			.label { @include text-small; }
-			.buttons { display: flex; flex-direction: row; gap: 0px 8px; margin: 12px 0px 0px 0px; }
-			.buttons:empty { display: none; }
-			.button { @include text-small; font-weight: 500; }
+			display: none;
+		}
+		.content {
+			.title {
+				@include text-small;
+				font-weight: 600;
+				margin: 0px 0px 2px 0px;
+			}
+			.label {
+				@include text-small;
+			}
+			.buttons {
+				display: flex;
+				flex-direction: row;
+				gap: 0px 8px;
+				margin: 12px 0px 0px 0px;
+			}
+			.buttons:empty {
+				display: none;
+			}
+			.button {
+				@include text-small;
+				font-weight: 500;
+			}
 
-			.element { display: inline; }
 			.element {
-				.iconObject { display: inline; margin-right: 4px; }
-				.iconObject:empty { display: none; }
-				.name { display: inline; font-weight: 500; }
+				display: inline;
+			}
+			.element {
+				.iconObject {
+					display: inline;
+					margin-right: 4px;
+				}
+				.iconObject:empty {
+					display: none;
+				}
+				.name {
+					display: inline;
+					font-weight: 500;
+				}
 			}
 		}
 	}
 	.notification:first-child {
-		.content { display: block; }
+		.content {
+			display: block;
+		}
 	}
 	.notification:first-child:hover {
-		.icon.delete { opacity: 1; }
+		.icon.delete {
+			opacity: 1;
+		}
 	}
-
 }
 
 .notifications.isExpanded {
-	.head { display: flex; }
+	.head {
+		display: flex;
+	}
 
 	.notification {
-		.content { display: block; }
+		.content {
+			display: block;
+		}
 	}
 	.notification:hover {
-		.icon.delete { opacity: 1; }
+		.icon.delete {
+			opacity: 1;
+		}
 	}
 }

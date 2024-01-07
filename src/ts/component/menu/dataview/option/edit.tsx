@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -7,199 +9,218 @@ import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
-	
-	refName: any = null;
-	color: string = null;
-	timeout = 0;
-	n = -1;
+const MenuOptionEdit = observer(
+	class MenuOptionEdit extends React.Component<I.Menu> {
+		refName: any = null;
+		color: string = null;
+		timeout = 0;
+		n = -1;
 
-	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option } = data;
-		const sections = this.getSections();
+		render() {
+			const { param } = this.props;
+			const { data } = param;
+			const { option } = data;
+			const sections = this.getSections();
 
-		const Section = (item: any) => (
-			<div className="section">
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						if (action.isBgColor) {
-							action.inner = <div className={`inner isMultiSelect textColor textColor-${action.className}`} />;
-							action.icon = 'color';
-							action.checkbox = action.value == this.color;
-						};
+			const Section = (item: any) => (
+				<div className="section">
+					<div className="items">
+						{item.children.map((action: any, i: number) => {
+							if (action.isBgColor) {
+								action.inner = (
+									<div
+										className={`inner isMultiSelect textColor textColor-${action.className}`}
+									/>
+								);
+								action.icon = 'color';
+								action.checkbox = action.value == this.color;
+							}
 
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								onClick={e => this.onClick(e, action)}
-								onMouseEnter={e => this.onMouseEnter(e, action)}
-							/>
-						);
-					})}
+							return (
+								<MenuItemVertical
+									key={i}
+									{...action}
+									onClick={e => this.onClick(e, action)}
+									onMouseEnter={e =>
+										this.onMouseEnter(e, action)
+									}
+								/>
+							);
+						})}
+					</div>
 				</div>
-			</div>
-		);
+			);
 
-		return (
-			<div>
-				<Filter
-					ref={ref => this.refName = ref}
-					placeholder={translate('menuDataviewOptionEditPlaceholder')}
-					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'textColor-' + this.color}
-					value={option.name}
-					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
-				/>
+			return (
+				<div>
+					<Filter
+						ref={ref => (this.refName = ref)}
+						placeholder={translate(
+							'menuDataviewOptionEditPlaceholder'
+						)}
+						placeholderFocus={translate(
+							'menuDataviewOptionEditPlaceholder'
+						)}
+						className={'textColor-' + this.color}
+						value={option.name}
+						onKeyUp={(e: any, v: string) => {
+							this.onKeyUp(e, v);
+						}}
+					/>
 
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
-			</div>
-		);
-	};
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} />
+					))}
+				</div>
+			);
+		}
 
-	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option } = data;
+		componentDidMount() {
+			const { param } = this.props;
+			const { data } = param;
+			const { option } = data;
 
-		this.color = option.color;
-		this.rebind();
-		this.forceUpdate();
-	};
-
-	componentDidUpdate () {
-		this.props.setActive();
-	};
-
-	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.refName) {
-				this.refName.focus(); 
-			};
-		}, 15);
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
-		$(window).off('keydown.menu');
-	};
-
-	getSections () {
-		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
-
-		return [
-			{ children: colors },
-			{ 
-				children: [
-					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
-				] 
-			},
-		];
-	};
-
-	getItems () {
-		const sections = this.getSections();
-		
-		let items: any[] = [];
-		for (const section of sections) {
-			items = items.concat(section.children);
-		};
-		
-		return items;
-	};
-
-	onKeyDown (e: any) {
-		window.clearTimeout(this.timeout);
-
-		let ret = false;
-
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-
-			this.save();
-			this.props.close();
-
-			ret = true;
-		});
-
-		if (!ret) {
-			this.props.onKeyDown(e);
-		};
-	};
-
-	onKeyUp (e: any, v: string) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
-	};
-
-
-	onClick (e: any, item: any) {
-		if (item.isBgColor) {
-			this.color = item.value;
-			this.save();
+			this.color = option.color;
+			this.rebind();
 			this.forceUpdate();
-		} else
-		if (item.id == 'remove') {
-			this.remove();
-		};
-	};
+		}
 
-	onMouseEnter (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
-	};
+		componentDidUpdate() {
+			this.props.setActive();
+		}
 
-	remove () {
-		const { param, close, id } = this.props;
-		const { data } = param;
-		const { option, onChange } = data;
-		const relation = data.relation.get();
-		
-		let value = Relation.getArrayValue(data.value);
-		value = value.filter(it => it != option.id);
+		componentWillUnmount() {
+			window.clearTimeout(this.timeout);
+		}
 
-		C.RelationListRemoveOption([ option.id ], false);
+		focus() {
+			window.setTimeout(() => {
+				if (this.refName) {
+					this.refName.focus();
+				}
+			}, 15);
+		}
 
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { 
-			value: value, 
-			relation: observable.box(relation),
-		});
-		
-		onChange(value);
-		close();
-	};
+		rebind() {
+			this.unbind();
+			$(window).on('keydown.menu', e => this.onKeyDown(e));
+			window.setTimeout(() => this.props.setActive(), 15);
+		}
 
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option } = data;
-		const value = this.refName ? this.refName.getValue() : '';
+		unbind() {
+			$(window).off('keydown.menu');
+		}
 
-		if (!value) {
-			return;
-		};
+		getSections() {
+			const colors = UtilMenu.getBgColors().filter(
+				it => it.id != 'bgColor-default'
+			);
 
-		C.ObjectSetDetails(option.id, [ 
-			{ key: 'name', value },
-			{ key: 'relationOptionColor', value: this.color },
-		]);
-	};
-	
-});
+			return [
+				{ children: colors },
+				{
+					children: [
+						{
+							id: 'remove',
+							icon: 'remove',
+							name: translate('menuDataviewOptionEditDelete'),
+						},
+					],
+				},
+			];
+		}
+
+		getItems() {
+			const sections = this.getSections();
+
+			let items: any[] = [];
+			for (const section of sections) {
+				items = items.concat(section.children);
+			}
+
+			return items;
+		}
+
+		onKeyDown(e: any) {
+			window.clearTimeout(this.timeout);
+
+			let ret = false;
+
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
+
+				this.save();
+				this.props.close();
+
+				ret = true;
+			});
+
+			if (!ret) {
+				this.props.onKeyDown(e);
+			}
+		}
+
+		onKeyUp(e: any, v: string) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(
+				() => this.save(),
+				Constant.delay.keyboard
+			);
+		}
+
+		onClick(e: any, item: any) {
+			if (item.isBgColor) {
+				this.color = item.value;
+				this.save();
+				this.forceUpdate();
+			} else if (item.id == 'remove') {
+				this.remove();
+			}
+		}
+
+		onMouseEnter(e: any, item: any) {
+			if (!keyboard.isMouseDisabled) {
+				this.props.setActive(item, false);
+			}
+		}
+
+		remove() {
+			const { param, close, id } = this.props;
+			const { data } = param;
+			const { option, onChange } = data;
+			const relation = data.relation.get();
+
+			let value = Relation.getArrayValue(data.value);
+			value = value.filter(it => it != option.id);
+
+			C.RelationListRemoveOption([option.id], false);
+
+			menuStore.updateData(id, { value });
+			menuStore.updateData('dataviewOptionList', {
+				value: value,
+				relation: observable.box(relation),
+			});
+
+			onChange(value);
+			close();
+		}
+
+		save() {
+			const { param } = this.props;
+			const { data } = param;
+			const { option } = data;
+			const value = this.refName ? this.refName.getValue() : '';
+
+			if (!value) {
+				return;
+			}
+
+			C.ObjectSetDetails(option.id, [
+				{ key: 'name', value },
+				{ key: 'relationOptionColor', value: this.color },
+			]);
+		}
+	}
+);
 
 export default MenuOptionEdit;

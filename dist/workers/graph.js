@@ -1,3 +1,5 @@
+/** @format */
+
 importScripts(
 	'./lib/d3/d3-quadtree.min.js',
 	'./lib/d3/d3-zoom.min.js',
@@ -18,14 +20,14 @@ const transformThreshold = 1.5;
 const delayFocus = 1000;
 
 const ObjectLayout = {
-	Human:	 1,
-	Task:	 2,
+	Human: 1,
+	Task: 2,
 	Bookmark: 11,
 };
 
 const EdgeType = {
-	Link:		 0,
-	Relation:	 1,
+	Link: 0,
+	Relation: 1,
 };
 
 const forceProps = {
@@ -75,13 +77,13 @@ let rootId = '';
 let root = null;
 let paused = false;
 
-addEventListener('message', ({ data }) => { 
+addEventListener('message', ({ data }) => {
 	if (this[data.id]) {
-		this[data.id](data); 
-	};
+		this[data.id](data);
+	}
 });
 
-init = (param) => {
+init = param => {
 	data = param;
 	canvas = data.canvas;
 	settings = data.settings;
@@ -95,7 +97,7 @@ init = (param) => {
 
 	ctx.lineCap = 'round';
 	ctx.fillStyle = Color.bg;
-	
+
 	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
@@ -114,7 +116,7 @@ init = (param) => {
 		if (root) {
 			x = root.x;
 			y = root.y;
-		};
+		}
 
 		transform = Object.assign(transform, getCenter(x, y));
 		send('onTransform', { ...transform });
@@ -122,7 +124,7 @@ init = (param) => {
 	}, 100);
 };
 
-initTheme = (theme) => {
+initTheme = theme => {
 	switch (theme) {
 		default:
 			hoverAlpha = 0.3;
@@ -134,7 +136,7 @@ initTheme = (theme) => {
 				text: '#b6b6b6',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',
-			}; 
+			};
 			break;
 
 		case 'dark':
@@ -149,25 +151,30 @@ initTheme = (theme) => {
 				selected: '#2aa7ee',
 			};
 			break;
-	};
+	}
 };
 
 initFonts = () => {
 	if (!self.FontFace) {
 		return;
-	};
+	}
 
 	const name = 'Inter';
-	const fontFace = new FontFace(name, `url("../font/inter/regular.woff") format("woff")`);
+	const fontFace = new FontFace(
+		name,
+		`url("../font/inter/regular.woff") format("woff")`
+	);
 
 	self.fonts.add(fontFace);
-	fontFace.load().then(() => { fontFamily = name; });
+	fontFace.load().then(() => {
+		fontFamily = name;
+	});
 };
 
 image = ({ src, bitmap }) => {
 	if (!images[src]) {
 		images[src] = bitmap;
-	};
+	}
 };
 
 initForces = () => {
@@ -176,31 +183,36 @@ initForces = () => {
 	updateOrphans();
 
 	simulation
-	.force('link', d3.forceLink().id(d => d.id))
-	.force('charge', d3.forceManyBody())
-	.force('center', d3.forceCenter())
-	.force('forceX', d3.forceX(nodes))
-	.force('forceY', d3.forceY(nodes));
+		.force(
+			'link',
+			d3.forceLink().id(d => d.id)
+		)
+		.force('charge', d3.forceManyBody())
+		.force('center', d3.forceCenter())
+		.force('forceX', d3.forceX(nodes))
+		.force('forceY', d3.forceY(nodes));
 
-	simulation.force('center')
-	.x(width * center.x)
-	.y(height * center.y);
+	simulation
+		.force('center')
+		.x(width * center.x)
+		.y(height * center.y);
 
-	simulation.force('charge')
-	.strength(charge.strength)
-	.distanceMax(charge.distanceMax);
+	simulation
+		.force('charge')
+		.strength(charge.strength)
+		.distanceMax(charge.distanceMax);
 
-	simulation.force('link')
-	.links(edges)
-	.distance(link.distance);
+	simulation.force('link').links(edges).distance(link.distance);
 
-	simulation.force('forceX')
-	.strength(d => d.isOrphan ? forceX.strength : 0)
-	.x(width * forceX.x);
+	simulation
+		.force('forceX')
+		.strength(d => (d.isOrphan ? forceX.strength : 0))
+		.x(width * forceX.x);
 
-	simulation.force('forceY')
-	.strength(d => d.isOrphan ? forceY.strength : 0)
-	.y(height * forceY.y);
+	simulation
+		.force('forceY')
+		.strength(d => (d.isOrphan ? forceY.strength : 0))
+		.y(height * forceY.y);
 
 	updateForces();
 	redraw();
@@ -220,7 +232,7 @@ updateForces = () => {
 		updateOrphans();
 
 		nodes = nodes.filter(d => !d.linkCnt);
-	};
+	}
 
 	// Filter relations
 	if (!settings.relation) {
@@ -228,15 +240,19 @@ updateForces = () => {
 		updateOrphans();
 
 		nodes = nodes.filter(d => !d.relationCnt);
-	};
+	}
 
 	// Filte local only edges
 	if (settings.local) {
-		edges = edges.filter(d => (d.source == rootId) || (d.target == rootId));
+		edges = edges.filter(d => d.source == rootId || d.target == rootId);
 
-		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
+		const nodeIds = util.arrayUnique(
+			[rootId]
+				.concat(edges.map(d => d.source))
+				.concat(edges.map(d => d.target))
+		);
 		nodes = nodes.filter(d => nodeIds.includes(d.id));
-	};
+	}
 
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
@@ -246,7 +262,7 @@ updateForces = () => {
 	// Filter orphans
 	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
-	};
+	}
 
 	map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
@@ -256,20 +272,25 @@ updateForces = () => {
 		let o = old.get(d.id);
 		if (!o) {
 			o = settings.local ? { x: width / 2, y: width / 2 } : {};
-		};
+		}
 		return Object.assign(o, d);
 	});
 	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
-	simulation.force('link')
-	.id(d => d.id)
-	.links(edges);
+	simulation
+		.force('link')
+		.id(d => d.id)
+		.links(edges);
 
 	edgeMap.clear();
 	nodes.forEach(d => {
-		const sources = edges.filter(it => it.target.id == d.id).map(it => it.source.id);
-		const targets = edges.filter(it => it.source.id == d.id).map(it => it.target.id);
+		const sources = edges
+			.filter(it => it.target.id == d.id)
+			.map(it => it.source.id);
+		const targets = edges
+			.filter(it => it.source.id == d.id)
+			.map(it => it.target.id);
 
 		edgeMap.set(d.id, [].concat(sources).concat(targets));
 	});
@@ -278,9 +299,9 @@ updateForces = () => {
 	redraw();
 };
 
-updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
-	
+updateSettings = param => {
+	const updateKeys = ['link', 'relation', 'orphan', 'local'];
+
 	let needUpdate = false;
 	let needFocus = false;
 
@@ -290,18 +311,18 @@ updateSettings = (param) => {
 
 			if (key == 'local') {
 				needFocus = true;
-			};
+			}
 
 			break;
-		};
-	};
+		}
+	}
 
 	settings = Object.assign(settings, param);
 	needUpdate ? updateForces() : redraw();
 
 	if (needFocus) {
 		setTimeout(() => this.setRootId({ rootId }), delayFocus);
-	};
+	}
 };
 
 updateTheme = ({ theme }) => {
@@ -311,16 +332,20 @@ updateTheme = ({ theme }) => {
 
 updateOrphans = () => {
 	nodes = nodes.map(d => {
-		const edgeList = edges.filter(it => (it.source == d.id) || (it.target == d.id));
-		
+		const edgeList = edges.filter(
+			it => it.source == d.id || it.target == d.id
+		);
+
 		d.isOrphan = !edgeList.length;
 		d.linkCnt = edgeList.filter(it => it.type == EdgeType.Link).length;
-		d.relationCnt = edgeList.filter(it => it.type == EdgeType.Relation).length;
+		d.relationCnt = edgeList.filter(
+			it => it.type == EdgeType.Relation
+		).length;
 		return d;
 	});
 };
 
-draw = (t) => {
+draw = t => {
 	const radius = 5.7 / transform.k;
 
 	time = t;
@@ -333,13 +358,19 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+		drawEdge(
+			d,
+			radius,
+			radius * 1.3,
+			settings.marker && d.isDouble,
+			settings.marker
+		);
 	});
 
 	nodes.forEach(d => {
 		if (checkNodeInViewport(d)) {
 			drawNode(d);
-		};
+		}
 	});
 
 	ctx.restore();
@@ -349,7 +380,7 @@ redraw = () => {
 	cancelAnimationFrame(frame);
 	if (!paused) {
 		frame = requestAnimationFrame(draw);
-	};
+	}
 };
 
 drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
@@ -365,8 +396,8 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sin1 = Math.sin(a1);
 	const cos2 = Math.cos(a2);
 	const sin2 = Math.sin(a2);
-	const mx = (x1 + x2) / 2;  
-    const my = (y1 + y2) / 2;
+	const mx = (x1 + x2) / 2;
+	const my = (y1 + y2) / 2;
 	const sx1 = x1 + r1 * cos1;
 	const sy1 = y1 + r1 * sin1;
 	const sx2 = x2 + r2 * cos2;
@@ -382,14 +413,14 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	if (isHovering) {
 		ctx.globalAlpha = hoverAlpha;
-	};
+	}
 
 	if (isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
 		ctx.globalAlpha = 1;
-	};
+	}
 
 	util.line(sx1, sy1, sx2, sy2, lineWidth, colorLink);
 
@@ -412,7 +443,13 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
+		util.roundedRect(
+			left - k,
+			top - k,
+			tw + k * 2,
+			th + k * 2,
+			getBorderRadius()
+		);
 
 		ctx.strokeStyle = colorLink;
 		ctx.lineWidth = lineWidth * 3;
@@ -424,16 +461,15 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.fillStyle = colorText;
 		ctx.fillText(d.name, 0, 0);
 		ctx.restore();
-	};
+	}
 
 	// Arrow heads
 	let move = arrowHeight;
 	if (showName) {
 		move = arrowHeight * 2 + tw / 2 + offset;
-	} else 
-	if (arrowStart && arrowEnd) {
+	} else if (arrowStart && arrowEnd) {
 		move = arrowHeight * 2;
-	};
+	}
 
 	const sax1 = mx - move * cos1;
 	const say1 = my - move * sin1;
@@ -442,19 +478,19 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	if (arrowStart) {
 		util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
-    };
+	}
 
-    if (arrowEnd) {
+	if (arrowEnd) {
 		util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
-    };
+	}
 };
 
-drawNode = (d) => {
+drawNode = d => {
 	const radius = getRadius(d);
 	const img = images[d.src];
 	const diameter = radius * 2;
 	const isSelected = selected.includes(d.id);
-	
+
 	let colorNode = Color.node;
 	let colorText = Color.text;
 	let colorLine = '';
@@ -471,69 +507,81 @@ drawNode = (d) => {
 				if (c.isOver) {
 					ctx.globalAlpha = 1;
 					break;
-				};
-			};
-		};
-	};
+				}
+			}
+		}
+	}
 
-	if (d.isOver || (root && (d.id == root.id))) {
+	if (d.isOver || (root && d.id == root.id)) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
 		lineWidth = getLineWidth() * 3;
 		ctx.globalAlpha = 1;
-	};
+	}
 
 	if (isSelected) {
 		colorNode = Color.selected;
 		colorText = Color.selected;
 		colorLine = Color.selected;
-	};
+	}
 
 	if (d.isOver || isSelected) {
 		lineWidth = getLineWidth() * 3;
-	};
+	}
 
 	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
+			util.roundedRect(
+				d.x - radius - lineWidth * 2,
+				d.y - radius - lineWidth * 2,
+				diameter + lineWidth * 4,
+				diameter + lineWidth * 4,
+				getBorderRadius()
+			);
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
 			ctx.strokeStyle = colorLine;
 			ctx.lineWidth = lineWidth;
 			ctx.stroke();
-		};
+		}
 
 		let x = d.x - radius;
 		let y = d.y - radius;
 		let w = diameter;
 		let h = diameter;
-	
+
 		if (d.iconImage) {
 			x = d.x - radius;
 			y = d.y - radius;
-	
+
 			if (isLayoutHuman(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
-			};
-	
+				util.roundedRect(
+					d.x - radius,
+					d.y - radius,
+					diameter,
+					diameter,
+					getBorderRadius()
+				);
+			}
+
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 			ctx.clip();
-	
+
 			if (img.width > img.height) {
 				w = h * (img.width / img.height);
 				x -= (w - diameter) / 2;
 			} else {
 				h = w * (img.height / img.width);
 				y -= (h - diameter) / 2;
-			};
-		};
+			}
+		}
 
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 		ctx.restore();
@@ -541,10 +589,10 @@ drawNode = (d) => {
 		util.circle(d.x, d.y, radius);
 		ctx.fillStyle = colorNode;
 		ctx.fill();
-	};
+	}
 
 	// Node name
-	if (settings.label && (transform.k >= transformThreshold)) {
+	if (settings.label && transform.k >= transformThreshold) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -564,10 +612,10 @@ drawNode = (d) => {
 		ctx.fillStyle = colorText;
 		ctx.fillText(d.shortName, 0, diameter + offset);
 		ctx.restore();
-	};
+	}
 };
 
-onZoom = (data) => {
+onZoom = data => {
 	transform = Object.assign(transform, data.transform);
 	redraw();
 };
@@ -575,7 +623,7 @@ onZoom = (data) => {
 onDragStart = ({ active }) => {
 	if (!active) {
 		restart(0.3);
-	};
+	}
 };
 
 onDragMove = ({ subjectId, x, y }) => {
@@ -583,12 +631,12 @@ onDragMove = ({ subjectId, x, y }) => {
 
 	if (!subjectId) {
 		return;
-	};
+	}
 
 	const d = nodes.find(it => it.id == subjectId);
 	if (!d) {
 		return;
-	};
+	}
 
 	const radius = getRadius(d);
 
@@ -601,36 +649,36 @@ onDragMove = ({ subjectId, x, y }) => {
 onDragEnd = ({ active }) => {
 	if (!active) {
 		simulation.alphaTarget(0);
-	};
+	}
 };
 
 onClick = ({ x, y }) => {
-  	const d = getNodeByCoords(x, y);
+	const d = getNodeByCoords(x, y);
 	if (d) {
 		send('onClick', { node: d.id });
-	};
+	}
 };
 
 onSelect = ({ x, y, selectRelated }) => {
-  	const d = getNodeByCoords(x, y);
-  	let related = [];
+	const d = getNodeByCoords(x, y);
+	let related = [];
 	if (d) {
 		if (selectRelated) {
 			related = edgeMap.get(d.id);
-		};
+		}
 
 		send('onSelect', { node: d.id, related });
-	};
+	}
 };
 
 onSetRootId = ({ x, y }) => {
-  	const d = getNodeByCoords(x, y);
+	const d = getNodeByCoords(x, y);
 	if (d) {
 		this.setRootId({ rootId: d.id });
-	};
+	}
 };
 
-onSetEdges = (param) => {
+onSetEdges = param => {
 	data.edges = param.edges;
 	updateForces();
 };
@@ -645,27 +693,27 @@ onMouseMove = ({ x, y }) => {
 
 	if (active) {
 		active.isOver = false;
-	};
+	}
 
 	if (d) {
 		d.isOver = true;
 	} else {
 		isHovering = false;
-	};
+	}
 
-	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
+	send('onMouseMove', { node: d ? d.id : '', x, y, k: transform.k });
 	redraw();
 	clearTimeout(timeoutHover);
 
 	if (!d) {
 		return;
-	};
+	}
 
 	timeoutHover = setTimeout(() => {
 		const d = getNodeByCoords(x, y);
 		if (d) {
 			isHovering = true;
-		};
+		}
 
 		redraw();
 	}, 200);
@@ -675,7 +723,7 @@ onContextMenu = ({ x, y }) => {
 	const active = nodes.find(d => d.isOver);
 	if (active) {
 		active.isOver = false;
-	};
+	}
 
 	const d = getNodeByCoords(x, y);
 	if (!d) {
@@ -684,7 +732,7 @@ onContextMenu = ({ x, y }) => {
 		send('onContextMenu', { node: d, x, y });
 		d.isOver = true;
 		redraw();
-	};
+	}
 };
 
 onAddNode = ({ target, sourceId }) => {
@@ -697,24 +745,28 @@ onAddNode = ({ target, sourceId }) => {
 		const source = nodes.find(it => it.id == sourceId);
 		if (!source) {
 			return;
-		};
+		}
 
 		x = source.x + target.radius * 2;
 		y = source.y + target.radius * 2;
 
-		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
-	};
+		data.edges.push({
+			type: EdgeType.Link,
+			source: source.id,
+			target: target.id,
+		});
+	}
 
 	target = Object.assign(target, {
 		index: id,
-		vx: 1, 
+		vx: 1,
 		vy: 1,
 		forceShow: true,
 	});
 
 	if (!target.x && !target.y) {
 		target = Object.assign(target, { x, y });
-	};
+	}
 
 	data.nodes.push(target);
 
@@ -725,44 +777,46 @@ onRemoveNode = ({ ids }) => {
 	isHovering = false;
 
 	data.nodes = data.nodes.filter(d => !ids.includes(d.id));
-	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
+	data.edges = data.edges.filter(
+		d => !ids.includes(d.source.id) && !ids.includes(d.target.id)
+	);
 
 	updateForces();
 };
 
-setRootId = (param) => {
+setRootId = param => {
 	rootId = param.rootId;
 	root = getNodeById(rootId);
 
 	if (!root) {
 		return;
-	};
+	}
 
 	const coords = { x: transform.x, y: transform.y };
 	const to = getCenter(root.x, root.y);
 
 	new TWEEN.Tween(coords)
-	.to(to, 500)
-	.easing(TWEEN.Easing.Quadratic.InOut)
-	.onUpdate(() => {
-		transform = Object.assign(transform, coords);
-		redraw();
-	})
-	.onComplete(() => send('onTransform', { ...transform }))
-	.start();
+		.to(to, 500)
+		.easing(TWEEN.Easing.Quadratic.InOut)
+		.onUpdate(() => {
+			transform = Object.assign(transform, coords);
+			redraw();
+		})
+		.onComplete(() => send('onTransform', { ...transform }))
+		.start();
 
 	if (settings.local) {
 		updateForces();
 	} else {
 		redraw();
-	};
+	}
 };
 
-restart = (alpha) => {
+restart = alpha => {
 	simulation.alphaTarget(alpha).restart();
 };
 
-resize = (data) => {
+resize = data => {
 	width = data.width;
 	height = data.height;
 	density = data.density;
@@ -780,32 +834,41 @@ const send = (id, data) => {
 	this.postMessage({ id, data });
 };
 
-const checkNodeInViewport = (d) => {
+const checkNodeInViewport = d => {
 	const dr = d.radius * transform.k;
 	const distX = transform.x + d.x * transform.k - dr;
 	const distY = transform.y + d.y * transform.k - dr;
 
-	return (distX >= -dr * 2) && (distX <= width) && (distY >= -dr * 2) && (distY <= height);
+	return (
+		distX >= -dr * 2 &&
+		distX <= width &&
+		distY >= -dr * 2 &&
+		distY <= height
+	);
 };
 
-const isLayoutHuman = (d) => {
+const isLayoutHuman = d => {
 	return d.layout == ObjectLayout.Human;
 };
 
-const isLayoutBookmark = (d) => {
+const isLayoutBookmark = d => {
 	return d.layout == ObjectLayout.Bookmark;
 };
 
-const getNodeById = (id) => {
+const getNodeById = id => {
 	return nodes.find(d => d.id == id);
 };
 
 const getNodeByCoords = (x, y) => {
-	return simulation.find(transform.invertX(x), transform.invertY(y), 10 / transform.k);
+	return simulation.find(
+		transform.invertX(x),
+		transform.invertY(y),
+		10 / transform.k
+	);
 };
 
-const getRadius = (d) => {
-	return d.radius / transform.k * (settings.icon && images[d.src] ? 2 : 1);
+const getRadius = d => {
+	return (d.radius / transform.k) * (settings.icon && images[d.src] ? 2 : 1);
 };
 
 const getFont = () => {
@@ -813,7 +876,7 @@ const getFont = () => {
 };
 
 const getNodeMap = () => {
-	return new Map(nodes.map(d => [ d.id, d ]));
+	return new Map(nodes.map(d => [d.id, d]));
 };
 
 const getCenter = (x, y) => {

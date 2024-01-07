@@ -1,3 +1,11 @@
-@import "~scss/_vars";
+/** @format */
 
-.frame { position: fixed; left: 50%; top: 50%; z-index: 1; border-radius: 8px; }
+@import '~scss/_vars';
+
+.frame {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+	border-radius: 8px;
+}

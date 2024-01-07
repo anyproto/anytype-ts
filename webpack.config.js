@@ -1,7 +1,10 @@
+/** @format */
+
 const path = require('path');
 const process = require('process');
 const webpack = require('webpack');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin =
+	require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
@@ -16,11 +19,11 @@ module.exports = (env, argv) => {
 			removeEmptyChunks: true,
 			splitChunks: false,
 		},
-		
+
 		entry: './src/ts/entry.tsx',
-	
+
 		resolve: {
-			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			alias: {
 				protobuf: path.resolve(__dirname, 'dist/lib'),
 				json: path.resolve(__dirname, 'src/json'),
@@ -35,10 +38,10 @@ module.exports = (env, argv) => {
 				path.resolve('./src/'),
 				path.resolve('./electron/'),
 				path.resolve('./dist/'),
-				path.resolve('./node_modules')
-			]
+				path.resolve('./node_modules'),
+			],
 		},
-		
+
 		devServer: {
 			hot: true,
 			static: {
@@ -46,7 +49,7 @@ module.exports = (env, argv) => {
 				watch: {
 					ignored: [
 						path.resolve(__dirname, 'dist'),
-						path.resolve(__dirname, 'node_modules')
+						path.resolve(__dirname, 'node_modules'),
 					],
 					usePolling: false,
 				},
@@ -58,36 +61,36 @@ module.exports = (env, argv) => {
 				progress: false,
 			},
 		},
-	
+
 		module: {
 			rules: [
 				{
 					test: /\.ts(x?)$/,
 					exclude: /node_modules/,
-					loader: 'ts-loader'
+					loader: 'ts-loader',
 				},
 				{
 					enforce: 'pre',
 					test: /\.js$/,
-					loader: 'source-map-loader'
+					loader: 'source-map-loader',
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					loader: 'url-loader'
+					loader: 'url-loader',
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					loader: 'url-loader'
+					loader: 'url-loader',
 				},
 				{
 					test: /\.s?css/,
 					use: [
 						{ loader: 'style-loader' },
 						{ loader: 'css-loader' },
-						{ loader: 'sass-loader' }
-					]
-				}
-			]
+						{ loader: 'sass-loader' },
+					],
+				},
+			],
 		},
 		plugins: [
 			//new BundleAnalyzerPlugin(),

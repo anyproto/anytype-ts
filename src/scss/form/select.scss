@@ -1,38 +1,87 @@
-@import "~scss/_vars";
+/** @format */
 
-.select { 
-	border-radius: 4px; border: solid 1px $colorShapePrimary; display: inline-block; vertical-align: middle;
-	transition: $transitionAllCommon; position: relative; font-family: 'Inter';
-	white-space: nowrap; padding: 3px 20px 3px 6px; line-height: 20px !important;
-}
-.select:hover, .select.active { background: $colorShapeTertiary; }
+@import '~scss/_vars';
 
 .select {
-	.icon { transition: none; }
+	border-radius: 4px;
+	border: solid 1px $colorShapePrimary;
+	display: inline-block;
+	vertical-align: middle;
+	transition: $transitionAllCommon;
+	position: relative;
+	font-family: 'Inter';
+	white-space: nowrap;
+	padding: 3px 20px 3px 6px;
+	line-height: 20px !important;
+}
+.select:hover,
+.select.active {
+	background: $colorShapeTertiary;
+}
+
+.select {
+	.icon {
+		transition: none;
+	}
 	.icon.arrow {
-		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute !important; top: 50%;
-		background-image: url('~img/arrow/select/dark.svg') !important; 
+		margin: -10px 0px 0px 0px !important;
+		right: 0px !important;
+		width: 20px !important;
+		height: 20px !important;
+		position: absolute !important;
+		top: 50%;
+		background-image: url('~img/arrow/select/dark.svg') !important;
 	}
-	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
+	.icon.arrow.light {
+		background-image: url('~img/arrow/select/light.svg') !important;
+	}
 
-	.item { display: flex; background: none !important; padding: 0px !important; }
 	.item {
-		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
-		.name { width: 100%; @include text-overflow-nw; }
-		.caption { display: none; }
+		display: flex;
+		background: none !important;
+		padding: 0px !important;
 	}
-	.item::before { display: none; }
+	.item {
+		.icon,
+		.iconObject {
+			transition: none;
+			margin-right: 6px;
+			flex-shrink: 0;
+		}
+		.name {
+			width: 100%;
+			@include text-overflow-nw;
+		}
+		.caption {
+			display: none;
+		}
+	}
+	.item::before {
+		display: none;
+	}
 }
 
-.select.big { padding: 9px 26px 9px 12px; border-radius: 10px; }
 .select.big {
-	.icon.arrow { right: 4px !important; }
+	padding: 9px 26px 9px 12px;
+	border-radius: 10px;
+}
+.select.big {
+	.icon.arrow {
+		right: 4px !important;
+	}
 	.item {
-		.name { line-height: 22px; font-weight: 600; }
+		.name {
+			line-height: 22px;
+			font-weight: 600;
+		}
 	}
 }
 
-.select.isReadonly { cursor: default; }
 .select.isReadonly {
-	.icon.arrow { display: none; }
+	cursor: default;
+}
+.select.isReadonly {
+	.icon.arrow {
+		display: none;
+	}
 }

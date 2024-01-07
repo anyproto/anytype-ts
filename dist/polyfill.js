@@ -1,28 +1,29 @@
+/** @format */
+
 const RendererEvents = {};
 
 window.Anytype = window.Anytype || {};
 window.Anytype.Config = {
-    debug: {
-        mw: true,
-    },
+	debug: {
+		mw: true,
+	},
 };
 
 window.Electron = {
 	platform: 'Windows',
-	version: {
-	},
+	version: {},
 	isMaximized: () => {},
-	getGlobal: (v) => {
+	getGlobal: v => {
 		switch (v) {
 			case 'serverAddress':
 				return window.serverAddress;
-		};
+		}
 	},
 	removeAllListeners: function () {},
 	on: function (id, callBack) {
-        RendererEvents[id] = callBack;
+		RendererEvents[id] = callBack;
 		console.log(RendererEvents);
-    },
+	},
 	send: function () {},
 	currentWindow: function () {
 		return { windowId: 1 };
@@ -30,28 +31,39 @@ window.Electron = {
 	Api: () => {},
 };
 
-window.require = window.require || function (mod) {
-    const ret = {};
+window.require =
+	window.require ||
+	function (mod) {
+		const ret = {};
 
-    switch (mod) {
-        case '@electron/remote':
-            ret.app = {
-                getVersion: function () { return ''; },
-                getPath: function () { return ''; },
-            };
+		switch (mod) {
+			case '@electron/remote':
+				ret.app = {
+					getVersion: function () {
+						return '';
+					},
+					getPath: function () {
+						return '';
+					},
+				};
 
-            ret.process = {
-                getSystemVersion: function () { return ''; },
-            };
+				ret.process = {
+					getSystemVersion: function () {
+						return '';
+					},
+				};
 
-            break;
+				break;
 
-        case 'os':
-            ret.platform = function () { return 'darwin'; };
-            ret.release = function () { return ''; };
-            break;
+			case 'os':
+				ret.platform = function () {
+					return 'darwin';
+				};
+				ret.release = function () {
+					return '';
+				};
+				break;
+		}
 
-    };
-
-    return ret;
-};
+		return ret;
+	};

@@ -1,126 +1,267 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
-	.block { 
-		@include text-paragraph; word-break: break-word; display: flex; flex-direction: row; flex: auto; 
-		position: relative; margin: 0px 0px 2px 0px; align-items: stretch;
+	.block {
+		@include text-paragraph;
+		word-break: break-word;
+		display: flex;
+		flex-direction: row;
+		flex: auto;
+		position: relative;
+		margin: 0px 0px 2px 0px;
+		align-items: stretch;
 	}
 	.block.isHidden {
-		.wrapMenu, .wrapContent { display: none; }
+		.wrapMenu,
+		.wrapContent {
+			display: none;
+		}
 	}
 
 	.block {
-		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
-		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
-		.wrapContent.bgColor { border-radius: 2px; }
-
-		.wrapContent > .dropTarget.targetTop, .wrapContent > .dropTarget.targetBot { 
-			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; pointer-events: none;
+		.wrapMenu {
+			width: 48px;
+			text-align: right;
+			position: relative;
+			flex-shrink: 0;
+			z-index: 1;
+			flex-basis: 48px;
 		}
-		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: 0px; }
-
-		.flex { position: relative; z-index: 2; }
-		.icon.dnd { 
-			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
-			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorShapeSecondary; border-radius: 12px; 
+		.wrapContent {
+			width: calc(100% - 48px);
+			position: relative;
+			flex-grow: 1;
 		}
-		.icon.dnd:hover { 
-			background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+		.wrapContent.bgColor {
+			border-radius: 2px;
 		}
 
-		.inputWithFile { position: relative; }
-		
-		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; flex: 0; }
-		.colResize.active { opacity: 1; }
+		.wrapContent > .dropTarget.targetTop,
+		.wrapContent > .dropTarget.targetBot {
+			padding: 0px;
+			width: 100%;
+			position: absolute;
+			left: 0px;
+			border-radius: 0px !important;
+			pointer-events: none;
+		}
+		.wrapContent > .dropTarget.targetBot {
+			height: 2px;
+			bottom: 0px;
+		}
+
+		.flex {
+			position: relative;
+			z-index: 2;
+		}
+		.icon.dnd {
+			width: 12px;
+			height: 100%;
+			background-size: 8px 16px;
+			opacity: 0;
+			cursor: grab;
+			position: absolute;
+			right: 6px;
+			top: 0px;
+			background-image: url('~img/icon/block/menu0.svg');
+			border: 1px solid $colorShapeSecondary;
+			border-radius: 12px;
+		}
+		.icon.dnd:hover {
+			background-image: url('~img/icon/block/menu2.svg') !important;
+			border-color: $colorSystemAccent100;
+			box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+		}
+
+		.inputWithFile {
+			position: relative;
+		}
+
 		.colResize {
-			.inner { position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
-			.line { 
-				height: 100%; width: 2px; background: $colorShapeSecondary; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
+			width: 0px;
+			position: relative;
+			opacity: 0;
+			z-index: 10;
+			flex: 0;
+		}
+		.colResize.active {
+			opacity: 1;
+		}
+		.colResize {
+			.inner {
+				position: absolute;
+				left: 22px;
+				top: -15px;
+				width: 8px;
+				height: calc(100% + 30px);
+				cursor: col-resize;
+				z-index: 1;
+			}
+			.line {
+				height: 100%;
+				width: 2px;
+				background: $colorShapeSecondary;
+				position: absolute;
+				left: 50%;
+				top: 0px;
+				margin-left: -1px;
 				border-radius: 2px;
 			}
 		}
-		
-		.focusable { border-radius: inherit; }
-		
-		.emptyToggle { 
-			display: none; margin-left: 28px; color: $colorControlActive; position: relative; z-index: 2;
+
+		.focusable {
+			border-radius: inherit;
+		}
+
+		.emptyToggle {
+			display: none;
+			margin-left: 28px;
+			color: $colorControlActive;
+			position: relative;
+			z-index: 2;
 			@include text-overflow-nw;
 		}
-		.emptyToggle:hover { color: $colorTextPrimary; }
+		.emptyToggle:hover {
+			color: $colorTextPrimary;
+		}
 	}
 
-	.block.index0 { padding-top: 0px !important; }
+	.block.index0 {
+		padding-top: 0px !important;
+	}
 
 	.block {
 		> .wrapContent {
-			> .selectable { position: relative; }
+			> .selectable {
+				position: relative;
+			}
 		}
 	}
 
 	.block.isReadonly {
-		.colResize { display: none; }
+		.colResize {
+			display: none;
+		}
 	}
-	.block.isReadonly > .wrapMenu > .icon.dnd { display: none; }
-	
-	.block.align0 > .wrapContent { text-align: left; }
-	.block.align1 > .wrapContent { text-align: center; }
-	.block.align2 > .wrapContent { text-align: right; }
-	
-	.block.isResizing { user-select: none; }
+	.block.isReadonly > .wrapMenu > .icon.dnd {
+		display: none;
+	}
+
+	.block.align0 > .wrapContent {
+		text-align: left;
+	}
+	.block.align1 > .wrapContent {
+		text-align: center;
+	}
+	.block.align2 > .wrapContent {
+		text-align: right;
+	}
+
 	.block.isResizing {
-		.icon.dnd { opacity: 1; }
+		user-select: none;
 	}
-	
+	.block.isResizing {
+		.icon.dnd {
+			opacity: 1;
+		}
+	}
+
 	.block.isAdding.top::before {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorSystemAccent100; position: absolute; right: 0px; top: -2px;
+		content: '';
+		display: block;
+		width: calc(100% - 48px);
+		height: 2px;
+		background: $colorSystemAccent100;
+		position: absolute;
+		right: 0px;
+		top: -2px;
 	}
-	
+
 	.block.isAdding.bottom::after {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorSystemAccent100; position: absolute; right: 0px; bottom: -2px;
+		content: '';
+		display: block;
+		width: calc(100% - 48px);
+		height: 2px;
+		background: $colorSystemAccent100;
+		position: absolute;
+		right: 0px;
+		bottom: -2px;
 	}
-	
-	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
-	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
-	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
+	.block:hover > .wrapMenu > .icon.dnd {
+		opacity: 1;
+	}
+	.block.showMenu > .wrapMenu > .icon.dnd {
+		opacity: 1;
+	}
 
-	.block > .wrapContent > .children.canToggle { display: none; }
-	.block.isToggled > .wrapContent > .children { display: block; }
-	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
-	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
-	
-	.block.blockIconPage > .wrapMenu { visibility: hidden; }
-	.block.blockIconUser > .wrapMenu { visibility: hidden; }
+	.block.isAdding.top > .wrapContent > .selectable > .dropTarget {
+		border-radius: 0px 0px 4px 4px !important;
+	}
+	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget {
+		border-radius: 4px 4px 0px 0px !important;
+	}
+
+	.block > .wrapContent > .children.canToggle {
+		display: none;
+	}
+	.block.isToggled > .wrapContent > .children {
+		display: block;
+	}
+	.block.isToggled > .wrapContent > .emptyToggle {
+		display: block;
+	}
+	.block.isToggled
+		> .wrapContent
+		> .selectable
+		> .dropTarget
+		> .flex
+		> .markers
+		> .marker.toggle {
+		transform: rotateZ(90deg);
+	}
+
+	.block.blockIconPage > .wrapMenu {
+		visibility: hidden;
+	}
+	.block.blockIconUser > .wrapMenu {
+		visibility: hidden;
+	}
 }
 
 #dragProvider.isDragging {
-	.block > .wrapContent > .selectable.isSelectionSelected::after { display: none; }
-	.block > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block > .wrapContent > .selectable.isSelectionSelected::after {
+		display: none;
+	}
+	.block > .wrapMenu > .icon.dnd {
+		opacity: 1;
+	}
 }
 
-@import "./bookmark.scss";
-@import "./cover.scss";
-@import "./dataview.scss";
-@import "./dataview/cell.scss";
-@import "./dataview/view/board.scss";
-@import "./dataview/view/common.scss";
-@import "./dataview/view/gallery.scss";
-@import "./dataview/view/grid.scss";
-@import "./dataview/view/list.scss";
-@import "./dataview/view/calendar.scss";
-@import "./dataview/view/graph.scss";
-@import "./div.scss";
-@import "./featured.scss";
-@import "./file.scss";
-@import "./iconPage.scss";
-@import "./iconUser.scss";
-@import "./layout.scss";
-@import "./link.scss";
-@import "./media.scss";
-@import "./relation.scss";
-@import "./table.scss";
-@import "./tableOfContents.scss";
-@import "./text.scss";
-@import "./type.scss";
-@import "./embed.scss";
+@import './bookmark.scss';
+@import './cover.scss';
+@import './dataview.scss';
+@import './dataview/cell.scss';
+@import './dataview/view/board.scss';
+@import './dataview/view/common.scss';
+@import './dataview/view/gallery.scss';
+@import './dataview/view/grid.scss';
+@import './dataview/view/list.scss';
+@import './dataview/view/calendar.scss';
+@import './dataview/view/graph.scss';
+@import './div.scss';
+@import './featured.scss';
+@import './file.scss';
+@import './iconPage.scss';
+@import './iconUser.scss';
+@import './layout.scss';
+@import './link.scss';
+@import './media.scss';
+@import './relation.scss';
+@import './table.scss';
+@import './tableOfContents.scss';
+@import './text.scss';
+@import './type.scss';
+@import './embed.scss';

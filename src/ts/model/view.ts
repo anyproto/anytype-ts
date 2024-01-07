@@ -1,9 +1,10 @@
+/** @format */
+
 import { I, M, UtilCommon, UtilData } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
-	
 	id = '';
 	name = '';
 	type: I.ViewType = I.ViewType.Grid;
@@ -19,8 +20,8 @@ class View implements I.View {
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
-	
-	constructor (props: I.View) {
+
+	constructor(props: I.View) {
 		this.id = String(props.id || '');
 		this.name = String(props.name || '');
 		this.type = Number(props.type) || I.ViewType.Grid;
@@ -33,8 +34,10 @@ class View implements I.View {
 		this.pageLimit = Number(props.pageLimit) || 0;
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		this.defaultTypeId = String(props.defaultTypeId || '');
-		
-		this.relations = (props.relations || []).map(it => new M.ViewRelation(it));
+
+		this.relations = (props.relations || []).map(
+			it => new M.ViewRelation(it)
+		);
 		this.filters = (props.filters || []).map(it => new M.Filter(it));
 		this.sorts = (props.sorts || []).map(it => new M.Sort(it));
 
@@ -57,48 +60,49 @@ class View implements I.View {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
+	}
 
-	isGrid () {
+	isGrid() {
 		return this.type == I.ViewType.Grid;
-	};
+	}
 
-	isList () {
+	isList() {
 		return this.type == I.ViewType.List;
-	};
+	}
 
-	isGallery () {
+	isGallery() {
 		return this.type == I.ViewType.Gallery;
-	};
+	}
 
-	isBoard () {
+	isBoard() {
 		return this.type == I.ViewType.Board;
-	};
+	}
 
-	getVisibleRelations () {
-		return this.relations.filter(it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey));
-	};
+	getVisibleRelations() {
+		return this.relations.filter(
+			it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey)
+		);
+	}
 
-	getRelation (relationKey: string) {
-		return this.relations.find(it => it && (it.relationKey == relationKey));
-	};
+	getRelation(relationKey: string) {
+		return this.relations.find(it => it && it.relationKey == relationKey);
+	}
 
-	getFilter (id: string) {
+	getFilter(id: string) {
 		return this.filters.find(it => it.id == id);
-	};
+	}
 
-	setFilter (filter: I.Filter) {
+	setFilter(filter: I.Filter) {
 		const obj = this.getFilter(filter.id);
 
 		if (obj) {
 			Object.assign(obj, filter);
-		};
-	};
+		}
+	}
 
-	getSort (id: string) {
+	getSort(id: string) {
 		return this.sorts.find(it => it.id == id);
-	};
-
-};
+	}
+}
 
 export default View;

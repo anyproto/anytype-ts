@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { I, Relation, UtilCommon, translate, UtilDate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
@@ -15,178 +17,230 @@ interface Props extends I.Filter {
 	onOver?: (e: any) => void;
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
-};
+}
 
-const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props> {
+const MenuItemFilter = observer(
+	class MenuItemFilter extends React.Component<Props> {
+		_isMounted = false;
 
-	_isMounted = false;
+		render() {
+			const {
+				id,
+				index,
+				relation,
+				condition,
+				quickOption,
+				subId,
+				readonly,
+				style,
+				onOver,
+				onClick,
+				onRemove,
+			} = this.props;
+			const isDictionary = Relation.isDictionary(relation.relationKey);
 
-	render () {
-		const { id, index, relation, condition, quickOption, subId, readonly, style, onOver, onClick, onRemove } = this.props;
-		const isDictionary = Relation.isDictionary(relation.relationKey);
+			let conditionOptions = [];
+			if (isDictionary) {
+				conditionOptions = Relation.filterConditionsDictionary();
+			} else {
+				conditionOptions = Relation.filterConditionsByType(
+					relation.format
+				);
+			}
 
-		let conditionOptions = [];
-		if (isDictionary) {
-			conditionOptions = Relation.filterConditionsDictionary();
-		} else {
-			conditionOptions = Relation.filterConditionsByType(relation.format);
-		};
+			const conditionOption: any =
+				conditionOptions.find(it => it.id == condition) || {};
+			const filterOptions = Relation.filterQuickOptions(
+				relation.format,
+				conditionOption.id
+			);
+			const filterOption: any =
+				filterOptions.find(it => it.id == quickOption) || {};
 
-		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
-		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
-		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
+			let value = this.props.value;
+			let v: any = null;
+			let list = [];
+			let Item: any = null;
 
-		let value = this.props.value;
-		let v: any = null;
-		let list = [];
-		let Item: any = null;
+			const Handle = SortableHandle(() => <Icon className="dnd" />);
 
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
+			switch (relation.format) {
+				default: {
+					v = `“${value}”`;
+					break;
+				}
 
-		switch (relation.format) {
+				case I.RelationType.Number: {
+					v = Number(value) || 0;
+					break;
+				}
 
-			default: {
-				v = `“${value}”`;
-				break;
-			};
+				case I.RelationType.Date: {
+					v = [];
 
-			case I.RelationType.Number: {
-				v = Number(value) || 0;
-				break;
-			};
+					let name = String(filterOption.name || '').toLowerCase();
 
-			case I.RelationType.Date: {
-				v = [];
+					if (quickOption == I.FilterQuickOption.ExactDate) {
+						v.push(
+							value !== null ? UtilDate.date('d.m.Y', value) : ''
+						);
+					} else if (
+						[
+							I.FilterQuickOption.NumberOfDaysAgo,
+							I.FilterQuickOption.NumberOfDaysNow,
+						].includes(quickOption)
+					) {
+						value = Number(value) || 0;
+						name =
+							quickOption == I.FilterQuickOption.NumberOfDaysAgo
+								? `menuItemFilterTimeAgo`
+								: `menuItemFilterTimeFromNow`;
+						v.push(
+							UtilCommon.sprintf(
+								translate(name),
+								value,
+								UtilCommon.plural(value, translate('pluralDay'))
+							)
+						);
+					} else if (filterOption) {
+						v.push(name);
+					}
 
-				let name = String(filterOption.name || '').toLowerCase();
+					v = v.join(' ');
+					break;
+				}
 
-				if (quickOption == I.FilterQuickOption.ExactDate) {
-					v.push(value !== null ? UtilDate.date('d.m.Y', value) : '');
-				} else
-				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
-					value = Number(value) || 0;
-					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-					v.push(UtilCommon.sprintf(translate(name), value, UtilCommon.plural(value, translate('pluralDay'))));
-				} else 
-				if (filterOption) {
-					v.push(name);
-				};
+				case I.RelationType.Checkbox: {
+					v = translate(`relationCheckboxLabelShort${Number(value)}`);
+					break;
+				}
 
-				v = v.join(' ');
-				break;
-			};
+				case I.RelationType.MultiSelect:
+				case I.RelationType.Select: {
+					list = Relation.getOptions(value);
 
-			case I.RelationType.Checkbox: {
-				v = translate(`relationCheckboxLabelShort${Number(value)}`);
-				break;
-			};
+					if (list.length) {
+						v = (
+							<React.Fragment>
+								{list.map((item: any) => (
+									<Tag
+										key={item.id}
+										text={item.name}
+										color={item.color}
+										className={Relation.selectClassName(
+											relation.format
+										)}
+									/>
+								))}
+							</React.Fragment>
+						);
+					} else {
+						v = 'empty';
+					}
+					break;
+				}
 
-			case I.RelationType.MultiSelect:
-			case I.RelationType.Select: {
-				list = Relation.getOptions(value);
+				case I.RelationType.Object: {
+					Item = (item: any) => {
+						return (
+							<div className="element">
+								<div className="flex">
+									<IconObject object={item} />
+									<div className="name">{item.name}</div>
+								</div>
+							</div>
+						);
+					};
 
-				if (list.length) {
+					list = Relation.getArrayValue(value).map(it =>
+						detailStore.get(subId, it, [])
+					);
+					list = list.filter(it => !it._empty_);
+
 					v = (
 						<React.Fragment>
-							{list.map((item: any) => (
-								<Tag 
-									key={item.id}
-									text={item.name}
-									color={item.color}
-									className={Relation.selectClassName(relation.format)} 
-								/>
-							))}
+							{list.map((item: any, i: number) => {
+								return <Item key={i} {...item} />;
+							})}
 						</React.Fragment>
 					);
-				} else {
-					v = 'empty';
-				};
-				break;
-			};
+					break;
+				}
+			}
 
-			case I.RelationType.Object: {
-				Item = (item: any) => {
-					return (
-						<div className="element">
-							<div className="flex">
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
-							</div>
-						</div>
-					);
-				};
-
-				list = Relation.getArrayValue(value).map(it => detailStore.get(subId, it, []));
-				list = list.filter(it => !it._empty_);
-
-				v = (
-					<React.Fragment>
-						{list.map((item: any, i: number) => {
-							return <Item key={i} {...item} />;
-						})}
-					</React.Fragment>
+			if (isDictionary) {
+				const options = Relation.getDictionaryOptions(
+					relation.relationKey
 				);
-				break;
-			};
-		};
+				const option = options.find(it => it.id == v);
 
-		if (isDictionary) {
-			const options = Relation.getDictionaryOptions(relation.relationKey);
-			const option = options.find(it => it.id == v);
+				if (option) {
+					v = option.name;
+				}
+			}
 
-			if (option) {
-				v = option.name;
-			};
-		};
+			if (
+				[
+					I.FilterCondition.None,
+					I.FilterCondition.Empty,
+					I.FilterCondition.NotEmpty,
+				].includes(condition)
+			) {
+				v = null;
+			}
 
-		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
-			v = null;
-		};
+			const Element = SortableElement((item: any) => (
+				<div
+					id={'item-' + id}
+					className={['item', readonly ? 'isReadonly' : ''].join(' ')}
+					onMouseEnter={onOver}
+					style={style}
+				>
+					{!readonly ? <Handle /> : ''}
+					<IconObject
+						size={40}
+						object={{
+							relationFormat: relation.format,
+							layout: I.ObjectLayout.Relation,
+						}}
+					/>
 
-		const Element = SortableElement((item: any) => (
-			<div 
-				id={'item-' + id}
-				className={[ 'item', (readonly ? 'isReadonly' : '') ].join(' ')} 
-				onMouseEnter={onOver}
-				style={style}
-			>
-				{!readonly ? <Handle /> : ''}
-				<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
-
-				<div className="txt" onClick={onClick}>
-					<div className="name">{relation.name}</div>
-					<div className="flex">
-						<div className="condition grey">
-							{conditionOption.name}
+					<div className="txt" onClick={onClick}>
+						<div className="name">{relation.name}</div>
+						<div className="flex">
+							<div className="condition grey">
+								{conditionOption.name}
+							</div>
+							{v !== null ? (
+								<div className="value grey">{v}</div>
+							) : (
+								''
+							)}
 						</div>
-						{v !== null ? (
-							<div className="value grey">{v}</div>
-						) : ''}
 					</div>
+
+					{!readonly ? (
+						<div className="buttons">
+							<Icon className="more" onClick={onClick} />
+							<Icon className="delete" onClick={onRemove} />
+						</div>
+					) : (
+						''
+					)}
 				</div>
+			));
 
-				{!readonly ? (
-					<div className="buttons">
-						<Icon className="more" onClick={onClick} />
-						<Icon className="delete" onClick={onRemove} />
-					</div>
-				) : ''}
-			</div>
-		));
+			return <Element index={index} />;
+		}
 
-		return <Element index={index} />;
-    };
+		componentDidMount() {
+			this._isMounted = true;
+		}
 
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
-});
+		componentWillUnmount() {
+			this._isMounted = false;
+		}
+	}
+);
 
 export default MenuItemFilter;

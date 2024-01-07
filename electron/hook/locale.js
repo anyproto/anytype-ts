@@ -1,3 +1,4 @@
+/** @format */
 
 const https = require('https');
 const path = require('path');
@@ -11,23 +12,36 @@ const LANGS = Constant.enabledInterfaceLang;
 
 const run = async () => {
 	for (const lang of LANGS) {
-		const fp = path.join(__dirname, '..', '..', 'dist', 'lib', 'json', 'lang', `${lang}.json`);
+		const fp = path.join(
+			__dirname,
+			'..',
+			'..',
+			'dist',
+			'lib',
+			'json',
+			'lang',
+			`${lang}.json`
+		);
 
 		let content = '';
 		if (lang == Constant.default.interfaceLang) {
-			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
+			content = JSON.stringify(
+				require('../../src/json/text.json'),
+				null,
+				4
+			);
 		} else {
 			content = await request(lang).catch(e => console.log(e));
-		};
+		}
 
 		if (content) {
 			fs.writeFileSync(fp, content);
 			console.log('Saved lang file:', fp);
-		};
-	};
+		}
+	}
 };
 
-const request = async (lang) => {
+const request = async lang => {
 	let str = '';
 
 	const options = {
@@ -36,7 +50,7 @@ const request = async (lang) => {
 		port: 443,
 		method: 'GET',
 		headers: {
-			'Accept': 'application/vnd.github+json',
+			Accept: 'application/vnd.github+json',
 			'X-GitHub-Api-Version': '2022-11-28',
 			'User-Agent': 'Chrome/59.0.3071.115',
 		},
@@ -44,11 +58,11 @@ const request = async (lang) => {
 
 	if (process.env.GITHUB_TOKEN) {
 		options.headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
-	};
+	}
 
 	return new Promise((resolve, reject) => {
 		const success = response => {
-			response.on('data', d => str += d);
+			response.on('data', d => (str += d));
 			response.on('end', function () {
 				const data = JSON.parse(str);
 
@@ -56,7 +70,7 @@ const request = async (lang) => {
 					reject(data.message);
 				} else {
 					resolve(Buffer.from(data.content, 'base64').toString());
-				};
+				}
 			});
 		};
 
@@ -68,7 +82,7 @@ const request = async (lang) => {
 		const req = https.request(options, success).on('error', error);
 
 		req.end();
-    });
+	});
 };
 
 run();

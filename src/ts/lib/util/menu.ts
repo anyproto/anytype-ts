@@ -1,14 +1,33 @@
+/** @format */
+
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore, dbStore } from 'Store';
+import {
+	I,
+	C,
+	keyboard,
+	translate,
+	UtilCommon,
+	UtilData,
+	UtilObject,
+	Relation,
+	Dataview,
+} from 'Lib';
+import {
+	blockStore,
+	menuStore,
+	detailStore,
+	commonStore,
+	dbStore,
+} from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
-
-	mapperBlock (it: any) {
+	mapperBlock(it: any) {
 		it.isBlock = true;
 		it.name = it.lang ? translate(`blockName${it.lang}`) : it.name;
-		it.description = it.lang ? translate(`blockText${it.lang}`) : it.description;
+		it.description = it.lang
+			? translate(`blockText${it.lang}`)
+			: it.description;
 		it.aliases = it.aliases || [];
 
 		if (it.lang) {
@@ -19,55 +38,125 @@ class UtilMenu {
 			it.description = translate(descriptionKey);
 
 			if (commonStore.interfaceLang != Constant.default.interfaceLang) {
-				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
-				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
+				it.aliases.push(
+					translate(nameKey, Constant.default.interfaceLang)
+				);
+				it.aliases.push(
+					translate(descriptionKey, Constant.default.interfaceLang)
+				);
 				it.aliases = UtilCommon.arrayUnique(it.aliases);
-			};
-		};
+			}
+		}
 		return it;
-	};
-	
-	getBlockText () {
+	}
+
+	getBlockText() {
 		return [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1', 'header1' ] },
-			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2', 'header2' ] },
-			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3', 'header3' ] },
-			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: [ 'quote' ] },
-			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
+			{
+				id: I.TextStyle.Header1,
+				lang: 'Header1',
+				aliases: ['h1', 'head1', 'header1'],
+			},
+			{
+				id: I.TextStyle.Header2,
+				lang: 'Header2',
+				aliases: ['h2', 'head2', 'header2'],
+			},
+			{
+				id: I.TextStyle.Header3,
+				lang: 'Header3',
+				aliases: ['h3', 'head3', 'header3'],
+			},
+			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: ['quote'] },
+			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: ['callout'] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = UtilData.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
-	};
-	
-	getBlockList () {
-		return [
-			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo', 'checkbox' ] },
-			{ id: I.TextStyle.Bulleted, lang: 'Bulleted', aliases: [ 'bulleted list' ] },
-			{ id: I.TextStyle.Numbered, lang: 'Numbered', aliases: [ 'numbered list' ] },
-			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: [ 'toggle' ] },
-		].map((it: any) => {
-			it.type = I.BlockType.Text;
-			it.icon = UtilData.blockTextClass(it.id);
-			return this.mapperBlock(it);
-		});
-	};
+	}
 
-	getBlockMedia () {
+	getBlockList() {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image', aliases: [ 'image', 'picture' ] },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video', aliases: [ 'video' ] },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio', aliases: [ 'audio' ] },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
+			{
+				id: I.TextStyle.Checkbox,
+				lang: 'Checkbox',
+				aliases: ['todo', 'checkbox'],
+			},
+			{
+				id: I.TextStyle.Bulleted,
+				lang: 'Bulleted',
+				aliases: ['bulleted list'],
+			},
+			{
+				id: I.TextStyle.Numbered,
+				lang: 'Numbered',
+				aliases: ['numbered list'],
+			},
+			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: ['toggle'] },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			it.icon = UtilData.blockTextClass(it.id);
+			return this.mapperBlock(it);
+		});
+	}
+
+	getBlockMedia() {
+		return [
+			{
+				type: I.BlockType.File,
+				id: I.FileType.File,
+				icon: 'mediaFile',
+				lang: 'File',
+				aliases: ['file'],
+			},
+			{
+				type: I.BlockType.File,
+				id: I.FileType.Image,
+				icon: 'mediaImage',
+				lang: 'Image',
+				aliases: ['image', 'picture'],
+			},
+			{
+				type: I.BlockType.File,
+				id: I.FileType.Video,
+				icon: 'mediaVideo',
+				lang: 'Video',
+				aliases: ['video'],
+			},
+			{
+				type: I.BlockType.File,
+				id: I.FileType.Audio,
+				icon: 'mediaAudio',
+				lang: 'Audio',
+				aliases: ['audio'],
+			},
+			{
+				type: I.BlockType.File,
+				id: I.FileType.Pdf,
+				icon: 'mediaPdf',
+				lang: 'Pdf',
+				aliases: ['pdf'],
+			},
+			{
+				type: I.BlockType.Bookmark,
+				id: 'bookmark',
+				icon: 'bookmark',
+				lang: 'Bookmark',
+				aliases: ['bookmark'],
+			},
+			{
+				type: I.BlockType.Text,
+				id: I.TextStyle.Code,
+				icon: 'code',
+				lang: 'Code',
+				aliases: ['code'],
+			},
 		].map(this.mapperBlock);
-	};
+	}
 
-	getBlockEmbed () {
+	getBlockEmbed() {
 		const { config } = commonStore;
 
 		let ret = [
@@ -76,8 +165,16 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
 			{ id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
 			{ id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
-			{ id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
-			{ id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
+			{
+				id: I.EmbedProcessor.Soundcloud,
+				icon: 'soundcloud',
+				name: 'Soundcloud',
+			},
+			{
+				id: I.EmbedProcessor.GoogleMaps,
+				icon: 'googleMaps',
+				name: 'Google maps',
+			},
 			{ id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
 		];
 
@@ -85,173 +182,367 @@ class UtilMenu {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
 
-				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
-				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
+				{
+					id: I.EmbedProcessor.Twitter,
+					icon: 'twitter',
+					name: 'X (Twitter)',
+				},
+				{
+					id: I.EmbedProcessor.OpenStreetMap,
+					icon: 'openStreetMap',
+					name: 'Open Street Map',
+				},
 				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
-				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
-				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
-				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
-				{ id: I.EmbedProcessor.GithubGist, icon: 'githubGist', name: 'Github Gist' },
-				{ id: I.EmbedProcessor.Codepen, icon: 'codepen', name: 'Codepen' },
-				{ id: I.EmbedProcessor.Bilibili, icon: 'bilibili', name: 'Bilibili' },
+				{
+					id: I.EmbedProcessor.Facebook,
+					icon: 'facebook',
+					name: 'Facebook',
+				},
+				{
+					id: I.EmbedProcessor.Instagram,
+					icon: 'instagram',
+					name: 'Instagram',
+				},
+				{
+					id: I.EmbedProcessor.Telegram,
+					icon: 'telegram',
+					name: 'Telegram',
+				},
+				{
+					id: I.EmbedProcessor.GithubGist,
+					icon: 'githubGist',
+					name: 'Github Gist',
+				},
+				{
+					id: I.EmbedProcessor.Codepen,
+					icon: 'codepen',
+					name: 'Codepen',
+				},
+				{
+					id: I.EmbedProcessor.Bilibili,
+					icon: 'bilibili',
+					name: 'Bilibili',
+				},
 			]);
-		};
+		}
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
 			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
 			return it;
 		});
-	};
+	}
 
-	getBlockObject () {
-		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+	getBlockObject() {
+		const items = UtilData.getObjectTypesForNewObject({
+			withSet: true,
+			withCollection: true,
+		});
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
+			{
+				type: I.BlockType.Page,
+				id: 'existing',
+				icon: 'existing',
+				lang: 'Existing',
+				arrow: true,
+				aliases: ['link'],
+			},
 		];
 
 		let i = 0;
 		for (const type of items) {
-			ret.push({ 
-				id: 'object' + i++, 
-				type: I.BlockType.Page, 
-				objectTypeId: type.id, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || UtilObject.defaultName('Page'), 
+			ret.push({
+				id: 'object' + i++,
+				type: I.BlockType.Page,
+				objectTypeId: type.id,
+				iconEmoji: type.iconEmoji,
+				name: type.name || UtilObject.defaultName('Page'),
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
 			});
-		};
+		}
 
 		return ret.map(this.mapperBlock);
-	};
+	}
 
-	getBlockOther () {
+	getBlockOther() {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline collection' ] },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline set' ] },
+			{
+				type: I.BlockType.Div,
+				id: I.DivStyle.Line,
+				icon: 'divLine',
+				lang: 'Line',
+				aliases: ['hr', 'line divider'],
+			},
+			{
+				type: I.BlockType.Div,
+				id: I.DivStyle.Dot,
+				icon: 'divDot',
+				lang: 'Dot',
+				aliases: ['dot', 'dots divider'],
+			},
+			{
+				type: I.BlockType.TableOfContents,
+				id: I.BlockType.TableOfContents,
+				icon: 'tableOfContents',
+				lang: 'TableOfContents',
+				aliases: ['tc', 'toc', 'table of contents'],
+			},
+			{
+				type: I.BlockType.Table,
+				id: I.BlockType.Table,
+				icon: 'table',
+				lang: 'SimpleTable',
+				aliases: ['table'],
+			},
+			{
+				type: I.BlockType.Dataview,
+				id: 'collection',
+				icon: 'collection',
+				lang: 'Collection',
+				aliases: [
+					'grid',
+					'table',
+					'gallery',
+					'list',
+					'board',
+					'kanban',
+					'inline collection',
+				],
+			},
+			{
+				type: I.BlockType.Dataview,
+				id: 'set',
+				icon: 'set',
+				lang: 'Set',
+				aliases: [
+					'grid',
+					'table',
+					'gallery',
+					'list',
+					'board',
+					'kanban',
+					'inline set',
+				],
+			},
 		].map(this.mapperBlock);
-	};
+	}
 
-	getTurnPage () {
+	getTurnPage() {
 		const ret = [];
-		const types = UtilData.getObjectTypesForNewObject(); 
+		const types = UtilData.getObjectTypesForNewObject();
 
 		let i = 0;
 		for (const type of types) {
-			ret.push({ 
-				type: I.BlockType.Page, 
-				id: 'object' + i++, 
-				objectTypeId: type.id, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || UtilObject.defaultName('Page'), 
+			ret.push({
+				type: I.BlockType.Page,
+				id: 'object' + i++,
+				objectTypeId: type.id,
+				iconEmoji: type.iconEmoji,
+				name: type.name || UtilObject.defaultName('Page'),
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
 			});
-		};
+		}
 
 		return ret;
-	};
-	
-	getTurnDiv () {
-		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
-		].map(this.mapperBlock);
-	};
+	}
 
-	getTurnFile () {
+	getTurnDiv() {
+		return [
+			{
+				type: I.BlockType.Div,
+				id: I.DivStyle.Line,
+				icon: 'divLine',
+				lang: 'Line',
+			},
+			{
+				type: I.BlockType.Div,
+				id: I.DivStyle.Dot,
+				icon: 'divDot',
+				lang: 'Dot',
+			},
+		].map(this.mapperBlock);
+	}
+
+	getTurnFile() {
 		return [
 			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
 			{ type: I.BlockType.File, id: I.FileStyle.Embed, lang: 'Embed' },
 		].map(this.mapperBlock);
-	};
+	}
 
 	// Action menu
-	getActions (param: any) {
+	getActions(param: any) {
 		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
-			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+			{
+				id: 'remove',
+				icon: 'remove',
+				name: translate('commonDelete'),
+				caption: 'Del',
+			},
+			{
+				id: 'copy',
+				icon: 'copy',
+				name: translate('commonDuplicate'),
+				caption: `${cmd} + D`,
+			},
+			{
+				id: 'move',
+				icon: 'move',
+				name: translate('commonMoveTo'),
+				arrow: true,
+			},
 			//{ id: 'comment', icon: 'comment', name: translate('commonComment')' }
 		];
 
 		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
-		};
-		
+			items.push({
+				id: 'turnObject',
+				icon: 'object',
+				name: translate('commonTurnIntoObject'),
+				arrow: true,
+			});
+		}
+
 		if (hasText) {
-			items.push({ id: 'clear', icon: 'clear', name: translate('libMenuClearStyle') });
-		};
-		
+			items.push({
+				id: 'clear',
+				icon: 'clear',
+				name: translate('libMenuClearStyle'),
+			});
+		}
+
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
+			items.push({
+				id: 'download',
+				icon: 'download',
+				name: translate('commonDownload'),
+			});
+			items.push({
+				id: 'openFileAsObject',
+				icon: 'expand',
+				name: translate('commonOpenObject'),
+			});
 			//items.push({ id: 'rename', icon: 'rename', name: translate('libMenuRename') });
 			//items.push({ id: 'replace', icon: 'replace', name: translate('libMenuReplace') });
-		};
+		}
 
 		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
-		};
+			items.push({
+				id: 'openBookmarkAsObject',
+				icon: 'expand',
+				name: translate('commonOpenObject'),
+			});
+		}
 
 		return items.map(it => ({ ...it, isAction: true }));
-	};
+	}
 
-	getDataviewActions (rootId: string, blockId: string) {
+	getDataviewActions(rootId: string, blockId: string) {
 		const isCollection = Dataview.isCollection(rootId, blockId);
 		const sourceName = isCollection ? 'collection' : 'set';
 
 		return [
-			{ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true },
-			{ id: 'openDataviewObject', icon: 'expand', name: UtilCommon.sprintf(translate('libMenuOpenSource'), sourceName) },
+			{
+				id: 'dataviewSource',
+				icon: 'source',
+				name: UtilCommon.sprintf(
+					translate('libMenuChangeSource'),
+					sourceName
+				),
+				arrow: true,
+			},
+			{
+				id: 'openDataviewObject',
+				icon: 'expand',
+				name: UtilCommon.sprintf(
+					translate('libMenuOpenSource'),
+					sourceName
+				),
+			},
 			//{ id: 'openDataviewFullscreen', icon: 'expand', name: translate('libMenuOpenFullscreen') }
 		].map(it => ({ ...it, isAction: true }));
-	};
-	
-	getTextColors () {
+	}
+
+	getTextColors() {
 		const items: any[] = [
-			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
+			{
+				id: 'color-default',
+				name: translate('commonDefault'),
+				value: '',
+				className: 'default',
+				isTextColor: true,
+			},
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
-		};
+			items.push({
+				id: 'color-' + color,
+				name: translate('textColor-' + color),
+				value: color,
+				className: color,
+				isTextColor: true,
+			});
+		}
 		return items;
-	};
-	
-	getBgColors () {
+	}
+
+	getBgColors() {
 		const items: any[] = [
-			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
+			{
+				id: 'bgColor-default',
+				name: translate('commonDefault'),
+				value: '',
+				className: 'default',
+				isBgColor: true,
+			},
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
-		};
+			items.push({
+				id: 'bgColor-' + color,
+				name: translate('textColor-' + color),
+				value: color,
+				className: color,
+				isBgColor: true,
+			});
+		}
 		return items;
-	};
-	
-	getAlign (hasQuote: boolean) {
+	}
+
+	getAlign(hasQuote: boolean) {
 		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
+			{
+				id: I.BlockHAlign.Left,
+				icon: 'align left',
+				name: translate('commonAlignLeft'),
+				isAlign: true,
+			},
+			{
+				id: I.BlockHAlign.Center,
+				icon: 'align center',
+				name: translate('commonAlignCenter'),
+				isAlign: true,
+			},
+			{
+				id: I.BlockHAlign.Right,
+				icon: 'align right',
+				name: translate('commonAlignRight'),
+				isAlign: true,
+			},
 		];
 
 		if (hasQuote) {
 			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
-		};
+		}
 
 		return ret;
-	};
+	}
 
-	getLayouts () {
+	getLayouts() {
 		return [
 			{ id: I.ObjectLayout.Page },
 			{ id: I.ObjectLayout.Human },
@@ -262,19 +553,24 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Type },
 			{ id: I.ObjectLayout.Relation },
 			{ id: I.ObjectLayout.Note },
-		].map(it => ({ 
-			...it, 
+		].map(it => ({
+			...it,
 			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
 			name: translate('layout' + it.id),
 		}));
-	};
+	}
 
-	turnLayouts () {
-		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+	turnLayouts() {
+		const allowed = [
+			I.ObjectLayout.Page,
+			I.ObjectLayout.Human,
+			I.ObjectLayout.Task,
+			I.ObjectLayout.Note,
+		];
 		return this.getLayouts().filter(it => allowed.includes(it.id));
-	};
+	}
 
-	getViews () {
+	getViews() {
 		const { config } = commonStore;
 
 		return [
@@ -284,45 +580,64 @@ class UtilMenu {
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
 			config.experimental ? { id: I.ViewType.Graph } : null,
-		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
-	};
+		]
+			.filter(it => it)
+			.map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+	}
 
-	viewContextMenu (param: any) {
-		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
+	viewContextMenu(param: any) {
+		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } =
+			param;
 		const views = dbStore.getViews(rootId, blockId);
 
 		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
+			{
+				id: 'edit',
+				icon: 'viewSettings',
+				name: translate('menuDataviewViewEditView'),
+			},
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
 		];
 
 		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
-		};
+			options.push({
+				id: 'remove',
+				icon: 'remove',
+				name: translate('commonDelete'),
+			});
+		}
 
 		menuStore.open('select', {
 			...menuParam,
 			data: {
 				options,
 				onSelect: (e, option) => {
-					menuStore.closeAll([ 'select' ]);
+					menuStore.closeAll(['select']);
 					if (close) {
 						close();
-					};
+					}
 
 					window.setTimeout(() => {
 						switch (option.id) {
-							case 'edit': $(`#button-${blockId}-settings`).trigger('click'); break;
-							case 'copy': onCopy(view); break;
-							case 'remove': onRemove(view); break;
-						};
+							case 'edit':
+								$(`#button-${blockId}-settings`).trigger(
+									'click'
+								);
+								break;
+							case 'copy':
+								onCopy(view);
+								break;
+							case 'remove':
+								onRemove(view);
+								break;
+						}
 					}, Constant.delay.menu);
-				}
-			}
+				},
+			},
 		});
-	};
+	}
 
-	getRelationTypes () {
+	getRelationTypes() {
 		return [
 			{ id: I.RelationType.Object },
 			{ id: I.RelationType.LongText },
@@ -340,25 +655,25 @@ class UtilMenu {
 			it.icon = 'relation ' + Relation.className(it.id);
 			return it;
 		});
-	};
+	}
 
-	getWidgetLimits (layout: I.WidgetLayout) {
+	getWidgetLimits(layout: I.WidgetLayout) {
 		let options = [];
 		switch (layout) {
 			default: {
-				options = [ 6, 10, 14 ];
+				options = [6, 10, 14];
 				break;
-			};
+			}
 
 			case I.WidgetLayout.List: {
-				options = [ 4, 6, 8 ];
+				options = [4, 6, 8];
 				break;
-			};
-		};
+			}
+		}
 		return options.map(id => ({ id: String(id), name: id }));
-	};
-	
-	sectionsFilter (sections: any[], filter: string) {
+	}
+
+	sectionsFilter(sections: any[], filter: string) {
 		const f = UtilCommon.regexEscape(filter);
 		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
@@ -366,40 +681,45 @@ class UtilMenu {
 			let w = 0;
 			if (s.toLowerCase() == f.toLowerCase()) {
 				w += 10000;
-			} else
-			if (s.match(regS)) {
+			} else if (s.match(regS)) {
 				w = 1000;
-			} else 
-			if (s.match(regC)) {
+			} else if (s.match(regC)) {
 				w = 100;
-			};
+			}
 			return w;
 		};
-		
+
 		sections = sections.filter((s: any) => {
 			if (s.name.match(regC)) {
 				return true;
-			};
+			}
 			s._sortWeight_ = 0;
-			s.children = (s.children || []).filter((c: any) => { 
-
+			s.children = (s.children || []).filter((c: any) => {
 				let ret = false;
 
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
-					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
+				if (c.isBlock && c.type == I.BlockType.Table) {
+					const match = filter.match(
+						/table([\d]+)(?:[^\d]{1}([\d]+))?/i
+					);
 					if (match) {
-						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
-						c.columnCnt = Math.max(1, Math.min(25, Number(match[2]) || 3));
+						c.rowCnt = Math.max(
+							1,
+							Math.min(25, Number(match[1]) || 3)
+						);
+						c.columnCnt = Math.max(
+							1,
+							Math.min(25, Number(match[2]) || 3)
+						);
 						c.name = `Table ${c.rowCnt}x${c.columnCnt}`;
 
 						ret = true;
-					};
-				};
+					}
+				}
 
 				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
-				};
+				}
 
 				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
@@ -407,42 +727,46 @@ class UtilMenu {
 							c._sortWeight_ = getWeight(alias);
 							ret = true;
 							break;
-						};
-					};
-				};
+						}
+					}
+				}
 
 				if (!ret && c.name && c.name.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.name);
-				};
+				}
 
 				if (!ret && c.description && c.description.match(regC)) {
 					ret = true;
 					c._sortWeight_ = getWeight(c.description);
-				};
-				
+				}
+
 				s._sortWeight_ += c._sortWeight_;
-				return ret; 
+				return ret;
 			});
-			s.children = s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) =>
+				UtilData.sortByWeight(c1, c2)
+			);
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) =>
+			UtilData.sortByWeight(c1, c2)
+		);
 		return sections;
-	};
-	
-	sectionsMap (sections: any[]) {
+	}
+
+	sectionsMap(sections: any[]) {
 		sections = UtilCommon.objectCopy(sections);
 		sections = sections.filter(it => it.children.length > 0);
 		sections = sections.map((s: any, i: number) => {
-			s.id = (undefined !== s.id) ? s.id : i;
+			s.id = undefined !== s.id ? s.id : i;
 
 			s.children = s.children.filter(it => it);
 			s.children = s.children.map((c: any, i: number) => {
-				c.id = (undefined !== c.id) ? c.id : i;
+				c.id = undefined !== c.id ? c.id : i;
 				c.itemId = c.id;
-				c.id = [ s.id, c.id ].join('-');
+				c.id = [s.id, c.id].join('-');
 				c.color = c.color || s.color || '';
 				return c;
 			});
@@ -451,30 +775,45 @@ class UtilMenu {
 		});
 
 		return UtilCommon.arrayUniqueObjects(sections, 'id');
-	};
+	}
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect(element: string, openRoute?: boolean) {
 		const { space } = commonStore;
 		const { spaceview } = blockStore;
 		const templateType = dbStore.getTemplateType();
-		const subIds = [ 'searchObject' ];
+		const subIds = ['searchObject'];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
+			C.WorkspaceSetInfo(
+				space,
+				{ spaceDashboardId: object.id },
+				(message: any) => {
+					if (message.error.code) {
+						return;
+					}
 
-				detailStore.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+					detailStore.update(
+						Constant.subId.space,
+						{
+							id: spaceview,
+							details: { spaceDashboardId: object.id },
+						},
+						false
+					);
 
-				if (update) {
-					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
-				};
+					if (update) {
+						detailStore.update(
+							Constant.subId.space,
+							{ id: object.id, details: object },
+							false
+						);
+					}
 
-				if (openRoute) {
-					UtilObject.openHome('route');
-				};
-			});
+					if (openRoute) {
+						UtilObject.openHome('route');
+					}
+				}
+			);
 		};
 
 		let menuContext = null;
@@ -483,83 +822,116 @@ class UtilMenu {
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds,
-			onOpen: context => menuContext = context,
+			onOpen: context => (menuContext = context),
 			onClose: () => menuStore.closeAll(subIds),
 			data: {
 				options: [
-					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
+					{
+						id: I.HomePredefinedId.Graph,
+						name: translate('commonGraph'),
+					},
+					{
+						id: I.HomePredefinedId.Last,
+						name: translate('spaceLast'),
+					},
+					{
+						id: I.HomePredefinedId.Existing,
+						name: translate('spaceExisting'),
+						arrow: true,
+					},
 				],
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
-					};
+					}
 
 					if (!item.arrow) {
 						menuStore.closeAll(subIds);
 						return;
-					};
+					}
 
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
 							menuStore.open('searchObject', {
-								element: `#${menuContext.getId()} #item-${item.id}`,
+								element: `#${menuContext.getId()} #item-${
+									item.id
+								}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{
+											operator: I.FilterOperator.And,
+											relationKey: 'layout',
+											condition: I.FilterCondition.NotIn,
+											value: UtilObject.getFileAndSystemLayouts(),
+										},
+										{
+											operator: I.FilterOperator.And,
+											relationKey: 'type',
+											condition:
+												I.FilterCondition.NotEqual,
+											value: templateType?.id,
+										},
 									],
 									canAdd: true,
 									onSelect: el => onSelect(el, true),
-								}
+								},
 							});
 							break;
-						};
-					};
+						}
+					}
 				},
 				onSelect: (e, item: any) => {
 					if (item.arrow) {
 						return;
-					};
+					}
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 							break;
-						};
-					};
+						}
+					}
 				},
-			}
+			},
 		});
-	};
+	}
 
-	getGraphTabs () {
+	getGraphTabs() {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
 
 		return [
-			{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
-			{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
+			{
+				id: 'graph',
+				name: translate('commonGraph'),
+				layout: I.ObjectLayout.Graph,
+				tooltipCaption: `${cmd} + ${alt} + O`,
+			},
+			{
+				id: 'navigation',
+				name: translate('commonFlow'),
+				layout: I.ObjectLayout.Navigation,
+				tooltipCaption: `${cmd} + O`,
+			},
 		];
-	};
+	}
 
-	getInterfaceLanguages () {
+	getInterfaceLanguages() {
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
 		for (const id of Constant.enabledInterfaceLang) {
 			ret.push({ id, name: Locale[id] });
-		};
+		}
 
 		return ret;
-	};
+	}
 
-	getSpellingLanguages () {
+	getSpellingLanguages() {
 		let ret: any[] = [];
 
 		ret = ret.concat(commonStore.languages || []);
@@ -567,8 +939,7 @@ class UtilMenu {
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;
-	};
-
-};
+	}
+}
 
 export default new UtilMenu();

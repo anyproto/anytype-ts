@@ -1,180 +1,382 @@
-@import "~scss/_vars";
+/** @format */
 
-.cell.c-shortText, .cell.c-url, .cell.c-email, .cell.c-phone {
-	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }
+@import '~scss/_vars';
+
+.cell.c-shortText,
+.cell.c-url,
+.cell.c-email,
+.cell.c-phone {
+	.name {
+		@include text-overflow-nw;
+		display: inline-block;
+		vertical-align: top;
+		width: 100%;
+	}
 }
 
-.cell.isEditing { border-radius: 2px; }
 .cell.isEditing {
-	.input-text { padding: 0px; height: 20px; }
-	.icon.edit { display: none !important; }
-	.cellContent { 
-		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		background: $colorBgPrimary; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
+	border-radius: 2px;
+}
+.cell.isEditing {
+	.input-text {
+		padding: 0px;
+		height: 20px;
+	}
+	.icon.edit {
+		display: none !important;
 	}
 	.cellContent {
-		.name { display: inline-block; }
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		overflow: visible !important;
+		height: auto !important;
+		white-space: normal !important;
+		background: $colorBgPrimary;
+		z-index: 10;
+		min-height: 100%;
+		box-shadow: 0px 0px 0px 2px #ffcf6f;
 	}
-	.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
+	.cellContent {
+		.name {
+			display: inline-block;
+		}
+	}
+	.empty {
+		display: inline-block !important;
+		visibility: visible !important;
+		white-space: nowrap;
+	}
 
-	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
-		transition: background-image $transitionCommon; margin: -10px 0px 0px 0px !important;
+	.icon.clear {
+		width: 20px;
+		height: 20px;
+		background-image: url('~img/icon/clear0.svg');
+		position: absolute;
+		right: 14px;
+		top: 50%;
+		transition: background-image $transitionCommon;
+		margin: -10px 0px 0px 0px !important;
 	}
-	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+	.icon.clear:hover {
+		background-image: url('~img/icon/clear1.svg');
+	}
 }
 
 .cell.isEditing.c-select.isSelect {
-	.icon.clear { display: block; }
-	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
+	.icon.clear {
+		display: block;
+	}
+	.over {
+		display: inline-block;
+		vertical-align: top;
+		font-size: 0px;
+		width: calc(100% - 30px);
+	}
 }
 
-.cell.isEditing.c-object, .cell.isEditing.c-select {
-	.cellContent { height: 20px !important; }
+.cell.isEditing.c-object,
+.cell.isEditing.c-select {
+	.cellContent {
+		height: 20px !important;
+	}
 }
 
 .cell.isEditing.c-file {
-	.inputWithFile { display: block; }
+	.inputWithFile {
+		display: block;
+	}
 }
 
-.cellContent { cursor: default; }
 .cellContent {
-	.iconObject { margin-right: 8px; vertical-align: top; flex-shrink: 0; }
-	.icon.clear { display: none; }
+	cursor: default;
+}
+.cellContent {
+	.iconObject {
+		margin-right: 8px;
+		vertical-align: top;
+		flex-shrink: 0;
+	}
+	.icon.clear {
+		display: none;
+	}
 
-	.name { display: inline-block; vertical-align: top; }
-	.empty { vertical-align: top; display: none; }
+	.name {
+		display: inline-block;
+		vertical-align: top;
+	}
+	.empty {
+		vertical-align: top;
+		display: none;
+	}
 
-	.more { display: inline-block; vertical-align: middle; @include text-small; color: $colorTextSecondary; }
+	.more {
+		display: inline-block;
+		vertical-align: middle;
+		@include text-small;
+		color: $colorTextSecondary;
+	}
 }
 
-.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
-	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0px 2px;
+}
+.cellContent.c-checkbox {
+	.icon {
+		width: 20px;
+		height: 20px;
+		background-image: url('~img/icon/dataview/checkbox0.svg');
+	}
+	.icon.active {
+		background-image: url('~img/icon/dataview/checkbox2.svg');
+	}
 
-	.label { line-height: 20px; }
+	.label {
+		line-height: 20px;
+	}
 }
 .cellContent.c-checkbox.canEdit {
-	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+	.icon:not(.active):hover {
+		background-image: url('~img/icon/dataview/checkbox1.svg');
+	}
 }
 
 .cellContent.c-file {
-	.inputWithFile { border: 0px; padding: 0px; display: none; }
-	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
-	.element {
-		.iconObject { flex-shrink: 0; }
-		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+	.inputWithFile {
+		border: 0px;
+		padding: 0px;
+		display: none;
 	}
-	.cellContent { white-space: normal; }
+	.element {
+		display: inline-block;
+		vertical-align: top;
+		white-space: nowrap;
+		max-width: 100%;
+	}
+	.element {
+		.iconObject {
+			flex-shrink: 0;
+		}
+		.name {
+			line-height: 20px;
+			width: 100%;
+			@include text-overflow-nw;
+		}
+	}
+	.cellContent {
+		white-space: normal;
+	}
 }
 
 .cellContent.c-select {
-	.more { height: 18px; }
+	.more {
+		height: 18px;
+	}
 }
 
 .cellContent.c-object {
-	.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
-	.element:last-child { margin-right: 0px; }
 	.element {
-		.iconObject { margin: 0px; }
-		.flex { align-items: center; gap: 0px 4px; }
-		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+		display: inline-block;
+		vertical-align: top;
+		max-width: 100%;
+		line-height: 20px;
+		white-space: nowrap;
+	}
+	.element:last-child {
+		margin-right: 0px;
+	}
+	.element {
+		.iconObject {
+			margin: 0px;
+		}
+		.flex {
+			align-items: center;
+			gap: 0px 4px;
+		}
+		.name {
+			line-height: 20px;
+			width: 100%;
+			@include text-overflow-nw;
+		}
 	}
 }
 .cellContent.c-object.canEdit {
-	.element { cursor: grab; }
 	.element {
-		.icon.objectRemove { cursor: default; }
+		cursor: grab;
+	}
+	.element {
+		.icon.objectRemove {
+			cursor: default;
+		}
 	}
 }
 
 .cellContent.isName {
-	.iconObject { z-index: 1; }
-	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+	.iconObject {
+		z-index: 1;
+	}
+	.name {
+		line-height: 20px;
+		@include text-overflow-nw;
+		width: 100%;
+	}
 }
 
 .cellContent.c-link {
-	.icon.user { margin-right: 5px; }
+	.icon.user {
+		margin-right: 5px;
+	}
 }
 
 .cellContent.c-select,
 .cellContent.c-object,
 .cellContent.c-file {
-	.over { display: inline-flex; vertical-align: top; width: 100%; gap: 4px 8px; align-items: flex-start; }
+	.over {
+		display: inline-flex;
+		vertical-align: top;
+		width: 100%;
+		gap: 4px 8px;
+		align-items: flex-start;
+	}
 }
 
-.cell.isEditing.c-shortText, 
-.cell.isEditing.c-longText, 
-.cell.isEditing.c-number, 
-.cell.isEditing.c-url, 
-.cell.isEditing.c-phone, 
-.cell.isEditing.c-email, 
+.cell.isEditing.c-shortText,
+.cell.isEditing.c-longText,
+.cell.isEditing.c-number,
+.cell.isEditing.c-url,
+.cell.isEditing.c-phone,
+.cell.isEditing.c-email,
 .cell.isEditing.c-date {
-	.cellContent { cursor: text !important; }
+	.cellContent {
+		cursor: text !important;
+	}
 }
 
-.cell.isEditing.c-select, .cell.isEditing.c-object {
-	.cellContent { overflow-x: hidden !important; overflow-y: auto !important; max-height: 200px; }
-	.itemWrap { display: inline-block; }
+.cell.isEditing.c-select,
+.cell.isEditing.c-object {
+	.cellContent {
+		overflow-x: hidden !important;
+		overflow-y: auto !important;
+		max-height: 200px;
+	}
+	.itemWrap {
+		display: inline-block;
+	}
 
-	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
-	#entry { -webkit-user-modify: read-write-plaintext-only; color: $colorTextPrimary; }
-	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
+	.placeholder {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		height: 100%;
+	}
+	#entry {
+		-webkit-user-modify: read-write-plaintext-only;
+		color: $colorTextPrimary;
+	}
+	#list {
+		margin-right: 6px;
+		position: relative;
+		word-wrap: break-word;
+	}
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 4px 0px; position: relative; vertical-align: top; max-width: 100%; }
-	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
-		.tagItem { margin: 0px !important; }
+		height: 18px;
+		line-height: 18px;
+		margin: 0px 8px 4px 0px;
+		position: relative;
+		vertical-align: top;
+		max-width: 100%;
+	}
+	.itemWrap:last-child {
+		margin-right: 0px !important;
+	}
+	.itemWrap {
+		.tagItem {
+			margin: 0px !important;
+		}
 	}
 
-	.itemWrap.isDraggable { cursor: grab; }
 	.itemWrap.isDraggable {
-		#remove { cursor: default; }
+		cursor: grab;
 	}
-}
-
-.cell.isEditing.c-object {
-	.itemWrap { margin: 0px 8px 4px 0px; max-width: 100%; }
-	.itemWrap:empty { margin: 0px; }
-	.itemWrap:last-child { margin-right: 0px !important; }
-	.itemWrap {
-		.element { margin: 0px !important; }
-		.element {
-			.icon.objectRemove { 
-				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0;
-				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
-			}
-			.icon.objectRemove:hover { opacity: 0.8; }
+	.itemWrap.isDraggable {
+		#remove {
+			cursor: default;
 		}
 	}
 }
 
-.cellContent.c-longText { white-space: pre-wrap; }
+.cell.isEditing.c-object {
+	.itemWrap {
+		margin: 0px 8px 4px 0px;
+		max-width: 100%;
+	}
+	.itemWrap:empty {
+		margin: 0px;
+	}
+	.itemWrap:last-child {
+		margin-right: 0px !important;
+	}
+	.itemWrap {
+		.element {
+			margin: 0px !important;
+		}
+		.element {
+			.icon.objectRemove {
+				width: 12px;
+				height: 20px;
+				margin: 0px 0px 0px 2px;
+				flex-shrink: 0;
+				background-image: url('~img/icon/object/remove.svg');
+				background-size: 8px;
+			}
+			.icon.objectRemove:hover {
+				opacity: 0.8;
+			}
+		}
+	}
+}
+
+.cellContent.c-longText {
+	white-space: pre-wrap;
+}
 .cell.isEditing.c-longText {
-	.cellContent { white-space: pre-wrap !important; }
+	.cellContent {
+		white-space: pre-wrap !important;
+	}
 }
 
-.cellContent.canEdit.c-shortText, 
-.cellContent.canEdit.c-longText, 
-.cellContent.canEdit.c-number, 
-.cellContent.canEdit.c-url, 
-.cellContent.canEdit.c-phone, 
-.cellContent.canEdit.c-email, 
-.cellContent.canEdit.c-date { cursor: text; }
-
-.cellContent.c-url, 
-.cellContent.c-email, 
-.cellContent.c-phone 
-{
-	.name { text-decoration: none; transition: $transitionAllCommon; width: auto; @include text-overflow-nw; width: 100%; }
+.cellContent.canEdit.c-shortText,
+.cellContent.canEdit.c-longText,
+.cellContent.canEdit.c-number,
+.cellContent.canEdit.c-url,
+.cellContent.canEdit.c-phone,
+.cellContent.canEdit.c-email,
+.cellContent.canEdit.c-date {
+	cursor: text;
 }
 
-.cellContent.canEdit.c-url, 
-.cellContent.canEdit.c-email, 
-.cellContent.canEdit.c-phone 
-{
-	.name { width: 100%; }
+.cellContent.c-url,
+.cellContent.c-email,
+.cellContent.c-phone {
+	.name {
+		text-decoration: none;
+		transition: $transitionAllCommon;
+		width: auto;
+		@include text-overflow-nw;
+		width: 100%;
+	}
+}
+
+.cellContent.canEdit.c-url,
+.cellContent.canEdit.c-email,
+.cellContent.canEdit.c-phone {
+	.name {
+		width: 100%;
+	}
 }

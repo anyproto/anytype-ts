@@ -1,13 +1,25 @@
+/** @format */
+
 import { I } from 'Lib';
 
-export enum MenuType { Vertical = 1, Horizontal };
-export enum MenuDirection { None, Top, Bottom, Left, Right, Center };
+export enum MenuType {
+	Vertical = 1,
+	Horizontal,
+}
+export enum MenuDirection {
+	None,
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Center,
+}
 
 export interface MenuTab {
 	id: string;
 	name: string;
 	component: string;
-};
+}
 
 export interface MenuParam {
 	component?: string;
@@ -39,13 +51,13 @@ export interface MenuParam {
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;
-	recalcRect?(): { width: number, height: number, x: number, y: number };
+	recalcRect?(): { width: number; height: number; x: number; y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
 	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
 	force?: boolean;
-};
+}
 
 export interface Menu {
 	id: string;
@@ -58,11 +70,11 @@ export interface Menu {
 	storageGet?(): any;
 	storageSet?(data: any): void;
 	getId?(): string;
-	getSize?(): { width: number; height: number; };
+	getSize?(): { width: number; height: number };
 	getPosition?(): DOMRect;
-	position? (): void;
-	close? (): void;
-};
+	position?(): void;
+	close?(): void;
+}
 
 export interface MenuItem {
 	id?: string;
@@ -96,4 +108,4 @@ export interface MenuItem {
 	onSwitch?(e: any, v: boolean): void;
 	onSelect?(id: string): void;
 	onMore?(e: any): void;
-};
+}

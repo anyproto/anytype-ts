@@ -1,204 +1,270 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore, popupStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
+import {
+	I,
+	C,
+	UtilCommon,
+	UtilObject,
+	Preview,
+	Action,
+	translate,
+	keyboard,
+} from 'Lib';
 
 interface State {
 	object: any;
 	target: any;
 	origin: any;
-};
+}
 
-const Toast = observer(class Toast extends React.Component<object, State> {
-
-    state = {
-        object: null,
-        target: null,
-        origin: null,
-    };
-
-	constructor (props: any) {
-		super(props);
-
-		this.close = this.close.bind(this);
-	};
-
-    render () {
-        const { toast } = commonStore;
-		if (!toast) {
-			return null;
+const Toast = observer(
+	class Toast extends React.Component<object, State> {
+		state = {
+			object: null,
+			target: null,
+			origin: null,
 		};
 
-        const { count, action, text, value, object, target, origin, ids } = toast;
+		constructor(props: any) {
+			super(props);
 
-        let buttons = [];
-        let textObject = null;
-        let textAction = null;
-        let textOrigin = null;
-        let textActionTo = null;
-        let textTarget = null;
+			this.close = this.close.bind(this);
+		}
 
-		const Element = (item: any) => (
-			<div className="chunk">
-				<IconObject object={item} size={18} />
-				<ObjectName object={item} />
-			</div>
-		);
+		render() {
+			const { toast } = commonStore;
+			if (!toast) {
+				return null;
+			}
 
-        switch (action) {
-			default: {
-				textAction = text;
-				break;
-			};
+			const { count, action, text, value, object, target, origin, ids } =
+				toast;
 
-            case I.ToastAction.Lock: {
-                if (!object) {
-                    break;
-                };
+			let buttons = [];
+			let textObject = null;
+			let textAction = null;
+			let textOrigin = null;
+			let textActionTo = null;
+			let textTarget = null;
 
-                textObject = <Element {...object} />;
-                textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
-                break;
-			};
+			const Element = (item: any) => (
+				<div className="chunk">
+					<IconObject object={item} size={18} />
+					<ObjectName object={item} />
+				</div>
+			);
 
-            case I.ToastAction.Move: {
-                if (!target) {
+			switch (action) {
+				default: {
+					textAction = text;
 					break;
-				};
+				}
 
-				const cnt = `${count} ${UtilCommon.plural(count, translate('pluralBlock'))}`;
+				case I.ToastAction.Lock: {
+					if (!object) {
+						break;
+					}
 
-				textAction = UtilCommon.sprintf(translate('toastMovedTo'), cnt);
-				textTarget = <Element {...target} />;
-
-				if (origin) {
-					textAction = UtilCommon.sprintf(translate('toastMovedFrom'), cnt);
-					textActionTo = translate('commonTo');
-					textOrigin = <Element {...origin} />;
-				};
-
-				buttons = buttons.concat([
-					{ action: 'open', label: translate('commonOpen') },
-					{ action: 'undo', label: translate('commonUndo') }
-				]);
-                break;
-			};
-
-			case I.ToastAction.Collection:
-            case I.ToastAction.Link: {
-                if (!object || !target) {
+					textObject = <Element {...object} />;
+					textAction = translate(
+						value ? 'toastIsLocked' : 'toastIsUnlocked'
+					);
 					break;
-				};
+				}
 
-				textAction = translate(action == I.ToastAction.Collection ? 'toastAddedToCollection' : 'toastLinkedTo');
-				textObject = <Element {...object} />;
-				textTarget = <Element {...target} />;
+				case I.ToastAction.Move: {
+					if (!target) {
+						break;
+					}
 
-                if (target.id != keyboard.getRootId()) {
-                    buttons = buttons.concat([
-                        { action: 'open', label: translate('commonOpen') }
-                    ]);
-                };
-                break;
-			};
+					const cnt = `${count} ${UtilCommon.plural(
+						count,
+						translate('pluralBlock')
+					)}`;
 
-            case I.ToastAction.StorageFull: {
-                textAction = translate('toastUploadLimitExceeded');
+					textAction = UtilCommon.sprintf(
+						translate('toastMovedTo'),
+						cnt
+					);
+					textTarget = <Element {...target} />;
 
-                buttons = buttons.concat([ 
-					{ action: 'manageStorage', label: translate('toastManageFiles') }
-				]);
-            };
+					if (origin) {
+						textAction = UtilCommon.sprintf(
+							translate('toastMovedFrom'),
+							cnt
+						);
+						textActionTo = translate('commonTo');
+						textOrigin = <Element {...origin} />;
+					}
 
-            case I.ToastAction.TemplateCreate: {
-                if (!object) {
-                    break;
-                };
-
-                textObject = <Element {...object} />;
-                textAction = translate('toastTemplateCreate');
-                break;
-            };
-
-			case I.ToastAction.Archive: {
-				if (!ids) {
+					buttons = buttons.concat([
+						{ action: 'open', label: translate('commonOpen') },
+						{ action: 'undo', label: translate('commonUndo') },
+					]);
 					break;
-				};
+				}
 
-				const cnt = `${ids.length} ${UtilCommon.plural(ids.length, translate('pluralObject'))}`;
-				textAction = UtilCommon.sprintf(translate('toastMovedToBin'), cnt);
+				case I.ToastAction.Collection:
+				case I.ToastAction.Link: {
+					if (!object || !target) {
+						break;
+					}
 
-				buttons = buttons.concat([
-					{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
-				]);
-				break;
-			};
-        };
+					textAction = translate(
+						action == I.ToastAction.Collection
+							? 'toastAddedToCollection'
+							: 'toastLinkedTo'
+					);
+					textObject = <Element {...object} />;
+					textTarget = <Element {...target} />;
 
-        return (
-            <div id="toast" className="toast" onClick={this.close}>
-                <div className="inner">
-                    <div className="message">
-                        {textObject}
-                        {textAction ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textAction) }} /> : ''}
-                        {textOrigin}
-						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textActionTo) }} /> : ''}
-                        {textTarget}
-                    </div>
+					if (target.id != keyboard.getRootId()) {
+						buttons = buttons.concat([
+							{ action: 'open', label: translate('commonOpen') },
+						]);
+					}
+					break;
+				}
 
-                    {buttons.length ? (
-						<div className="buttons">
-							{buttons.map((item: any, i: number) => (
-								<Button key={i} text={item.label} onClick={e => this.onClick(e, item)} />
-							))}
+				case I.ToastAction.StorageFull: {
+					textAction = translate('toastUploadLimitExceeded');
+
+					buttons = buttons.concat([
+						{
+							action: 'manageStorage',
+							label: translate('toastManageFiles'),
+						},
+					]);
+				}
+
+				case I.ToastAction.TemplateCreate: {
+					if (!object) {
+						break;
+					}
+
+					textObject = <Element {...object} />;
+					textAction = translate('toastTemplateCreate');
+					break;
+				}
+
+				case I.ToastAction.Archive: {
+					if (!ids) {
+						break;
+					}
+
+					const cnt = `${ids.length} ${UtilCommon.plural(
+						ids.length,
+						translate('pluralObject')
+					)}`;
+					textAction = UtilCommon.sprintf(
+						translate('toastMovedToBin'),
+						cnt
+					);
+
+					buttons = buttons.concat([
+						{
+							action: 'undoArchive',
+							label: translate('commonUndo'),
+							data: ids,
+						},
+					]);
+					break;
+				}
+			}
+
+			return (
+				<div id="toast" className="toast" onClick={this.close}>
+					<div className="inner">
+						<div className="message">
+							{textObject}
+							{textAction ? (
+								<span
+									dangerouslySetInnerHTML={{
+										__html: UtilCommon.sanitize(textAction),
+									}}
+								/>
+							) : (
+								''
+							)}
+							{textOrigin}
+							{textActionTo ? (
+								<span
+									dangerouslySetInnerHTML={{
+										__html: UtilCommon.sanitize(
+											textActionTo
+										),
+									}}
+								/>
+							) : (
+								''
+							)}
+							{textTarget}
 						</div>
-					) : ''}
-                </div>
-            </div>
-        );
-    };
 
-    componentDidUpdate () {
-        Preview.toastPosition();
-    };
+						{buttons.length ? (
+							<div className="buttons">
+								{buttons.map((item: any, i: number) => (
+									<Button
+										key={i}
+										text={item.label}
+										onClick={e => this.onClick(e, item)}
+									/>
+								))}
+							</div>
+						) : (
+							''
+						)}
+					</div>
+				</div>
+			);
+		}
 
-	close () {
-		Preview.toastHide(true);
-	};
+		componentDidUpdate() {
+			Preview.toastPosition();
+		}
 
-    onClick (e: any, item: any) {
-		switch (item.action) {
-            case 'open': {
-                this.onOpen(e);
-                break;
-			};
+		close() {
+			Preview.toastHide(true);
+		}
 
-            case 'undo': {
-                keyboard.onUndo(commonStore.toast.originId, 'Toast');
-                break;
-			};
+		onClick(e: any, item: any) {
+			switch (item.action) {
+				case 'open': {
+					this.onOpen(e);
+					break;
+				}
 
-			case 'undoArchive': {
-				if (item.data) {
-					Action.restore(item.data);
-				};
-				break;
-			};
+				case 'undo': {
+					keyboard.onUndo(commonStore.toast.originId, 'Toast');
+					break;
+				}
 
-            case 'manageStorage': {
-                popupStore.open('settings', { data: { page: 'storageManager' }});
-                commonStore.toastClear();
-            };
-        };
+				case 'undoArchive': {
+					if (item.data) {
+						Action.restore(item.data);
+					}
+					break;
+				}
 
-		this.close();
-    };
+				case 'manageStorage': {
+					popupStore.open('settings', {
+						data: { page: 'storageManager' },
+					});
+					commonStore.toastClear();
+				}
+			}
 
-    onOpen (e: any) {
-        UtilObject.openEvent(e, commonStore.toast.target);
-    };
+			this.close();
+		}
 
-});
+		onOpen(e: any) {
+			UtilObject.openEvent(e, commonStore.toast.target);
+		}
+	}
+);
 
 export default Toast;

@@ -1,6 +1,19 @@
+/** @format */
+
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon } from 'Component';
-import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
+import {
+	I,
+	C,
+	translate,
+	focus,
+	Action,
+	UtilCommon,
+	UtilObject,
+	UtilFile,
+	Renderer,
+	keyboard,
+} from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -15,357 +28,388 @@ pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 interface State {
 	pages: number;
 	page: number;
-};
+}
 
-const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponent, State> {
-	
-	state = {
-		pages: 0,
-		page: 1,
-	};
-	_isMounted = false;
-	node: any = null;
-	height = 0;
-
-	constructor (props: I.BlockComponent) {
-		super(props);
-		
-		this.onOpen = this.onOpen.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
-		this.onDocumentLoad = this.onDocumentLoad.bind(this);
-		this.onPageRender = this.onPageRender.bind(this);
-		this.onClick = this.onClick.bind(this);
-	};
-
-	render () {
-		const { rootId, block, readonly } = this.props;
-		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;		
-		const { page, pages } = this.state;
-
-		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
-		if (object._empty_) {
-			object = UtilCommon.objectCopy(content);
-			object.sizeInBytes = object.size;
+const BlockPdf = observer(
+	class BlockPdf extends React.Component<I.BlockComponent, State> {
+		state = {
+			pages: 0,
+			page: 1,
 		};
+		_isMounted = false;
+		node: any = null;
+		height = 0;
 
-		const { name, sizeInBytes } = object;
+		constructor(props: I.BlockComponent) {
+			super(props);
 
-		const { width } = fields;
-		let element = null;
-		let pager = null;
-		const css: any = {};
-		
-		if (width) {
-			css.width = (width * 100) + '%';
-		};
+			this.onOpen = this.onOpen.bind(this);
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.onKeyUp = this.onKeyUp.bind(this);
+			this.onFocus = this.onFocus.bind(this);
+			this.onChangeUrl = this.onChangeUrl.bind(this);
+			this.onChangeFile = this.onChangeFile.bind(this);
+			this.onDocumentLoad = this.onDocumentLoad.bind(this);
+			this.onPageRender = this.onPageRender.bind(this);
+			this.onClick = this.onClick.bind(this);
+		}
 
-		if (this.height) {
-			css.minHeight = this.height;
-		};
-		
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="pdf" 
-							textFile={translate('blockPdfUpload')}
-							accept={Constant.extension.pdf} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				if (pages > 1) {
-					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
-							pageLimit={1}
-							isShort={true}
-							onChange={(page: number) => { this.setState({ page }); }} 
-						/>
-					);
-				};
+		render() {
+			const { rootId, block, readonly } = this.props;
+			const { id, fields, content } = block;
+			const { state, hash, type, mime } = content;
+			const { page, pages } = this.state;
 
-				element = (
-					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
-						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{name}</span>
-							<span className="size">{UtilFile.size(sizeInBytes)}</span>
-						</div>
+			let object = detailStore.get(rootId, content.hash, ['sizeInBytes']);
+			if (object._empty_) {
+				object = UtilCommon.objectCopy(content);
+				object.sizeInBytes = object.size;
+			}
 
-						<Document
-							file={commonStore.fileUrl(hash)}
-							onLoadSuccess={this.onDocumentLoad}
-							renderMode="canvas"
-							loading={<Loader />}
-							onClick={this.onClick}
-						>
-							<Page 
-								pageNumber={page} 
-								loading={<Loader />}
-								dpi={300}
-								onRenderSuccess={this.onPageRender}
+			const { name, sizeInBytes } = object;
+
+			const { width } = fields;
+			let element = null;
+			let pager = null;
+			const css: any = {};
+
+			if (width) {
+				css.width = width * 100 + '%';
+			}
+
+			if (this.height) {
+				css.minHeight = this.height;
+			}
+
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty:
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? (
+								<Error text={translate('blockFileError')} />
+							) : (
+								''
+							)}
+							<InputWithFile
+								block={block}
+								icon="pdf"
+								textFile={translate('blockPdfUpload')}
+								accept={Constant.extension.pdf}
+								onChangeUrl={this.onChangeUrl}
+								onChangeFile={this.onChangeFile}
+								readonly={readonly}
 							/>
-						</Document>
+						</React.Fragment>
+					);
+					break;
 
-						{pager}
+				case I.FileState.Uploading:
+					element = <Loader />;
+					break;
 
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
-		};
-		
-		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + id ].join(' ')} 
-				tabIndex={0} 
-				onKeyDown={this.onKeyDown} 
-				onKeyUp={this.onKeyUp} 
-				onFocus={this.onFocus}
-			>
-				{element}
-			</div>
-		);
-	};
+				case I.FileState.Done:
+					if (pages > 1) {
+						pager = (
+							<Pager
+								offset={page - 1}
+								limit={1}
+								total={pages}
+								pageLimit={1}
+								isShort={true}
+								onChange={(page: number) => {
+									this.setState({ page });
+								}}
+							/>
+						);
+					}
 
-	componentDidMount(): void {
-		this._isMounted = true;
-		this.rebind();
-	};
+					element = (
+						<div
+							className={[
+								'wrap',
+								'pdfWrapper',
+								pager ? 'withPager' : '',
+							].join(' ')}
+							style={css}
+						>
+							<div className="info" onMouseDown={this.onOpen}>
+								<span className="name">{name}</span>
+								<span className="size">
+									{UtilFile.size(sizeInBytes)}
+								</span>
+							</div>
 
-	componentDidUpdate () {
-		this.rebind();
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
+							<Document
+								file={commonStore.fileUrl(hash)}
+								onLoadSuccess={this.onDocumentLoad}
+								renderMode="canvas"
+								loading={<Loader />}
+								onClick={this.onClick}
+							>
+								<Page
+									pageNumber={page}
+									loading={<Loader />}
+									dpi={300}
+									onRenderSuccess={this.onPageRender}
+								/>
+							</Document>
 
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		
-		this.unbind();
-		node.on('resizeStart', (e: any, oe: any) => this.onResizeStart(oe, true));
-		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
-		node.on('resizeEnd', (e: any, oe: any) => this.onResizeEnd(oe, true));
-		node.on('resizeInit', (e: any, oe: any) => this.onResizeInit());
-	};
+							{pager}
 
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		const video = node.find('video');
-		
-		node.off('resizeInit resizeStart resizeMove resizeEnd');
-		video.off('canplay');
-	};
-	
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
-		
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
+							<Icon
+								className="resize"
+								onMouseDown={e => this.onResizeStart(e, false)}
+							/>
+						</div>
+					);
+					break;
+			}
 
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
+			return (
+				<div
+					ref={node => (this.node = node)}
+					className={['focusable', 'c' + id].join(' ')}
+					tabIndex={0}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+				>
+					{element}
+				</div>
+			);
+		}
 
-	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-	};
-	
-	onChangeUrl (e: any, url: string) {
-		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		Action.upload(I.FileType.Pdf, rootId, id, url, '');
-	};
-	
-	onChangeFile (e: any, path: string) {
-		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		Action.upload(I.FileType.Pdf, rootId, id, '', path);
-	};
+		componentDidMount(): void {
+			this._isMounted = true;
+			this.rebind();
+		}
 
-	onOpen (e: any) {
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-		
-		C.FileDownload(hash, window.Electron.tmpPath, (message: any) => {
-			if (message.path) {
-				Renderer.send('pathOpen', message.path);
-			};
-		});
-	};
+		componentDidUpdate() {
+			this.rebind();
+		}
 
-	onDocumentLoad (result: any) {
-		const { numPages } = result;
-		this.setState({ pages: numPages });
-	};
+		componentWillUnmount() {
+			this._isMounted = false;
+			this.unbind();
+		}
 
-	onPageRender () {
-		const node = $(this.node);
-		const wrap = node.find('.wrap');
+		rebind() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		this.height = wrap.outerHeight();
-	};
+			const node = $(this.node);
 
-	onClick (e: any) {
-		if (keyboard.withCommand(e)) {
-			return;
-		};
+			this.unbind();
+			node.on('resizeStart', (e: any, oe: any) =>
+				this.onResizeStart(oe, true)
+			);
+			node.on('resizeMove', (e: any, oe: any) =>
+				this.onResizeMove(oe, true)
+			);
+			node.on('resizeEnd', (e: any, oe: any) =>
+				this.onResizeEnd(oe, true)
+			);
+			node.on('resizeInit', (e: any, oe: any) => this.onResizeInit());
+		}
 
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
+		unbind() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.Image });
-	};
+			const node = $(this.node);
+			const video = node.find('video');
 
-	onResizeInit () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		const wrap = node.find('.wrap');
-		
-		if (wrap.length) {
-			wrap.css({ width: (this.getWidth(true, 0) * 100) + '%' });
-		};
-	};
+			node.off('resizeInit resizeStart resizeMove resizeEnd');
+			video.off('canplay');
+		}
 
-	onResizeStart (e: any, checkMax: boolean) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
-		const win = $(window);
-		
-		focus.set(block.id, { from: 0, to: 0 });
-		win.off('mousemove.media mouseup.media');
-		
-		if (selection) {
-			selection.hide();
-		};
+		onKeyDown(e: any) {
+			const { onKeyDown } = this.props;
 
-		$(`#block-${block.id}`).addClass('isResizing');
+			if (onKeyDown) {
+				onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
 
-		keyboard.disableSelection(true);
-		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
-		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
-	};
-	
-	onResizeMove (e: any, checkMax: boolean) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		const wrap = node.find('.wrap');
-		
-		if (!wrap.length) {
-			return;
-		};
-		
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
-		
-		wrap.css({ width: (w * 100) + '%' });
-	};
-	
-	onResizeEnd (e: any, checkMax: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const { rootId, block } = this.props;
-		const { id } = block;
-		const node = $(this.node);
-		const wrap = node.find('.wrap');
-		
-		if (!wrap.length) {
-			return;
-		};
-		
-		const win = $(window);
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
-		
-		$(`#block-${block.id}`).removeClass('isResizing');
+		onKeyUp(e: any) {
+			const { onKeyUp } = this.props;
 
-		win.off('mousemove.media mouseup.media');
-		keyboard.disableSelection(false);
-		
-		this.height = 0;
+			if (onKeyUp) {
+				onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
 
-		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: w } },
-		]);
-	};
+		onFocus() {
+			focus.set(this.props.block.id, { from: 0, to: 0 });
+		}
 
-	getWidth (checkMax: boolean, v: number): number {
-		const { block } = this.props;
-		const { id, fields } = block;
-		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		onChangeUrl(e: any, url: string) {
+			const { rootId, block } = this.props;
+			const { id } = block;
 
-		if (!el.length) {
-			return width;
-		};
-		
-		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
-		
-		return Math.min(1, Math.max(0, w / rect.width));
-	};
+			Action.upload(I.FileType.Pdf, rootId, id, url, '');
+		}
 
-});
+		onChangeFile(e: any, path: string) {
+			const { rootId, block } = this.props;
+			const { id } = block;
+
+			Action.upload(I.FileType.Pdf, rootId, id, '', path);
+		}
+
+		onOpen(e: any) {
+			const { block } = this.props;
+			const { content } = block;
+			const { hash } = content;
+
+			C.FileDownload(hash, window.Electron.tmpPath, (message: any) => {
+				if (message.path) {
+					Renderer.send('pathOpen', message.path);
+				}
+			});
+		}
+
+		onDocumentLoad(result: any) {
+			const { numPages } = result;
+			this.setState({ pages: numPages });
+		}
+
+		onPageRender() {
+			const node = $(this.node);
+			const wrap = node.find('.wrap');
+
+			this.height = wrap.outerHeight();
+		}
+
+		onClick(e: any) {
+			if (keyboard.withCommand(e)) {
+				return;
+			}
+
+			const { block } = this.props;
+			const { content } = block;
+			const { hash } = content;
+
+			UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.Image });
+		}
+
+		onResizeInit() {
+			if (!this._isMounted) {
+				return;
+			}
+
+			const node = $(this.node);
+			const wrap = node.find('.wrap');
+
+			if (wrap.length) {
+				wrap.css({ width: this.getWidth(true, 0) * 100 + '%' });
+			}
+		}
+
+		onResizeStart(e: any, checkMax: boolean) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (!this._isMounted) {
+				return;
+			}
+
+			const { dataset, block } = this.props;
+			const { selection } = dataset || {};
+			const win = $(window);
+
+			focus.set(block.id, { from: 0, to: 0 });
+			win.off('mousemove.media mouseup.media');
+
+			if (selection) {
+				selection.hide();
+			}
+
+			$(`#block-${block.id}`).addClass('isResizing');
+
+			keyboard.disableSelection(true);
+			win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
+			win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
+		}
+
+		onResizeMove(e: any, checkMax: boolean) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (!this._isMounted) {
+				return;
+			}
+
+			const node = $(this.node);
+			const wrap = node.find('.wrap');
+
+			if (!wrap.length) {
+				return;
+			}
+
+			const rect = (
+				wrap.get(0) as Element
+			).getBoundingClientRect() as DOMRect;
+			const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+
+			wrap.css({ width: w * 100 + '%' });
+		}
+
+		onResizeEnd(e: any, checkMax: boolean) {
+			if (!this._isMounted) {
+				return;
+			}
+
+			const { rootId, block } = this.props;
+			const { id } = block;
+			const node = $(this.node);
+			const wrap = node.find('.wrap');
+
+			if (!wrap.length) {
+				return;
+			}
+
+			const win = $(window);
+			const rect = (
+				wrap.get(0) as Element
+			).getBoundingClientRect() as DOMRect;
+			const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+
+			$(`#block-${block.id}`).removeClass('isResizing');
+
+			win.off('mousemove.media mouseup.media');
+			keyboard.disableSelection(false);
+
+			this.height = 0;
+
+			C.BlockListSetFields(rootId, [
+				{ blockId: id, fields: { width: w } },
+			]);
+		}
+
+		getWidth(checkMax: boolean, v: number): number {
+			const { block } = this.props;
+			const { id, fields } = block;
+			const width = Number(fields.width) || 1;
+			const el = $(`#selectable-${id}`);
+
+			if (!el.length) {
+				return width;
+			}
+
+			const rect = el.get(0).getBoundingClientRect() as DOMRect;
+			const w = Math.min(
+				rect.width,
+				Math.max(160, checkMax ? width * rect.width : v)
+			);
+
+			return Math.min(1, Math.max(0, w / rect.width));
+		}
+	}
+);
 
 export default BlockPdf;

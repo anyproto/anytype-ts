@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
@@ -8,11 +10,53 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
-import { 
-	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
+import {
+	Page,
+	SelectionProvider,
+	DragProvider,
+	Progress,
+	Toast,
+	Preview as PreviewIndex,
+	Navigation,
+	ListPopup,
+	ListMenu,
+	ListNotification,
+} from 'Component';
+import {
+	commonStore,
+	authStore,
+	blockStore,
+	detailStore,
+	dbStore,
+	menuStore,
+	popupStore,
+	notificationStore,
+} from 'Store';
+import {
+	I,
+	C,
+	UtilCommon,
+	UtilRouter,
+	UtilFile,
+	UtilData,
+	UtilObject,
+	UtilMenu,
+	keyboard,
+	Storage,
+	analytics,
+	dispatcher,
+	translate,
+	Renderer,
+	focus,
+	Preview,
+	Mark,
+	Animation,
+	Onboarding,
+	Survey,
+	UtilDate,
+	UtilSmile,
+	Encode,
+	Decode,
 } from 'Lib';
 import * as Docs from 'Docs';
 
@@ -46,11 +90,13 @@ import Routes from 'json/route.json';
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-interface RouteElement { path: string; };
+interface RouteElement {
+	path: string;
+}
 
 interface State {
 	loading: boolean;
-};
+}
 
 declare global {
 	interface Window {
@@ -61,7 +107,7 @@ declare global {
 		isWebVersion: boolean;
 		Config: any;
 	}
-};
+}
 
 declare global {
 	namespace JSX {
@@ -69,7 +115,7 @@ declare global {
 			['em-emoji']: any;
 		}
 	}
-};
+}
 
 const rootStore = {
 	commonStore,
@@ -108,12 +154,12 @@ if (!window.Electron.isPackaged) {
 			Onboarding,
 			Survey,
 			Docs,
-			Encode, 
+			Encode,
 			Decode,
 			translate,
 		},
 	};
-};
+}
 
 /*
 spy(event => {
@@ -148,7 +194,7 @@ Sentry.init({
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
-	render () {
+	render() {
 		return (
 			<SelectionProvider>
 				<DragProvider>
@@ -160,18 +206,17 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				</DragProvider>
 			</SelectionProvider>
 		);
-	};
-};
+	}
+}
 
 class App extends React.Component<object, State> {
-
 	state = {
-		loading: true
+		loading: true,
 	};
 	node: any = null;
 	timeoutMaximize = 0;
 
-	constructor (props: any) {
+	constructor(props: any) {
 		super(props);
 
 		this.onInit = this.onInit.bind(this);
@@ -184,29 +229,33 @@ class App extends React.Component<object, State> {
 		this.onUpdateProgress = this.onUpdateProgress.bind(this);
 		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onSpellcheck = this.onSpellcheck.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { loading } = this.state;
 		const platform = UtilCommon.getPlatform();
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
 			drag = <div id="drag" />;
-		};
-		
+		}
+
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
-					<div ref={node => this.node = node}>
+					<div ref={node => (this.node = node)}>
 						{loading ? (
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
-									<div className="version anim from">{window.Electron.version.app}</div>
+									<div className="version anim from">
+										{window.Electron.version.app}
+									</div>
 								</div>
 							</div>
-						) : ''}
+						) : (
+							''
+						)}
 
 						{drag}
 						<div id="tooltipContainer" />
@@ -219,20 +268,25 @@ class App extends React.Component<object, State> {
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={RoutePage} />
+								<Route
+									path={item.path}
+									exact={true}
+									key={i}
+									component={RoutePage}
+								/>
 							))}
 						</Switch>
 					</div>
 				</Provider>
 			</Router>
 		);
-	};
+	}
 
-	componentDidMount () {
+	componentDidMount() {
 		this.init();
-	};
+	}
 
-	init () {
+	init() {
 		UtilRouter.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
@@ -241,24 +295,36 @@ class App extends React.Component<object, State> {
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
-		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
-	};
+		console.log(
+			'[Process] os version:',
+			window.Electron.version.system,
+			'arch:',
+			window.Electron.arch
+		);
+		console.log(
+			'[App] version:',
+			window.Electron.version.app,
+			'isPackaged',
+			window.Electron.isPackaged
+		);
+	}
 
-	initStorage () {
+	initStorage() {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', UtilDate.now());
-		};
+		}
 
 		Storage.delete('lastSurveyCanceled');
-	};
+	}
 
-	registerIpcEvents () {
+	registerIpcEvents() {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
+		Renderer.on('route', (e: any, route: string) =>
+			UtilRouter.go(route, {})
+		);
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -269,10 +335,16 @@ class App extends React.Component<object, State> {
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
-		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
+		Renderer.on('leave-full-screen', () =>
+			commonStore.fullscreenSet(false)
+		);
+		Renderer.on('config', (e: any, config: any) =>
+			commonStore.configSet(config, true)
+		);
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
+		Renderer.on('leave-full-screen', () =>
+			commonStore.fullscreenSet(false)
+		);
 		Renderer.on('logout', () => authStore.logout(false, false));
 		Renderer.on('shutdownStart', () => {
 			this.setState({ loading: true });
@@ -285,7 +357,7 @@ class App extends React.Component<object, State> {
 
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
-			};
+			}
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
@@ -297,10 +369,19 @@ class App extends React.Component<object, State> {
 			keyboard.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 		});
-	};
+	}
 
-	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
+	onInit(e: any, data: any) {
+		const {
+			dataPath,
+			config,
+			isDark,
+			isChild,
+			account,
+			phrase,
+			languages,
+			isPinChecked,
+		} = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
@@ -322,9 +403,11 @@ class App extends React.Component<object, State> {
 
 		if (redirect) {
 			Storage.delete('redirect');
-		};
+		}
 
-		raf(() => { anim.removeClass('from'); });
+		raf(() => {
+			anim.removeClass('from');
+		});
 
 		const cb = () => {
 			window.setTimeout(() => {
@@ -332,7 +415,9 @@ class App extends React.Component<object, State> {
 
 				window.setTimeout(() => {
 					loader.css({ opacity: 0 });
-					window.setTimeout(() => { loader.remove(); }, 500);
+					window.setTimeout(() => {
+						loader.remove();
+					}, 500);
 				}, 750);
 			}, 2000);
 		};
@@ -350,13 +435,13 @@ class App extends React.Component<object, State> {
 						commonStore.configSet(account.config, false);
 						UtilData.onInfo(account.info);
 						UtilData.onAuth({}, cb);
-					};
+					}
 				});
 
 				win.off('unload').on('unload', (e: any) => {
 					if (!authStore.token) {
 						return;
-					};
+					}
 
 					e.preventDefault();
 					C.WalletCloseSession(authStore.token, () => {
@@ -370,38 +455,38 @@ class App extends React.Component<object, State> {
 				Renderer.send('keytarGet', accountId);
 
 				cb();
-			};
+			}
 		} else {
 			cb();
-		};
-	};
+		}
+	}
 
-	onKeytarGet (e: any, key: string, value: string) {
+	onKeytarGet(e: any, key: string, value: string) {
 		const accountId = Storage.get('accountId');
 		const phrase = Storage.get('phrase');
 
-		if (!accountId || (key != accountId)) {
+		if (!accountId || key != accountId) {
 			return;
-		};
+		}
 
 		if (phrase) {
 			value = phrase;
 			Renderer.send('keytarSet', accountId, phrase);
 			Storage.delete('phrase');
-		};
+		}
 
 		if (value) {
 			authStore.phraseSet(value);
 			UtilRouter.go('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
-		};
-	};
+		}
+	}
 
-	onPopup (e: any, id: string, param: any, close?: boolean) {
+	onPopup(e: any, id: string, param: any, close?: boolean) {
 		if (Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
 			return;
-		};
+		}
 
 		param = param || {};
 		param.data = param.data || {};
@@ -409,24 +494,31 @@ class App extends React.Component<object, State> {
 
 		if (close) {
 			popupStore.closeAll();
-		};
+		}
 
-		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
-	};
+		window.setTimeout(() => {
+			popupStore.open(id, param);
+		}, Constant.delay.popup);
+	}
 
-	onUpdateCheck (e: any, auto: boolean) {
+	onUpdateCheck(e: any, auto: boolean) {
 		if (!auto) {
-			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
-		};
-	};
+			commonStore.progressSet({
+				status: translate('progressUpdateCheck'),
+				current: 0,
+				total: 1,
+				isUnlocked: true,
+			});
+		}
+	}
 
-	onUpdateConfirm (e: any, auto: boolean) {
+	onUpdateConfirm(e: any, auto: boolean) {
 		commonStore.progressClear();
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
-		};
+		}
 
 		popupStore.open('confirm', {
 			data: {
@@ -442,14 +534,14 @@ class App extends React.Component<object, State> {
 				},
 			},
 		});
-	};
+	}
 
-	onUpdateAvailable (e: any, auto: boolean) {
+	onUpdateAvailable(e: any, auto: boolean) {
 		commonStore.progressClear();
 
 		if (auto) {
 			return;
-		};
+		}
 
 		popupStore.open('confirm', {
 			data: {
@@ -465,37 +557,43 @@ class App extends React.Component<object, State> {
 				},
 			},
 		});
-	};
+	}
 
-	onUpdateUnavailable (e: any, auto: boolean) {
+	onUpdateUnavailable(e: any, auto: boolean) {
 		commonStore.progressClear();
 
 		if (auto) {
 			return;
-		};
+		}
 
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
+				text: UtilCommon.sprintf(
+					translate('popupConfirmUpdateDoneText'),
+					window.Electron.version.app
+				),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				canCancel: false,
 			},
 		});
-	};
+	}
 
-	onUpdateError (e: any, err: string, auto: boolean) {
+	onUpdateError(e: any, err: string, auto: boolean) {
 		console.error(err);
 		commonStore.progressClear();
 
 		if (auto) {
 			return;
-		};
+		}
 
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				text: UtilCommon.sprintf(
+					translate('popupConfirmUpdateErrorText'),
+					Errors[err] || err
+				),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {
@@ -506,40 +604,57 @@ class App extends React.Component<object, State> {
 				},
 			},
 		});
-	};
+	}
 
-	onUpdateProgress (e: any, progress: any) {
-		commonStore.progressSet({ 
-			status: UtilCommon.sprintf('Downloading update... %s/%s', UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
-			current: progress.transferred, 
+	onUpdateProgress(e: any, progress: any) {
+		commonStore.progressSet({
+			status: UtilCommon.sprintf(
+				'Downloading update... %s/%s',
+				UtilFile.size(progress.transferred),
+				UtilFile.size(progress.total)
+			),
+			current: progress.transferred,
 			total: progress.total,
 			isUnlocked: true,
 		});
-	};
+	}
 
-	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {
+	onSpellcheck(
+		e: any,
+		misspelledWord: string,
+		dictionarySuggestions: string[],
+		x: number,
+		y: number,
+		rect: any
+	) {
 		if (!misspelledWord) {
 			return;
-		};
+		}
 
 		keyboard.disableContextOpen(true);
 
 		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const { focused, range } = focus.state;
-		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
+		const options: any = dictionarySuggestions.map(it => ({
+			id: it,
+			name: it,
+		}));
 		const element = $(document.elementFromPoint(x, y));
 		const isInput = element.is('input');
 		const isTextarea = element.is('textarea');
 		const isEditable = element.is('.editable');
 
-		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
+		options.push({
+			id: 'add-to-dictionary',
+			name: translate('spellcheckAdd'),
+		});
 
 		menuStore.open('select', {
 			className: 'fromBlock',
 			classNameWrap: 'fromPopup',
-			recalcRect: () => { 
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			recalcRect: () => {
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			onOpen: () => menuStore.close('blockContext'),
 			onClose: () => keyboard.disableContextOpen(false),
@@ -552,49 +667,66 @@ class App extends React.Component<object, State> {
 								if (focused) {
 									focus.apply();
 
-									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
-									const value = String(obj.get(0).innerText || '');
+									const obj = Mark.cleanHtml(
+										$(`#block-${focused} #value`).html()
+									);
+									const value = String(
+										obj.get(0).innerText || ''
+									);
 
-									blockStore.updateContent(rootId, focused, { text: value });
-									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
-								} else 
-								if (isInput || isTextarea || isEditable) {
+									blockStore.updateContent(rootId, focused, {
+										text: value,
+									});
+									UtilData.blockInsertText(
+										rootId,
+										focused,
+										item.id,
+										range.from,
+										range.to
+									);
+								} else if (
+									isInput ||
+									isTextarea ||
+									isEditable
+								) {
 									let value = '';
 									if (isInput || isTextarea) {
 										value = String(element.val());
-									} else 
-									if (isEditable) {
-										value = String((element.get(0) as any).innerText || '');
-									};
-;
-									value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
+									} else if (isEditable) {
+										value = String(
+											(element.get(0) as any).innerText ||
+												''
+										);
+									}
+									value = value.replace(
+										new RegExp(`${misspelledWord}`, 'g'),
+										item.id
+									);
 
 									if (isInput || isTextarea) {
 										element.val(value);
-									} else 
-									if (isEditable) {
+									} else if (isEditable) {
 										element.text(value);
-									};
-								};
+									}
+								}
 								break;
-							};
+							}
 
 							case 'add-to-dictionary': {
 								Renderer.send('spellcheckAdd', misspelledWord);
 								break;
-							};
+							}
 
 							case 'disable-spellcheck': {
 								Renderer.send('setSpellingLang', []);
 								break;
-							};
-						};
+							}
+						}
 					});
 				},
-			}
+			},
 		});
-	};
-
-};
+	}
+}
 
 export default App;

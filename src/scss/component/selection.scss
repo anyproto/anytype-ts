@@ -1,9 +1,27 @@
-@import "~scss/_vars";
+/** @format */
 
-#selection { position: relative; user-select: none; }
-#selection * { user-select: none; }
-#selection-rect { 
-	position: absolute; left: 0px; top: 0px; width: 0px; height: 0px; display: none; z-index: 20; background: $colorSystemSelection; 
-	border: 0.05em solid #2aa7ee; pointer-events: none; border-radius: 2px;
+@import '~scss/_vars';
+
+#selection {
+	position: relative;
+	user-select: none;
 }
-#selection-rect.fromPopup { z-index: 102; }
+#selection * {
+	user-select: none;
+}
+#selection-rect {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 0px;
+	height: 0px;
+	display: none;
+	z-index: 20;
+	background: $colorSystemSelection;
+	border: 0.05em solid #2aa7ee;
+	pointer-events: none;
+	border-radius: 2px;
+}
+#selection-rect.fromPopup {
+	z-index: 102;
+}

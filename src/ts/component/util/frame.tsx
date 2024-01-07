@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -7,63 +9,63 @@ interface Props {
 	children?: React.ReactNode;
 	className?: string;
 	dataset?: any;
-};
+}
 
 class Frame extends React.Component<Props> {
-
 	_isMounted = false;
 	node: any = null;
 
-	render () {
+	render() {
 		const { children, className, dataset } = this.props;
-		const cn = [ 'frame' ];
+		const cn = ['frame'];
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 
 		return (
 			<div
-				ref={node => this.node = node}
+				ref={node => (this.node = node)}
 				className={cn.join(' ')}
 				{...UtilCommon.dataProps(dataset)}
 			>
 				{children}
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this._isMounted = true;
 		this.resize();
 		this.unbind();
-		
-		$(window).on('resize.frame', () => { this.resize(); });
-	};
-	
-	componentWillUnmount () {
+
+		$(window).on('resize.frame', () => {
+			this.resize();
+		});
+	}
+
+	componentWillUnmount() {
 		this._isMounted = false;
 		this.unbind();
-	};
-	
-	unbind () {
+	}
+
+	unbind() {
 		$(window).off('resize.frame');
-	};
-	
-	resize () {
+	}
+
+	resize() {
 		raf(() => {
 			if (!this._isMounted) {
 				return;
-			};
-			
+			}
+
 			const node = $(this.node);
-			node.css({ 
+			node.css({
 				marginTop: -node.outerHeight() / 2,
-				marginLeft: -node.outerWidth() / 2
+				marginLeft: -node.outerWidth() / 2,
 			});
 		});
-	};
-	
-};
+	}
+}
 
 export default Frame;

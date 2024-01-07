@@ -1,32 +1,88 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuSearchText { width: 400px; height: 44px; padding: 0px; position: fixed; top: 42px; }
 	.menu.menuSearchText {
-		.content { height: 100%; display: block; }
-		.flex { width: 100%; flex-direction: row; align-items: center; padding: 0px 0px 0px 8px; }
-		.input { height: 100%; padding: 13.5px 0px 13.5px 6px; flex-grow: 1; width: 100%; }
-		.icon.search { flex-shrink: 0; margin: 0px; }
+		width: 400px;
+		height: 44px;
+		padding: 0px;
+		position: fixed;
+		top: 42px;
+	}
+	.menu.menuSearchText {
+		.content {
+			height: 100%;
+			display: block;
+		}
+		.flex {
+			width: 100%;
+			flex-direction: row;
+			align-items: center;
+			padding: 0px 0px 0px 8px;
+		}
+		.input {
+			height: 100%;
+			padding: 13.5px 0px 13.5px 6px;
+			flex-grow: 1;
+			width: 100%;
+		}
+		.icon.search {
+			flex-shrink: 0;
+			margin: 0px;
+		}
 
-		.buttons { 
-			flex-shrink: 0; color: $colorControlActive; font-weight: 500; user-select: none; display: flex; gap: 0px 12px; height: 100%; 
-			align-items: center; padding: 0px 12px;
+		.buttons {
+			flex-shrink: 0;
+			color: $colorControlActive;
+			font-weight: 500;
+			user-select: none;
+			display: flex;
+			gap: 0px 12px;
+			height: 100%;
+			align-items: center;
+			padding: 0px 12px;
 		}
 		.buttons {
-			.switcher { display: none; flex-direction: row; align-items: center; gap: 0px 4px; }
-			.switcher.active { display: flex; }
-
-			.line { height: 20px; width: 1px; background: $colorShapePrimary; }
-
-			.icon.arrow { 
-				width: 24px; height: 24px; border-radius: 4px; transition: $transitionAllCommon; margin: 0px; 	
-				background-image: url('~img/arrow/search.svg'); 
+			.switcher {
+				display: none;
+				flex-direction: row;
+				align-items: center;
+				gap: 0px 4px;
 			}
-			.icon.arrow.right { transform: rotateZ(180deg); }
-			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+			.switcher.active {
+				display: flex;
+			}
 
-			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; }
-			.icon.clear:hover { background-image: url('~img/icon/clear1.svg') !important; }
+			.line {
+				height: 20px;
+				width: 1px;
+				background: $colorShapePrimary;
+			}
+
+			.icon.arrow {
+				width: 24px;
+				height: 24px;
+				border-radius: 4px;
+				transition: $transitionAllCommon;
+				margin: 0px;
+				background-image: url('~img/arrow/search.svg');
+			}
+			.icon.arrow.right {
+				transform: rotateZ(180deg);
+			}
+			.icon.arrow:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
+
+			.icon.clear {
+				width: 20px;
+				height: 20px;
+				background-image: url('~img/icon/clear0.svg') !important;
+			}
+			.icon.clear:hover {
+				background-image: url('~img/icon/clear1.svg') !important;
+			}
 		}
 	}
 }

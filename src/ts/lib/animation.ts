@@ -1,3 +1,5 @@
+/** @format */
+
 import raf from 'raf';
 import $ from 'jquery';
 import { I } from 'Lib';
@@ -8,13 +10,12 @@ const Duration = {
 };
 
 class Animation {
-
 	isAnimating = false;
 
-	to (callBack?: () => void) {
+	to(callBack?: () => void) {
 		if (this.isAnimating) {
 			return;
-		};
+		}
 
 		const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
 
@@ -29,12 +30,12 @@ class Animation {
 		});
 
 		this.finish(callBack);
-	};
+	}
 
-	from (callBack?: () => void) {
+	from(callBack?: () => void) {
 		if (this.isAnimating) {
 			return;
-		};
+		}
 
 		const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
 
@@ -49,38 +50,43 @@ class Animation {
 		});
 
 		this.finish(callBack);
-	};
+	}
 
-	finish (callBack?: () => void) {
+	finish(callBack?: () => void) {
 		window.setTimeout(() => {
 			this.isAnimating = false;
 
 			if (callBack) {
 				callBack();
-			};
+			}
 		}, this.getDuration());
-	};
+	}
 
-	getSortedNodes (dir: I.AnimDirection) {
-		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
+	getSortedNodes(dir: I.AnimDirection) {
+		const nodes: {
+			el: JQuery<HTMLElement>;
+			index: number;
+			type: I.AnimType;
+		}[] = [];
 
 		$('.animation').each((i: number, el: any) => {
 			el = $(el);
 
-			const type = Number(el.attr('data-animation-type')) || I.AnimType.Normal;
+			const type =
+				Number(el.attr('data-animation-type')) || I.AnimType.Normal;
 
 			let index = 0;
 			switch (dir) {
 				case I.AnimDirection.To: {
 					index = Number(el.attr('data-animation-index-to')) || i;
 					break;
-				};
+				}
 
 				case I.AnimDirection.From: {
 					index = Number(el.attr('data-animation-index-from')) || i;
 					break;
-				};
-			};
+				}
+			}
 
 			nodes.push({ el, index, type });
 		});
@@ -92,9 +98,9 @@ class Animation {
 		});
 
 		return nodes;
-	};
+	}
 
-	initNodes (css: object, dir: I.AnimDirection) {
+	initNodes(css: object, dir: I.AnimDirection) {
 		const nodes = this.getSortedNodes(dir);
 
 		let delay = 0;
@@ -107,7 +113,7 @@ class Animation {
 					this.applyCss(el, css, Duration.Normal, delay);
 					delay += Duration.Normal;
 					break;
-				};
+				}
 
 				case I.AnimType.Text: {
 					if (dir == I.AnimDirection.From) {
@@ -116,12 +122,14 @@ class Animation {
 						this.applyCss(el, css, Duration.Normal, delay);
 						delay += Duration.Normal;
 						break;
-					};
+					}
 
 					el.html('');
 
-					const processWord = (word) => {
-						const w = $('<span></span>').html(word).addClass('animationWord');
+					const processWord = word => {
+						const w = $('<span></span>')
+							.html(word)
+							.addClass('animationWord');
 
 						el.append(w);
 						el.append(' ');
@@ -130,22 +138,33 @@ class Animation {
 						delay += Duration.Word;
 					};
 
-					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
-						if (child.nodeType == 3) {
-							child.textContent.trim().split(' ').forEach(processWord);
-						} else {
-							processWord(child);
-						};
-					});
+					$(`<div>${el.attr('data-content')}</div>`)
+						.contents()
+						.toArray()
+						.forEach(child => {
+							if (child.nodeType == 3) {
+								child.textContent
+									.trim()
+									.split(' ')
+									.forEach(processWord);
+							} else {
+								processWord(child);
+							}
+						});
 					break;
-				};
-			};
-		};
+				}
+			}
+		}
 
 		return nodes;
-	};
+	}
 
-	applyCss (obj: JQuery<HTMLElement>, css: object, duration: number, delay: number) {
+	applyCss(
+		obj: JQuery<HTMLElement>,
+		css: object,
+		duration: number,
+		delay: number
+	) {
 		obj.css({ ...css, transition: '' });
 
 		raf(() => {
@@ -157,16 +176,22 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
-	};
+		window.setTimeout(
+			() => {
+				obj.css({ transition: '' });
+			},
+			(delay + duration) * 1000
+		);
+	}
 
-	getDuration () {
+	getDuration() {
 		const blockLength = $('.animation').length;
 		const wordLength = $('.animationWord').length;
 
-		return (blockLength * Duration.Normal + wordLength * Duration.Word) * 1000;
-	};
-
-};
+		return (
+			(blockLength * Duration.Normal + wordLength * Duration.Word) * 1000
+		);
+	}
+}
 
 export default new Animation();

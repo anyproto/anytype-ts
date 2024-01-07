@@ -1,17 +1,19 @@
+/** @format */
+
 const { notarize } = require('@electron/notarize');
 
 require('dotenv').config();
 
-exports.default = async function notarizing (context) {
+exports.default = async function notarizing(context) {
 	if (process.env.ELECTRON_SKIP_NOTARIZE) {
 		return;
-	};
+	}
 
 	const { electronPlatformName, appOutDir } = context;
 
 	if (electronPlatformName == 'darwin') {
 		const appName = context.packager.appInfo.productFilename;
-	
+
 		return await notarize({
 			tool: 'notarytool',
 			appPath: `${appOutDir}/${appName}.app`,
@@ -21,7 +23,7 @@ exports.default = async function notarizing (context) {
 			//appBundleId: 'com.anytype.anytype',
 			//ascProvider: process.env.APPLETEAM,
 		});
-	};
+	}
 
 	return null;
 };

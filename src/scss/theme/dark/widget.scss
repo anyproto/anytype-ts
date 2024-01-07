@@ -1,73 +1,137 @@
+/** @format */
+
 .listWidget {
 	> .buttons {
-		.button, .button.edit { background-color: $colorShapeSecondary; color: $colorTextPrimary; }
+		.button,
+		.button.edit {
+			background-color: $colorShapeSecondary;
+			color: $colorTextPrimary;
+		}
 	}
 }
 
-.widget { background-color: $colorBgPrimary; color: $colorTextPrimary; border-color: $colorShapeSecondary !important;  }
 .widget {
-	.iconWrap:hover, .iconWrap.active { background-color: $colorShapeHighlightMedium; }
-	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
-	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
-	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
+	background-color: $colorBgPrimary;
+	color: $colorTextPrimary;
+	border-color: $colorShapeSecondary !important;
+}
+.widget {
+	.iconWrap:hover,
+	.iconWrap.active {
+		background-color: $colorShapeHighlightMedium;
+	}
+	.icon.back {
+		background-image: url('#{$themePath}/icon/widget/back.svg');
+	}
+	.icon.collapse {
+		background-image: url('#{$themePath}/icon/widget/collapse.svg');
+	}
+	.icon.options {
+		background-image: url('#{$themePath}/icon/widget/options.svg');
+	}
 
-	.head::before { background-color: $colorShapeHighlightMedium; }
+	.head::before {
+		background-color: $colorShapeHighlightMedium;
+	}
 
-	.icon.remove .inner { background-color: $colorShapeSecondary; }
-	.icon.remove:hover .inner { background-color: $colorTextTertiary; }
+	.icon.remove .inner {
+		background-color: $colorShapeSecondary;
+	}
+	.icon.remove:hover .inner {
+		background-color: $colorTextTertiary;
+	}
 }
 
 .widget.active {
 	.head {
-		.iconWrap.options { background-color: $colorShapeHighlightMedium; }
+		.iconWrap.options {
+			background-color: $colorShapeHighlightMedium;
+		}
 	}
 }
 
 .widget.widgetSpace {
-	.iconObject:not(.withOption) { background-color: $colorShapeTertiary; }
-	.icon:hover { background-color: $colorShapeHighlightMedium; }
+	.iconObject:not(.withOption) {
+		background-color: $colorShapeTertiary;
+	}
+	.icon:hover {
+		background-color: $colorShapeHighlightMedium;
+	}
 }
 
 .widget.isPreview {
-	.head { border-color: $colorShapeSecondary; }
+	.head {
+		border-color: $colorShapeSecondary;
+	}
 }
 
 .widget.widgetTree {
-	.icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
-	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
-	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
-	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
-	.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
+	.icon.set {
+		background-image: url('#{$themePath}/icon/sidebar/set.svg');
+	}
+	.icon.collection {
+		background-image: url('#{$themePath}/icon/sidebar/collection.svg');
+	}
+	.icon.blank {
+		background-image: url('#{$themePath}/icon/sidebar/blank.svg');
+	}
+	.icon.arrow {
+		background-image: url('~img/arrow/select/light.svg');
+	}
+	.icon.arrow:hover {
+		background-color: $colorShapeHighlightMedium;
+	}
 
 	.item {
-		.inner:hover::before { background: $colorShapeHighlightMedium; }
+		.inner:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
 
 		.buttons {
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
+			.icon:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
 		}
 	}
 }
 
-.widget.widgetList, .widget.widgetCompact {
-	#viewSelect { border-color: $colorShapeSecondary; }
+.widget.widgetList,
+.widget.widgetCompact {
+	#viewSelect {
+		border-color: $colorShapeSecondary;
+	}
 	#viewSelect {
 		.viewList {
-			.viewItem { color: $colorTextSecondary; }
-			.viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
+			.viewItem {
+				color: $colorTextSecondary;
+			}
+			.viewItem:hover,
+			.viewItem.active {
+				color: $colorTextPrimary;
+			}
 		}
 
 		.select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+			.icon.arrow {
+				background-image: url('#{$themePath}/arrow/widget.svg') !important;
+			}
 		}
 	}
 
 	.body {
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
 		.item {
-			.iconObject.isTask, .iconObject.isBookmark { background: none; }
+			.iconObject.isTask,
+			.iconObject.isBookmark {
+				background: none;
+			}
 
 			.buttons {
-				.icon:hover { background-color: $colorShapeHighlightMedium; }
+				.icon:hover {
+					background-color: $colorShapeHighlightMedium;
+				}
 			}
 		}
 	}
@@ -76,12 +140,18 @@
 .widget.widgetList {
 	.body {
 		.item {
-			.iconObject { background: $colorShapeHighlightMedium; }
+			.iconObject {
+				background: $colorShapeHighlightMedium;
+			}
 		}
 	}
 }
 
 .button.widget {
-	.icon.store { background-image: url('#{$themePath}/icon/sidebar/store.svg'); }
-	.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
+	.icon.store {
+		background-image: url('#{$themePath}/icon/sidebar/store.svg');
+	}
+	.icon.bin {
+		background-image: url('#{$themePath}/icon/sidebar/bin.svg');
+	}
 }

@@ -1,428 +1,748 @@
-@import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
+/** @format */
+
+@import '~scss/_vars';
+@import '~scss/theme/dark/_vars';
 
 .menus {
+	/* Common */
 
-    /* Common */
+	.menu {
+		background: $colorBgSecondary;
+		box-shadow:
+			0px 4px 16px rgb(0 0 0 / 20%),
+			0px 0px 0px 1px #393933 inset;
+	}
 
-    .menu { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.menu {
+		.icon.textParagraph {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg');
+		}
 
-    .menu {
-        .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg'); }
-		
-		.icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/text/header10.svg'); }
-		.icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/text/header20.svg'); }
-		.icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/header30.svg'); }
-		.icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/text/quote0.svg'); }
-		
-        .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted0.svg'); }
-		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered0.svg'); }
-		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle0.svg'); }
+		.icon.textHeader1 {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/header10.svg');
+		}
+		.icon.textHeader2 {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/header20.svg');
+		}
+		.icon.textHeader3 {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/header30.svg');
+		}
+		.icon.textQuote {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/quote0.svg');
+		}
 
-		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
-		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
-		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
-		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+		.icon.textBulleted {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted0.svg');
+		}
+		.icon.textNumbered {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/numbered0.svg');
+		}
+		.icon.textToggle {
+			background-image: url('#{$themePath}/icon/menu/action/block/text/toggle0.svg');
+		}
 
-        .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
+		.icon.widget-0 {
+			background-image: url('#{$themePath}/icon/menu/widget/link.svg');
+		}
+		.icon.widget-1 {
+			background-image: url('#{$themePath}/icon/menu/widget/tree.svg');
+		}
+		.icon.widget-2 {
+			background-image: url('#{$themePath}/icon/menu/widget/list.svg');
+		}
+		.icon.widget-3 {
+			background-image: url('#{$themePath}/icon/menu/widget/compact.svg');
+		}
 
-        .icon.color {
-            .inner.textColor-default { background-color: $colorBgPrimary; }
-            .inner.bgColor-default { background: transparent; }
-        }
+		.icon.more {
+			background-image: url('#{$themePath}/icon/menu/action/more0.svg');
+		}
 
-        .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
-    }
-
-    /* Vertical */
-
-    .menu.vertical {
-        .tabs { border-color: $colorShapeSecondary; }
-        .tabs {
-            .tab:hover, .tab.active { color: $colorTextPrimary; }
-        }
-
-        .titleWrapper {
-            .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
-            .title { color: $colorTextSecondary; }
-        }
-
-        .line { background: $colorShapeSecondary; }
-        .section::after { background: $colorShapeSecondary; }
-		.separator .inner { background: $colorShapeSecondary; }
-
-        .item { background: none; }
-		.item::before { background: rgba(238, 238, 238, 0); }
-        .item.hover::before { background: $colorShapeHighlightMedium; }
-        .item {
-            .icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }
-            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
-			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
-        }
-
-        .loaderWrapper { background: $colorBgSecondary; }
-    }
-
-    /* Horizontal */
-
-    .menu.horizontal {
-        .section { border-color: $colorShapeSecondary; }
-    }
-
-    /* MenuBlockAdd */
-
-    .menu.menuBlockAdd {
-        .item.isBig {
-            .iconObject { background: $colorShapeTertiary; }
-
-            .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph1.svg'); }
-            
-            .icon.textHeader1 { background-image: url('#{$themePath}/icon/menu/action/block/text/header11.svg'); }
-            .icon.textHeader2 { background-image: url('#{$themePath}/icon/menu/action/block/text/header21.svg'); }
-            .icon.textHeader3 { background-image: url('#{$themePath}/icon/menu/action/block/text/header31.svg'); }
-            .icon.textQuote { background-image: url('#{$themePath}/icon/menu/action/block/text/quote1.svg'); }
-            
-            .icon.textBulleted { background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted1.svg'); }
-            .icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/text/numbered1.svg'); }
-            .icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/text/toggle1.svg'); }
-
-			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout1.svg'); }
-        }
-
-        .sectionName::before { background-color: $colorShapeSecondary; }
-    }
-
-    /* MenuSmile */
-
-    .menu.menuSmile {
-        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-        .head {
-            .btn:hover, .btn.active { color: $colorTextPrimary; }
-        }
-
-		.body.gallery {
-			.foot { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-			.item.active { background: $colorShapeHighlightMedium; }
-
-			.foot {
-				.icon:hover { background-color: $colorShapeHighlightMedium; }
-				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
-				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
-				.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
-				.icon.foods.active { background-image: url('#{$themePath}/icon/emoji/foods1.svg'); }
-				.icon.activity.active { background-image: url('#{$themePath}/icon/emoji/activity1.svg'); }
-				.icon.places.active { background-image: url('#{$themePath}/icon/emoji/places1.svg'); }
-				.icon.objects.active { background-image: url('#{$themePath}/icon/emoji/objects1.svg'); }
-				.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
-				.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
+		.icon.color {
+			.inner.textColor-default {
+				background-color: $colorBgPrimary;
+			}
+			.inner.bgColor-default {
+				background: transparent;
 			}
 		}
-    }
+
+		.arrowDirection {
+			background-image: url('#{$themePath}/arrow/menuDirection.svg');
+		}
+	}
+
+	/* Vertical */
+
+	.menu.vertical {
+		.tabs {
+			border-color: $colorShapeSecondary;
+		}
+		.tabs {
+			.tab:hover,
+			.tab.active {
+				color: $colorTextPrimary;
+			}
+		}
+
+		.titleWrapper {
+			.icon.back {
+				background-image: url('#{$themePath}/arrow/menu.svg');
+			}
+			.title {
+				color: $colorTextSecondary;
+			}
+		}
+
+		.line {
+			background: $colorShapeSecondary;
+		}
+		.section::after {
+			background: $colorShapeSecondary;
+		}
+		.separator .inner {
+			background: $colorShapeSecondary;
+		}
+
+		.item {
+			background: none;
+		}
+		.item::before {
+			background: rgba(238, 238, 238, 0);
+		}
+		.item.hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+		.item {
+			.icon.delete:hover,
+			.icon.more:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
+			.icon.arrow {
+				background-image: url('#{$themePath}/arrow/menu.svg');
+			}
+			.icon.chk {
+				background-image: url('#{$themePath}/icon/menu/checkbox.svg');
+			}
+		}
+
+		.loaderWrapper {
+			background: $colorBgSecondary;
+		}
+	}
+
+	/* Horizontal */
+
+	.menu.horizontal {
+		.section {
+			border-color: $colorShapeSecondary;
+		}
+	}
+
+	/* MenuBlockAdd */
+
+	.menu.menuBlockAdd {
+		.item.isBig {
+			.iconObject {
+				background: $colorShapeTertiary;
+			}
+
+			.icon.textParagraph {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph1.svg');
+			}
+
+			.icon.textHeader1 {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/header11.svg');
+			}
+			.icon.textHeader2 {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/header21.svg');
+			}
+			.icon.textHeader3 {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/header31.svg');
+			}
+			.icon.textQuote {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/quote1.svg');
+			}
+
+			.icon.textBulleted {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/bulleted1.svg');
+			}
+			.icon.textNumbered {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/numbered1.svg');
+			}
+			.icon.textToggle {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/toggle1.svg');
+			}
+
+			.icon.textCallout {
+				background-image: url('#{$themePath}/icon/menu/action/block/text/callout1.svg');
+			}
+		}
+
+		.sectionName::before {
+			background-color: $colorShapeSecondary;
+		}
+	}
+
+	/* MenuSmile */
+
+	.menu.menuSmile {
+		.head {
+			border-color: $colorShapeSecondary;
+			color: $colorTextSecondary;
+		}
+		.head {
+			.btn:hover,
+			.btn.active {
+				color: $colorTextPrimary;
+			}
+		}
+
+		.body.gallery {
+			.foot {
+				border-color: $colorShapeSecondary;
+				color: $colorTextSecondary;
+			}
+			.item.active {
+				background: $colorShapeHighlightMedium;
+			}
+
+			.foot {
+				.icon:hover {
+					background-color: $colorShapeHighlightMedium;
+				}
+				.icon.recent.active {
+					background-image: url('#{$themePath}/icon/emoji/recent1.svg');
+				}
+				.icon.people.active {
+					background-image: url('#{$themePath}/icon/emoji/people1.svg');
+				}
+				.icon.nature.active {
+					background-image: url('#{$themePath}/icon/emoji/nature1.svg');
+				}
+				.icon.foods.active {
+					background-image: url('#{$themePath}/icon/emoji/foods1.svg');
+				}
+				.icon.activity.active {
+					background-image: url('#{$themePath}/icon/emoji/activity1.svg');
+				}
+				.icon.places.active {
+					background-image: url('#{$themePath}/icon/emoji/places1.svg');
+				}
+				.icon.objects.active {
+					background-image: url('#{$themePath}/icon/emoji/objects1.svg');
+				}
+				.icon.symbols.active {
+					background-image: url('#{$themePath}/icon/emoji/symbols1.svg');
+				}
+				.icon.flags.active {
+					background-image: url('#{$themePath}/icon/emoji/flags1.svg');
+				}
+			}
+		}
+	}
 
 	/* MenuSmileSkin */
 
 	.menu.menuSmileSkin {
-		.item.active { background: $colorShapeHighlightMedium; }
-    }
+		.item.active {
+			background: $colorShapeHighlightMedium;
+		}
+	}
 
-    /* MenuBlockCover */
+	/* MenuBlockCover */
 
-    .menu.menuBlockCover {
-        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-        .head {
-            .btn:hover, .btn.active { color: $colorTextPrimary; }
-        }
-    }
+	.menu.menuBlockCover {
+		.head {
+			border-color: $colorShapeSecondary;
+			color: $colorTextSecondary;
+		}
+		.head {
+			.btn:hover,
+			.btn.active {
+				color: $colorTextPrimary;
+			}
+		}
+	}
 
-    /* MenuBlockRelationView */
+	/* MenuBlockRelationView */
 
-    .menu.menuBlockRelationView {
-        .section > .name { color: $colorTextPrimary; }
-
-		.item {
-			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-
-			.info { color: $colorTextSecondary; }
-        	.info.canEdit:hover { background: $colorShapeHighlightMedium; }
-
-        	.cell.canEdit:hover { background: $colorShapeHighlightMedium; }
-
-			.icon.fav:hover { background-color: $colorShapeHighlightMedium; }
+	.menu.menuBlockRelationView {
+		.section > .name {
+			color: $colorTextPrimary;
 		}
 
-        .item.add:hover { 
-            .info { background: $colorShapeHighlightMedium; color: $colorTextPrimary; }
-			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
-        }
-    }
-
-    /* MenuBlockRelationEdit */
-
-    .menu.menuBlockRelationEdit {
-        .input { border-color: $colorShapePrimary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
-    }
-
-     /* MenuDataviewRelationEdit */
-
-     .menu.menuDataviewRelationEdit {
-        .input { border-color: $colorShapePrimary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
-    }
-
-    /* MenuDataviewText */
-
-    .menu.menuDataviewText {
-        #input { background: $colorBgPrimary; }
-    }
-
-    /* MenuDataviewRelationList */
-
-    .menu.menuDataviewRelationList {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
-    }
-
-    /* MenuDataviewFileValues */
-
-    .menu.menuDataviewFileValues {
-		.item { color: $colorTextPrimary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
 		.item {
-            .icon.more { background-color: $colorShapeHighlightMedium; }
-        }
-    }
+			.icon.dnd {
+				border-color: rgba(217, 212, 184, 0.14);
+			}
+
+			.info {
+				color: $colorTextSecondary;
+			}
+			.info.canEdit:hover {
+				background: $colorShapeHighlightMedium;
+			}
+
+			.cell.canEdit:hover {
+				background: $colorShapeHighlightMedium;
+			}
+
+			.icon.fav:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
+		}
+
+		.item.add:hover {
+			.info {
+				background: $colorShapeHighlightMedium;
+				color: $colorTextPrimary;
+			}
+			.icon.plus {
+				background-image: url('#{$themePath}/icon/plus/menu1.svg');
+			}
+		}
+	}
+
+	/* MenuBlockRelationEdit */
+
+	.menu.menuBlockRelationEdit {
+		.input {
+			border-color: $colorShapePrimary;
+		}
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
+
+	/* MenuDataviewRelationEdit */
+
+	.menu.menuDataviewRelationEdit {
+		.input {
+			border-color: $colorShapePrimary;
+		}
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
+
+	/* MenuDataviewText */
+
+	.menu.menuDataviewText {
+		#input {
+			background: $colorBgPrimary;
+		}
+	}
+
+	/* MenuDataviewRelationList */
+
+	.menu.menuDataviewRelationList {
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
+
+	/* MenuDataviewFileValues */
+
+	.menu.menuDataviewFileValues {
+		.item {
+			color: $colorTextPrimary;
+		}
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+		.item {
+			.icon.more {
+				background-color: $colorShapeHighlightMedium;
+			}
+		}
+	}
 
 	/* MenuDataviewFilterValues */
 
-    .menu.menuDataviewFilterValues {
+	.menu.menuDataviewFilterValues {
 		.select {
-            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg') !important; }
-        }
-    }
-
-    /* MenuDataviewSort */
-
-    .menu.menuDataviewSort {
-        .item {
-            .select.grey { color: $colorTextSecondary; }
-        }
-    }
-
-    /* MenuDataviewOptionEdit */
-
-    .menu.menuDataviewOptionEdit {
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+			.icon.arrow {
+				background-image: url('#{$themePath}/arrow/menu.svg') !important;
+			}
+		}
 	}
 
-    /* MenuSearchObject */
+	/* MenuDataviewSort */
 
-    .menu.menuSearchObject.big {
-        .item {
-            .iconObject { background: $colorShapeTertiary; }
-        }
-    }
+	.menu.menuDataviewSort {
+		.item {
+			.select.grey {
+				color: $colorTextSecondary;
+			}
+		}
+	}
 
-    /* MenuThreadList */
+	/* MenuDataviewOptionEdit */
 
-    .menu.menuThreadList {
-        .item { border-color: $colorShapeSecondary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+	.menu.menuDataviewOptionEdit {
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
 
-        .item {
-            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
-        }
-    }
+	/* MenuSearchObject */
 
-    /* MenuBlockMore */
+	.menu.menuSearchObject.big {
+		.item {
+			.iconObject {
+				background: $colorShapeTertiary;
+			}
+		}
+	}
 
-    .menu.menuBlockMore {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
-    }
+	/* MenuThreadList */
 
-    /* MenuHelp */
+	.menu.menuThreadList {
+		.item {
+			border-color: $colorShapeSecondary;
+		}
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
 
-    .menu.menuHelp {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
-    }
+		.item {
+			.icon.cafe {
+				background-image: url('#{$themePath}/icon/cafe.svg');
+			}
+		}
+	}
 
-    /* MenuButton */
+	/* MenuBlockMore */
+
+	.menu.menuBlockMore {
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
+
+	/* MenuHelp */
+
+	.menu.menuHelp {
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+	}
+
+	/* MenuButton */
 
 	.menu.menuButton {
-		.item { color: $colorTextSecondary; }
-		.item:hover { color: $colorTextPrimary; }
+		.item {
+			color: $colorTextSecondary;
+		}
+		.item:hover {
+			color: $colorTextPrimary;
+		}
 	}
 
-    /* MenuDataviewCalendar */
+	/* MenuDataviewCalendar */
 
-    .menu.menuDataviewCalendar {
-        .select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
+	.menu.menuDataviewCalendar {
+		.select {
+			.icon.arrow {
+				background-image: url('#{$themePath}/arrow/select/big.svg');
+			}
 		}
-        .day:hover { background: #f9d77e; color: #ad8620 !important; }
-        .day.th { color: $colorControlActive !important; }
-        .day.th:hover { background: none; }
-        .day.active { color: $colorOrange; }
-    }
+		.day:hover {
+			background: #f9d77e;
+			color: #ad8620 !important;
+		}
+		.day.th {
+			color: $colorControlActive !important;
+		}
+		.day.th:hover {
+			background: none;
+		}
+		.day.active {
+			color: $colorOrange;
+		}
+	}
 
-    /* MenuBlockLatex */
+	/* MenuBlockLatex */
 
-    .menu.menuBlockLatex.isTemplate {
-        .item > .inner { border-color: $colorShapePrimary; }
-    }
+	.menu.menuBlockLatex.isTemplate {
+		.item > .inner {
+			border-color: $colorShapePrimary;
+		}
+	}
 
-    /* MenuBlockContext */
+	/* MenuBlockContext */
 
-    .menu.menuBlockContext {
-		.icon:hover { background-color: $colorShapeHighlightMedium; }
+	.menu.menuBlockContext {
+		.icon:hover {
+			background-color: $colorShapeHighlightMedium;
+		}
 
-        .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
-		.icon.active.kbd { background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg'); }
-		.icon.active.italic { background-image: url('#{$themePath}/icon/menu/action/mark/italic1.svg'); }
-		.icon.active.link { background-image: url('#{$themePath}/icon/menu/action/mark/link1.svg'); }
-		.icon.active.strike { background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg'); }
-		.icon.active.underline { background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg'); }
-    }
+		.icon.active.bold {
+			background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg');
+		}
+		.icon.active.kbd {
+			background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg');
+		}
+		.icon.active.italic {
+			background-image: url('#{$themePath}/icon/menu/action/mark/italic1.svg');
+		}
+		.icon.active.link {
+			background-image: url('#{$themePath}/icon/menu/action/mark/link1.svg');
+		}
+		.icon.active.strike {
+			background-image: url('#{$themePath}/icon/menu/action/mark/strike1.svg');
+		}
+		.icon.active.underline {
+			background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg');
+		}
+	}
 
 	/* MenuBlockLink */
 
 	.menu.menuBlockLink {
 		.item {
-			.iconObject { background-color: $colorShapeTertiary; }
+			.iconObject {
+				background-color: $colorShapeTertiary;
+			}
 		}
 
-		.item.add { color: $colorTextPrimary; }
+		.item.add {
+			color: $colorTextPrimary;
+		}
 	}
 
-    /* MenuBlockLinkSettings */
+	/* MenuBlockLinkSettings */
 
-    .menu.menuBlockLinkSettings {
-        .section.card {
-            .item { color: $colorTextSecondary; }
-            .item {
-                .icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text0.svg'); }
-			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
-            }
-
-            .item:hover { color: $colorTextPrimary; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
-            .item:hover {
-				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
-				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
+	.menu.menuBlockLinkSettings {
+		.section.card {
+			.item {
+				color: $colorTextSecondary;
+			}
+			.item {
+				.icon.style-text {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/text0.svg');
+				}
+				.icon.style-card {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg');
+				}
 			}
 
-            .item.active { color: $colorTextPrimary; background: $colorShapeHighlightMedium; }
+			.item:hover {
+				color: $colorTextPrimary;
+				box-shadow: 0px 0px 0px 1px $colorShapePrimary inset;
+			}
+			.item:hover {
+				.icon.style-text {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg');
+				}
+				.icon.style-card {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg');
+				}
+			}
+
 			.item.active {
-				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
-				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
+				color: $colorTextPrimary;
+				background: $colorShapeHighlightMedium;
 			}
-        }
+			.item.active {
+				.icon.style-text {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg');
+				}
+				.icon.style-card {
+					background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg');
+				}
+			}
+		}
 
-        .buttons {
-            .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; color: $colorTextSecondary; }
-            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; color: $colorTextPrimary; }
-        }
-    }
+		.buttons {
+			.button.grey {
+				box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset;
+				color: $colorTextSecondary;
+			}
+			.button.grey:hover {
+				box-shadow: 0px 0px 0px 1px $colorShapePrimary inset;
+				color: $colorTextPrimary;
+			}
+		}
+	}
 
-    /* MenuOnboarding */
+	/* MenuOnboarding */
 
-	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
-		a { color: $colorBgPrimary; }
+		width: 288px;
+		background: #373632;
+		color: #fff;
+		box-shadow: 0px 4px 16px rgb(0 0 0 / 20%);
+	}
+	.menu.menuOnboarding {
+		a {
+			color: $colorBgPrimary;
+		}
 
-		video { border-color: $colorShapeSecondary; }
+		video {
+			border-color: $colorShapeSecondary;
+		}
 
-		.highlight { background: $colorShapeSecondary; color: $colorOrange; }
+		.highlight {
+			background: $colorShapeSecondary;
+			color: $colorOrange;
+		}
 
-        .bottom {
-            .round {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
-                .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
-            }
-            .steps {
-                .step:not(.active) { background: $colorShapeSecondary; }
-                .step:not(.active):hover { background: $colorShapePrimary; }
-            }
-            .category { color: #5c5a54; }
-        }
+		.bottom {
+			.round {
+				.icon.arrow {
+					background-image: url('#{$themePath}/arrow/onboarding.svg');
+				}
+				.icon.tick {
+					background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg');
+				}
+			}
+			.steps {
+				.step:not(.active) {
+					background: $colorShapeSecondary;
+				}
+				.step:not(.active):hover {
+					background: $colorShapePrimary;
+				}
+			}
+			.category {
+				color: #5c5a54;
+			}
+		}
 	}
 
 	/* MenuSearchText */
 
 	.menu.menuSearchText {
 		.buttons {
-			.line { background: $colorShapeSecondary; }
+			.line {
+				background: $colorShapeSecondary;
+			}
 		}
 	}
 
 	/* MenuDataviewCreateBookmark */
 
 	.menu.menuDataviewCreateBookmark {
-		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
+		.loaderWrapper {
+			background: rgba(39, 39, 35, 0.9);
+		}
 		.buttons {
-			.button { color: $colorTextSecondary; }
-			.button:hover { color: $colorTextPrimary; }
+			.button {
+				color: $colorTextSecondary;
+			}
+			.button:hover {
+				color: $colorTextPrimary;
+			}
 		}
 	}
 
-    /* MenuDataviewViewLayout */
+	/* MenuDataviewViewLayout */
 
-    .menu.menuDataviewViewLayout {
-        .layouts {
-            .layout { border-color: $colorShapeSecondary; }
-            .layout {
-                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg'); }
-                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
-                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery0.svg'); }
-                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
-				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg'); }
-            }
+	.menu.menuDataviewViewLayout {
+		.layouts {
+			.layout {
+				border-color: $colorShapeSecondary;
+			}
+			.layout {
+				.icon.view.c0 {
+					background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg');
+				}
+				.icon.view.c1 {
+					background-image: url('#{$themePath}/icon/dataview/layout/list0.svg');
+				}
+				.icon.view.c2 {
+					background-image: url('#{$themePath}/icon/dataview/layout/gallery0.svg');
+				}
+				.icon.view.c3 {
+					background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg');
+				}
+				.icon.view.c4 {
+					background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg');
+				}
+			}
 
-            .layout:hover { background-color: rgba(238, 238, 238, 0.06); }
-            .layout.active { border: 2px solid $colorOrange; }
-            .layout.active {
-                .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg'); }
-                .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
-                .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
-                .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
-				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg'); }
-            }
-        }
-    }
-
-    /* MenuDataviewTemplateList */
-
-    .menu.menuDataviewTemplateList {
-        .emptySearch { border-color: $colorShapePrimary; }
-		.items {
-			.item {
-				.icon.more:hover { background-color: unset; }
-
-				.previewObject { background-color: $colorBgPrimary; }
-				.previewObject::before { background-color: $colorShapeHighlightMedium; }
+			.layout:hover {
+				background-color: rgba(238, 238, 238, 0.06);
+			}
+			.layout.active {
+				border: 2px solid $colorOrange;
+			}
+			.layout.active {
+				.icon.view.c0 {
+					background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg');
+				}
+				.icon.view.c1 {
+					background-image: url('#{$themePath}/icon/dataview/layout/list1.svg');
+				}
+				.icon.view.c2 {
+					background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg');
+				}
+				.icon.view.c3 {
+					background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg');
+				}
+				.icon.view.c4 {
+					background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg');
+				}
 			}
 		}
-    }
-    .menu.menuDataviewTemplateList.objectCreate {
+	}
+
+	/* MenuDataviewTemplateList */
+
+	.menu.menuDataviewTemplateList {
+		.emptySearch {
+			border-color: $colorShapePrimary;
+		}
 		.items {
 			.item {
-				.previewObject { box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
+				.icon.more:hover {
+					background-color: unset;
+				}
+
+				.previewObject {
+					background-color: $colorBgPrimary;
+				}
+				.previewObject::before {
+					background-color: $colorShapeHighlightMedium;
+				}
 			}
 		}
-    }
+	}
+	.menu.menuDataviewTemplateList.objectCreate {
+		.items {
+			.item {
+				.previewObject {
+					box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
+				}
+			}
+		}
+	}
 
 	/* MenuSpace */
 
-	.menu.menuSpace { color: $colorTextPrimary; }
-	.menu.menuSpace { 
+	.menu.menuSpace {
+		color: $colorTextPrimary;
+	}
+	.menu.menuSpace {
 		.head {
-			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }
+			.icon.settings {
+				background-image: url('#{$themePath}/icon/menu/space/settings.svg');
+			}
 		}
 
 		.items {
 			.item.add {
-				.iconWrap { box-shadow: 0px 0px 0px 1px $colorControlActive inset; background-image: url('#{$themePath}/icon/plus/space.svg'); }
+				.iconWrap {
+					box-shadow: 0px 0px 0px 1px $colorControlActive inset;
+					background-image: url('#{$themePath}/icon/plus/space.svg');
+				}
 			}
 
-			.item.hover { background-color: rgba(255, 255, 255, 0.1); }
+			.item.hover {
+				background-color: rgba(255, 255, 255, 0.1);
+			}
 		}
 	}
 
@@ -430,28 +750,46 @@
 
 	.menu.menuSelect.spaceSelect {
 		.item {
-			.icon.add { border-color: $colorShapeSecondary; }
+			.icon.add {
+				border-color: $colorShapeSecondary;
+			}
 		}
 	}
 
 	.menu.menuSelect.withFullDescripion {
 		.item.withDescription {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
+			.iconObject {
+				background-color: $colorShapeHighlightMedium;
+			}
 		}
 	}
 
 	.menu.menuSelect.featuredLinks {
 		.item {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
+			.iconObject {
+				background-color: $colorShapeHighlightMedium;
+			}
 		}
 	}
 
 	/* MenuQuickCapture */
 
-	.menuQuickCapture { background: none; box-shadow: none; }
-	.menuQuickCapture.isExpanded { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 	.menuQuickCapture {
-		.item { background-color: $colorShapeTertiary; }
-		.item.hover:before { background: $colorShapeHighlightMedium; }
+		background: none;
+		box-shadow: none;
+	}
+	.menuQuickCapture.isExpanded {
+		background: $colorBgSecondary;
+		box-shadow:
+			0px 4px 16px rgb(0 0 0 / 20%),
+			0px 0px 0px 1px #393933 inset;
+	}
+	.menuQuickCapture {
+		.item {
+			background-color: $colorShapeTertiary;
+		}
+		.item.hover:before {
+			background: $colorShapeHighlightMedium;
+		}
 	}
 }

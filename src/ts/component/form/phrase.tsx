@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
@@ -15,26 +17,17 @@ interface Props {
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
 	onCopy?: () => void;
-};
+}
 
 interface State {
 	phrase: string[];
 	isHidden: boolean;
 	hasError: boolean;
-};
+}
 
-const COLORS = [
-	'orange',
-	'red',
-	'pink',
-	'purple',
-	'blue',
-	'ice',
-	'lime',
-];
+const COLORS = ['orange', 'red', 'pink', 'purple', 'blue', 'ice', 'lime'];
 
 class Phrase extends React.Component<Props, State> {
-
 	public static defaultProps: Props = {
 		value: '',
 	};
@@ -50,7 +43,7 @@ class Phrase extends React.Component<Props, State> {
 	entry = null;
 	range = null;
 
-	constructor (props: Props) {
+	constructor(props: Props) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -61,45 +54,51 @@ class Phrase extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onToggle = this.onToggle.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { readonly, onCopy } = this.props;
 		const { isHidden, hasError, phrase } = this.state;
-		const cn = [ 'phraseWrapper' ];
+		const cn = ['phraseWrapper'];
 
 		if (isHidden) {
 			cn.push('isHidden');
-		};
+		}
 
 		if (hasError) {
 			cn.push('hasError');
-		};
+		}
 
 		if (readonly) {
 			cn.push('isReadonly');
-		};
+		}
 
 		const renderWord = (word: string, index: number) => {
 			const color = COLORS[index % COLORS.length];
-			const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
+			const cn = isHidden
+				? `bg bg-${color}`
+				: `textColor textColor-${color}`;
 
-			return <span className={[ 'word', cn ].join(' ')} key={index}>{word}</span>;
+			return (
+				<span className={['word', cn].join(' ')} key={index}>
+					{word}
+				</span>
+			);
 		};
 
 		return (
-			<div 
-				ref={ref => this.node = ref}
+			<div
+				ref={ref => (this.node = ref)}
 				className={cn.join(' ')}
 				onClick={this.onClick}
 			>
 				<div className="phraseInnerWrapper">
 					{!phrase.length ? <span className="word" /> : ''}
 					{phrase.map(renderWord)}
-					<span 
-						id="entry" 
+					<span
+						id="entry"
 						contentEditable={true}
-						suppressContentEditableWarning={true} 
+						suppressContentEditableWarning={true}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 						onPaste={this.onPaste}
@@ -111,41 +110,46 @@ class Phrase extends React.Component<Props, State> {
 					</span>
 				</div>
 
-				<div id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</div>
-				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
+				<div id="placeholder" className="placeholder">
+					{translate('phrasePlaceholder')}
+				</div>
+				<Icon
+					className={isHidden ? 'see' : 'hide'}
+					onClick={this.onToggle}
+				/>
 				<Icon className="copy" onClick={onCopy} />
 			</div>
 		);
-	};
+	}
 
-	componentDidMount () {
+	componentDidMount() {
 		const { value, isHidden } = this.props;
 
 		const text = this.normalizeWhiteSpace(value);
-		const phrase = text.length ? text.split(' '): [];
+		const phrase = text.length ? text.split(' ') : [];
 
 		this.init();
 		this.setState({ isHidden, phrase });
 		this.focus();
-	};
+	}
 
-	componentDidUpdate () {
+	componentDidUpdate() {
 		this.init();
 		this.placeholderCheck();
-	};
+	}
 
-	init () {
+	init() {
 		const node = $(this.node);
 
 		this.placeholder = node.find('#placeholder');
 		this.entry = node.find('#entry');
-	};
+	}
 
-	onClick () {
+	onClick() {
 		this.focus();
-	};
+	}
 
-	onKeyDown (e: React.KeyboardEvent) {
+	onKeyDown(e: React.KeyboardEvent) {
 		const { onKeyDown } = this.props;
 
 		keyboard.shortcut('space, enter', e, () => e.preventDefault());
@@ -156,7 +160,7 @@ class Phrase extends React.Component<Props, State> {
 			const range = getRange(this.entry.get(0));
 			if (range.start || range.end) {
 				return;
-			};
+			}
 
 			e.preventDefault();
 
@@ -170,57 +174,61 @@ class Phrase extends React.Component<Props, State> {
 
 		if (onKeyDown) {
 			onKeyDown(e);
-		};
-	};
+		}
+	}
 
-	onKeyUp (e: React.KeyboardEvent) {
+	onKeyUp(e: React.KeyboardEvent) {
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 			this.updateValue();
 		});
 
 		this.placeholderCheck();
-	};
+	}
 
-	updateValue () {
+	updateValue() {
 		const value = this.getEntryValue();
 
 		if (!value.length) {
 			return;
-		};
+		}
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
-	};
+		this.setState(({ phrase }) => ({
+			phrase: this.checkValue(phrase.concat([value])),
+		}));
+	}
 
-	onPaste (e) {
+	onPaste(e) {
 		e.preventDefault();
 
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat(text.split(' '))) }));
-	};
+		this.setState(({ phrase }) => ({
+			phrase: this.checkValue(phrase.concat(text.split(' '))),
+		}));
+	}
 
-	onBlur () {
+	onBlur() {
 		this.placeholderCheck();
-	};
+	}
 
-	onFocus () {
+	onFocus() {
 		this.placeholderCheck();
-	};
+	}
 
-	onSelect () {
+	onSelect() {
 		const node = $(this.node);
 		const entry = node.find('#entry');
 
 		if (entry.length) {
 			this.range = getRange(entry.get(0));
-		};
-	};
+		}
+	}
 
-	onToggle () {
+	onToggle() {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
 		const pin = Storage.get('pin');
@@ -229,57 +237,65 @@ class Phrase extends React.Component<Props, State> {
 
 			if (onToggle) {
 				onToggle(!isHidden);
-			};
+			}
 		};
 
 		if (isHidden && checkPin && pin) {
 			popupStore.open('pin', { data: { onSuccess } });
 		} else {
 			onSuccess();
-		};
-	};
+		}
+	}
 
-	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, Constant.limit.phrase.letter)).filter(it => it).slice(0, Constant.limit.phrase.word);
-	};
+	checkValue(v: string[]) {
+		return v
+			.map(it => it.substring(0, Constant.limit.phrase.letter))
+			.filter(it => it)
+			.slice(0, Constant.limit.phrase.word);
+	}
 
-	setError (v: boolean) {
+	setError(v: boolean) {
 		this.setState({ hasError: v });
-	};
+	}
 
-	focus () {
+	focus() {
 		this.entry.trigger('focus');
 		setRange(this.entry.get(0), this.range || { start: 0, end: 0 });
-	};
+	}
 
-	clear () {
+	clear() {
 		this.entry.text('');
-	};
+	}
 
-	getEntryValue () {
+	getEntryValue() {
 		return this.normalizeWhiteSpace(this.entry.text()).toLowerCase();
-	};
+	}
 
 	normalizeWhiteSpace = (val: string) => {
-		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
+		return (
+			String(val || '')
+				.replace(/\s\s+/g, ' ')
+				.trim() || ''
+		);
 	};
 
-	getValue () {
+	getValue() {
 		return this.state.phrase.join(' ').trim().toLowerCase();
-	};
+	}
 
-	placeholderCheck () {
-		this.getValue().length || this.getEntryValue() ? this.placeholderHide() : this.placeholderShow();	
-	};
+	placeholderCheck() {
+		this.getValue().length || this.getEntryValue()
+			? this.placeholderHide()
+			: this.placeholderShow();
+	}
 
-	placeholderHide () {
+	placeholderHide() {
 		this.placeholder.hide();
-	};
+	}
 
-	placeholderShow () {
+	placeholderShow() {
 		this.placeholder.show();
-	};
-
-};
+	}
+}
 
 export default Phrase;

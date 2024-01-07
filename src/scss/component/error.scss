@@ -1,4 +1,16 @@
-@import "~scss/_vars";
+/** @format */
 
-.error { color: $colorRed; margin: 1em 0px; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; word-break: break-word; user-select: text !important; }
-.error:empty { display: none; }
+@import '~scss/_vars';
+
+.error {
+	color: $colorRed;
+	margin: 1em 0px;
+	font-size: 14px;
+	line-height: 22px;
+	letter-spacing: 0.2px;
+	word-break: break-word;
+	user-select: text !important;
+}
+.error:empty {
+	display: none;
+}

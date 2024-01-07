@@ -1,61 +1,66 @@
+/** @format */
+
 import * as React from 'react';
 import { Icon, Label } from 'Component';
 import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell> {
+const CellCheckbox = observer(
+	class CellCheckbox extends React.Component<I.Cell> {
+		constructor(props: I.Cell) {
+			super(props);
 
-	constructor (props: I.Cell) {
-		super(props);
+			this.onClick = this.onClick.bind(this);
+		}
 
-		this.onClick = this.onClick.bind(this);
-	};
+		render() {
+			const { recordId, getRecord, withLabel, withName, relation } =
+				this.props;
+			const record = getRecord(recordId);
 
-	render () {
-		const { recordId, getRecord, withLabel, withName, relation } = this.props;
-		const record = getRecord(recordId);
-		
-		if (!record) {
-			return null;
-		};
+			if (!record) {
+				return null;
+			}
 
-		const value = this.getValue();
-		const cn = [];
+			const value = this.getValue();
+			const cn = [];
 
-		if (value) {
-			cn.push('active');
-		};
+			if (value) {
+				cn.push('active');
+			}
 
-		let label = '';
-		if (withLabel) {
-			label = UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name)
-		} else
-		if (withName) {
-			label = relation.name;
-		};
+			let label = '';
+			if (withLabel) {
+				label = UtilCommon.sprintf(
+					translate(`relationCheckboxLabel${Number(value)}`),
+					relation.name
+				);
+			} else if (withName) {
+				label = relation.name;
+			}
 
-		return (
-			<React.Fragment>
-				<Icon className={cn.join(' ')} />
-				{label ? <Label text={label} /> : ''}
-			</React.Fragment>
-		);
-	};
+			return (
+				<React.Fragment>
+					<Icon className={cn.join(' ')} />
+					{label ? <Label text={label} /> : ''}
+				</React.Fragment>
+			);
+		}
 
-	getValue () {
-		const { relation, getRecord, recordId } = this.props;
-		const record = getRecord(recordId);
+		getValue() {
+			const { relation, getRecord, recordId } = this.props;
+			const record = getRecord(recordId);
 
-		return Boolean(record[relation.relationKey]);
-	};
+			return Boolean(record[relation.relationKey]);
+		}
 
-	onClick () {
-		const { onChange } = this.props;
-		const value = this.getValue();
+		onClick() {
+			const { onChange } = this.props;
+			const value = this.getValue();
 
-		onChange(!value);
-	};
-	
-});
+			onChange(!value);
+		}
+	}
+);
 
 export default CellCheckbox;

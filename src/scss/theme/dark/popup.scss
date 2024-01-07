@@ -1,64 +1,113 @@
-@import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
+/** @format */
+
+@import '~scss/_vars';
+@import '~scss/theme/dark/_vars';
 
 .popups {
-    /* Common */
+	/* Common */
 
-    .popup {
-        .innerWrap { background: $colorBgPrimary; box-shadow: 0px 0px 0px 1px $colorBgSecondary; }
-        #loader { background: $colorBgLoader; }
-    }
+	.popup {
+		.innerWrap {
+			background: $colorBgPrimary;
+			box-shadow: 0px 0px 0px 1px $colorBgSecondary;
+		}
+		#loader {
+			background: $colorBgLoader;
+		}
+	}
 
-    /* PopupSearch */
+	/* PopupSearch */
 
-    .popup.popupSearch {
-        .head { border-color: $colorShapeSecondary; }
-        .item {
-            .descr { color: $colorTextSecondary; }
-        }
-        .item.active { background-color: $colorShapeHighlightMedium; }
-    }
+	.popup.popupSearch {
+		.head {
+			border-color: $colorShapeSecondary;
+		}
+		.item {
+			.descr {
+				color: $colorTextSecondary;
+			}
+		}
+		.item.active {
+			background-color: $colorShapeHighlightMedium;
+		}
+	}
 
-    /* PopupSettings */
+	/* PopupSettings */
 
-    .popup.popupSettings, .popup.popupSettingsOnboarding {
-		
+	.popup.popupSettings,
+	.popup.popupSettingsOnboarding {
 		.mainSides {
-			> .side.left { background: $colorBgSecondary; }
 			> .side.left {
-				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
-				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
+				background: $colorBgSecondary;
+			}
+			> .side.left {
+				.space:hover,
+				.space.active {
+					background: $colorShapeHighlightMedium;
+				}
+				.item:hover,
+				.item.active {
+					background: $colorShapeHighlightMedium;
+				}
 				.item {
-					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
+					.icon.logout {
+						background-image: url('#{$themePath}/icon/popup/settings/logout.svg');
+					}
 				}
 
-				.iconObject.withLetter { background-color: $colorShapeTertiary; }
+				.iconObject.withLetter {
+					background-color: $colorShapeTertiary;
+				}
 			}
 
 			> .side.right {
 				.head {
-					.inner { background: $colorBgPrimary; }
-					.element:hover { background-color: $colorShapeHighlightMedium; }
+					.inner {
+						background: $colorBgPrimary;
+					}
+					.element:hover {
+						background-color: $colorShapeHighlightMedium;
+					}
 				}
 
-				.label.section, .label.small, .label.grey { color: $colorTextSecondary; }
-				.row { border-color: $colorShapeSecondary; }
+				.label.section,
+				.label.small,
+				.label.grey {
+					color: $colorTextSecondary;
+				}
+				.row {
+					border-color: $colorShapeSecondary;
+				}
 
 				.input,
-				.select { border-color: $colorShapePrimary; }
-
-				.select { color: $colorTextSecondary; }
 				.select {
-					.item { color: $colorTextPrimary; }
+					border-color: $colorShapePrimary;
 				}
-				.select:hover { background-color: $colorShapeHighlightMedium; }
+
+				.select {
+					color: $colorTextSecondary;
+				}
+				.select {
+					.item {
+						color: $colorTextPrimary;
+					}
+				}
+				.select:hover {
+					background-color: $colorShapeHighlightMedium;
+				}
 
 				.actionItems,
-				.actionItems > .item { border-color: $colorShapeSecondary; }
+				.actionItems > .item {
+					border-color: $colorShapeSecondary;
+				}
 
-				.phraseWrapper { background-color: $colorShapeTertiary; }
 				.phraseWrapper {
-					.icon.see { background-color: $colorShapeTertiary; }
+					background-color: $colorShapeTertiary;
+				}
+				.phraseWrapper {
+					.icon.see {
+						background-color: $colorShapeTertiary;
+					}
 				}
 			}
 		}
@@ -68,27 +117,41 @@
 			.sections {
 				.spaceHeader {
 					.headerContent {
-						.spaceType { background-color: $colorShapeHighlightMedium; }
-					}	
+						.spaceType {
+							background-color: $colorShapeHighlightMedium;
+						}
+					}
 				}
 
 				.section {
-					.sectionContent { border-color: $colorShapeSecondary; }
 					.sectionContent {
-						.item { border-color: $colorShapeSecondary; }
+						border-color: $colorShapeSecondary;
+					}
+					.sectionContent {
 						.item {
-							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+							border-color: $colorShapeSecondary;
+						}
+						.item {
+							.icon.arrow.down {
+								background-image: url('#{$themePath}/arrow/button/black.svg');
+							}
 						}
 					}
 				}
 			}
 			.sections {
 				.section {
-					.sectionContent { border-color: $colorShapeSecondary; }
 					.sectionContent {
-						.item { border-color: $colorShapeSecondary; }
+						border-color: $colorShapeSecondary;
+					}
+					.sectionContent {
 						.item {
-							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+							border-color: $colorShapeSecondary;
+						}
+						.item {
+							.icon.arrow.down {
+								background-image: url('#{$themePath}/arrow/button/black.svg');
+							}
 						}
 					}
 				}
@@ -96,168 +159,272 @@
 		}
 
 		.side.right.tabSpaceCreate {
-			.loaderWrapper { background-color: $colorBgLoader; }
+			.loaderWrapper {
+				background-color: $colorBgLoader;
+			}
 		}
 
 		.side.right.tabDataManagement {
-			.iconObject { background: $colorShapeHighlightMedium; }
+			.iconObject {
+				background: $colorShapeHighlightMedium;
+			}
 		}
 
-        .side.right.tabPhrase {
-            .qrWrap { background: $colorControlActive; }
-        }
+		.side.right.tabPhrase {
+			.qrWrap {
+				background: $colorControlActive;
+			}
+		}
 
 		.side.right.tabAccount {
 			.sections .section {
-				.input { border-color: $colorShapeSecondary; }
-				.input:hover { border-color: $colorShapePrimary; }
-				.input:focus:not(.isReadonly) { border-color: $colorSystemAccent100; }
+				.input {
+					border-color: $colorShapeSecondary;
+				}
+				.input:hover {
+					border-color: $colorShapePrimary;
+				}
+				.input:focus:not(.isReadonly) {
+					border-color: $colorSystemAccent100;
+				}
 			}
 		}
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
-		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
+		.side.right.tabPinIndex .actionItems > .item.cp:hover {
+			background-color: rgba(166, 166, 166, 0.04) !important;
+		}
 
-        .side.right.tabImportIndex, 
+		.side.right.tabImportIndex,
 		.side.right.tabExportIndex {
-            .item { border-color: $colorShapeSecondary; }
-            .item:hover, .item.active { border-color: $colorShapePrimary; }
-        }
+			.item {
+				border-color: $colorShapeSecondary;
+			}
+			.item:hover,
+			.item.active {
+				border-color: $colorShapePrimary;
+			}
+		}
 
 		.side.right.tabImportNotion {
-			.btn { color: $colorTextSecondary; }
 			.btn {
-				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
+				color: $colorTextSecondary;
 			}
-			.btn:hover { color: $colorTextPrimary; }
+			.btn {
+				.icon.help {
+					background-image: url('#{$themePath}/icon/popup/settings/help0.svg');
+				}
+			}
 			.btn:hover {
-				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
+				color: $colorTextPrimary;
+			}
+			.btn:hover {
+				.icon.help {
+					background-image: url('#{$themePath}/icon/popup/settings/help1.svg');
+				}
 			}
 		}
 
-		.side.right.tabImportNotion, 
+		.side.right.tabImportNotion,
 		.side.right.tabImportNotionHelp {
-			.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
+			.icon.logo {
+				background-image: url('#{$themePath}/icon/import/notion.svg');
+			}
 		}
 
 		.side.right.tabImportNotionHelp {
-			.list img { border-color: $colorShapePrimary; }
+			.list img {
+				border-color: $colorShapePrimary;
+			}
 		}
 
 		.side.right.tabAppearance {
-			.btn { color: $colorTextSecondary; }
+			.btn {
+				color: $colorTextSecondary;
+			}
 
-			.btn.light { 
-				.bg { background-color: #fff; }
+			.btn.light {
+				.bg {
+					background-color: #fff;
+				}
 			}
 
 			.btn.dark {
-				.bg { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
-				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+				.bg {
+					box-shadow: 0px 0px 0px 1px $colorShapePrimary;
+				}
+				.icon {
+					background-image: url('~img/icon/popup/settings/theme/dark.svg');
+				}
 			}
 			.btn.system {
-				.bg::before, .bg::after {
-					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
+				.bg::before,
+				.bg::after {
+					content: '';
+					position: absolute;
+					top: 0px;
+					width: 50%;
+					height: 100%;
 				}
-				.bg::before { left: 0px; background: #fff; border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 0px 14px 14px 0px; }
-				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+				.bg::before {
+					left: 0px;
+					background: #fff;
+					border-radius: 14px 0px 0px 14px;
+				}
+				.bg::after {
+					right: 0px;
+					box-shadow: 0px 0px 0px 1px $colorShapePrimary;
+					border-radius: 0px 14px 14px 0px;
+				}
+				.icon {
+					background-image: url('~img/icon/popup/settings/theme/system.svg');
+				}
 			}
 
-			.btn.active { color: $colorTextPrimary; }
 			.btn.active {
-				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
+				color: $colorTextPrimary;
+			}
+			.btn.active {
+				.bg {
+					box-shadow: 0px 0px 0px 2px #ffee94;
+				}
 			}
 			.btn.system.active {
-				.bg::before { box-shadow: 0px 0px; }
+				.bg::before {
+					box-shadow: 0px 0px;
+				}
 			}
 		}
 
 		.side.right.tabDelete {
-			.check { border-color: $colorShapePrimary; }
+			.check {
+				border-color: $colorShapePrimary;
+			}
 		}
-    }
-    
-    /* PopupShortcuts */
+	}
 
-    .popup.popupShortcut {
-        .head {
-            .tabs { color: $colorTextSecondary; }
-            .tabs {
-                .item:hover, .item.active { color: $colorTextPrimary; }
-            }
-        }
+	/* PopupShortcuts */
 
-        .body {
-            .section {
-                .name { border-color: $colorShapeSecondary; }
-                .items {
-                    .item { border-color: $colorShapeSecondary; }
-                    .item {
-                        .key { color: $colorTextSecondary; }
-                    }
-                }
-            }
-            .section > .descr { border-color: $colorShapeSecondary; }
-        }
-    }
+	.popup.popupShortcut {
+		.head {
+			.tabs {
+				color: $colorTextSecondary;
+			}
+			.tabs {
+				.item:hover,
+				.item.active {
+					color: $colorTextPrimary;
+				}
+			}
+		}
+
+		.body {
+			.section {
+				.name {
+					border-color: $colorShapeSecondary;
+				}
+				.items {
+					.item {
+						border-color: $colorShapeSecondary;
+					}
+					.item {
+						.key {
+							color: $colorTextSecondary;
+						}
+					}
+				}
+			}
+			.section > .descr {
+				border-color: $colorShapeSecondary;
+			}
+		}
+	}
 
 	/* PopupPreview */
 
 	.popup.popupPreview {
-		#loader { background: $colorBgPrimary; }
+		#loader {
+			background: $colorBgPrimary;
+		}
 	}
 
-    /* PopupHelp */
+	/* PopupHelp */
 
-    .popup.popupHelp {
-		.head { color: $colorTextSecondary; }
+	.popup.popupHelp {
 		.head {
-			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
-			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
+			color: $colorTextSecondary;
+		}
+		.head {
+			.icon.mail {
+				background-image: url('#{$themePath}/icon/social/mail0.svg');
+			}
+			.icon.mail:hover {
+				background-image: url('#{$themePath}/icon/social/mail1.svg');
+			}
 		}
 
-        .highlight { color: $colorOrange; background: $colorShapeHighlightMedium; }
+		.highlight {
+			color: $colorOrange;
+			background: $colorShapeHighlightMedium;
+		}
 	}
 
-    /* PopupPrompt */
+	/* PopupPrompt */
 
-    .popup.popupPrompt {
-        .input { background: $colorBgPrimary; border-color: $colorShapePrimary; }
-    }
+	.popup.popupPrompt {
+		.input {
+			background: $colorBgPrimary;
+			border-color: $colorShapePrimary;
+		}
+	}
 
-    /* PopupExport */
+	/* PopupExport */
 
-    .popup.popupExport {
-        .row { border-color: $colorShapePrimary; }
-    }
+	.popup.popupExport {
+		.row {
+			border-color: $colorShapePrimary;
+		}
+	}
 
 	/* PopupMigration */
 
 	.popup.popupMigration {
-		.qrWrap { background-color: $colorBgSecondary; }
+		.qrWrap {
+			background-color: $colorBgSecondary;
+		}
 	}
 
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
 		.titleWrap {
-			.label { color: $colorTextSecondary;  }
+			.label {
+				color: $colorTextSecondary;
+			}
 		}
 
-		.screenWrap { background: $colorShapeHighlightMedium; }
 		.screenWrap {
-			.icon.arrow { 
-				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: $colorShapeSecondary;
+			background: $colorShapeHighlightMedium;
+		}
+		.screenWrap {
+			.icon.arrow {
+				background-color: $colorBgSecondary;
+				background-image: url('#{$themePath}/arrow/usecase.svg');
+				border-color: $colorShapeSecondary;
 			}
 		}
 
 		.footerWrap {
 			.side.right {
 				.tags {
-					.tagItem { background: $colorShapeHighlightMedium; color: $colorTextSecondary; }
+					.tagItem {
+						background: $colorShapeHighlightMedium;
+						color: $colorTextSecondary;
+					}
 				}
-				.label { color: $colorTextSecondary; }
+				.label {
+					color: $colorTextSecondary;
+				}
 			}
 		}
 	}
@@ -266,10 +433,11 @@
 		.objectManagerWrapper {
 			.items {
 				.item {
-					.iconObject { background-color: $colorShapeTertiary; }
+					.iconObject {
+						background-color: $colorShapeTertiary;
+					}
 				}
 			}
 		}
 	}
-
 }

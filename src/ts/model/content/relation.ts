@@ -1,11 +1,12 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentRelation implements I.ContentRelation {
-	
 	key = '';
-	
-	constructor (props: I.ContentRelation) {
+
+	constructor(props: I.ContentRelation) {
 		this.key = String(props.key || '');
 
 		makeObservable(this, {
@@ -13,8 +14,7 @@ class BlockContentRelation implements I.ContentRelation {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentRelation;

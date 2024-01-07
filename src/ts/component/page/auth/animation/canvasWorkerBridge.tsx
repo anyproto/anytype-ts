@@ -1,6 +1,8 @@
-/* 
-NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
-*/
+/**
+ * NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
+ *
+ * @format
+ */
 
 import * as React from 'react';
 import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
@@ -20,7 +22,7 @@ const CanvasWorkerBridge = (props: Props) => {
 
 		if (!canvasRef.current) {
 			return;
-		};
+		}
 
 		const canvas = canvasRef.current;
 		const offscreen = canvasRef.current.transferControlToOffscreen();
@@ -45,7 +47,7 @@ const CanvasWorkerBridge = (props: Props) => {
 				(event: any) => {
 					if (!worker.current) {
 						return;
-					};
+					}
 
 					worker.current.postMessage({
 						type: 'dom_events',
@@ -67,7 +69,7 @@ const CanvasWorkerBridge = (props: Props) => {
 		const handleResize = () => {
 			if (!worker.current) {
 				return;
-			};
+			}
 
 			worker.current.postMessage({
 				type: 'resize',
@@ -90,10 +92,10 @@ const CanvasWorkerBridge = (props: Props) => {
 	React.useEffect(() => {
 		if (!worker.current) {
 			return;
-		};
+		}
 
 		worker.current.postMessage({ type: 'props', payload: props });
-	}, [ props ]);
+	}, [props]);
 
 	/*
 	React.useEffect(() => {

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { I, UtilCommon, translate } from 'Lib';
 
@@ -5,8 +7,7 @@ const katex = require('katex');
 require('katex/dist/contrib/mhchem');
 
 class MenuPreviewLatex extends React.Component<I.Menu> {
-
-	render () {
+	render() {
 		const { param } = this.props;
 		const { data } = param;
 		const { text, example } = data;
@@ -15,17 +16,33 @@ class MenuPreviewLatex extends React.Component<I.Menu> {
 			displayMode: true,
 			throwOnError: false,
 			output: 'html',
-			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+			trust: (context: any) =>
+				['\\url', '\\href', '\\includegraphics'].includes(
+					context.command
+				),
 		});
 
 		return (
 			<div>
-				<div className="math" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(math) }} />
-				{example ? <div className="example">{UtilCommon.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
+				<div
+					className="math"
+					dangerouslySetInnerHTML={{
+						__html: UtilCommon.sanitize(math),
+					}}
+				/>
+				{example ? (
+					<div className="example">
+						{UtilCommon.sprintf(
+							translate('menuPreviewLatexExample'),
+							text
+						)}
+					</div>
+				) : (
+					''
+				)}
 			</div>
 		);
-	};
-
-};
+	}
+}
 
 export default MenuPreviewLatex;

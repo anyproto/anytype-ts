@@ -1,17 +1,33 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuBlockMention { width: 360px; }
 	.menu.menuBlockMention {
-		.content { transition: none; padding: 0px; }
-		.items { height: 100%; }
+		width: 360px;
+	}
+	.menu.menuBlockMention {
+		.content {
+			transition: none;
+			padding: 0px;
+		}
+		.items {
+			height: 100%;
+		}
 		.item {
-			.name { @include text-overflow-nw; width: 100%; }
+			.name {
+				@include text-overflow-nw;
+				width: 100%;
+			}
 		}
 
 		.item.add {
-			.name { margin: 0px; }
-			.caption { display: none; }
+			.name {
+				margin: 0px;
+			}
+			.caption {
+				display: none;
+			}
 		}
 	}
 }

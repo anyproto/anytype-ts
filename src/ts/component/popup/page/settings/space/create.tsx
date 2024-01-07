@@ -1,8 +1,28 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
+import {
+	Title,
+	Label,
+	Input,
+	IconObject,
+	Button,
+	Select,
+	Loader,
+	Error,
+} from 'Component';
+import {
+	UtilObject,
+	UtilCommon,
+	I,
+	C,
+	translate,
+	keyboard,
+	Preview,
+	analytics,
+} from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -11,213 +31,244 @@ interface State {
 	isLoading: boolean;
 	iconOption: number;
 	usecase: I.Usecase;
-};
+}
 
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
+const PopupSettingsSpaceIndex = observer(
+	class PopupSettingsSpaceIndex extends React.Component<
+		I.PopupSettings,
+		State
+	> {
+		refName: any = null;
 
-	refName: any = null;
-
-	state = {
-		error: '',
-		isLoading: false,
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
-		usecase: I.Usecase.Empty,
-	};
-
-	constructor (props: any) {
-		super(props);
-
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onSelectUsecase = this.onSelectUsecase.bind(this);
-	};
-
-	render () {
-		const { error, iconOption, usecase, isLoading } = this.state;
-		const { onSpaceTypeTooltip } = this.props;
-		const space = {
-			layout: I.ObjectLayout.SpaceView,
-			iconOption,
+		state = {
+			error: '',
+			isLoading: false,
+			iconOption: UtilCommon.rand(1, Constant.iconCnt),
+			usecase: I.Usecase.Empty,
 		};
-		const options = this.getUsecaseOptions();
 
-		return (
-			<React.Fragment>
+		constructor(props: any) {
+			super(props);
 
-				{isLoading ? <Loader /> : ''}
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.onSubmit = this.onSubmit.bind(this);
+			this.onSelectUsecase = this.onSelectUsecase.bind(this);
+		}
 
-				<Title text={translate('popupSettingsSpaceCreateTitle')} />
+		render() {
+			const { error, iconOption, usecase, isLoading } = this.state;
+			const { onSpaceTypeTooltip } = this.props;
+			const space = {
+				layout: I.ObjectLayout.SpaceView,
+				iconOption,
+			};
+			const options = this.getUsecaseOptions();
 
-				<div className="spaceHeader">
-					<div className="iconWrapper">
-						<IconObject
-							id="spaceIcon"
-							size={96}
-							object={space}
-							forceLetter={true}
-							canEdit={false}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-						/>
-					</div>
+			return (
+				<React.Fragment>
+					{isLoading ? <Loader /> : ''}
 
-					<div className="headerContent">
-						<div className="name">
-							<Input
-								ref={ref => this.refName = ref}
-								value=""
-								onKeyDown={this.onKeyDown}
-								placeholder={UtilObject.defaultName('Page')}
+					<Title text={translate('popupSettingsSpaceCreateTitle')} />
+
+					<div className="spaceHeader">
+						<div className="iconWrapper">
+							<IconObject
+								id="spaceIcon"
+								size={96}
+								object={space}
+								forceLetter={true}
+								canEdit={false}
+								menuParam={{
+									horizontal: I.MenuDirection.Center,
+								}}
 							/>
 						</div>
 
-						<Label
-							className="spaceType"
-							text={translate(`spaceType${I.SpaceType.Private}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
-					</div>
-				</div>
+						<div className="headerContent">
+							<div className="name">
+								<Input
+									ref={ref => (this.refName = ref)}
+									value=""
+									onKeyDown={this.onKeyDown}
+									placeholder={UtilObject.defaultName('Page')}
+								/>
+							</div>
 
-				<div className="sections">
-					<div className="section">
-						<div className="sectionContent">
-							<div className="item">
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate('popupSettingsSpaceCreateUsecaseTitle')} />
-										<Label text={translate('popupSettingsSpaceCreateUsecaseLabel')} />
-									</div>
-									<div className="side right">
-										<Select 
-											id="select-usecase"
-											value={String(usecase || '')}
-											options={options}
-											onChange={this.onSelectUsecase}
-											menuParam={{
-												width: 360,
-												horizontal: I.MenuDirection.Center,
-												className: 'withFullDescripion',
-												data: { noVirtualisation: true, noScroll: true }
-											}}
-										/>
+							<Label
+								className="spaceType"
+								text={translate(
+									`spaceType${I.SpaceType.Private}`
+								)}
+								onMouseEnter={onSpaceTypeTooltip}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							/>
+						</div>
+					</div>
+
+					<div className="sections">
+						<div className="section">
+							<div className="sectionContent">
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title
+												text={translate(
+													'popupSettingsSpaceCreateUsecaseTitle'
+												)}
+											/>
+											<Label
+												text={translate(
+													'popupSettingsSpaceCreateUsecaseLabel'
+												)}
+											/>
+										</div>
+										<div className="side right">
+											<Select
+												id="select-usecase"
+												value={String(usecase || '')}
+												options={options}
+												onChange={this.onSelectUsecase}
+												menuParam={{
+													width: 360,
+													horizontal:
+														I.MenuDirection.Center,
+													className:
+														'withFullDescripion',
+													data: {
+														noVirtualisation: true,
+														noScroll: true,
+													},
+												}}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div className="buttons">
-					<Button text={translate('commonCreate')} onClick={this.onSubmit} />
-					<Error text={error} />
-				</div>
+					<div className="buttons">
+						<Button
+							text={translate('commonCreate')}
+							onClick={this.onSubmit}
+						/>
+						<Error text={error} />
+					</div>
+				</React.Fragment>
+			);
+		}
 
-			</React.Fragment>
-		);
-	};
+		componentDidMount(): void {
+			this.onSelectUsecase(I.Usecase.Empty);
 
-	componentDidMount (): void {
-		this.onSelectUsecase(I.Usecase.Empty);
+			window.setTimeout(() => this.refName?.focus(), 15);
+		}
 
-		window.setTimeout(() => this.refName?.focus(), 15);
-	};
+		componentWillUnmount(): void {
+			menuStore.closeAll(['select', 'searchObject']);
+		}
 
-	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);	
-	};
+		onKeyDown(e: any, v: string) {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
 
-	onKeyDown (e: any, v: string) {
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
+				this.onSubmit();
+			});
+		}
 
-			this.onSubmit();
-		});
-	};
+		checkName(v: string): string {
+			if (
+				[
+					UtilObject.defaultName('Space'),
+					UtilObject.defaultName('Page'),
+				].includes(v)
+			) {
+				v = '';
+			}
+			return v;
+		}
 
-	checkName (v: string): string {
-		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
-			v = '';
-		};
-		return v;
-	};
+		getUsecaseOptions(): any[] {
+			let ret: any = [
+				{ id: I.Usecase.Empty, icon: 'white_medium_square' },
+			];
 
-	getUsecaseOptions (): any[] {
-		let ret: any = [ 
-			{ id: I.Usecase.Empty, icon: 'white_medium_square' },
-		];
+			ret = ret.concat(
+				_.shuffle([
+					{ id: I.Usecase.Personal, icon: 'postbox' },
+					{ id: I.Usecase.Notes, icon: 'memo' },
+					{ id: I.Usecase.Knowledge, icon: 'books' },
+					{ id: I.Usecase.Strategic, icon: 'bulb' },
+				])
+			);
 
-		ret = ret.concat(_.shuffle([
-			{ id: I.Usecase.Personal, icon: 'postbox', },
-			{ id: I.Usecase.Notes, icon: 'memo' },
-			{ id: I.Usecase.Knowledge, icon: 'books' },
-			{ id: I.Usecase.Strategic, icon: 'bulb' },
-        ]));
+			return ret.map((it: any) => ({
+				...it,
+				name: translate(`usecase${it.id}Title`),
+				description: translate(`usecase${it.id}Label`),
+				withDescription: true,
+				iconSize: 40,
+				object: { iconEmoji: `:${it.icon}:` },
+			}));
+		}
 
-		return ret.map((it: any) => ({
-			...it,
-			name: translate(`usecase${it.id}Title`),
-			description: translate(`usecase${it.id}Label`),
-			withDescription: true,
-			iconSize: 40,
-			object: { iconEmoji: `:${it.icon}:` }
-		}));
-	};
-
-	onSelectUsecase (id: any) {
-		const usecase = Number(id) || I.Usecase.Empty;
-		const item = this.getUsecase(usecase);
-
-		this.setState({ usecase });
-
-		if (item) {
-			this.refName.setPlaceholder(item.name);
-		};
-	};
-
-	getUsecase (id: I.Usecase) {
-		return this.getUsecaseOptions().find(it => it.id == id);
-	};
-
-	onSubmit () {
-		const { close, param } = this.props;
-		const { isLoading, usecase, iconOption } = this.state;
-		const { data } = param;
-		const { onCreate } = data;
-
-		if (isLoading) {
-			return;
-		};
-
-		this.setState({ isLoading: true });
-
-		let name = this.checkName(this.refName.getValue());
-		if (!name) {
+		onSelectUsecase(id: any) {
+			const usecase = Number(id) || I.Usecase.Empty;
 			const item = this.getUsecase(usecase);
 
+			this.setState({ usecase });
+
 			if (item) {
-				name = item.name;
-			};
-		};
+				this.refName.setPlaceholder(item.name);
+			}
+		}
 
-		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
-			this.setState({ isLoading: false });
+		getUsecase(id: I.Usecase) {
+			return this.getUsecaseOptions().find(it => it.id == id);
+		}
 
-			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime,  });
-				analytics.event('SelectUsecase', { type: usecase });
+		onSubmit() {
+			const { close, param } = this.props;
+			const { isLoading, usecase, iconOption } = this.state;
+			const { data } = param;
+			const { onCreate } = data;
 
-				if (onCreate) {
-					onCreate(message.objectId);
-				};
+			if (isLoading) {
+				return;
+			}
 
-				close();
-			} else {
-				this.setState({ error: message.error.description });
-			};
-		});
-	};
+			this.setState({ isLoading: true });
 
-});
+			let name = this.checkName(this.refName.getValue());
+			if (!name) {
+				const item = this.getUsecase(usecase);
+
+				if (item) {
+					name = item.name;
+				}
+			}
+
+			C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
+				this.setState({ isLoading: false });
+
+				if (!message.error.code) {
+					analytics.event('CreateSpace', {
+						usecase,
+						middleTime: message.middleTime,
+					});
+					analytics.event('SelectUsecase', { type: usecase });
+
+					if (onCreate) {
+						onCreate(message.objectId);
+					}
+
+					close();
+				} else {
+					this.setState({ error: message.error.description });
+				}
+			});
+		}
+	}
+);
 
 export default PopupSettingsSpaceIndex;

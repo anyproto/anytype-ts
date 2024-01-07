@@ -1,9 +1,21 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import {
+	AutoSizer,
+	CellMeasurer,
+	InfiniteLoader,
+	List as VList,
+	CellMeasurerCache,
+} from 'react-virtualized';
+import {
+	SortableContainer,
+	SortableElement,
+	SortableHandle,
+} from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, UtilObject, keyboard, Relation, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
@@ -11,284 +23,323 @@ import { commonStore, detailStore, menuStore } from 'Store';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
-	
-	_isMounted = false;
-	node: any = null;
-	n = -1;
-	top = 0;
-	cache: any = {};
-	refList: any = null;
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.rebind = this.rebind.bind(this);
-		this.onScroll = this.onScroll.bind(this);
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onAdd = this.onAdd.bind(this);
-	};
-	
-	render () {
-		const { getId } = this.props;
-		const items = this.getItems();
+const MenuObjectValues = observer(
+	class MenuObjectValues extends React.Component<I.Menu> {
+		_isMounted = false;
+		node: any = null;
+		n = -1;
+		top = 0;
+		cache: any = {};
+		refList: any = null;
 
-		const Handle = SortableHandle(() => (
-			<Icon className="dnd" />
-		));
+		constructor(props: I.Menu) {
+			super(props);
 
-		const Item = SortableElement((item: any) => {
-			const cn = [ 'item', 'withCaption', (item.isHidden ? 'isHidden' : '') ];
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className={cn.join(' ')} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+			this.rebind = this.rebind.bind(this);
+			this.onScroll = this.onScroll.bind(this);
+			this.onSortStart = this.onSortStart.bind(this);
+			this.onSortEnd = this.onSortEnd.bind(this);
+			this.onAdd = this.onAdd.bind(this);
+		}
+
+		render() {
+			const { getId } = this.props;
+			const items = this.getItems();
+
+			const Handle = SortableHandle(() => <Icon className="dnd" />);
+
+			const Item = SortableElement((item: any) => {
+				const cn = [
+					'item',
+					'withCaption',
+					item.isHidden ? 'isHidden' : '',
+				];
+				return (
+					<div
+						id={'item-' + item.id}
+						className={cn.join(' ')}
+						onMouseEnter={(e: any) => {
+							this.onOver(e, item);
+						}}
+						style={item.style}
+					>
+						<Handle />
+						<span
+							className="clickable"
+							onClick={(e: any) => {
+								this.onClick(e, item);
+							}}
+						>
+							<IconObject object={item} />
+							<ObjectName object={item} />
+						</span>
+						<Icon
+							className="delete"
+							onClick={(e: any) => {
+								this.onRemove(e, item);
+							}}
+						/>
+					</div>
+				);
+			});
+
+			const ItemAdd = (item: any) => (
+				<div
+					id="item-add"
+					className="item add"
+					onMouseEnter={(e: any) => {
+						this.onOver(e, item);
+					}}
+					onClick={(e: any) => {
+						this.onClick(e, item);
+					}}
 					style={item.style}
 				>
-					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject object={item} />
-						<ObjectName object={item} />
-					</span>
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					<Icon className="plus" />
+					<div className="name">{item.name}</div>
 				</div>
 			);
-		});
 
-		const ItemAdd = (item: any) => (
-			<div 
-				id="item-add" 
-				className="item add" 
-				onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-				onClick={(e: any) => { this.onClick(e, item); }}
-				style={item.style}
-			>
-				<Icon className="plus" />
-				<div className="name">{item.name}</div>
-			</div>
-		);
+			const rowRenderer = (param: any) => {
+				const item: any = items[param.index];
 
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
+				let content = null;
+				if (item.id == 'add') {
+					content = (
+						<ItemAdd
+							key={item.id}
+							{...item}
+							index={param.index}
+							disabled={true}
+							style={param.style}
+						/>
+					);
+				} else {
+					content = (
+						<Item
+							key={item.id}
+							{...item}
+							index={param.index}
+							style={param.style}
+						/>
+					);
+				}
 
-			let content = null;
-			if (item.id == 'add') {
-				content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;
-			} else {
-				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+				return (
+					<CellMeasurer
+						key={param.key}
+						parent={param.parent}
+						cache={this.cache}
+						columnIndex={0}
+						rowIndex={param.index}
+					>
+						{content}
+					</CellMeasurer>
+				);
 			};
 
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
+			const List = SortableContainer(() => (
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
 				>
-					{content}
-				</CellMeasurer>
+					{({ onRowsRendered }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={ref => (this.refList = ref)}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			));
+
+			return (
+				<List
+					ref={node => (this.node = node)}
+					axis="y"
+					transitionDuration={150}
+					distance={10}
+					useDragHandle={true}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEnd}
+					helperClass="isDragging"
+					helperContainer={() => $(`#${getId()} .content`).get(0)}
+				/>
 			);
-		};
+		}
 
-		const List = SortableContainer(() => (
-			<InfiniteLoader
-				rowCount={items.length}
-				loadMoreRows={() => {}}
-				isRowLoaded={() => true}
-				threshold={LIMIT}
-			>
-				{({ onRowsRendered }) => (
-					<AutoSizer className="scrollArea">
-						{({ width, height }) => (
-							<VList
-								ref={ref => this.refList = ref}
-								width={width}
-								height={height}
-								deferredMeasurmentCache={this.cache}
-								rowCount={items.length}
-								rowHeight={HEIGHT}
-								rowRenderer={rowRenderer}
-								onRowsRendered={onRowsRendered}
-								overscanRowCount={LIMIT}
-								onScroll={this.onScroll}
-								scrollToAlignment="center"
-							/>
-						)}
-					</AutoSizer>
-				)}
-			</InfiniteLoader>
-		));
-		
-		return (
-			<List 
-				ref={node => this.node = node}
-				axis="y" 
-				transitionDuration={150}
-				distance={10}
-				useDragHandle={true}
-				onSortStart={this.onSortStart}
-				onSortEnd={this.onSortEnd}
-				helperClass="isDragging"
-				helperContainer={() => $(`#${getId()} .content`).get(0)}
-			/>
-		);
-	};
-	
-	componentDidMount () {
-		const items = this.getItems();
+		componentDidMount() {
+			const items = this.getItems();
 
-		this._isMounted = true;
-		this.rebind();
-		this.resize();
+			this._isMounted = true;
+			this.rebind();
+			this.resize();
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT,
+				keyMapper: i => (items[i] || {}).id,
+			});
+		}
 
-	componentDidUpdate () {
-		this.resize();
+		componentDidUpdate() {
+			this.resize();
 
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
+			if (this.refList && this.top) {
+				this.refList.scrollToPosition(this.top);
+			}
 
-		this.props.setActive(null, true);
-	};
+			this.props.setActive(null, true);
+		}
 
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
+		componentWillUnmount() {
+			this._isMounted = false;
+			this.unbind();
+		}
 
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
-		$(window).off('keydown.menu');
-	};
+		rebind() {
+			this.unbind();
+			$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+			window.setTimeout(() => this.props.setActive(), 15);
+		}
 
-	getItems () {
-		const { config } = commonStore;
-		const { param } = this.props;
-		const { data } = param;
-		const { subId, valueMapper, nameAdd } = data;
+		unbind() {
+			$(window).off('keydown.menu');
+		}
 
-		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
+		getItems() {
+			const { config } = commonStore;
+			const { param } = this.props;
+			const { data } = param;
+			const { subId, valueMapper, nameAdd } = data;
 
-		if (valueMapper) {
-			value = value.map(valueMapper);
-		};
+			let value: any[] = Relation.getArrayValue(data.value);
+			value = value.map(it => detailStore.get(subId, it, []));
 
-		value = value.filter(it => it && !it._empty_);
-		
-		if (!config.debug.ho) {
-			value = value.filter(it => !it.isHidden);
-		};
+			if (valueMapper) {
+				value = value.map(valueMapper);
+			}
 
-		value.unshift({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
-		return value;
-	};
+			value = value.filter(it => it && !it._empty_);
 
-	onClick (e: any, item: any) {
-		if (item.id == 'add') {
-			this.onAdd();
-		} else {
-			UtilObject.openEvent(e, item);
-		};
-	};
+			if (!config.debug.ho) {
+				value = value.filter(it => !it.isHidden);
+			}
 
-	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
-	};
+			value.unshift({
+				id: 'add',
+				name: nameAdd || translate('menuDataviewObjectValuesAddObject'),
+			});
+			return value;
+		}
 
-	onAdd () {
-		const { param, getId, getSize } = this.props;
-		const { data, className, classNameWrap } = param;
-		const { width } = getSize();
+		onClick(e: any, item: any) {
+			if (item.id == 'add') {
+				this.onAdd();
+			} else {
+				UtilObject.openEvent(e, item);
+			}
+		}
 
-		menuStore.open('dataviewObjectList', {
-			element: `#${getId()}`,
-			width,
-			passThrough: true,
-			noAnimation: true,
-			className,
-			classNameWrap,
-			data: {
-				...data,
-				rebind: this.rebind,
-			},
-		});
-	};
+		onOver(e: any, item: any) {
+			if (!keyboard.isMouseDisabled) {
+				this.props.setActive(item, false);
+			}
+		}
 
-	onRemove (e: any, item: any) {
-		const { param, id } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-		const relation = data.relation.get();
-		
-		let value = Relation.getArrayValue(data.value);
-		value = value.filter(it => it != item.id);
-		
-		if (relation) {
+		onAdd() {
+			const { param, getId, getSize } = this.props;
+			const { data, className, classNameWrap } = param;
+			const { width } = getSize();
+
+			menuStore.open('dataviewObjectList', {
+				element: `#${getId()}`,
+				width,
+				passThrough: true,
+				noAnimation: true,
+				className,
+				classNameWrap,
+				data: {
+					...data,
+					rebind: this.rebind,
+				},
+			});
+		}
+
+		onRemove(e: any, item: any) {
+			const { param, id } = this.props;
+			const { data } = param;
+			const { onChange } = data;
+			const relation = data.relation.get();
+
+			let value = Relation.getArrayValue(data.value);
+			value = value.filter(it => it != item.id);
+
+			if (relation) {
+				value = Relation.formatValue(relation, value, true);
+			}
+
+			this.n = -1;
+
+			onChange(value, () => {
+				menuStore.updateData(id, { value });
+				menuStore.updateData('dataviewObjectList', { value });
+			});
+		}
+
+		onSortStart() {
+			keyboard.disableSelection(true);
+		}
+
+		onSortEnd(result: any) {
+			const { oldIndex, newIndex } = result;
+			const { param, id } = this.props;
+			const { data } = param;
+			const { onChange } = data;
+			const relation = data.relation.get();
+
+			let value = Relation.getArrayValue(data.value);
+			value = arrayMove(value, oldIndex - 1, newIndex - 1);
 			value = Relation.formatValue(relation, value, true);
-		};
 
-		this.n = -1;
+			onChange(value, () => menuStore.updateData(id, { value }));
+			keyboard.disableSelection(false);
+		}
 
-		onChange(value, () => {
-			menuStore.updateData(id, { value });
-			menuStore.updateData('dataviewObjectList', { value });
-		});
-	};
+		onScroll({ scrollTop }) {
+			if (scrollTop) {
+				this.top = scrollTop;
+			}
+		}
 
-	onSortStart () {
-		keyboard.disableSelection(true);
-	};
-	
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param, id } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-		const relation = data.relation.get();
+		resize() {
+			const { getId, position } = this.props;
+			const items = this.getItems();
+			const obj = $(`#${getId()} .content`);
+			const offset = 16;
+			const height = Math.max(
+				HEIGHT + offset,
+				Math.min(300, items.length * HEIGHT + offset)
+			);
 
-		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - 1, newIndex - 1);
-		value = Relation.formatValue(relation, value, true);
-
-		onChange(value, () => menuStore.updateData(id, { value }));
-		keyboard.disableSelection(false);
-	};
-
-	onScroll ({ scrollTop }) {
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-	};
-
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
-		const obj = $(`#${getId()} .content`);
-		const offset = 16;
-		const height = Math.max(HEIGHT + offset, Math.min(300, items.length * HEIGHT + offset));
-
-		obj.css({ height });
-		position();
-	};
-
-});
+			obj.css({ height });
+			position();
+		}
+	}
+);
 
 export default MenuObjectValues;

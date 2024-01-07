@@ -1,13 +1,14 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentWidget implements I.ContentWidget {
-	
 	layout: I.WidgetLayout = I.WidgetLayout.Link;
 	limit = 0;
 	viewId = '';
 
-	constructor (props: I.ContentWidget) {
+	constructor(props: I.ContentWidget) {
 		this.layout = Number(props.layout) || I.WidgetLayout.Link;
 		this.limit = Number(props.limit) || 0;
 		this.viewId = String(props.viewId || '');
@@ -19,8 +20,7 @@ class BlockContentWidget implements I.ContentWidget {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentWidget;

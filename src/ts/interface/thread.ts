@@ -1,13 +1,15 @@
+/** @format */
+
 export enum ThreadStatus {
-	Unknown		 = 0,
-	Offline		 = 1,
-	Syncing		 = 2,
-	Synced		 = 3,
-	Failed		 = 4,
+	Unknown = 0,
+	Offline = 1,
+	Syncing = 2,
+	Synced = 3,
+	Failed = 4,
 	Incompatible = 5,
 
-	Local		 = 100,
-};
+	Local = 100,
+}
 
 export interface FilesStatus {
 	pinning: number;
@@ -18,14 +20,14 @@ export interface FilesStatus {
 
 export interface ThreadSummary {
 	status: ThreadStatus;
-};
+}
 
 export interface ThreadDevice {
 	name: string;
 	online: boolean;
 	lastPulled: number;
 	lastEdited: number;
-};
+}
 
 export interface ThreadAccount {
 	id: string;
@@ -35,17 +37,17 @@ export interface ThreadAccount {
 	lastPulled: number;
 	lastEdited: number;
 	devices: ThreadDevice[];
-};
+}
 
 export interface ThreadCafe {
 	status: ThreadStatus;
 	lastPulled: number;
 	lastPushSucceed: boolean;
 	files: FilesStatus;
-};
+}
 
 export interface ThreadObj {
 	summary: ThreadSummary;
 	cafe: ThreadCafe;
 	accounts: ThreadAccount[];
-};
+}

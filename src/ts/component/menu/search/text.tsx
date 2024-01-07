@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
@@ -5,53 +7,70 @@ import { Icon, Input } from 'Component';
 import { I, UtilCommon, keyboard, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
-const SKIP = [ 
-	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
-	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
+const SKIP = [
+	'span',
+	'div',
+	'name',
+	'markupMention',
+	'markupColor',
+	'markupBgcolor',
+	'markupStrike',
+	'markupCode',
+	'markupItalic',
+	'markupBold',
+	'markupUnderline',
+	'markupLink',
+	'markupEmoji',
+	'markupObject',
 ];
 
 class MenuSearchText extends React.Component<I.Menu> {
-	
 	node: any = null;
 	ref = null;
 	last = '';
 	n = 0;
 	toggled = [];
-	
-	constructor (props: I.Menu) {
+
+	constructor(props: I.Menu) {
 		super(props);
-		
+
 		this.onClear = this.onClear.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { param, storageGet } = this.props;
 		const { data } = param;
 		const value = String(data.value || storageGet().search || '');
-		
+
 		return (
-			<div 
-				ref={node => this.node = node}
-				className="flex"
-			>
+			<div ref={node => (this.node = node)} className="flex">
 				<Icon className="search" />
 
-				<Input 
-					ref={ref => this.ref = ref} 
-					value={value} 
+				<Input
+					ref={ref => (this.ref = ref)}
+					value={value}
 					placeholder={translate('commonSearchPlaceholder')}
-					onKeyDown={this.onKeyDown} 
-					onKeyUp={this.onKeyUp} 
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
 				/>
 				<div className="buttons">
-
 					<div id="switcher" className="switcher">
-						<Icon className="arrow left" onClick={() => { this.onArrow(-1); }} />
+						<Icon
+							className="arrow left"
+							onClick={() => {
+								this.onArrow(-1);
+							}}
+						/>
 						<div id="cnt" className="cnt" />
-						<Icon className="arrow right" onClick={() => { this.onArrow(1); }} />
+						<Icon
+							className="arrow right"
+							onClick={() => {
+								this.onArrow(1);
+							}}
+						/>
 					</div>
 
 					<div className="line" />
@@ -60,46 +79,54 @@ class MenuSearchText extends React.Component<I.Menu> {
 				</div>
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this.search();
 
-		window.setTimeout(() => { 
+		window.setTimeout(() => {
 			if (this.ref) {
-				this.ref.focus(); 
-			};
+				this.ref.focus();
+			}
 		}, 100);
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this.clear();
 		keyboard.setFocus(false);
-	};
+	}
 
-	onKeyDown (e: any) {
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
-			e.preventDefault();
-		});
-	};
-	
-	onKeyUp (e: any) {
+	onKeyDown(e: any) {
+		keyboard.shortcut(
+			'arrowup, arrowdown, tab, enter',
+			e,
+			(pressed: string) => {
+				e.preventDefault();
+			}
+		);
+	}
+
+	onKeyUp(e: any) {
 		e.preventDefault();
-		
+
 		let ret = false;
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
-			this.onArrow(pressed == 'arrowup' ? -1 : 1);
-			ret = true;
-		});
+		keyboard.shortcut(
+			'arrowup, arrowdown, tab, enter',
+			e,
+			(pressed: string) => {
+				this.onArrow(pressed == 'arrowup' ? -1 : 1);
+				ret = true;
+			}
+		);
 
 		if (ret) {
 			return;
-		};
+		}
 
 		this.search();
-	};
+	}
 
-	onArrow (dir: number) {
+	onArrow(dir: number) {
 		const items = this.getItems();
 		const max = items.length - 1;
 
@@ -107,20 +134,20 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		if (this.n < 0) {
 			this.n = max;
-		};
+		}
 		if (this.n > max) {
 			this.n = 0;
-		};
+		}
 
 		this.search();
-	};
+	}
 
-	onSearch (e: any) {
+	onSearch(e: any) {
 		this.focus();
 		this.onArrow(1);
-	};
+	}
 
-	search () {
+	search() {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
@@ -132,14 +159,14 @@ class MenuSearchText extends React.Component<I.Menu> {
 		if (this.last != value) {
 			this.n = 0;
 			this.clear();
-		};
+		}
 		this.last = value;
-		
+
 		storageSet({ search: value });
 
 		if (!value) {
 			return;
-		};
+		}
 
 		analytics.event('SearchWords', { length: value.length, route });
 
@@ -152,46 +179,54 @@ class MenuSearchText extends React.Component<I.Menu> {
 				const tag = el.nodeName.toLowerCase();
 				if (SKIP.indexOf(tag) < 0) {
 					return false;
-				};
+				}
 
-				const parents = $(el).parents('.block.textToggle:not(.isToggled)');
+				const parents = $(el).parents(
+					'.block.textToggle:not(.isToggled)'
+				);
 				if (parents.length) {
 					const parent = $(parents[0]);
 					const id = parents.attr('data-id');
 
 					this.toggled.push(id);
 					parent.addClass('isToggled');
-				};
+				}
 
 				const style = window.getComputedStyle(el);
-				if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
+				if (
+					style.display == 'none' ||
+					style.opacity == '0' ||
+					style.visibility == 'hidden'
+				) {
 					return false;
-				};
+				}
 				return true;
 			},
 		});
 
 		const items = this.getItems();
 
-		items.length ? switcher.addClass('active') : switcher.removeClass('active');
+		items.length
+			? switcher.addClass('active')
+			: switcher.removeClass('active');
 		this.focus();
-	};
+	}
 
-	setCnt () {
+	setCnt() {
 		const node = $(this.node);
 		const cnt = node.find('#cnt');
 		const items = this.getItems();
 
 		cnt.text(`${this.n + 1}/${items.length}`);
-	};
+	}
 
-	onClear () {
+	onClear() {
 		this.ref.setValue('');
 		this.clear();
 		this.props.storageSet({ search: '' });
-	};
+	}
 
-	clear () {
+	clear() {
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
 		const items = this.getItems();
@@ -203,13 +238,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		for (const id of this.toggled) {
 			$(`#block-${id}`).removeClass('isToggled');
-		};
+		}
 
 		this.toggled = [];
 		switcher.removeClass('active');
-	};
+	}
 
-	getScrollContainer () {
+	getScrollContainer() {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -221,10 +256,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 			const scrollable = container.find('.scrollable');
 
 			return scrollable.length ? scrollable : container;
-		};
-	};
+		}
+	}
 
-	getSearchContainer () {
+	getSearchContainer() {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -233,14 +268,14 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return $('#page.isFull');
 		} else {
 			return $('.popup').last().find('.innerWrap');
-		};
-	};
+		}
+	}
 
-	getItems () {
+	getItems() {
 		return this.getSearchContainer().find('search');
-	};
+	}
 
-	focus () {
+	focus() {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -257,7 +292,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		if (next && next.length) {
 			next.addClass('active');
-		
+
 			const st = searchContainer.scrollTop();
 			const no = next.offset().top;
 
@@ -270,12 +305,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 			} else {
 				y = no;
 				wh = $(window).height();
-			};
+			}
 
 			scrollContainer.scrollTop(y - wh + offset);
-		};
-	};
-	
-};
+		}
+	}
+}
 
 export default MenuSearchText;

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { I, UtilCommon } from 'Lib';
 
@@ -18,51 +20,68 @@ interface Props {
 	children?: React.ReactNode;
 	onClick?(e: any): void;
 	onContextMenu?(e: any): void;
-};
+}
 
 class DropTarget extends React.Component<Props> {
-	
 	public static defaultProps: Props = {
 		id: '',
 		rootId: '',
 		dropType: I.DropType.None,
 	};
 
-	constructor (props: Props) {
+	constructor(props: Props) {
 		super(props);
-		
+
 		this.onClick = this.onClick.bind(this);
-	};
-	
-	render () {
-		const { 
-			id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn, 
-			isReversed, onContextMenu,
+	}
+
+	render() {
+		const {
+			id,
+			rootId,
+			cacheKey,
+			targetContextId,
+			dropType,
+			type,
+			style,
+			children,
+			className,
+			canDropMiddle,
+			isTargetTop,
+			isTargetBottom,
+			isTargetColumn,
+			isReversed,
+			onContextMenu,
 		} = this.props;
-		const key = [ dropType, cacheKey || id ];
-		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId, 'drop-target-' + id ];
+		const key = [dropType, cacheKey || id];
+		const cn = [
+			'dropTarget',
+			'isDroppable',
+			'root-' + rootId,
+			'drop-target-' + id,
+		];
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 		if (isTargetTop) {
 			cn.push('targetTop');
 			key.push('top');
-		};
+		}
 		if (isTargetBottom) {
 			cn.push('targetBot');
 			key.push('bot');
-		};
+		}
 		if (isTargetColumn) {
 			cn.push('targetCol');
 			key.push('col');
-		};
+		}
 
 		return (
-			<div 
+			<div
 				key={'drop-target-' + id}
-				className={cn.join(' ')} 
-				onClick={this.onClick} 
+				className={cn.join(' ')}
+				onClick={this.onClick}
 				onContextMenu={onContextMenu}
 				{...UtilCommon.dataProps({
 					id,
@@ -79,16 +98,15 @@ class DropTarget extends React.Component<Props> {
 				{children}
 			</div>
 		);
-	};
-	
-	onClick (e: any) {
+	}
+
+	onClick(e: any) {
 		const { onClick } = this.props;
-		
+
 		if (onClick) {
 			onClick(e);
-		};
-	};
-	
-};
+		}
+	}
+}
 
 export default DropTarget;

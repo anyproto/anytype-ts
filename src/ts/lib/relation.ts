@@ -1,118 +1,227 @@
-import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject } from 'Lib';
+/** @format */
+
+import {
+	I,
+	UtilCommon,
+	UtilFile,
+	UtilDate,
+	translate,
+	Dataview,
+	UtilObject,
+} from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Relation {
+	public typeName(v: I.RelationType): string {
+		return UtilCommon.toCamelCase(
+			I.RelationType[v || I.RelationType.LongText]
+		);
+	}
 
-	public typeName (v: I.RelationType): string {
-		return UtilCommon.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
-	};
-
-	public className (v: I.RelationType): string {
+	public className(v: I.RelationType): string {
 		let c = this.typeName(v);
-		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].indexOf(v) >= 0) {
+		if (
+			[I.RelationType.Select, I.RelationType.MultiSelect].indexOf(v) >= 0
+		) {
 			c = 'select ' + this.selectClassName(v);
-		};
+		}
 		return 'c-' + c;
-	};
+	}
 
-	public selectClassName (v: I.RelationType): string {
+	public selectClassName(v: I.RelationType): string {
 		return UtilCommon.toCamelCase('is-' + I.RelationType[v]);
-	};
+	}
 
-	public cellId (prefix: string, relationKey: string, id: string|number) {
-		return [ prefix, relationKey, id ].join('-');
-	};
+	public cellId(prefix: string, relationKey: string, id: string | number) {
+		return [prefix, relationKey, id].join('-');
+	}
 
-	public width (width: number, format: I.RelationType): number {
+	public width(width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;
-	};
+	}
 
-	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
+	public filterConditionsByType(
+		type: I.RelationType
+	): { id: I.FilterCondition; name: string }[] {
 		let ret = [
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
+			{
+				id: I.FilterCondition.None,
+				name: translate('filterConditionNone'),
+			},
 		];
 
 		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
-					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+			case I.RelationType.ShortText:
+			case I.RelationType.LongText:
+			case I.RelationType.Url:
+			case I.RelationType.Email:
+			case I.RelationType.Phone:
+				ret = ret.concat([
+					{
+						id: I.FilterCondition.Equal,
+						name: translate('filterConditionEqual'),
+					},
+					{
+						id: I.FilterCondition.NotEqual,
+						name: translate('filterConditionNotEqual'),
+					},
+					{
+						id: I.FilterCondition.Like,
+						name: translate('filterConditionLike'),
+					},
+					{
+						id: I.FilterCondition.NotLike,
+						name: translate('filterConditionNotLike'),
+					},
+					{
+						id: I.FilterCondition.Empty,
+						name: translate('filterConditionEmpty'),
+					},
+					{
+						id: I.FilterCondition.NotEmpty,
+						name: translate('filterConditionNotEmpty'),
+					},
 				]);
 				break;
 
-			case I.RelationType.Object: 
-			case I.RelationType.Select: 
-			case I.RelationType.MultiSelect: 
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+			case I.RelationType.Object:
+			case I.RelationType.Select:
+			case I.RelationType.MultiSelect:
+				ret = ret.concat([
+					{
+						id: I.FilterCondition.In,
+						name: translate('filterConditionInArray'),
+					},
+					{
+						id: I.FilterCondition.AllIn,
+						name: translate('filterConditionAllIn'),
+					},
+					{
+						id: I.FilterCondition.NotIn,
+						name: translate('filterConditionNotInArray'),
+					},
+					{
+						id: I.FilterCondition.Empty,
+						name: translate('filterConditionEmpty'),
+					},
+					{
+						id: I.FilterCondition.NotEmpty,
+						name: translate('filterConditionNotEmpty'),
+					},
 				]);
 				break;
-			
+
 			case I.RelationType.Number:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				ret = ret.concat([
+					{ id: I.FilterCondition.Equal, name: '=' },
+					{ id: I.FilterCondition.NotEqual, name: '≠' },
+					{ id: I.FilterCondition.Greater, name: '>' },
+					{ id: I.FilterCondition.Less, name: '<' },
+					{ id: I.FilterCondition.GreaterOrEqual, name: '≥' },
+					{ id: I.FilterCondition.LessOrEqual, name: '≤' },
+					{
+						id: I.FilterCondition.Empty,
+						name: translate('filterConditionEmpty'),
+					},
+					{
+						id: I.FilterCondition.NotEmpty,
+						name: translate('filterConditionNotEmpty'),
+					},
 				]);
 				break;
 
 			case I.RelationType.Date:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
-					{ id: I.FilterCondition.In,				 name: translate('filterConditionInDate') },
-					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
+				ret = ret.concat([
+					{
+						id: I.FilterCondition.Equal,
+						name: translate('filterConditionEqual'),
+					},
+					{
+						id: I.FilterCondition.Greater,
+						name: translate('filterConditionGreaterDate'),
+					},
+					{
+						id: I.FilterCondition.Less,
+						name: translate('filterConditionLessDate'),
+					},
+					{
+						id: I.FilterCondition.GreaterOrEqual,
+						name: translate('filterConditionGreaterOrEqualDate'),
+					},
+					{
+						id: I.FilterCondition.LessOrEqual,
+						name: translate('filterConditionLessOrEqualDate'),
+					},
+					{
+						id: I.FilterCondition.In,
+						name: translate('filterConditionInDate'),
+					},
+					{
+						id: I.FilterCondition.Empty,
+						name: translate('filterConditionEmpty'),
+					},
+					{
+						id: I.FilterCondition.NotEmpty,
+						name: translate('filterConditionNotEmpty'),
+					},
 				]);
 				break;
-			
+
 			case I.RelationType.Checkbox:
 			default:
-				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
+				ret = ret.concat([
+					{
+						id: I.FilterCondition.Equal,
+						name: translate('filterConditionEqual'),
+					},
+					{
+						id: I.FilterCondition.NotEqual,
+						name: translate('filterConditionNotEqual'),
+					},
 				]);
 				break;
-		};
+		}
 		return ret;
-	};
+	}
 
-	public filterConditionsDictionary () {
-		return [ 
-			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
-			{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-			{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-			{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-			{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+	public filterConditionsDictionary() {
+		return [
+			{
+				id: I.FilterCondition.None,
+				name: translate('filterConditionNone'),
+			},
+			{
+				id: I.FilterCondition.Equal,
+				name: translate('filterConditionEqual'),
+			},
+			{
+				id: I.FilterCondition.NotEqual,
+				name: translate('filterConditionNotEqual'),
+			},
+			{
+				id: I.FilterCondition.Empty,
+				name: translate('filterConditionEmpty'),
+			},
+			{
+				id: I.FilterCondition.NotEmpty,
+				name: translate('filterConditionNotEmpty'),
+			},
 		];
-	};
+	}
 
-	public filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
-		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
+	public filterQuickOptions(
+		type: I.RelationType,
+		condition: I.FilterCondition
+	) {
+		if (
+			[I.FilterCondition.Empty, I.FilterCondition.NotEmpty].includes(
+				condition
+			)
+		) {
 			return [];
-		};
+		}
 
 		let ret = [];
 
@@ -145,72 +254,76 @@ class Relation {
 						]);
 						ret = ret.concat(defaultOptions);
 						break;
-					};
+					}
 
 					case I.FilterCondition.Greater:
 					case I.FilterCondition.Less:
 					case I.FilterCondition.GreaterOrEqual:
 					case I.FilterCondition.LessOrEqual: {
-						ret = ret.concat(extendedOptions).concat(defaultOptions);
+						ret = ret
+							.concat(extendedOptions)
+							.concat(defaultOptions);
 						break;
-					};
+					}
 
 					case I.FilterCondition.In: {
 						ret = ret.concat(extendedOptions);
 						break;
-					};
+					}
 
 					case I.FilterCondition.None: {
 						break;
-					};
+					}
 
 					default: {
 						ret = ret.concat(defaultOptions);
 						break;
-					};
-				};
+					}
+				}
 				break;
-			};
-		};
+			}
+		}
 
 		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
-	};
+	}
 
-	public formatValue (relation: any, value: any, maxCount: boolean) {
+	public formatValue(relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default: {
 				value = String(value || '');
 				break;
-			};
+			}
 
 			case I.RelationType.Number: {
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
-				if ((value === '') || (value === undefined)) {
+				value = String(value || '')
+					.replace(/,\s?/g, '.')
+					.replace(/[^\d\.e+-]*/gi, '');
+				if (value === '' || value === undefined) {
 					value = null;
-				};
+				}
 				if (value !== null) {
 					value = Number(value);
-				};
+				}
 				if (isNaN(value)) {
 					value = null;
-				};
+				}
 				break;
-			};
+			}
 
 			case I.RelationType.Date: {
-				if ((value === '') || (value === undefined)) {
+				if (value === '' || value === undefined) {
 					value = null;
-				};
+				}
 				if (value !== null) {
 					value = parseFloat(String(value || '0'));
-				};
+				}
 				break;
-			};
+			}
 
 			case I.RelationType.Checkbox: {
 				value = Boolean(value);
 				break;
-			};
+			}
 
 			case I.RelationType.Select:
 			case I.RelationType.File:
@@ -220,15 +333,18 @@ class Relation {
 				value = this.getArrayValue(UtilCommon.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
-					value = value.slice(value.length - relation.maxCount, value.length);
-				};
+					value = value.slice(
+						value.length - relation.maxCount,
+						value.length
+					);
+				}
 				break;
-			};
-		};
+			}
+		}
 		return value;
-	};
+	}
 
-	public checkRelationValue (relation: any, value: any): boolean {
+	public checkRelationValue(relation: any, value: any): boolean {
 		value = this.formatValue(relation, value, false);
 
 		let ret = false;
@@ -236,12 +352,12 @@ class Relation {
 			default: {
 				ret = value ? true : false;
 				break;
-			};
+			}
 
 			case I.RelationType.Checkbox: {
 				ret = true;
 				break;
-			};
+			}
 
 			case I.RelationType.Select:
 			case I.RelationType.File:
@@ -250,152 +366,207 @@ class Relation {
 			case I.RelationType.Relations: {
 				ret = value.length ? true : false;
 				break;
-			};
-		};
+			}
+		}
 		return ret;
-	};
+	}
 
-	public mapValue (relation: any, value: any) {
+	public mapValue(relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
 				return UtilFile.size(value);
-			};
+			}
 
 			case 'widthInPixels':
 			case 'heightInPixels': {
 				return UtilCommon.formatNumber(value) + 'px';
-			};
+			}
 
 			case 'layout': {
 				value = Number(value) || I.ObjectLayout.Page;
 				return I.ObjectLayout[value];
-			};
+			}
 
 			case 'origin': {
 				value = Number(value) || I.ObjectOrigin.None;
-				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
-			};
-		};
+				return value == I.ObjectOrigin.None
+					? null
+					: translate(`origin${value}`);
+			}
+		}
 		return null;
-	};
+	}
 
-	public getOptions (value: any[]) {
-		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
-	};
+	public getOptions(value: any[]) {
+		return this.getArrayValue(value)
+			.map(id => dbStore.getOption(id))
+			.filter(it => it && !it._empty_);
+	}
 
-	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
-		const formats = [ I.RelationType.File ];
+	public getFilterOptions(rootId: string, blockId: string, view: I.View) {
+		const formats = [I.RelationType.File];
 		const ret: any[] = [];
-		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		const relations: any[] = Dataview.viewGetRelations(
+			rootId,
+			blockId,
+			view
+		).filter((it: I.ViewRelation) => {
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && !formats.includes(relation.format) && (it.relationKey != 'done');
+			return (
+				relation &&
+				!formats.includes(relation.format) &&
+				it.relationKey != 'done'
+			);
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
+		relations.splice(idxName >= 0 ? idxName + 1 : 0, 0, {
+			relationKey: 'done',
+		});
 
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey);
 			if (!relation) {
 				return;
-			};
+			}
 
-			ret.push({ 
-				id: relation.relationKey, 
+			ret.push({
+				id: relation.relationKey,
 				icon: 'relation ' + this.className(relation.format),
-				name: relation.name, 
+				name: relation.name,
 				isHidden: relation.isHidden,
 				format: relation.format,
 				maxCount: relation.maxCount,
 			});
 		});
 		return ret;
-	};
+	}
 
-	public getSizeOptions () {
+	public getSizeOptions() {
 		return [
 			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
 			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
 			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
 		];
-	};
+	}
 
-	public getCoverOptions (rootId: string, blockId: string) {
-		const formats = [ I.RelationType.File ];
-		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => {
-			if (it.isInstalled && (it.relationKey == 'picture')) {
-				return true;
-			};
-			return it.isInstalled && !it.isHidden && formats.includes(it.format);
-		}).map(it => ({
-			id: it.relationKey, 
-			icon: 'relation ' + this.className(it.format),
-			name: it.name, 
-		}));
+	public getCoverOptions(rootId: string, blockId: string) {
+		const formats = [I.RelationType.File];
+		const options: any[] = UtilCommon.objectCopy(
+			dbStore.getObjectRelations(rootId, blockId)
+		)
+			.filter(it => {
+				if (it.isInstalled && it.relationKey == 'picture') {
+					return true;
+				}
+				return (
+					it.isInstalled &&
+					!it.isHidden &&
+					formats.includes(it.format)
+				);
+			})
+			.map(it => ({
+				id: it.relationKey,
+				icon: 'relation ' + this.className(it.format),
+				name: it.name,
+			}));
 
 		return [
 			{ id: '', icon: '', name: translate('commonNone') },
-			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
+			{
+				id: Constant.pageCoverRelationKey,
+				icon: 'image',
+				name: translate('libRelationPageCover'),
+			},
 		].concat(options);
-	};
+	}
 
-	public getGroupOptions (rootId: string, blockId: string, type: I.ViewType) {
+	public getGroupOptions(rootId: string, blockId: string, type: I.ViewType) {
 		let formats = [];
 
 		switch (type) {
 			default: {
-				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
+				formats = [
+					I.RelationType.Select,
+					I.RelationType.MultiSelect,
+					I.RelationType.Checkbox,
+				];
 				break;
-			};
+			}
 
 			case I.ViewType.Calendar: {
-				formats = [ I.RelationType.Date ];
+				formats = [I.RelationType.Date];
 				break;
-			};
-		};
-		
-		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
-			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
-		});
+			}
+		}
+
+		let options: any[] = dbStore
+			.getObjectRelations(rootId, blockId)
+			.filter((it: any) => {
+				return (
+					it.isInstalled &&
+					formats.includes(it.format) &&
+					(!it.isHidden || ['done'].includes(it.relationKey))
+				);
+			});
 
 		options.sort((c1: any, c2: any) => {
 			const f1 = c1.format;
 			const f2 = c2.format;
 
-			if ((f1 == I.RelationType.Select) && (f2 != I.RelationType.Select)) return -1;
-			if ((f1 != I.RelationType.Select) && (f2 == I.RelationType.Select)) return 1;
+			if (f1 == I.RelationType.Select && f2 != I.RelationType.Select)
+				return -1;
+			if (f1 != I.RelationType.Select && f2 == I.RelationType.Select)
+				return 1;
 
-			if ((f1 == I.RelationType.MultiSelect) && (f2 != I.RelationType.MultiSelect)) return -1;
-			if ((f1 != I.RelationType.MultiSelect) && (f2 == I.RelationType.MultiSelect)) return 1;
+			if (
+				f1 == I.RelationType.MultiSelect &&
+				f2 != I.RelationType.MultiSelect
+			)
+				return -1;
+			if (
+				f1 != I.RelationType.MultiSelect &&
+				f2 == I.RelationType.MultiSelect
+			)
+				return 1;
 
-			if ((f1 == I.RelationType.Checkbox) && (f2 != I.RelationType.Checkbox)) return -1;
-			if ((f1 != I.RelationType.Checkbox) && (f2 == I.RelationType.Checkbox)) return 1;
+			if (f1 == I.RelationType.Checkbox && f2 != I.RelationType.Checkbox)
+				return -1;
+			if (f1 != I.RelationType.Checkbox && f2 == I.RelationType.Checkbox)
+				return 1;
 			return 0;
 		});
 
 		options = options.map(it => ({
-			id: it.relationKey, 
+			id: it.relationKey,
 			icon: 'relation ' + this.className(it.format),
-			name: it.name, 
+			name: it.name,
 		}));
 
 		return options;
-	};
+	}
 
-	public getGroupOption (rootId: string, blockId: string, type: I.ViewType, relationKey: string) {
+	public getGroupOption(
+		rootId: string,
+		blockId: string,
+		type: I.ViewType,
+		relationKey: string
+	) {
 		const groupOptions = this.getGroupOptions(rootId, blockId, type);
-		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
-	};
+		return groupOptions.length
+			? groupOptions.find(it => it.id == relationKey) || groupOptions[0]
+			: null;
+	}
 
-	public getPageLimitOptions (type: I.ViewType) {
-		let options = [ 10, 20, 50, 70, 100 ];
+	public getPageLimitOptions(type: I.ViewType) {
+		let options = [10, 20, 50, 70, 100];
 		if (type == I.ViewType.Gallery) {
-			options = [ 12, 24, 60, 84, 120 ];
-		};
+			options = [12, 24, 60, 84, 120];
+		}
 		return options.map(it => ({ id: it, name: it }));
-	};
+	}
 
-	public getDictionaryOptions (relationKey: string) {
+	public getDictionaryOptions(relationKey: string) {
 		const options = [];
 		const dictionary = {
 			layout: I.ObjectLayout,
@@ -406,60 +577,77 @@ class Relation {
 		if (item) {
 			const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
 			keys.forEach((key, index) => {
-				options.push({ id: index, name: translate(`${relationKey}${index}`) });
+				options.push({
+					id: index,
+					name: translate(`${relationKey}${index}`),
+				});
 			});
-		};
+		}
 
 		return options;
-	};
+	}
 
-	public getStringValue (value: any) {
-		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
+	public getStringValue(value: any) {
+		if (
+			typeof value === 'object' &&
+			value &&
+			UtilCommon.hasProperty(value, 'length')
+		) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
-		};
-	};
+		}
+	}
 
-	public getArrayValue (value: any): any[] {
+	public getArrayValue(value: any): any[] {
 		if (this.isEmpty(value)) {
 			return [];
-		};
+		}
 		if (typeof value !== 'object') {
-			return [ value ];
-		};
+			return [value];
+		}
 		if (!UtilCommon.objectLength(value)) {
 			return [];
-		};
-		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
-	};
+		}
+		return UtilCommon.arrayUnique(
+			value.map(it => String(it || '')).filter(it => !this.isEmpty(it))
+		);
+	}
 
-	public isEmpty (v: any) {
-		return (v === null) || (v === undefined) || (v === '');
-	};
+	public isEmpty(v: any) {
+		return v === null || v === undefined || v === '';
+	}
 
-	public isUrl (type: I.RelationType) {
-		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
-	};
+	public isUrl(type: I.RelationType) {
+		return [
+			I.RelationType.Url,
+			I.RelationType.Email,
+			I.RelationType.Phone,
+		].includes(type);
+	}
 
-	public getUrlScheme (type: I.RelationType, value: string): string {
+	public getUrlScheme(type: I.RelationType, value: string): string {
 		value = String(value || '');
 
 		let ret = '';
 		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
 			ret = 'http://';
-		};
+		}
 		if (type == I.RelationType.Email) {
 			ret = 'mailto:';
-		};
+		}
 		if (type == I.RelationType.Phone) {
 			ret = 'tel:';
-		};
+		}
 		return ret;
-	};
+	}
 
-	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
+	public getSetOfObjects(
+		rootId: string,
+		objectId: string,
+		layout: I.ObjectLayout
+	): any[] {
+		const object = detailStore.get(rootId, objectId, ['setOf']);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
 
@@ -470,86 +658,95 @@ class Relation {
 				case I.ObjectLayout.Type: {
 					el = dbStore.getTypeById(id);
 					break;
-				};
+				}
 
 				case I.ObjectLayout.Relation: {
 					el = dbStore.getRelationById(id);
 					break;
-				};
-			};
+				}
+			}
 
 			if (el) {
 				ret.push(el);
-			};
+			}
 		});
 
 		return ret;
-	};
+	}
 
-	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+	public getTimestampForQuickOption(value: any, option: I.FilterQuickOption) {
 		const time = UtilDate.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
 				value = time - 86400;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.CurrentWeek:
 			case I.FilterQuickOption.CurrentMonth:
 			case I.FilterQuickOption.Today: {
 				value = time;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.Tomorrow: {
 				value = time + 86400;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.LastWeek: {
 				value = time - 86400 * 7;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.LastMonth: {
 				value = time - 86400 * 30;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.NextWeek: {
 				value = time + 86400 * 7;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.NextMonth: {
 				value = time + 86400 * 30;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.NumberOfDaysAgo: {
 				value = time - 86400 * value;
 				break;
-			};
+			}
 
 			case I.FilterQuickOption.NumberOfDaysNow: {
 				value = time + 86400 * value;
 				break;
-			};
-		};
+			}
+		}
 
 		return value;
-	};
+	}
 
-	getParamForNewObject (name: string, relation: any): { flags: I.ObjectFlag[], details: any } {
+	getParamForNewObject(
+		name: string,
+		relation: any
+	): { flags: I.ObjectFlag[]; details: any } {
 		const details: any = { name };
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
+		const flags: I.ObjectFlag[] = [I.ObjectFlag.SelectTemplate];
 		const objectTypes = this.getArrayValue(relation.objectTypes);
 
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes
+				.map(id => dbStore.getTypeById(id))
+				.filter(
+					it =>
+						it &&
+						!UtilObject.isFileOrSystemLayout(it.recommendedLayout)
+				);
 			const l = allowedTypes.length;
 
 			if (l) {
@@ -557,40 +754,39 @@ class Relation {
 
 				if (l > 1) {
 					flags.push(I.ObjectFlag.SelectType);
-				};
-			};
-		};
+				}
+			}
+		}
 
 		if (type) {
 			details.type = type.id;
 		} else {
 			flags.push(I.ObjectFlag.SelectType);
-		};
+		}
 
-		return { flags, details }
-	};
+		return { flags, details };
+	}
 
-	systemKeys () {
+	systemKeys() {
 		return require('lib/json/generated/systemRelations.json');
-	};
+	}
 
-	systemKeysWithoutUser () {
-		const skipKeys = [ 'tag', 'description' ];
+	systemKeysWithoutUser() {
+		const skipKeys = ['tag', 'description'];
 		return this.systemKeys().filter(it => !skipKeys.includes(it));
-	};
+	}
 
-	isSystem (relationKey: string): boolean {
+	isSystem(relationKey: string): boolean {
 		return this.systemKeys().includes(relationKey);
-	};
+	}
 
-	dictionaryKeys () {
-		return [ 'layout', 'origin' ];
-	};
+	dictionaryKeys() {
+		return ['layout', 'origin'];
+	}
 
-	isDictionary (relationKey: string): boolean {
+	isDictionary(relationKey: string): boolean {
 		return this.dictionaryKeys().includes(relationKey);
-	};
-	
-};
+	}
+}
 
 export default new Relation();

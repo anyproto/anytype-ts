@@ -1,135 +1,329 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
 	.block.blockDataview {
-        .viewContent.viewBoard {
+		.viewContent.viewBoard {
+			.columns {
+				display: flex;
+				flex-direction: row;
+				gap: 0px 8px;
+				position: relative;
+			}
+			.column {
+				width: 262px;
+				flex-shrink: 0;
+				display: flex;
+				flex-direction: column;
+				position: relative;
+			}
 
-            .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
-            .column { width: 262px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
+			.column.isOver::before {
+				content: '';
+				position: absolute;
+				background: $colorSystemAccent100;
+				width: 2px;
+				height: 100%;
+				border-radius: 2px;
+				top: 0px;
+			}
+			.column.isOver.left::before {
+				left: -5px;
+			}
+			.column.isOver.right::before {
+				right: -5px;
+			}
 
-			.column.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
-			.column.isOver.left::before { left: -5px; }
-			.column.isOver.right::before { right: -5px; }
+			.column {
+				.bgColor {
+					position: absolute;
+					left: 0px;
+					top: 0px;
+					width: 100%;
+					height: 100%;
+					opacity: 0.5;
+				}
 
-            .column {
-				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
-
-                .head { cursor: grab; color: $colorTextSecondary; width: 100%; position: relative; padding: 8px 16px 0px 16px; }
-				.head * { cursor: grab; }
 				.head {
-					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
-					.side.left { width: calc(100% - 54px); display: flex; align-items: flex-start; gap: 0px 6px; justify-content: flex-start; }
-					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
-
-					.label { @include text-overflow-nw; }
-
-					.cellContent { width: 100%; display: inline; }
-					.cellContent {
-						.empty { display: block; line-height: 24px; color: $colorTextSecondary; }
-						.wrap { display: inline-block; white-space: nowrap; width: 100%; }
-						.tagItem { max-width: 100%; }
-						.more { vertical-align: top; }
+					cursor: grab;
+					color: $colorTextSecondary;
+					width: 100%;
+					position: relative;
+					padding: 8px 16px 0px 16px;
+				}
+				.head * {
+					cursor: grab;
+				}
+				.head {
+					.sides {
+						display: flex;
+						width: 100%;
+						gap: 0px 6px;
+						line-height: 24px;
+						position: relative;
+						z-index: 1;
+					}
+					.side.left {
+						width: calc(100% - 54px);
+						display: flex;
+						align-items: flex-start;
+						gap: 0px 6px;
+						justify-content: flex-start;
+					}
+					.side.right {
+						width: 54px;
+						display: flex;
+						align-items: flex-start;
+						gap: 0px 6px;
+						flex-shrink: 0;
+						justify-content: flex-end;
 					}
 
-					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
+					.label {
+						@include text-overflow-nw;
+					}
+
+					.cellContent {
+						width: 100%;
+						display: inline;
+					}
+					.cellContent {
+						.empty {
+							display: block;
+							line-height: 24px;
+							color: $colorTextSecondary;
+						}
+						.wrap {
+							display: inline-block;
+							white-space: nowrap;
+							width: 100%;
+						}
+						.tagItem {
+							max-width: 100%;
+						}
+						.more {
+							vertical-align: top;
+						}
+					}
+
 					.cellContent.c-checkbox {
-						.icon { width: 24px; height: 24px; vertical-align: top; }
+						width: auto;
+						display: flex;
+						gap: 0px 6px;
+					}
+					.cellContent.c-checkbox {
+						.icon {
+							width: 24px;
+							height: 24px;
+							vertical-align: top;
+						}
 					}
 
 					.side.right {
-						.icon { 
-							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; 
-							opacity: 0; 
+						.icon {
+							flex-shrink: 0;
+							width: 24px;
+							height: 24px;
+							background-size: 20px;
+							border-radius: 4px;
+							vertical-align: top;
+							opacity: 0;
 						}
-						.icon:hover { background-color: $colorShapeHighlightMedium; }
+						.icon:hover {
+							background-color: $colorShapeHighlightMedium;
+						}
 
-						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+						.icon.more {
+							background-image: url('~img/icon/menu/action/more0.svg');
+						}
+						.icon.add {
+							background-image: url('~img/icon/plus/menu0.svg');
+						}
 					}
 
-					.bgColor { border-radius: 4px 4px 0px 0px; }
+					.bgColor {
+						border-radius: 4px 4px 0px 0px;
+					}
 				}
 
-				.body { position: relative; z-index: 1; }
 				.body {
-					.bg { position: relative; padding: 7px; }
-					.bgColor { border-radius: 0px 0px 4px 4px; }
+					position: relative;
+					z-index: 1;
+				}
+				.body {
+					.bg {
+						position: relative;
+						padding: 7px;
+					}
+					.bgColor {
+						border-radius: 0px 0px 4px 4px;
+					}
 				}
 
-				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; }
-            }
-			.column:hover, .column.active {
-				.head .side.right .icon { opacity: 1; }
+				.loadMore {
+					margin-bottom: 8px;
+					position: relative;
+					z-index: 1;
+				}
+			}
+			.column:hover,
+			.column.active {
+				.head .side.right .icon {
+					opacity: 1;
+				}
 			}
 
 			.column.withColor {
-				.head .sides { background: none; }
+				.head .sides {
+					background: none;
+				}
 			}
-			.column.isDragging { opacity: 0.3; }
+			.column.isDragging {
+				opacity: 0.3;
+			}
 			.column.isClone {
-				.head { padding: 8px 16px; }
-				.head .bgColor { display: none; }
-				.body { display: none; }
-				.card { display: none; }
+				.head {
+					padding: 8px 16px;
+				}
+				.head .bgColor {
+					display: none;
+				}
+				.body {
+					display: none;
+				}
+				.card {
+					display: none;
+				}
 			}
 
-            .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
-				.cardContent { 
-					border: 1px solid $colorShapeHighlightMedium; border-radius: 12px; padding: 16px; background: $colorBgPrimary; transition: border-color $transitionCommon;
+				width: 246px;
+				display: flex;
+				flex-direction: column;
+				margin: 0px auto 8px auto;
+				position: relative;
+				z-index: 1;
+				cursor: default;
+			}
+			.card {
+				.cardContent {
+					border: 1px solid $colorShapeHighlightMedium;
+					border-radius: 12px;
+					padding: 16px;
+					background: $colorBgPrimary;
+					transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
 
 				.cellContent {
-					.name:empty { display: none; }
+					.name:empty {
+						display: none;
+					}
 				}
 
 				.cellContent.isName {
-					.name { @include clamp2; white-space: normal; }
-					.input.name { padding: 0; height: unset; }
+					.name {
+						@include clamp2;
+						white-space: normal;
+					}
+					.input.name {
+						padding: 0;
+						height: unset;
+					}
 				}
 
 				.cellContent.c-longText {
-					.name { @include clamp3; }
+					.name {
+						@include clamp3;
+					}
 				}
 
-				.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 12px; }
+				.selectable.isSelectionSelected::after {
+					left: 0px;
+					width: 100%;
+					border-radius: 12px;
+				}
 			}
-			.card:last-child { margin: 0px; }
-
-			.card.add:hover, .card:hover {
-				.cardContent { border-color: $colorShapeSecondary; }
-				.icon.checkbox { opacity: 1; }
+			.card:last-child {
+				margin: 0px;
 			}
 
-			.card.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
-			.card.isOver.top::before { top: -5px; }
-			.card.isOver.bottom::before { bottom: -5px; }
+			.card.add:hover,
+			.card:hover {
+				.cardContent {
+					border-color: $colorShapeSecondary;
+				}
+				.icon.checkbox {
+					opacity: 1;
+				}
+			}
+
+			.card.isOver::before {
+				content: '';
+				position: absolute;
+				background: $colorSystemAccent100;
+				height: 2px;
+				width: 100%;
+				border-radius: 2px;
+				left: 0px;
+			}
+			.card.isOver.top::before {
+				top: -5px;
+			}
+			.card.isOver.bottom::before {
+				bottom: -5px;
+			}
 
 			.card.isDragging {
-				.cardContent { opacity: 0.3; }
+				.cardContent {
+					opacity: 0.3;
+				}
 			}
 
-            .card.add { 
-				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionAllCommon; 
-				border: 1px solid $colorShapeTertiary; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorBgPrimary;
+			.card.add {
+				min-height: unset;
+				text-align: center;
+				padding: 10px 0px;
+				margin: 0px auto;
+				line-height: 1;
+				transition: $transitionAllCommon;
+				border: 1px solid $colorShapeTertiary;
+				border-radius: 12px;
+				flex-direction: row;
+				justify-content: center;
+				background: $colorBgPrimary;
 			}
-			.card.add.first { margin: 0px; }
-            .card.add {
-                .icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
-            }
-            .card.add:hover {
-                .icon { background-image: url('~img/icon/plus/column1.svg'); }
-            }
+			.card.add.first {
+				margin: 0px;
+			}
+			.card.add {
+				.icon {
+					background-image: url('~img/icon/plus/column0.svg');
+					vertical-align: top;
+				}
+			}
+			.card.add:hover {
+				.icon {
+					background-image: url('~img/icon/plus/column1.svg');
+				}
+			}
 
-			.card.add.isOver.bottom::before { top: -6px; }
+			.card.add.isOver.bottom::before {
+				top: -6px;
+			}
 			.card.isEditing {
-				.cardContent { border: 2px solid $colorSystemAccent100; padding: 15px; }
+				.cardContent {
+					border: 2px solid $colorSystemAccent100;
+					padding: 15px;
+				}
 			}
-        }
-    }
+		}
+	}
 }
 
 html.platformLinux {
-	.blocks .block.blockDataview .viewContent.viewBoard .column .body { overflow-y: auto; }
+	.blocks .block.blockDataview .viewContent.viewBoard .column .body {
+		overflow-y: auto;
+	}
 }

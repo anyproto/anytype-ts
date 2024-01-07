@@ -1,80 +1,86 @@
+/** @format */
+
 import * as React from 'react';
 import { I, focus } from 'Lib';
 import { observer } from 'mobx-react';
 
-const BlockDiv = observer(class BlockDiv extends React.Component<I.BlockComponent> {
+const BlockDiv = observer(
+	class BlockDiv extends React.Component<I.BlockComponent> {
+		_isMounted = false;
 
-	_isMounted = false;
+		constructor(props: I.BlockComponent) {
+			super(props);
 
-	constructor (props: I.BlockComponent) {
-		super(props);
-		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-	};
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.onKeyUp = this.onKeyUp.bind(this);
+			this.onFocus = this.onFocus.bind(this);
+		}
 
-	render () {
-		const { block } = this.props;
-		const { id, content } = block;
-		const { style } = content;
-		
-		const cn = [ 'wrap', 'focusable', 'c' + id ];
-		let inner: any = null;
-			
-		switch (content.style) {
-			case I.DivStyle.Line:
-				inner = (
-					<div className="line" />
-				);
-				break;
+		render() {
+			const { block } = this.props;
+			const { id, content } = block;
+			const { style } = content;
 
-			case I.DivStyle.Dot:
-				inner = (
-					<div className="dots">
-						<div className="dot" />
-						<div className="dot" />
-						<div className="dot" />
-					</div>
-				);
-				break;
-		};
+			const cn = ['wrap', 'focusable', 'c' + id];
+			let inner: any = null;
 
-		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{inner}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-	
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
+			switch (content.style) {
+				case I.DivStyle.Line:
+					inner = <div className="line" />;
+					break;
 
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
+				case I.DivStyle.Dot:
+					inner = (
+						<div className="dots">
+							<div className="dot" />
+							<div className="dot" />
+							<div className="dot" />
+						</div>
+					);
+					break;
+			}
 
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
+			return (
+				<div
+					className={cn.join(' ')}
+					tabIndex={0}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+				>
+					{inner}
+				</div>
+			);
+		}
 
-	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-	};
-	
-});
+		componentDidMount() {
+			this._isMounted = true;
+		}
+
+		componentWillUnmount() {
+			this._isMounted = false;
+		}
+
+		onKeyDown(e: any) {
+			const { onKeyDown } = this.props;
+
+			if (onKeyDown) {
+				onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
+
+		onKeyUp(e: any) {
+			const { onKeyUp } = this.props;
+
+			if (onKeyUp) {
+				onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
+
+		onFocus() {
+			focus.set(this.props.block.id, { from: 0, to: 0 });
+		}
+	}
+);
 
 export default BlockDiv;

@@ -1,102 +1,215 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
-	.block.blockRelation { @include text-common; }
-	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
+	.block.blockRelation {
+		@include text-common;
+	}
+	.block.blockRelation > .wrapContent > .selectable > .dropTarget {
+		padding: 0px;
+	}
 
 	.block.blockRelation {
-		.icon.edit { display: none; }
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
-		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; }
-
-		.sides { display: flex; }
-
-		.info { 
-			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
-			display: flex; align-items: flex-start; gap: 0px 6px;
+		.icon.edit {
+			display: none;
 		}
-		.info.noValue { width: 100%; color: $colorTextTertiary; }
+		.icon.checkbox {
+			width: 20px;
+			height: 20px;
+			vertical-align: top;
+			background-image: url('~img/icon/dataview/checkbox0.svg');
+		}
+		.icon.checkbox.active {
+			background-image: url('~img/icon/dataview/checkbox1.svg');
+		}
+
+		.input {
+			@include text-common;
+			line-height: 22px;
+			vertical-align: top;
+			display: inline-block;
+			height: 22px;
+			padding: 0px;
+		}
+
+		.sides {
+			display: flex;
+		}
 
 		.info {
-			.name { 
-				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				color: $colorTextSecondary; width: 100%;
+			padding: 6px 2px 6px 0px;
+			line-height: 20px;
+			width: 30%;
+			min-width: 40px;
+			flex-shrink: 0;
+			@include text-overflow-nw;
+			display: flex;
+			align-items: flex-start;
+			gap: 0px 6px;
+		}
+		.info.noValue {
+			width: 100%;
+			color: $colorTextTertiary;
+		}
+
+		.info {
+			.name {
+				display: inline-block;
+				vertical-align: top;
+				@include text-common;
+				line-height: 20px;
+				@include text-overflow-nw;
+				color: $colorTextSecondary;
+				width: 100%;
 			}
-			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
-			.icon.ghost { width: 20px; height: 20px; }
+			.icon.lock {
+				width: 8px;
+				height: 20px;
+				background-image: url('~img/icon/lock.svg');
+				flex-shrink: 0;
+			}
+			.icon.ghost {
+				width: 20px;
+				height: 20px;
+			}
 		}
 
 		.wrap.isDeleted {
-			.info .name { color: $colorTextSecondary; }
+			.info .name {
+				color: $colorTextSecondary;
+			}
 		}
 
 		.cellContent.canEdit {
-			.empty { display: block; }
+			.empty {
+				display: block;
+			}
 		}
 
-		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
-		.cell.canEdit:hover { background: $colorShapeHighlightLight; }
-		
-		.cell.c-select { padding: 8px; line-height: 18px; }
+		.cell {
+			@include text-common;
+			width: 70%;
+			position: relative;
+			padding: 5px 8px;
+			border-radius: 4px;
+			transition: background $transitionCommon;
+		}
+		.cell.canEdit:hover {
+			background: $colorShapeHighlightLight;
+		}
+
 		.cell.c-select {
-			.empty { line-height: 24px; }
+			padding: 8px;
+			line-height: 18px;
+		}
+		.cell.c-select {
+			.empty {
+				line-height: 24px;
+			}
 		}
 
-		.cell.c-select, 
-		.cell.c-object, 
+		.cell.c-select,
+		.cell.c-object,
 		.cell.c-file {
-			.over { flex-wrap: wrap; }
+			.over {
+				flex-wrap: wrap;
+			}
 		}
 
-		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
-			.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
-			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
-			.icon.clear { right: 8px; }
+			padding: 0px;
+		}
+		.cell.isEditing {
+			.cellContent {
+				position: relative;
+				height: auto !important;
+				min-height: 32px;
+				border-radius: 4px;
+			}
+			.cellContent.isName .input {
+				height: 20px;
+				line-height: 20px;
+				width: calc(100% - 24px);
+			}
+			.icon.clear {
+				right: 8px;
+			}
 
-			#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
+			#entry {
+				line-height: 18px;
+				height: 18px;
+				vertical-align: top;
+				display: inline-block;
+			}
 		}
 
 		.cell.isEditing.c-select {
-			.cellContent, .placeholder  { padding: 6px 8px; }
-			#entry { margin-top: 2px; }
+			.cellContent,
+			.placeholder {
+				padding: 6px 8px;
+			}
+			#entry {
+				margin-top: 2px;
+			}
 		}
 		.cell.isEditing.c-select.isSelect {
-			.over { width: calc(100% - 26px); }
+			.over {
+				width: calc(100% - 26px);
+			}
 		}
 
-		.cell.isEditing.c-shortText, 
-		.cell.isEditing.c-number, 
-		.cell.isEditing.c-url, 
-		.cell.isEditing.c-phone, 
-		.cell.isEditing.c-email
-		{
-			.cellContent { padding: 5px 8px !important; }
+		.cell.isEditing.c-shortText,
+		.cell.isEditing.c-number,
+		.cell.isEditing.c-url,
+		.cell.isEditing.c-phone,
+		.cell.isEditing.c-email {
+			.cellContent {
+				padding: 5px 8px !important;
+			}
 		}
 
 		.cell.isEditing.c-date {
-			.cellContent { padding: 5px 8px 4px 8px !important; }
+			.cellContent {
+				padding: 5px 8px 4px 8px !important;
+			}
 		}
 
 		.cell.c-object {
-			.element { background: none !important; }
+			.element {
+				background: none !important;
+			}
 		}
 
 		.cell.isEditing.c-object {
-			.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
+			.cellContent,
+			.placeholder {
+				padding: 5px 8px 1px 8px !important;
+			}
 		}
 
 		.cell.isEditing.c-file {
-			.cellContent, .placeholder { padding: 5px 8px !important; }
+			.cellContent,
+			.placeholder {
+				padding: 5px 8px !important;
+			}
 		}
 
 		.cell.isEditing.c-longText {
-			.cellContent { box-shadow: 0px 0px; visibility: hidden; border: 0px; padding: 5px 8px; }
-			.cellContent span:empty { height: 22px; }
+			.cellContent {
+				box-shadow: 0px 0px;
+				visibility: hidden;
+				border: 0px;
+				padding: 5px 8px;
+			}
+			.cellContent span:empty {
+				height: 22px;
+			}
 		}
 	}
 
-	.block.blockRelation > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
+	.block.blockRelation > .wrapContent > .dropTarget.targetBot {
+		display: block;
+		height: 2px;
+	}
 }

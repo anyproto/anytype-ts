@@ -1,3 +1,5 @@
+/** @format */
+
 const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const version = app.getVersion();
@@ -18,28 +20,33 @@ const MIN_HEIGHT = 480;
 const NEW_WINDOW_SHIFT = 30;
 
 class WindowManager {
-
 	list = new Set();
 
-	create (options, param) {
+	create(options, param) {
 		const Api = require('./api.js');
 		const { route, isChild } = options;
 		const { languages, zoom, hideMenuBar } = ConfigManager.config;
 
-		param = Object.assign({
-			backgroundColor: Util.getBgColor('dark'),
-			show: false,
-			titleBarStyle: 'hidden-inset',
-			webPreferences: {},
-		}, param);
+		param = Object.assign(
+			{
+				backgroundColor: Util.getBgColor('dark'),
+				show: false,
+				titleBarStyle: 'hidden-inset',
+				webPreferences: {},
+			},
+			param
+		);
 
-		param.webPreferences = Object.assign({
-			nativeWindowOpen: true,
-			contextIsolation: true,
-			nodeIntegration: false,
-			spellcheck: true,
-			sandbox: false,
-		}, param.webPreferences);
+		param.webPreferences = Object.assign(
+			{
+				nativeWindowOpen: true,
+				contextIsolation: true,
+				nodeIntegration: false,
+				spellcheck: true,
+				sandbox: false,
+			},
+			param.webPreferences
+		);
 
 		let win = new BrowserWindow(param);
 
@@ -54,39 +61,53 @@ class WindowManager {
 			win = null;
 		});
 
-		win.once('ready-to-show', () => { win.show(); });
-		win.on('focus', () => { 
+		win.once('ready-to-show', () => {
+			win.show();
+		});
+		win.on('focus', () => {
 			UpdateManager.setWindow(win);
-			MenuManager.setWindow(win); 
+			MenuManager.setWindow(win);
 		});
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
 		win.webContents.on('context-menu', (e, param) => {
-			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
+			Util.send(
+				win,
+				'spellcheck',
+				param.misspelledWord,
+				param.dictionarySuggestions,
+				param.x,
+				param.y,
+				param.selectionRect
+			);
 		});
 
 		if (hideMenuBar) {
 			win.setMenuBarVisibility(false);
 			win.setAutoHideMenuBar(true);
-		};
+		}
 
 		return win;
-	};
+	}
 
-	createMain (options) {
+	createMain(options) {
 		const { isChild } = options;
-		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icon512x512.png'));
+		const image = nativeImage.createFromPath(
+			path.join(Util.imagePath(), 'icon512x512.png')
+		);
 
 		let state = {};
 		let param = {
 			minWidth: MIN_WIDTH,
 			minHeight: MIN_HEIGHT,
-			width: DEFAULT_WIDTH, 
+			width: DEFAULT_WIDTH,
 			height: DEFAULT_HEIGHT,
 
 			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+				preload: fixPathForAsarUnpack(
+					path.join(Util.electronPath(), 'js', 'preload.js')
+				),
 				devTools: is.development,
 			},
 		};
@@ -98,16 +119,17 @@ class WindowManager {
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
 			param.trafficLightPosition = { x: 20, y: 18 };
-		} else
-		if (is.windows) {
+		} else if (is.windows) {
 			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
-		} else
-		if (is.linux) {
+		} else if (is.linux) {
 			param.icon = image;
-		};
+		}
 
 		if (!isChild) {
-			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
+			state = windowStateKeeper({
+				defaultWidth: DEFAULT_WIDTH,
+				defaultHeight: DEFAULT_HEIGHT,
+			});
 			param = Object.assign(param, {
 				x: state.x,
 				y: state.y,
@@ -118,8 +140,11 @@ class WindowManager {
 			const primaryDisplay = screen.getPrimaryDisplay();
 			const { width, height } = primaryDisplay.workAreaSize;
 
-			param = Object.assign(param, this.getWindowPosition(param, width, height));
-		};
+			param = Object.assign(
+				param,
+				this.getWindowPosition(param, width, height)
+			);
+		}
 
 		const win = this.create(options, param);
 
@@ -127,24 +152,38 @@ class WindowManager {
 
 		if (!isChild) {
 			state.manage(win);
-		};
+		}
 
-		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+		win.loadURL(
+			is.development
+				? `http://localhost:${port}`
+				: 'file://' + path.join(Util.appPath, 'dist', 'index.html')
+		);
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 
 		return win;
-	};
+	}
 
-	createAbout () {
-		const win = this.create({}, { 
-			width: 400, 
-			height: 400, 
-			useContentSize: true,
-			backgroundColor: Util.getBgColor(Util.getTheme()),
-		});
+	createAbout() {
+		const win = this.create(
+			{},
+			{
+				width: 400,
+				height: 400,
+				useContentSize: true,
+				backgroundColor: Util.getBgColor(Util.getTheme()),
+			}
+		);
 
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
+		win.loadURL(
+			'file://' +
+				path.join(
+					Util.electronPath(),
+					'about',
+					`index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`
+				)
+		);
 		win.setMenu(null);
 
 		win.webContents.on('will-navigate', (e, url) => {
@@ -160,9 +199,9 @@ class WindowManager {
 		});
 
 		return win;
-	};
+	}
 
-	command (win, cmd, param) {
+	command(win, cmd, param) {
 		param = param || {};
 
 		switch (cmd) {
@@ -185,24 +224,40 @@ class WindowManager {
 			case 'printHtml':
 			case 'printPdf':
 				const ext = cmd.replace(/print/, '').toLowerCase();
-				dialog.showSaveDialog(win, {
-					buttonLabel: 'Export',
-					fileFilter: { extensions: [ ext ] },
-					defaultPath: `${app.getPath('documents')}/${param.name}.${ext}`,
-					properties: [ 'createDirectory', 'showOverwriteConfirmation' ],
-				}).then((result) => {
-					const fp = result.filePath;
-					if (!fp) {
-						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
-					} else {
-						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
-					};
-				});
+				dialog
+					.showSaveDialog(win, {
+						buttonLabel: 'Export',
+						fileFilter: { extensions: [ext] },
+						defaultPath: `${app.getPath('documents')}/${
+							param.name
+						}.${ext}`,
+						properties: [
+							'createDirectory',
+							'showOverwriteConfirmation',
+						],
+					})
+					.then(result => {
+						const fp = result.filePath;
+						if (!fp) {
+							Util.send(
+								win,
+								'commandGlobal',
+								'saveAsHTMLSuccess'
+							);
+						} else {
+							Util[cmd](
+								win,
+								path.dirname(fp),
+								path.basename(fp),
+								param.options
+							);
+						}
+					});
 				break;
-		};
-	};
+		}
+	}
 
-	getWindowPosition (param, displayWidth, displayHeight) {
+	getWindowPosition(param, displayWidth, displayHeight) {
 		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		let x = Math.round(displayWidth / 2 - param.width / 2);
@@ -220,23 +275,22 @@ class WindowManager {
 			if (xLimit || yLimit) {
 				x = 0;
 				y = 0;
-			};
-		};
+			}
+		}
 
 		return { x, y };
-	};
+	}
 
-	sendToAll () {
-		const args = [ ...arguments ];
+	sendToAll() {
+		const args = [...arguments];
 		this.list.forEach(it => {
-			Util.send.apply(this, [ it ].concat(args));
+			Util.send.apply(this, [it].concat(args));
 		});
-	};
+	}
 
-	reloadAll () {
+	reloadAll() {
 		this.list.forEach(it => it.webContents.reload());
-	};
-
-};
+	}
+}
 
 module.exports = new WindowManager();

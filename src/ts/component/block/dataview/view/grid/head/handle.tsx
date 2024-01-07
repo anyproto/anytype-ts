@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -11,40 +13,46 @@ interface Props {
 	name: string;
 	readonly: boolean;
 	onClick?: (e: any) => void;
-};
+}
 
-const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
+const HeadHandle = observer(
+	class HeadHandle extends React.Component<Props> {
+		constructor(props: Props) {
+			super(props);
 
-	constructor (props: Props) {
-		super(props);
+			this.onMouseDown = this.onMouseDown.bind(this);
+		}
 
-		this.onMouseDown = this.onMouseDown.bind(this);
-	};
+		render() {
+			const { format, name, readonly, onClick } = this.props;
 
-	render () {
-		const { format, name, readonly, onClick } = this.props;
+			const Handle = SortableHandle(() => (
+				<div
+					className="flex"
+					onMouseDown={this.onMouseDown}
+					onClick={onClick}
+					onContextMenu={onClick}
+				>
+					{readonly ? <Icon className="lock" /> : ''}
+					<IconObject
+						object={{
+							relationFormat: format,
+							layout: I.ObjectLayout.Relation,
+						}}
+						tooltip={name}
+					/>
+					<div className="name">{name}</div>
+				</div>
+			));
 
-		const Handle = SortableHandle(() => (
-			<div 
-				className="flex" 
-				onMouseDown={this.onMouseDown} 
-				onClick={onClick}
-				onContextMenu={onClick}
-			>
-				{readonly ? <Icon className="lock" /> : ''}
-				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
-				<div className="name">{name}</div>
-			</div>
-		));
+			return <Handle />;
+		}
 
-		return <Handle />;
-	};
-
-	onMouseDown (e: any) {
-		$('.cell.isEditing').removeClass('isEditing');
-		menuStore.closeAll();
-	};
-
-});
+		onMouseDown(e: any) {
+			$('.cell.isEditing').removeClass('isEditing');
+			menuStore.closeAll();
+		}
+	}
+);
 
 export default HeadHandle;

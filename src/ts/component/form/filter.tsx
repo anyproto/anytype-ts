@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
@@ -13,7 +15,10 @@ interface Props {
 	placeholderFocus?: string;
 	tooltip?: string;
 	tooltipCaption?: string;
-	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipX?:
+		| I.MenuDirection.Left
+		| I.MenuDirection.Center
+		| I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	focusOnMount?: boolean;
 	onClick?(e: any): void;
@@ -24,14 +29,13 @@ interface Props {
 	onChange?(value: string): void;
 	onClear?(): void;
 	onIconClick?(e: any): void;
-};
+}
 
 interface State {
 	isActive: boolean;
-};
+}
 
 class Filter extends React.Component<Props, State> {
-
 	public static defaultProps = {
 		className: '',
 		inputClassName: '',
@@ -41,52 +45,68 @@ class Filter extends React.Component<Props, State> {
 	state = {
 		isActive: false,
 	};
-	
+
 	node: any = null;
 	isFocused = false;
 	placeholder: any = null;
 	ref = null;
 
-	constructor (props: Props) {
+	constructor(props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClear = this.onClear.bind(this);
-	};
-	
-	render () {
+	}
+
+	render() {
 		const { isActive } = this.state;
-		const { id, value, icon, tooltip, tooltipCaption, tooltipX, tooltipY, placeholder = translate('commonFilterClick'), className, inputClassName, focusOnMount, onKeyDown, onKeyUp, onClick, onIconClick } = this.props;
-		const cn = [ 'filter' ];
+		const {
+			id,
+			value,
+			icon,
+			tooltip,
+			tooltipCaption,
+			tooltipX,
+			tooltipY,
+			placeholder = translate('commonFilterClick'),
+			className,
+			inputClassName,
+			focusOnMount,
+			onKeyDown,
+			onKeyUp,
+			onClick,
+			onIconClick,
+		} = this.props;
+		const cn = ['filter'];
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 
 		if (isActive) {
 			cn.push('isActive');
-		};
+		}
 
 		let iconObj = null;
 		if (icon) {
 			iconObj = (
-				<Icon 
-					className={icon} 
+				<Icon
+					className={icon}
 					tooltip={tooltip}
 					tooltipCaption={tooltipCaption}
 					tooltipX={tooltipX}
 					tooltipY={tooltipY}
-					onClick={onIconClick} 
+					onClick={onIconClick}
 				/>
 			);
-		};
+		}
 
 		return (
 			<div
-				ref={node => this.node = node}
-				id={id} 
+				ref={node => (this.node = node)}
+				id={id}
 				className={cn.join(' ')}
 				onClick={onClick}
 			>
@@ -94,19 +114,21 @@ class Filter extends React.Component<Props, State> {
 					{iconObj}
 
 					<div className="filterInputWrap">
-						<Input 
-							ref={ref => this.ref = ref}
+						<Input
+							ref={ref => (this.ref = ref)}
 							id="input"
 							className={inputClassName}
 							value={value}
 							focusOnMount={focusOnMount}
-							onFocus={this.onFocus} 
-							onBlur={this.onBlur} 
-							onChange={this.onChange} 
+							onFocus={this.onFocus}
+							onBlur={this.onBlur}
+							onChange={this.onChange}
 							onKeyDown={onKeyDown}
 							onKeyUp={onKeyUp}
 						/>
-						<div id="placeholder" className="placeholder">{placeholder}</div>
+						<div id="placeholder" className="placeholder">
+							{placeholder}
+						</div>
 					</div>
 
 					<Icon className="clear" onClick={this.onClear} />
@@ -114,7 +136,7 @@ class Filter extends React.Component<Props, State> {
 				<div className="line" />
 			</div>
 		);
-	};
+	}
 
 	componentDidMount() {
 		const node = $(this.node);
@@ -124,27 +146,27 @@ class Filter extends React.Component<Props, State> {
 
 		this.checkButton();
 		this.resize();
-	};
+	}
 
-	componentDidUpdate () {
+	componentDidUpdate() {
 		this.checkButton();
 		this.resize();
-	};
+	}
 
-	focus () {
+	focus() {
 		this.ref.focus();
 		this.checkButton();
-	};
+	}
 
-	blur () {
+	blur() {
 		this.ref.blur();
-	};
+	}
 
-	setRange (range: I.TextRange) {
+	setRange(range: I.TextRange) {
 		this.ref.setRange(range);
-	};
+	}
 
-	onFocus (e: any) {
+	onFocus(e: any) {
 		const { placeholderFocus, onFocus } = this.props;
 
 		this.isFocused = true;
@@ -152,14 +174,14 @@ class Filter extends React.Component<Props, State> {
 
 		if (placeholderFocus) {
 			this.placeholderSet(placeholderFocus);
-		};
+		}
 
-		if (onFocus) { 
+		if (onFocus) {
 			onFocus(e);
-		};
-	};
-	
-	onBlur (e: any) {
+		}
+	}
+
+	onBlur(e: any) {
 		const { placeholderFocus, placeholder, onBlur } = this.props;
 
 		this.isFocused = false;
@@ -167,34 +189,34 @@ class Filter extends React.Component<Props, State> {
 
 		if (placeholderFocus) {
 			this.placeholderSet(placeholder);
-		};
+		}
 
 		if (onBlur) {
 			onBlur(e);
-		};
-	};
+		}
+	}
 
-	addFocusedClass () {
+	addFocusedClass() {
 		this.addClass('isFocused');
-	};
+	}
 
-	removeFocusedClass () {
+	removeFocusedClass() {
 		this.removeClass('isFocused');
-	};
+	}
 
-	addClass (c: string) {
+	addClass(c: string) {
 		$(this.node).addClass(c);
-	};
+	}
 
-	removeClass (c: string) {
+	removeClass(c: string) {
 		$(this.node).removeClass(c);
-	};
+	}
 
-	setActive (v: boolean) {
+	setActive(v: boolean) {
 		this.setState({ isActive: v });
-	};
+	}
 
-	onClear (e: any) {
+	onClear(e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -206,55 +228,54 @@ class Filter extends React.Component<Props, State> {
 
 		if (onClear) {
 			onClear();
-		};
-	};
+		}
+	}
 
-	onChange (e: any, v: string) {	
+	onChange(e: any, v: string) {
 		const { onChange } = this.props;
 
 		this.checkButton();
 
 		if (onChange) {
 			onChange(v);
-		};
-	};
+		}
+	}
 
-	checkButton () {
+	checkButton() {
 		const node = $(this.node);
 
 		this.getValue() ? node.addClass('active') : node.removeClass('active');
 		this.placeholderCheck();
-	};
+	}
 
-	setValue (v: string) {
+	setValue(v: string) {
 		this.ref.setValue(v);
 		this.checkButton();
-	};
+	}
 
-	getValue () {
+	getValue() {
 		return this.ref.getValue();
-	};
+	}
 
-	placeholderCheck () {
-		this.getValue() ? this.placeholderHide() : this.placeholderShow();	
-	};
+	placeholderCheck() {
+		this.getValue() ? this.placeholderHide() : this.placeholderShow();
+	}
 
-	placeholderSet (v: string) {
+	placeholderSet(v: string) {
 		this.placeholder.text(v);
-	};
-	
-	placeholderHide () {
+	}
+
+	placeholderHide() {
 		this.placeholder.hide();
-	};
+	}
 
-	placeholderShow () {
+	placeholderShow() {
 		this.placeholder.show();
-	};
+	}
 
-	resize () {
+	resize() {
 		this.placeholder.css({ lineHeight: this.placeholder.height() + 'px' });
-	};
-
-};
+	}
+}
 
 export default Filter;

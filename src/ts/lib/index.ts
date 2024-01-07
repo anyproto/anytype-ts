@@ -1,3 +1,5 @@
+/** @format */
+
 import * as I from 'Interface';
 import * as M from 'Model';
 import Renderer from './renderer';
@@ -39,7 +41,7 @@ import Constant from 'json/constant.json';
 import { commonStore } from 'Store';
 
 /**
- * 
+ *
  * @param key the key of the text as found in the json/text.json file
  * @returns a piece of display text in the language of the user
  * Defaults to the default lang set in constant.json (english)
@@ -50,14 +52,14 @@ const translate = (key: string, force?: string): string => {
 
 	let data = defaultData;
 	if (lang == Constant.default.interfaceLang) {
-		data = defaultData; 
+		data = defaultData;
 	} else {
-		try { 
+		try {
 			data = require(`lib/json/lang/${lang}.json`);
-		} catch(e) {
-			data = defaultData; 
-		};
-	};
+		} catch (e) {
+			data = defaultData;
+		}
+	}
 
 	return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 };
@@ -77,7 +79,7 @@ export {
 	translate,
 	dispatcher,
 	Mapper,
-	Encode, 
+	Encode,
 	Decode,
 	analytics,
 	history,
@@ -89,7 +91,6 @@ export {
 	Preview,
 	Highlight,
 	Animation,
-
 	UtilCommon,
 	UtilData,
 	UtilSmile,

@@ -1,13 +1,14 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class Mark implements I.Mark {
-	
 	type: I.MarkType = I.MarkType.Strike;
 	param = '';
 	range: I.TextRange = { from: 0, to: 0 };
 
-	constructor (props: I.Mark) {
+	constructor(props: I.Mark) {
 		this.type = Number(props.type) || I.MarkType.Strike;
 		this.param = String(props.param || '');
 		this.range = props.range || { from: 0, to: 0 };
@@ -19,12 +20,10 @@ class Mark implements I.Mark {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 class BlockContentText implements I.ContentText {
-	
 	text = '';
 	style: I.TextStyle = I.TextStyle.Paragraph;
 	checked = false;
@@ -33,7 +32,7 @@ class BlockContentText implements I.ContentText {
 	iconImage = '';
 	marks: I.Mark[] = [];
 
-	constructor (props: I.ContentText) {
+	constructor(props: I.ContentText) {
 		this.text = String(props.text || '');
 		this.style = Number(props.style) || I.TextStyle.Paragraph;
 		this.checked = Boolean(props.checked);
@@ -53,8 +52,7 @@ class BlockContentText implements I.ContentText {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentText;

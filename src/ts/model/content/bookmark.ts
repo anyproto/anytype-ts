@@ -1,13 +1,14 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentBookmark implements I.ContentBookmark {
-	
 	targetObjectId = '';
 	state: I.BookmarkState = I.BookmarkState.Empty;
 	url = '';
-	
-	constructor (props: I.ContentBookmark) {
+
+	constructor(props: I.ContentBookmark) {
 		this.targetObjectId = String(props.targetObjectId || '');
 		this.state = Number(props.state) || I.BookmarkState.Empty;
 		this.url = String(props.url || '');
@@ -19,8 +20,7 @@ class BlockContentBookmark implements I.ContentBookmark {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentBookmark;

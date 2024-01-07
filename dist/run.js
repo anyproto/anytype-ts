@@ -1,3 +1,5 @@
+/** @format */
+
 const s = document.createElement('script');
 
 s.src = './main.js?' + Math.random();

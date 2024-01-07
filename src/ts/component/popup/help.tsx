@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -9,19 +11,18 @@ import Url from 'json/url.json';
 
 interface State {
 	showFull: boolean;
-};
+}
 
 const LIMIT = 1;
 
 class PopupHelp extends React.Component<I.Popup, State> {
-
 	_isMounted = false;
 	node: any = null;
 	state = {
 		showFull: false,
 	};
-	
-	render () {
+
+	render() {
 		const { showFull } = this.state;
 		const document = this.getDocument();
 		const blocks = this.getBlocks();
@@ -40,24 +41,30 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		let sections = this.getSections();
 		if (isWhatsNew && !showFull) {
 			sections = sections.slice(0, LIMIT);
-		};
+		}
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className="wrapper"
-			>
+			<div ref={node => (this.node = node)} className="wrapper">
 				<div className="head">
 					<div className="side left">
 						{title ? <Label text={title.text} /> : ''}
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={() => UtilCommon.onUrl(Url.mail)} className="mail" />
+						<Icon
+							onClick={() => UtilCommon.onUrl(Url.mail)}
+							className="mail"
+						/>
 					</div>
 				</div>
-				
-				<div className={[ 'editor', 'help', (cover ? 'withCover' : '') ].join(' ')}>
+
+				<div
+					className={[
+						'editor',
+						'help',
+						cover ? 'withCover' : '',
+					].join(' ')}
+				>
 					{cover ? <Cover {...cover.param} /> : ''}
 
 					<div className="blocks">
@@ -68,89 +75,108 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 					{isWhatsNew && !showFull ? (
 						<div className="buttons">
-							<Button text={translate('popupHelpOlderReleases')} onClick={() => { this.setState({ showFull: true }); }} />
+							<Button
+								text={translate('popupHelpOlderReleases')}
+								onClick={() => {
+									this.setState({ showFull: true });
+								}}
+							/>
 						</div>
-					) : ''}
+					) : (
+						''
+					)}
 				</div>
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
 
 		UtilCommon.renderLinks($(this.node));
-	};
+	}
 
-	componentDidUpdate () {
+	componentDidUpdate() {
 		this.resize();
 
 		UtilCommon.renderLinks($(this.node));
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this._isMounted = false;
 		this.unbind();
-	};
+	}
 
-	rebind () {
+	rebind() {
 		this.unbind();
-		$(window).off('resize.popupHelp').on('resize.popupHelp', () => this.resize());
-	};
+		$(window)
+			.off('resize.popupHelp')
+			.on('resize.popupHelp', () => this.resize());
+	}
 
-	unbind () {
+	unbind() {
 		$(window).off('resize.help');
-	};
+	}
 
-	getDocument () {
+	getDocument() {
 		const { param } = this.props;
 		const { data } = param;
 
 		return UtilCommon.toUpperCamelCase(data.document);
-	};
+	}
 
-	getBlocks () {
+	getBlocks() {
 		return Docs.Help[this.getDocument()] || [];
-	};
+	}
 
-	getSections (): any[] {
+	getSections(): any[] {
 		const document = this.getDocument();
-		const blocks = this.getBlocks().filter(it => it.type != I.BlockType.Cover);
+		const blocks = this.getBlocks().filter(
+			it => it.type != I.BlockType.Cover
+		);
 		const sections: any[] = [];
 
 		switch (document) {
 			default: {
 				sections.push({ children: blocks });
 				break;
-			};
+			}
 
 			case 'WhatsNew': {
 				let section = { children: [], header: null };
 				for (const block of blocks) {
-					if (!section.header && [ I.TextStyle.Title, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(block.style)) {
+					if (
+						!section.header &&
+						[
+							I.TextStyle.Title,
+							I.TextStyle.Header1,
+							I.TextStyle.Header2,
+							I.TextStyle.Header3,
+						].includes(block.style)
+					) {
 						section.header = block;
-					};
+					}
 
 					section.children.push(block);
 
 					if (block.type == I.BlockType.Div) {
 						sections.push(section);
 						section = { children: [], header: null };
-					};
-				};
+					}
+				}
 				break;
-			};
-		};
+			}
+		}
 
 		return sections;
-	};
+	}
 
-	resize () {
+	resize() {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
@@ -160,9 +186,10 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();
 
-		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
-	};
-	
-};
+		raf(() => {
+			obj.css({ top: hh + 20, marginTop: 0 });
+		});
+	}
+}
 
 export default PopupHelp;

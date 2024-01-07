@@ -1,9 +1,68 @@
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="22" height="22" rx="4" fill="#0FC8BA"/>
-<rect x="4.69125" y="16.3036" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 16.3036)" fill="white"/>
-<rect x="12.0484" y="17.3928" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 12.0484 17.3928)" fill="#0FC8BA" stroke="white"/>
-<rect x="4.69125" y="11.5892" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 11.5892)" fill="white"/>
-<rect x="4.69125" y="6.875" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 6.875)" fill="white"/>
-<rect x="6.5484" y="12.6786" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 6.5484 12.6786)" fill="#0FC8BA" stroke="white"/>
-<rect x="12.0484" y="7.96423" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 12.0484 7.96423)" fill="#0FC8BA" stroke="white"/>
-</svg>
+/** @format */
+
+<svg
+	width="22"
+	height="22"
+	viewBox="0 0 22 22"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<rect width="22" height="22" rx="4" fill="#0FC8BA" />
+	<rect
+		x="4.69125"
+		y="16.3036"
+		width="1.17857"
+		height="12.5714"
+		rx="0.589286"
+		transform="rotate(-90 4.69125 16.3036)"
+		fill="white"
+	/>
+	<rect
+		x="12.0484"
+		y="17.3928"
+		width="3.35714"
+		height="3.35714"
+		rx="1.67857"
+		transform="rotate(-90 12.0484 17.3928)"
+		fill="#0FC8BA"
+		stroke="white"
+	/>
+	<rect
+		x="4.69125"
+		y="11.5892"
+		width="1.17857"
+		height="12.5714"
+		rx="0.589286"
+		transform="rotate(-90 4.69125 11.5892)"
+		fill="white"
+	/>
+	<rect
+		x="4.69125"
+		y="6.875"
+		width="1.17857"
+		height="12.5714"
+		rx="0.589286"
+		transform="rotate(-90 4.69125 6.875)"
+		fill="white"
+	/>
+	<rect
+		x="6.5484"
+		y="12.6786"
+		width="3.35714"
+		height="3.35714"
+		rx="1.67857"
+		transform="rotate(-90 6.5484 12.6786)"
+		fill="#0FC8BA"
+		stroke="white"
+	/>
+	<rect
+		x="12.0484"
+		y="7.96423"
+		width="3.35714"
+		height="3.35714"
+		rx="1.67857"
+		transform="rotate(-90 12.0484 7.96423)"
+		fill="#0FC8BA"
+		stroke="white"
+	/>
+</svg>;

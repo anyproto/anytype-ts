@@ -1,175 +1,295 @@
-@import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
+/** @format */
+
+@import '~scss/_vars';
+@import '~scss/theme/dark/_vars';
 
 /* PageMainGraph */
 
 .pageMainGraph {
-    canvas { background: $colorBgPrimary; }
-	#loader { background: $colorBgPrimary !important; }
+	canvas {
+		background: $colorBgPrimary;
+	}
+	#loader {
+		background: $colorBgPrimary !important;
+	}
 
-    .wrapper {
-        .side.right { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
-        .side.right {
-            .bottom { border-color: $colorShapeSecondary; }
-            .filter { background: none; }
-        }
+	.wrapper {
+		.side.right {
+			background: $colorBgPrimary;
+			border-color: $colorShapeSecondary;
+		}
+		.side.right {
+			.bottom {
+				border-color: $colorShapeSecondary;
+			}
+			.filter {
+				background: none;
+			}
+		}
 
-        .section {
-            .item { background: $colorBgPrimary; }
-            .item:hover::before { background: $colorShapeHighlightMedium; }
-        }
-    }
+		.section {
+			.item {
+				background: $colorBgPrimary;
+			}
+			.item:hover::before {
+				background: $colorShapeHighlightMedium;
+			}
+		}
+	}
 
-    .footer {
-        .icon { background-color: $colorShapeSecondary; }
-    }
+	.footer {
+		.icon {
+			background-color: $colorShapeSecondary;
+		}
+	}
 }
 
 /* PageMainStore */
 
 .pageMainStore {
-    .body {
+	.body {
 		.tabs {
-			.tab { color: $colorTextSecondary; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
+			.tab {
+				color: $colorTextSecondary;
+			}
+			.tab:hover,
+			.tab.active {
+				color: $colorTextPrimary;
+			}
 		}
 
-		.emptySearch { border-color: $colorShapePrimary; }
+		.emptySearch {
+			border-color: $colorShapePrimary;
+		}
 
 		.mid {
-			.filter { border-color: $colorShapePrimary; }
+			.filter {
+				border-color: $colorShapePrimary;
+			}
 		}
 
-        .items {
-            .item {
-                .flex { border-color: $colorShapeSecondary; } 
-				.flex:hover {  border-color: $colorShapePrimary; background-color: $colorShapeHighlightMedium; }
+		.items {
+			.item {
+				.flex {
+					border-color: $colorShapeSecondary;
+				}
+				.flex:hover {
+					border-color: $colorShapePrimary;
+					background-color: $colorShapeHighlightMedium;
+				}
 
 				.buttons {
-					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
-					.icon.check { background-image: url('#{$themePath}/icon/store/check0.svg'); }
-					.icon.check:hover { background-image: url('#{$themePath}/icon/store/check1.svg'); }
-					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
-					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
+					.icon.lock {
+						background-image: url('#{$themePath}/icon/store/lock.svg');
+					}
+					.icon.check {
+						background-image: url('#{$themePath}/icon/store/check0.svg');
+					}
+					.icon.check:hover {
+						background-image: url('#{$themePath}/icon/store/check1.svg');
+					}
+					.icon.plus {
+						background-image: url('#{$themePath}/icon/store/plus0.svg');
+					}
+					.icon.plus:hover {
+						background-image: url('#{$themePath}/icon/store/plus1.svg');
+					}
 
-					.button { color: $colorTextSecondary; }
-					.button:hover { color: $colorTextPrimary; }
+					.button {
+						color: $colorTextSecondary;
+					}
+					.button:hover {
+						color: $colorTextPrimary;
+					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 /* PageMainType */
 
 .pageMainType {
-    .wrapper {
-        .section.template {
-			.btn { color: $colorTextSecondary; }
+	.wrapper {
+		.section.template {
 			.btn {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
+				color: $colorTextSecondary;
+			}
+			.btn {
+				.icon.plus {
+					background-image: url('#{$themePath}/icon/plus/template0.svg');
+				}
 			}
 
-			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
-				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
+				color: $colorTextPrimary;
+			}
+			.btn:hover {
+				.icon.plus {
+					background-image: url('#{$themePath}/icon/plus/template1.svg');
+				}
 			}
 
 			.listPreviewObject {
-				.icon.arrow.left { left: -32px; }
-				.icon.arrow.right { right: -32px; }
+				.icon.arrow.left {
+					left: -32px;
+				}
+				.icon.arrow.right {
+					right: -32px;
+				}
 			}
 		}
 
-        .section.relation {
-            .item {
-                .name { color: $colorTextSecondary; }
-            }
-            .item.canEdit, .item.add {
-				.clickable:hover { background: $colorShapeHighlightMedium; }
+		.section.relation {
+			.item {
+				.name {
+					color: $colorTextSecondary;
+				}
+			}
+			.item.canEdit,
+			.item.add {
+				.clickable:hover {
+					background: $colorShapeHighlightMedium;
+				}
 			}
 
 			.item.add {
 				.clickable:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-					.name { color: $colorTextSecondary; }
+					.icon.plus {
+						background-image: url('~img/icon/plus/menu0.svg');
+					}
+					.name {
+						color: $colorTextSecondary;
+					}
 				}
 			}
-        }
+		}
 
-        table { border-color: $colorShapeSecondary; }
-        table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
-        }
-    }
+		table {
+			border-color: $colorShapeSecondary;
+		}
+		table {
+			.cellHead .name {
+				border-color: $colorShapeSecondary;
+				color: $colorTextSecondary;
+			}
+			.cell {
+				border-color: $colorShapeSecondary;
+			}
+			tbody {
+				border-color: $colorShapeSecondary;
+			}
+		}
+	}
 }
-.pageMainType > div > #loader { background: $colorBgPrimary; }
+.pageMainType > div > #loader {
+	background: $colorBgPrimary;
+}
 
 /* PageMainRelation */
 
 .pageMainRelation {
-    .wrapper {
-        table { border-color: $colorShapeSecondary; }
-        table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
-        }
-    }
+	.wrapper {
+		table {
+			border-color: $colorShapeSecondary;
+		}
+		table {
+			.cellHead .name {
+				border-color: $colorShapeSecondary;
+				color: $colorTextSecondary;
+			}
+			.cell {
+				border-color: $colorShapeSecondary;
+			}
+			tbody {
+				border-color: $colorShapeSecondary;
+			}
+		}
+	}
 }
-.pageMainRelation > div > #loader { background: $colorBgPrimary; }
+.pageMainRelation > div > #loader {
+	background: $colorBgPrimary;
+}
 
 /* PageMainNavigation */
 
 .pageMainNavigation {
-	.wrapper > #loader { background: $colorBgPrimary; }
-    .selected { border-color: $colorShapePrimary; }
-    .selected {
-        .descr { color: $colorTextSecondary; }
-    }
+	.wrapper > #loader {
+		background: $colorBgPrimary;
+	}
+	.selected {
+		border-color: $colorShapePrimary;
+	}
+	.selected {
+		.descr {
+			color: $colorTextSecondary;
+		}
+	}
 
-    .items {
-        .item { border-color: $colorShapePrimary; }
-        .item {
-			.iconObject { background: $colorShapeTertiary; }
-			.iconObject.isTask { background: none; }
+	.items {
+		.item {
+			border-color: $colorShapePrimary;
+		}
+		.item {
+			.iconObject {
+				background: $colorShapeTertiary;
+			}
+			.iconObject.isTask {
+				background: none;
+			}
 
-            .descr { color: $colorTextSecondary; }
-        }
-    }
+			.descr {
+				color: $colorTextSecondary;
+			}
+		}
+	}
 }
 
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
-    .list {
-        .section.fix { background: $colorBgPrimary; }
+	.list {
+		background: $colorBgPrimary;
+		border-color: $colorShapeSecondary;
+	}
+	.list {
+		.section.fix {
+			background: $colorBgPrimary;
+		}
 
-        .item:hover, .item.active { background: $colorShapeHighlightMedium; }
-        .item {
-            .name { color: $colorTextSecondary; }
-            .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
-        }
-    }
+		.item:hover,
+		.item.active {
+			background: $colorShapeHighlightMedium;
+		}
+		.item {
+			.name {
+				color: $colorTextSecondary;
+			}
+			.icon.arrow {
+				background-image: url('#{$themePath}/arrow/historyList.svg');
+			}
+		}
+	}
 }
 
 /* PageMainBookmark */
 
 .pageMainBookmark {
-    .wrapper {
-        .item.add:hover { background: $colorShapeHighlightMedium; }
-    }
+	.wrapper {
+		.item.add:hover {
+			background: $colorShapeHighlightMedium;
+		}
+	}
 }
 
 /* PageMainEmpty */
 
 .pageMainEmpty {
-    .wrapper {
-        .row { border-color: $colorShapePrimary; }
-    }
+	.wrapper {
+		.row {
+			border-color: $colorShapePrimary;
+		}
+	}
 }
 
 /* PageMainArchive */
@@ -177,21 +297,31 @@
 .pageMainArchive {
 	.wrapper {
 		.titleWrapper {
-			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
+			.icon.archive {
+				background-image: url('#{$themePath}/icon/archive/logo.svg');
+			}
 		}
 
-		.controls { border-color: $colorShapePrimary; }
+		.controls {
+			border-color: $colorShapePrimary;
+		}
 		.controls {
 			.side.left {
-				.element:hover { background-color: $colorShapeHighlightMedium; }
+				.element:hover {
+					background-color: $colorShapeHighlightMedium;
+				}
 			}
 		}
 
 		.objectManagerWrapper {
-			.items { height: 100%; }
+			.items {
+				height: 100%;
+			}
 			.items {
 				.item {
-					.iconObject { background-color: $colorShapeTertiary; }
+					.iconObject {
+						background-color: $colorShapeTertiary;
+					}
 				}
 			}
 		}

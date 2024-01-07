@@ -1,30 +1,70 @@
-<!DOCTYPE html>
+<!-- @format -->
+
+<!doctype html>
 <html>
 	<head>
 		<script src="../js/jquery.js"></script>
 		<style type="text/css">
-			* { margin: 0px; padding: 0px; box-sizing: border-box; user-select: none; }
-
-			body { background-color: #fff; }
-			html.dark body { background-color: #171717; }
-
-			html.align1 body { text-align: center; }
-			html.align2 body { text-align: right; }
-
-			html:not(.allowIframeResize) { height: 100%; }
-			html:not(.allowIframeResize) {
-				body, #root { height: 100%; }
-				iframe { width: 100% !important; height: 100% !important; border: 0px !important; }
+			* {
+				margin: 0px;
+				padding: 0px;
+				box-sizing: border-box;
+				user-select: none;
 			}
 
-			#root { font-size: 0px; }
+			body {
+				background-color: #fff;
+			}
+			html.dark body {
+				background-color: #171717;
+			}
 
-			.twitter-tweet, .instagram-media { margin: 0px !important; display: inline-flex !important; }
-			.gist-file { margin: 0px !important; }
-			.cp_embed_iframe { border: 0px !important; }
+			html.align1 body {
+				text-align: center;
+			}
+			html.align2 body {
+				text-align: right;
+			}
 
-			html.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
-			html.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
+			html:not(.allowIframeResize) {
+				height: 100%;
+			}
+			html:not(.allowIframeResize) {
+				body,
+				#root {
+					height: 100%;
+				}
+				iframe {
+					width: 100% !important;
+					height: 100% !important;
+					border: 0px !important;
+				}
+			}
+
+			#root {
+				font-size: 0px;
+			}
+
+			.twitter-tweet,
+			.instagram-media {
+				margin: 0px !important;
+				display: inline-flex !important;
+			}
+			.gist-file {
+				margin: 0px !important;
+			}
+			.cp_embed_iframe {
+				border: 0px !important;
+			}
+
+			html.align1 .twitter-tweet,
+			body.align1 .instagram-media {
+				justify-content: center;
+			}
+			html.align2 .twitter-tweet,
+			body.align2 .instagram-media {
+				justify-content: flex-end;
+			}
 		</style>
 	</head>
 	<body>
@@ -40,10 +80,7 @@
 				const root = $('#root');
 				const scripts = $('#scripts');
 				const param = getParam();
-				const allowedOrigins = [
-					'//localhost:',
-					'file://',
-				];
+				const allowedOrigins = ['//localhost:', 'file://'];
 
 				let processor = 0;
 				let useRootHeight = false;
@@ -57,9 +94,17 @@
 					const oe = e.originalEvent;
 					if (!allowedOrigins.some(it => oe.origin.match(it))) {
 						return;
-					};
+					}
 
-					const { html, js, libs, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
+					const {
+						html,
+						js,
+						libs,
+						className,
+						insertBeforeLoad,
+						allowIframeResize,
+						align,
+					} = oe.data;
 
 					blockId = oe.data.blockId;
 					processor = oe.data.processor;
@@ -70,18 +115,18 @@
 
 					if (param.theme) {
 						htmlEl.addClass(param.theme);
-					};
+					}
 					if (className) {
 						htmlEl.addClass(className);
-					};
+					}
 					if (allowIframeResize) {
 						htmlEl.addClass('allowIframeResize');
-					};
+					}
 					htmlEl.addClass(`align${align}`);
 
 					if (allowIframeResize) {
 						setInterval(resize, 300);
-					};
+					}
 
 					// Github Gist
 					if (processor == 15) {
@@ -89,47 +134,49 @@
 					} else {
 						if (insertBeforeLoad) {
 							insertHtml(html);
-						};
+						}
 
 						loadLibs(libs, () => {
 							if (!insertBeforeLoad) {
 								insertHtml(html);
-							};
+							}
 
 							if (js) {
 								try {
 									eval(js);
 								} catch (e) {
 									console.error(e);
-								};
-							};
+								}
+							}
 
 							resize();
 						});
-					};
+					}
 				});
 
 				win.on('resize', resize);
 
-				function resize () {
-					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+				function resize() {
+					const height = useRootHeight
+						? root.height()
+						: document.documentElement.scrollHeight;
 					window.parent.postMessage({ height, blockId }, '*');
-				};
+				}
 
-				function insertHtml (html) {
+				function insertHtml(html) {
 					if (cachedHtml !== html) {
 						root.html(html);
 						cachedHtml = html;
-					};
-				};
+					}
+				}
 
-				function loadLibs (list, callBack) {
+				function loadLibs(list, callBack) {
 					if (!list.length) {
 						if (callBack) {
 							callBack();
-						};
+						}
 						return;
-					};
+					}
 
 					const src = list.shift();
 					const script = document.createElement('script');
@@ -138,48 +185,48 @@
 					script.onload = function (e) {
 						if (list.length) {
 							loadLibs(list, callBack);
-						} else 
-						if (callBack) {
+						} else if (callBack) {
 							callBack();
-						};
+						}
 					};
 
 					script.type = 'text/javascript';
 					script.src = src;
-				};
+				}
 
-				function getParam () {
+				function getParam() {
 					const a = location.search.replace(/^\?/, '').split('&');
 					const param = {};
 
-					a.forEach((s) => {
+					a.forEach(s => {
 						const kv = s.split('=');
 						param[kv[0]] = kv[1];
 					});
 					return param;
-				};
+				}
 
-				function loadGithubGist (html) {
-					const m = html.match(/src="([^"]+)"/); 
-					if (!m || (m.length < 1)) {
+				function loadGithubGist(html) {
+					const m = html.match(/src="([^"]+)"/);
+					if (!m || m.length < 1) {
 						return;
-					};
+					}
 
 					$.ajax({
 						url: m[1].replace(/\.js$/, '.json'),
 						dataType: 'jsonp',
 						timeout: 1000,
-						success: (data) => {
+						success: data => {
 							if (!head.find('#gist-css').length) {
-								head.append(`<link id="gist-css" href="${data.stylesheet}" rel="stylesheet">`);
-							};
+								head.append(
+									`<link id="gist-css" href="${data.stylesheet}" rel="stylesheet">`
+								);
+							}
 
 							root.html(data.div);
 							resize();
-						}
+						},
 					});
-				};
-
+				}
 			});
 		</script>
 	</body>

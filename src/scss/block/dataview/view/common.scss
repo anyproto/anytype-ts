@@ -1,69 +1,148 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
 	.block.blockDataview {
-
 		.viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorControlActive; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
-				.btn { display: inline-block; transition: $transitionAllCommon; }
-				.btn:hover { color: $colorTextPrimary; }
+				color: $colorControlActive;
+				line-height: 20px;
+				width: 100%;
+				display: block;
+			}
+			.cell.add {
+				.btn {
+					display: inline-block;
+					transition: $transitionAllCommon;
+				}
 				.btn:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+					color: $colorTextPrimary;
+				}
+				.btn:hover {
+					.icon.plus {
+						background-image: url('~img/icon/plus/menu1.svg');
+					}
 				}
 
-				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
-				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); }
+				.icon {
+					vertical-align: top;
+					margin: 0px 4px 0px 0px;
+				}
+				.name {
+					vertical-align: top;
+					display: inline-block;
+					line-height: 20px;
+					height: 20px;
+					vertical-align: top;
+					width: calc(100% - 24px);
+				}
 			}
 		}
 
-		.viewContent.viewGallery, 
+		.viewContent.viewGallery,
 		.viewContent.viewBoard {
-			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 4px; @include text-small; color: $colorTextSecondary; }
-				.cellContent.canEdit { cursor: default; }
-				.cellContent:empty, .cellContent.isEmpty { display: none; }
-				.cellContent.last { margin: 0px; }
-				.cellContent.c-description { color: $colorTextPrimary; }
+				white-space: normal;
+			}
+			.card {
 				.cellContent {
-					.more { vertical-align: top; height: 18px; }
+					margin-bottom: 4px;
+					@include text-small;
+					color: $colorTextSecondary;
+				}
+				.cellContent.canEdit {
+					cursor: default;
+				}
+				.cellContent:empty,
+				.cellContent.isEmpty {
+					display: none;
+				}
+				.cellContent.last {
+					margin: 0px;
+				}
+				.cellContent.c-description {
+					color: $colorTextPrimary;
+				}
+				.cellContent {
+					.more {
+						vertical-align: top;
+						height: 18px;
+					}
 				}
 
-				.cellContent.isName { @include text-paragraph; color: $colorTextPrimary; display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
-					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
+					@include text-paragraph;
+					color: $colorTextPrimary;
+					display: flex;
+					gap: 0px 6px;
+					position: relative;
+				}
+				.cellContent.isName {
+					.iconObject {
+						position: absolute;
+						left: 0px;
+						top: 0px;
+						margin: 0px;
+						cursor: default;
+					}
 					.name {
-						line-height: 20px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
-						vertical-align: top; white-space: normal; overflow: hidden; @include clamp2;
+						line-height: 20px;
+						font-size: 14px;
+						font-weight: 500;
+						letter-spacing: -0.12px;
+						vertical-align: top;
+						white-space: normal;
+						overflow: hidden;
+						@include clamp2;
 					}
 				}
 
 				.cellContent.isName.withIcon {
-					.name { text-indent: 24px; }
+					.name {
+						text-indent: 24px;
+					}
 				}
 
-				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { margin-bottom: 0px; @include text-small; }
-					.over { height: 18px; }
+					line-height: 18px;
+				}
+				.cellContent.c-select {
+					.tagItem {
+						margin-bottom: 0px;
+						@include text-small;
+					}
+					.over {
+						height: 18px;
+					}
 				}
 
-				.cellContent.c-object, .cellContent.c-file {
-					.element { margin: 0px 6px 0px 0px; }
-					.element:last-child { margin-right: 0px; }
-				}
-
-				.cellContent.c-url, 
-				.cellContent.c-phone, 
-				.cellContent.c-email {
-					.name { width: auto; max-width: 100%; }
-				}
-
-				.cellContent.c-object, 
+				.cellContent.c-object,
 				.cellContent.c-file {
-					.over { display: flex; height: 20px; }
+					.element {
+						margin: 0px 6px 0px 0px;
+					}
+					.element:last-child {
+						margin-right: 0px;
+					}
+				}
+
+				.cellContent.c-url,
+				.cellContent.c-phone,
+				.cellContent.c-email {
+					.name {
+						width: auto;
+						max-width: 100%;
+					}
+				}
+
+				.cellContent.c-object,
+				.cellContent.c-file {
+					.over {
+						display: flex;
+						height: 20px;
+					}
 				}
 			}
 		}
@@ -71,19 +150,26 @@
 		.viewContent.viewGrid.isCollection,
 		.viewContent.viewList.isCollection {
 			.row:hover {
-				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
+				.icon.dnd {
+					opacity: 1;
+					background-image: url('~img/icon/block/menu1.svg');
+				}
 				.icon.dnd:hover {
-					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+					background-image: url('~img/icon/block/menu2.svg') !important;
+					border-color: $colorSystemAccent100;
+					box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
 				}
 			}
 		}
 	}
 
 	.block.blockDataview.isInline {
-		.viewContent.viewGallery, 
+		.viewContent.viewGallery,
 		.viewContent.viewBoard {
 			.cellContent.isName {
-				.name { @include clamp2; }
+				.name {
+					@include clamp2;
+				}
 			}
 		}
 	}

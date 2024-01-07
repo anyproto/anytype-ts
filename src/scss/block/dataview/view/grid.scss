@@ -1,177 +1,420 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
 	.block.blockDataview {
-		.cellHead { 
-			@include text-small; text-align: left; color: $colorTextSecondary; font-weight: 400; line-height: 20px; position: relative; height: 38px;
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
+		.cellHead {
+			@include text-small;
+			text-align: left;
+			color: $colorTextSecondary;
+			font-weight: 400;
+			line-height: 20px;
+			position: relative;
+			height: 38px;
+			cursor: grab;
+			display: inline-block;
+			vertical-align: top;
+			transition: background-color $transitionCommon;
 		}
 		.cellHead {
-			.cellContent { cursor: grab; height: 36px !important; overflow: visible !important; }
-			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; }
-			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
-			.icon.lock { flex-shrink: 0; }
+			.cellContent {
+				cursor: grab;
+				height: 36px !important;
+				overflow: visible !important;
+			}
+			.flex {
+				padding: 9px 14px;
+				gap: 0px 6px;
+				align-items: center;
+			}
+			.iconObject {
+				width: 20px;
+				height: 20px;
+				margin: 0px;
+				vertical-align: top;
+				flex-shrink: 0;
+				display: none;
+			}
+			.icon.lock {
+				flex-shrink: 0;
+			}
 
-			.name { 
-				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+			.name {
+				display: inline-block;
+				line-height: 20px;
+				height: 20px;
+				vertical-align: top;
+				width: 100%;
 				@include text-overflow-nw;
 			}
 
-			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
+			.resize {
+				width: 20px;
+				height: calc(100% - 2px);
+				position: absolute;
+				right: 0px;
+				top: 1px;
+				cursor: col-resize;
+				z-index: 10;
+			}
 		}
-		.cellHead.small { text-align: center; }
 		.cellHead.small {
-			.flex { display: inline-block; }
-			.iconObject { display: block; }
-			.name { display: none; }
-			.icon.lock { display: none; }
+			text-align: center;
 		}
-		.cellHead.last { overflow: visible; padding: 9px 14px; cursor: default; }
+		.cellHead.small {
+			.flex {
+				display: inline-block;
+			}
+			.iconObject {
+				display: block;
+			}
+			.name {
+				display: none;
+			}
+			.icon.lock {
+				display: none;
+			}
+		}
 		.cellHead.last {
-			.icon.plus { margin: 0px; }
+			overflow: visible;
+			padding: 9px 14px;
+			cursor: default;
+		}
+		.cellHead.last {
+			.icon.plus {
+				margin: 0px;
+			}
 		}
 
-		.cellHead.isDragging { border: 0px; height: 38px; }
+		.cellHead.isDragging {
+			border: 0px;
+			height: 38px;
+		}
 		.cellHead.isDragging::after {
-			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: '';
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			z-index: 0;
+			pointer-events: none;
 			background-color: $colorShapeHighlightLight;
 		}
 		.cellHead.isDragging {
-			.resize { display: none; }
+			.resize {
+				display: none;
+			}
 		}
 
-		.cellHead.cellKeyHover::after, .cellHead.active::after { 
-			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+		.cellHead.cellKeyHover::after,
+		.cellHead.active::after {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			z-index: 0;
+			pointer-events: none;
 			background-color: $colorShapeHighlightLight;
 		}
 
-		.cellHead.last::after, .cellHead.active::after { background: none; }
-		.cellHead.last:hover, .cellHead.last.active {
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+		.cellHead.last::after,
+		.cellHead.active::after {
+			background: none;
+		}
+		.cellHead.last:hover,
+		.cellHead.last.active {
+			.icon.plus {
+				background-image: url('~img/icon/plus/menu1.svg');
+			}
 		}
 
-        .viewContent.viewGrid { width: 100%; position: relative; }
 		.viewContent.viewGrid {
-			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
-
-			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorShapeSecondary inset; }
-
-			.icon.checkbox { vertical-align: top; }
-			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
-
-			.row { white-space: nowrap; box-shadow: 0px 1px $colorShapeSecondary inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
-			.row.add { margin-top: -2px; }
-			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
-			.row:hover { background-color: $colorShapeHighlightLight; }
-
-			.row > .selectable,
-			.row > .dropTarget > .selectable { display: grid; }
-
-			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
-			.cellContent {
-				.empty { visibility: hidden; display: block; }
-				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
+			width: 100%;
+			position: relative;
+		}
+		.viewContent.viewGrid {
+			.rowHead {
+				display: grid;
+				white-space: nowrap;
+				width: calc(100% - 4px);
+				margin-left: 2px;
+				height: 36px;
 			}
 
-			.cell.isName, .cellContent.isName { cursor: default; }
+			.loadMore {
+				padding: 10px 2px;
+				box-shadow: 0px 1px $colorShapeSecondary inset;
+			}
+
+			.icon.checkbox {
+				vertical-align: top;
+			}
+			.icon.edit {
+				width: 36px;
+				height: 48px;
+				position: absolute;
+				right: 0px;
+				top: 0px;
+			}
+
+			.row {
+				white-space: nowrap;
+				box-shadow: 0px 1px $colorShapeSecondary inset;
+				margin-left: 2px !important;
+				width: calc(100% - 4px);
+				height: 48px;
+			}
+			.row.add {
+				margin-top: -2px;
+			}
+			.row.isArchived *,
+			.row.isDeleted * {
+				text-decoration: line-through;
+				color: $colorControlActive;
+			}
+			.row:hover {
+				background-color: $colorShapeHighlightLight;
+			}
+
+			.row > .selectable,
+			.row > .dropTarget > .selectable {
+				display: grid;
+			}
+
+			.cellContent {
+				width: 100%;
+				overflow: hidden;
+				height: 20px;
+				line-height: 20px;
+			}
+			.cellContent {
+				.empty {
+					visibility: hidden;
+					display: block;
+				}
+				.name,
+				.empty {
+					line-height: 20px;
+					@include text-overflow-nw;
+					width: 100%;
+				}
+			}
+
+			.cell.isName,
+			.cellContent.isName {
+				cursor: default;
+			}
 
 			.cell.isName.canEdit:hover {
-				.name { width: calc(100% - 40px) !important; }
-				.icon.edit { display: block; }
+				.name {
+					width: calc(100% - 40px) !important;
+				}
+				.icon.edit {
+					display: block;
+				}
 			}
 
 			.row.isNote {
 				.cell.isName.canEdit:hover {
-					.name { width: 100% !important; }
-					.icon.edit { display: none; }
+					.name {
+						width: 100% !important;
+					}
+					.icon.edit {
+						display: none;
+					}
 				}
-			};
-			
-			.cell.c-object, .cell.c-file { padding-right: 0px; }
-			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
-				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
-				
-			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
-			.cell.cellKeyHover { background-color: $colorShapeHighlightLight; }
+
+			.cell.c-object,
+			.cell.c-file {
+				padding-right: 0px;
+			}
+			.cellContent.c-object,
+			.cellContent.c-select,
+			.cellContent.c-file {
+				.wrap {
+					height: 100%;
+					overflow: hidden;
+					white-space: nowrap;
+				}
+			}
+
+			.cell {
+				display: inline-block;
+				height: 48px;
+				padding: 14px;
+				vertical-align: top;
+				position: relative;
+				word-break: break-word;
+			}
+			.cell.cellKeyHover {
+				background-color: $colorShapeHighlightLight;
+			}
 
 			.cell.isEditing {
-				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
-				.cellContent.isName { padding: 0px 14px !important; }
+				.cellContent {
+					height: 100% !important;
+					min-width: 300px;
+					padding: 14px;
+					border-radius: 4px;
+				}
 				.cellContent.isName {
-					.iconObject { margin: 14px 8px 14px 0px; }
-					.input-text { height: 48px; width: calc(100% - 30px) !important; }
-					.name { width: 100%; }
+					padding: 0px 14px !important;
+				}
+				.cellContent.isName {
+					.iconObject {
+						margin: 14px 8px 14px 0px;
+					}
+					.input-text {
+						height: 48px;
+						width: calc(100% - 30px) !important;
+					}
+					.name {
+						width: 100%;
+					}
 				}
 			}
-			.cell.isEditing.c-select { 
-				.cellContent { padding-bottom: 6px; height: auto !important; }
-				.wrap { overflow: visible; white-space: normal; }
+			.cell.isEditing.c-select {
+				.cellContent {
+					padding-bottom: 6px;
+					height: auto !important;
+				}
+				.wrap {
+					overflow: visible;
+					white-space: normal;
+				}
 			}
-			.cell.isEditing.c-object { 
-				.cellContent { padding-bottom: 12px; height: auto !important; }
-				.wrap { overflow: visible; white-space: normal; }
+			.cell.isEditing.c-object {
+				.cellContent {
+					padding-bottom: 12px;
+					height: auto !important;
+				}
+				.wrap {
+					overflow: visible;
+					white-space: normal;
+				}
 			}
 
-			.cell.isEditing.c-select, .cell.isEditing.c-object {
-				.placeholder { padding: 14px; }
+			.cell.isEditing.c-select,
+			.cell.isEditing.c-object {
+				.placeholder {
+					padding: 14px;
+				}
 			}
 
-			.cell.isEditing.c-longText { 
-				.cellContent { display: none; }
+			.cell.isEditing.c-longText {
+				.cellContent {
+					display: none;
+				}
 			}
-			.cell.isEditing.c-checkbox { 
-				.cellContent { min-width: unset; }
+			.cell.isEditing.c-checkbox {
+				.cellContent {
+					min-width: unset;
+				}
 			}
 		}
 
 		.viewContent.viewGrid.isCollection {
-			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
+			.cellHead:first-child .flex,
+			.cell:first-child {
+				padding-left: 20px;
+			}
 			.row:hover {
-				.icon.drag { opacity: 1; }
-			}
-
-			.dropTarget.isOver { box-shadow: 0px 0px; }
-			.dropTarget.isOver::before { 
-				content: ""; position: absolute; background: $colorSystemAccent100; width: 100%; height: 2px; border-radius: 2px; left: 0px; z-index: 1;
-			}
-			.dropTarget.isOver.top::before { top: -1px; }
-			.dropTarget.isOver.bottom::before { bottom: -1px; }
-		}
-    }
-
-	.block.blockDataview.isInline {
-		.viewContent.viewGrid {
-			.row { height: 40px; }
-
-			.cellHead:first-child {
-				.flex { padding-left: 0px; }
-			}
-
-			.cell { height: 40px; padding: 10px 14px; }
-			.cell:first-child { padding-left: 0px; }
-
-			.cell.isEditing { padding: 0px; }
-			.cell.isEditing {
-				.cellContent { padding: 10px 14px; }
-
-				.cellContent.isName { padding-left: 6px !important; }
-				.cellContent.isName {
-					.iconObject { margin-top: 10px; margin-bottom: 10px; }
-					.input-text { height: 39px; }
+				.icon.drag {
+					opacity: 1;
 				}
 			}
 
-			.cell.isEditing.c-select, .cell.isEditing.c-object {
-				.placeholder { padding: 10px 14px; }
+			.dropTarget.isOver {
+				box-shadow: 0px 0px;
+			}
+			.dropTarget.isOver::before {
+				content: '';
+				position: absolute;
+				background: $colorSystemAccent100;
+				width: 100%;
+				height: 2px;
+				border-radius: 2px;
+				left: 0px;
+				z-index: 1;
+			}
+			.dropTarget.isOver.top::before {
+				top: -1px;
+			}
+			.dropTarget.isOver.bottom::before {
+				bottom: -1px;
+			}
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.viewContent.viewGrid {
+			.row {
+				height: 40px;
+			}
+
+			.cellHead:first-child {
+				.flex {
+					padding-left: 0px;
+				}
+			}
+
+			.cell {
+				height: 40px;
+				padding: 10px 14px;
+			}
+			.cell:first-child {
+				padding-left: 0px;
+			}
+
+			.cell.isEditing {
+				padding: 0px;
+			}
+			.cell.isEditing {
+				.cellContent {
+					padding: 10px 14px;
+				}
+
+				.cellContent.isName {
+					padding-left: 6px !important;
+				}
+				.cellContent.isName {
+					.iconObject {
+						margin-top: 10px;
+						margin-bottom: 10px;
+					}
+					.input-text {
+						height: 39px;
+					}
+				}
+			}
+
+			.cell.isEditing.c-select,
+			.cell.isEditing.c-object {
+				.placeholder {
+					padding: 10px 14px;
+				}
 			}
 
 			.cell.isEditing.c-select {
-				.itemWrap { margin-bottom: 0px; }
+				.itemWrap {
+					margin-bottom: 0px;
+				}
 			}
 
-			.icon.edit { height: 40px; }
-			.loadMore { padding-top: 11px; margin-top: 0px; }
+			.icon.edit {
+				height: 40px;
+			}
+			.loadMore {
+				padding-top: 11px;
+				margin-top: 0px;
+			}
 		}
 	}
 }

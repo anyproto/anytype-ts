@@ -1,300 +1,354 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
+import {
+	I,
+	UtilData,
+	UtilCommon,
+	UtilDate,
+	UtilObject,
+	translate,
+	Dataview,
+} from 'Lib';
 import { dbStore, menuStore, detailStore } from 'Store';
 import Item from './calendar/item';
 import Constant from 'json/constant.json';
 
 const PADDING = 46;
 
-const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
+const ViewCalendar = observer(
+	class ViewCalendar extends React.Component<I.ViewComponent> {
+		node: any = null;
+		refMonth = null;
+		refYear = null;
+		value = UtilDate.now();
+		scroll = false;
 
-	node: any = null;
-	refMonth = null;
-	refYear = null;
-	value = UtilDate.now();
-	scroll = false;
+		constructor(props: I.ViewComponent) {
+			super(props);
 
-	constructor (props: I.ViewComponent) {
-		super (props);
+			this.onToday = this.onToday.bind(this);
+		}
 
-		this.onToday = this.onToday.bind(this);
-	};
+		render() {
+			const { className } = this.props;
+			const cn = ['viewContent', className];
+			const data = this.getData();
+			const { m, y } = this.getDateParam(this.value);
+			const today = this.getDateParam(UtilDate.now());
 
-	render () {
-		const { className } = this.props;
-		const cn = [ 'viewContent', className ];
-		const data = this.getData();
-		const { m, y } = this.getDateParam(this.value);
-		const today = this.getDateParam(UtilDate.now());
+			const days = [];
+			const months = [];
+			const years = [];
 
-		const days = [];
-		const months = [];
-		const years = [];
+			for (let i = 1; i <= 7; ++i) {
+				days.push({ id: i, name: translate(`day${i}`) });
+			}
 
-		for (let i = 1; i <= 7; ++i) {
-			days.push({ id: i, name: translate(`day${i}`) });
-		};
+			for (let i = 1; i <= 12; ++i) {
+				months.push({ id: i, name: translate('month' + i) });
+			}
 
-		for (let i = 1; i <= 12; ++i) {
-			months.push({ id: i, name: translate('month' + i) });
-		};
+			for (let i = 0; i <= 3000; ++i) {
+				years.push({ id: i, name: i });
+			}
 
-		for (let i = 0; i <= 3000; ++i) {
-			years.push({ id: i, name: i });
-		};
+			return (
+				<div ref={node => (this.node = node)}>
+					<div id="dateSelect" className="dateSelect">
+						<div className="side left">
+							<Select
+								ref={ref => (this.refMonth = ref)}
+								id="calendar-month"
+								value={m}
+								options={months}
+								className="month"
+								onChange={m =>
+									this.setValue(UtilDate.timestamp(y, m, 1))
+								}
+							/>
+							<Select
+								ref={ref => (this.refYear = ref)}
+								id="calendar-year"
+								value={y}
+								options={years}
+								className="year"
+								onChange={y =>
+									this.setValue(UtilDate.timestamp(y, m, 1))
+								}
+							/>
+						</div>
 
-		return (
-			<div ref={node => this.node = node}>
-				<div id="dateSelect" className="dateSelect">
-					<div className="side left">
-						<Select 
-							ref={ref => this.refMonth = ref}
-							id="calendar-month" 
-							value={m} 
-							options={months} 
-							className="month" 
-							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
-						/>
-						<Select 
-							ref={ref => this.refYear = ref}
-							id="calendar-year" 
-							value={y} 
-							options={years} 
-							className="year" 
-							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
-						/>
-					</div>
-
-					<div className="side right">
-						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div className="btn" onClick={this.onToday}>{translate('menuCalendarToday')}</div>
-						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
-					</div>
-				</div>
-
-				<div className="wrap">
-					<div className={cn.join(' ')}>
-						<div className="table">
-							<div className="head">
-								{days.map((item, i) => (
-									<div key={i} className="item th">
-										{item.name.substring(0, 2)}
-									</div>
-								))}
+						<div className="side right">
+							<Icon
+								className="arrow left"
+								onClick={() => this.onArrow(-1)}
+							/>
+							<div className="btn" onClick={this.onToday}>
+								{translate('menuCalendarToday')}
 							</div>
+							<Icon
+								className="arrow right"
+								onClick={() => this.onArrow(1)}
+							/>
+						</div>
+					</div>
 
-							<div className="body">
-								{data.map((item, i) => {
-									const cn = [];
-									if (m != item.m) {
-										cn.push('other');
-									};
-									if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
-										cn.push('active');
-									};
-									if (i < 7) {
-										cn.push('first');
-									};
+					<div className="wrap">
+						<div className={cn.join(' ')}>
+							<div className="table">
+								<div className="head">
+									{days.map((item, i) => (
+										<div key={i} className="item th">
+											{item.name.substring(0, 2)}
+										</div>
+									))}
+								</div>
 
-									return (
-										<Item 
-											key={i}
-											{...this.props} 
-											{...item} 
-											className={cn.join(' ')}
-											items={this.getItems()}
-										/>
-									);
-								})}
+								<div className="body">
+									{data.map((item, i) => {
+										const cn = [];
+										if (m != item.m) {
+											cn.push('other');
+										}
+										if (
+											today.d == item.d &&
+											today.m == item.m &&
+											today.y == item.y
+										) {
+											cn.push('active');
+										}
+										if (i < 7) {
+											cn.push('first');
+										}
+
+										return (
+											<Item
+												key={i}
+												{...this.props}
+												{...item}
+												className={cn.join(' ')}
+												items={this.getItems()}
+											/>
+										);
+									})}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		);
-	};
+			);
+		}
 
-	componentDidMount(): void {
-		this.init();
-		this.load();
-	};
+		componentDidMount(): void {
+			this.init();
+			this.load();
+		}
 
-	componentDidUpdate (): void {
-		this.init();
+		componentDidUpdate(): void {
+			this.init();
 
-		if (this.scroll) {
-			this.scrollToday();
-			this.scroll = false;
-		};
-	};
+			if (this.scroll) {
+				this.scrollToday();
+				this.scroll = false;
+			}
+		}
 
-	init () {
-		const { m, y } = this.getDateParam(this.value);
+		init() {
+			const { m, y } = this.getDateParam(this.value);
 
-		this.refMonth?.setValue(m);
-		this.refYear?.setValue(y);
-	};
+			this.refMonth?.setValue(m);
+			this.refYear?.setValue(y);
+		}
 
-	getDateParam (t: number) {
-		const [ d, m, y ] = UtilDate.date('j,n,Y', t).split(',').map(it => Number(it));
-		return { d, m, y };
-	};
+		getDateParam(t: number) {
+			const [d, m, y] = UtilDate.date('j,n,Y', t)
+				.split(',')
+				.map(it => Number(it));
+			return { d, m, y };
+		}
 
-	getData () {
-		return UtilDate.getCalendarMonth(this.value);
-	};
+		getData() {
+			return UtilDate.getCalendarMonth(this.value);
+		}
 
-	getSubId () {
-		const { rootId, block } = this.props;
-		return dbStore.getSubId(rootId, block.id);
-	};
+		getSubId() {
+			const { rootId, block } = this.props;
+			return dbStore.getSubId(rootId, block.id);
+		}
 
-	load () {
-		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
-		const object = getTarget();
-		const view = getView();
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
-			return;
-		};
+		load() {
+			const { isCollection, getView, getKeys, getTarget, getSearchIds } =
+				this.props;
+			const object = getTarget();
+			const view = getView();
+			const relation = dbStore.getRelationByKey(view.groupRelationKey);
 
-		const data = this.getData();
-		if (!data.length) {
-			return;
-		};
+			if (!relation || !view) {
+				return;
+			}
 
-		const first = data[0];
-		const last = data[data.length - 1];
-		const start = UtilDate.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
-		].concat(view.filters);
-		const sorts: I.Sort[] = [].concat(view.sorts);
-		const searchIds = getSearchIds();
-		const subId = this.getSubId();
+			const data = this.getData();
+			if (!data.length) {
+				return;
+			}
 
-		filters.push({ 
-			operator: I.FilterOperator.And, 
-			relationKey: relation.relationKey, 
-			condition: I.FilterCondition.GreaterOrEqual, 
-			value: start, 
-			quickOption: I.FilterQuickOption.ExactDate,
-			format: relation.format,
-		});
+			const first = data[0];
+			const last = data[data.length - 1];
+			const start = UtilDate.timestamp(
+				first.y,
+				first.m,
+				first.d,
+				0,
+				0,
+				0
+			);
+			const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
+			const filters: I.Filter[] = [
+				{
+					operator: I.FilterOperator.And,
+					relationKey: 'layout',
+					condition: I.FilterCondition.NotIn,
+					value: UtilObject.excludeFromSet(),
+				},
+			].concat(view.filters);
+			const sorts: I.Sort[] = [].concat(view.sorts);
+			const searchIds = getSearchIds();
+			const subId = this.getSubId();
 
-		filters.push({ 
-			operator: I.FilterOperator.And, 
-			relationKey: relation.relationKey, 
-			condition: I.FilterCondition.LessOrEqual, 
-			value: end, 
-			quickOption: I.FilterQuickOption.ExactDate,
-			format: relation.format,
-		});
+			filters.push({
+				operator: I.FilterOperator.And,
+				relationKey: relation.relationKey,
+				condition: I.FilterCondition.GreaterOrEqual,
+				value: start,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			});
 
-		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
-		};
+			filters.push({
+				operator: I.FilterOperator.And,
+				relationKey: relation.relationKey,
+				condition: I.FilterCondition.LessOrEqual,
+				value: end,
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			});
 
-		UtilData.searchSubscribe({
-			subId,
-			filters: filters.map(it => Dataview.filterMapper(view, it)),
-			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: getKeys(view.id),
-			sources: object.setOf || [],
-			ignoreHidden: true,
-			ignoreDeleted: true,
-			collectionId: (isCollection ? object.id : ''),
-		});
-	};
+			if (searchIds) {
+				filters.push({
+					operator: I.FilterOperator.And,
+					relationKey: 'id',
+					condition: I.FilterCondition.In,
+					value: searchIds || [],
+				});
+			}
 
-	onArrow (dir: number) {
-		let { m, y } = this.getDateParam(this.value);
+			UtilData.searchSubscribe({
+				subId,
+				filters: filters.map(it => Dataview.filterMapper(view, it)),
+				sorts: sorts.map(it => Dataview.filterMapper(view, it)),
+				keys: getKeys(view.id),
+				sources: object.setOf || [],
+				ignoreHidden: true,
+				ignoreDeleted: true,
+				collectionId: isCollection ? object.id : '',
+			});
+		}
 
-		m += dir;
-		if (m < 0) {
-			m = 12;
-			y--;
-		};
-		if (m > 12) {
-			m = 1;
-			y++;
-		};
+		onArrow(dir: number) {
+			let { m, y } = this.getDateParam(this.value);
 
-		this.setValue(UtilDate.timestamp(y, m, 1));
-	};
+			m += dir;
+			if (m < 0) {
+				m = 12;
+				y--;
+			}
+			if (m > 12) {
+				m = 1;
+				y++;
+			}
 
-	onToday () {
-		const today = this.getDateParam(UtilDate.now());
+			this.setValue(UtilDate.timestamp(y, m, 1));
+		}
 
-		this.scroll = true;
-		this.setValue(UtilDate.timestamp(today.y, today.m, today.d));
-	};
+		onToday() {
+			const today = this.getDateParam(UtilDate.now());
 
-	scrollToday () {
-		const node = $(this.node);
-		const el = node.find('.day.active');
+			this.scroll = true;
+			this.setValue(UtilDate.timestamp(today.y, today.m, today.d));
+		}
 
-		if (!el.length) {
-			return;
-		};
+		scrollToday() {
+			const node = $(this.node);
+			const el = node.find('.day.active');
 
-		const scroll = node.find('.body');
-		const st = scroll.scrollTop();
-		const ch = scroll.height();
-		const pt = el.position().top;
-		const eh = el.outerHeight();
-		const top = Math.max(0, st + pt + eh - ch);
+			if (!el.length) {
+				return;
+			}
 
-		scroll.scrollTop(top);
-	};
+			const scroll = node.find('.body');
+			const st = scroll.scrollTop();
+			const ch = scroll.height();
+			const pt = el.position().top;
+			const eh = el.outerHeight();
+			const top = Math.max(0, st + pt + eh - ch);
 
-	setValue (value: number) {
-		this.value = value;
-		this.forceUpdate();
-		this.load();
-	};
+			scroll.scrollTop(top);
+		}
 
-	getItems () {
-		const { getView } = this.props;
-		const view = getView();
-		const subId = this.getSubId();
+		setValue(value: number) {
+			this.value = value;
+			this.forceUpdate();
+			this.load();
+		}
 
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
-	};
+		getItems() {
+			const { getView } = this.props;
+			const view = getView();
+			const subId = this.getSubId();
 
-	resize () {
-		const { isPopup, isInline } = this.props;
+			return dbStore
+				.getRecords(subId, '')
+				.map(id => detailStore.get(subId, id, [view.groupRelationKey]));
+		}
 
-		if (isInline) {
-			return;
-		};
+		resize() {
+			const { isPopup, isInline } = this.props;
 
-		const win = $(window);
-		const node = $(this.node);
-		const wrap = node.find('.wrap');
+			if (isInline) {
+				return;
+			}
 
-		wrap.css({ width: 0, height: 0, marginLeft: 0 });
+			const win = $(window);
+			const node = $(this.node);
+			const wrap = node.find('.wrap');
 
-		const container = UtilCommon.getPageContainer(isPopup);
-		const cw = container.width();
-		const ch = container.height();
-		const mw = cw - PADDING * 2;
-		const margin = (cw - mw) / 2;
-		const { top } = node.offset();
-		const day = node.find('.day').first();
+			wrap.css({ width: 0, height: 0, marginLeft: 0 });
 
-		wrap.css({ width: cw, height: Math.max(600, ch - top - 90), marginLeft: -margin - 2 });
-		win.trigger('resize.menuDataviewCalendarDay');
+			const container = UtilCommon.getPageContainer(isPopup);
+			const cw = container.width();
+			const ch = container.height();
+			const mw = cw - PADDING * 2;
+			const margin = (cw - mw) / 2;
+			const { top } = node.offset();
+			const day = node.find('.day').first();
 
-		if (day.length) {
-			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
-		};
-	};
+			wrap.css({
+				width: cw,
+				height: Math.max(600, ch - top - 90),
+				marginLeft: -margin - 2,
+			});
+			win.trigger('resize.menuDataviewCalendarDay');
 
-});
+			if (day.length) {
+				menuStore.update('dataviewCalendarDay', {
+					width: day.outerWidth() + 8,
+				});
+			}
+		}
+	}
+);
 
 export default ViewCalendar;

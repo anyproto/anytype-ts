@@ -1,3 +1,5 @@
+/** @format */
+
 const { app } = require('electron');
 const storage = require('electron-json-storage');
 const version = app.getVersion();
@@ -14,10 +16,9 @@ const BETA = 'beta';
 const ALPHA = 'alpha';
 
 class ConfigManager {
-
 	config = {};
 
-	init (callBack) {
+	init(callBack) {
 		storage.get(CONFIG_NAME, (error, data) => {
 			this.config = data || {};
 			this.checkChannel();
@@ -27,64 +28,71 @@ class ConfigManager {
 
 			if (error) {
 				console.error(error);
-			};
+			}
 
 			if (callBack) {
 				callBack();
-			};
+			}
 		});
-	};
+	}
 
-	set (obj, callBack) {
+	set(obj, callBack) {
 		this.config = Object.assign(this.config, obj);
 		this.checkChannel();
 		this.checkTheme();
 
 		console.log('[ConfigManager].set:', this.config);
 
-		storage.set(CONFIG_NAME, this.config, (error) => {
+		storage.set(CONFIG_NAME, this.config, error => {
 			if (callBack) {
 				callBack(error);
-			};
+			}
 		});
-	};
+	}
 
-	checkTheme () {
-		this.config.theme = (undefined !== this.config.theme) ? this.config.theme : 'system';
-	};
+	checkTheme() {
+		this.config.theme =
+			undefined !== this.config.theme ? this.config.theme : 'system';
+	}
 
-	checkChannel () {
+	checkChannel() {
 		const channelIds = this.getChannels().map(it => it.id);
 
-		this.config.channel = String(this.config.channel || this.getDefaultChannel());
+		this.config.channel = String(
+			this.config.channel || this.getDefaultChannel()
+		);
 		if (!channelIds.includes(this.config.channel)) {
 			this.config.channel = LATEST;
-		};
-	};
+		}
+	}
 
-	getDefaultChannel () {
+	getDefaultChannel() {
 		let c = LATEST;
 		if (version.match('alpha')) {
 			c = ALPHA;
-		};
+		}
 		if (version.match('beta')) {
 			c = BETA;
-		};
+		}
 		return c;
-	};
+	}
 
-	getChannels () {
+	getChannels() {
 		const Util = require('./util.js');
 
-		let channels = ChannelSettings.map((it) => {
-			return { id: it.id, label: Util.translate(it.lang), type: 'radio', checked: (this.config.channel == it.id) };
+		let channels = ChannelSettings.map(it => {
+			return {
+				id: it.id,
+				label: Util.translate(it.lang),
+				type: 'radio',
+				checked: this.config.channel == it.id,
+			};
 		});
 		if (!this.config.sudo) {
 			channels = channels.filter(it => it.id != 'alpha');
-		};
+		}
 		return channels;
-	};
-
-};
+	}
+}
 
 module.exports = new ConfigManager();

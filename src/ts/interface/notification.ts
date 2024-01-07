@@ -1,22 +1,24 @@
+/** @format */
+
 import { I } from 'Lib';
 
 export enum NotificationType {
-	None	 = '',
-	Import	 = 'import',
-	Export	 = 'export',
-	Gallery	 = 'galleryImport',
-};
+	None = '',
+	Import = 'import',
+	Export = 'export',
+	Gallery = 'galleryImport',
+}
 
 export enum NotificationStatus {
-    Created	 = 0,
-    Shown	 = 1,
-    Read	 = 2,
-    Replied	 = 3,
-};
+	Created = 0,
+	Shown = 1,
+	Read = 2,
+	Replied = 3,
+}
 
 export enum NotificationAction {
-    Close	 = 0,
-};
+	Close = 0,
+}
 
 export interface Notification {
 	id: string;
@@ -27,7 +29,7 @@ export interface Notification {
 	payload: any;
 	title?: string;
 	text?: string;
-};
+}
 
 export interface NotificationPayloadImport {
 	processId: string;
@@ -35,11 +37,11 @@ export interface NotificationPayloadImport {
 	importType: I.ImportType;
 	spaceId: string;
 	name: string;
-};
+}
 
 export interface NotificationComponent {
 	item: Notification;
 	style?: any;
 	onButton?: (e: any, action: string) => void;
 	resize?: () => void;
-};
+}

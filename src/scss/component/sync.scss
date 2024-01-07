@@ -1,14 +1,35 @@
-@import "~scss/_vars";
+/** @format */
 
-.sync { 
-	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: $colorTextSecondary; background: $colorShapeTertiary; 
-	border-radius: 4px; padding: 0px 6px; gap: 0px 4px;
+@import '~scss/_vars';
+
+.sync {
+	height: 18px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	@include text-small;
+	color: $colorTextSecondary;
+	background: $colorShapeTertiary;
+	border-radius: 4px;
+	padding: 0px 6px;
+	gap: 0px 4px;
 }
 .sync {
-	.icon { width: 8px; height: 8px; }
-	.icon.green { background-image: url('~img/icon/status/green.svg'); }
-	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
-	.icon.red { background-image: url('~img/icon/status/red.svg'); }
+	.icon {
+		width: 8px;
+		height: 8px;
+	}
+	.icon.green {
+		background-image: url('~img/icon/status/green.svg');
+	}
+	.icon.orange {
+		background-image: url('~img/icon/status/orange.svg');
+	}
+	.icon.red {
+		background-image: url('~img/icon/status/red.svg');
+	}
 
-	.name { @include text-overflow-nw; }
+	.name {
+		@include text-overflow-nw;
+	}
 }

@@ -1,27 +1,33 @@
+/** @format */
+
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import {
+	I,
+	C,
+	UtilCommon,
+	UtilRouter,
+	UtilObject,
+	keyboard,
+	translate,
+} from 'Lib';
 import { popupStore } from 'Store';
 
 interface State {
 	error: string;
-};
+}
 
 class PageMainImport extends React.Component<I.PageComponent, State> {
-
 	state = {
 		error: '',
 	};
 	node = null;
 
-	render () {
+	render() {
 		const { error } = this.state;
 
 		return (
-			<div 
-				ref={ref => this.node = ref}
-				className="wrapper"
-			>
+			<div ref={ref => (this.node = ref)} className="wrapper">
 				<Frame>
 					<Title text="Downloading manifest" />
 					<Loader />
@@ -30,15 +36,21 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+							<Button
+								text={translate('commonBack')}
+								className="c28"
+								onClick={() => keyboard.onBack()}
+							/>
 						</div>
-					) : ''}
+					) : (
+						''
+					)}
 				</Frame>
 			</div>
 		);
-	};
+	}
 
-	componentDidMount (): void {
+	componentDidMount(): void {
 		const search = this.getSearch();
 
 		C.DownloadManifest(search.source, (message: any) => {
@@ -47,19 +59,19 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			} else {
 				UtilObject.openHome('route');
 				popupStore.open('usecase', { data: { object: message.info } });
-			};
+			}
 		});
-	};
+	}
 
-	componentDidUpdate (): void {
+	componentDidUpdate(): void {
 		$(window).trigger('resize');
-	};
+	}
 
-	getSearch () {
+	getSearch() {
 		return UtilCommon.searchParam(UtilRouter.history.location.search);
-	};
+	}
 
-	resize () {
+	resize() {
 		const { isPopup } = this.props;
 		const win = $(window);
 		const obj = UtilCommon.getPageContainer(isPopup);
@@ -71,8 +83,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 		const wh = isPopup ? oh - hh : win.height();
 
 		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
-	};
-
-};
+	}
+}
 
 export default PageMainImport;

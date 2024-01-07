@@ -1,3 +1,5 @@
+/** @format */
+
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import { Decode, Mapper } from 'Lib';
 
@@ -22,18 +24,24 @@ export const AccountSelect = (response: Rpc.Account.Select.Response) => {
 
 export const AccountDelete = (response: Rpc.Account.Delete.Response) => {
 	return {
-		status: response.hasStatus() ? Mapper.From.AccountStatus(response.getStatus()) : null,
+		status: response.hasStatus()
+			? Mapper.From.AccountStatus(response.getStatus())
+			: null,
 	};
 };
 
-export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFromLegacyExport.Response) => {
+export const AccountRecoverFromLegacyExport = (
+	response: Rpc.Account.RecoverFromLegacyExport.Response
+) => {
 	return {
 		accountId: response.getAccountid(),
 		spaceId: response.getPersonalspaceid(),
 	};
 };
 
-export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
+export const DebugSpaceSummary = (
+	response: Rpc.Debug.SpaceSummary.Response
+) => {
 	return response.toObject();
 };
 
@@ -45,7 +53,9 @@ export const Export = (response: any) => {
 
 export const LinkPreview = (response: Rpc.LinkPreview.Response) => {
 	return {
-		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
+		previewLink: response.hasLinkpreview()
+			? Mapper.From.PreviewLink(response.getLinkpreview())
+			: {},
 	};
 };
 
@@ -58,7 +68,7 @@ export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
 
 export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 	const usage = response.getUsage();
-	
+
 	let res = {};
 
 	if (usage) {
@@ -66,7 +76,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 			bytesLimit: usage.getByteslimit(),
 			localUsage: usage.getLocalbytesusage(),
 		});
-	};
+	}
 
 	return {
 		...res,
@@ -102,7 +112,9 @@ export const WalletConvert = (response: Rpc.Wallet.Convert.Response) => {
 	};
 };
 
-export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response) => {
+export const WalletCreateSession = (
+	response: Rpc.Wallet.CreateSession.Response
+) => {
 	return {
 		token: response.getToken(),
 	};
@@ -128,21 +140,27 @@ export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
+export const ObjectCreateBookmark = (
+	response: Rpc.Object.CreateBookmark.Response
+) => {
 	return {
 		objectId: response.getObjectid(),
 		details: Decode.struct(response.getDetails()),
 	};
 };
 
-export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
+export const ObjectCreateObjectType = (
+	response: Rpc.Object.CreateObjectType.Response
+) => {
 	return {
 		objectId: response.getObjectid(),
 		details: Decode.struct(response.getDetails()),
 	};
 };
 
-export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Response) => {
+export const ObjectCreateRelation = (
+	response: Rpc.Object.CreateRelation.Response
+) => {
 	return {
 		objectId: response.getObjectid(),
 		relationKey: response.getKey(),
@@ -150,7 +168,9 @@ export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Respons
 	};
 };
 
-export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
+export const ObjectCreateRelationOption = (
+	response: Rpc.Object.CreateRelationOption.Response
+) => {
 	return {
 		objectId: response.getObjectid(),
 		details: Decode.struct(response.getDetails()),
@@ -175,14 +195,18 @@ export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	};
 };
 
-export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Response) => {
+export const ObjectGroupsSubscribe = (
+	response: Rpc.Object.GroupsSubscribe.Response
+) => {
 	return {
 		subId: response.getSubid(),
 		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
 	};
 };
 
-export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Response) => {
+export const ObjectSearchSubscribe = (
+	response: Rpc.Object.SearchSubscribe.Response
+) => {
 	const counters = response.getCounters();
 	return {
 		counters: {
@@ -195,7 +219,9 @@ export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Respo
 	};
 };
 
-export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) => {
+export const ObjectSubscribeIds = (
+	response: Rpc.Object.SubscribeIds.Response
+) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.struct),
 		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
@@ -215,13 +241,17 @@ export const ObjectToBookmark = (response: Rpc.Object.ToBookmark.Response) => {
 	};
 };
 
-export const ObjectShareByLink = (response: Rpc.Object.ShareByLink.Response) => {
+export const ObjectShareByLink = (
+	response: Rpc.Object.ShareByLink.Response
+) => {
 	return {
 		link: response.getLink(),
 	};
 };
 
-export const ObjectListDuplicate = (response: Rpc.Object.ListDuplicate.Response) => {
+export const ObjectListDuplicate = (
+	response: Rpc.Object.ListDuplicate.Response
+) => {
 	return {
 		ids: response.getIdsList(),
 	};
@@ -283,20 +313,25 @@ export const BlockPaste = (response: Rpc.Block.Paste.Response) => {
 	};
 };
 
-export const BlockListDuplicate = (response: Rpc.Block.ListDuplicate.Response) => {
+export const BlockListDuplicate = (
+	response: Rpc.Block.ListDuplicate.Response
+) => {
 	return {
 		blockIds: response.getBlockidsList(),
 	};
 };
 
-export const BlockListConvertToObjects = (response: Rpc.Block.ListConvertToObjects.Response) => {
+export const BlockListConvertToObjects = (
+	response: Rpc.Block.ListConvertToObjects.Response
+) => {
 	return {
 		linkIds: response.getLinkidsList(),
 	};
 };
 
-
-export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDataview.CreateFromExistingObject.Response) => {
+export const BlockDataviewCreateFromExistingObject = (
+	response: Rpc.BlockDataview.CreateFromExistingObject.Response
+) => {
 	return {
 		blockId: response.getBlockid(),
 		targetObjectId: response.getTargetobjectid(),
@@ -304,38 +339,52 @@ export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDatavie
 	};
 };
 
-export const BlockDataviewViewCreate = (response: Rpc.BlockDataview.View.Create.Response) => {
+export const BlockDataviewViewCreate = (
+	response: Rpc.BlockDataview.View.Create.Response
+) => {
 	return {
 		viewId: response.getViewid(),
 	};
 };
 
-export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObject.Response) => {
+export const BlockLinkCreateWithObject = (
+	response: Rpc.BlockLink.CreateWithObject.Response
+) => {
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
 	};
 };
 
-export const BlockBookmarkCreateAndFetch = (response: Rpc.BlockBookmark.CreateAndFetch.Response) => {
+export const BlockBookmarkCreateAndFetch = (
+	response: Rpc.BlockBookmark.CreateAndFetch.Response
+) => {
 	return {
 		blockId: response.getBlockid(),
 	};
 };
 
-export const BlockFileCreateAndUpload = (response: Rpc.BlockFile.CreateAndUpload.Response) => {
+export const BlockFileCreateAndUpload = (
+	response: Rpc.BlockFile.CreateAndUpload.Response
+) => {
 	return {
 		blockId: response.getBlockid(),
 	};
 };
 
-export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) => {
+export const HistoryGetVersions = (
+	response: Rpc.History.GetVersions.Response
+) => {
 	return {
-		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
+		versions: (response.getVersionsList() || []).map(
+			Mapper.From.HistoryVersion
+		),
 	};
 };
 
-export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
+export const NavigationGetObjectInfoWithLinks = (
+	response: Rpc.Navigation.GetObjectInfoWithLinks.Response
+) => {
 	const object = response.getObject();
 	const links = object.getLinks();
 
@@ -344,22 +393,32 @@ export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObj
 			id: object.getId(),
 			info: Mapper.From.ObjectInfo(object.getInfo()),
 			links: {
-				inbound: (links.getInboundList() || []).map(Mapper.From.ObjectInfo),
-				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
+				inbound: (links.getInboundList() || []).map(
+					Mapper.From.ObjectInfo
+				),
+				outbound: (links.getOutboundList() || []).map(
+					Mapper.From.ObjectInfo
+				),
 			},
 		},
 	};
 };
 
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
+export const HistoryShowVersion = (
+	response: Rpc.History.ShowVersion.Response
+) => {
 	const version = response.getVersion();
 	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
+		version: version
+			? Mapper.From.HistoryVersion(response.getVersion())
+			: null,
 		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 
-export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject.Response) => {
+export const TemplateCreateFromObject = (
+	response: Rpc.Template.CreateFromObject.Response
+) => {
 	return {
 		id: response.getId(),
 	};
@@ -383,7 +442,9 @@ export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
 	};
 };
 
-export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
+export const WorkspaceObjectAdd = (
+	response: Rpc.Workspace.Object.Add.Response
+) => {
 	return {
 		objectId: response.getObjectid(),
 		details: Decode.struct(response.getDetails()),
@@ -392,7 +453,9 @@ export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) 
 
 export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
 	return {
-		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
+		pictures: (response.getPicturesList() || []).map(
+			Mapper.From.UnsplashPicture
+		),
 	};
 };
 
@@ -424,6 +487,8 @@ export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
 
 export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	return {
-		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+		list: (response.getNotificationsList() || []).map(
+			Mapper.From.Notification
+		),
 	};
 };

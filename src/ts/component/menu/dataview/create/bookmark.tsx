@@ -1,27 +1,28 @@
+/** @format */
+
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
 import { I, C, keyboard, translate } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 
-interface State { 
+interface State {
 	loading: boolean;
-};
+}
 
 class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
-	
 	ref = null;
 
 	state = {
 		loading: false,
 	};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.onSubmit = this.onSubmit.bind(this);
-	};
 
-	render () {
+	constructor(props: I.Menu) {
+		super(props);
+
+		this.onSubmit = this.onSubmit.bind(this);
+	}
+
+	render() {
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
@@ -31,26 +32,35 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			<form onSubmit={this.onSubmit} className="flex">
 				{loading ? <Loader /> : ''}
 
-				<Input ref={ref => this.ref = ref} value={value} placeholder={translate('defaultNameBookmark')} />
+				<Input
+					ref={ref => (this.ref = ref)}
+					value={value}
+					placeholder={translate('defaultNameBookmark')}
+				/>
 
 				<div className="buttons">
-					<Button type="input" color="blank" text={translate('commonCreate')} onClick={this.onSubmit} />
+					<Button
+						type="input"
+						color="blank"
+						text={translate('commonCreate')}
+						onClick={this.onSubmit}
+					/>
 				</div>
 			</form>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		if (this.ref) {
-			this.ref.focus(); 
-		};
-	};
+			this.ref.focus();
+		}
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		keyboard.setFocus(false);
-	};
+	}
 
-	onSubmit (e: any) {
+	onSubmit(e: any) {
 		e.preventDefault();
 
 		const { close, param } = this.props;
@@ -61,31 +71,36 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		if (!value) {
 			return;
-		};
+		}
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark({ ...details, source: value }, commonStore.space, (message: any) => {
-			this.setState({ loading: false });
+		C.ObjectCreateBookmark(
+			{ ...details, source: value },
+			commonStore.space,
+			(message: any) => {
+				this.setState({ loading: false });
 
-			if (message.error.code) {
-				popupStore.open('confirm', {
-					data: {
-						title: translate('menuDataviewCreateSomethingWentWrong'),
-						text: translate('menuDataviewContextTryAgain'),
-						textConfirm: translate('commonOk'),
-						canCancel: false,
-					},
-				});
-			} else {
-				if (onSubmit) {
-					onSubmit(message.details);
-				};
-				close();
-			};
-		});
-	};
-
-};
+				if (message.error.code) {
+					popupStore.open('confirm', {
+						data: {
+							title: translate(
+								'menuDataviewCreateSomethingWentWrong'
+							),
+							text: translate('menuDataviewContextTryAgain'),
+							textConfirm: translate('commonOk'),
+							canCancel: false,
+						},
+					});
+				} else {
+					if (onSubmit) {
+						onSubmit(message.details);
+					}
+					close();
+				}
+			}
+		);
+	}
+}
 
 export default MenuDataviewCreateBookmark;

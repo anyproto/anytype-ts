@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
@@ -5,158 +7,177 @@ import { Icon, Label } from 'Component';
 import { UtilCommon, C, Storage, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 
-const Progress = observer(class Progress extends React.Component {
-	
-	_isMounted = false;
-	node: any = null;
-	obj: any = null;
-	dx = 0;
-	dy = 0;
-	width = 0;
-	height = 0;
+const Progress = observer(
+	class Progress extends React.Component {
+		_isMounted = false;
+		node: any = null;
+		obj: any = null;
+		dx = 0;
+		dy = 0;
+		width = 0;
+		height = 0;
 
-	constructor (props: any) {
-		super(props);
-		
-		this.onCancel = this.onCancel.bind(this);
-		this.onDragStart = this.onDragStart.bind(this);
-	};
-	
-	render () {
-		const { progress } = commonStore;
-		const { status, current, total, isUnlocked, canCancel } = progress || {};
+		constructor(props: any) {
+			super(props);
 
-		if (!status) {
-			return null;
-		};
-		
-		const text = UtilCommon.sprintf(status, current, total);
-		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
-		
-		return (
-			<div 
-				ref={node => this.node = node} 
-				className={cn.join(' ')}
-			>
-				<div id="inner" className="inner" onMouseDown={this.onDragStart}>
-					<Label text={text} />
-					{canCancel ? <Icon className="close" onClick={this.onCancel} /> : ''}
-					<div className="bar">
-						<div className="fill" style={{width: (Math.ceil(current / total * 100)) + '%'}} />
+			this.onCancel = this.onCancel.bind(this);
+			this.onDragStart = this.onDragStart.bind(this);
+		}
+
+		render() {
+			const { progress } = commonStore;
+			const { status, current, total, isUnlocked, canCancel } =
+				progress || {};
+
+			if (!status) {
+				return null;
+			}
+
+			const text = UtilCommon.sprintf(status, current, total);
+			const cn = ['progress', isUnlocked ? 'isUnlocked' : ''];
+
+			return (
+				<div ref={node => (this.node = node)} className={cn.join(' ')}>
+					<div
+						id="inner"
+						className="inner"
+						onMouseDown={this.onDragStart}
+					>
+						<Label text={text} />
+						{canCancel ? (
+							<Icon className="close" onClick={this.onCancel} />
+						) : (
+							''
+						)}
+						<div className="bar">
+							<div
+								className="fill"
+								style={{
+									width:
+										Math.ceil((current / total) * 100) +
+										'%',
+								}}
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-		);
-	};
+			);
+		}
 
-	componentDidMount () {
-		this._isMounted = true;
-	};
+		componentDidMount() {
+			this._isMounted = true;
+		}
 
-	componentDidUpdate () {
-		const { progress } = commonStore;
-		if (!progress) {
-			return;
-		};
+		componentDidUpdate() {
+			const { progress } = commonStore;
+			if (!progress) {
+				return;
+			}
 
-		const { current, total } = progress;
-		const win = $(window);
-		const node = $(this.node);
+			const { current, total } = progress;
+			const win = $(window);
+			const node = $(this.node);
 
-		node.removeClass('hide');
-		this.resize();
+			node.removeClass('hide');
+			this.resize();
 
-		win.off('resize.progress').on('resize.progress', () => this.resize());
-		
-		if (total && (current >= total)) {
-			node.addClass('hide');
-			win.off('resize.progress');
+			win.off('resize.progress').on('resize.progress', () =>
+				this.resize()
+			);
 
-			window.setTimeout(() => commonStore.progressClear(), 200);
-		};
-	};
+			if (total && current >= total) {
+				node.addClass('hide');
+				win.off('resize.progress');
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
+				window.setTimeout(() => commonStore.progressClear(), 200);
+			}
+		}
 
-	onCancel (e: any) {
-		const { progress } = commonStore;
-		const { id } = progress;
-		
-		C.ProcessCancel(id);
-	};
+		componentWillUnmount() {
+			this._isMounted = false;
+		}
 
-	onDragStart (e: any) {
-		const win = $(window);
-		const offset = this.obj.offset();
+		onCancel(e: any) {
+			const { progress } = commonStore;
+			const { id } = progress;
 
-		this.dx = e.pageX - offset.left;
-		this.dy = e.pageY - offset.top;
+			C.ProcessCancel(id);
+		}
 
-		keyboard.disableSelection(true);
-		keyboard.setDragging(true);
+		onDragStart(e: any) {
+			const win = $(window);
+			const offset = this.obj.offset();
 
-		win.off('mousemove.progress mouseup.progress');
-		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.progress', (e: any) => { this.onDragEnd(e); });
-	};
+			this.dx = e.pageX - offset.left;
+			this.dy = e.pageY - offset.top;
 
-	onDragMove (e: any) {
-		const win = $(window);
-		const x = e.pageX - this.dx - win.scrollLeft();
-		const y = e.pageY - this.dy - win.scrollTop();
+			keyboard.disableSelection(true);
+			keyboard.setDragging(true);
 
-		this.setStyle(x, y);
-	};
+			win.off('mousemove.progress mouseup.progress');
+			win.on('mousemove.progress', (e: any) => {
+				this.onDragMove(e);
+			});
+			win.on('mouseup.progress', (e: any) => {
+				this.onDragEnd(e);
+			});
+		}
 
-	onDragEnd (e: any) {
-		keyboard.disableSelection(false);
-		keyboard.setDragging(false);
+		onDragMove(e: any) {
+			const win = $(window);
+			const x = e.pageX - this.dx - win.scrollLeft();
+			const y = e.pageY - this.dy - win.scrollTop();
 
-		$(window).off('mousemove.progress mouseup.progress');
-	};
+			this.setStyle(x, y);
+		}
 
-	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		onDragEnd(e: any) {
+			keyboard.disableSelection(false);
+			keyboard.setDragging(false);
 
-		x = Number(x) || 0;
-		x = Math.max(0, x);
-		x = Math.min(ww - this.width, x);
+			$(window).off('mousemove.progress mouseup.progress');
+		}
 
-		y = Number(y) || 0;
-		y = Math.max(UtilCommon.sizeHeader(), y);
-		y = Math.min(wh - this.height, y);
+		checkCoords(x: number, y: number): { x: number; y: number } {
+			const { ww, wh } = UtilCommon.getWindowDimensions();
 
-		return { x, y };
-	};
+			x = Number(x) || 0;
+			x = Math.max(0, x);
+			x = Math.min(ww - this.width, x);
 
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
+			y = Number(y) || 0;
+			y = Math.max(UtilCommon.sizeHeader(), y);
+			y = Math.min(wh - this.height, y);
 
-		const node = $(this.node);
-		const coords = Storage.get('progress');
+			return { x, y };
+		}
 
-		this.obj = node.find('#inner');
-		this.height = this.obj.outerHeight();
-		this.width = this.obj.outerWidth();
+		resize() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		if (coords) {
-			this.setStyle(coords.x, coords.y);
-		};
-	};
+			const node = $(this.node);
+			const coords = Storage.get('progress');
 
-	setStyle (x: number, y: number) {
-		const coords = this.checkCoords(x, y);
+			this.obj = node.find('#inner');
+			this.height = this.obj.outerHeight();
+			this.width = this.obj.outerWidth();
 
-		if ((coords.x !== null) && (coords.y !== null)) {
-			this.obj.css({ margin: 0, left: coords.x, top: coords.y });
-			Storage.set('progress', coords, true);
-		};
-	};
-	
-});
+			if (coords) {
+				this.setStyle(coords.x, coords.y);
+			}
+		}
+
+		setStyle(x: number, y: number) {
+			const coords = this.checkCoords(x, y);
+
+			if (coords.x !== null && coords.y !== null) {
+				this.obj.css({ margin: 0, left: coords.x, top: coords.y });
+				Storage.set('progress', coords, true);
+			}
+		}
+	}
+);
 
 export default Progress;

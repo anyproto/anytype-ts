@@ -1,10 +1,11 @@
+/** @format */
+
 import $ from 'jquery';
 import raf from 'raf';
 
 const BORDER = 100;
 
 class ScrollOnMove {
-	
 	timeout = 0;
 	viewportWidth = 0;
 	viewportHeight = 0;
@@ -13,7 +14,7 @@ class ScrollOnMove {
 	isPopup = false;
 	frame = 0;
 
-	onMouseDown (e: any, isPopup: boolean) {
+	onMouseDown(e: any, isPopup: boolean) {
 		this.isPopup = isPopup;
 
 		if (isPopup) {
@@ -36,7 +37,7 @@ class ScrollOnMove {
 				document.documentElement.offsetWidth,
 				document.documentElement.clientWidth
 			);
-			
+
 			this.documentHeight = Math.max(
 				document.body.scrollHeight,
 				document.body.offsetHeight,
@@ -45,26 +46,33 @@ class ScrollOnMove {
 				document.documentElement.offsetHeight,
 				document.documentElement.clientHeight
 			);
-		};
-	};
+		}
+	}
 
-	checkForWindowScroll (param: any) {
+	checkForWindowScroll(param: any) {
 		this.clear();
 		this.frame = raf(() => {
 			if (this.adjustWindowScroll(param)) {
 				this.checkForWindowScroll(param);
-			};
+			}
 		});
-	};
+	}
 
-	adjustWindowScroll (param: any) {
-		const { 
-			viewportX, viewportY,
-			isInLeftEdge, isInRightEdge, isInTopEdge, isInBottomEdge, 
-			edgeLeft, edgeRight, edgeTop, edgeBottom, 
+	adjustWindowScroll(param: any) {
+		const {
+			viewportX,
+			viewportY,
+			isInLeftEdge,
+			isInRightEdge,
+			isInTopEdge,
+			isInBottomEdge,
+			edgeLeft,
+			edgeRight,
+			edgeTop,
+			edgeBottom,
 		} = param;
 
-		const maxScrollX = this.documentWidth - this.viewportWidth; 
+		const maxScrollX = this.documentWidth - this.viewportWidth;
 		const maxScrollY = this.documentHeight - this.viewportHeight;
 
 		let currentScrollX = 0;
@@ -80,12 +88,12 @@ class ScrollOnMove {
 			container = window;
 			currentScrollX = window.pageXOffset;
 			currentScrollY = window.pageYOffset;
-		};
+		}
 
-		const canScrollUp = (currentScrollY > 0);
-		const canScrollDown = (currentScrollY < maxScrollY);
-		const canScrollLeft = (currentScrollX > 0);
-		const canScrollRight = (currentScrollX < maxScrollX);
+		const canScrollUp = currentScrollY > 0;
+		const canScrollDown = currentScrollY < maxScrollY;
+		const canScrollLeft = currentScrollX > 0;
+		const canScrollRight = currentScrollX < maxScrollX;
 		const maxStep = 10;
 
 		let nextScrollX = currentScrollX;
@@ -95,20 +103,18 @@ class ScrollOnMove {
 		if (isInLeftEdge && canScrollLeft) {
 			intensity = (edgeLeft - viewportX) / BORDER;
 			nextScrollX = nextScrollX - maxStep * intensity;
-		} else 
-		if (isInRightEdge && canScrollRight) {
+		} else if (isInRightEdge && canScrollRight) {
 			intensity = (viewportX - edgeRight) / BORDER;
 			nextScrollX = nextScrollX + maxStep * intensity;
-		};
+		}
 
 		if (isInTopEdge && canScrollUp) {
 			intensity = (edgeTop - viewportY) / BORDER;
 			nextScrollY = nextScrollY - maxStep * intensity;
-		} else 
-		if (isInBottomEdge && canScrollDown) {
+		} else if (isInBottomEdge && canScrollDown) {
 			intensity = (viewportY - edgeBottom) / BORDER;
 			nextScrollY = nextScrollY + maxStep * intensity;
-		};
+		}
 
 		nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
 		nextScrollY = Math.max(0, Math.min(maxScrollY, nextScrollY));
@@ -116,25 +122,22 @@ class ScrollOnMove {
 		// Disable move on X
 		nextScrollX = currentScrollX;
 
-		if (
-			(nextScrollX !== currentScrollX) ||
-			(nextScrollY !== currentScrollY)
-		) {
+		if (nextScrollX !== currentScrollX || nextScrollY !== currentScrollY) {
 			if (container) {
 				container.scrollTo(nextScrollX, nextScrollY);
-			};
+			}
 			return true;
 		} else {
 			return false;
-		};
-	};
-	
-	onMouseMove (x: number, y: number) {
+		}
+	}
+
+	onMouseMove(x: number, y: number) {
 		const edgeTop = BORDER;
 		const edgeLeft = BORDER;
 		const edgeBottom = this.viewportHeight - BORDER;
 		const edgeRight = this.viewportWidth - BORDER;
-	
+
 		const isInLeftEdge = x < edgeLeft;
 		const isInRightEdge = x > edgeRight;
 		const isInTopEdge = y < edgeTop;
@@ -143,32 +146,31 @@ class ScrollOnMove {
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
 			this.clear();
 			return;
-		};
-	
-		this.checkForWindowScroll({
-			viewportX:		 x, 
-			viewportY:		 y,
-			isInLeftEdge:	 isInLeftEdge, 
-			isInRightEdge:	 isInRightEdge, 
-			isInTopEdge:	 isInTopEdge, 
-			isInBottomEdge:	 isInBottomEdge, 
-			edgeLeft:		 edgeLeft, 
-			edgeRight:		 edgeRight, 
-			edgeTop:		 edgeTop, 
-			edgeBottom:		 edgeBottom, 
-		});
-	};
-	
-	onMouseUp (e: any) {
-		this.clear();
-	};
+		}
 
-	clear () {
+		this.checkForWindowScroll({
+			viewportX: x,
+			viewportY: y,
+			isInLeftEdge: isInLeftEdge,
+			isInRightEdge: isInRightEdge,
+			isInTopEdge: isInTopEdge,
+			isInBottomEdge: isInBottomEdge,
+			edgeLeft: edgeLeft,
+			edgeRight: edgeRight,
+			edgeTop: edgeTop,
+			edgeBottom: edgeBottom,
+		});
+	}
+
+	onMouseUp(e: any) {
+		this.clear();
+	}
+
+	clear() {
 		if (this.frame) {
 			raf.cancel(this.frame);
-		};
-	};
-	
-};
+		}
+	}
+}
 
- export const scrollOnMove: ScrollOnMove = new ScrollOnMove();
+export const scrollOnMove: ScrollOnMove = new ScrollOnMove();

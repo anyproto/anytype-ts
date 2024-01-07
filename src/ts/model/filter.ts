@@ -1,8 +1,9 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class Filter implements I.Filter {
-
 	id = '';
 	relationKey = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
@@ -10,13 +11,13 @@ class Filter implements I.Filter {
 	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;
 	value: any = {};
 
-	constructor (props: I.Filter) {
-
+	constructor(props: I.Filter) {
 		this.id = String(props.id || '');
 		this.relationKey = String(props.relationKey || '');
 		this.operator = Number(props.operator) || I.FilterOperator.And;
 		this.condition = Number(props.condition) || I.FilterCondition.None;
-		this.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
+		this.quickOption =
+			Number(props.quickOption) || I.FilterQuickOption.ExactDate;
 		this.value = props.value;
 
 		makeObservable(this, {
@@ -28,8 +29,7 @@ class Filter implements I.Filter {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default Filter;

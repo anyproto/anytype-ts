@@ -1,82 +1,171 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; padding: 0px; overflow: hidden; }
-		.items { height: 100%; }
-		.item.empty { margin-top: 8px; }
-
-		.item { display: flex; align-items: center; }
-		.item {
-			.icon { flex-shrink: 0; }
-			.name { width: 100%; @include text-overflow-nw; }
+		.content {
+			transition: none;
+			padding: 0px;
+			overflow: hidden;
+		}
+		.items {
+			height: 100%;
+		}
+		.item.empty {
+			margin-top: 8px;
 		}
 
-		.item.isInitial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
+		.item {
+			display: flex;
+			align-items: center;
+		}
+		.item {
+			.icon {
+				flex-shrink: 0;
+			}
+			.name {
+				width: 100%;
+				@include text-overflow-nw;
+			}
+		}
+
 		.item.isInitial {
-			.name { text-transform: uppercase; @include text-very-small; }
+			padding: 2px 16px;
+			line-height: 18px;
+			margin-bottom: 2px;
+		}
+		.item.isInitial {
+			.name {
+				text-transform: uppercase;
+				@include text-very-small;
+			}
 		}
 	}
 
 	.menu.menuSelect.withFilter {
-		.content { padding: 8px 0px 0px 0px; }
-		.items { height: calc(100% - 34px); }
+		.content {
+			padding: 8px 0px 0px 0px;
+		}
+		.items {
+			height: calc(100% - 34px);
+		}
 	}
 
-	.menu.menuSelect.skip { width: 320px; }
 	.menu.menuSelect.skip {
-		.name { margin: 0px; width: calc(100% - 24px); @include text-overflow-nw; }
+		width: 320px;
+	}
+	.menu.menuSelect.skip {
+		.name {
+			margin: 0px;
+			width: calc(100% - 24px);
+			@include text-overflow-nw;
+		}
 	}
 
 	.menu.menuSelect.button {
-		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: $colorControlActive; font-weight: 500; }
-		.item:hover { color: $colorTextPrimary; }
-		.item:last-child { margin-right: 0px; }
+		.item {
+			white-space: nowrap;
+			display: inline-block;
+			margin-right: 16px;
+			color: $colorControlActive;
+			font-weight: 500;
+		}
+		.item:hover {
+			color: $colorTextPrimary;
+		}
+		.item:last-child {
+			margin-right: 0px;
+		}
 	}
 
 	.menu.menuSelect.center {
-		.item { text-align: center; }
+		.item {
+			text-align: center;
+		}
 	}
 
 	.menu.menuSelect.withFullDescripion {
-		.content { overflow: auto; padding: 8px 0px; }
+		.content {
+			overflow: auto;
+			padding: 8px 0px;
+		}
 
-		.item.withDescription { height: auto; }
 		.item.withDescription {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
-			.descr { overflow: visible; white-space: normal; height: auto; }
+			height: auto;
+		}
+		.item.withDescription {
+			.iconObject {
+				background-color: $colorShapeHighlightMedium;
+			}
+			.descr {
+				overflow: visible;
+				white-space: normal;
+				height: auto;
+			}
 		}
 	}
 
 	.menu.menuSelect.noScroll {
-		.content { overflow: hidden; max-height: unset; }
+		.content {
+			overflow: hidden;
+			max-height: unset;
+		}
 	}
 
 	.menu.menuSelect.noVirtualisation {
-		.items { padding: 8px 0px; }
+		.items {
+			padding: 8px 0px;
+		}
 	}
 
-	.menu.menuSelect.spaceSelect { width: 280px; }
 	.menu.menuSelect.spaceSelect {
-		.content { padding: 8px 0px; }
-		.item { padding: 4px 16px; }
+		width: 280px;
+	}
+	.menu.menuSelect.spaceSelect {
+		.content {
+			padding: 8px 0px;
+		}
+		.item {
+			padding: 4px 16px;
+		}
 		.item {
 			.icon.add {
-				border-radius: 8px; border: 1px solid $colorShapeSecondary; background-color: $colorShapeHighlightLight;
-				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
+				border-radius: 8px;
+				border: 1px solid $colorShapeSecondary;
+				background-color: $colorShapeHighlightLight;
+				background-image: url('~img/icon/popup/usecase/plus.svg');
+				width: 48px;
+				height: 48px;
+				background-size: 20px;
 			}
-			.iconObject, .icon { margin: 0px; }
-			.iconObject.isSpaceView { border-radius: 8px !important; }
-			.clickable { align-items: center; gap: 0px 12px; }
+			.iconObject,
+			.icon {
+				margin: 0px;
+			}
+			.iconObject.isSpaceView {
+				border-radius: 8px !important;
+			}
+			.clickable {
+				align-items: center;
+				gap: 0px 12px;
+			}
 		}
 	}
 
 	/* Links, Backlinks */
 	.menu.menuSelect.featuredLinks {
-		.titleWrapper { padding-bottom: 0px; }
+		.titleWrapper {
+			padding-bottom: 0px;
+		}
 		.item {
-			.info { width: 100%; }
-			.iconObject { margin: 0px; background-color: $colorShapeHighlightMedium; }
+			.info {
+				width: 100%;
+			}
+			.iconObject {
+				margin: 0px;
+				background-color: $colorShapeHighlightMedium;
+			}
 		}
 	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -5,47 +7,50 @@ import { UtilCommon } from 'Lib';
 
 interface Props {
 	text: string;
-};
+}
 
 class EmptySearch extends React.Component<Props> {
-
 	_isMounted = false;
 	node: any = null;
 
-	render () {
+	render() {
 		const { text } = this.props;
-		
+
 		return (
-			<div ref={node => this.node = node} className="emptySearch">
-				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
+			<div ref={node => (this.node = node)} className="emptySearch">
+				<div
+					className="txt"
+					dangerouslySetInnerHTML={{
+						__html: UtilCommon.sanitize(text),
+					}}
+				/>
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this._isMounted = true;
 		this.resize();
-	};
+	}
 
-	componentDidUpdate () {
+	componentDidUpdate() {
 		this.resize();
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this._isMounted = false;
-	};
+	}
 
-	resize () {
+	resize() {
 		raf(() => {
 			if (!this._isMounted) {
 				return;
-			};
+			}
 
 			const node = $(this.node);
 			node.css({ lineHeight: node.height() + 'px' });
 		});
-	};
-
-};
+	}
+}
 
 export default EmptySearch;

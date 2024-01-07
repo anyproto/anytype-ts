@@ -1,221 +1,604 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 22; }
-	.menuWrap.fromPopup, 
-	.menuWrap.fromHeader, 
+	.menuWrap {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		width: 100%;
+		z-index: 22;
+	}
+	.menuWrap.fromPopup,
+	.menuWrap.fromHeader,
 	.menuWrap.fromSidebar,
-	.menuWrap.fromNavigation { z-index: 103; }
+	.menuWrap.fromNavigation {
+		z-index: 103;
+	}
 
-	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {
-		.menu { position: fixed; }
+		position: fixed;
+	}
+	.menuWrap.fixed {
+		.menu {
+			position: fixed;
+		}
 	}
 
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
-	#menu-polygon { z-index: 1000; position: absolute; }
-
-	.menu * { user-select: none; }
-	
-	.menu { 
-		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: $colorBgPrimary; opacity: 0; transform: scale3d(0.9,0.9,1);
-		transition: opacity 0.15s $easeInQuint, transform 0.15s $easeInQuint;
+	.dimmer {
+		position: fixed;
+		left: 0px;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0);
 	}
-	.menu.fixed { position: fixed; }
-	.menu * { user-select: none; }
+	#menu-polygon {
+		z-index: 1000;
+		position: absolute;
+	}
 
-	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
-	
-	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
-	.menu.v2.h3 { transform-origin: 0% 0%; } /* left bottom */
-	
-	.menu.v1.h4 { transform-origin: 100% 100%; } /* right top */
-	.menu.v2.h4 { transform-origin: 100% 0%; } /* right bottom */
-	
-	.menu.v1.h5 { transform-origin: 50% 100%; } /* center top */
-	.menu.v2.h5 { transform-origin: 50% 0%; } /* center bottom */
-	
-	.menu.v5.h3 { transform-origin: 0% 50%; } /* left center */
-	.menu.v5.h4 { transform-origin: 100% 50%; } /* right center */
-	
+	.menu * {
+		user-select: none;
+	}
+
 	.menu {
-		.input { user-select: text; }
-		
-		.arrowDirection { 
-			width: 17px; height: 8px; transition: none; background-image: url('~img/arrow/menuDirection.svg');
+		border-radius: 8px;
+		position: absolute;
+		z-index: inherit;
+		text-align: left;
+		backface-visibility: hidden;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+		background: $colorBgPrimary;
+		opacity: 0;
+		transform: scale3d(0.9, 0.9, 1);
+		transition:
+			opacity 0.15s $easeInQuint,
+			transform 0.15s $easeInQuint;
+	}
+	.menu.fixed {
+		position: fixed;
+	}
+	.menu * {
+		user-select: none;
+	}
+
+	.menu.show {
+		opacity: 1;
+		transform: scale3d(1, 1, 1);
+	}
+
+	.menu.v1.h3 {
+		transform-origin: 0% 100%;
+	} /* left top */
+	.menu.v2.h3 {
+		transform-origin: 0% 0%;
+	} /* left bottom */
+
+	.menu.v1.h4 {
+		transform-origin: 100% 100%;
+	} /* right top */
+	.menu.v2.h4 {
+		transform-origin: 100% 0%;
+	} /* right bottom */
+
+	.menu.v1.h5 {
+		transform-origin: 50% 100%;
+	} /* center top */
+	.menu.v2.h5 {
+		transform-origin: 50% 0%;
+	} /* center bottom */
+
+	.menu.v5.h3 {
+		transform-origin: 0% 50%;
+	} /* left center */
+	.menu.v5.h4 {
+		transform-origin: 100% 50%;
+	} /* right center */
+
+	.menu {
+		.input {
+			user-select: text;
+		}
+
+		.arrowDirection {
+			width: 17px;
+			height: 8px;
+			transition: none;
+			background-image: url('~img/arrow/menuDirection.svg');
 			position: absolute;
 		}
-		.arrowDirection.c1 { top: -8px; }
-		.arrowDirection.c2 { bottom: -8px; transform: rotateZ(180deg); }
-		.arrowDirection.c3 { left: -12px; transform: rotateZ(-90deg); }
-		.arrowDirection.c4 { right: -12px; transform: rotateZ(90deg); }
+		.arrowDirection.c1 {
+			top: -8px;
+		}
+		.arrowDirection.c2 {
+			bottom: -8px;
+			transform: rotateZ(180deg);
+		}
+		.arrowDirection.c3 {
+			left: -12px;
+			transform: rotateZ(-90deg);
+		}
+		.arrowDirection.c4 {
+			right: -12px;
+			transform: rotateZ(90deg);
+		}
 	}
-	
-	.menu.vertical { width: 224px; }
-	.menu.vertical {
-		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
-		.ReactVirtualized__List { padding: 8px 0px; }
 
-		.loaderWrapper { 
-			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
+	.menu.vertical {
+		width: 224px;
+	}
+	.menu.vertical {
+		.content {
+			overflow-y: auto;
+			overflow-x: hidden;
+			max-height: 368px;
+			padding: 8px 0px;
+			border-radius: inherit;
+			transform: none;
+		}
+		.ReactVirtualized__List {
+			padding: 8px 0px;
+		}
+
+		.loaderWrapper {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			z-index: 20;
+			width: 100%;
+			height: 100%;
+			border-radius: 12px;
 			background: $colorBgLoader;
 		}
 
-		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorShapeSecondary; white-space: nowrap; font-weight: 700; color: $colorControlActive; }
 		.tabs {
-			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; margin-right: 16px; position: relative; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
-			.tab:last-child { margin: 0px; }
+			padding: 10px 14px;
+			border-bottom: 1px solid $colorShapeSecondary;
+			white-space: nowrap;
+			font-weight: 700;
+			color: $colorControlActive;
+		}
+		.tabs {
+			.tab {
+				display: inline-block;
+				vertical-align: top;
+				transition: $transitionAllCommon;
+				margin-right: 16px;
+				position: relative;
+			}
+			.tab:hover,
+			.tab.active {
+				color: $colorTextPrimary;
+			}
+			.tab:last-child {
+				margin: 0px;
+			}
 		}
 
-		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
 		.titleWrapper {
-			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
-			.title { @include text-common; font-weight: 600; color: $colorTextPrimary; padding: 0; }
+			display: flex;
+			gap: 0 6px;
+			padding: 8px 14px;
+			align-items: center;
 		}
-		
-		.inputWrap { padding: 0px 14px 8px 14px; }
-		.input { border: 1px solid $colorShapeSecondary; padding: 0px 8px; }
-	
-		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorControlActive; }
-
-		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorShapeSecondary; }
-	
-		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; width: 100%; background: $colorBgPrimary; }
-		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
-		.item.isReadonly { cursor: default; }
-		
-		.item::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-			pointer-events: none;
-		}
-		.item.hover::before { background: $colorShapeHighlightMedium; }
-		.item.hover, .item:hover {
-			.icon.delete, .icon.more { opacity: 1; }
-		}
-		.item.withMore.hover, .item.withMore:hover {
-			.caption { opacity: 0; }
+		.titleWrapper {
+			.icon.back {
+				width: 20px;
+				height: 20px;
+				background-image: url('~img/arrow/menu.svg');
+				transform: rotateZ(180deg);
+			}
+			.title {
+				@include text-common;
+				font-weight: 600;
+				color: $colorTextPrimary;
+				padding: 0;
+			}
 		}
 
-		.item.isReadonly::before { transition: none; }
-		.item.isReadonly.hover::before, .item.isReadonly:hover::before { opacity: 0; background: none; }
+		.inputWrap {
+			padding: 0px 14px 8px 14px;
+		}
+		.input {
+			border: 1px solid $colorShapeSecondary;
+			padding: 0px 8px;
+		}
 
-		.item.add { line-height: 20px; }
+		.title {
+			@include text-small;
+			margin: 0px;
+			padding: 7px 14px;
+			font-weight: 400;
+			color: $colorControlActive;
+		}
+
+		.separator .inner {
+			margin: 8px 14px 7px 14px;
+			height: 1px;
+			background: $colorShapeSecondary;
+		}
 
 		.item {
-			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
+			padding: 4px 14px;
+			@include text-common;
+			line-height: 20px;
+			position: relative;
+			width: 100%;
+			background: $colorBgPrimary;
+		}
+		.item.isDragging {
+			box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
+		}
+		.item.isReadonly {
+			cursor: default;
+		}
 
-			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
-			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
-			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
-			.icon.delete, .icon.more { 
-				width: 24px; height: 24px; background-size: 20px; position: absolute; right: 10px; top: 50%; 
-				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
+		.item::before {
+			content: '';
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			background: rgba(79, 79, 79, 0);
+			z-index: 1;
+			pointer-events: none;
+		}
+		.item.hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+		.item.hover,
+		.item:hover {
+			.icon.delete,
+			.icon.more {
+				opacity: 1;
 			}
-			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
-			.icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }
-			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
-			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
+		}
+		.item.withMore.hover,
+		.item.withMore:hover {
+			.caption {
+				opacity: 0;
+			}
+		}
 
-			.buttons { flex-shrink: 0; margin-top: -2px; }
+		.item.isReadonly::before {
+			transition: none;
+		}
+		.item.isReadonly.hover::before,
+		.item.isReadonly:hover::before {
+			opacity: 0;
+			background: none;
+		}
+
+		.item.add {
+			line-height: 20px;
+		}
+
+		.item {
+			.name {
+				display: inline-block;
+				vertical-align: top;
+				position: relative;
+				line-height: 20px;
+			}
+
+			.icon {
+				width: 20px;
+				height: 20px;
+				margin-right: 6px;
+				vertical-align: top;
+				transition: none;
+				flex-shrink: 0;
+			}
+			.icon.dnd {
+				width: 20px;
+				height: 20px;
+				background-image: url('~img/icon/dnd.svg');
+				margin: 0px;
+				vertical-align: top;
+				cursor: grab;
+			}
+			.icon.plus {
+				margin-right: 6px;
+				background-image: url('~img/icon/plus/menu0.svg');
+			}
+			.icon.delete,
+			.icon.more {
+				width: 24px;
+				height: 24px;
+				background-size: 20px;
+				position: absolute;
+				right: 10px;
+				top: 50%;
+				margin: -12px 0px 0px 0px;
+				border-radius: 4px;
+				opacity: 0;
+				z-index: 1;
+			}
+			.icon.delete {
+				background-image: url('~img/icon/menu/delete.svg');
+			}
+			.icon.delete:hover,
+			.icon.more:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
+			.icon.arrow {
+				width: 20px;
+				height: 20px;
+				position: absolute;
+				right: 6px;
+				top: 50%;
+				margin: -10px 0px 0px 0px;
+				background-image: url('~img/arrow/menu.svg');
+			}
+			.icon.chk {
+				width: 20px;
+				height: 20px;
+				position: absolute;
+				right: 6px;
+				top: 50%;
+				margin: -10px 0px 0px 0px;
+				background-image: url('~img/icon/menu/checkbox.svg');
+			}
+
 			.buttons {
-				.icon { position: static; margin: 0px; }
+				flex-shrink: 0;
+				margin-top: -2px;
 			}
-			
-			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
-
-			.clickable { display: flex; flex-grow: 1; width: 100%; }
-
-			.select { height: 20px; padding-top: 0px; padding-bottom: 0px; }
-			.select {
-				.item { @include text-small; }
+			.buttons {
+				.icon {
+					position: static;
+					margin: 0px;
+				}
 			}
 
-			.highlightMark { top: 50%; margin-top: -5px; right: 14px; }
-		}
+			.iconObject {
+				margin-right: 6px;
+				vertical-align: top;
+				flex-shrink: 0;
+			}
 
-		.item.empty { cursor: default; }
-
-		.item.withDescription { padding: 8px 14px; height: 56px; }
-		.item.withDescription {
-			.iconMain, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
-			
-			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorTextSecondary; }
-			.descr:empty { display: none; }
-
-			.info { line-height: 40px; width: calc(100% - 16px); }
-			.txt { width: 100%; }
-		}
-
-		.item.withDescription.withIcon, 
-		.item.withDescription.withIconObject {
-			.info { padding-left: 52px; }
-		}
-
-		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }
-		.item.withCaption {
-			.iconObject { margin: 0px; }
-			.iconObject, .icon.dnd { flex-shrink: 0; }
-			.name { width: 100%; margin-right: 6px; }
-
-			.clickable { flex-grow: 1; gap: 0px 6px; width: calc(100% - 100px); }
 			.clickable {
-				.icon { margin: 0px; }
-				.name { margin: 0px; width: 100%; }
+				display: flex;
+				flex-grow: 1;
+				width: 100%;
 			}
 
-			.caption { 
-				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorTextSecondary; @include text-small; text-align: right;
-				flex-shrink: 0; line-height: 20px;
+			.select {
+				height: 20px;
+				padding-top: 0px;
+				padding-bottom: 0px;
+			}
+			.select {
+				.item {
+					@include text-small;
+				}
 			}
 
-			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }
+			.highlightMark {
+				top: 50%;
+				margin-top: -5px;
+				right: 14px;
+			}
+		}
+
+		.item.empty {
+			cursor: default;
+		}
+
+		.item.withDescription {
+			padding: 8px 14px;
+			height: 56px;
+		}
+		.item.withDescription {
+			.iconMain,
+			.iconObject {
+				width: 40px;
+				height: 40px;
+				border-radius: 6px;
+				position: absolute;
+				left: 14px;
+				top: 8px;
+			}
+
+			.descr {
+				@include text-small;
+				@include text-overflow-nw;
+				line-height: 20px;
+				height: 20px;
+				color: $colorTextSecondary;
+			}
+			.descr:empty {
+				display: none;
+			}
+
+			.info {
+				line-height: 40px;
+				width: calc(100% - 16px);
+			}
+			.txt {
+				width: 100%;
+			}
+		}
+
+		.item.withDescription.withIcon,
+		.item.withDescription.withIconObject {
+			.info {
+				padding-left: 52px;
+			}
+		}
+
+		.item.withCaption {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0px 6px;
+		}
+		.item.withCaption {
+			.iconObject {
+				margin: 0px;
+			}
+			.iconObject,
+			.icon.dnd {
+				flex-shrink: 0;
+			}
+			.name {
+				width: 100%;
+				margin-right: 6px;
+			}
+
+			.clickable {
+				flex-grow: 1;
+				gap: 0px 6px;
+				width: calc(100% - 100px);
+			}
+			.clickable {
+				.icon {
+					margin: 0px;
+				}
+				.name {
+					margin: 0px;
+					width: 100%;
+				}
+			}
+
+			.caption {
+				@include text-overflow-nw;
+				display: inline-block;
+				vertical-align: top;
+				color: $colorTextSecondary;
+				@include text-small;
+				text-align: right;
+				flex-shrink: 0;
+				line-height: 20px;
+			}
+
+			.highlightMark {
+				position: relative;
+				top: auto;
+				right: auto;
+				margin: 0px 0px 0px 10px;
+			}
 		}
 
 		.item.withCaption.withArrow {
-			.caption { padding-right: 12px; }
+			.caption {
+				padding-right: 12px;
+			}
 		}
 
 		.item.withCaption.withCheckbox {
-			.icon.chk { display: none; }
+			.icon.chk {
+				display: none;
+			}
 		}
 
-		.item.withSwitch, .item.withSelect { display: flex; align-items: center; justify-content: space-between; }
-		.item.withSwitch, .item.withSelect {
-			.clickable { display: flex; }
+		.item.withSwitch,
+		.item.withSelect {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.item.withSwitch,
+		.item.withSelect {
+			.clickable {
+				display: flex;
+			}
 		}
 
-		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorShapeSecondary; }
-		.sectionName { padding: 5px 14px; @include text-small; color: $colorTextSecondary; font-weight: 500; }
-		
-		.section { padding: 8px 0px 0px 0px; }
-		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorShapeSecondary; display: block; }
-		.section:first-child { padding: 0px; }
-		.section:last-child { border: 0px; }
-		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorTextSecondary; display: block; font-weight: 500; }
-		.section > .name:empty { display: none; }
-		.section > .inputWrap { padding-bottom: 0px; }
-		.section.noLine::after { display: none; }
+		.line {
+			height: 1px;
+			margin: 8px 14px 7px 14px;
+			background: $colorShapeSecondary;
+		}
+		.sectionName {
+			padding: 5px 14px;
+			@include text-small;
+			color: $colorTextSecondary;
+			font-weight: 500;
+		}
+
+		.section {
+			padding: 8px 0px 0px 0px;
+		}
+		.section::after {
+			content: '';
+			height: 1px;
+			margin: 8px 14px 0px 14px;
+			background: $colorShapeSecondary;
+			display: block;
+		}
+		.section:first-child {
+			padding: 0px;
+		}
+		.section:last-child {
+			border: 0px;
+		}
+		.section:last-child::after {
+			display: none;
+		}
+		.section > .name {
+			padding: 3px 14px;
+			margin-bottom: 2px;
+			@include text-small;
+			color: $colorTextSecondary;
+			display: block;
+			font-weight: 500;
+		}
+		.section > .name:empty {
+			display: none;
+		}
+		.section > .inputWrap {
+			padding-bottom: 0px;
+		}
+		.section.noLine::after {
+			display: none;
+		}
 	}
 
 	.menu.horizontal {
-		.content { display: flex; }
-		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorShapeSecondary; white-space: nowrap; position: relative; }
-		.section:last-child { border: 0px; }
-		
-		.icon { width: 20px; height: 20px; margin-right: 12px; }
-		.icon:last-child { margin: 0px; }
-		
+		.content {
+			display: flex;
+		}
+		.section {
+			flex: auto;
+			padding: 12px 18px;
+			height: 44px;
+			border-right: 1px solid $colorShapeSecondary;
+			white-space: nowrap;
+			position: relative;
+		}
+		.section:last-child {
+			border: 0px;
+		}
+
 		.icon {
-			.icon.arrow { 
-				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 0px; top: 50%; 
-				margin-top: -4px; background-size: contain;
+			width: 20px;
+			height: 20px;
+			margin-right: 12px;
+		}
+		.icon:last-child {
+			margin: 0px;
+		}
+
+		.icon {
+			.icon.arrow {
+				width: 8px;
+				height: 8px;
+				background-image: url('~img/icon/menu/action/arrow0.svg');
+				position: absolute;
+				right: 0px;
+				top: 50%;
+				margin-top: -4px;
+				background-size: contain;
 			}
 		}
 		.icon.active {
-			 .icon.arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
+			.icon.arrow {
+				background-image: url('~img/icon/menu/action/arrow1.svg');
+			}
 		}
 	}
 }
@@ -223,51 +606,53 @@
 html.platformWindows {
 	.menus {
 		.menu.vertical {
-			.content { overflow-y: overlay; }
+			.content {
+				overflow-y: overlay;
+			}
 		}
 	}
 }
 
-@import "./button.scss";
-@import "./help.scss";
-@import "./onboarding.scss";
-@import "./relation.scss";
-@import "./select.scss";
-@import "./smile.scss";
-@import "./thread.scss";
-@import "./type.scss";
-@import "./widget.scss";
-@import "./space.scss";
-@import "./quickCapture.scss";
+@import './button.scss';
+@import './help.scss';
+@import './onboarding.scss';
+@import './relation.scss';
+@import './select.scss';
+@import './smile.scss';
+@import './thread.scss';
+@import './type.scss';
+@import './widget.scss';
+@import './space.scss';
+@import './quickCapture.scss';
 
-@import "./account/path.scss";
+@import './account/path.scss';
 
-@import "./search/object.scss";
-@import "./search/text.scss";
+@import './search/object.scss';
+@import './search/text.scss';
 
-@import "./preview/object.scss";
+@import './preview/object.scss';
 
-@import "./block/common.scss";
-@import "./block/context.scss";
-@import "./block/cover.scss";
-@import "./block/icon.scss";
-@import "./block/latex.scss";
-@import "./block/link.scss";
-@import "./block/linkSettings.scss";
-@import "./block/mention.scss";
-@import "./block/relation.scss";
+@import './block/common.scss';
+@import './block/context.scss';
+@import './block/cover.scss';
+@import './block/icon.scss';
+@import './block/latex.scss';
+@import './block/link.scss';
+@import './block/linkSettings.scss';
+@import './block/mention.scss';
+@import './block/relation.scss';
 
-@import "./dataview/calendar.scss";
-@import "./dataview/common.scss";
-@import "./dataview/create/bookmark.scss";
-@import "./dataview/file.scss";
-@import "./dataview/filter.scss";
-@import "./dataview/group.scss";
-@import "./dataview/object.scss";
-@import "./dataview/option.scss";
-@import "./dataview/relation.scss";
-@import "./dataview/sort.scss";
-@import "./dataview/source.scss";
-@import "./dataview/text.scss";
-@import "./dataview/view.scss";
-@import "./dataview/template.scss";
+@import './dataview/calendar.scss';
+@import './dataview/common.scss';
+@import './dataview/create/bookmark.scss';
+@import './dataview/file.scss';
+@import './dataview/filter.scss';
+@import './dataview/group.scss';
+@import './dataview/object.scss';
+@import './dataview/option.scss';
+@import './dataview/relation.scss';
+@import './dataview/sort.scss';
+@import './dataview/source.scss';
+@import './dataview/text.scss';
+@import './dataview/view.scss';
+@import './dataview/template.scss';

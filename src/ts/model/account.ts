@@ -1,8 +1,9 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
-	
 	homeObjectId = '';
 	profileObjectId = '';
 	gatewayUrl = '';
@@ -14,8 +15,8 @@ class AccountInfo implements I.AccountInfo {
 	widgetsId = '';
 	analyticsId = '';
 	networkId = '';
-	
-	constructor (props: I.AccountInfo) {
+
+	constructor(props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
 		this.profileObjectId = String(props.profileObjectId || '');
 		this.gatewayUrl = String(props.gatewayUrl || '');
@@ -44,24 +45,20 @@ class AccountInfo implements I.AccountInfo {
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
-	};
-
-};
+	}
+}
 
 class AccountConfig implements I.AccountConfig {
-	
-	constructor (props: I.AccountConfig) {
+	constructor(props: I.AccountConfig) {
 		return this;
-	};
-
-};
+	}
+}
 
 class AccountStatus implements I.AccountStatus {
-	
 	type: I.AccountStatusType = I.AccountStatusType.Active;
 	date = 0;
-	
-	constructor (props: I.AccountStatus) {
+
+	constructor(props: I.AccountStatus) {
 		this.type = Number(props.type) || I.AccountStatusType.Active;
 		this.date = Number(props.date) || 0;
 
@@ -72,18 +69,16 @@ class AccountStatus implements I.AccountStatus {
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
-	};
-
-};
+	}
+}
 
 class Account implements I.Account {
-	
 	id = '';
 	info: I.AccountInfo = null;
 	config: I.AccountConfig = null;
 	status: I.AccountStatus = null;
-	
-	constructor (props: I.Account) {
+
+	constructor(props: I.Account) {
 		this.id = String(props.id || '');
 		this.info = new AccountInfo(props.info);
 		this.config = new AccountConfig(props.config);
@@ -96,8 +91,7 @@ class Account implements I.Account {
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
 		return this;
-	};
-
-};
+	}
+}
 
 export default Account;

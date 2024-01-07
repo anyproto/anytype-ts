@@ -1,15 +1,16 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLink implements I.ContentLink {
-	
 	targetBlockId = '';
 	iconSize: I.LinkIconSize = I.LinkIconSize.None;
 	cardStyle: I.LinkCardStyle = I.LinkCardStyle.Text;
 	description: I.LinkDescription = I.LinkDescription.None;
 	relations: string[] = [];
-	
-	constructor (props: I.ContentLink) {
+
+	constructor(props: I.ContentLink) {
 		this.targetBlockId = String(props.targetBlockId || '');
 		this.iconSize = Number(props.iconSize) || I.LinkIconSize.None;
 		this.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
@@ -25,8 +26,7 @@ class BlockContentLink implements I.ContentLink {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentLink;

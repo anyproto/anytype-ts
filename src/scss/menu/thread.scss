@@ -1,40 +1,91 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
 	.menu.menuThreadList,
 	.menu.menuThreadStatus {
-		.description { color: $colorControlActive; display: flex; flex-direction: row; align-items: center; }
-		
-		.item { line-height: 22px; }
-
-		.side { width: 50%; }
-		.side.right { text-align: right; white-space: nowrap; }
-
-		.icon { margin-right: 9px; }
-
-		.red { color: $colorRed; }
-		.orange { color: $colorSystemAccent100; }
-		.green { color: $colorGreen; }
-	}
-
-	.menu.menuThreadStatus { width: 360px; }
-	.menu.menuThreadStatus {
-		.item { padding: 5px 16px; }
-	}
-
-	.menu.menuThreadList { width: 272px; }
-	.menu.menuThreadList {
-		.content { padding: 0px; }
-		.item { padding: 11px 16px; border-bottom: 1px solid $colorShapeSecondary; }
-		.item:hover::before { background: $colorShapeHighlightMedium; }
-		.item:last-child { border: 0px; }
+		.description {
+			color: $colorControlActive;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
 
 		.item {
-			.icon, .iconObject { position: absolute; left: 16px; top: 12px; }
-			.iconObject { top: 13px; }
-			.icon.cafe { left: 15px; width: 20px; height: 20px; background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
-			.info { padding-left: 28px; }
+			line-height: 22px;
+		}
+
+		.side {
+			width: 50%;
+		}
+		.side.right {
+			text-align: right;
+			white-space: nowrap;
+		}
+
+		.icon {
+			margin-right: 9px;
+		}
+
+		.red {
+			color: $colorRed;
+		}
+		.orange {
+			color: $colorSystemAccent100;
+		}
+		.green {
+			color: $colorGreen;
 		}
 	}
 
+	.menu.menuThreadStatus {
+		width: 360px;
+	}
+	.menu.menuThreadStatus {
+		.item {
+			padding: 5px 16px;
+		}
+	}
+
+	.menu.menuThreadList {
+		width: 272px;
+	}
+	.menu.menuThreadList {
+		.content {
+			padding: 0px;
+		}
+		.item {
+			padding: 11px 16px;
+			border-bottom: 1px solid $colorShapeSecondary;
+		}
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
+		.item:last-child {
+			border: 0px;
+		}
+
+		.item {
+			.icon,
+			.iconObject {
+				position: absolute;
+				left: 16px;
+				top: 12px;
+			}
+			.iconObject {
+				top: 13px;
+			}
+			.icon.cafe {
+				left: 15px;
+				width: 20px;
+				height: 20px;
+				background-size: 18px 16px;
+				background-image: url('~img/icon/cafe.svg');
+			}
+			.info {
+				padding-left: 28px;
+			}
+		}
+	}
 }

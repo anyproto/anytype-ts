@@ -1,4 +1,8 @@
-/* Text */
+/**
+ * Text
+ *
+ * @format
+ */
 
 $colorTextPrimary: #252525;
 $colorTextSecondary: #949494;
@@ -24,7 +28,7 @@ $colorControlOnBg: #fff;
 /* Background */
 
 $colorBgPrimary: #fff;
-$colorBgLoader: rgba(255,255,255,0.7);
+$colorBgLoader: rgba(255, 255, 255, 0.7);
 
 /* System */
 
@@ -51,24 +55,96 @@ $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
 $transitionCommon: 0.1s $easeInQuint;
 $transitionAllCommon: all $transitionCommon;
 
-@mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
-@mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@mixin text-overflow {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+@mixin text-overflow-nw {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
-@mixin text-9 { font-size: 9px; line-height: 12px; letter-spacing: 0.14px; }
-@mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: $colorControlActive; }
-@mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0px; }
-@mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; }
-@mixin text-paragraph { font-size: 16px; line-height: 24px; letter-spacing: -0.2px; }
-@mixin text-title { font-size: 36px; line-height: 40px; letter-spacing: -0.64px; font-weight: 700; }
-@mixin text-header1 { font-size: 28px; line-height: 32px; letter-spacing: -0.56px; font-weight: 700; }
-@mixin text-header2 { font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; }
-@mixin text-header3 { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; font-weight: 700; }
-@mixin text-description { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+@mixin text-9 {
+	font-size: 9px;
+	line-height: 12px;
+	letter-spacing: 0.14px;
+}
+@mixin text-very-small {
+	font-size: 11px;
+	line-height: 18px;
+	letter-spacing: 0.2px;
+	color: $colorControlActive;
+}
+@mixin text-small {
+	font-size: 12px;
+	line-height: 18px;
+	letter-spacing: 0px;
+}
+@mixin text-common {
+	font-size: 14px;
+	line-height: 22px;
+	letter-spacing: -0.12px;
+}
+@mixin text-paragraph {
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: -0.2px;
+}
+@mixin text-title {
+	font-size: 36px;
+	line-height: 40px;
+	letter-spacing: -0.64px;
+	font-weight: 700;
+}
+@mixin text-header1 {
+	font-size: 28px;
+	line-height: 32px;
+	letter-spacing: -0.56px;
+	font-weight: 700;
+}
+@mixin text-header2 {
+	font-size: 22px;
+	line-height: 28px;
+	letter-spacing: -0.48px;
+	font-weight: 700;
+}
+@mixin text-header3 {
+	font-size: 18px;
+	line-height: 26px;
+	letter-spacing: -0.28px;
+	font-weight: 700;
+}
+@mixin text-description {
+	font-size: 18px;
+	line-height: 26px;
+	letter-spacing: -0.28px;
+}
 
-@mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
+@mixin pos-abs-mid {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+}
 
-@mixin clamp { -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
-@mixin clamp1 { @include clamp; -webkit-line-clamp: 1;  } 
-@mixin clamp2 { @include clamp; -webkit-line-clamp: 2; } 
-@mixin clamp3 { @include clamp; -webkit-line-clamp: 3; } 
-@mixin clamp4 { @include clamp; -webkit-line-clamp: 4; } 
+@mixin clamp {
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	overflow: hidden;
+}
+@mixin clamp1 {
+	@include clamp;
+	-webkit-line-clamp: 1;
+}
+@mixin clamp2 {
+	@include clamp;
+	-webkit-line-clamp: 2;
+}
+@mixin clamp3 {
+	@include clamp;
+	-webkit-line-clamp: 3;
+}
+@mixin clamp4 {
+	@include clamp;
+	-webkit-line-clamp: 4;
+}

@@ -1,16 +1,32 @@
-@import "~scss/_vars";
+/** @format */
 
-.mediaVideo { width: 100%; }
+@import '~scss/_vars';
+
 .mediaVideo {
-    .controls {
-        .icon.play {
-            width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
-            background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7);
-            background-size: 24px 28px; background-position: 24px center;
-        }
-        .icon.play:hover { background-color: rgba(255,255,255,0.9); }
-    }
+	width: 100%;
+}
+.mediaVideo {
+	.controls {
+		.icon.play {
+			width: 64px;
+			height: 64px;
+			border-radius: 100%;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin: -32px 0px 0px -32px;
+			background-image: url('~img/icon/play.svg');
+			background-color: rgba(255, 255, 255, 0.7);
+			background-size: 24px 28px;
+			background-position: 24px center;
+		}
+		.icon.play:hover {
+			background-color: rgba(255, 255, 255, 0.9);
+		}
+	}
 }
 .mediaVideo.isPlaying {
-    .icon.play { display: none; }
+	.icon.play {
+		display: none;
+	}
 }

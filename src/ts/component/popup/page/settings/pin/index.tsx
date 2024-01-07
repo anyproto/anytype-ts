@@ -1,83 +1,108 @@
+/** @format */
+
 import * as React from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
 import { I, UtilDate, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
+const PopupSettingsPagePinIndex = observer(
+	class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
+		render() {
+			const pin = Storage.get('pin');
+			const pinTime = commonStore.pinTime / 1000;
+			const times = [60, 300, 600, 3600].map(time => ({
+				id: time,
+				name: UtilDate.duration(time),
+			}));
 
-	render () {
-		const pin = Storage.get('pin');
-		const pinTime = commonStore.pinTime / 1000;
-		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilDate.duration(time) }));
+			return (
+				<React.Fragment>
+					<Title text={translate('popupSettingsPinTitle')} />
+					<Label
+						className="description"
+						text={translate('popupSettingsPinText')}
+					/>
 
-		return (
-			<React.Fragment>
-				<Title text={translate('popupSettingsPinTitle')} />
-				<Label className="description" text={translate('popupSettingsPinText')} />
-				
-				{pin ? (
-					<div className="actionItems">
-						<div className="item">
-							<Label text={translate('popupSettingsPinCheckTimeOut')} />
+					{pin ? (
+						<div className="actionItems">
+							<div className="item">
+								<Label
+									text={translate(
+										'popupSettingsPinCheckTimeOut'
+									)}
+								/>
 
-							<Select
-								id="pinTime"
-								arrowClassName="light"
-								options={times}
-								value={String(pinTime || '')}
-								onChange={v => commonStore.pinTimeSet(v)}
-								menuParam={{ horizontal: I.MenuDirection.Right }}
+								<Select
+									id="pinTime"
+									arrowClassName="light"
+									options={times}
+									value={String(pinTime || '')}
+									onChange={v => commonStore.pinTimeSet(v)}
+									menuParam={{
+										horizontal: I.MenuDirection.Right,
+									}}
+								/>
+							</div>
+
+							<div className="item" onClick={this.onChangePin}>
+								<Label
+									text={translate('popupSettingsPinChange')}
+								/>
+								<Icon className="arrow" />
+							</div>
+
+							<div
+								className="item red"
+								onClick={this.onTurnOffPin}
+							>
+								<Label
+									text={translate('popupSettingsPinOff')}
+								/>
+								<Icon className="arrow" />
+							</div>
+						</div>
+					) : (
+						<div className="buttons">
+							<Button
+								className="c36"
+								text={translate('popupSettingsPinOn')}
+								onClick={this.onTurnOnPin}
 							/>
 						</div>
+					)}
+				</React.Fragment>
+			);
+		}
 
-						<div className="item" onClick={this.onChangePin}>
-							<Label text={translate('popupSettingsPinChange')} />
-							<Icon className="arrow" />
-						</div>
+		onTurnOnPin = () => {
+			const { onPage } = this.props;
 
-						<div className="item red" onClick={this.onTurnOffPin}>
-							<Label text={translate('popupSettingsPinOff')} />
-							<Icon className="arrow" />
-						</div>
-					</div>
-				) : (
-					<div className="buttons">
-						<Button className="c36" text={translate('popupSettingsPinOn')} onClick={this.onTurnOnPin} />
-					</div>
-				)}
-			</React.Fragment>
-		);
-	};
+			onPage('pinSelect');
+			analytics.event('PinCodeOn');
+		};
 
-	onTurnOnPin = () => {
-		const { onPage } = this.props;
+		onTurnOffPin = () => {
+			const { onPage, setConfirmPin } = this.props;
 
-		onPage('pinSelect');
-		analytics.event('PinCodeOn');
-	};
+			setConfirmPin(() => {
+				Storage.delete('pin');
+				onPage('pinIndex');
+			});
 
-	onTurnOffPin = () => {
-		const { onPage, setConfirmPin } = this.props;
+			onPage('pinConfirm');
+			analytics.event('PinCodeOff');
+		};
 
-		setConfirmPin(() => { 
-			Storage.delete('pin');
-			onPage('pinIndex');
-		});
+		onChangePin = () => {
+			const { onPage, setConfirmPin } = this.props;
 
-		onPage('pinConfirm');
-		analytics.event('PinCodeOff');
-	};
+			setConfirmPin(() => onPage('pinSelect'));
 
-	onChangePin = () => {
-		const { onPage, setConfirmPin } = this.props;
-
-		setConfirmPin(() => onPage('pinSelect'));
-
-		onPage('pinConfirm');
-		analytics.event('PinCodeChange');
-	};
-
-});
+			onPage('pinConfirm');
+			analytics.event('PinCodeChange');
+		};
+	}
+);
 
 export default PopupSettingsPagePinIndex;

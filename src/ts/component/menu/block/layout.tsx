@@ -1,24 +1,34 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
+import {
+	I,
+	keyboard,
+	analytics,
+	UtilData,
+	UtilObject,
+	UtilMenu,
+	UtilCommon,
+	translate,
+} from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuBlockLayout extends React.Component<I.Menu> {
-	
 	n = -1;
-	
-	constructor (props: I.Menu) {
+
+	constructor(props: I.Menu) {
 		super(props);
-		
+
 		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onResize = this.onResize.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
@@ -29,19 +39,23 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
+						<MenuItemVertical
+							key={i}
+							{...action}
 							icon={action.icon || action.id}
 							checkbox={action.id == value}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={(e: any) => {
+								this.onMouseEnter(e, action);
+							}}
+							onClick={(e: any) => {
+								this.onClick(e, action);
+							}}
 						/>
 					))}
 				</div>
 			</div>
 		);
-		
+
 		return (
 			<div>
 				{sections.map((item: any, i: number) => (
@@ -49,54 +63,69 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				))}
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this.rebind();
-	};
+	}
 
-	componentWillUnmount (): void {
+	componentWillUnmount(): void {
 		menuStore.closeAll(Constant.menuIds.layout);
-	};
-	
-	rebind () {
-		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => this.props.setActive(), 15);
-	};
-	
-	unbind () {
-		$(window).off('keydown.menu');
-	};
+	}
 
-	getSections () {
+	rebind() {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => {
+			this.props.onKeyDown(e);
+		});
+		window.setTimeout(() => this.props.setActive(), 15);
+	}
+
+	unbind() {
+		$(window).off('keydown.menu');
+	}
+
+	getSections() {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const allowedLayout = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
-		
-		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
+		const allowedLayout = blockStore.checkFlags(rootId, rootId, [
+			I.RestrictionObject.Layout,
+		]);
+		const allowedDetails = blockStore.checkFlags(rootId, rootId, [
+			I.RestrictionObject.Details,
+		]);
+		const object = detailStore.get(rootId, rootId, ['layoutAlign']);
 
-		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
-			align = null;
+		let align = {
+			id: 'align',
+			name: translate('commonAlign'),
+			icon: ['align', UtilData.alignIcon(object.layoutAlign)].join(' '),
+			arrow: true,
 		};
+		let resize = {
+			id: 'resize',
+			icon: 'resize',
+			name: translate('menuBlockLayoutSetLayoutWidth'),
+		};
+
+		if (!allowedDetails || object.layout == I.ObjectLayout.Task) {
+			align = null;
+		}
 		if (!allowedDetails) {
 			resize = null;
-		};
+		}
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: UtilMenu.turnLayouts() });
-		};
+			sections.push({
+				name: translate('menuBlockLayoutChooseLayoutType'),
+				children: UtilMenu.turnLayouts(),
+			});
+		}
 
-		sections.push({ 
-			children: [ 
-				resize,
-				align,
-			]
+		sections.push({
+			children: [resize, align],
 		});
 
 		sections = sections.filter((section: any) => {
@@ -105,31 +134,31 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		});
 
 		return sections;
-	};
-	
-	getItems () {
+	}
+
+	getItems() {
 		const sections = this.getSections();
-		
+
 		let items: any[] = [];
 		for (const section of sections) {
 			items = items.concat(section.children);
-		};
-		
-		return items;
-	};
+		}
 
-	onMouseEnter (e: any, item: any) {
+		return items;
+	}
+
+	onMouseEnter(e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
-		};
-	};
-	
-	onOver (e: any, item: any) {
+		}
+	}
+
+	onOver(e: any, item: any) {
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.layout);
 			return;
-		};
+		}
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
@@ -162,19 +191,19 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 						analytics.event('SetLayoutAlign', { align });
 						close();
-					}
+					},
 				});
 				break;
-		};
+		}
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
 			menuStore.closeAll(Constant.menuIds.layout, () => {
 				menuStore.open(menuId, menuParam);
 			});
-		};
-	};
-	
-	onClick (e: any, item: any) {
+		}
+	}
+
+	onClick(e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onLayoutSelect } = data;
@@ -182,7 +211,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		if (item.arrow) {
 			return;
-		};
+		}
 
 		close();
 
@@ -194,27 +223,31 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			UtilObject.setLayout(rootId, item.id, (message: any) => {
 				if (onLayoutSelect) {
 					onLayoutSelect(item.id);
-				};
+				}
 			});
 
-			analytics.event('ChangeLayout', { objectType: object.type, layout: item.id });
-		};
-	};
+			analytics.event('ChangeLayout', {
+				objectType: object.type,
+				layout: item.id,
+			});
+		}
+	}
 
-	onResize (e: any) {
+	onResize(e: any) {
 		const container = UtilCommon.getPageContainer(keyboard.isPopup());
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');
 
-		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => { 
-			if (!$(e.target).parents(`#editorSize`).length) {
-				wrapper.removeClass('isResizing');
-				container.off('mousedown.editorSize');
-			};
-		});
-	};
-	
-};
+		container
+			.off('mousedown.editorSize')
+			.on('mousedown.editorSize', (e: any) => {
+				if (!$(e.target).parents(`#editorSize`).length) {
+					wrapper.removeClass('isResizing');
+					container.off('mousedown.editorSize');
+				}
+			});
+	}
+}
 
 export default MenuBlockLayout;

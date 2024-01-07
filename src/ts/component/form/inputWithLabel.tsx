@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { Input, Icon, Label } from 'Component';
@@ -14,28 +16,27 @@ interface Props {
 	onBlur?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-};
+}
 
 class InputWithLabel extends React.Component<Props> {
-	
 	node: any = null;
 	isFocused = false;
 	placeholder: any = null;
 	ref = null;
 
-	constructor (props: Props) {
+	constructor(props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-	};
-	
-	render () {
+	}
+
+	render() {
 		const { label } = this.props;
 
 		return (
 			<div
-				ref={node => this.node = node}
+				ref={node => (this.node = node)}
 				onClick={() => this.ref.focus()}
 				className="inputWithLabel"
 			>
@@ -43,55 +44,54 @@ class InputWithLabel extends React.Component<Props> {
 					<Label text={label} />
 
 					<Input
-						ref={ref => this.ref = ref}
+						ref={ref => (this.ref = ref)}
 						{...this.props}
 						onFocus={this.onFocus}
 						onBlur={this.onBlur}
 					/>
-
 				</div>
 			</div>
 		);
-	};
+	}
 
 	componentDidMount() {
 		const node = $(this.node);
 
 		this.ref.setValue(this.props.value);
-	};
+	}
 
-	focus () {
+	focus() {
 		this.ref.focus();
-	};
+	}
 
-	blur () {
+	blur() {
 		this.ref.blur();
-	};
+	}
 
-	setValue (v: string) {
+	setValue(v: string) {
 		this.ref.setValue(v);
-	};
+	}
 
-	getValue () {
+	getValue() {
 		return this.ref.getValue();
-	};
+	}
 
-	setRange (range: I.TextRange) {
+	setRange(range: I.TextRange) {
 		this.ref.setRange(range);
-	};
+	}
 
-	onFocus (e: any) {
+	onFocus(e: any) {
 		const { onFocus } = this.props;
 
 		this.isFocused = true;
 		this.addFocusedClass();
 
-		if (onFocus) { 
+		if (onFocus) {
 			onFocus(e);
-		};
-	};
-	
-	onBlur (e: any) {
+		}
+	}
+
+	onBlur(e: any) {
 		const { onBlur } = this.props;
 
 		this.isFocused = false;
@@ -99,19 +99,18 @@ class InputWithLabel extends React.Component<Props> {
 
 		if (onBlur) {
 			onBlur(e);
-		};
-	};
+		}
+	}
 
-	addFocusedClass () {
+	addFocusedClass() {
 		const node = $(this.node);
 		node.addClass('isFocused');
-	};
+	}
 
-	removeFocusedClass () {
+	removeFocusedClass() {
 		const node = $(this.node);
 		node.removeClass('isFocused');
-	};
-
-};
+	}
+}
 
 export default InputWithLabel;

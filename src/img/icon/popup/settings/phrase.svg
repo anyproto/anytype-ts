@@ -1,6 +1,17 @@
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="22" height="22" rx="4" fill="#2AA7EE"/>
-<path d="M9.43011 10.2142H12.573V12.5714L11.3944 13.7499L12.573 14.9285L11.3944 16.1071L12.573 17.2857V18.0714L11.0015 19.6674L9.43011 18.0714V10.2142Z" fill="white"/>
-<circle cx="11" cy="7.07139" r="3.92857" fill="white"/>
-<circle cx="11" cy="5.89281" r="1.17857" fill="#2AA7EE"/>
-</svg>
+/** @format */
+
+<svg
+	width="22"
+	height="22"
+	viewBox="0 0 22 22"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<rect width="22" height="22" rx="4" fill="#2AA7EE" />
+	<path
+		d="M9.43011 10.2142H12.573V12.5714L11.3944 13.7499L12.573 14.9285L11.3944 16.1071L12.573 17.2857V18.0714L11.0015 19.6674L9.43011 18.0714V10.2142Z"
+		fill="white"
+	/>
+	<circle cx="11" cy="7.07139" r="3.92857" fill="white" />
+	<circle cx="11" cy="5.89281" r="1.17857" fill="#2AA7EE" />
+</svg>;

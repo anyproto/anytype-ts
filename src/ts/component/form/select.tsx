@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { I, Relation } from 'Lib';
@@ -17,134 +19,140 @@ interface Props {
 	showOnHover?: boolean;
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
-	onChange? (id: any): void;
-};
+	onChange?(id: any): void;
+}
 
 interface State {
 	value: string[];
 	options: I.Option[];
-};
+}
 
 class Select extends React.Component<Props, State> {
-	
 	public static defaultProps = {
 		initial: '',
 		noFilter: true,
 	};
-	
+
 	_isMounted = false;
 	state = {
 		value: [],
-		options: [] as I.Option[]
+		options: [] as I.Option[],
 	};
-	
-	constructor (props: Props) {
+
+	constructor(props: Props) {
 		super(props);
-		
+
 		this.show = this.show.bind(this);
 		this.hide = this.hide.bind(this);
-	};
-	
-	render () {
-		const { id, className, arrowClassName, readonly, showOnHover } = this.props;
+	}
+
+	render() {
+		const { id, className, arrowClassName, readonly, showOnHover } =
+			this.props;
 		const { options } = this.state;
-		const cn = [ 'select' ];
-		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
+		const cn = ['select'];
+		const acn = ['arrow', arrowClassName ? arrowClassName : ''];
 		const value = Relation.getArrayValue(this.state.value);
 		const current: any[] = [];
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 
 		if (readonly) {
 			cn.push('isReadonly');
-		};
-		
+		}
+
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
 			if (option) {
 				current.push(option);
-			};
+			}
 		});
 
 		if (!current.length && options.length) {
 			current.push(options[0]);
-		};
+		}
 
 		const onClick = showOnHover ? null : this.show;
 		const onMouseEnter = showOnHover ? this.show : null;
 
 		return (
-			<div 
-				id={`select-${id}`} 
-				className={cn.join(' ')} 
-				onClick={onClick} 
+			<div
+				id={`select-${id}`}
+				className={cn.join(' ')}
+				onClick={onClick}
 				onMouseEnter={onMouseEnter}
 			>
 				{current ? (
 					<React.Fragment>
 						{current.map((item: any, i: number) => (
-							<MenuItemVertical key={i} {...item} iconSize={item.iconSize ? 20 : undefined} />
+							<MenuItemVertical
+								key={i}
+								{...item}
+								iconSize={item.iconSize ? 20 : undefined}
+							/>
 						))}
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>
-				) : ''}
+				) : (
+					''
+				)}
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this._isMounted = true;
 
 		const options = this.getOptions();
-		
+
 		let value = Relation.getArrayValue(this.props.value);
 		if (!value.length && options.length) {
-			value = [ options[0].id ];
-		};
+			value = [options[0].id];
+		}
 
 		this.setState({ value, options });
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this._isMounted = false;
-	};
+	}
 
-	getOptions () {
+	getOptions() {
 		const { initial } = this.props;
 		const options = [];
-		
+
 		if (initial) {
-			options.push({ id: '', name: initial, isInitial: true });			
-		};
+			options.push({ id: '', name: initial, isInitial: true });
+		}
 		for (const option of this.props.options) {
 			options.push(option);
-		};
+		}
 		return options;
-	};
+	}
 
-	setOptions (options: any[]) {
+	setOptions(options: any[]) {
 		this.setState({ options });
-	};
+	}
 
-	getValue (): any {
+	getValue(): any {
 		const { isMultiple } = this.props;
 		const value = Relation.getArrayValue(this.state.value);
 
 		return isMultiple ? value : value[0];
-	};
-	
-	setValue (v: any) {
+	}
+
+	setValue(v: any) {
 		const value = Relation.getArrayValue(v);
 
 		if (this._isMounted) {
 			this.state.value = value;
 			this.setState({ value });
-		};
-	};
-	
-	show (e: React.MouseEvent) {
+		}
+	}
+
+	show(e: React.MouseEvent) {
 		e.stopPropagation();
 
 		const { id, onChange, noFilter, isMultiple, readonly } = this.props;
@@ -154,7 +162,7 @@ class Select extends React.Component<Props, State> {
 
 		if (readonly) {
 			return;
-		};
+		}
 
 		const mp = this.props.menuParam || {};
 
@@ -163,73 +171,80 @@ class Select extends React.Component<Props, State> {
 
 		if (mp.onOpen) {
 			onOpen = mp.onOpen;
-			delete(mp.onOpen);
-		};
+			delete mp.onOpen;
+		}
 		if (mp.onClose) {
 			onClose = mp.onClose;
-			delete(mp.onClose);
-		};
+			delete mp.onClose;
+		}
 
-		const menuParam = Object.assign({ 
-			element,
-			noFlipX: true,
-			onOpen: () => {
-				window.setTimeout(() => $(element).addClass('active'));
+		const menuParam = Object.assign(
+			{
+				element,
+				noFlipX: true,
+				onOpen: () => {
+					window.setTimeout(() => $(element).addClass('active'));
 
-				if (onOpen) {
-					onOpen();
-				};
+					if (onOpen) {
+						onOpen();
+					}
+				},
+				onClose: () => {
+					window.setTimeout(() => $(element).removeClass('active'));
+
+					if (onClose) {
+						onClose();
+					}
+				},
 			},
-			onClose: () => { 
-				window.setTimeout(() => $(element).removeClass('active'));
+			mp
+		);
 
-				if (onClose) {
-					onClose();
-				};
-			},
-		}, mp);
+		menuParam.data = Object.assign(
+			{
+				noFilter,
+				noClose: true,
+				value,
+				options,
+				onSelect: (e: any, item: any) => {
+					let { value } = this.state;
 
-		menuParam.data = Object.assign({
-			noFilter,
-			noClose: true,
-			value,
-			options,
-			onSelect: (e: any, item: any) => {
-				let { value } = this.state;
-				
-				if (item.id !== '') {
-					if (isMultiple) {
-						value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
+					if (item.id !== '') {
+						if (isMultiple) {
+							value = value.includes(item.id)
+								? value.filter(it => it != item.id)
+								: [...value, item.id];
+						} else {
+							value = [item.id];
+						}
 					} else {
-						value = [ item.id ];
-					};
-				} else {
-					value = [];
-				};
+						value = [];
+					}
 
-				this.setValue(value);
+					this.setValue(value);
 
-				if (onChange) {
-					onChange(this.getValue());
-				};
+					if (onChange) {
+						onChange(this.getValue());
+					}
 
-				if (!isMultiple) {
-					this.hide();
-				} else {
-					menuStore.updateData('select', { value });
-				};
+					if (!isMultiple) {
+						this.hide();
+					} else {
+						menuStore.updateData('select', { value });
+					}
+				},
 			},
-		}, mp.data || {});
+			mp.data || {}
+		);
 
-		menuStore.closeAll([ 'select' ], () => {
+		menuStore.closeAll(['select'], () => {
 			menuStore.open('select', menuParam);
 		});
-	};
-	
-	hide () {
+	}
+
+	hide() {
 		menuStore.close('select');
-	};
-	
-};
+	}
+}
 
 export default Select;

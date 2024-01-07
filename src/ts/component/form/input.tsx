@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
@@ -27,32 +29,31 @@ interface Props {
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
 	onClick?(e: any): void;
-};
+}
 
 interface State {
 	value: string;
 	type: string;
-};
+}
 
 class Input extends React.Component<Props, State> {
-	
 	_isMounted = false;
 	node: any = null;
 	mask: any = null;
 	isFocused: boolean = false;
 
 	public static defaultProps = {
-        type: 'text',
-		value: ''
-    };
+		type: 'text',
+		value: '',
+	};
 
 	state = {
 		value: '',
-		type: ''
+		type: '',
 	};
-	
-	constructor (props: Props) {
-        super(props);
+
+	constructor(props: Props) {
+		super(props);
 
 		this.onChange = this.onChange.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
@@ -61,23 +62,36 @@ class Input extends React.Component<Props, State> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onSelect = this.onSelect.bind(this);
-	};
+	}
 
-	render () {
-		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick, onMouseEnter, onMouseLeave } = this.props;
+	render() {
+		const {
+			id,
+			name,
+			placeholder,
+			className,
+			autoComplete,
+			readonly,
+			maxLength,
+			multiple,
+			accept,
+			onClick,
+			onMouseEnter,
+			onMouseLeave,
+		} = this.props;
 		const type: string = this.state.type || this.props.type;
-		const cn = [ 'input', 'input-' + type ];
+		const cn = ['input', 'input-' + type];
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 		if (readonly) {
 			cn.push('isReadonly');
-		};
-		
+		}
+
 		return (
 			<input
-				ref={node => this.node = node}
+				ref={node => (this.node = node)}
 				type={type}
 				name={name}
 				id={id}
@@ -102,186 +116,187 @@ class Input extends React.Component<Props, State> {
 				spellCheck={false}
 			/>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this._isMounted = true;
 
 		const { value, type, focusOnMount } = this.props;
-		
+
 		this.setValue(value);
 		this.setState({ type });
 		this.initMask();
 
 		if (focusOnMount) {
 			this.focus();
-		};
-	};
-	
-	componentWillUnmount () {
+		}
+	}
+
+	componentWillUnmount() {
 		this._isMounted = false;
 
 		if (this.isFocused) {
 			this.isFocused = false;
 			keyboard.setFocus(false);
-		};
-	};
+		}
+	}
 
-	initMask () {
+	initMask() {
 		let { maskOptions } = this.props;
 		if (!maskOptions || !this._isMounted) {
 			return;
-		};
+		}
 
 		maskOptions = maskOptions || {};
 		new Inputmask(maskOptions.mask, maskOptions).mask($(this.node).get(0));
-	};
+	}
 
-	onChange (e: any) {
+	onChange(e: any) {
 		this.setValue(e.target.value);
-		
+
 		if (this.props.onChange) {
 			this.props.onChange(e, e.target.value);
-		};
-	};
-	
-	onKeyUp (e: any) {
+		}
+	}
+
+	onKeyUp(e: any) {
 		this.setValue(e.target.value);
-		
+
 		if (this.props.onKeyUp) {
 			this.props.onKeyUp(e, this.state.value);
-		};
-	};
-	
-	onKeyDown (e: any) {
+		}
+	}
+
+	onKeyDown(e: any) {
 		if (this.props.onKeyDown) {
 			this.props.onKeyDown(e, this.state.value);
-		};
-	};
-	
-	onFocus (e: any) {
+		}
+	}
+
+	onFocus(e: any) {
 		if (this.props.onFocus) {
 			this.props.onFocus(e, this.state.value);
-		};
-		
+		}
+
 		this.isFocused = true;
 		keyboard.setFocus(true);
-	};
-	
-	onBlur (e: any) {
+	}
+
+	onBlur(e: any) {
 		if (this.props.onBlur) {
 			this.props.onBlur(e, this.state.value);
-		};
-		
+		}
+
 		this.isFocused = false;
 		keyboard.setFocus(false);
-	};
-	
-	onPaste (e: any) {
+	}
+
+	onPaste(e: any) {
 		e.stopPropagation();
 
 		if (this.props.onPaste) {
 			e.preventDefault();
 			this.setValue(e.clipboardData.getData('text/plain'));
 			this.props.onPaste(e, this.state.value);
-		};
-	};
-	
-	onSelect (e: any) {
+		}
+	}
+
+	onSelect(e: any) {
 		if (this.props.onSelect) {
 			this.props.onSelect(e, this.state.value);
-		};
-	};
+		}
+	}
 
 	getInputElement() {
 		return $(this.node).get(0) as HTMLInputElement;
 	}
-	
-	focus () {
+
+	focus() {
 		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
-			};
+			}
 
-			this.getInputElement().focus({ preventScroll: true }); 
+			this.getInputElement().focus({ preventScroll: true });
 		});
-	};
-	
-	blur () {
+	}
+
+	blur() {
 		window.setTimeout(() => {
 			if (this._isMounted) {
 				$(this.node).trigger('blur');
-			};
+			}
 		});
-	};
-	
-	select () {
+	}
+
+	select() {
 		if (this._isMounted) {
-			window.setTimeout(() => { this.getInputElement().select();	});
-		};
-	};
-	
-	setValue (v: string) {
+			window.setTimeout(() => {
+				this.getInputElement().select();
+			});
+		}
+	}
+
+	setValue(v: string) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		this.state.value = String(v || '');
 		this.setState({ value: this.state.value });
-	};
-	
-	getValue () {
+	}
+
+	getValue() {
 		return this.state.value;
-	};
-	
-	setType (v: string) {
+	}
+
+	setType(v: string) {
 		if (this._isMounted) {
 			this.setState({ type: v });
-		};
-	};
-	
-	setError (v: boolean) {
+		}
+	}
+
+	setError(v: boolean) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		const node = $(this.node);
 		v ? node.addClass('withError') : node.removeClass('withError');
-	};
+	}
 
-	setRange (range: I.TextRange) {
-		window.setTimeout(() => { 
+	setRange(range: I.TextRange) {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
-			};
+			}
 
 			const el = this.getInputElement();
 
-			el.focus({ preventScroll: true }); 
-			el.setSelectionRange(range.from, range.to); 
+			el.focus({ preventScroll: true });
+			el.setSelectionRange(range.from, range.to);
 		});
-	};
-	
-	addClass (v: string) {
+	}
+
+	addClass(v: string) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		$(this.node).addClass(v);
-	};
-	
-	removeClass (v: string) {
+	}
+
+	removeClass(v: string) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		$(this.node).removeClass(v);
-	};
+	}
 
-	setPlaceholder (v: string) {
+	setPlaceholder(v: string) {
 		$(this.node).attr({ placeholder: v });
-	};
-	
-};
+	}
+}
 
 export default Input;

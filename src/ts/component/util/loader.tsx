@@ -1,19 +1,20 @@
+/** @format */
+
 import * as React from 'react';
 
 interface Props {
 	id?: string;
 	type?: string;
 	className?: string;
-};
+}
 
 class Loader extends React.Component<Props> {
-
 	public static defaultProps = {
 		className: '',
 		type: 'dots',
 	};
 
-	render () {
+	render() {
 		const { id, type, className } = this.props;
 
 		let content = null;
@@ -21,7 +22,7 @@ class Loader extends React.Component<Props> {
 			case 'loader': {
 				content = <div className="loader" />;
 				break;
-			};
+			}
 
 			case 'dots': {
 				content = (
@@ -32,16 +33,15 @@ class Loader extends React.Component<Props> {
 					</div>
 				);
 				break;
-			};
-		};
+			}
+		}
 
 		return (
-			<div id={id} className={[ 'loaderWrapper', className ].join(' ')}>
+			<div id={id} className={['loaderWrapper', className].join(' ')}>
 				{content}
 			</div>
 		);
-	};
-	
-};
+	}
+}
 
 export default Loader;

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
@@ -6,180 +8,183 @@ import { I, translate, focus, keyboard, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
+const BlockAudio = observer(
+	class BlockAudio extends React.Component<I.BlockComponent> {
+		_isMounted = false;
+		node: any = null;
+		refPlayer: any = null;
 
-	_isMounted = false;
-	node: any = null;
-	refPlayer: any = null;
+		constructor(props: I.BlockComponent) {
+			super(props);
 
-	constructor (props: I.BlockComponent) {
-		super(props);
+			this.onPlay = this.onPlay.bind(this);
+			this.onPause = this.onPause.bind(this);
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.onKeyUp = this.onKeyUp.bind(this);
+			this.onFocus = this.onFocus.bind(this);
+			this.onChangeUrl = this.onChangeUrl.bind(this);
+			this.onChangeFile = this.onChangeFile.bind(this);
+		}
 
-		this.onPlay = this.onPlay.bind(this);
-		this.onPause = this.onPause.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
-	};
+		render() {
+			const { block, readonly } = this.props;
+			const { id, content } = block;
+			const { state, hash, name } = content;
 
-	render () {
-		const { block, readonly } = this.props;
-		const { id, content } = block;
-		const { state, hash, name } = content;
-		
-		let element = null;
-		
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="audio" 
-							textFile={translate('blockAudioUpload')} 
-							accept={Constant.extension.audio} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
+			let element = null;
+
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty:
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? (
+								<Error text={translate('blockFileError')} />
+							) : (
+								''
+							)}
+							<InputWithFile
+								block={block}
+								icon="audio"
+								textFile={translate('blockAudioUpload')}
+								accept={Constant.extension.audio}
+								onChangeUrl={this.onChangeUrl}
+								onChangeFile={this.onChangeFile}
+								readonly={readonly}
+							/>
+						</React.Fragment>
+					);
+					break;
+
+				case I.FileState.Uploading:
+					element = <Loader />;
+					break;
+
+				case I.FileState.Done:
+					const playlist = [{ name, src: commonStore.fileUrl(hash) }];
+
+					element = (
+						<MediaAudio
+							ref={node => (this.refPlayer = node)}
+							playlist={playlist}
+							onPlay={this.onPlay}
+							onPause={this.onPause}
 						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				const playlist = [ 
-					{ name, src: commonStore.fileUrl(hash) },
-				];
+					);
+					break;
+			}
 
-				element = (
-					<MediaAudio
-						ref={node => this.refPlayer = node}
-						playlist={playlist}
-						onPlay={this.onPlay}
-						onPause={this.onPause}
-					/>
-				);
-				break;
-		};
-		
-		return (
-			<div
-				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + id ].join(' ')}
-				tabIndex={0}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-			>
-				{element}
-			</div>
-		);
-	};
+			return (
+				<div
+					ref={node => (this.node = node)}
+					className={['focusable', 'c' + id].join(' ')}
+					tabIndex={0}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+				>
+					{element}
+				</div>
+			);
+		}
 
-	componentDidMount () {
-		this._isMounted = true;
-		this.rebind();
-	};
+		componentDidMount() {
+			this._isMounted = true;
+			this.rebind();
+		}
 
-	componentDidUpdate () {
-		this.rebind();
-	};
+		componentDidUpdate() {
+			this.rebind();
+		}
 
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.unbind();
-	};
+		componentWillUnmount() {
+			this._isMounted = false;
+			this.unbind();
+		}
 
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
+		rebind() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		$(this.node).on('resize', () => {
-			if (this.refPlayer) {
-				this.refPlayer.resize();
-			};
-		});
-	};
+			$(this.node).on('resize', () => {
+				if (this.refPlayer) {
+					this.refPlayer.resize();
+				}
+			});
+		}
 
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
+		unbind() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		$(this.node).off('resize');
-	};
+			$(this.node).off('resize');
+		}
 
-	onPlay () {
-		if (!this._isMounted) {
-			return;
-		};
+		onPlay() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		$(this.node).addClass('isPlaying');
-	};
+			$(this.node).addClass('isPlaying');
+		}
 
-	onPause () {
-		if (!this._isMounted) {
-			return;
-		};
+		onPause() {
+			if (!this._isMounted) {
+				return;
+			}
 
-		$(this.node).removeClass('isPlaying');
-	};
+			$(this.node).removeClass('isPlaying');
+		}
 
-	onKeyDown (e: any) {
-		const { onKeyDown } = this.props;
+		onKeyDown(e: any) {
+			const { onKeyDown } = this.props;
 
-		let ret = false;
+			let ret = false;
 
-		keyboard.shortcut('space', e, (pressed: string) => {
-			e.preventDefault();
-			e.stopPropagation();
+			keyboard.shortcut('space', e, (pressed: string) => {
+				e.preventDefault();
+				e.stopPropagation();
 
-			if (this.refPlayer) {
-				this.refPlayer.onPlay();
-			};
-			ret = true;
-		});
+				if (this.refPlayer) {
+					this.refPlayer.onPlay();
+				}
+				ret = true;
+			});
 
-		if (ret) {
-			return;
-		};
-		
-		if (onKeyDown) {
-			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
-	
-	onKeyUp (e: any) {
-		const { onKeyUp } = this.props;
+			if (ret) {
+				return;
+			}
 
-		if (onKeyUp) {
-			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
+			if (onKeyDown) {
+				onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
 
-	onFocus () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-	};
+		onKeyUp(e: any) {
+			const { onKeyUp } = this.props;
 
-	onChangeUrl (e: any, url: string) {
-		const { rootId, block } = this.props;
-		Action.upload(I.FileType.Audio, rootId, block.id, url, '');
-	};
-	
-	onChangeFile (e: any, path: string) {
-		const { rootId, block } = this.props;
-		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
-	};
-});
+			if (onKeyUp) {
+				onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+			}
+		}
+
+		onFocus() {
+			focus.set(this.props.block.id, { from: 0, to: 0 });
+		}
+
+		onChangeUrl(e: any, url: string) {
+			const { rootId, block } = this.props;
+			Action.upload(I.FileType.Audio, rootId, block.id, url, '');
+		}
+
+		onChangeFile(e: any, path: string) {
+			const { rootId, block } = this.props;
+			Action.upload(I.FileType.Audio, rootId, block.id, '', path);
+		}
+	}
+);
 
 export default BlockAudio;

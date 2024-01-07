@@ -1,5 +1,13 @@
+/** @format */
+
 const { ipcRenderer, contextBridge } = require('electron');
-const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@electron/remote');
+const {
+	app,
+	getCurrentWindow,
+	getGlobal,
+	dialog,
+	BrowserWindow,
+} = require('@electron/remote');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -12,7 +20,7 @@ const logPath = path.join(userPath, 'logs');
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
 		app: app.getVersion(),
-		os: [ os.platform(), process.arch, process.getSystemVersion() ].join(' '),
+		os: [os.platform(), process.arch, process.getSystemVersion()].join(' '),
 		system: process.getSystemVersion(),
 		device: os.hostname(),
 	},
@@ -28,10 +36,10 @@ contextBridge.exposeInMainWorld('Electron', {
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	isFocused: () => getCurrentWindow().isFocused(),
 	focus: () => getCurrentWindow().focus(),
-	getGlobal: (key) => getGlobal(key),
+	getGlobal: key => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	fileParam: (path) => {
+	fileParam: path => {
 		const stat = fs.statSync(path);
 		const buffer = readChunk.sync(path, 0, stat.size);
 		const type = fileType(buffer);
@@ -55,7 +63,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	dirname: fp => path.dirname(fp),
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
-	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
+	removeAllListeners: event => ipcRenderer.removeAllListeners(event),
 	Api: (id, cmd, args) => {
 		id = Number(id) || 0;
 		cmd = String(cmd || '');

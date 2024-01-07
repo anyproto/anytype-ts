@@ -1,115 +1,280 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
-		.wrap { display: flex; flex-direction: column; }
-		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
+		width: 384px;
+		user-select: none;
+	}
+	.menu.menuSmile {
+		.content {
+			overflow: visible;
+			padding-bottom: 0px;
+			max-height: unset;
+		}
+		.wrap {
+			display: flex;
+			flex-direction: column;
+		}
+		.ReactVirtualized__List {
+			padding: 0px 0px 8px 0px;
+		}
 
-		.head { 
-			color: $colorControlActive; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorShapeSecondary; 
-			display: flex; flex-direction: row; gap: 0px 16px;
+		.head {
+			color: $colorControlActive;
+			font-weight: 500;
+			padding: 3px 16px 10px 16px;
+			border-bottom: 1px solid $colorShapeSecondary;
+			display: flex;
+			flex-direction: row;
+			gap: 0px 16px;
 		}
 		.head {
-			.btn { display: inline-block; vertical-align: top; transition: $transitionAllCommon; }
-			.btn:last-child { margin-right: 0px; }
-			.btn:hover, .btn.active { color: $colorTextPrimary; }
+			.btn {
+				display: inline-block;
+				vertical-align: top;
+				transition: $transitionAllCommon;
+			}
+			.btn:last-child {
+				margin-right: 0px;
+			}
+			.btn:hover,
+			.btn.active {
+				color: $colorTextPrimary;
+			}
 		}
 
 		.body.gallery {
-			.filter.withHead { padding-top: 8px; }
-			.filter {
-				.inner { height: 35px; }
+			.filter.withHead {
+				padding-top: 8px;
 			}
-		
-			.items { height: 238px; }
-			
-			.section { padding: 11px 14px !important; border: 0px; }
-			.section > .name { padding: 0px; margin: 0px; }
-			
-			.row { padding: 0px 12px; display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; }
-			
-			.item { width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
-			.item::before { display: none; }
-			.item.active { background: $colorShapeHighlightMedium; }
+			.filter {
+				.inner {
+					height: 35px;
+				}
+			}
+
+			.items {
+				height: 238px;
+			}
+
+			.section {
+				padding: 11px 14px !important;
+				border: 0px;
+			}
+			.section > .name {
+				padding: 0px;
+				margin: 0px;
+			}
+
+			.row {
+				padding: 0px 12px;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				flex-wrap: nowrap;
+			}
 
 			.item {
-				.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
-				.iconEmoji .emoji-mart-emoji { vertical-align: top; }
-				.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
+				width: 40px;
+				height: 40px;
+				position: relative;
+				border-radius: 6px;
+				padding: 0px;
+			}
+			.item::before {
+				display: none;
+			}
+			.item.active {
+				background: $colorShapeHighlightMedium;
 			}
 
-			.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorShapeSecondary; display: flex; justify-content: space-between; }
+			.item {
+				.iconObject {
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					margin: -16px 0px 0px -16px;
+					width: 32px;
+					height: 32px;
+					line-height: 32px;
+				}
+				.iconEmoji .emoji-mart-emoji {
+					vertical-align: top;
+				}
+				.iconEmoji .emoji-mart-emoji span {
+					margin-top: 2px;
+				}
+			}
+
 			.foot {
-				.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; transition: $transitionAllCommon; }
-				.icon:hover { background-color: $colorShapeHighlightMedium; }
+				padding: 5px 16px 6px 16px;
+				border-top: 1px solid $colorShapeSecondary;
+				display: flex;
+				justify-content: space-between;
+			}
+			.foot {
+				.icon {
+					width: 32px;
+					height: 32px;
+					border-radius: 4px;
+					background-size: 20px;
+					flex-shrink: 0;
+					transition: $transitionAllCommon;
+				}
+				.icon:hover {
+					background-color: $colorShapeHighlightMedium;
+				}
 
-				.icon.recent { background-image: url('~img/icon/emoji/recent0.svg'); }
-				.icon.recent.active { background-image: url('~img/icon/emoji/recent1.svg'); }
+				.icon.recent {
+					background-image: url('~img/icon/emoji/recent0.svg');
+				}
+				.icon.recent.active {
+					background-image: url('~img/icon/emoji/recent1.svg');
+				}
 
-				.icon.people { background-image: url('~img/icon/emoji/people0.svg'); }
-				.icon.people.active { background-image: url('~img/icon/emoji/people1.svg'); }
+				.icon.people {
+					background-image: url('~img/icon/emoji/people0.svg');
+				}
+				.icon.people.active {
+					background-image: url('~img/icon/emoji/people1.svg');
+				}
 
-				.icon.nature { background-image: url('~img/icon/emoji/nature0.svg'); }
-				.icon.nature.active { background-image: url('~img/icon/emoji/nature1.svg'); }
+				.icon.nature {
+					background-image: url('~img/icon/emoji/nature0.svg');
+				}
+				.icon.nature.active {
+					background-image: url('~img/icon/emoji/nature1.svg');
+				}
 
-				.icon.foods { background-image: url('~img/icon/emoji/foods0.svg'); }
-				.icon.foods.active { background-image: url('~img/icon/emoji/foods1.svg'); }
+				.icon.foods {
+					background-image: url('~img/icon/emoji/foods0.svg');
+				}
+				.icon.foods.active {
+					background-image: url('~img/icon/emoji/foods1.svg');
+				}
 
-				.icon.activity { background-image: url('~img/icon/emoji/activity0.svg'); }
-				.icon.activity.active { background-image: url('~img/icon/emoji/activity1.svg'); }
+				.icon.activity {
+					background-image: url('~img/icon/emoji/activity0.svg');
+				}
+				.icon.activity.active {
+					background-image: url('~img/icon/emoji/activity1.svg');
+				}
 
-				.icon.places { background-image: url('~img/icon/emoji/places0.svg'); }
-				.icon.places.active { background-image: url('~img/icon/emoji/places1.svg'); }
+				.icon.places {
+					background-image: url('~img/icon/emoji/places0.svg');
+				}
+				.icon.places.active {
+					background-image: url('~img/icon/emoji/places1.svg');
+				}
 
-				.icon.objects { background-image: url('~img/icon/emoji/objects0.svg'); }
-				.icon.objects.active { background-image: url('~img/icon/emoji/objects1.svg'); }
+				.icon.objects {
+					background-image: url('~img/icon/emoji/objects0.svg');
+				}
+				.icon.objects.active {
+					background-image: url('~img/icon/emoji/objects1.svg');
+				}
 
-				.icon.symbols { background-image: url('~img/icon/emoji/symbols0.svg'); }
-				.icon.symbols.active { background-image: url('~img/icon/emoji/symbols1.svg'); }
+				.icon.symbols {
+					background-image: url('~img/icon/emoji/symbols0.svg');
+				}
+				.icon.symbols.active {
+					background-image: url('~img/icon/emoji/symbols1.svg');
+				}
 
-				.icon.flags { background-image: url('~img/icon/emoji/flags0.svg'); }
-				.icon.flags.active { background-image: url('~img/icon/emoji/flags1.svg'); }
+				.icon.flags {
+					background-image: url('~img/icon/emoji/flags0.svg');
+				}
+				.icon.flags.active {
+					background-image: url('~img/icon/emoji/flags1.svg');
+				}
 			}
 		}
 
-		.body.upload { padding: 16px; }
 		.body.upload {
-			.loaderWrapper { height: 292px; position: relative; background: none; }
-
-			.dropzone { 
-				height: 292px; display: flex; align-items: center; border-radius: 2px; background: $colorShapeHighlightMedium;
-				justify-content: center; flex-direction: column; gap: 6px 0px; padding: 16px; text-align: center;
+			padding: 16px;
+		}
+		.body.upload {
+			.loaderWrapper {
+				height: 292px;
+				position: relative;
+				background: none;
 			}
-			.dropzone.isDraggingOver { background: $colorSystemDropZone; }
 
 			.dropzone {
-				.icon.coverUpload { 
-					width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
-					display: block; 
+				height: 292px;
+				display: flex;
+				align-items: center;
+				border-radius: 2px;
+				background: $colorShapeHighlightMedium;
+				justify-content: center;
+				flex-direction: column;
+				gap: 6px 0px;
+				padding: 16px;
+				text-align: center;
+			}
+			.dropzone.isDraggingOver {
+				background: $colorSystemDropZone;
+			}
+
+			.dropzone {
+				.icon.coverUpload {
+					width: 28px;
+					height: 28px;
+					background-image: url('~img/icon/cover/upload.svg');
+					display: block;
 				}
 				.label {
-					span { color: $colorTextSecondary; }
+					span {
+						color: $colorTextSecondary;
+					}
 				}
 			}
 		}
 	}
-	
-	.menu.menuSmileSkin { padding: 4px 10px; white-space: nowrap; }
+
 	.menu.menuSmileSkin {
-		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; position: relative; border-radius: 6px; }
+		padding: 4px 10px;
+		white-space: nowrap;
+	}
+	.menu.menuSmileSkin {
 		.item {
-			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
-			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
+			display: inline-block;
+			vertical-align: top;
+			width: 40px;
+			height: 40px;
+			position: relative;
+			border-radius: 6px;
 		}
-		.item.active { background: $colorShapeHighlightMedium; }
-		.item:last-child { margin: 0px; }
+		.item {
+			.iconObject {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: -16px 0px 0px -16px;
+				width: 32px;
+				height: 32px;
+				line-height: 32px;
+			}
+			.iconEmoji .emoji-mart-emoji span {
+				margin-top: 2px;
+			}
+		}
+		.item.active {
+			background: $colorShapeHighlightMedium;
+		}
+		.item:last-child {
+			margin: 0px;
+		}
 	}
 }
 
-html.platformWindows, html.platformLinux {
+html.platformWindows,
+html.platformLinux {
 	.menus {
-		.menu.menuSmile { width: 401px; }
+		.menu.menuSmile {
+			width: 401px;
+		}
 	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 import Account from './account';
 import Block from './block';
 import BlockStructure from './blockStructure';
@@ -8,14 +10,11 @@ import ViewRelation from './viewRelation';
 import Filter from './filter';
 import Sort from './sort';
 
-export { 
+export {
 	Account,
-
 	Block,
 	BlockStructure,
-
 	Notification,
-
 	View,
 	ViewRelation,
 	Filter,

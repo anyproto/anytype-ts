@@ -1,100 +1,292 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
-	.block.blockMedia { padding: 6px 0px; }
-	.block.blockMedia.isResizing * { cursor: nwse-resize; }
-	
 	.block.blockMedia {
-		.focusable.isFocused { background: none; }
-		.focusable.isFocused::before { 
-			content: ""; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; z-index: 1; 
-			pointer-events: none; border-radius: 6px;
+		padding: 6px 0px;
+	}
+	.block.blockMedia.isResizing * {
+		cursor: nwse-resize;
+	}
+
+	.block.blockMedia {
+		.focusable.isFocused {
+			background: none;
+		}
+		.focusable.isFocused::before {
+			content: '';
+			position: absolute;
+			left: -2px;
+			top: 0px;
+			width: calc(100% + 4px);
+			height: 100%;
+			z-index: 1;
+			pointer-events: none;
+			border-radius: 6px;
 		}
 
-		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
-		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
-		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
+		.icon.resize,
+		.icon.download {
+			position: absolute;
+			z-index: 1;
+			opacity: 0;
+			cursor: default;
+			transition: $transitionAllCommon;
+		}
+		.icon.resize {
+			width: 20px;
+			height: 20px;
+			right: 0px;
+			bottom: 0px;
+			cursor: nwse-resize;
+			background-image: url('~img/icon/resize.svg');
+		}
+		.icon.download {
+			width: 28px;
+			height: 28px;
+			right: 8px;
+			top: 8px;
+			background-image: url('~img/icon/download.svg');
+		}
 
-		.loaderWrapper { border-radius: 4px; border: solid 1px $colorShapePrimary; height: 48px; width: 100%; }
-		.error { margin: 0px; @include text-small; line-height: 22px; }
-		
-		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
-		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
-		video { width: 100%; }
+		.loaderWrapper {
+			border-radius: 4px;
+			border: solid 1px $colorShapePrimary;
+			height: 48px;
+			width: 100%;
+		}
+		.error {
+			margin: 0px;
+			@include text-small;
+			line-height: 22px;
+		}
 
-		.pdfWrapper { 
-			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorShapePrimary;
-			border-radius: 0px; display: inline-flex; flex-direction: column; gap: 6px 0px;
+		.wrap {
+			max-width: 100%;
+			position: relative;
+			display: inline-block;
+			overflow: hidden;
+		}
+		.mediaImage {
+			width: 100%;
+			display: block;
+			cursor: zoom-in;
+		}
+		video {
+			width: 100%;
+		}
+
+		.pdfWrapper {
+			width: 100%;
+			overflow: hidden;
+			position: relative;
+			padding: 12px;
+			box-shadow: 0px 0px 0px 1px $colorShapePrimary;
+			border-radius: 0px;
+			display: inline-flex;
+			flex-direction: column;
+			gap: 6px 0px;
 		}
 		.pdfWrapper {
-			.info { @include text-common; flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 			.info {
-				.name { height: 24px; line-height: 24px; display: inline-block; vertical-align: top; @include text-overflow-nw; }
+				@include text-common;
+				flex-shrink: 0;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+			}
+			.info {
+				.name {
+					height: 24px;
+					line-height: 24px;
+					display: inline-block;
+					vertical-align: top;
+					@include text-overflow-nw;
+				}
 				.size {
-					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorControlActive; margin: 0px 8px;
-					display: inline-block; vertical-align: top;
+					@include text-common;
+					max-width: 100px;
+					height: 24px;
+					line-height: 24px;
+					color: $colorControlActive;
+					margin: 0px 8px;
+					display: inline-block;
+					vertical-align: top;
 				}
 			}
 
-			.pager { flex-shrink: 0; cursor: default; }
 			.pager {
-				.icon { opacity: 0 !important; }
+				flex-shrink: 0;
+				cursor: default;
+			}
+			.pager {
+				.icon {
+					opacity: 0 !important;
+				}
 			}
 
-			.loaderWrapper { width: 100%; height: 48px; position: relative; left: 0px; top: 0px; }
+			.loaderWrapper {
+				width: 100%;
+				height: 48px;
+				position: relative;
+				left: 0px;
+				top: 0px;
+			}
 
-			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
-			.react-pdf__Page { position: static !important; }
-			.react-pdf__Page__svg, .react-pdf__Page__canvas { width: 100% !important; height: 100% !important; overflow: hidden; }
-			.react-pdf__Page__svg svg { width: 100%; height: auto; }
-			.react-pdf__Page__textContent { display: none; }
-			.react-pdf__Page__annotations { display: none; }
+			.react-pdf__Document {
+				width: 100%;
+				display: inline-block;
+				position: relative;
+				flex-grow: 1;
+			}
+			.react-pdf__Page {
+				position: static !important;
+			}
+			.react-pdf__Page__svg,
+			.react-pdf__Page__canvas {
+				width: 100% !important;
+				height: 100% !important;
+				overflow: hidden;
+			}
+			.react-pdf__Page__svg svg {
+				width: 100%;
+				height: auto;
+			}
+			.react-pdf__Page__textContent {
+				display: none;
+			}
+			.react-pdf__Page__annotations {
+				display: none;
+			}
 		}
 		.pdfWrapper:hover {
 			.pager {
-				.icon.disabled { opacity: 0.5 !important; }
-				.icon { opacity: 1 !important; }
+				.icon.disabled {
+					opacity: 0.5 !important;
+				}
+				.icon {
+					opacity: 1 !important;
+				}
 			}
 		}
-				
+
 		.icon.dots {
-			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
-			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; z-index: 1;
+			width: 32px;
+			height: 32px;
+			border-radius: 8px;
+			background-color: rgba(0, 0, 0, 0.35);
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			background-image: url('~img/icon/menu/file/dots.svg');
+			opacity: 0;
+			background-size: 24px 24px;
+			z-index: 1;
 		}
 	}
 
-	.block.blockMedia > .wrapContent { border-radius: 6px; }
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
+	.block.blockMedia > .wrapContent {
+		border-radius: 6px;
+	}
+	.block.blockMedia > .wrapContent > .selectable > .dropTarget {
+		line-height: 0px;
+	}
 
 	.block.blockMedia.isReadonly {
-		.icon.resize { display: none; }
+		.icon.resize {
+			display: none;
+		}
 	}
-	
+
 	.block.blockMedia:hover {
-		.icon.resize { opacity: 1; }
-		.icon.download { opacity: 1; }
-		.icon.dots { opacity: 1; }
-	}
-	
-	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected > .dropTarget > .focusable > .wrap {
-		.icon.resize { opacity: 1; }
-		.icon.download { opacity: 1; }
-		.icon.dots { opacity: 1; }
-	}
-	
-	.block.blockMedia.isVideo > .wrapContent > .selectable > .dropTarget > .focusable.isPlaying > .wrap {
-		.icon.resize { display: none; }
-		.icon.download { display: none; }
-		.icon.dots { display: none; }
-		.icon.play { display: none; }
+		.icon.resize {
+			opacity: 1;
+		}
+		.icon.download {
+			opacity: 1;
+		}
+		.icon.dots {
+			opacity: 1;
+		}
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorShapeTertiary; }
-	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
+	.block.blockMedia
+		> .wrapContent
+		> .selectable.isSelectionSelected
+		> .dropTarget
+		> .focusable
+		> .wrap {
+		.icon.resize {
+			opacity: 1;
+		}
+		.icon.download {
+			opacity: 1;
+		}
+		.icon.dots {
+			opacity: 1;
+		}
+	}
 
-	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
-	.block.blockMedia.isPdf.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
-	.block.blockMedia.isImage.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
-	.block.blockMedia.isVideo.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
-	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 6px; }
+	.block.blockMedia.isVideo
+		> .wrapContent
+		> .selectable
+		> .dropTarget
+		> .focusable.isPlaying
+		> .wrap {
+		.icon.resize {
+			display: none;
+		}
+		.icon.download {
+			display: none;
+		}
+		.icon.dots {
+			display: none;
+		}
+		.icon.play {
+			display: none;
+		}
+	}
+
+	.block.blockMedia.isAudio.withContent > .wrapContent {
+		background-color: $colorShapeTertiary;
+	}
+	.block.blockMedia.isAudio
+		> .wrapContent
+		> .selectable
+		> .dropTarget
+		> .focusable
+		> .wrap {
+		width: 100%;
+		padding: 16px;
+		border-radius: 6px;
+		overflow: hidden;
+	}
+
+	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after {
+		left: 0px;
+		width: 100%;
+		border-radius: 4px;
+	}
+	.block.blockMedia.isPdf.withContent
+		> .wrapContent
+		> .selectable.isSelectionSelected::after {
+		border-radius: 0px;
+	}
+	.block.blockMedia.isImage.withContent
+		> .wrapContent
+		> .selectable.isSelectionSelected::after {
+		border-radius: 0px;
+	}
+	.block.blockMedia.isVideo.withContent
+		> .wrapContent
+		> .selectable.isSelectionSelected::after {
+		border-radius: 0px;
+	}
+	.block.blockMedia.isAudio.withContent
+		> .wrapContent
+		> .selectable.isSelectionSelected::after {
+		border-radius: 6px;
+	}
 }

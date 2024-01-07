@@ -1,78 +1,80 @@
+/** @format */
+
 import { I } from 'Lib';
 
 export enum CardSize {
-	Small	 = 0,
-	Medium	 = 1,
-	Large	 = 2,
-};
+	Small = 0,
+	Medium = 1,
+	Large = 2,
+}
 
 export enum DateFormat {
-	MonthAbbrBeforeDay	 = 0, // Jul 30, 2020
-	MonthAbbrAfterDay	 = 1, // 30 Jul 2020
-	Short				 = 2, // 30/07/2020
-	ShortUS				 = 3, // 07/30/2020
-	ISO					 = 4, // 2020-07-30
-};
+	MonthAbbrBeforeDay = 0, // Jul 30, 2020
+	MonthAbbrAfterDay = 1, // 30 Jul 2020
+	Short = 2, // 30/07/2020
+	ShortUS = 3, // 07/30/2020
+	ISO = 4, // 2020-07-30
+}
 
 export enum TimeFormat {
 	H12 = 0,
 	H24 = 1,
-};
+}
 
 export enum ViewType {
-	Grid	 = 0,
-	List	 = 1,
-	Gallery	 = 2,
-	Board	 = 3,
+	Grid = 0,
+	List = 1,
+	Gallery = 2,
+	Board = 3,
 	Calendar = 4,
-	Graph	 = 5,
-};
+	Graph = 5,
+}
 
-export enum SortType { 
-	Asc		 = 0, 
-	Desc	 = 1,
-	Custom	 = 2,
-};
+export enum SortType {
+	Asc = 0,
+	Desc = 1,
+	Custom = 2,
+}
 
-export enum FilterOperator { 
-	And		 = 0, 
-	Or		 = 1,
-};
+export enum FilterOperator {
+	And = 0,
+	Or = 1,
+}
 
-export enum FilterCondition { 
-	None			 = 0,
-	Equal			 = 1,
-	NotEqual		 = 2,
-	Greater			 = 3,
-	Less			 = 4,
-	GreaterOrEqual	 = 5,
-	LessOrEqual		 = 6,
-	Like			 = 7,
-	NotLike			 = 8,
-	In				 = 9,
-	NotIn			 = 10,
-	Empty			 = 11,
-	NotEmpty		 = 12,
-	AllIn			 = 13,
-	NotAllIn		 = 14,
-	ExactIn			 = 15,
-    NotExactIn		 = 16,
-};
+export enum FilterCondition {
+	None = 0,
+	Equal = 1,
+	NotEqual = 2,
+	Greater = 3,
+	Less = 4,
+	GreaterOrEqual = 5,
+	LessOrEqual = 6,
+	Like = 7,
+	NotLike = 8,
+	In = 9,
+	NotIn = 10,
+	Empty = 11,
+	NotEmpty = 12,
+	AllIn = 13,
+	NotAllIn = 14,
+	ExactIn = 15,
+	NotExactIn = 16,
+}
 
 export enum FilterQuickOption {
-	ExactDate		 = 0,
-	Yesterday		 = 1,
-	Today			 = 2,
-	Tomorrow		 = 3,
-	LastWeek		 = 4,
-	CurrentWeek		 = 5,
-	NextWeek		 = 6,
-	LastMonth		 = 7,
-	CurrentMonth	 = 8,
-	NextMonth		 = 9,
-	NumberOfDaysAgo	 = 10,
-	NumberOfDaysNow	 = 11,
-};
+	ExactDate = 0,
+	Yesterday = 1,
+	Today = 2,
+	Tomorrow = 3,
+	LastWeek = 4,
+	CurrentWeek = 5,
+	NextWeek = 6,
+	LastMonth = 7,
+	CurrentMonth = 8,
+	NextMonth = 9,
+	NumberOfDaysAgo = 10,
+	NumberOfDaysNow = 11,
+}
 
 export interface Sort {
 	id?: string;
@@ -80,7 +82,7 @@ export interface Sort {
 	type: SortType;
 	includeTime?: boolean;
 	customOrder?: string[];
-};
+}
 
 export interface Filter {
 	id?: string;
@@ -90,7 +92,7 @@ export interface Filter {
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
 	value: any;
-};
+}
 
 export interface ViewRelation {
 	relationKey: string;
@@ -99,7 +101,7 @@ export interface ViewRelation {
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
-};
+}
 
 export interface ViewComponent {
 	rootId?: string;
@@ -114,7 +116,12 @@ export interface ViewComponent {
 	className?: string;
 	refCells?: any;
 	onRef?(ref: any, id: string): void;
-	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
+	loadData(
+		viewId: string,
+		offset: number,
+		clear: boolean,
+		callBack?: (message: any) => void
+	): void;
 	getRecords?(): string[];
 	getRecord(id: string): any;
 	getCoverObject?(id: string): any;
@@ -133,19 +140,28 @@ export interface ViewComponent {
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onContext?(e: any, id: string): void;
-	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+	onCellChange?: (
+		id: string,
+		key: string,
+		value: any,
+		callBack?: (message: any) => void
+	) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	isAllowedDefaultType?: () => boolean;
-	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
+	objectOrderUpdate?: (
+		orders: any[],
+		records: any[],
+		callBack?: (message: any) => void
+	) => void;
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
 	onSourceTypeSelect?(element: any): void;
 	onViewSettings?(): void;
 	getSearchIds?(): string[];
-};
+}
 
 export interface ViewEmpty {
 	rootId?: string;
@@ -156,7 +172,7 @@ export interface ViewEmpty {
 	withButton: boolean;
 	className?: string;
 	onClick: (e: any) => void;
-};
+}
 
 export interface View {
 	id: string;
@@ -180,7 +196,7 @@ export interface View {
 	isList?: () => boolean;
 	isGallery?: () => boolean;
 	isBoard?: () => boolean;
-};
+}
 
 export interface Cell {
 	rootId?: string;
@@ -213,15 +229,20 @@ export interface Cell {
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+	onCellChange?: (
+		id: string,
+		key: string,
+		value: any,
+		callBack?: (message: any) => void
+	) => void;
 	cellPosition?: (cellId: string) => void;
 	elementMapper?: (relation: any, item: any) => any;
-};
+}
 
 export interface BoardGroup {
 	id: string;
 	value: any;
-};
+}
 
 export interface ContentDataview {
 	sources: string[];
@@ -231,8 +252,8 @@ export interface ContentDataview {
 	objectOrder: any[];
 	targetObjectId: string;
 	isCollection: boolean;
-};
+}
 
 export interface BlockDataview extends I.Block {
 	content: ContentDataview;
-};
+}

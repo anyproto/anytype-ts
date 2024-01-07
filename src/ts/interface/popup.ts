@@ -1,3 +1,5 @@
+/** @format */
+
 import { I } from 'Lib';
 
 export interface PopupParam {
@@ -6,17 +8,17 @@ export interface PopupParam {
 	preventResize?: boolean;
 	preventMenuClose?: boolean;
 	onClose?(): void;
-};
+}
 
 export interface Popup {
 	id: string;
 	param: PopupParam;
-	position? (): void;
-	close? (): void;
+	position?(): void;
+	close?(): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 	getId?(): string;
-};
+}
 
 export interface PopupSettings extends Popup {
 	prevPage: string;
@@ -26,4 +28,4 @@ export interface PopupSettings extends Popup {
 	onConfirmPin: () => void;
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
-};
+}

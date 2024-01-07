@@ -1,4 +1,6 @@
-module.exports = (env) => {
+/** @format */
+
+module.exports = env => {
 	return {
 		target: 'node',
 		mode: 'production',
@@ -8,17 +10,14 @@ module.exports = (env) => {
 			removeEmptyChunks: false,
 			splitChunks: false,
 		},
-		
+
 		entry: './electron.js',
 		output: {
-			filename: 'bundle-back.js'
+			filename: 'bundle-back.js',
 		},
 
 		module: {
-			rules: [
-				{ test: /\.node$/, loader: 'node-loader' },
-			]
-		}
-		
+			rules: [{ test: /\.node$/, loader: 'node-loader' }],
+		},
 	};
 };

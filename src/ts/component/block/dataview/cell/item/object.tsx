@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
@@ -10,76 +12,78 @@ interface Props {
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
 	onRemove?: (e: any, id: string) => void;
-};
+}
 
-const ItemObject = observer(class ItemObject extends React.Component<Props> {
+const ItemObject = observer(
+	class ItemObject extends React.Component<Props> {
+		constructor(props: Props) {
+			super(props);
 
-	constructor (props: Props) {
-		super(props);
+			this.onClick = this.onClick.bind(this);
+			this.onRemove = this.onRemove.bind(this);
+		}
 
-		this.onClick = this.onClick.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-	};
+		render() {
+			const { iconSize, relation, canEdit } = this.props;
+			const cn = ['element'];
+			const object = this.getObject();
 
-	render () {
-		const { iconSize, relation, canEdit } = this.props;
-		const cn = [ 'element' ];
-		const object = this.getObject();
+			let iconObject = null;
+			let iconRemove = null;
 
-		let iconObject = null;
-		let iconRemove = null;
-		
-		if (object.isHidden) {
-			cn.push('isHidden');
-		};
-		if (canEdit) {
-			cn.push('canEdit');
-			iconRemove = <Icon className="objectRemove" onClick={this.onRemove} />;
-		};
-		if (relation.relationKey != 'type') {
-			iconObject = <IconObject object={object} size={iconSize} />;
-		};
+			if (object.isHidden) {
+				cn.push('isHidden');
+			}
+			if (canEdit) {
+				cn.push('canEdit');
+				iconRemove = (
+					<Icon className="objectRemove" onClick={this.onRemove} />
+				);
+			}
+			if (relation.relationKey != 'type') {
+				iconObject = <IconObject object={object} size={iconSize} />;
+			}
 
-		return (
-			<div className={cn.join(' ')} onClick={this.onClick}>
-				<div className="flex">
-					{iconObject}
-					<ObjectName object={object} />
-					{iconRemove}
+			return (
+				<div className={cn.join(' ')} onClick={this.onClick}>
+					<div className="flex">
+						{iconObject}
+						<ObjectName object={object} />
+						{iconRemove}
+					</div>
 				</div>
-			</div>
-		);
-	};
+			);
+		}
 
-	onClick (e: any) {
-		const { onClick, canEdit } = this.props;
-		const object = this.getObject();
+		onClick(e: any) {
+			const { onClick, canEdit } = this.props;
+			const object = this.getObject();
 
-		if (!canEdit && onClick) {
-			onClick(e, object);
-		};
-	};
+			if (!canEdit && onClick) {
+				onClick(e, object);
+			}
+		}
 
-	onRemove (e: any) {
-		e.stopPropagation();
+		onRemove(e: any) {
+			e.stopPropagation();
 
-		const { object, canEdit, onRemove } = this.props;
+			const { object, canEdit, onRemove } = this.props;
 
-		if (canEdit && onRemove) {
-			onRemove(e, object.id);
-		};
-	};
+			if (canEdit && onRemove) {
+				onRemove(e, object.id);
+			}
+		}
 
-	getObject () {
-		const { relation, elementMapper } = this.props;
+		getObject() {
+			const { relation, elementMapper } = this.props;
 
-		let object = this.props.object || {};
-		if (elementMapper) {
-			object = elementMapper(relation, object);
-		};
-		return object;
-	};
-
-});
+			let object = this.props.object || {};
+			if (elementMapper) {
+				object = elementMapper(relation, object);
+			}
+			return object;
+		}
+	}
+);
 
 export default ItemObject;

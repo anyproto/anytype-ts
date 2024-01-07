@@ -1,3 +1,5 @@
+/** @format */
+
 import Page from './page';
 
 import EditorPage from './editor/page';
@@ -89,12 +91,10 @@ export {
 	Page,
 	EditorPage,
 	Block,
-
 	DragLayer,
 	DragProvider,
 	DragBox,
 	DropTarget,
-
 	ListPopup,
 	ListMenu,
 	ListChildren,
@@ -102,7 +102,6 @@ export {
 	ListObject,
 	ListObjectManager,
 	ListNotification,
-
 	Header,
 	Footer,
 	Pager,
@@ -139,31 +138,23 @@ export {
 	Error,
 	Navigation,
 	Notification,
-
 	Icon,
 	IconObject,
 	IconEmoji,
-
 	Preview,
 	PreviewLink,
 	PreviewObject,
 	PreviewDefault,
-
 	Graph,
 	Cell,
-
 	Sidebar,
 	Widget,
-
 	ObjectName,
 	ObjectDescription,
 	ObjectType,
-
 	Menu,
 	MenuItemVertical,
-
 	MediaAudio,
 	MediaVideo,
-
-	ProgressBar
+	ProgressBar,
 };

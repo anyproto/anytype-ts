@@ -1,13 +1,37 @@
+/** @format */
+
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import {
+	I,
+	C,
+	UtilCommon,
+	UtilData,
+	Storage,
+	focus,
+	history as historyPopup,
+	analytics,
+	Renderer,
+	sidebar,
+	UtilObject,
+	UtilRouter,
+	Preview,
+	Action,
+	translate,
+} from 'Lib';
+import {
+	commonStore,
+	authStore,
+	blockStore,
+	detailStore,
+	menuStore,
+	popupStore,
+} from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
 
 class Keyboard {
-	
-	mouse: any = { 
+	mouse: any = {
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
 	};
@@ -19,7 +43,7 @@ class Keyboard {
 	matchPopup: any = {};
 	source: any = null;
 	selection: any = null;
-	
+
 	isDragging = false;
 	isResizing = false;
 	isFocused = false;
@@ -34,10 +58,10 @@ class Keyboard {
 	isPasteDisabled = false;
 	isSelectionDisabled = false;
 	isSelectionClearDisabled = false;
-	
-	init () {
+
+	init() {
 		this.unbind();
-		
+
 		const win = $(window);
 		const doc = $(document);
 
@@ -46,7 +70,7 @@ class Keyboard {
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
-		
+
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
@@ -55,9 +79,9 @@ class Keyboard {
 
 			if (!commonStore.isSidebarFixed) {
 				sidebar.hide();
-			};
+			}
 
-			menuStore.closeAll([ 'blockContext' ]);
+			menuStore.closeAll(['blockContext']);
 
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
@@ -65,46 +89,50 @@ class Keyboard {
 		doc.off('mouseleave.common').on('mouseleave.common', () => {
 			if (!commonStore.isSidebarFixed) {
 				sidebar.hide();
-			};
+			}
 		});
 
 		Renderer.remove('commandGlobal');
-		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
-	};
-	
-	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
-	};
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) =>
+			this.onCommand(cmd, arg)
+		);
+	}
 
-	onScroll () {
+	unbind() {
+		$(window).off(
+			'keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common'
+		);
+	}
+
+	onScroll() {
 		Preview.tooltipHide(false);
 
 		$(window).trigger('resize.menuOnboarding resize.menuSpace');
-	};
+	}
 
-	onMouseDown (e: any) {
+	onMouseDown(e: any) {
 		const { focused } = focus.state;
 		const target = $(e.target);
 
 		// Mouse back
-		if ((e.buttons & 8) && !this.isNavigationDisabled) {
+		if (e.buttons & 8 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onBack();
-		};
+		}
 
 		// Mouse forward
-		if ((e.buttons & 16) && !this.isNavigationDisabled) {
+		if (e.buttons & 16 && !this.isNavigationDisabled) {
 			e.preventDefault();
 			this.onForward();
-		};
+		}
 
 		// Remove isFocusable from focused block
 		if (target.parents(`#block-${focused}`).length <= 0) {
 			$('.focusable.c' + focused).removeClass('isFocused');
-		};
-	};
+		}
+	}
 
-	onMouseMove (e: any) {
+	onMouseMove(e: any) {
 		this.initPinCheck();
 		this.disableMouse(false);
 
@@ -115,10 +143,10 @@ class Keyboard {
 
 		if (this.isMain()) {
 			sidebar.onMouseMove();
-		};
-	};
-	
-	onKeyDown (e: any) {
+		}
+	}
+
+	onKeyDown(e: any) {
 		const isMac = UtilCommon.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
@@ -131,21 +159,27 @@ class Keyboard {
 
 			if (pressed.match('.') && this.isFocused) {
 				return;
-			};
+			}
 
-			commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
+			commonStore.isSidebarFixed
+				? sidebar.toggleOpenClose()
+				: sidebar.toggleExpandCollapse();
 		});
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
-			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
+			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () =>
+				this.onBack()
+			);
+			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () =>
+				this.onForward()
+			);
 
 			if (!UtilCommon.getSelectionRange() && isMac) {
 				this.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				this.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
-			};
-		};
+			}
+		}
 
 		// Close popups and menus
 		this.shortcut('escape', e, () => {
@@ -153,33 +187,30 @@ class Keyboard {
 
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
-			} else 
-			if (popupStore.isOpen()) {
+			} else if (popupStore.isOpen()) {
 				let canClose = true;
 
 				if (this.isPopup()) {
 					if (UtilCommon.getSelectionRange()) {
 						UtilCommon.clearSelection();
 						canClose = false;
-					} else
-					if (this.selection) {
+					} else if (this.selection) {
 						const ids = this.selection.get(I.SelectType.Block);
 						if (ids.length) {
 							canClose = false;
-						};
-					};
-				};
+						}
+					}
+				}
 
 				if (canClose) {
 					popupStore.closeLast();
-				};
-			};
-			
+				}
+			}
+
 			Preview.previewHide(false);
 		});
 
 		if (isMain) {
-
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
 				popupStore.open('shortcut', { preventResize: true });
@@ -203,17 +234,25 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
+				if (
+					popupStore.isOpen('search') ||
+					!this.isPinChecked ||
+					(pressed == `${cmd}+k` && this.checkSelection())
+				) {
 					return;
-				};
+				}
 
 				this.onSearchPopup('Shortcut');
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
+				if (
+					popupStore.isOpen('search') ||
+					!this.isPinChecked ||
+					this.checkSelection()
+				) {
 					return;
-				};
+				}
 
 				UtilObject.openAuto({ layout: I.ObjectLayout.Store });
 			});
@@ -222,26 +261,32 @@ class Keyboard {
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
 					this.onSearchMenu('', 'Shortcut');
-				};
+				}
 			});
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				UtilObject.openAuto({
+					id: this.getRootId(),
+					layout: I.ObjectLayout.Navigation,
+				});
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				UtilObject.openAuto({
+					id: this.getRootId(),
+					layout: I.ObjectLayout.Graph,
+				});
 			});
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
 					UtilObject.openHome('route');
-				};
+				}
 			});
 
 			// Create new page
@@ -259,7 +304,7 @@ class Keyboard {
 			this.shortcut(`${cmd}+comma`, e, () => {
 				if (!popupStore.isOpen('settings')) {
 					popupStore.open('settings', {});
-				};
+				}
 			});
 
 			// Create relation
@@ -282,70 +327,90 @@ class Keyboard {
 						textCancel: translate('commonClose'),
 						canConfirm: true,
 						canCancel: true,
-						onConfirm: () => UtilCommon.copyToast('ID', this.getRootId()),
-					}
+						onConfirm: () =>
+							UtilCommon.copyToast('ID', this.getRootId()),
+					},
 				});
 			});
-		};
+		}
 
 		this.initPinCheck();
-	};
+	}
 
 	// Check if smth is selected
-	checkSelection () {
+	checkSelection() {
 		const range = UtilCommon.getSelectionRange();
 
-		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+		if (
+			(range && !range.collapsed) ||
+			(this.selection && this.selection.get(I.SelectType.Block).length)
+		) {
 			return true;
-		};
+		}
 
 		return false;
-	};
+	}
 
-	pageCreate (details: any, route: string) {
+	pageCreate(details: any, route: string) {
 		const isMain = this.isMain();
 
 		if (!isMain) {
 			return;
-		};
+		}
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			UtilObject.openAuto({ id: message.targetId });
-			analytics.event('CreateObject', { route, objectType: commonStore.type });
-		});
-	};
+		UtilObject.create(
+			'',
+			'',
+			details,
+			I.BlockPosition.Bottom,
+			'',
+			{},
+			[I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty],
+			(message: any) => {
+				UtilObject.openAuto({ id: message.targetId });
+				analytics.event('CreateObject', {
+					route,
+					objectType: commonStore.type,
+				});
+			}
+		);
+	}
 
-	isPopup () {
+	isPopup() {
 		return popupStore.isOpen('page');
-	};
+	}
 
-	getRootId (): string {
+	getRootId(): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
-	};
+		return isPopup ? popupMatch.params.id : this.match?.params?.id;
+	}
 
-	onKeyUp (e: any) {
+	onKeyUp(e: any) {
 		this.pressed = this.pressed.filter(it => it != this.eventKey(e));
-	};
+	}
 
-	onBack () {
+	onBack() {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
+		if (
+			authStore.accountIsDeleted() ||
+			authStore.accountIsPending() ||
+			!this.checkBack()
+		) {
 			return;
-		};
+		}
 
 		if (isPopup) {
 			if (!historyPopup.checkBack()) {
 				popupStore.close('page');
 			} else {
-				historyPopup.goBack((match: any) => { 
-					popupStore.updateData('page', { matchPopup: match }); 
+				historyPopup.goBack((match: any) => {
+					popupStore.updateData('page', { matchPopup: match });
 				});
-			};
+			}
 		} else {
 			const history = UtilRouter.history;
 
@@ -354,104 +419,104 @@ class Keyboard {
 			if (account && !prev) {
 				UtilObject.openHome('route');
 				return;
-			};
+			}
 
 			if (prev) {
 				const route = UtilRouter.getParam(prev.pathname);
 
-				if ((route.page == 'main') && (route.action == 'history')) {
+				if (route.page == 'main' && route.action == 'history') {
 					prev = history.entries[history.index - 3];
 					if (prev) {
 						UtilRouter.go(prev.pathname, {});
-					};
+					}
 					return;
-				};
+				}
 
 				history.goBack();
-			};
-		};
+			}
+		}
 
 		menuStore.closeAll();
 		this.restoreSource();
 		analytics.event('HistoryBack');
-	};
+	}
 
-	onForward () {
+	onForward() {
 		const isPopup = this.isPopup();
 
 		if (!this.checkForward()) {
 			return;
-		};
+		}
 
 		if (isPopup) {
-			historyPopup.goForward((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
+			historyPopup.goForward((match: any) => {
+				popupStore.updateData('page', { matchPopup: match });
 			});
 		} else {
 			UtilRouter.history.goForward();
-		};
+		}
 
 		menuStore.closeAll();
 		analytics.event('HistoryForward');
-	};
+	}
 
-	checkBack (): boolean {
+	checkBack(): boolean {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 		const history = UtilRouter.history;
 
 		if (!history) {
 			return;
-		};
+		}
 
 		if (!isPopup) {
 			const prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				return false;
-			};
+			}
 
 			if (prev) {
 				const route = UtilRouter.getParam(prev.pathname);
 
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
+				if (['index', 'auth'].includes(route.page) && account) {
 					return false;
-				};
+				}
 
-				if ((route.page == 'main') && !account) {
+				if (route.page == 'main' && !account) {
 					return false;
-				};
+				}
 
-				if ((route.page == 'main') && (route.action == 'usecase')) {
+				if (route.page == 'main' && route.action == 'usecase') {
 					return false;
-				};
-			};
-		};
+				}
+			}
+		}
 
 		return true;
-	};
+	}
 
-	checkForward (): boolean {
+	checkForward(): boolean {
 		const isPopup = this.isPopup();
 		const history = UtilRouter.history;
 
 		if (!history) {
 			return;
-		};
+		}
 
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
 		} else {
 			ret = history.index + 1 <= history.entries.length - 1;
-		};
+		}
 		return ret;
-	};
+	}
 
-	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd)) {
+	onCommand(cmd: string, arg: any) {
+		if (!this.isMain() && ['search', 'print'].includes(cmd)) {
 			return;
-		};
+		}
 
 		const rootId = this.getRootId();
 		const logPath = window.Electron.logPath;
@@ -461,17 +526,17 @@ class Keyboard {
 			case 'search': {
 				this.onSearchMenu('', 'MenuSystem');
 				break;
-			};
+			}
 
 			case 'print': {
 				this.onPrint('MenuSystem');
 				break;
-			};
+			}
 
 			case 'tech': {
 				this.onTechInfo();
 				break;
-			};
+			}
 
 			case 'gallery':
 			case 'terms':
@@ -480,124 +545,137 @@ class Keyboard {
 			case 'community': {
 				Renderer.send('urlOpen', Url[cmd]);
 				break;
-			};
+			}
 
 			case 'contact': {
 				this.onContactUrl();
 				break;
-			};
+			}
 
 			case 'undo': {
 				if (!this.isFocused) {
 					this.onUndo(rootId, 'MenuSystem');
-				};
+				}
 				break;
-			};
+			}
 
 			case 'redo': {
 				if (!this.isFocused) {
 					this.onRedo(rootId, 'MenuSystem');
-				};
+				}
 				break;
-			};
+			}
 
 			case 'create': {
 				this.pageCreate({}, 'MenuSystem');
 				break;
-			};
+			}
 
 			case 'saveAsHTML': {
 				this.onSaveAsHTML();
 				break;
-			};
+			}
 
 			case 'saveAsHTMLSuccess': {
 				this.printRemove();
 				break;
-			};
+			}
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, {
-					zip: true, 
-					nested: true, 
-					files: true, 
-					archived: true, 
+				Action.export([rootId], I.ExportType.Protobuf, {
+					zip: true,
+					nested: true,
+					files: true,
+					archived: true,
 					route: 'MenuSystem',
 				});
 				break;
-			};
+			}
 
 			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
-					C.TemplateExportAll(paths[0], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
+				Action.openDir(
+					{ buttonLabel: translate('commonExport') },
+					paths => {
+						C.TemplateExportAll(paths[0], (message: any) => {
+							if (message.error.code) {
+								return;
+							}
 
-						Renderer.send('pathOpen', paths[0]);
-					});
-				});
+							Renderer.send('pathOpen', paths[0]);
+						});
+					}
+				);
 				break;
-			};
+			}
 
 			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
-					C.DebugExportLocalstore(paths[0], [], (message: any) => {
-						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[0]);
-						};
-					});
-				});
+				Action.openDir(
+					{ buttonLabel: translate('commonExport') },
+					paths => {
+						C.DebugExportLocalstore(
+							paths[0],
+							[],
+							(message: any) => {
+								if (!message.error.code) {
+									Renderer.send('pathOpen', paths[0]);
+								}
+							}
+						);
+					}
+				);
 				break;
-			};
+			}
 
 			case 'debugSpace': {
 				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
+						window.Electron.fileWrite(
+							'debug-space-summary.json',
+							JSON.stringify(message, null, 5),
+							{ encoding: 'utf8' }
+						);
 
 						Renderer.send('pathOpen', tmpPath);
-					};
+					}
 				});
 				break;
-			};
+			}
 
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('pathOpen', logPath);
-					};
+					}
 				});
 				break;
-			};
+			}
 
 			case 'debugProcess': {
 				C.DebugStackGoroutines(logPath, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('pathOpen', logPath);
-					};
+					}
 				});
 				break;
-			};
+			}
 
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				break;
-			};
+			}
 
 			case 'interfaceLang': {
 				Action.setInterfaceLang(arg);
 				break;
-			};
+			}
+		}
+	}
 
-		};
-	};
-
-	onContactUrl () {
+	onContactUrl() {
 		const { account } = authStore;
 		if (!account) {
 			return;
-		};
+		}
 
 		C.AppGetVersion((message: any) => {
 			let url = Url.contact;
@@ -612,139 +690,150 @@ class Keyboard {
 
 			Renderer.send('urlOpen', url);
 		});
-	};
+	}
 
-	onTechInfo () {
+	onTechInfo() {
 		const { account } = authStore;
 		if (!account) {
 			return;
-		};
+		}
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
-				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
-				[ translate('libKeyboardBuildNumber'), message.details ],
-				[ translate('libKeyboardLibraryVersion'), message.version ],
-				[ translate('libKeyboardAccountID'), account.id ],
-				[ translate('libKeyboardAnalyticsID'), account.info.analyticsId ],
-				[ translate('libKeyboardDeviceID'), account.info.deviceId ],
+				[translate('libKeyboardOSVersion'), window.Electron.version.os],
+				[
+					translate('libKeyboardAppVersion'),
+					window.Electron.version.app,
+				],
+				[translate('libKeyboardBuildNumber'), message.details],
+				[translate('libKeyboardLibraryVersion'), message.version],
+				[translate('libKeyboardAccountID'), account.id],
+				[translate('libKeyboardAnalyticsID'), account.info.analyticsId],
+				[translate('libKeyboardDeviceID'), account.info.deviceId],
 			];
 
 			popupStore.open('confirm', {
 				className: 'isWide isLeft',
 				data: {
-					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
+					text: data
+						.map(it => `<b>${it[0]}</b>: ${it[1]}`)
+						.join('<br/>'),
 					textConfirm: translate('commonCopy'),
 					textCancel: translate('commonClose'),
 					canConfirm: true,
 					canCancel: true,
 					onConfirm: () => {
-						UtilCommon.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
+						UtilCommon.copyToast(
+							translate('libKeyboardTechInformation'),
+							data.map(it => `${it[0]}: ${it[1]}`).join('\n')
+						);
 					},
-				}
+				},
 			});
 		});
-	};
+	}
 
-	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
+	onUndo(rootId: string, route?: string, callBack?: (message: any) => void) {
 		C.ObjectUndo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
-			};
+			}
 
 			if (callBack) {
 				callBack(message);
-			};
+			}
 		});
 		analytics.event('Undo', { route });
-	};
+	}
 
-	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
+	onRedo(rootId: string, route?: string, callBack?: (message: any) => void) {
 		C.ObjectRedo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
-			};
+			}
 
 			if (callBack) {
 				callBack(message);
-			};
+			}
 		});
 
 		analytics.event('Redo', { route });
-	};
+	}
 
-	printApply (className: string, clearTheme: boolean) {
+	printApply(className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
 		const html = $('html');
 
 		html.addClass('printMedia');
-		
+
 		if (isPopup) {
 			html.addClass('withPopup');
-		};
+		}
 
 		if (className) {
 			html.addClass(className);
-		};
+		}
 
 		if (clearTheme) {
 			UtilCommon.addBodyClass('theme', '');
-		};
+		}
 
 		$('#link-prism').remove();
 		focus.clearRange(true);
-	};
+	}
 
-	printRemove () {
+	printRemove() {
 		$('html').removeClass('withPopup printMedia print save');
 		commonStore.setThemeClass();
 		$(window).trigger('resize');
-	};
+	}
 
-	onPrint (route?: string) {
+	onPrint(route?: string) {
 		this.printApply('print', true);
 
 		window.print();
 
 		this.printRemove();
 		analytics.event('Print', { route });
-	};
+	}
 
-	onSaveAsHTML () {
+	onSaveAsHTML() {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('save', false);
 		Renderer.send('winCommand', 'printHtml', { name: object.name });
-	};
+	}
 
-	onPrintToPDF (options: any) {
+	onPrintToPDF(options: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
 		this.printApply('print', true);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
-	};
+	}
 
-	onSearchMenu (value: string, route?: string) {
+	onSearchMenu(value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainStore() || this.isMainGraph();
+			isDisabled =
+				this.isMainSet() || this.isMainStore() || this.isMainGraph();
 		} else {
-			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
-		};
+			isDisabled = ['set', 'store', 'graph'].includes(
+				popupMatch.params.action
+			);
+		}
 
 		if (isDisabled) {
 			return;
-		};
+		}
 
-		menuStore.closeAll([ 'blockContext' ]);
+		menuStore.closeAll(['blockContext']);
 		window.setTimeout(() => {
 			menuStore.open('searchText', {
 				element: '#header',
@@ -759,17 +848,17 @@ class Keyboard {
 				},
 			});
 		}, Constant.delay.menu);
-	};
+	}
 
-	onSearchPopup (route: string) {
+	onSearchPopup(route: string) {
 		popupStore.open('search', {
 			data: { isPopup: this.isPopup(), route },
 		});
-	};
+	}
 
-	onSpaceMenu (shortcut: boolean) {
+	onSpaceMenu(shortcut: boolean) {
 		popupStore.close('search', () => {
-			menuStore.closeAll([ 'quickCapture' ], () => {
+			menuStore.closeAll(['quickCapture'], () => {
 				menuStore.open('space', {
 					element: '#navigationPanel',
 					className: 'fixed',
@@ -780,22 +869,22 @@ class Keyboard {
 					offsetY: -12,
 					data: {
 						shortcut,
-					}
+					},
 				});
 			});
 		});
-	};
+	}
 
-	onQuickCapture () {
+	onQuickCapture() {
 		if (menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
-		};
+		}
 
 		const element = '#button-navigation-plus';
 
 		popupStore.close('search', () => {
-			menuStore.closeAll([ 'quickCapture', 'space' ], () => {
+			menuStore.closeAll(['quickCapture', 'space'], () => {
 				menuStore.open('quickCapture', {
 					element,
 					className: 'fixed',
@@ -810,32 +899,36 @@ class Keyboard {
 				});
 			});
 		});
-	};
+	}
 
-	onLock (rootId: string, v: boolean, route?: string) {
+	onLock(rootId: string, v: boolean, route?: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
 		if (!block) {
 			return;
-		};
+		}
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
 		]);
 
-		Preview.toastShow({ objectId: rootId, action: I.ToastAction.Lock, value: v });
-		analytics.event((v ? 'LockPage' : 'UnlockPage'), { route });
-	};
+		Preview.toastShow({
+			objectId: rootId,
+			action: I.ToastAction.Lock,
+			value: v,
+		});
+		analytics.event(v ? 'LockPage' : 'UnlockPage', { route });
+	}
 
-	onToggleLock () {
+	onToggleLock() {
 		const rootId = this.getRootId();
 		const root = blockStore.getLeaf(rootId, rootId);
-		
+
 		if (root) {
 			this.onLock(rootId, !root.isLocked(), 'Shortcut');
-		};
-	};
+		}
+	}
 
-	setWindowTitle () {
+	setWindowTitle() {
 		const match = this.getMatch();
 		const action = match?.params?.action;
 		const titles = {
@@ -851,116 +944,120 @@ class Keyboard {
 		} else {
 			const rootId = this.getRootId();
 			UtilData.setWindowTitle(rootId, rootId);
-		};
-	};
+		}
+	}
 
-	getPopupMatch () {
+	getPopupMatch() {
 		const popup = popupStore.get('page');
-		return popup && popup?.param.data.matchPopup || {};
-	};
+		return (popup && popup?.param.data.matchPopup) || {};
+	}
 
-	getMatch () {
-		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
-	};
+	getMatch() {
+		return (
+			(this.isPopup() ? this.getPopupMatch() : this.match) || {
+				params: {},
+			}
+		);
+	}
 
-	ctrlByPlatform (e: any) {
+	ctrlByPlatform(e: any) {
 		return UtilCommon.isPlatformMac() ? e.metaKey : e.ctrlKey;
-	};
+	}
 
-	isMain () {
+	isMain() {
 		return this.match?.params?.page == 'main';
-	};
-	
-	isMainEditor () {
-		return this.isMain() && (this.match?.params?.action == 'edit');
-	};
+	}
 
-	isMainSet () {
-		return this.isMain() && (this.match?.params?.action == 'set');
-	};
+	isMainEditor() {
+		return this.isMain() && this.match?.params?.action == 'edit';
+	}
 
-	isMainStore () {
-		return this.isMain() && (this.match?.params?.action == 'store');
-	};
+	isMainSet() {
+		return this.isMain() && this.match?.params?.action == 'set';
+	}
 
-	isMainGraph () {
-		return this.isMain() && (this.match?.params?.action == 'graph');
-	};
+	isMainStore() {
+		return this.isMain() && this.match?.params?.action == 'store';
+	}
 
-	isMainIndex () {
-		return this.isMain() && (this.match?.params?.action == 'index');
-	};
-	
-	setFocus (v: boolean) {
+	isMainGraph() {
+		return this.isMain() && this.match?.params?.action == 'graph';
+	}
+
+	isMainIndex() {
+		return this.isMain() && this.match?.params?.action == 'index';
+	}
+
+	setFocus(v: boolean) {
 		this.isFocused = v;
-	};
-	
-	setResize (v: boolean) {
-		this.isResizing = v;
-	};
-	
-	setDragging (v: boolean) {
-		this.isDragging = v;
-	};
+	}
 
-	setPinChecked (v: boolean) {
+	setResize(v: boolean) {
+		this.isResizing = v;
+	}
+
+	setDragging(v: boolean) {
+		this.isDragging = v;
+	}
+
+	setPinChecked(v: boolean) {
 		v = Boolean(v);
 
 		if (this.isPinChecked === v) {
 			return;
-		};
+		}
 
 		this.isPinChecked = v;
 		Renderer.send('setPinChecked', v);
-	};
+	}
 
-	setMatch (match: any) {
+	setMatch(match: any) {
 		this.match = match;
-	};
+	}
 
-	setSource (source: any) {
+	setSource(source: any) {
 		this.source = UtilCommon.objectCopy(source);
-	};
+	}
 
-	setSelection (v: any) {
+	setSelection(v: any) {
 		this.selection = v;
-	};
+	}
 
-	setSelectionClearDisabled (v: boolean) {
+	setSelectionClearDisabled(v: boolean) {
 		this.isSelectionClearDisabled = v;
-	};
+	}
 
-	initPinCheck () {
+	initPinCheck() {
 		const { account } = authStore;
 		const check = () => {
 			const pin = Storage.get('pin');
 			if (!pin) {
 				this.setPinChecked(true);
 				return false;
-			};
+			}
 			return true;
 		};
 
 		if (!account || !check()) {
 			return;
-		};
+		}
 
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
 			if (!check()) {
 				return;
-			};
+			}
 
 			this.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
 		}, commonStore.pinTime);
-	};
+	}
 
-	restoreSource () {
+	restoreSource() {
 		if (!this.source) {
 			return;
-		};
+		}
 
 		const { type, data } = this.source;
 
@@ -970,72 +1067,86 @@ class Keyboard {
 					popupStore.open(data.id, data.param);
 				}, Constant.delay.popup);
 				break;
-		};
+		}
 
 		this.setSource(null);
-	};
-	
-	disableMouse (v: boolean) {
-		this.isMouseDisabled = v;
-	};
+	}
 
-	disableNavigation (v: boolean) {
+	disableMouse(v: boolean) {
+		this.isMouseDisabled = v;
+	}
+
+	disableNavigation(v: boolean) {
 		this.isNavigationDisabled = v;
-	};
+	}
 
 	// Flag to prevent blur events
-	disableBlur (v: boolean) {
+	disableBlur(v: boolean) {
 		this.isBlurDisabled = v;
-	};
+	}
 
 	// Flag to prevent menuBlockContext from closing
-	disableContextClose (v: boolean) {
+	disableContextClose(v: boolean) {
 		this.isContextCloseDisabled = v;
-	};
+	}
 
 	// Flag to prevent menuBlockContext from opening
-	disableContextOpen (v: boolean) {
+	disableContextOpen(v: boolean) {
 		this.isContextOpenDisabled = v;
-	};
-	
-	disablePreview (v: boolean) {
+	}
+
+	disablePreview(v: boolean) {
 		this.isPreviewDisabled = v;
-	};
+	}
 
 	// Flag to prevent document from sending close, to prevent deletion of drafts
-	disableClose (v: boolean) {
+	disableClose(v: boolean) {
 		this.isCloseDisabled = v;
-	};
+	}
 
 	// Flag to prevent common paste handling in editor
-	disablePaste (v: boolean) {
+	disablePaste(v: boolean) {
 		this.isPasteDisabled = v;
-	};
+	}
 
-	disableSelection (v: boolean) {
+	disableSelection(v: boolean) {
 		this.isSelectionDisabled = v;
-	};
-	
-	isSpecial (e: any): boolean {
-		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));
-	};
+	}
 
-	isArrow (e: any): boolean {
-		return [ Key.up, Key.down, Key.left, Key.right ].includes(this.eventKey(e));
-	};
+	isSpecial(e: any): boolean {
+		return (
+			this.isArrow(e) ||
+			[
+				Key.escape,
+				Key.backspace,
+				Key.tab,
+				Key.enter,
+				Key.shift,
+				Key.ctrl,
+				Key.alt,
+				Key.meta,
+			].includes(this.eventKey(e))
+		);
+	}
 
-	withCommand (e: any): boolean {
+	isArrow(e: any): boolean {
+		return [Key.up, Key.down, Key.left, Key.right].includes(
+			this.eventKey(e)
+		);
+	}
+
+	withCommand(e: any): boolean {
 		return e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
-	};
+	}
 
-	eventKey (e: any) {
+	eventKey(e: any) {
 		return e && e.key ? e.key.toLowerCase() : '';
-	};
+	}
 
-	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
+	shortcut(s: string, e: any, callBack: (pressed: string) => void) {
 		if (!e || !e.key) {
 			return;
-		};
+		}
 
 		const a = s.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
@@ -1046,87 +1157,85 @@ class Keyboard {
 
 		if (e.shiftKey) {
 			pressed.push('shift');
-		};
+		}
 		if (e.altKey) {
 			pressed.push('alt');
-		};
+		}
 		if (e.ctrlKey) {
 			pressed.push('ctrl');
-		};
+		}
 		if (e.metaKey) {
 			pressed.push('cmd');
-		};
+		}
 
 		for (const item of a) {
 			const keys = item.split('+').sort();
-			
+
 			for (const k of keys) {
 				if (which == KeyCode[k]) {
 					pressed.push(k);
-				} else
-				if (k == key) {
+				} else if (k == key) {
 					pressed.push(key);
-				};
-			};
+				}
+			}
 
-			pressed = [ ...new Set(pressed) ];
+			pressed = [...new Set(pressed)];
 
 			const check = pressed.sort().join('+');
 			if (check == keys.join('+')) {
 				res = check;
-			};
-		};
+			}
+		}
 
 		if (res) {
 			callBack(res);
-		};
-	};
+		}
+	}
 
-	cmdSymbol () {
+	cmdSymbol() {
 		return UtilCommon.isPlatformMac() ? '&#8984;' : 'Ctrl';
-	};
+	}
 
-	altSymbol () {
+	altSymbol() {
 		return UtilCommon.isPlatformMac() ? '&#8997;' : 'Alt';
-	};
+	}
 
-	cmdKey () {
+	cmdKey() {
 		return UtilCommon.isPlatformMac() ? 'cmd' : 'ctrl';
-	};
-
-};
+	}
+}
 
 export enum Key {
-	backspace	 = 'backspace',
-	tab			 = 'tab',
-	enter		 = 'enter',
-	shift		 = 'shift',
-	alt			 = 'alt',
-	ctrl		 = 'control',
-	meta		 = 'meta',
-	escape		 = 'escape',
-	space		 = 'space',
-	left		 = 'arrowleft',
-	up			 = 'arrowup',
-	right		 = 'arrowright',
-	down		 = 'arrowdown',
-	a			 = 'a',
-	b			 = 'b',
-	c			 = 'c',
-	d			 = 'd',
-	e			 = 'e',
-	i			 = 'i',
-	k			 = 'k',
-	l			 = 'l',
-	n			 = 'n',
-	o			 = 'o',
-	p			 = 'p',
-	s			 = 's',
-	v			 = 'v',
-	x			 = 'x',
-	y			 = 'y',
-	z			 = 'z',
-	slash		 = '/',
-};
+	backspace = 'backspace',
+	tab = 'tab',
+	enter = 'enter',
+	shift = 'shift',
+	alt = 'alt',
+	ctrl = 'control',
+	meta = 'meta',
+	escape = 'escape',
+	space = 'space',
+	left = 'arrowleft',
+	up = 'arrowup',
+	right = 'arrowright',
+	down = 'arrowdown',
+	a = 'a',
+	b = 'b',
+	c = 'c',
+	d = 'd',
+	e = 'e',
+	i = 'i',
+	k = 'k',
+	l = 'l',
+	n = 'n',
+	o = 'o',
+	p = 'p',
+	s = 's',
+	v = 'v',
+	x = 'x',
+	y = 'y',
+	z = 'z',
+	slash = '/',
+}
 
- export const keyboard: Keyboard = new Keyboard();
+export const keyboard: Keyboard = new Keyboard();

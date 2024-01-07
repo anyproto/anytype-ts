@@ -1,7 +1,18 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
+import {
+	I,
+	Action,
+	translate,
+	UtilObject,
+	UtilCommon,
+	C,
+	analytics,
+	Onboarding,
+} from 'Lib';
 import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -10,21 +21,20 @@ interface Props {
 	object: any;
 	count?: number;
 	isPopup?: boolean;
-};
+}
 
 class HeaderBanner extends React.Component<Props> {
-
 	node: any = null;
 
-	constructor (props: Props) {
+	constructor(props: Props) {
 		super(props);
 
 		this.onTemplateMenu = this.onTemplateMenu.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { type, object, count } = this.props;
-		const cn = [ 'headerBanner' ];
+		const cn = ['headerBanner'];
 
 		let label = '';
 		let target = null;
@@ -34,43 +44,61 @@ class HeaderBanner extends React.Component<Props> {
 		switch (type) {
 			case I.BannerType.IsArchived: {
 				label = translate('deletedBanner');
-				action = <div className="action" onClick={e => Action.restore([ object.id ])}>{translate('deletedBannerRestore')}</div>;
+				action = (
+					<div
+						className="action"
+						onClick={e => Action.restore([object.id])}
+					>
+						{translate('deletedBannerRestore')}
+					</div>
+				);
 				break;
-			};
+			}
 
 			case I.BannerType.IsTemplate: {
-				const targetObjectType = dbStore.getTypeById(object.targetObjectType);
+				const targetObjectType = dbStore.getTypeById(
+					object.targetObjectType
+				);
 
 				label = translate('templateBannner');
 				if (targetObjectType) {
 					target = (
-						<div className="typeName" onClick={() => UtilObject.openAuto(targetObjectType)}>
+						<div
+							className="typeName"
+							onClick={() =>
+								UtilObject.openAuto(targetObjectType)
+							}
+						>
 							{translate('commonOf')}
 							<IconObject size={18} object={targetObjectType} />
 							<ObjectName object={targetObjectType} />
 						</div>
 					);
-				};
+				}
 				break;
-			};
+			}
 
 			case I.BannerType.TemplateSelect: {
 				cn.push('withMenu');
 
 				if (count) {
-					label = UtilCommon.sprintf(translate('selectTemplateBannerWithNumber'), count, UtilCommon.plural(count, translate('pluralTemplate')));
+					label = UtilCommon.sprintf(
+						translate('selectTemplateBannerWithNumber'),
+						count,
+						UtilCommon.plural(count, translate('pluralTemplate'))
+					);
 				} else {
 					label = translate('selectTemplateBanner');
-				};
+				}
 
 				onClick = this.onTemplateMenu;
 				break;
-			};
-		};
+			}
+		}
 
 		return (
 			<div
-				ref={node => this.node = node}
+				ref={node => (this.node = node)}
 				id="headerBanner"
 				className={cn.join(' ')}
 				onClick={onClick}
@@ -83,17 +111,17 @@ class HeaderBanner extends React.Component<Props> {
 				{action}
 			</div>
 		);
-	};
+	}
 
-	componentDidMount (): void {
+	componentDidMount(): void {
 		const { type, isPopup } = this.props;
 
 		if (type == I.BannerType.TemplateSelect) {
 			Onboarding.start('templateSelect', isPopup);
-		};
-	};
+		}
+	}
 
-	onTemplateMenu () {
+	onTemplateMenu() {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
 		const type = dbStore.getTypeById(object.type);
@@ -102,7 +130,7 @@ class HeaderBanner extends React.Component<Props> {
 
 		if (!type || menuStore.isOpen('dataviewTemplateList')) {
 			return;
-		};
+		}
 
 		let menuContext = null;
 
@@ -110,10 +138,12 @@ class HeaderBanner extends React.Component<Props> {
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
-			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: Constant.menuIds.dataviewTemplate.concat([
+				'dataviewTemplateContext',
+			]),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			onOpen: (context) => {
+			onOpen: context => {
 				menuContext = context;
 				node.addClass('active');
 			},
@@ -139,8 +169,7 @@ class HeaderBanner extends React.Component<Props> {
 				},
 			},
 		});
-	};
-
-};
+	}
+}
 
 export default HeaderBanner;

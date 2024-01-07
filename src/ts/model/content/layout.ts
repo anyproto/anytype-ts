@@ -1,11 +1,12 @@
+/** @format */
+
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLayout implements I.ContentLayout {
-	
 	style: I.LayoutStyle = I.LayoutStyle.Row;
-	
-	constructor (props: I.ContentLayout) {
+
+	constructor(props: I.ContentLayout) {
 		this.style = Number(props.style) || I.LayoutStyle.Row;
 
 		makeObservable(this, {
@@ -13,8 +14,7 @@ class BlockContentLayout implements I.ContentLayout {
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));
-	};
-
-};
+	}
+}
 
 export default BlockContentLayout;

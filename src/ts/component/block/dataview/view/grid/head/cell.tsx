@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { I, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
@@ -11,104 +13,147 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	block?: I.Block;
 	index: number;
 	onResizeStart(e: any, key: string): void;
-};
+}
 
-const HeadCell = observer(class HeadCell extends React.Component<Props> {
+const HeadCell = observer(
+	class HeadCell extends React.Component<Props> {
+		constructor(props: Props) {
+			super(props);
 
-	constructor (props: Props) {
-		super(props);
+			this.onEdit = this.onEdit.bind(this);
+			this.onMouseEnter = this.onMouseEnter.bind(this);
+			this.onMouseLeave = this.onMouseLeave.bind(this);
+		}
 
-		this.onEdit = this.onEdit.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-	};
+		render() {
+			const { relationKey, index, onResizeStart } = this.props;
+			const relation = dbStore.getRelationByKey(relationKey);
 
-	render () {
-		const { relationKey, index, onResizeStart } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
-		
-		if (!relation) {
-			return;
-		};
+			if (!relation) {
+				return;
+			}
 
-		const { format, name } = relation;
-		const readonly = relation.isReadonlyValue;
+			const { format, name } = relation;
+			const readonly = relation.isReadonlyValue;
 
-		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
+			const Cell = SortableElement((item: any) => {
+				const cn = [
+					'cellHead',
+					`cell-key-${this.props.relationKey}`,
+					Relation.className(format),
+				];
 
-			return (
-				<div 
-					id={Relation.cellId('head', relationKey, '')} 
-					className={cn.join(' ')}
-					onClick={this.onEdit}
-					onContextMenu={this.onEdit}
-					onMouseEnter={this.onMouseEnter}
-					onMouseLeave={this.onMouseLeave}
-				>
-					<div className="cellContent">
-						<Handle name={name} format={format} readonly={readonly} />
-						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }} />
+				return (
+					<div
+						id={Relation.cellId('head', relationKey, '')}
+						className={cn.join(' ')}
+						onClick={this.onEdit}
+						onContextMenu={this.onEdit}
+						onMouseEnter={this.onMouseEnter}
+						onMouseLeave={this.onMouseLeave}
+					>
+						<div className="cellContent">
+							<Handle
+								name={name}
+								format={format}
+								readonly={readonly}
+							/>
+							<div
+								className="resize"
+								onMouseDown={(e: any) => {
+									onResizeStart(e, relationKey);
+								}}
+							/>
+						</div>
 					</div>
-				</div>
-			);
-		});
-
-		return <Cell index={index} />;
-	};
-
-	onMouseEnter (): void {
-		const { block } = this.props;
-
-		if (!keyboard.isDragging) {
-			$(`#block-${block.id} .cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
-		};
-	};
-
-	onMouseLeave () {
-		$('.cellKeyHover').removeClass('cellKeyHover');
-	};
-
-	onEdit (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
-
-		if (!relation || keyboard.isResizing) {
-			return;
-		};
-
-		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
-		const obj = $(element);
-
-		window.setTimeout(() => {
-			menuStore.open('dataviewRelationEdit', { 
-				element,
-				horizontal: I.MenuDirection.Center,
-				noFlipY: true,
-				onOpen: () => { obj.addClass('active'); },
-				onClose: () => { obj.removeClass('active'); },
-				data: {
-					loadData,
-					getView,
-					getTarget,
-					rootId,
-					isInline,
-					isCollection,
-					blockId: block.id,
-					relationId: relation.id,
-					readonly,
-					extendedOptions: true,
-					addCommand: (rootId: string, blockId: string, relation: any) => {
-						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
-					},
-				}
+				);
 			});
-		}, Constant.delay.menu);
-	};
 
-});
+			return <Cell index={index} />;
+		}
+
+		onMouseEnter(): void {
+			const { block } = this.props;
+
+			if (!keyboard.isDragging) {
+				$(
+					`#block-${block.id} .cell-key-${this.props.relationKey}`
+				).addClass('cellKeyHover');
+			}
+		}
+
+		onMouseLeave() {
+			$('.cellKeyHover').removeClass('cellKeyHover');
+		}
+
+		onEdit(e: any) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const {
+				rootId,
+				block,
+				readonly,
+				loadData,
+				getView,
+				getTarget,
+				relationKey,
+				isInline,
+				isCollection,
+			} = this.props;
+			const relation = dbStore.getRelationByKey(relationKey);
+
+			if (!relation || keyboard.isResizing) {
+				return;
+			}
+
+			const element = `#block-${block.id} #${Relation.cellId(
+				'head',
+				relationKey,
+				''
+			)}`;
+			const obj = $(element);
+
+			window.setTimeout(() => {
+				menuStore.open('dataviewRelationEdit', {
+					element,
+					horizontal: I.MenuDirection.Center,
+					noFlipY: true,
+					onOpen: () => {
+						obj.addClass('active');
+					},
+					onClose: () => {
+						obj.removeClass('active');
+					},
+					data: {
+						loadData,
+						getView,
+						getTarget,
+						rootId,
+						isInline,
+						isCollection,
+						blockId: block.id,
+						relationId: relation.id,
+						readonly,
+						extendedOptions: true,
+						addCommand: (
+							rootId: string,
+							blockId: string,
+							relation: any
+						) => {
+							Dataview.relationAdd(
+								rootId,
+								blockId,
+								relation.relationKey,
+								relation._index_,
+								getView()
+							);
+						},
+					},
+				});
+			}, Constant.delay.menu);
+		}
+	}
+);
 
 export default HeadCell;

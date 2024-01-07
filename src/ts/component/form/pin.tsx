@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
@@ -15,7 +17,7 @@ interface Props {
 	onSuccess?: (value: string) => void;
 	/** callback when the pin is entered (and does not match expectedPin if provided)*/
 	onError?: () => void;
-};
+}
 
 type State = {
 	/** index of the current pin character in focus */
@@ -29,7 +31,6 @@ type State = {
 const TIMEOUT_DURATION = 150;
 
 class Pin extends React.Component<Props, State> {
-
 	public static defaultProps = {
 		pinLength: Constant.pinLength,
 		expectedPin: null,
@@ -45,49 +46,55 @@ class Pin extends React.Component<Props, State> {
 	// This timeout is used so that the input boxes first show the inputted value as text, then hides it as password showing (•)
 	timeout = 0;
 
-	render () {
+	render() {
 		const { pinLength } = this.props;
 		const { index } = this.state;
 
 		return (
 			<div className="pin" onClick={this.onClick}>
-				{Array(pinLength).fill(null).map((_, i) => (
-					<Input 
-						className={i === index ? 'active' : ''}
-						ref={ref => this.inputRefs[i] = ref} 
-						maxLength={1} 
-						key={i} 
-						onFocus={() => this.onInputFocus(i)} 
-						onBlur={() => this.onInputBlur(i)} 
-						onKeyUp={this.onInputKeyUp} 
-						onKeyDown={e => this.onInputKeyDown(e, i)} 
-						onChange={(_, value) => this.onInputChange(i, value)} 
-					/>
-				))}
+				{Array(pinLength)
+					.fill(null)
+					.map((_, i) => (
+						<Input
+							className={i === index ? 'active' : ''}
+							ref={ref => (this.inputRefs[i] = ref)}
+							maxLength={1}
+							key={i}
+							onFocus={() => this.onInputFocus(i)}
+							onBlur={() => this.onInputBlur(i)}
+							onKeyUp={this.onInputKeyUp}
+							onKeyDown={e => this.onInputKeyDown(e, i)}
+							onChange={(_, value) =>
+								this.onInputChange(i, value)
+							}
+						/>
+					))}
 			</div>
 		);
-	};
+	}
 
-	componentDidMount () {
+	componentDidMount() {
 		if (this.props.focusOnMount) {
 			this.focus();
-		};
+		}
 		this.rebind();
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		window.clearTimeout(this.timeout);
 		this.unbind();
-	};
+	}
 
 	rebind = () => {
 		this.unbind();
-		$(window).on('mousedown.pin', e => { e.preventDefault(); });
+		$(window).on('mousedown.pin', e => {
+			e.preventDefault();
+		});
 	};
 
 	unbind = () => {
 		$(window).off('mousedown.pin');
-	}; 
+	};
 
 	focus = () => {
 		this.inputRefs[this.state.index].focus();
@@ -101,30 +108,30 @@ class Pin extends React.Component<Props, State> {
 	check = () => {
 		const { expectedPin, onSuccess, onError } = this.props;
 		const pin = this.getValue();
-		const success = !expectedPin || (expectedPin === sha1(pin));
+		const success = !expectedPin || expectedPin === sha1(pin);
 
 		success ? onSuccess(pin) : onError();
 	};
 
 	/** returns the pin state stored in the input DOM */
 	getValue = () => {
-		return this.inputRefs.map((input) => input.getValue()).join('');
+		return this.inputRefs.map(input => input.getValue()).join('');
 	};
 
 	/** sets all the input boxes to empty string */
 	clear = () => {
 		for (const i in this.inputRefs) {
 			this.inputRefs[i].setValue('');
-		};
+		}
 	};
 
 	/** resets state */
-	reset () {
+	reset() {
 		this.setState({ index: 0 }, () => {
 			this.clear();
-			this.focus();	
+			this.focus();
 		});
-	};
+	}
 
 	// Input subcomponent methods
 
@@ -145,7 +152,7 @@ class Pin extends React.Component<Props, State> {
 				prev.setType('text');
 				prev.focus();
 			});
-		};
+		}
 	};
 
 	onInputKeyUp = () => {
@@ -154,7 +161,7 @@ class Pin extends React.Component<Props, State> {
 
 		if (pin.length === size) {
 			this.check();
-		};
+		}
 	};
 
 	onInputChange = (index: number, value: string) => {
@@ -168,11 +175,13 @@ class Pin extends React.Component<Props, State> {
 
 		if (next) {
 			next.focus();
-		};
+		}
 
-		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+		this.timeout = window.setTimeout(
+			() => input.setType('password'),
+			TIMEOUT_DURATION
+		);
 	};
-
-};
+}
 
 export default Pin;

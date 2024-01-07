@@ -1,23 +1,24 @@
+/** @format */
+
 import * as React from 'react';
 import { Icon } from 'Component';
 import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
-
 	refFilter: any = null;
 	rootId = '';
 
-	constructor (props: I.HeaderComponent) {
+	constructor(props: I.HeaderComponent) {
 		super(props);
-		
+
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.onSettings = this.onSettings.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-	};
+	}
 
-	render () {
+	render() {
 		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
 		const cmd = keyboard.cmdSymbol();
 
@@ -31,17 +32,30 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					<Icon
+						className="expand"
+						tooltip={translate('commonOpenObject')}
+						onClick={this.onOpen}
+					/>
 				</div>
 
 				<div className="side center">
 					<div id="tabs" className="tabs">
 						{tabs.map((item: any, i: number) => (
-							<div 
+							<div
 								key={i}
-								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+								className={[
+									'tab',
+									item.id == tab ? 'active' : '',
+								].join(' ')}
 								onClick={() => onTab(item.id)}
-								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
+								onMouseOver={e =>
+									onTooltipShow(
+										e,
+										item.tooltip,
+										item.tooltipCaption
+									)
+								}
 								onMouseOut={onTooltipHide}
 							>
 								{item.name}
@@ -51,30 +65,48 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-search" className="btn-search" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="btn-filter dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="btn-settings" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
+					<Icon
+						id="button-header-search"
+						className="btn-search"
+						tooltip={translate('headerGraphTooltipSearch')}
+						onClick={this.onSearch}
+					/>
+					<Icon
+						id="button-header-filter"
+						className="btn-filter dn"
+						tooltip={translate('headerGraphTooltipFilters')}
+						onClick={this.onFilter}
+					/>
+					<Icon
+						id="button-header-settings"
+						className="btn-settings"
+						tooltip={translate('headerGraphTooltipSettings')}
+						onClick={this.onSettings}
+					/>
 				</div>
 			</React.Fragment>
 		);
-	};
+	}
 
 	componentDidMount(): void {
 		this.rootId = this.props.rootId;
-	};
+	}
 
-	onOpen () {
-		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
-	};
+	onOpen() {
+		UtilObject.openRoute({
+			rootId: this.rootId,
+			layout: I.ObjectLayout.Graph,
+		});
+	}
 
-	onSearch () {
+	onSearch() {
 		const { graph } = commonStore;
 		const menuParam = {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: this.rootId,
 				blockId: this.rootId,
-				blockIds: [ this.rootId ],
+				blockIds: [this.rootId],
 				filters: UtilData.graphFilters(),
 				filter: graph.filter,
 				canAdd: true,
@@ -84,23 +116,23 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				onFilterChange: (v: string) => {
 					commonStore.graphSet({ filter: v });
 				},
-			}
+			},
 		};
 
 		this.props.menuOpen('searchObject', '#button-header-search', menuParam);
-	};
+	}
 
-	onFilter () {
-	};
+	onFilter() {}
 
-	onSettings () {
-		this.props.menuOpen('graphSettings', '#button-header-settings', { horizontal: I.MenuDirection.Right });
-	};
+	onSettings() {
+		this.props.menuOpen('graphSettings', '#button-header-settings', {
+			horizontal: I.MenuDirection.Right,
+		});
+	}
 
-	setRootId (id: string) {
+	setRootId(id: string) {
 		this.rootId = id;
-	};
-
-};
+	}
+}
 
 export default HeaderMainGraph;

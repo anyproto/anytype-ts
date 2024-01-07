@@ -1,61 +1,67 @@
+/** @format */
+
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { I, M, UtilCommon, Encode, Decode } from 'Lib';
 
 export const Mapper = {
-
 	BlockType: (v: number): I.BlockType => {
 		const V = Model.Block.ContentCase;
 
 		let t = I.BlockType.Empty;
-		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
-		if (v == V.TEXT)				 t = I.BlockType.Text;
-		if (v == V.FILE)				 t = I.BlockType.File;
-		if (v == V.LAYOUT)				 t = I.BlockType.Layout;
-		if (v == V.DIV)					 t = I.BlockType.Div;
-		if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
-		if (v == V.LINK)				 t = I.BlockType.Link;
-		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
-		if (v == V.RELATION)			 t = I.BlockType.Relation;
-		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-		if (v == V.LATEX)				 t = I.BlockType.Embed;
-		if (v == V.TABLE)				 t = I.BlockType.Table;
-		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
-		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
-		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
-		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
+		if (v == V.SMARTBLOCK) t = I.BlockType.Page;
+		if (v == V.TEXT) t = I.BlockType.Text;
+		if (v == V.FILE) t = I.BlockType.File;
+		if (v == V.LAYOUT) t = I.BlockType.Layout;
+		if (v == V.DIV) t = I.BlockType.Div;
+		if (v == V.BOOKMARK) t = I.BlockType.Bookmark;
+		if (v == V.LINK) t = I.BlockType.Link;
+		if (v == V.DATAVIEW) t = I.BlockType.Dataview;
+		if (v == V.RELATION) t = I.BlockType.Relation;
+		if (v == V.FEATUREDRELATIONS) t = I.BlockType.Featured;
+		if (v == V.LATEX) t = I.BlockType.Embed;
+		if (v == V.TABLE) t = I.BlockType.Table;
+		if (v == V.TABLECOLUMN) t = I.BlockType.TableColumn;
+		if (v == V.TABLEROW) t = I.BlockType.TableRow;
+		if (v == V.TABLEOFCONTENTS) t = I.BlockType.TableOfContents;
+		if (v == V.WIDGET) t = I.BlockType.Widget;
 		return t;
 	},
 
-	BoardGroupType (v: number) {
+	BoardGroupType(v: number) {
 		const V = Model.Block.Content.Dataview.Group.ValueCase;
 
 		let t = '';
-		if (v == V.STATUS)	 t = 'status';
-		if (v == V.TAG)		 t = 'tag';
+		if (v == V.STATUS) t = 'status';
+		if (v == V.TAG) t = 'tag';
 		if (v == V.CHECKBOX) t = 'checkbox';
-		if (v == V.DATE)	 t = 'date';
+		if (v == V.DATE) t = 'date';
 		return t;
 	},
 
-	NotificationPayload (v: number) {
+	NotificationPayload(v: number) {
 		const V = Model.Notification.PayloadCase;
 
 		let t = '';
-		if (v == V.IMPORT)			 t = 'import';
-		if (v == V.EXPORT)			 t = 'export';
-		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
+		if (v == V.IMPORT) t = 'import';
+		if (v == V.EXPORT) t = 'export';
+		if (v == V.GALLERYIMPORT) t = 'galleryImport';
 		return t;
 	},
 
 	From: {
-
 		Account: (obj: Model.Account): I.Account => {
 			return {
 				id: obj.getId(),
-				info: obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
-				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
-				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+				info: obj.hasInfo()
+					? Mapper.From.AccountInfo(obj.getInfo())
+					: null,
+				config: obj.hasConfig()
+					? Mapper.From.AccountConfig(obj.getConfig())
+					: null,
+				status: obj.hasStatus()
+					? Mapper.From.AccountStatus(obj.getStatus())
+					: null,
 			};
 		},
 
@@ -85,7 +91,7 @@ export const Mapper = {
 				date: obj.getDeletiondate(),
 			};
 		},
-		
+
 		ObjectInfo: (obj: any): I.PageInfo => {
 			return {
 				id: obj.getId(),
@@ -115,15 +121,15 @@ export const Mapper = {
 		},
 
 		PreviewLink: (obj: any) => {
-            return {
-                type: obj.getType(),
-                title: obj.getTitle(),
-                description: obj.getDescription(),
-                faviconUrl: obj.getFaviconurl(),
-                imageUrl: obj.getImageurl(),
-                url: obj.getUrl(),
-            };
-        },
+			return {
+				type: obj.getType(),
+				title: obj.getTitle(),
+				description: obj.getDescription(),
+				faviconUrl: obj.getFaviconurl(),
+				imageUrl: obj.getImageurl(),
+				url: obj.getUrl(),
+			};
+		},
 
 		Details: (obj: any): any => {
 			return {
@@ -173,8 +179,10 @@ export const Mapper = {
 		BlockText: (obj: any) => {
 			let marks = [];
 			if (obj.hasMarks()) {
-				marks = (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark);
-			};
+				marks = (obj.getMarks().getMarksList() || []).map(
+					Mapper.From.Mark
+				);
+			}
 
 			return {
 				text: obj.getText(),
@@ -204,9 +212,15 @@ export const Mapper = {
 			return {
 				sources: obj.getSourceList(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
-				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
-				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				relationLinks: (obj.getRelationlinksList() || []).map(
+					Mapper.From.RelationLink
+				),
+				groupOrder: (obj.getGroupordersList() || []).map(
+					Mapper.From.GroupOrder
+				),
+				objectOrder: (obj.getObjectordersList() || []).map(
+					Mapper.From.ObjectOrder
+				),
 				targetObjectId: obj.getTargetobjectid(),
 				isCollection: obj.getIscollection(),
 			};
@@ -232,7 +246,7 @@ export const Mapper = {
 		BlockTable: () => {
 			return {};
 		},
-	
+
 		BlockTableColumn: () => {
 			return {};
 		},
@@ -272,14 +286,18 @@ export const Mapper = {
 				item.content = Mapper.From[fm](content);
 			} else {
 				console.log('[Mapper] From does not exist: ', fm, cc);
-			};
+			}
 			return item;
 		},
 
 		Restrictions: (obj: any): any => {
 			return {
 				object: obj ? obj.getObjectList() || [] : [],
-				dataview: obj ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
+				dataview: obj
+					? (obj.getDataviewList() || []).map(
+							Mapper.From.RestrictionsDataview
+						)
+					: [],
 			};
 		},
 
@@ -298,12 +316,17 @@ export const Mapper = {
 		},
 
 		View: (obj: any): I.View => {
-			return Object.assign({
-				id: obj.getId(),
-				sorts: obj.getSortsList().map(Mapper.From.Sort),
-				filters: obj.getFiltersList().map(Mapper.From.Filter),
-				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
-			}, Mapper.From.ViewFields(obj));
+			return Object.assign(
+				{
+					id: obj.getId(),
+					sorts: obj.getSortsList().map(Mapper.From.Sort),
+					filters: obj.getFiltersList().map(Mapper.From.Filter),
+					relations: obj
+						.getRelationsList()
+						.map(Mapper.From.ViewRelation),
+				},
+				Mapper.From.ViewFields(obj)
+			);
 		},
 
 		ViewFields: (obj: any): any => {
@@ -323,15 +346,15 @@ export const Mapper = {
 		},
 
 		ViewRelation: (obj: any) => {
-            return {
-                relationKey: obj.getKey(),
-                isVisible: obj.getIsvisible(),
-                width: obj.getWidth(),
+			return {
+				relationKey: obj.getKey(),
+				isVisible: obj.getIsvisible(),
+				width: obj.getWidth(),
 				includeTime: obj.getDateincludetime(),
-                timeFormat: obj.getTimeformat(),
+				timeFormat: obj.getTimeformat(),
 				dateFormat: obj.getDateformat(),
-            };
-        },
+			};
+		},
 
 		Filter: (obj: any): I.Filter => {
 			return {
@@ -365,52 +388,54 @@ export const Mapper = {
 		},
 
 		ThreadSummary: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-            };
-        },
+			return {
+				status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
+			};
+		},
 
 		ThreadCafe: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-                lastPulled: obj.getLastpulled(),
-                lastPushSucceed: obj.getLastpushsucceed(),
+			return {
+				status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
+				lastPulled: obj.getLastpulled(),
+				lastPushSucceed: obj.getLastpushsucceed(),
 				files: Mapper.From.ThreadFiles(obj.getFiles()),
-            };
-        },
+			};
+		},
 
 		ThreadFiles: (obj: any) => {
-            return {
+			return {
 				pinning: obj.getPinning(),
 				pinned: obj.getPinned(),
 				failed: obj.getFailed(),
 				updated: obj.getUpdated(),
-            };
-        },
+			};
+		},
 
 		ThreadDevice: (obj: any) => {
-            return {
-                name: obj.getName(),
+			return {
+				name: obj.getName(),
 				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-            };
-        },
+				lastPulled: obj.getLastpulled(),
+				lastEdited: obj.getLastedited(),
+			};
+		},
 
 		ThreadAccount: (obj: any) => {
-            return {
+			return {
 				id: obj.getId(),
 				name: obj.getName(),
 				imageHash: obj.getImagehash(),
 				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-				devices: (obj.getDevicesList() || []).map(Mapper.From.ThreadDevice),
-            };
-        },
+				lastPulled: obj.getLastpulled(),
+				lastEdited: obj.getLastedited(),
+				devices: (obj.getDevicesList() || []).map(
+					Mapper.From.ThreadDevice
+				),
+			};
+		},
 
 		GraphEdge: (obj: any) => {
-            return {
+			return {
 				type: obj.getType(),
 				source: obj.getSource(),
 				target: obj.getTarget(),
@@ -419,16 +444,16 @@ export const Mapper = {
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),
-            };
-        },
+			};
+		},
 
 		UnsplashPicture: (obj: any) => {
 			return {
-                id: obj.getId(),
+				id: obj.getId(),
 				url: obj.getUrl(),
 				artist: obj.getArtist(),
 				artistUrl: obj.getArtisturl(),
-            };
+			};
 		},
 
 		ObjectView: (obj: any) => {
@@ -436,8 +461,10 @@ export const Mapper = {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
-				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
+				relationLinks: (obj.getRelationlinksList() || []).map(
+					Mapper.From.RelationLink
+				),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
 			};
 		},
 
@@ -458,9 +485,9 @@ export const Mapper = {
 				case 'checkbox':
 					value = field.getChecked();
 					break;
-			};
+			}
 
-			return { 
+			return {
 				id: obj.getId(),
 				value,
 			};
@@ -491,11 +518,10 @@ export const Mapper = {
 		Notification: (obj: any): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
 			const field = obj['get' + UtilCommon.ucFirst(type)]();
-			
+
 			let payload: any = {};
 
 			switch (type) {
-
 				case 'import':
 				case 'galleryImport': {
 					payload = Object.assign(payload, {
@@ -507,9 +533,9 @@ export const Mapper = {
 
 					if (type == 'import') {
 						payload.importType = field.getImporttype();
-					};
+					}
 					break;
-				};
+				}
 
 				case 'export': {
 					payload = Object.assign(payload, {
@@ -517,9 +543,8 @@ export const Mapper = {
 						exportType: field.getExporttype(),
 					});
 					break;
-				};
-
-			};
+				}
+			}
 
 			return {
 				id: obj.getId(),
@@ -530,13 +555,11 @@ export const Mapper = {
 				payload,
 			};
 		},
-
-    },
+	},
 
 	//------------------------------------------------------------
 
 	To: {
-
 		Range: (obj: any) => {
 			const item = new Model.Range();
 
@@ -576,7 +599,7 @@ export const Mapper = {
 
 		BlockLayout: (obj: any) => {
 			const content = new Model.Block.Content.Layout();
-			
+
 			content.setStyle(obj.style);
 
 			return content;
@@ -590,7 +613,9 @@ export const Mapper = {
 			content.setStyle(obj.style);
 			content.setChecked(obj.checked);
 			content.setColor(obj.color);
-			content.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
+			content.setMarks(
+				new Model.Block.Content.Text.Marks().setMarksList(marks)
+			);
 			content.setIconemoji(obj.iconEmoji);
 			content.setIconimage(obj.iconImage);
 
@@ -599,7 +624,7 @@ export const Mapper = {
 
 		BlockFile: (obj: any) => {
 			const content = new Model.Block.Content.File();
-	
+
 			content.setHash(obj.hash);
 			content.setName(obj.name);
 			content.setType(obj.type);
@@ -613,7 +638,7 @@ export const Mapper = {
 
 		BlockBookmark: (obj: any) => {
 			const content = new Model.Block.Content.Bookmark();
-	
+
 			content.setTargetobjectid(obj.targetObjectId);
 			content.setState(obj.state);
 			content.setUrl(obj.url);
@@ -623,7 +648,7 @@ export const Mapper = {
 
 		BlockLink: (obj: any) => {
 			const content = new Model.Block.Content.Link();
-	
+
 			content.setTargetblockid(obj.targetBlockId);
 			content.setIconsize(obj.iconSize);
 			content.setCardstyle(obj.cardStyle);
@@ -651,7 +676,7 @@ export const Mapper = {
 
 		BlockLatex: (obj: any) => {
 			const content = new Model.Block.Content.Latex();
-	
+
 			content.setText(obj.text);
 			content.setProcessor(obj.processor);
 
@@ -664,7 +689,7 @@ export const Mapper = {
 			content.setTargetobjectid(obj.targetObjectId);
 			content.setIscollection(obj.isCollection);
 			content.setViewsList((obj.views || []).map(Mapper.To.View));
-	
+
 			return content;
 		},
 
@@ -690,13 +715,13 @@ export const Mapper = {
 
 		BlockTableOfContents: () => {
 			const content = new Model.Block.Content.TableOfContents();
-	
+
 			return content;
 		},
 
 		BlockWidget: (obj: any) => {
 			const content = new Model.Block.Content.Widget();
-			
+
 			content.setLayout(obj.layout);
 			content.setLimit(obj.limit);
 			content.setViewid(obj.viewId);
@@ -706,21 +731,21 @@ export const Mapper = {
 
 		Block: (obj: any) => {
 			obj.content = UtilCommon.objectCopy(obj.content || {});
-	
+
 			const block = new Model.Block();
-	
+
 			block.setId(obj.id);
 			block.setAlign(obj.hAlign);
 			block.setVerticalalign(obj.vAlign);
 			block.setBackgroundcolor(obj.bgColor);
-	
+
 			if (obj.childrenIds) {
 				block.setChildrenidsList(obj.childrenIds);
-			};
-	
+			}
+
 			if (obj.fields) {
 				block.setFields(Encode.struct(obj.fields || {}));
-			};
+			}
 
 			const fb = UtilCommon.toCamelCase('set-' + obj.type.toLowerCase());
 			const fm = UtilCommon.toUpperCamelCase('block-' + obj.type);
@@ -728,8 +753,12 @@ export const Mapper = {
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
 			} else {
-				console.log('[Mapper] Block method or To method do not exist: ', fb, fm);
-			};
+				console.log(
+					'[Mapper] Block method or To method do not exist: ',
+					fb,
+					fm
+				);
+			}
 
 			return block;
 		},
@@ -749,7 +778,7 @@ export const Mapper = {
 
 		Filter: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Filter();
-			
+
 			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setFormat(obj.format);
@@ -764,7 +793,7 @@ export const Mapper = {
 
 		Sort: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Sort();
-			
+
 			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
@@ -777,7 +806,7 @@ export const Mapper = {
 
 		View: (obj: I.View) => {
 			obj = new M.View(UtilCommon.objectCopy(obj));
-			
+
 			const item = new Model.Block.Content.Dataview.View();
 
 			item.setId(obj.id);
@@ -812,16 +841,18 @@ export const Mapper = {
 			const item = new Model.Block.Content.Dataview.GroupOrder();
 
 			item.setViewid(obj.viewId);
-			item.setViewgroupsList(obj.groups.map((it: any) => {
-				const el = new Model.Block.Content.Dataview.ViewGroup();
+			item.setViewgroupsList(
+				obj.groups.map((it: any) => {
+					const el = new Model.Block.Content.Dataview.ViewGroup();
 
-				el.setGroupid(it.groupId);
-				el.setIndex(it.index);
-				el.setHidden(it.isHidden);
-				el.setBackgroundcolor(it.bgColor);
+					el.setGroupid(it.groupId);
+					el.setIndex(it.index);
+					el.setHidden(it.isHidden);
+					el.setBackgroundcolor(it.bgColor);
 
-				return el;
-			}));
+					return el;
+				})
+			);
 
 			return item;
 		},
@@ -852,7 +883,5 @@ export const Mapper = {
 
 			return item;
 		},
-
-	}
-
+	},
 };

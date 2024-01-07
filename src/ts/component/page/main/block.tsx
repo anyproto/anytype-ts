@@ -1,171 +1,190 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, UtilCommon, Action, UtilObject, translate, UtilRouter } from 'Lib';
+import {
+	I,
+	C,
+	UtilCommon,
+	Action,
+	UtilObject,
+	translate,
+	UtilRouter,
+} from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
 interface State {
 	isDeleted: boolean;
-};
+}
 
-const PageMainBlock = observer(class PageMainBlock extends React.Component<I.PageComponent, State> {
+const PageMainBlock = observer(
+	class PageMainBlock extends React.Component<I.PageComponent, State> {
+		_isMounted = false;
+		node: any = null;
+		id = '';
+		refHeader: any = null;
+		loading = false;
 
-	_isMounted = false;
-	node: any = null;
-	id = '';
-	refHeader: any = null;
-	loading = false;
-
-	state = {
-		isDeleted: false,
-	};
-
-	constructor (props: any) {
-		super(props);
-		
-		this.resize = this.resize.bind(this);
-	};
-
-	render () {
-		const { params } = this.getMatch();
-		const { blockId } = params;
-
-		if (this.state.isDeleted) {
-			return <Deleted {...this.props} />;
+		state = {
+			isDeleted: false,
 		};
 
-		if (this.loading) {
-			return <Loader id="loader" />;
-		};
+		constructor(props: any) {
+			super(props);
 
-		const rootId = this.getRootId();
-		const block = blockStore.getLeaf(rootId, blockId);
+			this.resize = this.resize.bind(this);
+		}
 
-		return (
-			<div 
-				ref={node => this.node = node}
-				className="setWrapper"
-			>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+		render() {
+			const { params } = this.getMatch();
+			const { blockId } = params;
 
-				<div className="blocks wrapper">
-					{block ? (
-						<Block 
-							{...this.props} 
-							key={block.id} 
-							rootId={rootId} 
-							iconSize={20} 
-							block={block} 
-							className="noPlus" 
-						/>
-					) : translate('pageMainBlockEmpty')}
+			if (this.state.isDeleted) {
+				return <Deleted {...this.props} />;
+			}
+
+			if (this.loading) {
+				return <Loader id="loader" />;
+			}
+
+			const rootId = this.getRootId();
+			const block = blockStore.getLeaf(rootId, blockId);
+
+			return (
+				<div ref={node => (this.node = node)} className="setWrapper">
+					<Header
+						component="mainObject"
+						ref={ref => (this.refHeader = ref)}
+						{...this.props}
+						rootId={rootId}
+					/>
+
+					<div className="blocks wrapper">
+						{block ? (
+							<Block
+								{...this.props}
+								key={block.id}
+								rootId={rootId}
+								iconSize={20}
+								block={block}
+								className="noPlus"
+							/>
+						) : (
+							translate('pageMainBlockEmpty')
+						)}
+					</div>
 				</div>
-			</div>
-		);
-	};
+			);
+		}
 
-	componentDidMount () {
-		this._isMounted = true;
-		this.open();
-	};
+		componentDidMount() {
+			this._isMounted = true;
+			this.open();
+		}
 
-	componentDidUpdate () {
-		this.open();
-		this.resize();
-	};
+		componentDidUpdate() {
+			this.open();
+			this.resize();
+		}
 
-	componentWillUnmount () {
-		this._isMounted = false;
-		this.close();
-	};
+		componentWillUnmount() {
+			this._isMounted = false;
+			this.close();
+		}
 
-	open () {
-		const rootId = this.getRootId();
+		open() {
+			const rootId = this.getRootId();
 
-		if (this.id == rootId) {
-			return;
-		};
-
-		this.close();
-		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
-
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilObject.openHome('route');
-				};
+			if (this.id == rootId) {
 				return;
-			};
+			}
 
-			const object = detailStore.get(rootId, rootId, []);
-			if (object.isDeleted) {
-				this.setState({ isDeleted: true });
-				return;
-			};
-
-			this.loading = false;
+			this.close();
+			this.id = rootId;
+			this.loading = true;
 			this.forceUpdate();
 
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
+			C.ObjectOpen(
+				rootId,
+				'',
+				UtilRouter.getRouteSpaceId(),
+				(message: any) => {
+					if (message.error.code) {
+						if (message.error.code == Errors.Code.NOT_FOUND) {
+							this.setState({ isDeleted: true });
+						} else {
+							UtilObject.openHome('route');
+						}
+						return;
+					}
 
-			this.resize();
-		});
-	};
+					const object = detailStore.get(rootId, rootId, []);
+					if (object.isDeleted) {
+						this.setState({ isDeleted: true });
+						return;
+					}
 
-	close () {
-		if (!this.id) {
-			return;
-		};
+					this.loading = false;
+					this.forceUpdate();
 
-		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
-		if (close) {
-			Action.pageClose(this.id, true);
-		};
-	};
+					if (this.refHeader) {
+						this.refHeader.forceUpdate();
+					}
 
-	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
-	};
+					this.resize();
+				}
+			);
+		}
 
-	getMatch () {
-		const { match, matchPopup, isPopup } = this.props;
-		return (isPopup ? matchPopup : match) || { params: {} };
-	};
+		close() {
+			if (!this.id) {
+				return;
+			}
 
-	resize () {
-		if (this.loading || !this._isMounted) {
-			return;
-		};
+			const { isPopup, match } = this.props;
 
-		const win = $(window);
-		const { isPopup } = this.props;
-		
-		raf(() => {
-			const node = $(this.node);
-			const container = UtilCommon.getPageContainer(isPopup);
-			const header = container.find('#header');
-			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+			let close = true;
+			if (isPopup && match.params.id == this.id) {
+				close = false;
+			}
+			if (close) {
+				Action.pageClose(this.id, true);
+			}
+		}
 
-			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
-		});
-	};
+		getRootId() {
+			const { rootId, match } = this.props;
+			return rootId ? rootId : match.params.id;
+		}
 
-});
+		getMatch() {
+			const { match, matchPopup, isPopup } = this.props;
+			return (isPopup ? matchPopup : match) || { params: {} };
+		}
+
+		resize() {
+			if (this.loading || !this._isMounted) {
+				return;
+			}
+
+			const win = $(window);
+			const { isPopup } = this.props;
+
+			raf(() => {
+				const node = $(this.node);
+				const container = UtilCommon.getPageContainer(isPopup);
+				const header = container.find('#header');
+				const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+
+				container.css({ minHeight: isPopup ? '' : win.height() });
+				node.css({ paddingTop: isPopup ? 0 : hh });
+			});
+		}
+	}
+);
 
 export default PageMainBlock;

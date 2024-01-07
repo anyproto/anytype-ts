@@ -1,103 +1,220 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewGallery { padding: 0px; }
 		.viewContent.viewGallery {
-			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 14px; }
-
-			.card { 
-				width: 100%; border: 1px solid $colorShapeHighlightMedium; transition-property: border-color, background; transition-duration: 0.1s; 
-				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; background: $colorBgPrimary;
-				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
+			padding: 0px;
+		}
+		.viewContent.viewGallery {
+			.row {
+				display: grid;
+				grid-column-gap: 16px;
+				padding: 0px 0px 16px 14px;
 			}
 
-			.card.add { box-shadow: 0px 0px; }
+			.card {
+				width: 100%;
+				border: 1px solid $colorShapeHighlightMedium;
+				transition-property: border-color, background;
+				transition-duration: 0.1s;
+				transition-timing-function: $easeInQuint;
+				border-radius: 12px;
+				display: inline-block;
+				background: $colorBgPrimary;
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
+				min-height: 72px;
+				position: relative;
+			}
+
+			.card.add {
+				box-shadow: 0px 0px;
+			}
 			.card.add::after {
-				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg');
+				content: '';
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				width: 20px;
+				height: 20px;
+				background-image: url('~img/icon/plus/menu0.svg');
 				margin: -10px 0px 0px -10px;
 			}
 
 			.card {
-				.dropTarget { height: 100%; }
-				.dropTarget.isOver { box-shadow: 0px 0px; }
-				.dropTarget.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; width: 2px; height: 100%; border-radius: 2px; top: 0px; }
-				.dropTarget.isOver.top::before { left: -10px; }
-				.dropTarget.isOver.bottom::before { right: -10px; }
+				.dropTarget {
+					height: 100%;
+				}
+				.dropTarget.isOver {
+					box-shadow: 0px 0px;
+				}
+				.dropTarget.isOver::before {
+					content: '';
+					position: absolute;
+					background: $colorSystemAccent100;
+					width: 2px;
+					height: 100%;
+					border-radius: 2px;
+					top: 0px;
+				}
+				.dropTarget.isOver.top::before {
+					left: -10px;
+				}
+				.dropTarget.isOver.bottom::before {
+					right: -10px;
+				}
 
-				.selectable.isSelectionSelected::after { border-radius: 12px; }
+				.selectable.isSelectionSelected::after {
+					border-radius: 12px;
+				}
 
-				.selectable { height: 100%; }
-				.itemContent > .inner { padding: 16px; }
-
-				.cover { 
-					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: $colorShapeHighlightMedium; width: 100%; justify-content: center; border-radius: 12px 12px 0px 0px; overflow: hidden;
+				.selectable {
+					height: 100%;
+				}
+				.itemContent > .inner {
+					padding: 16px;
 				}
 
 				.cover {
-					img { width: 100%; height: 100%; object-fit: cover; }
+					position: relative;
+					aspect-ratio: 7/3;
+					background-position: top center;
+					display: flex;
+					align-items: center;
+					background-color: $colorShapeHighlightMedium;
+					width: 100%;
+					justify-content: center;
+					border-radius: 12px 12px 0px 0px;
+					overflow: hidden;
+				}
 
-					.inner { 
-						position: relative; color: $colorTextTertiary; transition: $transitionAllCommon; width: 100%; height: 100%; 
-						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat;
+				.cover {
+					img {
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+					}
+
+					.inner {
+						position: relative;
+						color: $colorTextTertiary;
+						transition: $transitionAllCommon;
+						width: 100%;
+						height: 100%;
+						background-image: url('~img/icon/dataview/gallery-image-preview.svg');
+						background-repeat: no-repeat;
 						background-position: center center;
 					}
 
-					.mediaVideo { height: 100%; }
 					.mediaVideo {
-						video { width: 100%; height: 100%; object-fit: cover; }
+						height: 100%;
+					}
+					.mediaVideo {
+						video {
+							width: 100%;
+							height: 100%;
+							object-fit: cover;
+						}
 					}
 
-					.mediaAudio { padding: 8px 16px; }
+					.mediaAudio {
+						padding: 8px 16px;
+					}
 				}
 				.cover.canEdit {
-					.inner { background: none; }
-					.inner {  
-						.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/gallery-cover0.svg'); margin: -2px 6px 0px 0px; }
-						.add { 
-							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px; 
-							top: 50%; margin-top: -10px;
+					.inner {
+						background: none;
+					}
+					.inner {
+						.icon.plus {
+							width: 20px;
+							height: 20px;
+							background-image: url('~img/icon/plus/gallery-cover0.svg');
+							margin: -2px 6px 0px 0px;
+						}
+						.add {
+							width: 100%;
+							height: 20px;
+							line-height: 20px;
+							text-align: center;
+							position: absolute;
+							left: 0px;
+							top: 0px;
+							top: 50%;
+							margin-top: -10px;
 						}
 					}
 				}
 			}
-			.card:hover { border-color: $colorShapeSecondary; background: $colorShapeHighlightLight; }
+			.card:hover {
+				border-color: $colorShapeSecondary;
+				background: $colorShapeHighlightLight;
+			}
 			.card:hover {
 				.cover {
-					.inner { color: $colorTextPrimary; }
-					.inner .icon.plus { background-image: url('~img/icon/plus/gallery-cover1.svg'); }
+					.inner {
+						color: $colorTextPrimary;
+					}
+					.inner .icon.plus {
+						background-image: url('~img/icon/plus/gallery-cover1.svg');
+					}
 				}
 
-				.icon.checkbox { opacity: 1; }
+				.icon.checkbox {
+					opacity: 1;
+				}
 			}
 
 			.card.coverFit {
-				.cover { background-size: contain; background-position: center center; }
 				.cover {
-					img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
+					background-size: contain;
+					background-position: center center;
+				}
+				.cover {
+					img {
+						width: auto;
+						height: auto;
+						max-height: 100%;
+						max-width: 100%;
+						object-fit: contain;
+					}
 
 					.mediaVideo {
-						video { object-fit: contain; }
+						video {
+							object-fit: contain;
+						}
 					}
 				}
 			}
 
 			.card.withCover {
-				.itemContent > .inner { padding-top: 12px; }
+				.itemContent > .inner {
+					padding-top: 12px;
+				}
 			}
 
-			.card.isEditing { border: 2px solid $colorSystemAccent100; }
 			.card.isEditing {
-				.inner { padding: 15px; }
+				border: 2px solid $colorSystemAccent100;
+			}
+			.card.isEditing {
+				.inner {
+					padding: 15px;
+				}
 			}
 
 			.cellContent.c-longText {
-				.name { overflow: hidden; @include clamp2; }
+				.name {
+					overflow: hidden;
+					@include clamp2;
+				}
 			}
 
 			.cellContent.isName {
-				.input.name { padding: 0; height: unset; }
+				.input.name {
+					padding: 0;
+					height: unset;
+				}
 			}
 		}
 	}
@@ -106,14 +223,28 @@
 .blocks {
 	.block.blockDataview.isInline {
 		.viewContent.viewGallery {
-			.galleryWrap { margin: 0px; display: grid; gap: 16px; }
-			.galleryWrap.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-			.galleryWrap.medium { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-			.galleryWrap.large { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.galleryWrap {
+				margin: 0px;
+				display: grid;
+				gap: 16px;
+			}
+			.galleryWrap.small {
+				grid-template-columns: repeat(4, minmax(0, 1fr));
+			}
+			.galleryWrap.medium {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+			.galleryWrap.large {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
 
-			.card { width: auto; }
+			.card {
+				width: auto;
+			}
 
-			.loadMore { padding: 0px 2px 10px;}
+			.loadMore {
+				padding: 0px 2px 10px;
+			}
 		}
 	}
 }

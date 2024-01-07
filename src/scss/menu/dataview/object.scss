@@ -1,64 +1,129 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-
-	.menu.menuDataviewObjectList { width: 288px; }
 	.menu.menuDataviewObjectList {
-		.content { padding: 0px; transition: none; }
-		
-		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.wrap.withFilter { padding-top: 8px; }
+		width: 288px;
+	}
+	.menu.menuDataviewObjectList {
+		.content {
+			padding: 0px;
+			transition: none;
+		}
+
+		.wrap {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
 		.wrap.withFilter {
-			.items { height: calc(100% - 44px); }
-			.emptySearch { height: calc(100% - 44px); }
-			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
+			padding-top: 8px;
+		}
+		.wrap.withFilter {
+			.items {
+				height: calc(100% - 44px);
+			}
+			.emptySearch {
+				height: calc(100% - 44px);
+			}
+			.loaderWrapper {
+				top: 44px;
+				height: calc(100% - 44px);
+			}
 		}
 
-		.items { height: 100%; }
+		.items {
+			height: 100%;
+		}
 		.item {
-			.name { @include text-overflow-nw; width: calc(100% - 26px); }
+			.name {
+				@include text-overflow-nw;
+				width: calc(100% - 26px);
+			}
 		}
-		.label { color: $colorControlActive; @include text-common; padding: 0px 16px; }
+		.label {
+			color: $colorControlActive;
+			@include text-common;
+			padding: 0px 16px;
+		}
 
-		.filter { flex-shrink: 0; }
+		.filter {
+			flex-shrink: 0;
+		}
 	}
 
-	.menu.menuDataviewObjectList.single { width: 256px; }
+	.menu.menuDataviewObjectList.single {
+		width: 256px;
+	}
 	.menu.menuDataviewObjectList.single {
 		.item {
-			.name { margin: 0px; }
-			.caption { display: none; }
+			.name {
+				margin: 0px;
+			}
+			.caption {
+				display: none;
+			}
 		}
 	}
 
-	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
-		.content { padding: 0px; }
-
-		.item { padding: 4px 16px 4px 10px; }
-		.item {
-			.name { @include text-overflow-nw; }
-			.clickable { width: calc(100% - 24px) !important; }
-
-			.icon.delete { 
-				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
-				opacity: 0; z-index: 1; transition: none;
-			}
-			.icon.delete:hover { background-color: $colorShapeHighlightMedium; }
+		width: 288px;
+	}
+	.menu.menuDataviewObjectValues {
+		.content {
+			padding: 0px;
 		}
-		.item.hover, .item:hover {
-			.clickable { width: calc(100% - 44px) !important; }
-			.icon.delete { opacity: 1; }
+
+		.item {
+			padding: 4px 16px 4px 10px;
+		}
+		.item {
+			.name {
+				@include text-overflow-nw;
+			}
+			.clickable {
+				width: calc(100% - 24px) !important;
+			}
+
+			.icon.delete {
+				width: 24px;
+				height: 24px;
+				background-size: 20px;
+				right: 10px;
+				margin-top: -12px;
+				border-radius: 4px;
+				opacity: 0;
+				z-index: 1;
+				transition: none;
+			}
+			.icon.delete:hover {
+				background-color: $colorShapeHighlightMedium;
+			}
+		}
+		.item.hover,
+		.item:hover {
+			.clickable {
+				width: calc(100% - 44px) !important;
+			}
+			.icon.delete {
+				opacity: 1;
+			}
 		}
 
 		.item.add {
-			.clickable { width: 100%; display: block; }
+			.clickable {
+				width: 100%;
+				display: block;
+			}
 		}
 	}
 
 	.menu.menuDataviewObjectValues.fromFilter {
 		.item {
-			.icon.dnd { display: none; }
+			.icon.dnd {
+				display: none;
+			}
 		}
 	}
 }

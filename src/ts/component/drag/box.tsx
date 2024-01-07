@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { UtilCommon } from 'Lib';
 
@@ -5,10 +7,9 @@ interface Props {
 	children?: React.ReactNode;
 	onDragEnd(oldIndex: number, newIndex: number): void;
 	onClick?(e: any, id: string): void;
-};
+}
 
 class DragBox extends React.Component<Props> {
-	
 	_isMounted = false;
 	node: any = null;
 	cache: any = {};
@@ -16,41 +17,41 @@ class DragBox extends React.Component<Props> {
 	oy = 0;
 	oldIndex = -1;
 	newIndex = -1;
-	
-	constructor (props: Props) {
+
+	constructor(props: Props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onClick = this.onClick.bind(this);
-	};
-	
-	render () {
-		const children = React.Children.map(this.props.children, (child: any) => {
-			return React.cloneElement(child, { 
-				onClick: this.onClick,
-				onDragStart: this.onDragStart 
-			});
-		});
+	}
+
+	render() {
+		const children = React.Children.map(
+			this.props.children,
+			(child: any) => {
+				return React.cloneElement(child, {
+					onClick: this.onClick,
+					onDragStart: this.onDragStart,
+				});
+			}
+		);
 
 		return (
-			<span 
-				ref={node => this.node = node}
-				className="dragbox"
-			>
+			<span ref={node => (this.node = node)} className="dragbox">
 				{children}
 			</span>
 		);
-	};
-	
-	componentDidMount () {
-		this._isMounted = true;
-	};
-	
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
+	}
 
-	onClick (e: any) {
+	componentDidMount() {
+		this._isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
+	onClick(e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -58,16 +59,16 @@ class DragBox extends React.Component<Props> {
 
 		if (onClick) {
 			onClick(e, $(e.currentTarget).data('id'));
-		};
-	};
+		}
+	}
 
-	onDragStart (e: any) {
+	onDragStart(e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		const win = $(window);
 		const node = $(this.node);
@@ -82,7 +83,7 @@ class DragBox extends React.Component<Props> {
 			const id = item.data('id');
 			if (!id || item.hasClass('isClone')) {
 				return;
-			};
+			}
 
 			const p = item.position();
 			this.cache[id] = {
@@ -102,14 +103,18 @@ class DragBox extends React.Component<Props> {
 		element.addClass('isDragging');
 
 		win.off('mousemove.dragbox mouseup.dragbox');
-		win.on('mousemove.dragbox', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.dragbox', (e: any) => { this.onDragEnd(e); });
-	};
+		win.on('mousemove.dragbox', (e: any) => {
+			this.onDragMove(e);
+		});
+		win.on('mouseup.dragbox', (e: any) => {
+			this.onDragEnd(e);
+		});
+	}
 
-	onDragMove (e: any) {
+	onDragMove(e: any) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		const node = $(this.node);
 		const items = node.find('.isDraggable');
@@ -129,19 +134,25 @@ class DragBox extends React.Component<Props> {
 			const el = $(items.get(i));
 			const rect = this.cache[el.data('id')];
 
-			if (rect && UtilCommon.rectsCollide({ x: center, y, width: 2, height }, rect)) {
+			if (
+				rect &&
+				UtilCommon.rectsCollide(
+					{ x: center, y, width: 2, height },
+					rect
+				)
+			) {
 				const isLeft = center <= rect.x + rect.width / 2;
 				this.newIndex = i;
 				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));
 				break;
-			};
-		};
-	};
+			}
+		}
+	}
 
-	onDragEnd (e: any) {
+	onDragEnd(e: any) {
 		if (!this._isMounted) {
 			return;
-		};
+		}
 
 		const node = $(this.node);
 		const { onDragEnd } = this.props;
@@ -154,13 +165,12 @@ class DragBox extends React.Component<Props> {
 
 		if (this.newIndex >= 0) {
 			onDragEnd(this.oldIndex, this.newIndex);
-		};
+		}
 
 		this.cache = {};
 		this.oldIndex = -1;
 		this.newIndex = -1;
-	};
-	
-};
+	}
+}
 
 export default DragBox;

@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
@@ -82,960 +84,1074 @@ import MenuQuickCapture from './quickCapture';
 
 interface State {
 	tab: string;
-};
+}
 
 const BORDER = 10;
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
 const Components: any = {
+	accountPath: MenuAccountPath,
 
-	accountPath:			 MenuAccountPath,
+	help: MenuHelp,
+	onboarding: MenuOnboarding,
 
-	help:					 MenuHelp,
-	onboarding:				 MenuOnboarding,
+	select: MenuSelect,
+	button: MenuButton,
 
-	select:					 MenuSelect,
-	button:					 MenuButton,
+	smile: MenuSmile,
+	smileSkin: MenuSmileSkin,
 
-	smile:					 MenuSmile,
-	smileSkin:				 MenuSmileSkin,
+	searchText: MenuSearchText,
+	searchObject: MenuSearchObject,
 
-	searchText:				 MenuSearchText,
-	searchObject:			 MenuSearchObject,
+	previewObject: MenuPreviewObject,
+	previewLatex: MenuPreviewLatex,
 
-	previewObject:			 MenuPreviewObject,
-	previewLatex:			 MenuPreviewLatex,
+	threadList: MenuThreadList,
+	threadStatus: MenuThreadStatus,
 
-	threadList:				 MenuThreadList,
-	threadStatus:			 MenuThreadStatus,
-	
-	blockContext:			 MenuBlockContext,
-	blockAction:			 MenuBlockAction,
-	blockStyle:				 MenuBlockStyle,
-	blockAdd:				 MenuBlockAdd,
-	blockColor:				 MenuBlockColor,
-	blockBackground:		 MenuBlockBackground,
-	blockMore:				 MenuBlockMore,
-	blockAlign:				 MenuBlockHAlign,
-	blockLink:				 MenuBlockLink,
-	blockCover:				 MenuBlockCover,
-	blockMention:			 MenuBlockMention,
-	blockLayout:			 MenuBlockLayout,
-	blockLatex:				 MenuBlockLatex,
-	blockLinkSettings:		 MenuBlockLinkSettings,
+	blockContext: MenuBlockContext,
+	blockAction: MenuBlockAction,
+	blockStyle: MenuBlockStyle,
+	blockAdd: MenuBlockAdd,
+	blockColor: MenuBlockColor,
+	blockBackground: MenuBlockBackground,
+	blockMore: MenuBlockMore,
+	blockAlign: MenuBlockHAlign,
+	blockLink: MenuBlockLink,
+	blockCover: MenuBlockCover,
+	blockMention: MenuBlockMention,
+	blockLayout: MenuBlockLayout,
+	blockLatex: MenuBlockLatex,
+	blockLinkSettings: MenuBlockLinkSettings,
 
-	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationView:		 MenuBlockRelationView,
+	blockRelationEdit: MenuBlockRelationEdit,
+	blockRelationView: MenuBlockRelationView,
 
-	relationSuggest:		 MenuRelationSuggest,
-	typeSuggest:			 MenuTypeSuggest,
+	relationSuggest: MenuRelationSuggest,
+	typeSuggest: MenuTypeSuggest,
 
-	graphSettings:			 MenuGraphSettings,
-	widget:					 MenuWidget,
-	space:					 MenuSpace,
+	graphSettings: MenuGraphSettings,
+	widget: MenuWidget,
+	space: MenuSpace,
 
-	dataviewRelationList:	 MenuDataviewRelationList,
-	dataviewRelationEdit:	 MenuDataviewRelationEdit,
-	dataviewGroupList:		 MenuDataviewGroupList,
-	dataviewGroupEdit:		 MenuDataviewGroupEdit,
-	dataviewObjectList:		 MenuDataviewObjectList,
-	dataviewObjectValues:	 MenuDataviewObjectValues,
-	dataviewFileList:		 MenuDataviewFileList,
-	dataviewFileValues:		 MenuDataviewFileValues,
-	dataviewOptionList:		 MenuDataviewOptionList,
-	dataviewOptionEdit:		 MenuDataviewOptionEdit,
-	dataviewFilterList:		 MenuDataviewFilterList,
-	dataviewFilterValues:	 MenuDataviewFilterValues,
-	dataviewSort:			 MenuDataviewSort,
-	dataviewViewList:		 MenuDataviewViewList,
-	dataviewViewSettings:	 MenuDataviewViewSettings,
-	dataviewViewLayout:	 	 MenuDataviewViewLayout,
-	dataviewCalendar:		 MenuDataviewCalendar,
-	dataviewCalendarDay:	 MenuDataviewCalendarDay,
-	dataviewDate:			 MenuDataviewDate,
-	dataviewText:			 MenuDataviewText,
-	dataviewSource:			 MenuDataviewSource,
-	dataviewContext:		 MenuDataviewContext,
-	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
+	dataviewRelationList: MenuDataviewRelationList,
+	dataviewRelationEdit: MenuDataviewRelationEdit,
+	dataviewGroupList: MenuDataviewGroupList,
+	dataviewGroupEdit: MenuDataviewGroupEdit,
+	dataviewObjectList: MenuDataviewObjectList,
+	dataviewObjectValues: MenuDataviewObjectValues,
+	dataviewFileList: MenuDataviewFileList,
+	dataviewFileValues: MenuDataviewFileValues,
+	dataviewOptionList: MenuDataviewOptionList,
+	dataviewOptionEdit: MenuDataviewOptionEdit,
+	dataviewFilterList: MenuDataviewFilterList,
+	dataviewFilterValues: MenuDataviewFilterValues,
+	dataviewSort: MenuDataviewSort,
+	dataviewViewList: MenuDataviewViewList,
+	dataviewViewSettings: MenuDataviewViewSettings,
+	dataviewViewLayout: MenuDataviewViewLayout,
+	dataviewCalendar: MenuDataviewCalendar,
+	dataviewCalendarDay: MenuDataviewCalendarDay,
+	dataviewDate: MenuDataviewDate,
+	dataviewText: MenuDataviewText,
+	dataviewSource: MenuDataviewSource,
+	dataviewContext: MenuDataviewContext,
+	dataviewCreateBookmark: MenuDataviewCreateBookmark,
 	dataviewTemplateContext: MenuDataviewTemplateContext,
-	dataviewTemplateList:	 MenuDataviewTemplateList,
+	dataviewTemplateList: MenuDataviewTemplateList,
 
-	quickCapture: 			 MenuQuickCapture,
+	quickCapture: MenuQuickCapture,
 };
 
-const Menu = observer(class Menu extends React.Component<I.Menu, State> {
+const Menu = observer(
+	class Menu extends React.Component<I.Menu, State> {
+		_isMounted = false;
+		node: any = null;
+		timeoutPoly = 0;
+		ref = null;
+		isAnimating = false;
+		poly: any = null;
 
-	_isMounted = false;
-	node: any = null;
-	timeoutPoly = 0;
-	ref = null;
-	isAnimating = false;
-	poly: any = null;
-
-	state = {
-		tab: '',
-	};
-	
-	constructor (props: I.Menu) {
-		super(props);
-		
-		this.position = this.position.bind(this);
-		this.close = this.close.bind(this);
-		this.setHover = this.setHover.bind(this);
-		this.setActive = this.setActive.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.storageGet = this.storageGet.bind(this);
-		this.storageSet = this.storageSet.bind(this);
-		this.getId = this.getId.bind(this);
-		this.getSize = this.getSize.bind(this);
-		this.getPosition = this.getPosition.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
-		this.onDimmerClick = this.onDimmerClick.bind(this);
-	};
-
-	render () {
-		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack } = param;
-		const { data } = param;
-		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
-		const menuId = this.getId();
-		const arrowDirection = this.getArrowDirection();
-		const cn = [
-			'menu',
-			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
-			'v' + vertical,
-			'h' + horizontal
-		];
-		const cd = [];
-		
-		let tab = '';
-		let title = '';
-		let Component = null;
-
-		if (tabs.length) {
-			tab = this.state.tab || tabs[0].id;
+		state = {
+			tab: '',
 		};
 
-		if (param.title) {
-			title = param.title;
-		};
+		constructor(props: I.Menu) {
+			super(props);
 
-		if (component) {
-			cn.push(UtilCommon.toCamelCase('menu-' + component));
-		} else {
-			cn.push(menuId);
-		};
+			this.position = this.position.bind(this);
+			this.close = this.close.bind(this);
+			this.setHover = this.setHover.bind(this);
+			this.setActive = this.setActive.bind(this);
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.storageGet = this.storageGet.bind(this);
+			this.storageSet = this.storageSet.bind(this);
+			this.getId = this.getId.bind(this);
+			this.getSize = this.getSize.bind(this);
+			this.getPosition = this.getPosition.bind(this);
+			this.onMouseLeave = this.onMouseLeave.bind(this);
+			this.onDimmerClick = this.onDimmerClick.bind(this);
+		}
 
-		if (tab) {
-			const item = tabs.find(it => it.id == tab);
-			if (item) {
-				Component = Components[item.component];
-			};
-		} else
-		if (component) {
-			Component = Components[component];
-		} else {
-			Component = Components[id];
-		};
+		render() {
+			const { id, param } = this.props;
+			const {
+				element,
+				type,
+				vertical,
+				horizontal,
+				passThrough,
+				noDimmer,
+				component,
+				withArrow,
+				getTabs,
+				withBack,
+				onBack,
+			} = param;
+			const { data } = param;
+			const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
+			const menuId = this.getId();
+			const arrowDirection = this.getArrowDirection();
+			const cn = [
+				'menu',
+				type == I.MenuType.Horizontal ? 'horizontal' : 'vertical',
+				'v' + vertical,
+				'h' + horizontal,
+			];
+			const cd = [];
 
-		if (!Component) {
-			return null;
-		};
-		
-		if (param.className) {
-			cn.push(param.className);
-		};
+			let tab = '';
+			let title = '';
+			let Component = null;
 
-		if (passThrough) {
-			cd.push('through');
-		};
+			if (tabs.length) {
+				tab = this.state.tab || tabs[0].id;
+			}
 
-		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
-				{item.name}
-			</div>
-		);
+			if (param.title) {
+				title = param.title;
+			}
 
-		return (
-			<div 
-				ref={node => this.node = node}
-				id={`${menuId}-wrap`} 
-				className="menuWrap"
-			>
-				<div 
-					id={menuId} 
-					className={cn.join(' ')} 
-					onMouseLeave={this.onMouseLeave}
+			if (component) {
+				cn.push(UtilCommon.toCamelCase('menu-' + component));
+			} else {
+				cn.push(menuId);
+			}
+
+			if (tab) {
+				const item = tabs.find(it => it.id == tab);
+				if (item) {
+					Component = Components[item.component];
+				}
+			} else if (component) {
+				Component = Components[component];
+			} else {
+				Component = Components[id];
+			}
+
+			if (!Component) {
+				return null;
+			}
+
+			if (param.className) {
+				cn.push(param.className);
+			}
+
+			if (passThrough) {
+				cd.push('through');
+			}
+
+			const Tab = (item: any) => (
+				<div
+					className={['tab', item.id == tab ? 'active' : ''].join(
+						' '
+					)}
+					onClick={(e: any) => {
+						this.onTab(item.id);
+					}}
 				>
-					{tabs.length ? (
-						<div className="tabs">
-							{tabs.map((item: any, i: number) => (
-								<Tab key={i} {...item} />
-							))}
-						</div>
-					) : ''}
-
-					{title ? (
-						<div className="titleWrapper">
-							{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
-							<Title text={title} />
-						</div>
-					) : ''}
-
-					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
-
-					<div className="content">
-						<Component 
-							ref={ref => this.ref = ref}
-							{...this.props} 
-							setActive={this.setActive}
-							setHover={this.setHover}
-							onKeyDown={this.onKeyDown}
-							storageGet={this.storageGet}
-							storageSet={this.storageSet}
-							getId={this.getId} 
-							getSize={this.getSize}
-							getPosition={this.getPosition}
-							position={this.position} 
-							close={this.close} 
-						/>
-					</div>
+					{item.name}
 				</div>
-				{!noDimmer ? (
-					<Dimmer onClick={this.onDimmerClick} className={cd.join(' ')} />
-				) : ''}
-			</div>
-		);
-	};
-	
-	componentDidMount () {
-		const { id, param } = this.props;
-		const { initialTab, onOpen } = param;
+			);
 
-		this._isMounted = true;
-		this.poly = $('#menu-polygon');
+			return (
+				<div
+					ref={node => (this.node = node)}
+					id={`${menuId}-wrap`}
+					className="menuWrap"
+				>
+					<div
+						id={menuId}
+						className={cn.join(' ')}
+						onMouseLeave={this.onMouseLeave}
+					>
+						{tabs.length ? (
+							<div className="tabs">
+								{tabs.map((item: any, i: number) => (
+									<Tab key={i} {...item} />
+								))}
+							</div>
+						) : (
+							''
+						)}
 
-		this.setClass();
-		this.position();
-		this.animate();
-		this.rebind();
-		this.setActive();
-		
-		const obj = $(`#${this.getId()}`);
-		const el = this.getElement();
+						{title ? (
+							<div className="titleWrapper">
+								{withBack ? (
+									<Icon
+										className="arrow back"
+										onClick={() => onBack(id)}
+									/>
+								) : (
+									''
+								)}
+								<Title text={title} />
+							</div>
+						) : (
+							''
+						)}
 
-		if (el && el.length) {
-			el.addClass('hover');
-		};
+						{withArrow ? (
+							<Icon
+								id="arrowDirection"
+								className={[
+									'arrowDirection',
+									'c' + arrowDirection,
+								].join(' ')}
+							/>
+						) : (
+							''
+						)}
 
-		if (param.height) {
-			obj.css({ height: param.height });
-		};
+						<div className="content">
+							<Component
+								ref={ref => (this.ref = ref)}
+								{...this.props}
+								setActive={this.setActive}
+								setHover={this.setHover}
+								onKeyDown={this.onKeyDown}
+								storageGet={this.storageGet}
+								storageSet={this.storageSet}
+								getId={this.getId}
+								getSize={this.getSize}
+								getPosition={this.getPosition}
+								position={this.position}
+								close={this.close}
+							/>
+						</div>
+					</div>
+					{!noDimmer ? (
+						<Dimmer
+							onClick={this.onDimmerClick}
+							className={cd.join(' ')}
+						/>
+					) : (
+						''
+					)}
+				</div>
+			);
+		}
 
-		if (initialTab) {
-			this.onTab(initialTab);
-		};
+		componentDidMount() {
+			const { id, param } = this.props;
+			const { initialTab, onOpen } = param;
 
-		if (onOpen) {
-			onOpen(this);
-		};
+			this._isMounted = true;
+			this.poly = $('#menu-polygon');
 
-		analytics.event('menu', { params: { id } });
-	};
+			this.setClass();
+			this.position();
+			this.animate();
+			this.rebind();
+			this.setActive();
 
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { noAnimation } = param;
-		const node = $(this.node); 
-		const menu = node.find('.menu');
+			const obj = $(`#${this.getId()}`);
+			const el = this.getElement();
 
-		this.setClass();
+			if (el && el.length) {
+				el.addClass('hover');
+			}
 
-		if (noAnimation) {
-			menu.addClass('noAnimation');
-		};
+			if (param.height) {
+				obj.css({ height: param.height });
+			}
 
-		menu.addClass('show').css({ transform: 'none' });
-		this.position();
-	};
+			if (initialTab) {
+				this.onTab(initialTab);
+			}
 
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { isSub, data } = param;
-		const { rebind } = data;
-		const el = this.getElement();
+			if (onOpen) {
+				onOpen(this);
+			}
 
-		this._isMounted = false;
-		this.unbind();
+			analytics.event('menu', { params: { id } });
+		}
 
-		if (el && el.length) {
-			el.removeClass('hover');
-		};
-		
-		if (isSub) {
-			this.poly.hide();
-			window.clearTimeout(this.timeoutPoly);
-		};
+		componentDidUpdate() {
+			const { param } = this.props;
+			const { noAnimation } = param;
+			const node = $(this.node);
+			const menu = node.find('.menu');
 
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
+			this.setClass();
 
-		if (rebind) {
-			rebind();
-		};
-	};
+			if (noAnimation) {
+				menu.addClass('noAnimation');
+			}
 
-	setClass () {
-		if (!this._isMounted) {
-			return;
-		};
+			menu.addClass('show').css({ transform: 'none' });
+			this.position();
+		}
 
-		const { param } = this.props;
-		const { classNameWrap } = param;
-		const node = $(this.node);
-		const cn = [ 'menuWrap' ];
+		componentWillUnmount() {
+			const { param } = this.props;
+			const { isSub, data } = param;
+			const { rebind } = data;
+			const el = this.getElement();
 
-		if (classNameWrap) {
-			cn.push(classNameWrap);	
-		};
+			this._isMounted = false;
+			this.unbind();
 
-		if (popupStore.isOpen()) {
-			cn.push('fromPopup');
-		};
+			if (el && el.length) {
+				el.removeClass('hover');
+			}
 
-		node.attr({ class: cn.join(' ') });
-	};
+			if (isSub) {
+				this.poly.hide();
+				window.clearTimeout(this.timeoutPoly);
+			}
 
-	rebind () {
-		this.unbind();
-		$(window).on(`resize.${this.getId()}`, () => this.position());
-	};
-	
-	unbind () {
-		$(window).off(`resize.${this.getId()}`);
-	};
-	
-	animate () {
-		if (this.isAnimating) {
-			return;
-		};
+			if (this.ref && this.ref.unbind) {
+				this.ref.unbind();
+			}
 
-		const { param } = this.props;
-		const { noAnimation } = param;
-		const menu = $(`#${this.getId()}`);
+			if (rebind) {
+				rebind();
+			}
+		}
 
-		if (noAnimation) {
-			menu.addClass('noAnimation show').css({ transform: 'none' });
-		} else {
-			this.isAnimating = true;
+		setClass() {
+			if (!this._isMounted) {
+				return;
+			}
+
+			const { param } = this.props;
+			const { classNameWrap } = param;
+			const node = $(this.node);
+			const cn = ['menuWrap'];
+
+			if (classNameWrap) {
+				cn.push(classNameWrap);
+			}
+
+			if (popupStore.isOpen()) {
+				cn.push('fromPopup');
+			}
+
+			node.attr({ class: cn.join(' ') });
+		}
+
+		rebind() {
+			this.unbind();
+			$(window).on(`resize.${this.getId()}`, () => this.position());
+		}
+
+		unbind() {
+			$(window).off(`resize.${this.getId()}`);
+		}
+
+		animate() {
+			if (this.isAnimating) {
+				return;
+			}
+
+			const { param } = this.props;
+			const { noAnimation } = param;
+			const menu = $(`#${this.getId()}`);
+
+			if (noAnimation) {
+				menu.addClass('noAnimation show').css({ transform: 'none' });
+			} else {
+				this.isAnimating = true;
+
+				raf(() => {
+					if (!this._isMounted) {
+						return;
+					}
+
+					menu.addClass('show');
+					window.setTimeout(() => {
+						menu.css({ transform: 'none' });
+						this.isAnimating = false;
+					}, Constant.delay.menu);
+				});
+			}
+		}
+
+		position() {
+			const { id, param } = this.props;
+			const {
+				element,
+				recalcRect,
+				type,
+				vertical,
+				horizontal,
+				fixedX,
+				fixedY,
+				isSub,
+				noFlipX,
+				noFlipY,
+				withArrow,
+			} = param;
+
+			if (this.ref && this.ref.beforePosition) {
+				this.ref.beforePosition();
+			}
 
 			raf(() => {
 				if (!this._isMounted) {
 					return;
-				};
-				
-				menu.addClass('show');
-				window.setTimeout(() => { 
-					menu.css({ transform: 'none' }); 
-					this.isAnimating = false;
-				}, Constant.delay.menu);
-			});
-		};
-	};
-	
-	position () {
-		const { id, param } = this.props;
-		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+				}
 
-		if (this.ref && this.ref.beforePosition) {
-			this.ref.beforePosition();
-		};
+				const win = $(window);
+				const node = $(this.node);
+				const menu = node.find('.menu');
+				const arrow = menu.find('#arrowDirection');
+				const winSize = UtilCommon.getWindowDimensions();
+				const ww = winSize.ww;
+				const wh = win.scrollTop() + winSize.wh;
+				const width = param.width ? param.width : menu.outerWidth();
+				const height = menu.outerHeight();
+				const scrollTop = win.scrollTop();
+				const isFixed =
+					menu.css('position') == 'fixed' ||
+					node.css('position') == 'fixed';
+				const offsetX =
+					Number(
+						typeof param.offsetX === 'function'
+							? param.offsetX()
+							: param.offsetX
+					) || 0;
+				const offsetY =
+					Number(
+						typeof param.offsetY === 'function'
+							? param.offsetY()
+							: param.offsetY
+					) || 0;
+				const minY = UtilCommon.sizeHeader();
 
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
+				let ew = 0;
+				let eh = 0;
+				let ox = 0;
+				let oy = 0;
+				let rect = null;
 
-			const win = $(window);
-			const node = $(this.node);
-			const menu = node.find('.menu');
-			const arrow = menu.find('#arrowDirection');
-			const winSize = UtilCommon.getWindowDimensions();
-			const ww = winSize.ww;
-			const wh = win.scrollTop() + winSize.wh;
-			const width = param.width ? param.width : menu.outerWidth();
-			const height = menu.outerHeight();
-			const scrollTop = win.scrollTop();
-			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
-			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
-			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-			const minY = UtilCommon.sizeHeader();
+				if (recalcRect) {
+					rect = recalcRect();
+				}
+				if (!rect) {
+					rect = param.rect;
+				}
 
-			let ew = 0;
-			let eh = 0;
-			let ox = 0;
-			let oy = 0;
-			let rect = null;
-
-			if (recalcRect) {
-				rect = recalcRect();
-			};
-			if (!rect) {
-				rect = param.rect;
-			};
-
-			if (rect) {
-				ew = Number(rect.width) || 0;
-				eh = Number(rect.height) || 0;
-				ox = Number(rect.x) || 0;
-				oy = Number(rect.y) || 0;
-			} else {
-				const el = this.getElement();
-				if (!el || !el.length) {
-					console.log('[Menu].position', id, 'element not found', element);
-					return;
-				};
-
-				const { left, top } = el.offset();
-				ew = el.outerWidth();
-				eh = el.outerHeight();
-				ox = left;
-				oy = top;
-			};
-
-			let x = ox;
-			let y = oy;
-			let flipX = false;
-
-			switch (vertical) {
-				case I.MenuDirection.Top:
-					y = oy - height + offsetY;
-					
-					// Switch
-					if (!noFlipY && (y <= BORDER)) {
-						y = oy + eh - offsetY;
-					};
-					break;
-
-				case I.MenuDirection.Center:
-					y = oy - height / 2 + eh / 2 + offsetY;
-					break;
-
-				case I.MenuDirection.Bottom:
-					y = oy + eh + offsetY;
-
-					// Switch
-					if (!noFlipY && (y >= wh - height - BORDER)) {
-						y = oy - height - offsetY;
-					};
-					break;
-			};
-
-			switch (horizontal) {
-				case I.MenuDirection.Left:
-					x += offsetX;
-
-					// Switch
-					if (!noFlipX && (x >= ww - width - BORDER)) {
-						x = ox - width;
-						flipX = true;
-					};
-					break;
-
-				case I.MenuDirection.Center:
-					x = x + ew / 2 - width / 2 + offsetX;
-					break;
-
-				case I.MenuDirection.Right:
-					x -= width + offsetX - ew;
-
-					// Switch
-					if (!noFlipX && (x <= BORDER)) {
-						x = ox + ew;
-						flipX = true;
-					};
-					break;
-			};
-
-			if (isFixed) {
-				oy -= scrollTop;
-				y -= scrollTop;
-			};
-
-			x = Math.max(BORDER, x);
-			x = Math.min(ww - width - BORDER, x);
-
-			y = Math.max(minY, y);
-			y = Math.min(wh - height - 80, y);
-
-			if (undefined !== fixedX) x = fixedX;
-			if (undefined !== fixedY) y = fixedY;
-
-			const css: any = { left: x, top: y };
-			if (param.width) {
-				css.width = param.width;
-			};
-			menu.css(css);
-
-			if (isSub && (type == I.MenuType.Vertical)) {
-				const coords = UtilCommon.objectCopy(keyboard.mouse.page);
-				const offset = 8;
-
-				let w = Math.abs(x - coords.x) - offset;
-				let t = '';
-				let l = coords.x + offset;
-
-				if (flipX) {
-					w -= width;
-					l -= w + offset * 2;
-					t = 'scaleX(-1)';
-				};
-
-				this.poly.show().css({
-					width: w,
-					height: height,
-					left: l,
-					top: y,
-					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
-					transform: t,
-					position: (isFixed ? 'fixed' : 'absolute'),
-				});
-
-				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { this.poly.hide(); }, 500);
-			};
-
-			// Arrow positioning
-
-			if (withArrow) {
-				const arrowDirection = this.getArrowDirection();
-				const size = this.getSize();
-				const { width, height } = size;
-				const min = 8;
-				const css: any = { left: '', right: '', top: '', bottom: '' };
-
-				switch (arrowDirection) {
-					case I.MenuDirection.Bottom:
-					case I.MenuDirection.Top:
-
-						switch (horizontal) {
-							case I.MenuDirection.Left:
-								if (ew > width) {
-									css.left = width / 2 - ARROW_WIDTH / 2;
-								} else {
-									css.left = ew / 2 - ARROW_WIDTH / 2;
-								};
-								css.left = Math.max(min, Math.min(width - min, css.left));
-								break;
-
-							case I.MenuDirection.Center:
-								if (ew > width) {
-									css.left = width / 2 - ARROW_WIDTH / 2;
-								} else {
-									css.left = ox - x + ew / 2 - ARROW_WIDTH / 2;
-								};
-								css.left = Math.max(min, Math.min(width - min, css.left));
-								break;
-
-							case I.MenuDirection.Right: 
-								if (ew > width) {
-									css.right = width / 2 - ARROW_WIDTH / 2;
-								} else {
-									css.right = ew / 2 - ARROW_WIDTH / 2;
-								};
-								css.right = Math.max(min, Math.min(width - min, css.right));
-								break;
-						};
-						break;
-					
-					case I.MenuDirection.Left:
-					case I.MenuDirection.Right:
-						css.top = eh / 2 - ARROW_HEIGHT / 2;
-						css.top = Math.max(min, Math.min(height - min, css.top));
-						break;
-				};
-
-				arrow.css(css);
-			};
-		});
-	};
-
-	close () {
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
-
-		menuStore.close(this.props.id);
-	};
-
-	onDimmerClick () {
-		const { param } = this.props;
-		const { noClose } = param;
-
-		if (!noClose) {
-			this.close();
-		};
-	};
-	
-	onMouseLeave (e: any) {
-		const { param } = this.props;
-		const { isSub } = param;
-		
-		if (isSub) {
-			//this.poly.hide();
-		};
-	};
-
-	onKeyDown (e: any) {
-		if (!this.ref || !this.ref.getItems) {
-			return;
-		};
-
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		const { param } = this.props;
-		const { commonFilter, data } = param;
-		const { preventFilter } = data;
-		const refInput = this.ref.refFilter || this.ref.refName;
-		const shortcutClose = [ 'escape' ];
-		const shortcutSelect = [ 'tab', 'enter' ];
-
-		let ret = false;
-
-		if (refInput) {
-			if (refInput.isFocused && (this.ref.n < 0)) {
-				keyboard.shortcut('arrowleft, arrowright', e, () => { ret = true; });
-
-				keyboard.shortcut('arrowdown', e, () => {
-					refInput.blur();
-
-					this.ref.n = 0;
-					this.setActive(null, true);
-
-					ret = true;
-				});
-
-				if (this.ref && this.ref.onClick && !preventFilter) {	
-					keyboard.shortcut(shortcutSelect.join(', '), e, () => {
-						e.preventDefault();
-
-						const items = this.ref.getItems();
-						const item = items.length ? items[0] : null;
-
-						if (item) {
-							item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
-						};
-					});
-				};
-
-				keyboard.shortcut('arrowup', e, () => {
-					if (!this.ref.getItems) {
+				if (rect) {
+					ew = Number(rect.width) || 0;
+					eh = Number(rect.height) || 0;
+					ox = Number(rect.x) || 0;
+					oy = Number(rect.y) || 0;
+				} else {
+					const el = this.getElement();
+					if (!el || !el.length) {
+						console.log(
+							'[Menu].position',
+							id,
+							'element not found',
+							element
+						);
 						return;
+					}
+
+					const { left, top } = el.offset();
+					ew = el.outerWidth();
+					eh = el.outerHeight();
+					ox = left;
+					oy = top;
+				}
+
+				let x = ox;
+				let y = oy;
+				let flipX = false;
+
+				switch (vertical) {
+					case I.MenuDirection.Top:
+						y = oy - height + offsetY;
+
+						// Switch
+						if (!noFlipY && y <= BORDER) {
+							y = oy + eh - offsetY;
+						}
+						break;
+
+					case I.MenuDirection.Center:
+						y = oy - height / 2 + eh / 2 + offsetY;
+						break;
+
+					case I.MenuDirection.Bottom:
+						y = oy + eh + offsetY;
+
+						// Switch
+						if (!noFlipY && y >= wh - height - BORDER) {
+							y = oy - height - offsetY;
+						}
+						break;
+				}
+
+				switch (horizontal) {
+					case I.MenuDirection.Left:
+						x += offsetX;
+
+						// Switch
+						if (!noFlipX && x >= ww - width - BORDER) {
+							x = ox - width;
+							flipX = true;
+						}
+						break;
+
+					case I.MenuDirection.Center:
+						x = x + ew / 2 - width / 2 + offsetX;
+						break;
+
+					case I.MenuDirection.Right:
+						x -= width + offsetX - ew;
+
+						// Switch
+						if (!noFlipX && x <= BORDER) {
+							x = ox + ew;
+							flipX = true;
+						}
+						break;
+				}
+
+				if (isFixed) {
+					oy -= scrollTop;
+					y -= scrollTop;
+				}
+
+				x = Math.max(BORDER, x);
+				x = Math.min(ww - width - BORDER, x);
+
+				y = Math.max(minY, y);
+				y = Math.min(wh - height - 80, y);
+
+				if (undefined !== fixedX) x = fixedX;
+				if (undefined !== fixedY) y = fixedY;
+
+				const css: any = { left: x, top: y };
+				if (param.width) {
+					css.width = param.width;
+				}
+				menu.css(css);
+
+				if (isSub && type == I.MenuType.Vertical) {
+					const coords = UtilCommon.objectCopy(keyboard.mouse.page);
+					const offset = 8;
+
+					let w = Math.abs(x - coords.x) - offset;
+					let t = '';
+					let l = coords.x + offset;
+
+					if (flipX) {
+						w -= width;
+						l -= w + offset * 2;
+						t = 'scaleX(-1)';
+					}
+
+					this.poly.show().css({
+						width: w,
+						height: height,
+						left: l,
+						top: y,
+						clipPath: `polygon(0px ${oy - y}px, 0px ${
+							oy - y + eh
+						}px, 100% 100%, 100% 0%)`,
+						transform: t,
+						position: isFixed ? 'fixed' : 'absolute',
+					});
+
+					window.clearTimeout(this.timeoutPoly);
+					this.timeoutPoly = window.setTimeout(() => {
+						this.poly.hide();
+					}, 500);
+				}
+
+				// Arrow positioning
+
+				if (withArrow) {
+					const arrowDirection = this.getArrowDirection();
+					const size = this.getSize();
+					const { width, height } = size;
+					const min = 8;
+					const css: any = {
+						left: '',
+						right: '',
+						top: '',
+						bottom: '',
 					};
 
-					this.ref.n = this.ref.getItems().length - 1;
-					this.setActive(null, true);
+					switch (arrowDirection) {
+						case I.MenuDirection.Bottom:
+						case I.MenuDirection.Top:
+							switch (horizontal) {
+								case I.MenuDirection.Left:
+									if (ew > width) {
+										css.left = width / 2 - ARROW_WIDTH / 2;
+									} else {
+										css.left = ew / 2 - ARROW_WIDTH / 2;
+									}
+									css.left = Math.max(
+										min,
+										Math.min(width - min, css.left)
+									);
+									break;
 
-					refInput.blur();
-					ret = true;
-				});
-			} else {
-				keyboard.shortcut('arrowup', e, () => {
-					if (!this.ref.n) {
-						this.ref.n = -1;
-						refInput.focus();
+								case I.MenuDirection.Center:
+									if (ew > width) {
+										css.left = width / 2 - ARROW_WIDTH / 2;
+									} else {
+										css.left =
+											ox - x + ew / 2 - ARROW_WIDTH / 2;
+									}
+									css.left = Math.max(
+										min,
+										Math.min(width - min, css.left)
+									);
+									break;
+
+								case I.MenuDirection.Right:
+									if (ew > width) {
+										css.right = width / 2 - ARROW_WIDTH / 2;
+									} else {
+										css.right = ew / 2 - ARROW_WIDTH / 2;
+									}
+									css.right = Math.max(
+										min,
+										Math.min(width - min, css.right)
+									);
+									break;
+							}
+							break;
+
+						case I.MenuDirection.Left:
+						case I.MenuDirection.Right:
+							css.top = eh / 2 - ARROW_HEIGHT / 2;
+							css.top = Math.max(
+								min,
+								Math.min(height - min, css.top)
+							);
+							break;
+					}
+
+					arrow.css(css);
+				}
+			});
+		}
+
+		close() {
+			if (this.ref && this.ref.unbind) {
+				this.ref.unbind();
+			}
+
+			menuStore.close(this.props.id);
+		}
+
+		onDimmerClick() {
+			const { param } = this.props;
+			const { noClose } = param;
+
+			if (!noClose) {
+				this.close();
+			}
+		}
+
+		onMouseLeave(e: any) {
+			const { param } = this.props;
+			const { isSub } = param;
+
+			if (isSub) {
+				//this.poly.hide();
+			}
+		}
+
+		onKeyDown(e: any) {
+			if (!this.ref || !this.ref.getItems) {
+				return;
+			}
+
+			e.stopPropagation();
+			keyboard.disableMouse(true);
+
+			const { param } = this.props;
+			const { commonFilter, data } = param;
+			const { preventFilter } = data;
+			const refInput = this.ref.refFilter || this.ref.refName;
+			const shortcutClose = ['escape'];
+			const shortcutSelect = ['tab', 'enter'];
+
+			let ret = false;
+
+			if (refInput) {
+				if (refInput.isFocused && this.ref.n < 0) {
+					keyboard.shortcut('arrowleft, arrowright', e, () => {
+						ret = true;
+					});
+
+					keyboard.shortcut('arrowdown', e, () => {
+						refInput.blur();
+
+						this.ref.n = 0;
 						this.setActive(null, true);
 
 						ret = true;
-					};
-				});
-			};
-		};
+					});
 
-		if (ret) {
-			return;
-		};
+					if (this.ref && this.ref.onClick && !preventFilter) {
+						keyboard.shortcut(shortcutSelect.join(', '), e, () => {
+							e.preventDefault();
 
-		if (!commonFilter) {
-			shortcutClose.push('arrowleft');
-			shortcutSelect.push('arrowright');
-		};
+							const items = this.ref.getItems();
+							const item = items.length ? items[0] : null;
 
-		keyboard.shortcut(shortcutClose.join(', '), e, () => {
-			e.preventDefault();
-			this.close();
-		});
+							if (item) {
+								item.arrow && this.ref.onOver
+									? this.ref.onOver(e, item)
+									: this.ref.onClick(e, item);
+							}
+						});
+					}
 
-		if (!this.ref || !this.ref.getItems) {
-			return;
-		};
+					keyboard.shortcut('arrowup', e, () => {
+						if (!this.ref.getItems) {
+							return;
+						}
 
-		const items = this.ref.getItems();
-		const l = items.length;
-		const item = items[this.ref.n];
+						this.ref.n = this.ref.getItems().length - 1;
+						this.setActive(null, true);
 
-		const onArrowDown = () => {
-			this.ref.n++;
-			if (this.ref.n > l - 1) {
-				this.ref.n = 0;
-			};
-
-			this.setActive(null, true);
-
-			const item = items[this.ref.n];
-			if (!item) {
-				return;
-			};
-
-			if (item.isDiv || item.isSection) {
-				onArrowDown();
-				return;
-			};
-
-			if (!item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
-			};
-		};
-
-		const onArrowUp = () => {
-			this.ref.n--;
-			if (this.ref.n < 0) {
-				if ((this.ref.n == -1) && refInput) {
-					this.ref.n = -1;
-					refInput.focus();
+						refInput.blur();
+						ret = true;
+					});
 				} else {
-					this.ref.n = l - 1;
-				};
+					keyboard.shortcut('arrowup', e, () => {
+						if (!this.ref.n) {
+							this.ref.n = -1;
+							refInput.focus();
+							this.setActive(null, true);
+
+							ret = true;
+						}
+					});
+				}
+			}
+
+			if (ret) {
+				return;
+			}
+
+			if (!commonFilter) {
+				shortcutClose.push('arrowleft');
+				shortcutSelect.push('arrowright');
+			}
+
+			keyboard.shortcut(shortcutClose.join(', '), e, () => {
+				e.preventDefault();
+				this.close();
+			});
+
+			if (!this.ref || !this.ref.getItems) {
+				return;
+			}
+
+			const items = this.ref.getItems();
+			const l = items.length;
+			const item = items[this.ref.n];
+
+			const onArrowDown = () => {
+				this.ref.n++;
+				if (this.ref.n > l - 1) {
+					this.ref.n = 0;
+				}
+
+				this.setActive(null, true);
+
+				const item = items[this.ref.n];
+				if (!item) {
+					return;
+				}
+
+				if (item.isDiv || item.isSection) {
+					onArrowDown();
+					return;
+				}
+
+				if (!item.arrow && this.ref.onOver) {
+					this.ref.onOver(e, item);
+				}
 			};
 
-			this.setActive(null, true);
+			const onArrowUp = () => {
+				this.ref.n--;
+				if (this.ref.n < 0) {
+					if (this.ref.n == -1 && refInput) {
+						this.ref.n = -1;
+						refInput.focus();
+					} else {
+						this.ref.n = l - 1;
+					}
+				}
 
-			const item = items[this.ref.n];
+				this.setActive(null, true);
+
+				const item = items[this.ref.n];
+				if (!item) {
+					return;
+				}
+
+				if (item.isDiv || item.isSection) {
+					onArrowUp();
+					return;
+				}
+
+				if (!item.arrow && this.ref.onOver) {
+					this.ref.onOver(e, item);
+				}
+			};
+
+			keyboard.shortcut('arrowup', e, () => {
+				e.preventDefault();
+				onArrowUp();
+			});
+
+			keyboard.shortcut('arrowdown', e, () => {
+				e.preventDefault();
+				onArrowDown();
+			});
+
+			if (this.ref && this.ref.onClick) {
+				keyboard.shortcut(shortcutSelect.join(', '), e, () => {
+					e.preventDefault();
+					if (item) {
+						item.arrow && this.ref.onOver
+							? this.ref.onOver(e, item)
+							: this.ref.onClick(e, item);
+					}
+				});
+			}
+
+			if (this.ref && this.ref.onSortEnd) {
+				keyboard.shortcut(
+					'shift+arrowup, shift+arrowdown',
+					e,
+					(pressed: string) => {
+						e.preventDefault();
+						this.onSortMove(pressed.match('arrowup') ? -1 : 1);
+					}
+				);
+			}
+
+			if (
+				!keyboard.isFocused &&
+				(!refInput || (refInput && !refInput.isFocused))
+			) {
+				if (this.ref && this.ref.onRemove) {
+					keyboard.shortcut('backspace', e, () => {
+						e.preventDefault();
+
+						this.ref.n--;
+						this.checkIndex();
+						this.ref.onRemove(e, item);
+						this.setActive(null, true);
+					});
+				}
+
+				if (this.ref && this.ref.onSwitch) {
+					keyboard.shortcut('space', e, () => {
+						e.preventDefault();
+
+						this.ref.onSwitch(e, item);
+					});
+				}
+			}
+		}
+
+		onSortMove(dir: number) {
+			const n = this.ref.n;
+
+			this.ref.n = n + dir;
+			this.checkIndex();
+			this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
+		}
+
+		checkIndex() {
+			const items = this.ref.getItems();
+
+			this.ref.n = Math.max(0, this.ref.n);
+			this.ref.n = Math.min(items.length - 1, this.ref.n);
+		}
+
+		setActive(item?: any, scroll?: boolean) {
+			if (!this.ref || !this.ref.getItems) {
+				return;
+			}
+
+			const refInput = this.ref.refFilter || this.ref.refName;
+			if (this.ref.n == -1 && refInput) {
+				refInput.focus();
+			}
+
+			const items = this.ref.getItems();
+			if (item) {
+				this.ref.n = items.findIndex(it => it.id == item.id);
+			}
+
+			if (this.ref.refList && scroll) {
+				let idx = this.ref.n;
+				if (this.ref.recalcIndex) {
+					idx = this.ref.recalcIndex();
+				}
+				this.ref.refList.scrollToRow(Math.max(0, idx));
+			}
+
+			const next = items[this.ref.n];
+
+			if (next && (next.isDiv || next.isSection)) {
+				this.ref.n++;
+				this.setActive(items[this.ref.n], scroll);
+			} else {
+				this.setHover(next, scroll);
+			}
+		}
+
+		setHover(item?: any, scroll?: boolean) {
+			if (!this._isMounted) {
+				return;
+			}
+
+			const node = $(this.node);
+			const menu = node.find('.menu');
+
+			menu.find('.item.hover').removeClass('hover');
+
 			if (!item) {
 				return;
-			};
+			}
 
-			if (item.isDiv || item.isSection) {
-				onArrowUp();
+			let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
+			if (!el.length) {
+				el = menu.find(`#item-${$.escapeSelector(item.id)}`);
+			}
+
+			if (!el.length) {
 				return;
-			};
+			}
 
-			if (!item.arrow && this.ref.onOver) {
-				this.ref.onOver(e, item);
-			};
-		};
+			el.addClass('hover');
 
-		keyboard.shortcut('arrowup', e, () => {
-			e.preventDefault();
-			onArrowUp();
-		});
+			if (scroll) {
+				let scrollWrap = node.find('.scrollWrap');
+				if (!scrollWrap.length) {
+					scrollWrap = node.find('.content');
+				}
 
-		keyboard.shortcut('arrowdown', e, () => {
-			e.preventDefault();
-			onArrowDown();
-		});
+				const st = scrollWrap.scrollTop();
+				const pt = el.position().top;
+				const eh = el.outerHeight();
+				const ch = scrollWrap.height();
+				const top = Math.max(0, st + pt + eh - BORDER - ch);
 
-		if (this.ref && this.ref.onClick) {	
-			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
-				e.preventDefault();
+				scrollWrap.scrollTop(top);
+			}
+		}
+
+		onTab(tab: string) {
+			this.setState({ tab });
+		}
+
+		storageGet() {
+			return Storage.get(this.getId()) || {};
+		}
+
+		storageSet(data: any) {
+			Storage.set(this.getId(), data);
+		}
+
+		getId(): string {
+			const { param } = this.props;
+			const { getTabs } = param;
+			const { tab } = this.state;
+			const tabs = getTabs ? getTabs() : [];
+
+			let id = '';
+
+			if (tab) {
+				const item = tabs.find(it => it.id == tab);
 				if (item) {
-					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
-				};
-			});
-		};
+					id = item.component;
+				}
+			} else {
+				id = this.props.id;
+			}
 
-		if (this.ref && this.ref.onSortEnd) {
-			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-				e.preventDefault();
-				this.onSortMove(pressed.match('arrowup') ? -1 : 1);
-			});
-		};
+			return UtilCommon.toCamelCase('menu-' + id);
+		}
 
-		if (!keyboard.isFocused && (!refInput || (refInput && !refInput.isFocused))) {
-			if (this.ref && this.ref.onRemove) {
-				keyboard.shortcut('backspace', e, () => {
-					e.preventDefault();
+		getElement() {
+			const { param } = this.props;
+			const { element } = param;
 
-					this.ref.n--;
-					this.checkIndex();
-					this.ref.onRemove(e, item);
-					this.setActive(null, true);
-				});
-			};
+			return $(element);
+		}
 
-			if (this.ref && this.ref.onSwitch) {
-				keyboard.shortcut('space', e, () => {
-					e.preventDefault();
+		getSize(): { width: number; height: number } {
+			const obj = $(`#${this.getId()}`);
+			return { width: obj.outerWidth(), height: obj.outerHeight() };
+		}
 
-					this.ref.onSwitch(e, item);
-				});
-			};
-		};
-	};
+		getPosition(): DOMRect {
+			const obj = $(`#${this.getId()}`);
+			return obj.length
+				? (obj.get(0).getBoundingClientRect() as DOMRect)
+				: null;
+		}
 
-	onSortMove (dir: number) {
-		const n = this.ref.n;
+		getArrowDirection(): I.MenuDirection {
+			const { param } = this.props;
+			const { vertical, horizontal } = param;
 
-		this.ref.n = n + dir;
-		this.checkIndex();
-		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
-	};
+			let dir: I.MenuDirection = I.MenuDirection.None;
 
-	checkIndex () {
-		const items = this.ref.getItems();
+			if (vertical == I.MenuDirection.Bottom) {
+				dir = I.MenuDirection.Top;
+			}
+			if (vertical == I.MenuDirection.Top) {
+				dir = I.MenuDirection.Bottom;
+			}
+			if (
+				vertical == I.MenuDirection.Center &&
+				horizontal == I.MenuDirection.Left
+			) {
+				dir = I.MenuDirection.Right;
+			}
+			if (
+				vertical == I.MenuDirection.Center &&
+				horizontal == I.MenuDirection.Right
+			) {
+				dir = I.MenuDirection.Left;
+			}
 
-		this.ref.n = Math.max(0, this.ref.n);
-		this.ref.n = Math.min(items.length - 1, this.ref.n);
-	};
-
-	setActive (item?: any, scroll?: boolean) {
-		if (!this.ref || !this.ref.getItems) {
-			return;
-		};
-
-		const refInput = this.ref.refFilter || this.ref.refName;
-		if ((this.ref.n == -1) && refInput) {
-			refInput.focus();
-		};
-
-		const items = this.ref.getItems();
-		if (item) {
-			this.ref.n = items.findIndex(it => it.id == item.id);
-		};
-
-		if (this.ref.refList && scroll) {
-			let idx = this.ref.n;
-			if (this.ref.recalcIndex) {
-				idx = this.ref.recalcIndex();
-			};
-			this.ref.refList.scrollToRow(Math.max(0, idx));
-		};
-
-		const next = items[this.ref.n];
-
-		if (next && (next.isDiv || next.isSection)) {
-			this.ref.n++;
-			this.setActive(items[this.ref.n], scroll);
-		} else {
-			this.setHover(next, scroll);
-		};
-	};
-	
-	setHover (item?: any, scroll?: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-		const menu = node.find('.menu');
-		
-		menu.find('.item.hover').removeClass('hover');
-
-		if (!item) {
-			return;
-		};
-
-		let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
-		if (!el.length) {
-			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
-		};
-
-		if (!el.length) {
-			return;
-		};
-
-		el.addClass('hover');
-
-		if (scroll) {
-			let scrollWrap = node.find('.scrollWrap');
-			if (!scrollWrap.length) {
-				scrollWrap = node.find('.content');
-			};
-
-			const st = scrollWrap.scrollTop();
-			const pt = el.position().top;
-			const eh = el.outerHeight();
-			const ch = scrollWrap.height();
-			const top = Math.max(0, st + pt + eh - BORDER - ch);
-			
-			scrollWrap.scrollTop(top);
-		};
-	};
-
-	onTab (tab: string) {
-		this.setState({ tab });
-	};
-
-	storageGet () {
-		return Storage.get(this.getId()) || {};
-	};
-
-	storageSet (data: any) {
-		Storage.set(this.getId(), data);
-	};
-
-	getId (): string {
-		const { param } = this.props;
-		const { getTabs } = param;
-		const { tab } = this.state;
-		const tabs = getTabs ? getTabs() : [];
-
-		let id = '';
-
-		if (tab) {
-			const item = tabs.find(it => it.id == tab);
-			if (item) {
-				id = item.component;
-			};
-		} else {
-			id = this.props.id;
-		};
-
-		return UtilCommon.toCamelCase('menu-' + id);
-	};
-
-	getElement () {
-		const { param } = this.props;
-		const { element } = param;
-
-		return $(element);
-	};
-
-	getSize (): { width: number; height: number; } {
-		const obj = $(`#${this.getId()}`);
-		return { width: obj.outerWidth(), height: obj.outerHeight() };
-	};
-
-	getPosition (): DOMRect {
-		const obj = $(`#${this.getId()}`);
-		return obj.length ? obj.get(0).getBoundingClientRect() as DOMRect : null;
-	};
-
-	getArrowDirection (): I.MenuDirection {
-		const { param } = this.props;
-		const { vertical, horizontal } = param;
-
-		let dir: I.MenuDirection = I.MenuDirection.None;
-
-		if (vertical == I.MenuDirection.Bottom) {
-			dir = I.MenuDirection.Top;
-		};
-		if (vertical == I.MenuDirection.Top) {
-			dir = I.MenuDirection.Bottom;
-		};
-		if ((vertical == I.MenuDirection.Center) && (horizontal == I.MenuDirection.Left)) {
-			dir = I.MenuDirection.Right;
-		};
-		if ((vertical == I.MenuDirection.Center) && (horizontal == I.MenuDirection.Right)) {
-			dir = I.MenuDirection.Left;
-		};
-
-		return dir;
-	};
-
-});
+			return dir;
+		}
+	}
+);
 
 export default Menu;

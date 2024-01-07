@@ -1,3 +1,5 @@
+/** @format */
+
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, keyboard, UtilCommon } from 'Lib';
@@ -6,24 +8,23 @@ import Constant from 'json/constant.json';
 interface State {
 	focused: string;
 	range: I.TextRange;
-};
+}
 
 class Focus {
-	
-	state: State = { 
-		focused: '', 
-		range: { from: 0, to: 0 } 
+	state: State = {
+		focused: '',
+		range: { from: 0, to: 0 },
 	};
 
-	backup: State = { 
-		focused: '', 
-		range: { from: 0, to: 0 } 
+	backup: State = {
+		focused: '',
+		range: { from: 0, to: 0 },
 	};
-	
-	set (id: string, range: I.TextRange): Focus {
+
+	set(id: string, range: I.TextRange): Focus {
 		if (!range) {
 			return;
-		};
+		}
 
 		this.state = {
 			focused: String(id || ''),
@@ -36,45 +37,45 @@ class Focus {
 
 		C.BlockSetCarriage(keyboard.getRootId(), id, range);
 		return this;
-	};
+	}
 
-	restore () {
+	restore() {
 		this.state = UtilCommon.objectCopy(this.backup);
-	};
+	}
 
-	clear (withRange: boolean) {
+	clear(withRange: boolean) {
 		this.clearRange(withRange);
 		this.state = { focused: '', range: { from: 0, to: 0 } };
-	};
+	}
 
-	clearRange (withRange: boolean) {
+	clearRange(withRange: boolean) {
 		const { focused } = this.state;
 		const el = $('.focusable.c' + focused);
-		
+
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
-		};
+		}
 
 		if (withRange) {
 			UtilCommon.clearSelection();
 			keyboard.setFocus(false);
-		};
+		}
 
 		$('.focusable.isFocused').removeClass('isFocused');
-	};
-	
-	apply (): Focus {
+	}
+
+	apply(): Focus {
 		const { focused, range } = this.state;
 		if (!focused) {
 			return;
-		};
+		}
 
 		$('.focusable.isFocused').removeClass('isFocused');
 
 		const node = $('.focusable.c' + focused);
 		if (!node.length) {
 			return;
-		};
+		}
 
 		node.addClass('isFocused');
 
@@ -82,24 +83,28 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			window.setTimeout(() => { (el as HTMLInputElement).setSelectionRange(range.from, range.to); });
-		} else
-		if (node.hasClass('editable')) {
+			window.setTimeout(() => {
+				(el as HTMLInputElement).setSelectionRange(
+					range.from,
+					range.to
+				);
+			});
+		} else if (node.hasClass('editable')) {
 			keyboard.setFocus(true);
 			setRange(el, { start: range.from, end: range.to });
-		};
+		}
 		return this;
-	};
-	
-	scroll (isPopup: boolean, id: string) {
+	}
+
+	scroll(isPopup: boolean, id: string) {
 		if (!id) {
 			return;
-		};
+		}
 
 		const node = $(`.focusable.c${id}`);
 		if (!node.length) {
 			return;
-		};
+		}
 
 		const container = UtilCommon.getScrollContainer(isPopup);
 		const ch = container.height();
@@ -107,15 +112,14 @@ class Focus {
 		const hh = UtilCommon.sizeHeader();
 		const o = Constant.size.lastBlock + hh;
 		const st = container.scrollTop();
-		const y = isPopup ? (no - container.offset().top + st) : no;
+		const y = isPopup ? no - container.offset().top + st : no;
 
-		if ((y >= st) && (y <= st + ch - o)) {
+		if (y >= st && y <= st + ch - o) {
 			return;
-		};
+		}
 
 		container.scrollTop(Math.max(y, ch - o) - ch + o);
-	};
+	}
+}
 
-};
-
- export const focus: Focus = new Focus();
+export const focus: Focus = new Focus();

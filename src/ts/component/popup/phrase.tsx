@@ -1,24 +1,37 @@
+/** @format */
+
 import * as React from 'react';
 import { Title, Label, Button, IconObject } from 'Component';
 import { I, translate } from 'Lib';
 
 class PopupPhrase extends React.Component<I.Popup> {
-	
-	render () {
+	render() {
 		return (
 			<div>
 				<Title text={translate('popupPhraseTitle1')} />
 				<div className="rows">
 					<div className="row">
-						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':game_die:' }} />
+						<IconObject
+							size={40}
+							iconSize={40}
+							object={{ iconEmoji: ':game_die:' }}
+						/>
 						<Label text={translate('popupPhraseLabel1')} />
 					</div>
 					<div className="row">
-						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':old_key:' }} />
+						<IconObject
+							size={40}
+							iconSize={40}
+							object={{ iconEmoji: ':old_key:' }}
+						/>
 						<Label text={translate('popupPhraseLabel2')} />
 					</div>
 					<div className="row">
-						<IconObject size={40} iconSize={40} object={{ iconEmoji: ':point_up:' }} />
+						<IconObject
+							size={40}
+							iconSize={40}
+							object={{ iconEmoji: ':point_up:' }}
+						/>
 						<Label text={translate('popupPhraseLabel3')} />
 					</div>
 				</div>
@@ -34,12 +47,14 @@ class PopupPhrase extends React.Component<I.Popup> {
 				</div>
 
 				<div className="buttons">
-					<Button text={translate('commonOkay')} onClick={() => this.props.close()} />
+					<Button
+						text={translate('commonOkay')}
+						onClick={() => this.props.close()}
+					/>
 				</div>
 			</div>
 		);
-	};
-
-};
+	}
+}
 
 export default PopupPhrase;

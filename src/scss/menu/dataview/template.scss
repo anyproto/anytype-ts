@@ -1,54 +1,125 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-    .menu.menuDataviewTemplateList { width: 360px; }
-    .menu.menuDataviewTemplateList {
-        .titleWrapper + .content { padding-top: 8px; }
+	.menu.menuDataviewTemplateList {
+		width: 360px;
+	}
+	.menu.menuDataviewTemplateList {
+		.titleWrapper + .content {
+			padding-top: 8px;
+		}
 
-        .content { padding: 16px; max-height: 408px; }
-		.select { margin-bottom: 16px; }
+		.content {
+			padding: 16px;
+			max-height: 408px;
+		}
+		.select {
+			margin-bottom: 16px;
+		}
 
-		.title { padding: 4px 0; margin-bottom: 6px; }
+		.title {
+			padding: 4px 0;
+			margin-bottom: 6px;
+		}
 
-		.items { display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 12px; }
 		.items {
-			.item { position: relative; padding: 0px; background: unset; }
-			.item::before { display: none; }
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 12px;
+		}
+		.items {
+			.item {
+				position: relative;
+				padding: 0px;
+				background: unset;
+			}
+			.item::before {
+				display: none;
+			}
 
 			.item {
-				.icon.more { position: static; width: 20px; height: 20px; margin: 0px; opacity: 1; }
-				.icon.more:hover { background-color: unset; }
+				.icon.more {
+					position: static;
+					width: 20px;
+					height: 20px;
+					margin: 0px;
+					opacity: 1;
+				}
+				.icon.more:hover {
+					background-color: unset;
+				}
 
 				.previewObject {
-					.add { width: 20px; height: 20px; @include pos-abs-mid; margin: -10px 0px 0px -10px; }
-					.moreWrapper.hover { opacity: 1; }
+					.add {
+						width: 20px;
+						height: 20px;
+						@include pos-abs-mid;
+						margin: -10px 0px 0px -10px;
+					}
+					.moreWrapper.hover {
+						opacity: 1;
+					}
 				}
 				.previewObject.isDefault {
-					.border { border-color: $colorSystemAccent100; border-width: 2px; }
+					.border {
+						border-color: $colorSystemAccent100;
+						border-width: 2px;
+					}
 				}
 				.previewObject:before {
-					content: ''; position: absolute; left: 0; top: 0; z-index: 0; width: 100%; height: 100%;
-					background-color: $colorShapeHighlightLight; opacity: 0; transition: $transitionAllCommon;
+					content: '';
+					position: absolute;
+					left: 0;
+					top: 0;
+					z-index: 0;
+					width: 100%;
+					height: 100%;
+					background-color: $colorShapeHighlightLight;
+					opacity: 0;
+					transition: $transitionAllCommon;
 				}
 			}
 			.item.hover {
-				.previewObject:before { opacity: 1; }
+				.previewObject:before {
+					opacity: 1;
+				}
 			}
 		}
 
 		.emptySearch {
-			height: 112px; width: 100%; border-radius: 8px; border: 1px solid $colorShapeSecondary; @include text-small;
-			display: flex; align-items: center; justify-content: center;
+			height: 112px;
+			width: 100%;
+			border-radius: 8px;
+			border: 1px solid $colorShapeSecondary;
+			@include text-small;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
-    }
-    .menu.menuDataviewTemplateList.fromBanner { background-color: transparent; box-shadow: none; width: auto; }
-    .menu.menuDataviewTemplateList.fromBanner {
-		.content { overflow: visible; padding: 0px; }
-        .content {
-            .items { justify-content: space-around; align-content: flex-start; }
-            .items {
-                .previewObject { background: $colorBgPrimary; box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); }
-            }
-        }
-    }
+	}
+	.menu.menuDataviewTemplateList.fromBanner {
+		background-color: transparent;
+		box-shadow: none;
+		width: auto;
+	}
+	.menu.menuDataviewTemplateList.fromBanner {
+		.content {
+			overflow: visible;
+			padding: 0px;
+		}
+		.content {
+			.items {
+				justify-content: space-around;
+				align-content: flex-start;
+			}
+			.items {
+				.previewObject {
+					background: $colorBgPrimary;
+					box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07);
+				}
+			}
+		}
+	}
 }

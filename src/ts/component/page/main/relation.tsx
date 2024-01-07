@@ -1,7 +1,18 @@
+/** @format */
+
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
+import {
+	I,
+	C,
+	Action,
+	UtilCommon,
+	UtilObject,
+	UtilRouter,
+	translate,
+	UtilDate,
+} from 'Lib';
 import { detailStore, dbStore, commonStore, menuStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
@@ -9,168 +20,253 @@ import HeadSimple from 'Component/page/head/simple';
 interface State {
 	isDeleted: boolean;
 	isLoading: boolean;
-};
+}
 
-const PageMainRelation = observer(class PageMainRelation extends React.Component<I.PageComponent, State> {
+const PageMainRelation = observer(
+	class PageMainRelation extends React.Component<I.PageComponent, State> {
+		id = '';
+		refHeader: any = null;
+		refHead: any = null;
 
-	id = '';
-	refHeader: any = null;
-	refHead: any = null;
-
-	state = {
-		isDeleted: false,
-		isLoading: false
-	};
-
-	constructor (props: I.PageComponent) {
-		super(props);
-
-		this.onCreate = this.onCreate.bind(this);
-	};
-
-	render () {
-		const { isLoading, isDeleted } = this.state;
-
-		if (isDeleted) {
-			return <Deleted {...this.props} />;
+		state = {
+			isDeleted: false,
+			isLoading: false,
 		};
 
-		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
-		const subIdType = dbStore.getSubId(rootId, 'type');
-		const totalType = dbStore.getMeta(subIdType, '').total;
-		const subIdObject = dbStore.getSubId(rootId, 'object');
-		const totalObject = dbStore.getMeta(subIdObject, '').total;
-		const columnsObject: any[] = [
-			{ 
-				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
-			},
-			{ relationKey: object.relationKey, name: object.name, isCell: true }
-		];
+		constructor(props: I.PageComponent) {
+			super(props);
 
-		const filtersType: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
-		];
-		const filtersObject: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
-		];
+			this.onCreate = this.onCreate.bind(this);
+		}
 
-		return (
-			<div>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+		render() {
+			const { isLoading, isDeleted } = this.state;
 
-				{isLoading ? <Loader id="loader" /> : ''}
+			if (isDeleted) {
+				return <Deleted {...this.props} />;
+			}
 
-				<div className="blocks wrapper">
-					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
+			const rootId = this.getRootId();
+			const object = detailStore.get(rootId, rootId);
+			const subIdType = dbStore.getSubId(rootId, 'type');
+			const totalType = dbStore.getMeta(subIdType, '').total;
+			const subIdObject = dbStore.getSubId(rootId, 'object');
+			const totalObject = dbStore.getMeta(subIdObject, '').total;
+			const columnsObject: any[] = [
+				{
+					relationKey: 'lastModifiedDate',
+					name: translate('commonUpdated'),
+					mapper: (v: any) =>
+						UtilDate.date(
+							UtilDate.dateFormat(
+								I.DateFormat.MonthAbbrBeforeDay
+							),
+							v
+						),
+				},
+				{
+					relationKey: object.relationKey,
+					name: object.name,
+					isCell: true,
+				},
+			];
 
-					<div className="section set">
-						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
-						<div className="content">
-							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
-						</div>
-					</div>
+			const filtersType: I.Filter[] = [
+				{
+					operator: I.FilterOperator.And,
+					relationKey: 'spaceId',
+					condition: I.FilterCondition.Equal,
+					value: object.spaceId,
+				},
+				{
+					operator: I.FilterOperator.And,
+					relationKey: 'layout',
+					condition: I.FilterCondition.Equal,
+					value: I.ObjectLayout.Type,
+				},
+				{
+					operator: I.FilterOperator.And,
+					relationKey: 'recommendedRelations',
+					condition: I.FilterCondition.In,
+					value: [rootId],
+				},
+			];
+			const filtersObject: I.Filter[] = [
+				{
+					operator: I.FilterOperator.And,
+					relationKey: 'spaceId',
+					condition: I.FilterCondition.Equal,
+					value: object.spaceId,
+				},
+			];
 
-					{object.isInstalled ? (
+			return (
+				<div>
+					<Header
+						component="mainObject"
+						ref={ref => (this.refHeader = ref)}
+						{...this.props}
+						rootId={rootId}
+					/>
+
+					{isLoading ? <Loader id="loader" /> : ''}
+
+					<div className="blocks wrapper">
+						<HeadSimple
+							ref={ref => (this.refHead = ref)}
+							type="Relation"
+							rootId={rootId}
+							onCreate={this.onCreate}
+						/>
+
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.sprintf(translate('pageMainRelationObjectsCreated'), UtilCommon.plural(totalObject, translate('pluralObject')))}</div>
+							<div className="title">
+								{totalType}{' '}
+								{UtilCommon.plural(
+									totalType,
+									translate('pluralType')
+								)}
+							</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
+								<ListObject
+									subId={subIdType}
+									rootId={rootId}
+									columns={[]}
+									filters={filtersType}
+								/>
 							</div>
 						</div>
-					) : ''}
+
+						{object.isInstalled ? (
+							<div className="section set">
+								<div className="title">
+									{totalObject}{' '}
+									{UtilCommon.sprintf(
+										translate(
+											'pageMainRelationObjectsCreated'
+										),
+										UtilCommon.plural(
+											totalObject,
+											translate('pluralObject')
+										)
+									)}
+								</div>
+								<div className="content">
+									<ListObject
+										sources={[rootId]}
+										subId={subIdObject}
+										rootId={rootId}
+										columns={columnsObject}
+										filters={filtersObject}
+									/>
+								</div>
+							</div>
+						) : (
+							''
+						)}
+					</div>
+
+					<Footer component="mainObject" {...this.props} />
 				</div>
+			);
+		}
 
-				<Footer component="mainObject" {...this.props} />
-			</div>
-		);
-	};
+		componentDidMount() {
+			this.open();
+		}
 
-	componentDidMount () {
-		this.open();
-	};
+		componentDidUpdate() {
+			this.open();
+		}
 
-	componentDidUpdate () {
-		this.open();
-	};
+		componentWillUnmount() {
+			this.close();
+		}
 
-	componentWillUnmount () {
-		this.close();
-	};
+		open() {
+			const rootId = this.getRootId();
 
-	open () {
-		const rootId = this.getRootId();
-
-		if (this.id == rootId) {
-			return;
-		};
-
-		this.close();
-		this.id = rootId;
-		this.setState({ isLoading: true });
-		
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilObject.openHome('route');
-				};
+			if (this.id == rootId) {
 				return;
-			};
+			}
 
-			const object = detailStore.get(rootId, rootId, []);
-			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+			this.close();
+			this.id = rootId;
+			this.setState({ isLoading: true });
+
+			C.ObjectOpen(
+				rootId,
+				'',
+				UtilRouter.getRouteSpaceId(),
+				(message: any) => {
+					if (message.error.code) {
+						if (message.error.code == Errors.Code.NOT_FOUND) {
+							this.setState({
+								isDeleted: true,
+								isLoading: false,
+							});
+						} else {
+							UtilObject.openHome('route');
+						}
+						return;
+					}
+
+					const object = detailStore.get(rootId, rootId, []);
+					if (object.isDeleted) {
+						this.setState({ isDeleted: true, isLoading: false });
+						return;
+					}
+
+					this.setState({ isLoading: false });
+
+					if (this.refHeader) {
+						this.refHeader.forceUpdate();
+					}
+					if (this.refHead) {
+						this.refHead.forceUpdate();
+					}
+				}
+			);
+		}
+
+		close() {
+			if (!this.id) {
 				return;
-			};
+			}
 
-			this.setState({ isLoading: false });
+			const { isPopup, match } = this.props;
 
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-		});
-	};
+			let close = true;
+			if (isPopup && match.params.id == this.id) {
+				close = false;
+			}
+			if (close) {
+				Action.pageClose(this.id, true);
+			}
+		}
 
-	close () {
-		if (!this.id) {
-			return;
-		};
+		getRootId() {
+			const { rootId, match } = this.props;
+			return rootId ? rootId : match.params.id;
+		}
 
-		const { isPopup, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == this.id)) {
-			close = false;
-		};
-		if (close) {
-			Action.pageClose(this.id, true);
-		};
-	};
+		onCreate() {
+			const rootId = this.getRootId();
+			const object = detailStore.get(rootId, rootId);
 
-	getRootId () {
-		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
-	};
-
-	onCreate () {
-		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
-
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', commonStore.space, (message: any) => {
-			if (!message.error.code) {
-				UtilObject.openPopup(message.details);
-			};
-		});
-	};
-
-});
+			C.ObjectCreateSet(
+				[rootId],
+				{ name: object.name + ' set' },
+				'',
+				commonStore.space,
+				(message: any) => {
+					if (!message.error.code) {
+						UtilObject.openPopup(message.details);
+					}
+				}
+			);
+		}
+	}
+);
 
 export default PageMainRelation;

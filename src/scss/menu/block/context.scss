@@ -1,34 +1,90 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuBlockContext { padding: 0px; height: 44px; transform-origin: 50% 50% !important; }
 	.menu.menuBlockContext {
-		.section { padding: 6px 12px; }
-		.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; }
-		.icon:hover { background-color: $colorShapeTertiary; }
-		.icon.blockStyle { width: 44px; background-position: 6px center; }
-		.icon.blockStyle {
-			.icon.arrow { right: 6px; }
+		padding: 0px;
+		height: 44px;
+		transform-origin: 50% 50% !important;
+	}
+	.menu.menuBlockContext {
+		.section {
+			padding: 6px 12px;
 		}
-		
-		.icon.blockStyle.active.text { background-image: url('~img/icon/menu/style/text.svg'); }
-		.icon.blockStyle.active.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }
-		.icon.blockStyle.active.header2 { background-image: url('~img/icon/menu/style/header2.svg'); }
-		.icon.blockStyle.active.header3 { background-image: url('~img/icon/menu/style/header3.svg'); }
-		.icon.blockStyle.active.quote { background-image: url('~img/icon/menu/style/quote.svg'); }
-		.icon.blockStyle.active.list { background-image: url('~img/icon/menu/style/list.svg'); }
-		.icon.blockStyle.active.checkbox { background-image: url('~img/icon/menu/style/checkbox.svg'); }
-		.icon.blockStyle.active.numbered { background-image: url('~img/icon/menu/style/numbered.svg'); }
-		.icon.blockStyle.active.toggle { background-image: url('~img/icon/menu/style/toggle.svg'); }
-		.icon.blockStyle.active.code { background-image: url('~img/icon/menu/style/code.svg'); }
-		
-		.icon.active.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
-		.icon.active.kbd { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
-		.icon.active.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
-		.icon.active.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
-		.icon.active.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
-		.icon.active.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
-		
-		.icon.active.more { background-image: url('~img/icon/menu/action/more1.svg'); }
+		.icon {
+			width: 32px;
+			height: 32px;
+			background-size: 20px 20px;
+			vertical-align: top;
+			margin: 0px;
+			border-radius: 4px;
+		}
+		.icon:hover {
+			background-color: $colorShapeTertiary;
+		}
+		.icon.blockStyle {
+			width: 44px;
+			background-position: 6px center;
+		}
+		.icon.blockStyle {
+			.icon.arrow {
+				right: 6px;
+			}
+		}
+
+		.icon.blockStyle.active.text {
+			background-image: url('~img/icon/menu/style/text.svg');
+		}
+		.icon.blockStyle.active.header1 {
+			background-image: url('~img/icon/menu/style/header1.svg');
+		}
+		.icon.blockStyle.active.header2 {
+			background-image: url('~img/icon/menu/style/header2.svg');
+		}
+		.icon.blockStyle.active.header3 {
+			background-image: url('~img/icon/menu/style/header3.svg');
+		}
+		.icon.blockStyle.active.quote {
+			background-image: url('~img/icon/menu/style/quote.svg');
+		}
+		.icon.blockStyle.active.list {
+			background-image: url('~img/icon/menu/style/list.svg');
+		}
+		.icon.blockStyle.active.checkbox {
+			background-image: url('~img/icon/menu/style/checkbox.svg');
+		}
+		.icon.blockStyle.active.numbered {
+			background-image: url('~img/icon/menu/style/numbered.svg');
+		}
+		.icon.blockStyle.active.toggle {
+			background-image: url('~img/icon/menu/style/toggle.svg');
+		}
+		.icon.blockStyle.active.code {
+			background-image: url('~img/icon/menu/style/code.svg');
+		}
+
+		.icon.active.bold {
+			background-image: url('~img/icon/menu/action/mark/bold1.svg');
+		}
+		.icon.active.kbd {
+			background-image: url('~img/icon/menu/action/mark/code1.svg');
+		}
+		.icon.active.italic {
+			background-image: url('~img/icon/menu/action/mark/italic1.svg');
+		}
+		.icon.active.link {
+			background-image: url('~img/icon/menu/action/mark/link1.svg');
+		}
+		.icon.active.strike {
+			background-image: url('~img/icon/menu/action/mark/strike1.svg');
+		}
+		.icon.active.underline {
+			background-image: url('~img/icon/menu/action/mark/underline1.svg');
+		}
+
+		.icon.active.more {
+			background-image: url('~img/icon/menu/action/more1.svg');
+		}
 	}
 }

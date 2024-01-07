@@ -1,13 +1,37 @@
-@import "~scss/_vars";
+/** @format */
 
-.dragbox { display: inline; position: relative; }
+@import '~scss/_vars';
+
 .dragbox {
-    .isDraggable { position: relative; }
-    .isDraggable.isClone { opacity: 0.75; position: absolute !important; left: 0px; top: 0px; }
-    .isDraggable.isDragging { opacity: 0.5; }
-    .isDraggable.isOver::after {
-        content: ""; position: absolute; top: 0px; width: 2px; height: 100%; display: block; background: $colorSystemAccent100;
-    }
-    .isDraggable.isOver.left::after { left: -4px; }
-    .isDraggable.isOver.right::after { right: -4px; }
+	display: inline;
+	position: relative;
+}
+.dragbox {
+	.isDraggable {
+		position: relative;
+	}
+	.isDraggable.isClone {
+		opacity: 0.75;
+		position: absolute !important;
+		left: 0px;
+		top: 0px;
+	}
+	.isDraggable.isDragging {
+		opacity: 0.5;
+	}
+	.isDraggable.isOver::after {
+		content: '';
+		position: absolute;
+		top: 0px;
+		width: 2px;
+		height: 100%;
+		display: block;
+		background: $colorSystemAccent100;
+	}
+	.isDraggable.isOver.left::after {
+		left: -4px;
+	}
+	.isDraggable.isOver.right::after {
+		right: -4px;
+	}
 }

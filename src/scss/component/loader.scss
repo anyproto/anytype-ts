@@ -1,41 +1,108 @@
-@import "~scss/_vars";
+/** @format */
 
-.loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
+@import '~scss/_vars';
+
+.loaderWrapper {
+	width: 24px;
+	height: 24px;
+	margin: 0px auto;
+	position: relative;
+}
 .loaderWrapper {
 	@keyframes rotate {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	@keyframes dots-light {
-		0% { background-color: $colorTextPrimary; }
-		32% { background-color: $colorTextPrimary; }
-		100% { background-color: rgba(0,0,0,0); }
+		0% {
+			background-color: $colorTextPrimary;
+		}
+		32% {
+			background-color: $colorTextPrimary;
+		}
+		100% {
+			background-color: rgba(0, 0, 0, 0);
+		}
 	}
 
 	.loader {
-		border: 2px solid $colorShapeSecondary; border-radius: 100%; width: 24px; height: 24px; border-left: 2px solid $colorControlActive; position: absolute; 
-		left: 50%; top: 50%; margin: -12px 0px 0px -12px; transform: translateZ(0); animation: rotate 0.8s infinite linear;
+		border: 2px solid $colorShapeSecondary;
+		border-radius: 100%;
+		width: 24px;
+		height: 24px;
+		border-left: 2px solid $colorControlActive;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin: -12px 0px 0px -12px;
+		transform: translateZ(0);
+		animation: rotate 0.8s infinite linear;
 	}
 
-	.dots { display: inline-block; width: 28px; height: 4px; position: absolute; left: 50%; top: 50%; margin: -2px 0px 0px -14px; }
 	.dots {
-		.dot { 
-			width: 4px; height: 4px; border-radius: 50%; animation: dots-light 0.6s cubic-bezier(0.22, 1, 0.36, 1) infinite; 
-			display: inline-block; vertical-align: top; background-color: rgba(0,0,0,0); margin-right: 8px; border: 1px solid $colorControlAccent;
+		display: inline-block;
+		width: 28px;
+		height: 4px;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin: -2px 0px 0px -14px;
+	}
+	.dots {
+		.dot {
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			animation: dots-light 0.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+			display: inline-block;
+			vertical-align: top;
+			background-color: rgba(0, 0, 0, 0);
+			margin-right: 8px;
+			border: 1px solid $colorControlAccent;
 		}
-		.dot:last-child { margin: 0px; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
+		.dot:last-child {
+			margin: 0px;
+		}
+		.dot:nth-child(2) {
+			animation-delay: 0.2s;
+		}
+		.dot:nth-child(3) {
+			animation-delay: 0.4s;
+		}
 	}
 }
 
-.loaderWrapper.inline { margin: 0px; display: inline-block; vertical-align: top; }
 .loaderWrapper.inline {
-	.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+	margin: 0px;
+	display: inline-block;
+	vertical-align: top;
+}
+.loaderWrapper.inline {
+	.loader {
+		width: 20px;
+		height: 20px;
+		margin: -10px 0px 0px -10px;
+	}
 }
 
-.loaderWrapper.c20 { width: 20px; height: 20px; }
-.loaderWrapper.c26 { width: 26px; height: 26px; }
-.loaderWrapper.c28 { width: 28px; height: 28px; }
-.loaderWrapper.c32 { width: 32px; height: 32px; }
+.loaderWrapper.c20 {
+	width: 20px;
+	height: 20px;
+}
+.loaderWrapper.c26 {
+	width: 26px;
+	height: 26px;
+}
+.loaderWrapper.c28 {
+	width: 28px;
+	height: 28px;
+}
+.loaderWrapper.c32 {
+	width: 32px;
+	height: 32px;
+}

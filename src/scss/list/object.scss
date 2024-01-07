@@ -1,43 +1,90 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .listObject {
-	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid $colorShapeSecondary; table-layout: fixed; border-top: 1px solid $colorShapeSecondary; }
 	table {
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
+		width: 100%;
+		border-collapse: collapse;
+		border-bottom: 1px solid $colorShapeSecondary;
+		table-layout: fixed;
+		border-top: 1px solid $colorShapeSecondary;
+	}
+	table {
+		.row.isArchived *,
+		.row.isDeleted * {
+			text-decoration: line-through;
+			color: $colorControlActive;
+		}
 
-		.cellHead { 
-			text-align: left; color: $colorTextSecondary; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
-			@include text-overflow-nw; width: 25%;
+		.cellHead {
+			text-align: left;
+			color: $colorTextSecondary;
+			padding: 14px 0px 14px 14px;
+			white-space: nowrap;
+			font-weight: 400;
+			line-height: 20px;
+			position: relative;
+			@include text-overflow-nw;
+			width: 25%;
 		}
 		.cellHead {
-			.name { 
-				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
-				@include text-overflow-nw; border-right: 1px solid $colorShapeSecondary;
+			.name {
+				display: inline-block;
+				line-height: 20px;
+				height: 20px;
+				vertical-align: top;
+				width: 100%;
+				@include text-overflow-nw;
+				border-right: 1px solid $colorShapeSecondary;
 			}
 		}
-		.cellHead:first-child { width: 50%; }
+		.cellHead:first-child {
+			width: 50%;
+		}
 		.cellHead:last-child {
-			.name { border: 0px; }
+			.name {
+				border: 0px;
+			}
 		}
 
-		tbody { border-top: 1px solid $colorShapeSecondary; }
-
-		.cell { 
-			padding: 14px; border-bottom: 1px solid $colorShapeSecondary; vertical-align: top; position: relative; word-break: break-word; 
+		tbody {
+			border-top: 1px solid $colorShapeSecondary;
 		}
 
-		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+		.cell {
+			padding: 14px;
+			border-bottom: 1px solid $colorShapeSecondary;
+			vertical-align: top;
+			position: relative;
+			word-break: break-word;
+		}
+
 		.cellContent {
-			.more { vertical-align: top; }
+			width: 100%;
+			overflow: hidden;
+			height: 20px;
+			line-height: 20px;
+		}
+		.cellContent {
+			.more {
+				vertical-align: top;
+			}
 		}
 
 		.cellContent.c-object {
-			.wrap { white-space: nowrap; }
+			.wrap {
+				white-space: nowrap;
+			}
 		}
 		.cellContent.c-select {
-			.tagItem { margin-bottom: 0px; }
+			.tagItem {
+				margin-bottom: 0px;
+			}
 		}
 	}
 
-	.pager { margin-top: 10px; }
+	.pager {
+		margin-top: 10px;
+	}
 }

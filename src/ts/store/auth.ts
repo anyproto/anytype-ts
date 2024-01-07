@@ -1,15 +1,23 @@
+/** @format */
+
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
+import {
+	blockStore,
+	detailStore,
+	commonStore,
+	dbStore,
+	menuStore,
+	notificationStore,
+} from 'Store';
 import { keyboard } from 'Lib';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
 	path: string;
-};
+}
 
 class AuthStore {
-	
 	public walletPathValue = '';
 	public accountPathValue = '';
 	public accountItem: I.Account = null;
@@ -18,8 +26,8 @@ class AuthStore {
 	public phrase = '';
 	public token = '';
 	public threadMap: Map<string, any> = new Map();
-	
-	constructor () {
+
+	constructor() {
 		makeObservable(this, {
 			walletPathValue: observable,
 			accountPathValue: observable,
@@ -43,74 +51,74 @@ class AuthStore {
 			clearAll: action,
 			logout: action,
 		});
-	};
+	}
 
-	get accounts (): I.Account[] {
+	get accounts(): I.Account[] {
 		return this.accountList;
-	};
+	}
 
-    get account (): I.Account {
+	get account(): I.Account {
 		return this.accountItem;
-    };
+	}
 
-	get walletPath (): string {
+	get walletPath(): string {
 		return String(this.walletPathValue || '');
-    };
+	}
 
-	get accountPath (): string {
+	get accountPath(): string {
 		return String(this.accountPathValue || '');
-    };
+	}
 
-	get accountSpaceId (): string {
+	get accountSpaceId(): string {
 		return String(this.accountItem?.info?.accountSpaceId || '');
-	};
+	}
 
-	get networkConfig (): NetworkConfig {
+	get networkConfig(): NetworkConfig {
 		const obj = Storage.get('networkConfig') || {};
 
 		return {
 			mode: Number(obj.mode) || I.NetworkMode.Default,
 			path: String(obj.path || ''),
 		};
-	};
+	}
 
-	walletPathSet (v: string) {
+	walletPathSet(v: string) {
 		this.walletPathValue = v;
-    };
+	}
 
-	accountPathSet (v: string) {
+	accountPathSet(v: string) {
 		this.accountPathValue = v;
-    };
+	}
 
-	phraseSet (v: string) {
+	phraseSet(v: string) {
 		this.phrase = v;
-    };
+	}
 
-	nameSet (v: string) {
+	nameSet(v: string) {
 		this.name = v;
-    };
+	}
 
-	tokenSet (v: string) {
+	tokenSet(v: string) {
 		this.token = v;
-    };
+	}
 
-	networkConfigSet (obj: NetworkConfig) {
+	networkConfigSet(obj: NetworkConfig) {
 		Storage.set('networkConfig', obj, true);
-	};
+	}
 
-	accountAdd (account: any) {
+	accountAdd(account: any) {
 		account.info = account.info || {};
 		account.status = account.status || {};
 		account.config = account.config || {};
 
 		this.accountList.push(new M.Account(account));
-    };
+	}
 
-	accountListClear () {
+	accountListClear() {
 		this.accountList = [];
-    };
+	}
 
-	accountSet (account: any) {
+	accountSet(account: any) {
 		account = account || {};
 		account.info = account.info || {};
 		account.status = account.status || {};
@@ -120,69 +128,77 @@ class AuthStore {
 			this.accountItem = new M.Account(account);
 		} else {
 			set(this.accountItem, account);
-		};
+		}
 
 		if (account.id) {
 			Storage.set('accountId', account.id);
 			Renderer.send('setAccount', this.accountItem);
-		};
-    };
+		}
+	}
 
-	accountSetStatus (status: I.AccountStatus) {
+	accountSetStatus(status: I.AccountStatus) {
 		if (this.accountItem) {
 			set(this.accountItem.status, status);
-		};
-	};
+		}
+	}
 
-	accountIsDeleted (): boolean {
-		return this.accountItem && this.accountItem.status && [ 
-			I.AccountStatusType.StartedDeletion,
-			I.AccountStatusType.Deleted,
-		].includes(this.accountItem.status.type);
-	};
+	accountIsDeleted(): boolean {
+		return (
+			this.accountItem &&
+			this.accountItem.status &&
+			[
+				I.AccountStatusType.StartedDeletion,
+				I.AccountStatusType.Deleted,
+			].includes(this.accountItem.status.type)
+		);
+	}
 
-	accountIsPending (): boolean {
-		return this.accountItem && this.accountItem.status && [ 
-			I.AccountStatusType.PendingDeletion,
-		].includes(this.accountItem.status.type);
-	};
+	accountIsPending(): boolean {
+		return (
+			this.accountItem &&
+			this.accountItem.status &&
+			[I.AccountStatusType.PendingDeletion].includes(
+				this.accountItem.status.type
+			)
+		);
+	}
 
-	threadSet (rootId: string, obj: any) {
+	threadSet(rootId: string, obj: any) {
 		const thread = this.threadMap.get(rootId);
 		if (thread) {
 			set(thread, obj);
 		} else {
 			this.threadMap.set(rootId, observable(obj));
-		};
-    };
+		}
+	}
 
-	threadRemove (rootId: string) {
+	threadRemove(rootId: string) {
 		this.threadMap.delete(rootId);
-    };
+	}
 
-	threadGet (rootId: string) {
+	threadGet(rootId: string) {
 		return this.threadMap.get(rootId) || {};
-    };
+	}
 
-	clearAll () {
+	clearAll() {
 		this.threadMap = new Map();
 		this.accountItem = null;
 
 		this.accountListClear();
 		this.nameSet('');
 		this.phraseSet('');
-	};
+	}
 
-	logout (mainWindow: boolean, removeData: boolean) {
+	logout(mainWindow: boolean, removeData: boolean) {
 		if (mainWindow) {
 			C.AccountStop(removeData, () => {
-				C.WalletCloseSession(this.token)
-                this.tokenSet('');
+				C.WalletCloseSession(this.token);
+				this.tokenSet('');
 			});
 
 			analytics.event('LogOut');
 			Renderer.send('logout');
-		};
+		}
 
 		analytics.profile('', '');
 		analytics.removeContext();
@@ -200,8 +216,7 @@ class AuthStore {
 
 		this.clearAll();
 		Storage.logout();
-    };
+	}
+}
 
-};
-
- export const authStore: AuthStore = new AuthStore();
+export const authStore: AuthStore = new AuthStore();

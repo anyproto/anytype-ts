@@ -1,16 +1,35 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuBlockLinkSettings { width: 256px; }
+	.menu.menuBlockLinkSettings {
+		width: 256px;
+	}
 	.menu.menuBlockLinkSettings {
 		.item {
-			.name { @include text-overflow-nw; width: calc(100% - 58px); }
-			.switch { position: absolute; right: 14px; top: 50%; margin-top: -8px; }
-			.icon.arrow { background-image: url('~img/arrow/select/medium.svg'); }
+			.name {
+				@include text-overflow-nw;
+				width: calc(100% - 58px);
+			}
+			.switch {
+				position: absolute;
+				right: 14px;
+				top: 50%;
+				margin-top: -8px;
+			}
+			.icon.arrow {
+				background-image: url('~img/arrow/select/medium.svg');
+			}
 		}
 
 		.item.withCaption {
-			.caption { @include text-common; line-height: 20px; width: 80px; padding-right: 14px; }
+			.caption {
+				@include text-common;
+				line-height: 20px;
+				width: 80px;
+				padding-right: 14px;
+			}
 		}
 	}
 }

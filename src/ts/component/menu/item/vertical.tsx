@@ -1,74 +1,110 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, IconObject, Switch, Select } from 'Component';
 import { I, UtilCommon } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
-
 	node: any = null;
 
-	render () {
-		const { 
-			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
-			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
-			selectMenuParam, subComponent
+	render() {
+		const {
+			id,
+			icon,
+			object,
+			inner,
+			name,
+			description,
+			caption,
+			color,
+			arrow,
+			checkbox,
+			isActive,
+			withDescription,
+			withSwitch,
+			withSelect,
+			withMore,
+			className,
+			style,
+			iconSize,
+			switchValue,
+			selectValue,
+			options,
+			readonly,
+			forceLetter,
+			onClick,
+			onSwitch,
+			onSelect,
+			onMouseEnter,
+			onMouseLeave,
+			onMore,
+			selectMenuParam,
+			subComponent,
 		} = this.props;
-		const cn = [ 'item' ];
+		const cn = ['item'];
 		const withArrow = arrow || subComponent;
 
 		let hasClick = true;
 
 		if (className) {
 			cn.push(className);
-		};
+		}
 		if (color) {
 			cn.push(`textColor textColor-${color}`);
-		};
+		}
 		if (withArrow) {
 			cn.push('withArrow');
-		};
+		}
 		if (withDescription) {
 			cn.push('withDescription');
-		};
+		}
 		if (caption) {
 			cn.push('withCaption');
-		};
+		}
 		if (withSwitch) {
 			hasClick = false;
 			cn.push('withSwitch');
-		};
+		}
 		if (withSelect) {
 			hasClick = false;
 			cn.push('withSelect');
-		};
+		}
 		if (checkbox) {
 			cn.push('withCheckbox');
-		};
+		}
 		if (withMore) {
 			cn.push('withMore');
-		};
+		}
 		if (isActive) {
 			cn.push('active');
-		};
+		}
 		if (readonly) {
 			cn.push('isReadonly');
-		};
+		}
 		if (readonly) {
 			cn.push('isReadonly');
-		};
+		}
 
 		let iconElement = null;
 		if (object) {
-			iconElement = <IconObject object={object} size={iconSize} forceLetter={forceLetter} />;
+			iconElement = (
+				<IconObject
+					object={object}
+					size={iconSize}
+					forceLetter={forceLetter}
+				/>
+			);
 
 			if (object.isHidden) {
 				cn.push('isHidden');
-			};
-		} else 
-		if (icon) {
+			}
+		} else if (icon) {
 			cn.push('withIcon');
-			iconElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
-		};
+			iconElement = (
+				<Icon className={[icon, 'iconMain'].join(' ')} inner={inner} />
+			);
+		}
 
 		let content = null;
 		if (withDescription) {
@@ -87,18 +123,17 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			let additional = null;
 			if (withSwitch) {
 				additional = (
-					<Switch 
-						value={switchValue} 
+					<Switch
+						value={switchValue}
 						readonly={readonly}
-						onChange={onSwitch} 
+						onChange={onSwitch}
 					/>
 				);
-			} else 
-			if (withSelect) {
+			} else if (withSelect) {
 				additional = (
 					<Select
 						id={`select-${id}`}
-						value={selectValue} 
+						value={selectValue}
 						options={options}
 						onChange={onSelect}
 						{...selectMenuParam}
@@ -108,19 +143,28 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				additional = (
 					<React.Fragment>
 						{typeof caption === 'string' ? (
-							<div className="caption" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(caption) }} />
+							<div
+								className="caption"
+								dangerouslySetInnerHTML={{
+									__html: UtilCommon.sanitize(caption),
+								}}
+							/>
 						) : (
 							<div className="caption">{caption}</div>
 						)}
-						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
+						{withMore ? (
+							<Icon className="more" onMouseDown={onMore} />
+						) : (
+							''
+						)}
 					</React.Fragment>
 				);
-			};
+			}
 
 			content = (
 				<React.Fragment>
-					<div 
-						className="clickable" 
+					<div
+						className="clickable"
 						onMouseDown={hasClick ? undefined : onClick}
 					>
 						{iconElement}
@@ -129,16 +173,16 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 					{additional}
 				</React.Fragment>
 			);
-		};
+		}
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				id={'item-' + id} 
-				className={cn.join(' ')} 
+			<div
+				ref={node => (this.node = node)}
+				id={'item-' + id}
+				className={cn.join(' ')}
 				onMouseDown={hasClick ? onClick : undefined}
-				onMouseEnter={onMouseEnter} 
-				onMouseLeave={onMouseLeave} 
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
 				style={style}
 			>
 				{content}
@@ -146,27 +190,28 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				{checkbox ? <Icon className="chk" /> : ''}
 			</div>
 		);
-    };
+	}
 
-	componentDidMount () {
+	componentDidMount() {
 		this.resize();
-	};
+	}
 
-	componentDidUpdate () {
+	componentDidUpdate() {
 		this.resize();
-	};
+	}
 
-	resize () {
+	resize() {
 		const node = $(this.node);
-		
+
 		if (node.hasClass('withIcon')) {
 			return;
-		};
+		}
 
 		const icon = node.find('.iconObject');
-		icon.length ? node.addClass('withIconObject') : node.removeClass('withIconObject');
-	};
-
-};
+		icon.length
+			? node.addClass('withIconObject')
+			: node.removeClass('withIconObject');
+	}
+}
 
 export default MenuItemVertical;

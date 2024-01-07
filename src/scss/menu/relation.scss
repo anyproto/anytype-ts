@@ -1,14 +1,34 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
 	.menu.menuRelationSuggest {
-		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
-		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.items { height: 100%; }
+		.content {
+			max-height: unset;
+			overflow: hidden;
+			padding: 0px;
+			transition: none;
+		}
+		.wrap {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		.items {
+			height: 100%;
+		}
 
 		.item {
-			.name { @include text-overflow-nw; width: calc(100% - 26px); }
+			.name {
+				@include text-overflow-nw;
+				width: calc(100% - 26px);
+			}
 		}
-		.label { color: $colorControlActive; @include text-common; padding: 0px 16px; }
+		.label {
+			color: $colorControlActive;
+			@include text-common;
+			padding: 0px 16px;
+		}
 	}
 }

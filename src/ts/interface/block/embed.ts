@@ -1,26 +1,28 @@
+/** @format */
+
 import { I } from 'Lib';
 
 export enum EmbedProcessor {
-	Latex			 = 0,
-	Mermaid			 = 1,
-	Chart			 = 2,
-	Youtube			 = 3,
-	Vimeo			 = 4,
-	Soundcloud		 = 5,
-	GoogleMaps 		 = 6,
-	Miro 	 		 = 7,
-	Figma 	 		 = 8,
+	Latex = 0,
+	Mermaid = 1,
+	Chart = 2,
+	Youtube = 3,
+	Vimeo = 4,
+	Soundcloud = 5,
+	GoogleMaps = 6,
+	Miro = 7,
+	Figma = 8,
 
-	Twitter			 = 9,
-	OpenStreetMap	 = 10,
-	Reddit			 = 11,
-	Facebook		 = 12,
-	Instagram		 = 13,
-	Telegram		 = 14,
-	GithubGist		 = 15,
-	Codepen			 = 16,
-	Bilibili		 = 17,
-};
+	Twitter = 9,
+	OpenStreetMap = 10,
+	Reddit = 11,
+	Facebook = 12,
+	Instagram = 13,
+	Telegram = 14,
+	GithubGist = 15,
+	Codepen = 16,
+	Bilibili = 17,
+}
 
 export interface ContentEmbed {
 	text: string;
@@ -29,4 +31,4 @@ export interface ContentEmbed {
 
 export interface BlockEmbed extends I.Block {
 	content: ContentEmbed;
-};
+}

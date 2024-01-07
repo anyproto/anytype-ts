@@ -1,14 +1,15 @@
+/** @format */
+
 import React from 'react';
 
 interface DotIndicatorProps {
 	index: number;
 	count: number;
 	className?: string;
-};
-	
-class DotIndicator extends React.Component<DotIndicatorProps> {
+}
 
-	render () {
+class DotIndicator extends React.Component<DotIndicatorProps> {
+	render() {
 		const { index, count, className } = this.props;
 		const dots = [];
 
@@ -18,14 +19,15 @@ class DotIndicator extends React.Component<DotIndicatorProps> {
 
 			if (isActive) {
 				cn.push('active');
-			};
+			}
 
-			dots.push(<span	key={i} className={cn.join(' ')} />);
-		};
+			dots.push(<span key={i} className={cn.join(' ')} />);
+		}
 
-		return <div className={['dotIndicator', className].join(' ')}>{dots}</div>;
-	};
-
-};
+		return (
+			<div className={['dotIndicator', className].join(' ')}>{dots}</div>
+		);
+	}
+}
 
 export default DotIndicator;

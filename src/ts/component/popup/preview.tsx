@@ -1,3 +1,5 @@
+/** @format */
+
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
@@ -11,12 +13,11 @@ const WIDTH_VIDEO = 672;
 const HEIGHT_VIDEO = 382;
 
 class PopupPreview extends React.Component<I.Popup> {
-	
 	isLoaded = false;
 	width = 0;
 	height = 0;
 
-	render () {
+	render() {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { src, type } = data;
@@ -25,15 +26,29 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />;
+				content = (
+					<img
+						className="media"
+						src={src}
+						onClick={() => close()}
+						onDragStart={e => e.preventDefault()}
+					/>
+				);
 				break;
-			};
+			}
 
 			case I.FileType.Video: {
-				content = <video src={src} controls={true} autoPlay={true} loop={true} />;
+				content = (
+					<video
+						src={src}
+						controls={true}
+						autoPlay={true}
+						loop={true}
+					/>
+				);
 				break;
-			};
-		};
+			}
+		}
 
 		return (
 			<div>
@@ -43,39 +58,39 @@ class PopupPreview extends React.Component<I.Popup> {
 				</div>
 			</div>
 		);
-	};
-	
-	componentDidMount () {
+	}
+
+	componentDidMount() {
 		this.resize();
 		this.rebind();
-	};
-	
-	componentDidUpdate () {
+	}
+
+	componentDidUpdate() {
 		this.isLoaded = false;
 		this.resize();
-	};
+	}
 
-	componentWillUnmount () {
+	componentWillUnmount() {
 		this.unbind();
-	};
+	}
 
-	unbind () {
+	unbind() {
 		$(window).off('resize.popupPreview keydown.popupPreview');
-	};
+	}
 
-	rebind () {
+	rebind() {
 		this.unbind();
 
 		const win = $(window);
 		win.on('resize.popupPreview', () => this.resize());
 		win.on('keydown.menu', e => this.onKeyDown(e));
-	};
+	}
 
-	onKeyDown (e: any) {
+	onKeyDown(e: any) {
 		keyboard.shortcut('escape', e, () => this.props.close());
-	};
-	
-	resize () {
+	}
+
+	resize() {
 		const { param, getId, position } = this.props;
 		const { data } = param;
 		const { src, type } = data;
@@ -89,7 +104,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		let mw = ww - BORDER * 2;
 		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 			mw -= sidebar.outerWidth();
-		};
+		}
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');
@@ -103,7 +118,7 @@ class PopupPreview extends React.Component<I.Popup> {
 				if (this.isLoaded) {
 					this.resizeImage(mw, mh, this.width, this.height);
 					break;
-				};
+				}
 
 				wrap.css({ width: WIDTH_DEFAULT, height: HEIGHT_DEFAULT });
 				position();
@@ -122,21 +137,21 @@ class PopupPreview extends React.Component<I.Popup> {
 				img.onerror = onError;
 				img.src = src;
 				break;
-			};
+			}
 
 			case I.FileType.Video: {
 				if (this.isLoaded) {
 					position();
 					break;
-				};
+				}
 
 				const video = obj.find('video');
 				const videoEl = video.get(0);
 				const width = WIDTH_VIDEO;
 				const height = HEIGHT_VIDEO;
 
-				videoEl.oncanplay = () => { 
-					loader.remove(); 
+				videoEl.oncanplay = () => {
+					loader.remove();
 					this.isLoaded = true;
 				};
 				videoEl.onerror = onError;
@@ -144,29 +159,33 @@ class PopupPreview extends React.Component<I.Popup> {
 				wrap.css({ width, height });
 				video.css({ width, height });
 				position();
-			};
-		};
+			}
+		}
+	}
 
-	};
-
-	resizeImage (maxWidth: number, maxHeight: number, width: number, height: number) {
+	resizeImage(
+		maxWidth: number,
+		maxHeight: number,
+		width: number,
+		height: number
+	) {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 
-		let w = 0, h = 0;
+		let w = 0,
+			h = 0;
 		if (width > height) {
 			w = Math.min(maxWidth, width);
 			h = Math.min(maxHeight, w / (width / height));
 		} else {
 			h = Math.min(maxHeight, height);
 			w = Math.min(maxWidth, h / (height / width));
-		};
+		}
 
 		wrap.css({ width: w, height: h });
 		position();
-	};
-
-};
+	}
+}
 
 export default PopupPreview;

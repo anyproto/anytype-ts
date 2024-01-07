@@ -1,108 +1,219 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
-	
 	.block.blockLayout {
-		> .wrapMenu { display: none; }
+		> .wrapMenu {
+			display: none;
+		}
 		> .wrapContent {
-			> .dropTarget { display: none; }
+			> .dropTarget {
+				display: none;
+			}
 			> .selectable {
-				> .dropTarget { display: none; }
+				> .dropTarget {
+					display: none;
+				}
 			}
 		}
 	}
 
-	.block.blockLayout:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
+	.block.blockLayout:not(.blockLayout.layoutDiv):not(
+			.blockLayout.layoutHeader
+		) {
 		> .wrapContent {
 			> .children {
 				> .block.first {
 					.colResize {
-						.inner { top: 0px; height: calc(100% + 15px); }
+						.inner {
+							top: 0px;
+							height: calc(100% + 15px);
+						}
 					}
 				}
 
 				> .block.last {
 					.colResize {
-						.inner { top: 0px; height: calc(100% + 15px); }
+						.inner {
+							top: 0px;
+							height: calc(100% + 15px);
+						}
 					}
 				}
 
 				> .block.first.last {
 					.colResize {
-						.inner { top: 0px; height: 100%; }
+						.inner {
+							top: 0px;
+							height: 100%;
+						}
 					}
 				}
 			}
 		}
 	}
-	
-	/* Row */
-	.block.blockLayout.layoutRow { padding: 14px 0px; }
-	.block.blockLayout.layoutRow {
-		> .wrapContent { width: 100%; overflow: visible; }
-		> .wrapContent {
-			> .children { display: flex; flex-direction: row; align-items: stretch; }
 
-			> .dropTarget { display: block; width: calc(100% - 48px); left: 48px; height: 15px; }
-			> .dropTarget.isOver { box-shadow: 0px 0px; }
-			> .dropTarget.targetTop { top: -14px; }
-			> .dropTarget.targetBot { bottom: -14px; }
-			> .dropTarget.isOver::before { 
-				content: ""; position: absolute; background: $colorSystemAccent100; width: 100%; height: 2px; border-radius: 2px; left: 0px;
+	/* Row */
+	.block.blockLayout.layoutRow {
+		padding: 14px 0px;
+	}
+	.block.blockLayout.layoutRow {
+		> .wrapContent {
+			width: 100%;
+			overflow: visible;
+		}
+		> .wrapContent {
+			> .children {
+				display: flex;
+				flex-direction: row;
+				align-items: stretch;
 			}
-			> .dropTarget.isOver.top::before { bottom: 4px; }
-			> .dropTarget.isOver.bottom::before { top: 4px; }
+
+			> .dropTarget {
+				display: block;
+				width: calc(100% - 48px);
+				left: 48px;
+				height: 15px;
+			}
+			> .dropTarget.isOver {
+				box-shadow: 0px 0px;
+			}
+			> .dropTarget.targetTop {
+				top: -14px;
+			}
+			> .dropTarget.targetBot {
+				bottom: -14px;
+			}
+			> .dropTarget.isOver::before {
+				content: '';
+				position: absolute;
+				background: $colorSystemAccent100;
+				width: 100%;
+				height: 2px;
+				border-radius: 2px;
+				left: 0px;
+			}
+			> .dropTarget.isOver.top::before {
+				bottom: 4px;
+			}
+			> .dropTarget.isOver.bottom::before {
+				top: 4px;
+			}
 		}
 	}
 
 	/* Column */
-	.block.blockLayout.layoutColumn { padding: 0px; margin: 0px; }
 	.block.blockLayout.layoutColumn {
-		> .wrapContent { width: 100%; display: flex; flex-flow: column; }
+		padding: 0px;
+		margin: 0px;
+	}
+	.block.blockLayout.layoutColumn {
 		> .wrapContent {
-			> .dropTarget.targetCol { flex-grow: 1; position: relative; display: block; }
-			> .dropTarget.targetCol.isOver.bottom { box-shadow: 0px 0px; }
-			> .dropTarget.targetCol.isOver.bottom::after { 
-				content: ""; width: calc(100% - 48px); height: 2px; background: $colorSystemAccent100; position: absolute; left: 48px; top: 4px; 
+			width: 100%;
+			display: flex;
+			flex-flow: column;
+		}
+		> .wrapContent {
+			> .dropTarget.targetCol {
+				flex-grow: 1;
+				position: relative;
+				display: block;
+			}
+			> .dropTarget.targetCol.isOver.bottom {
+				box-shadow: 0px 0px;
+			}
+			> .dropTarget.targetCol.isOver.bottom::after {
+				content: '';
+				width: calc(100% - 48px);
+				height: 2px;
+				background: $colorSystemAccent100;
+				position: absolute;
+				left: 48px;
+				top: 4px;
 			}
 		}
 
 		> .children {
 			> .blockDataview {
-				.content { overflow: hidden; }
+				.content {
+					overflow: hidden;
+				}
 			}
 
-			> .block.first.blockText.textHeader1 { padding-top: 0px; }
-			> .block.last.blockText.textHeader1 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader1 {
+				padding-top: 0px;
+			}
+			> .block.last.blockText.textHeader1 {
+				padding-bottom: 0px;
+			}
 
-			> .block.first.blockText.textHeader2 { padding-top: 0px; }
-			> .block.last.blockText.textHeader2 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader2 {
+				padding-top: 0px;
+			}
+			> .block.last.blockText.textHeader2 {
+				padding-bottom: 0px;
+			}
 
-			> .block.first.blockText.textHeader3 { padding-top: 0px; }
-			> .block.last.blockText.textHeader3 { padding-bottom: 0px; }
+			> .block.first.blockText.textHeader3 {
+				padding-top: 0px;
+			}
+			> .block.last.blockText.textHeader3 {
+				padding-bottom: 0px;
+			}
 
-			> .block.first.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-			> .block.last.blockFile > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+			> .block.first.blockFile
+				> .wrapContent
+				> .selectable
+				> .dropTarget {
+				padding-top: 0px;
+			}
+			> .block.last.blockFile > .wrapContent > .selectable > .dropTarget {
+				padding-bottom: 0px;
+			}
 
-			> .block.first.blockMedia > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-			> .block.last.blockMedia > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+			> .block.first.blockMedia
+				> .wrapContent
+				> .selectable
+				> .dropTarget {
+				padding-top: 0px;
+			}
+			> .block.last.blockMedia
+				> .wrapContent
+				> .selectable
+				> .dropTarget {
+				padding-bottom: 0px;
+			}
 		}
 	}
 
 	/* Div */
 	.block.blockLayout.layoutDiv {
-		> .wrapContent { width: 100%; overflow: visible; }
+		> .wrapContent {
+			width: 100%;
+			overflow: visible;
+		}
 	}
 
 	/* Header */
-	.block.blockLayout.layoutHeader { margin: 0px !important; }
 	.block.blockLayout.layoutHeader {
-		> .wrapContent { width: 100%; overflow: visible; }
+		margin: 0px !important;
+	}
+	.block.blockLayout.layoutHeader {
+		> .wrapContent {
+			width: 100%;
+			overflow: visible;
+		}
 	}
 
 	/* Footer */
-	.block.blockLayout.layoutFooter { margin: 0px !important; }
 	.block.blockLayout.layoutFooter {
-		> .wrapContent { width: 100%; overflow: visible; }
+		margin: 0px !important;
+	}
+	.block.blockLayout.layoutFooter {
+		> .wrapContent {
+			width: 100%;
+			overflow: visible;
+		}
 	}
 }

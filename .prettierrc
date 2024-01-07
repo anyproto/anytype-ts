@@ -2,7 +2,6 @@
 	"trailingComma": "es5",
 	"tabWidth": 4,
 	"useTabs": true,
-	"semi": false,
 	"singleQuote": true,
 	"semi": true,
 	"quoteProps": "as-needed",
@@ -15,5 +14,25 @@
 	"proseWrap": "never",
 	"htmlWhitespaceSensitivity": "ignore",
 	"endOfLine": "lf",
-	"singleAttributePerLine": false
+	"singleAttributePerLine": false,
+	"overrides": [
+		{
+			"files": "*.html",
+			"options": {
+				"parser": "html"
+			}
+		},
+		{
+			"files": "*.css",
+			"options": {
+				"parser": "css"
+			}
+		},
+		{
+			"files": "*.scss",
+			"options": {
+				"parser": "css"
+			}
+		}
+	]
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 import { I, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
@@ -11,8 +13,10 @@ const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string, c?: string) => text(`<video src="${src}" controls class="c70 ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${src}" class="c70 ${c || ''}" />`);
+const video = (src: string, c?: string) =>
+	text(`<video src="${src}" controls class="c70 ${c || ''}" />`);
+const img = (src: string, c?: string) =>
+	text(`<img src="${src}" class="c70 ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
@@ -27,120 +31,243 @@ export default [
 	h2(`🐛 Bug Fixes:`),
 
 	bullet(`Fixed a bug that caused inline sets to be blank on creation.`),
-	bullet(`${hl('file://')} scheme is now properly working for links. Thanks, ${link('https://community.anytype.io/t/12820', 'Filip')}!`),
-	bullet(`Fixed a bug preventing renaming inline sets or collections. Thanks, ${link('https://community.anytype.io/t/cannot-rename-an-inline-set-or-collection/12796', 'Shampra')}!`),
-	bullet(`Emoji popup is no longer scrollable. Thanks, ${link('https://community.anytype.io/t/emoji-pop-up-become-scrollable-0-36-24-beta-and-later/12793', 'PavloUA')}!`),
+	bullet(
+		`${hl(
+			'file://'
+		)} scheme is now properly working for links. Thanks, ${link(
+			'https://community.anytype.io/t/12820',
+			'Filip'
+		)}!`
+	),
+	bullet(
+		`Fixed a bug preventing renaming inline sets or collections. Thanks, ${link(
+			'https://community.anytype.io/t/cannot-rename-an-inline-set-or-collection/12796',
+			'Shampra'
+		)}!`
+	),
+	bullet(
+		`Emoji popup is no longer scrollable. Thanks, ${link(
+			'https://community.anytype.io/t/emoji-pop-up-become-scrollable-0-36-24-beta-and-later/12793',
+			'PavloUA'
+		)}!`
+	),
 
 	h2(`💻 Tech:`),
-	bullet(`Inter font has been updated to version 4.0. Thanks, ${link('https://github.com/Linerly', 'Linerly')}!`),
-	bullet(`Katex has been updated to 0.16.9 to fix crash when entering special symbols. Thanks, ${link('https://community.anytype.io/t/uncaught-katex-error-when-pasting-special-symbols-in-latex-block/12164', 'Jannis')}!`),
+	bullet(
+		`Inter font has been updated to version 4.0. Thanks, ${link(
+			'https://github.com/Linerly',
+			'Linerly'
+		)}!`
+	),
+	bullet(
+		`Katex has been updated to 0.16.9 to fix crash when entering special symbols. Thanks, ${link(
+			'https://community.anytype.io/t/uncaught-katex-error-when-pasting-special-symbols-in-latex-block/12164',
+			'Jannis'
+		)}!`
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`A Winter Wonderland of Fresh Features ☃️`),
-	text(`Happy festive season, Anytypers! We’re excited to be bidding 2023 farewell with another huge release that addresses some long standing community requests, gives you greater control over your data management, and unlocks the possibility to share your pre-created templates and use cases with other Anytypers. Let’s jump in!`),
+	text(
+		`Happy festive season, Anytypers! We’re excited to be bidding 2023 farewell with another huge release that addresses some long standing community requests, gives you greater control over your data management, and unlocks the possibility to share your pre-created templates and use cases with other Anytypers. Let’s jump in!`
+	),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Introducing: The ANY Experience Gallery`),
 	img('./img/help/37/1.png'),
-	text(`For all of you who’ve longingly admired the various setups others have shared in our ${link('https://community.anytype.io/c/gallery/27/none', 'community showcase')}, or for those of you who’ve created incredible setups of your own that you’ve wished to share, the wait is over.`),
-	text(`Introducing: The ANY Experience gallery, a marketplace of use cases, templates, and setups where any member of our community can upload their own experience, or import an experience created by others. To browse the gallery, ${link('https://gallery.any.coop/', 'click here')} (we’ve kickstarted the process with a few experiences of our own). If you’d like to contribute your own experience to the gallery, you can follow the instructions ${link('https://github.com/orgs/anyproto/discussions/123', 'here')}.`),
+	text(
+		`For all of you who’ve longingly admired the various setups others have shared in our ${link(
+			'https://community.anytype.io/c/gallery/27/none',
+			'community showcase'
+		)}, or for those of you who’ve created incredible setups of your own that you’ve wished to share, the wait is over.`
+	),
+	text(
+		`Introducing: The ANY Experience gallery, a marketplace of use cases, templates, and setups where any member of our community can upload their own experience, or import an experience created by others. To browse the gallery, ${link(
+			'https://gallery.any.coop/',
+			'click here'
+		)} (we’ve kickstarted the process with a few experiences of our own). If you’d like to contribute your own experience to the gallery, you can follow the instructions ${link(
+			'https://github.com/orgs/anyproto/discussions/123',
+			'here'
+		)}.`
+	),
 
 	h3(`Embed Blocks`),
 	video('./img/help/37/2.mp4'),
-	text(`Now live! Simply type /embed in the editor to pull up a menu of currently supported embeds. These include: Mermaid diagrams, Youtube videos, Miro boards, Google Maps, and several more.`),
+	text(
+		`Now live! Simply type /embed in the editor to pull up a menu of currently supported embeds. These include: Mermaid diagrams, Youtube videos, Miro boards, Google Maps, and several more.`
+	),
 
 	h3(`Backlinks MVP`),
 	img('./img/help/37/3.png'),
-	text(`Another highly-requested feature we’re thrilled to deliver with this release, is the first iteration of backlinks. Backlinks and forward links have been implemented as relations, and can be found in the relations panel of any object. `),
-	text(`By default, if an object already has backlinks, the backlinks will be displayed as a featured relation, indicating the number of backlinks and - when clicked the linked objects. If an object has no backlinks, the relation will not be featured, but can be located in your relations panel.`),
+	text(
+		`Another highly-requested feature we’re thrilled to deliver with this release, is the first iteration of backlinks. Backlinks and forward links have been implemented as relations, and can be found in the relations panel of any object. `
+	),
+	text(
+		`By default, if an object already has backlinks, the backlinks will be displayed as a featured relation, indicating the number of backlinks and - when clicked the linked objects. If an object has no backlinks, the relation will not be featured, but can be located in your relations panel.`
+	),
 
 	h3(`Configurable Self-hosting & Local-Only Mode`),
 	video('./img/help/37/4.mp4'),
-	text(`The final feature in the highlight reel of this release is configurable settings for self-hosting and local-only mode for your data. To change your sync settings, log out of your account and tap the settings wheel in the top right of the window. There, you’ll see options to choose Self-hosting or Local-only.`),
+	text(
+		`The final feature in the highlight reel of this release is configurable settings for self-hosting and local-only mode for your data. To change your sync settings, log out of your account and tap the settings wheel in the top right of the window. There, you’ll see options to choose Self-hosting or Local-only.`
+	),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
 	h3(`New Object Creation Menu`),
 	img('./img/help/37/5.png'),
-	text(`When right-clicking the plus-button from the navigation menu, you’ll be presented with a menu of standard types, plus your most recently-used Types. In this way, we hope to reduce the number of clicks needed to create objects of a specific type, especially for those of you who love custom object types.`),
+	text(
+		`When right-clicking the plus-button from the navigation menu, you’ll be presented with a menu of standard types, plus your most recently-used Types. In this way, we hope to reduce the number of clicks needed to create objects of a specific type, especially for those of you who love custom object types.`
+	),
 
 	h3(`Object Creation from Widget`),
 	img('./img/help/37/6.png'),
-	text(`When hovering over any widget in your sidebar, you’ll see a new plus button next to the widget settings button. By pressing it, you can add any new object to the target widget.`),
+	text(
+		`When hovering over any widget in your sidebar, you’ll see a new plus button next to the widget settings button. By pressing it, you can add any new object to the target widget.`
+	),
 
 	h3(`Local Graph Mode`),
 	img('./img/help/37/7.png'),
-	text(`When selecting an object in the graph, you’ll have an option in the graph settings menu to toggle on ${hl('Local Graph')}, which will display only the selected object and its linked objects, rather than your entire graph.`),
+	text(
+		`When selecting an object in the graph, you’ll have an option in the graph settings menu to toggle on ${hl(
+			'Local Graph'
+		)}, which will display only the selected object and its linked objects, rather than your entire graph.`
+	),
 
 	h3(`Widgets can now be created from object 3-dots menu`),
 	video('./img/help/37/8.mp4'),
-	text(`Any object can now be transformed into a widget simply by clicking the three-dots menu and selecting the first option: Create Widget.`),
+	text(
+		`Any object can now be transformed into a widget simply by clicking the three-dots menu and selecting the first option: Create Widget.`
+	),
 
 	h3(`Settings pages added to global search`),
-	text(`You can now use the global search to navigate to your account settings pages, such as Preferences, Appearance, Recovery Phrase, and Data Management. `),
+	text(
+		`You can now use the global search to navigate to your account settings pages, such as Preferences, Appearance, Recovery Phrase, and Data Management. `
+	),
 
 	h3(`Search now includes content inside closed toggles`),
-	text(`When using the ${hl(`Ctrl + F`)} command in the editor, the search will now include content inside of closed toggles. If your search term is found inside the closed toggle, the toggle will open.`),
+	text(
+		`When using the ${hl(
+			`Ctrl + F`
+		)} command in the editor, the search will now include content inside of closed toggles. If your search term is found inside the closed toggle, the toggle will open.`
+	),
 
 	h3(`Japanese Language Added to Interface Options`),
-	text(`Hooray! Japanese is now part of the growing pool of interface languages available on Desktop. `),
+	text(
+		`Hooray! Japanese is now part of the growing pool of interface languages available on Desktop. `
+	),
 
 	h3(`Updated Emoji Library`),
 	text(`The emoji library has been updated to include additional emojis.`),
 
 	h2(`💻 Tech:`),
-	bullet(`Fixed application icons in Linux builds. Thanks, ${link('https://github.com/D-Brox', 'D-Brox')}!`),
-	bullet(`Closed possible XSS attack vectors in block content. Thanks, ${link('https://github.com/dragosrotaru', 'dragosrotaru')}!`),
+	bullet(
+		`Fixed application icons in Linux builds. Thanks, ${link(
+			'https://github.com/D-Brox',
+			'D-Brox'
+		)}!`
+	),
+	bullet(
+		`Closed possible XSS attack vectors in block content. Thanks, ${link(
+			'https://github.com/dragosrotaru',
+			'dragosrotaru'
+		)}!`
+	),
 
 	h2(`🐛 Bug Fixes:`),
-	bullet(`Fixed: Calendar view now properly loads objects outside of current month. Thanks, ${link('https://community.anytype.io/t/objects-only-appear-in-their-months/12401', 'edion86')}!`),
-	bullet(`Fixed: Emojis & Mentions can now be easily deleted with backspace. Thanks, ${link('https://community.anytype.io/t/deleting-and-typing-with-emojis-via-ctrl-e-takes-awhile/2710', 'whereisj9')}!`),
-	bullet(`Fixed: Space key can now be used properly in @mention searches. Thanks, ${link('https://community.anytype.io/t/allow-using-spaces-in-object-name-during-linking-with/8373', 'dzshch')}!`),
-	bullet(`Fixed: Hovers for filter menu options are now working correctly for set & collection filters. Thanks, ${link('https://community.anytype.io/t/part-of-filter-doesnt-open-when-hover/11658', 'PavloUA')}!`),
+	bullet(
+		`Fixed: Calendar view now properly loads objects outside of current month. Thanks, ${link(
+			'https://community.anytype.io/t/objects-only-appear-in-their-months/12401',
+			'edion86'
+		)}!`
+	),
+	bullet(
+		`Fixed: Emojis & Mentions can now be easily deleted with backspace. Thanks, ${link(
+			'https://community.anytype.io/t/deleting-and-typing-with-emojis-via-ctrl-e-takes-awhile/2710',
+			'whereisj9'
+		)}!`
+	),
+	bullet(
+		`Fixed: Space key can now be used properly in @mention searches. Thanks, ${link(
+			'https://community.anytype.io/t/allow-using-spaces-in-object-name-during-linking-with/8373',
+			'dzshch'
+		)}!`
+	),
+	bullet(
+		`Fixed: Hovers for filter menu options are now working correctly for set & collection filters. Thanks, ${link(
+			'https://community.anytype.io/t/part-of-filter-doesnt-open-when-hover/11658',
+			'PavloUA'
+		)}!`
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`Release 0.36.0 - When a little more space is all you need...`),
-	text(`Buckle up, Anytypers - November's release is a power lineup of features designed to level up your space game. It's so big in fact, that it <b><i><u>requires you to install the updated version on all devices with Anytype installed before you begin using it</u></i></b>, because backwards compatibility is not guaranteed between versions. Kindly remember to take this step before playing with the new feature set, and as always - we hope you enjoy!`),
-	text(link('https://download.anytype.io', 'Download latest platform versions here.')),
+	text(
+		`Buckle up, Anytypers - November's release is a power lineup of features designed to level up your space game. It's so big in fact, that it <b><i><u>requires you to install the updated version on all devices with Anytype installed before you begin using it</u></i></b>, because backwards compatibility is not guaranteed between versions. Kindly remember to take this step before playing with the new feature set, and as always - we hope you enjoy!`
+	),
+	text(
+		link(
+			'https://download.anytype.io',
+			'Download latest platform versions here.'
+		)
+	),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Multi-Spaces are Here!`),
 	video('./img/help/36/1.mp4'),
-	text(`Spaces were first introduced in June of this year as a container for your graph of objects. From today's release onwards, you'll be able to level up your space game by creating separate spaces, each with their own graph of objects, widget sidebar, and eventually - privacy settings.`),
-	text(`Simply click your profile picture to create new spaces, or navigate between existing ones. Use the space management menu at the top of your sidebar to customize your space settings or delete your space. For now, your account is limited to 10 spaces.`),
+	text(
+		`Spaces were first introduced in June of this year as a container for your graph of objects. From today's release onwards, you'll be able to level up your space game by creating separate spaces, each with their own graph of objects, widget sidebar, and eventually - privacy settings.`
+	),
+	text(
+		`Simply click your profile picture to create new spaces, or navigate between existing ones. Use the space management menu at the top of your sidebar to customize your space settings or delete your space. For now, your account is limited to 10 spaces.`
+	),
 
 	h3(`Calendar View for Sets & Collections`),
 	video('./img/help/36/3.mp4'),
-	text(`You asked, we listened - the most popular feature request from our forums is now live! Calendar view has been added as a new view option to sets and collections. To display objects in your calendar, you must select a Date relation to group your objects such as: Creation Date, Due Date, or any custom date relation.`),
+	text(
+		`You asked, we listened - the most popular feature request from our forums is now live! Calendar view has been added as a new view option to sets and collections. To display objects in your calendar, you must select a Date relation to group your objects such as: Creation Date, Due Date, or any custom date relation.`
+	),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
 	h3(`Widget Creation via Drag n' Drop`),
 	video('./img/help/36/4.mp4'),
-	text(`As a quick solution for creating new widgets, you can now drag & drop linked and mentioned objects from your editor, or objects displayed in sets and collections, directly into the sidebar. `),
+	text(
+		`As a quick solution for creating new widgets, you can now drag & drop linked and mentioned objects from your editor, or objects displayed in sets and collections, directly into the sidebar. `
+	),
 
 	h3(`New Template Picker in Object Creation Flow`),
 	img('./img/help/36/5.png'),
-	text(`Upon creating any new object, you'll no longer see a popup window to prompt template selection. Rather, your default template will be applied. If you wish to change it, you can use the template picker on the top of the editor, which will disappear once you begin adding content to the body of the object.`),
+	text(
+		`Upon creating any new object, you'll no longer see a popup window to prompt template selection. Rather, your default template will be applied. If you wish to change it, you can use the template picker on the top of the editor, which will disappear once you begin adding content to the body of the object.`
+	),
 
 	h3(`Search function added to Sets & Collections`),
-	text(`Using the new search button in sets and collections (the magnifying glass next to the filter menu), you can now search for objects whose names match your search terms.`),
+	text(
+		`Using the new search button in sets and collections (the magnifying glass next to the filter menu), you can now search for objects whose names match your search terms.`
+	),
 
 	h3(`Updated Default Template Selection Flow for Sets & Collections`),
 	img('./img/help/36/6.png'),
-	text(`The selection menu for default templates according to set & collection views has been moved from the view settings menu. To select your default template, click the down caret arrow next to the ‘New' button and choose the template you'd like to apply to the view using the three-dots menu.`),
+	text(
+		`The selection menu for default templates according to set & collection views has been moved from the view settings menu. To select your default template, click the down caret arrow next to the ‘New' button and choose the template you'd like to apply to the view using the three-dots menu.`
+	),
 
 	h3(`Onboarding Updates`),
-	text(`We've simplified the sequencing, copy, and text explainers for the new-user onboarding flow.`),
+	text(
+		`We've simplified the sequencing, copy, and text explainers for the new-user onboarding flow.`
+	),
 
 	h3(`Import Improvements`),
-	text(`We've made several important improvements to the Notion import via API, including: import of tags, database views, custom icons, and video and audio files.`),
+	text(
+		`We've made several important improvements to the Notion import via API, including: import of tags, database views, custom icons, and video and audio files.`
+	),
 
 	h2(`💻 Tech:`),
 
@@ -148,108 +275,224 @@ export default [
 
 	h2(`🐛 Bug Fixes:`),
 
-	bullet(`Fixed: Value in the last cell of a row no longer disappears when using right arrow key. Thanks, ${link('https://community.anytype.io/t/value-in-last-cell-of-a-row-goes-missing-when-using-right-arrow/10468', 'sambouwer')}!`),
+	bullet(
+		`Fixed: Value in the last cell of a row no longer disappears when using right arrow key. Thanks, ${link(
+			'https://community.anytype.io/t/value-in-last-cell-of-a-row-goes-missing-when-using-right-arrow/10468',
+			'sambouwer'
+		)}!`
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`Release 0.35.0 - Fresh Updates for September`),
-	text(`This month's release addresses a slew of bugs and polishes targeted at the editor, template, and import experiences, which we hope will bring greater ease to your workflows. Our next big release featuring multi-spaces is coming soon, so stay tuned for some big announcements in October!`),
+	text(
+		`This month's release addresses a slew of bugs and polishes targeted at the editor, template, and import experiences, which we hope will bring greater ease to your workflows. Our next big release featuring multi-spaces is coming soon, so stay tuned for some big announcements in October!`
+	),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Create &amp; Edit Templates from Sets &amp; Collections`),
 	video(`./img/help/35/1-templates.mp4`),
-	text(`Finally, template creation on-the-fly is here! From today's release onward, you no longer need to visit the Library to create and edit your templates. Using the ‘Show templates' button in any Set or Collection, you can open, edit, and create new templates for immediate use.`),
+	text(
+		`Finally, template creation on-the-fly is here! From today's release onward, you no longer need to visit the Library to create and edit your templates. Using the ‘Show templates' button in any Set or Collection, you can open, edit, and create new templates for immediate use.`
+	),
 
 	h3(`Updates to Notion Import`),
-	text(`Thanks to your feedback, we've fixed many bugs discovered during the import process. We've also updated the import instructions and error messages to make it more clear how to troubleshoot in case something goes wrong.`),
+	text(
+		`Thanks to your feedback, we've fixed many bugs discovered during the import process. We've also updated the import instructions and error messages to make it more clear how to troubleshoot in case something goes wrong.`
+	),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
 	h3(`Read-only &amp; Restore-from-Bin Enabled for Deleted Objects`),
 	video(`./img/help/35/2-restore.mp4`),
-	text(`You can now open the content of deleted objects in read-only mode. Once opened, you'll see a banner that allows you to restore the object, without needing to visit the Bin to do so. `),
+	text(
+		`You can now open the content of deleted objects in read-only mode. Once opened, you'll see a banner that allows you to restore the object, without needing to visit the Bin to do so. `
+	),
 
 	h3(`Edit Object Icons in Mentioned &amp; Linked Objects`),
-	text(`It's now possible to edit the icons of Objects which are referenced via links or mentions in your editor, including checking or unchecking tasks.`),
+	text(
+		`It's now possible to edit the icons of Objects which are referenced via links or mentions in your editor, including checking or unchecking tasks.`
+	),
 
 	h3(`Link to Website is Now First Option When Adding Links to Text Blocks`),
 	img(`./img/help/35/3-menu.png`),
-	text(`To simplify the process of adding web links to text blocks, inputting a URL as a text block link will bring Link to Website to the top of the menu. Thanks, ${link(`https://community.anytype.io/t/change-the-layout-of-link-in-font-settings/9757`, `gdbb`)}!`),
+	text(
+		`To simplify the process of adding web links to text blocks, inputting a URL as a text block link will bring Link to Website to the top of the menu. Thanks, ${link(
+			`https://community.anytype.io/t/change-the-layout-of-link-in-font-settings/9757`,
+			`gdbb`
+		)}!`
+	),
 
 	h3(`Logout Button Added to Profile Settings Sidebar`),
-	text(`The profile logout button has been moved to your profile settings sidebar, which means it'll be visible no matter which page of your profile settings you're currently using.`),
+	text(
+		`The profile logout button has been moved to your profile settings sidebar, which means it'll be visible no matter which page of your profile settings you're currently using.`
+	),
 
 	h3(`New Onboarding Use Case Added`),
-	text(`Strategic Writing has been added as a use case to the onboarding selection, focusing on collecting, developing, and thoughtfully presenting written ideas in Anytype.`),
+	text(
+		`Strategic Writing has been added as a use case to the onboarding selection, focusing on collecting, developing, and thoughtfully presenting written ideas in Anytype.`
+	),
 
 	h3(`Redesign of Set Control Menus`),
 	img(`./img/help/35/4-set.png`),
-	text(`We've updated the design of the View settings menu with options for renaming the view and selecting the default template for the set. In addition, current settings can be previewed from the menu including layout, applied filters, and applied sorts.`),
+	text(
+		`We've updated the design of the View settings menu with options for renaming the view and selecting the default template for the set. In addition, current settings can be previewed from the menu including layout, applied filters, and applied sorts.`
+	),
 
-	h3(`Default Object Type Now Selectable in Collections &amp; Sets-by-Relation`),
-	text(`Previously, each new Object created in Collections &amp; Sets-by-Relation required Type selection before proceeding. To make Object creation speedier, you can now define the default Object type for each view in your Collection or Set-by-Relation. `),
+	h3(
+		`Default Object Type Now Selectable in Collections &amp; Sets-by-Relation`
+	),
+	text(
+		`Previously, each new Object created in Collections &amp; Sets-by-Relation required Type selection before proceeding. To make Object creation speedier, you can now define the default Object type for each view in your Collection or Set-by-Relation. `
+	),
 
-	h3(`Vietnamese, Brazilian Portuguese, and Polish added to Desktop Interface`),
-	text(`Thanks to the help of our community, our pool of interface languages has grown again! Say hello to Anytype Desktop in 🇻🇳Vietnamese, 🇧🇷Brazilian Portuguese, and 🇵🇱Polish.`),
+	h3(
+		`Vietnamese, Brazilian Portuguese, and Polish added to Desktop Interface`
+	),
+	text(
+		`Thanks to the help of our community, our pool of interface languages has grown again! Say hello to Anytype Desktop in 🇻🇳Vietnamese, 🇧🇷Brazilian Portuguese, and 🇵🇱Polish.`
+	),
 
 	h3(`Checkbox Design &amp; Hover State Unified in All Parts of App`),
-	text(`For greater visual consistency, the icon design for checked and unchecked Objects which use Layout: Action has been standardized across the app.`),
+	text(
+		`For greater visual consistency, the icon design for checked and unchecked Objects which use Layout: Action has been standardized across the app.`
+	),
 
 	h3(`Sets Added Back to Type Select Menu when Using Plus Button`),
-	text(`Knowing how frequently our community uses Sets, we've restored Set as a fixed menu option when creating a new Object from the plus-button.`),
+	text(
+		`Knowing how frequently our community uses Sets, we've restored Set as a fixed menu option when creating a new Object from the plus-button.`
+	),
 
 	h3(`Added Ability to Copy Blocks from Version History`),
-	text(`In the case you want to use content from previous Object versions without restoring the version itself, you can now copy-paste blocks from previous versions to your current object.`),
+	text(
+		`In the case you want to use content from previous Object versions without restoring the version itself, you can now copy-paste blocks from previous versions to your current object.`
+	),
 
-	h3(`Protobuf Import Renamed to Any-Block; Now Supports Export-Import of JSON Files`),
-	text(`In your Space Import and Export menus, the Protobuf option has been replaced with Any-Block, which also supports JSON files. This export option will become the foundation for sharing templates and use cases between Anytype community members—more news to come soon!`),
+	h3(
+		`Protobuf Import Renamed to Any-Block; Now Supports Export-Import of JSON Files`
+	),
+	text(
+		`In your Space Import and Export menus, the Protobuf option has been replaced with Any-Block, which also supports JSON files. This export option will become the foundation for sharing templates and use cases between Anytype community members—more news to come soon!`
+	),
 
 	h3(`Removed View Selector for Widgets where Source has Single View`),
-	text(`For Sets &amp; Collections that have just a single view, their corresponding widget no longer shows a view selector menu.`),
+	text(
+		`For Sets &amp; Collections that have just a single view, their corresponding widget no longer shows a view selector menu.`
+	),
 
 	h3(`Position of Toast Notifications Adjusted`),
-	text(`To remove conflicts with the navigation panel, toast notifications now appear at the top of your Anytype window.`),
+	text(
+		`To remove conflicts with the navigation panel, toast notifications now appear at the top of your Anytype window.`
+	),
 
 	h2(`🐛 Bug Fixes:`),
 
-	bullet(`Fixed: Search palette now correctly displays recently edited objects. Thanks, ${link(`https://community.anytype.io/t/search-palette-doesnt-show-most-recent-objects/9992`, `C.c`)}!`),
-	bullet(`Fixed: Caret position no longer jumps when using the editor. Thanks, ${link(`https://community.anytype.io/t/cursor-jumping-back-while-typing-still-a-problem/10562/3`, `stujo7`)}!`),
-	bullet(`Fixed: When selecting objects as relation value, sort is now applied according to descending values. Thanks, ${link(`https://community.anytype.io/t/inconsistent-sorting-on-macos-vs-ios/10716`, `Hoador`)}!`),
+	bullet(
+		`Fixed: Search palette now correctly displays recently edited objects. Thanks, ${link(
+			`https://community.anytype.io/t/search-palette-doesnt-show-most-recent-objects/9992`,
+			`C.c`
+		)}!`
+	),
+	bullet(
+		`Fixed: Caret position no longer jumps when using the editor. Thanks, ${link(
+			`https://community.anytype.io/t/cursor-jumping-back-while-typing-still-a-problem/10562/3`,
+			`stujo7`
+		)}!`
+	),
+	bullet(
+		`Fixed: When selecting objects as relation value, sort is now applied according to descending values. Thanks, ${link(
+			`https://community.anytype.io/t/inconsistent-sorting-on-macos-vs-ios/10716`,
+			`Hoador`
+		)}!`
+	),
 	bullet(`Fixed: Several layout problems in print version`),
-	bullet(`Fixed: View controllers for Sets &amp; Collections now remain visible regardless of window size. Thanks, ${link(`https://community.anytype.io/t/set-view-controllers-inaccessible-on-certain-screen-width/10301`, `raph`)}!`),
-	bullet(`Fixed: Note snippets are no longer parsing HTML from code blocks. Thanks, ${link(`https://community.anytype.io/t/10589`, `CodeMacLife`)}!`),
-	bullet(`Fixed: Copy and deleting relations before they are created is no longer enabled in Objects, Sets &amp; Collections`),
+	bullet(
+		`Fixed: View controllers for Sets &amp; Collections now remain visible regardless of window size. Thanks, ${link(
+			`https://community.anytype.io/t/set-view-controllers-inaccessible-on-certain-screen-width/10301`,
+			`raph`
+		)}!`
+	),
+	bullet(
+		`Fixed: Note snippets are no longer parsing HTML from code blocks. Thanks, ${link(
+			`https://community.anytype.io/t/10589`,
+			`CodeMacLife`
+		)}!`
+	),
+	bullet(
+		`Fixed: Copy and deleting relations before they are created is no longer enabled in Objects, Sets &amp; Collections`
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`Release 0.34.0 - Anytype Goes Global 🌍`),
 
-	text(`We're keeping fresh this summer with some sweeping updates which include our first push of localized interfaces and lots of polishing work on templates.`),
-	text(`Big thanks to everyone who's helped to make Anytype more wonderful this month by ${link(`https://crowdin.com/project/anytype-desktop`, `translating the interface to your native language`)}, ${link(`https://github.com/anyproto`, `making pull requests`)}, ${link(`https://community.anytype.io/c/bug-reports/7/none`, `reporting bugs`)}, and spreading the word. We see and appreciate you!`),
+	text(
+		`We're keeping fresh this summer with some sweeping updates which include our first push of localized interfaces and lots of polishing work on templates.`
+	),
+	text(
+		`Big thanks to everyone who's helped to make Anytype more wonderful this month by ${link(
+			`https://crowdin.com/project/anytype-desktop`,
+			`translating the interface to your native language`
+		)}, ${link(
+			`https://github.com/anyproto`,
+			`making pull requests`
+		)}, ${link(
+			`https://community.anytype.io/c/bug-reports/7/none`,
+			`reporting bugs`
+		)}, and spreading the word. We see and appreciate you!`
+	),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Introduction of Localized Interfaces`),
 	img('./img/help/34/1.png', 'screen'),
-	text(`With the help of our linguistically gifted community, we're thrilled to bring you the very first iteration of a localized interface. Anytype desktop is now available in 14 languages! To change your interface language, jump to Settings > Preferences and select the language of your choosing.`),
-	text(`Please note that all translations from the English language are community-contributed. If you notice any errors, you're free to submit your corrections ${link(`https://community.anytype.io/t/localization-launch/10269/13`, `using this platform`)}. Any updates will be shipped in the successive release.`),
-	text(`Don't see your language? Feel free to ${link(`https://github.com/orgs/anyproto/discussions/45`, `start contributing your own translations`)}!`),
+	text(
+		`With the help of our linguistically gifted community, we're thrilled to bring you the very first iteration of a localized interface. Anytype desktop is now available in 14 languages! To change your interface language, jump to Settings > Preferences and select the language of your choosing.`
+	),
+	text(
+		`Please note that all translations from the English language are community-contributed. If you notice any errors, you're free to submit your corrections ${link(
+			`https://community.anytype.io/t/localization-launch/10269/13`,
+			`using this platform`
+		)}. Any updates will be shipped in the successive release.`
+	),
+	text(
+		`Don't see your language? Feel free to ${link(
+			`https://github.com/orgs/anyproto/discussions/45`,
+			`start contributing your own translations`
+		)}!`
+	),
 
 	h3(`Introduction of Blank Templates &amp; Default Template Selection`),
 
-	text(`If you ever wished you could bypass automatic template application when creating objects, a "blank" template has now been added to all types, with the exception of Type: Note. This blank template cannot be deleted or modified in any way.`),
+	text(
+		`If you ever wished you could bypass automatic template application when creating objects, a "blank" template has now been added to all types, with the exception of Type: Note. This blank template cannot be deleted or modified in any way.`
+	),
 	img('./img/help/34/2.png', 'screen'),
-	text(`Meanwhile, it's now possible to choose a default template for each type. From the types page, click the newly-added three-dots menu for the template, and click on the menu option ${hl(`Set as default`)}.`),
+	text(
+		`Meanwhile, it's now possible to choose a default template for each type. From the types page, click the newly-added three-dots menu for the template, and click on the menu option ${hl(
+			`Set as default`
+		)}.`
+	),
 	img('./img/help/34/3.png', 'screen'),
-	text(`This template will now be applied each time you create an object from sets or collections, though you can customize the template according to each set view. When creating objects from the ${hl(`+`)} button or ${hl(`/`)} command menu, you will still be presented with a panel of templates to choose from.`),
+	text(
+		`This template will now be applied each time you create an object from sets or collections, though you can customize the template according to each set view. When creating objects from the ${hl(
+			`+`
+		)} button or ${hl(
+			`/`
+		)} command menu, you will still be presented with a panel of templates to choose from.`
+	),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
-	bullet(`<b>Template titles applied by default</b><br/>Template titles are now applied to new objects created with that template. This paves the way for future updates, such as adding automated titles to templates.`),
+	bullet(
+		`<b>Template titles applied by default</b><br/>Template titles are now applied to new objects created with that template. This paves the way for future updates, such as adding automated titles to templates.`
+	),
 	bullet(`<b>Batch updating of object type now possible from Set &amp; Collection</b><br/>
-			If you select several objects of the same type, you'll see a new menu option to ${hl(`Change type`)}, which we hope will reduce the need to update types object-by-object.`),
+			If you select several objects of the same type, you'll see a new menu option to ${hl(
+				`Change type`
+			)}, which we hope will reduce the need to update types object-by-object.`),
 	bullet(`<b>Widgets now available for recently edited & recently opened objects</b><br/>
 			<img src="./img/help/34/4.png" class="c70 screen" /><br/>
 			Depending on whether you prefer to define your recent objects according to recently modified or opened date, you can now choose the corresponding widget. Please note that recently opened widgets are device-specific and therefore will not sync across your devices due to the decentralized nature of the application.`),
@@ -261,28 +504,79 @@ export default [
 			No need for endless back and forth; content in your LaTeX blocks will now wrap automatically for better readability.`),
 
 	h2(`🛠️ Tech & Performance:`),
-	bullet(`<b>RPM build is back</b><br />For our Linux lovers, the RPM package manager is now back; you can download RPM builds from our download page.`),
+	bullet(
+		`<b>RPM build is back</b><br />For our Linux lovers, the RPM package manager is now back; you can download RPM builds from our download page.`
+	),
 
 	h2(`🐛 Bug Fixes:`),
-	bullet(`Fixed: Status/tag relation menus no longer opening editing interface on hover`),
-	bullet(`Fixed: Cursor no longer dropping when adding link-in-text using keyboard shortcut`),
-	bullet(`Fixed: Unreadable font color in dark mode for Notion imports has been fixed. Thanks, ${link(`https://community.anytype.io/t/dark-mode-font-color-hard-to-read/8445`, `kunthawat`)}!`),
-	bullet(`Fixed: Numbered lists no longer reset from 40 onward. Thanks, ${link(`https://community.anytype.io/t/numbered-list-resets-after-40-items/10300`, `Rebo`)}!`),
-	bullet(`Fixed: Relations added to objects after set creation are now showing in column view when toggled on. Thanks, ${link(`https://community.anytype.io/t/attributes-weird-behavior/9862`, `saifeldeen`)}!`),
-	bullet(`Fixed: Text context menu is now opening properly for all selected blocks`),
-	bullet(`Fixed: Text relations no longer reverted to previous state in sets after being edited inside the object. Thanks, ${link(`https://community.anytype.io/t/url-source-relation-is-reset-or-set-to-previous-content-when-clicking-url-source-cell-in-set-grid-view/9484`, `xpdmk`)}!`),
-	bullet(`Fixed: KaTeX has been updated to the latest version, permitting LaTeX blocks to render chemical equations. Thanks, ${link(`https://community.anytype.io/t/latex-not-rendering-ce/10326`, `jannis`)}!`),
-	bullet(`Fixed: It is no longer possible to to double-press ${hl(`Enter`)} in paste menu. Thanks, ${link(`https://community.anytype.io/t/pasting-a-link-and-pressing-enter-repeatedly-results-in-pasting-the-link-twice/9453`, `sergiu`)}!`),
-	bullet(`Fixed: Horizontal scrollbar in code blocks no longer appear in PDF exports or print versions. Thanks, ${link(`https://community.anytype.io/t/double-scrollbar-on-pdf-export-for-code-blocks-with-scrollbar/9864`, `jannis`)}!`),
+	bullet(
+		`Fixed: Status/tag relation menus no longer opening editing interface on hover`
+	),
+	bullet(
+		`Fixed: Cursor no longer dropping when adding link-in-text using keyboard shortcut`
+	),
+	bullet(
+		`Fixed: Unreadable font color in dark mode for Notion imports has been fixed. Thanks, ${link(
+			`https://community.anytype.io/t/dark-mode-font-color-hard-to-read/8445`,
+			`kunthawat`
+		)}!`
+	),
+	bullet(
+		`Fixed: Numbered lists no longer reset from 40 onward. Thanks, ${link(
+			`https://community.anytype.io/t/numbered-list-resets-after-40-items/10300`,
+			`Rebo`
+		)}!`
+	),
+	bullet(
+		`Fixed: Relations added to objects after set creation are now showing in column view when toggled on. Thanks, ${link(
+			`https://community.anytype.io/t/attributes-weird-behavior/9862`,
+			`saifeldeen`
+		)}!`
+	),
+	bullet(
+		`Fixed: Text context menu is now opening properly for all selected blocks`
+	),
+	bullet(
+		`Fixed: Text relations no longer reverted to previous state in sets after being edited inside the object. Thanks, ${link(
+			`https://community.anytype.io/t/url-source-relation-is-reset-or-set-to-previous-content-when-clicking-url-source-cell-in-set-grid-view/9484`,
+			`xpdmk`
+		)}!`
+	),
+	bullet(
+		`Fixed: KaTeX has been updated to the latest version, permitting LaTeX blocks to render chemical equations. Thanks, ${link(
+			`https://community.anytype.io/t/latex-not-rendering-ce/10326`,
+			`jannis`
+		)}!`
+	),
+	bullet(
+		`Fixed: It is no longer possible to to double-press ${hl(
+			`Enter`
+		)} in paste menu. Thanks, ${link(
+			`https://community.anytype.io/t/pasting-a-link-and-pressing-enter-repeatedly-results-in-pasting-the-link-twice/9453`,
+			`sergiu`
+		)}!`
+	),
+	bullet(
+		`Fixed: Horizontal scrollbar in code blocks no longer appear in PDF exports or print versions. Thanks, ${link(
+			`https://community.anytype.io/t/double-scrollbar-on-pdf-export-for-code-blocks-with-scrollbar/9864`,
+			`jannis`
+		)}!`
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
-	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
-	text(`Before we get to the good stuff: this is our last release before we officially launch our public beta(!). On July 19, we'll be opening our repositories and celebrating this occasion with a 24-hour AMA on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>.`),
-	text(`We'd absolutely love for you to join our launch by following us on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>, bringing us your juicy questions and comments with you on launch day, and maybe even telling a friend.`),
+	text(
+		`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`
+	),
+	text(
+		`Before we get to the good stuff: this is our last release before we officially launch our public beta(!). On July 19, we'll be opening our repositories and celebrating this occasion with a 24-hour AMA on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>.`
+	),
+	text(
+		`We'd absolutely love for you to join our launch by following us on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>, bringing us your juicy questions and comments with you on launch day, and maybe even telling a friend.`
+	),
 	text(`And now, without further ado:`),
 
 	h2(`💎 Highlights of this Release:`),
@@ -290,116 +584,243 @@ export default [
 	bullet(`<b>Redesigned onboarding &amp; login experience</b>`),
 
 	video(`./img/help/33/onboarding.mp4`),
-	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
-	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
-	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
-	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
+	text(
+		`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`
+	),
+	text(
+		`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`
+	),
+	text(
+		`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`
+	),
+	text(
+		`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`
+	),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
 	bullet(`<b>Account & Space Settings Menu Updates</b>`),
-	text(`We've re-arranged some of the elements in your account and space settings menu to work more intuitively - namely, import and export menus have moved from your account to your space settings.`),
-	text(`We've also added a description field to your account settings, which is reflected in your profile object as Relation: Description.`),
+	text(
+		`We've re-arranged some of the elements in your account and space settings menu to work more intuitively - namely, import and export menus have moved from your account to your space settings.`
+	),
+	text(
+		`We've also added a description field to your account settings, which is reflected in your profile object as Relation: Description.`
+	),
 
-	bullet(`<b>Views in Set widgets are now correctly updated when something is changed in source set</b>`),
-	text(`No need to re-create your widgets - any changes you make to your sets will be instantly reflected in the corresponding set widget.`),
+	bullet(
+		`<b>Views in Set widgets are now correctly updated when something is changed in source set</b>`
+	),
+	text(
+		`No need to re-create your widgets - any changes you make to your sets will be instantly reflected in the corresponding set widget.`
+	),
 
 	h2(`🛠️ Tech & Performance:`),
 
 	bullet(`<b>Windows build now signed with certificate</b>`),
-	text(`Say goodbye to Windows Defender alerts - our security certificate has now been signed`),
+	text(
+		`Say goodbye to Windows Defender alerts - our security certificate has now been signed`
+	),
 
 	h2(`🐛 Bug Fixes:`),
 
-	bullet(`<b>Fixed: "Last opened" homepage setting now working correctly</b>`),
-	bullet(`<b>Fixed: Image popups no longer flickering when resizing windows.</b> Thanks, <a href="https://community.anytype.io/t/image-popup-flickering-around-when-resizing-window/9580">jannis</a>!`),
-	bullet(`<b>Fixed: Right-clicking on file no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/right-click-on-file-opens-its-object-page/9496">person</a>!`),
-	bullet(`<b>Fixed: Right-clicking on object from sidebar no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/sidebar-right-click-bug/9605">isle9</a>!`),
-	bullet(`<b>Fixed: It's now possible to copy text from block when block menu is open.</b> Thanks, <a href="https://community.anytype.io/t/use-blocks-tab-to-copy-and-paste/9003">sooyoung</a>!`),
+	bullet(
+		`<b>Fixed: "Last opened" homepage setting now working correctly</b>`
+	),
+	bullet(
+		`<b>Fixed: Image popups no longer flickering when resizing windows.</b> Thanks, <a href="https://community.anytype.io/t/image-popup-flickering-around-when-resizing-window/9580">jannis</a>!`
+	),
+	bullet(
+		`<b>Fixed: Right-clicking on file no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/right-click-on-file-opens-its-object-page/9496">person</a>!`
+	),
+	bullet(
+		`<b>Fixed: Right-clicking on object from sidebar no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/sidebar-right-click-bug/9605">isle9</a>!`
+	),
+	bullet(
+		`<b>Fixed: It's now possible to copy text from block when block menu is open.</b> Thanks, <a href="https://community.anytype.io/t/use-blocks-tab-to-copy-and-paste/9003">sooyoung</a>!`
+	),
 	bullet(`<b>Fixed: Caret position no longer jumps on alt + delete</b>`),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
-	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
-	text(`More than 300 bugs, polishes, and features were merged into this one update, so we won't detail each and every one of them. Instead, in this month's What's New edition, we'll be focusing on the main changes you'll notice once you've installed the new app, and describing each in greater detail.`),
+	text(
+		`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`
+	),
+	text(
+		`More than 300 bugs, polishes, and features were merged into this one update, so we won't detail each and every one of them. Instead, in this month's What's New edition, we'll be focusing on the main changes you'll notice once you've installed the new app, and describing each in greater detail.`
+	),
 
 	h2(`Introduction of Private Spaces`),
 	video(`./img/help/32/1-spaces.mp4`),
-	text(`Upon opening this version you'll notice a new addition to your account: that of ${hl(`Space`)}. Your space can be customized in terms of name, icon, and homepage, which you'll find by clicking on the settings wheel on the ${hl(`Space`)} button.`),
-	text(`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your space homepage. Clicking on the space widget in the top position of your sidebar will open your space settings. To return to your home page from anywhere in the app, you can use shortcut: ${hl(`${alt} + H`)}`),
+	text(
+		`Upon opening this version you'll notice a new addition to your account: that of ${hl(
+			`Space`
+		)}. Your space can be customized in terms of name, icon, and homepage, which you'll find by clicking on the settings wheel on the ${hl(
+			`Space`
+		)} button.`
+	),
+	text(
+		`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your space homepage. Clicking on the space widget in the top position of your sidebar will open your space settings. To return to your home page from anywhere in the app, you can use shortcut: ${hl(
+			`${alt} + H`
+		)}`
+	),
 
 	h2(`Integration of Anysync protocol`),
-	text(`While it won't be visible from the interface, this release brings the integration of our new Anysync protocol, a work which has been years in the making. For us, arriving here means showing the world that a local-first, p2p synced protocol with an E2E encrypted product built on top, is possible. We hope you'll find the syncing of your accounts between devices a smoother experience than before, and rest easy knowing that your data is absolutely yours.`),
+	text(
+		`While it won't be visible from the interface, this release brings the integration of our new Anysync protocol, a work which has been years in the making. For us, arriving here means showing the world that a local-first, p2p synced protocol with an E2E encrypted product built on top, is possible. We hope you'll find the syncing of your accounts between devices a smoother experience than before, and rest easy knowing that your data is absolutely yours.`
+	),
 
 	h2(`Introduction of Widgets`),
 	video(`./img/help/32/2-widgets.mp4`),
-	text(`Over the past months, we've thought long and hard about how to improve the navigation experience towards a more flexible approach. Enter: widgets, modular units which can be added or removed from your sidebar. Widgets allow you to quickly navigate to your objects and visualize the other objects they are linked to.`),
-	text(`When creating widgets, keep in mind that a widget "source" can be any object which you've previously added to your graph, or a dynamic list of your "recent", "favorite", or "sets" objects - tabs which were available in the previous tab of your homescreen.`),
-	text(`Widgets of any kind can be displayed as a link; meanwhile, widgets pointing to singular objects created with the editor can be displayed with "tree" appearance. Widgets pointing to sets, collections, recents, or favorites, can be displayed as a simple or compact list with all target objects inside.`),
+	text(
+		`Over the past months, we've thought long and hard about how to improve the navigation experience towards a more flexible approach. Enter: widgets, modular units which can be added or removed from your sidebar. Widgets allow you to quickly navigate to your objects and visualize the other objects they are linked to.`
+	),
+	text(
+		`When creating widgets, keep in mind that a widget "source" can be any object which you've previously added to your graph, or a dynamic list of your "recent", "favorite", or "sets" objects - tabs which were available in the previous tab of your homescreen.`
+	),
+	text(
+		`Widgets of any kind can be displayed as a link; meanwhile, widgets pointing to singular objects created with the editor can be displayed with "tree" appearance. Widgets pointing to sets, collections, recents, or favorites, can be displayed as a simple or compact list with all target objects inside.`
+	),
 
 	h2(`New navigation bar`),
 	video(`./img/help/32/3-navbar.mp4`),
-	text(`Many commands which were previously dispersed throughout the interface have now been condensed into one navigation bar, which is your home base for managing and moving about your anytype. The navigation bar will remain visible no matter where you are in the app, putting your graph, global search, and profile settings within easier reach.`),
+	text(
+		`Many commands which were previously dispersed throughout the interface have now been condensed into one navigation bar, which is your home base for managing and moving about your anytype. The navigation bar will remain visible no matter where you are in the app, putting your graph, global search, and profile settings within easier reach.`
+	),
 
 	h2(`Collections`),
 	video(`./img/help/32/4-collections.mp4`),
-	text(`With this update you'll also discover Collections, which work less like a filter (Sets) and more like a folder. Any object in your graph can be manually added to a collection, either by using the + New buttons in the collection itself, or by selection ‘Link to' from the target object's 3-dots menu.`),
-	text(`Similarly with sets, you can visualize your collections based on four different views, and you can also sort & filter your collections based on object relations. Unlike sets however, adding an object to a given collection creates a new link in your graph.`),
-	text(`To get you started on your Collections journey, you'll now see the option to turn any set into a collection of objects, as well as the menu option to create a collection when you hit the ‘plus' button. `),
+	text(
+		`With this update you'll also discover Collections, which work less like a filter (Sets) and more like a folder. Any object in your graph can be manually added to a collection, either by using the + New buttons in the collection itself, or by selection ‘Link to' from the target object's 3-dots menu.`
+	),
+	text(
+		`Similarly with sets, you can visualize your collections based on four different views, and you can also sort & filter your collections based on object relations. Unlike sets however, adding an object to a given collection creates a new link in your graph.`
+	),
+	text(
+		`To get you started on your Collections journey, you'll now see the option to turn any set into a collection of objects, as well as the menu option to create a collection when you hit the ‘plus' button. `
+	),
 
 	h2(`Protobuf Export & Import`),
 	img(`./img/help/32/export.png`, 'full screen'),
-	text(`In case you would like to transfer objects between anytype accounts, protobuf export is now available on the object and account level. When sharing the object with another anytype user, simply share the exported file - which the other user can import directly as an object in their account. Separately, if for any reason you need to create a new account and wish to preserve all objects in your account, you can also make an export of all your objects by navigating to your Profile settings > Export. `),
+	text(
+		`In case you would like to transfer objects between anytype accounts, protobuf export is now available on the object and account level. When sharing the object with another anytype user, simply share the exported file - which the other user can import directly as an object in their account. Separately, if for any reason you need to create a new account and wish to preserve all objects in your account, you can also make an export of all your objects by navigating to your Profile settings > Export. `
+	),
 
 	div(),
 	// --------------------------------------------//
 
 	h1(`Release 0.31.0: Inline Sets are Here 😍`),
-	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
-	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
+	text(
+		`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`
+	),
+	text(
+		`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`
+	),
 
 	h2(`💎 Highlights of this Release`),
 
-	bullet(`<b>Inline Sets</b><br/>We've added a new block type - inline set. You can create an inline set using commands ${hl(`/inline`)} or ${hl(`/&lt;viewtype&gt;`)} to select gallery, grid, etc.<br/><br/>Once created, select an existing set as a source, or create a new one. Any changes you make to the inline set query, icon, or name will be synced with the source set. Meanwhile, views will not synced, but copied, which means you can tweak views to your current needs without worrying that your source set will be impacted.`),
+	bullet(
+		`<b>Inline Sets</b><br/>We've added a new block type - inline set. You can create an inline set using commands ${hl(
+			`/inline`
+		)} or ${hl(
+			`/&lt;viewtype&gt;`
+		)} to select gallery, grid, etc.<br/><br/>Once created, select an existing set as a source, or create a new one. Any changes you make to the inline set query, icon, or name will be synced with the source set. Meanwhile, views will not synced, but copied, which means you can tweak views to your current needs without worrying that your source set will be impacted.`
+	),
 	video(`./img/help/31/1-inline-set.mp4`),
 
-	bullet(`<b>Library Redesign</b><br/>Your control panel for managing types &amp; relations got a facelift in 0.31.0. Descriptions have been removed and buttons have been updated for a lighter, cleaner look &amp; feel.`),
+	bullet(
+		`<b>Library Redesign</b><br/>Your control panel for managing types &amp; relations got a facelift in 0.31.0. Descriptions have been removed and buttons have been updated for a lighter, cleaner look &amp; feel.`
+	),
 	img(`./img/help/31/2-library.png`, 'full screen'),
 
 	h2(`⚡ Quality-of-Life Improvements`),
 
-	bullet(`<b>Notion Import via API</b><br/>Here by popular demand: importing your files directly from Notion to Anytype! The new integration preserves relationships between parent-child pages as links between imported Objects. Follow the instructions from the ${hl(`Settings &gt; Import &gt; Notion &gt; Learn more`)} section to set up your integration token and start importing your files to your space.`),
+	bullet(
+		`<b>Notion Import via API</b><br/>Here by popular demand: importing your files directly from Notion to Anytype! The new integration preserves relationships between parent-child pages as links between imported Objects. Follow the instructions from the ${hl(
+			`Settings &gt; Import &gt; Notion &gt; Learn more`
+		)} section to set up your integration token and start importing your files to your space.`
+	),
 	img(`./img/help/31/6-import.png`, 'full screen'),
 
-	bullet(`<b>Graph redesign</b><br/>We've re-worked the graph to include Object previews-on-hover, Icons as nodes, and directional arrows. We will continue to expand our graph functionality in the coming few releases, so stay tuned for further updates.`),
+	bullet(
+		`<b>Graph redesign</b><br/>We've re-worked the graph to include Object previews-on-hover, Icons as nodes, and directional arrows. We will continue to expand our graph functionality in the coming few releases, so stay tuned for further updates.`
+	),
 	img(`./img/help/31/3-graph.png`, 'full screen'),
 
-	bullet(`<b>Gallery view Playback</b><br/>Sets of audio & video files now permit playback from gallery view. Using Page cover in set by Video for example, will make cards playable as well.`),
+	bullet(
+		`<b>Gallery view Playback</b><br/>Sets of audio & video files now permit playback from gallery view. Using Page cover in set by Video for example, will make cards playable as well.`
+	),
 	video(`./img/help/31/5-set-playback.mp4`),
 
-	bullet(`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`),
+	bullet(
+		`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`
+	),
 	img(`./img/help/31/4-profile.png`, 'half screen'),
 
-	bullet(`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
+	bullet(
+		`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link(
+			'https://community.anytype.io/t/8029',
+			'sambouwer'
+		)}!`
+	),
 
 	h2(`💻 Tech &amp; Performance`),
 	bullet(`Electron upgraded to 22.0.0`),
 	bullet(`Node update to 16.17.1`),
-	bullet(`Lots &amp; lots of code refactoring in preparation for opening our repositories`),
-	bullet(`We've changed the way we store view changes in sets (atomically instead of whole view model), to optimize for performance in sets &amp; objects containing inline sets.`),
+	bullet(
+		`Lots &amp; lots of code refactoring in preparation for opening our repositories`
+	),
+	bullet(
+		`We've changed the way we store view changes in sets (atomically instead of whole view model), to optimize for performance in sets &amp; objects containing inline sets.`
+	),
 
 	h2(`🐛 Bug Fixes`),
-	bullet(`Fixed: The "Views" dropdown menu in sets is now working properly. Thanks, ${link('https://community.anytype.io/t/7945', 'isle9')}!`),
-	bullet(`Fixed: Editing text relations is now working properly. Thanks, ${link('https://community.anytype.io/t/7793', 'dzlg')}!`),
-	bullet(`Fixed: The views list in sets is no longer collapsing when sidebar is open`),
-	bullet(`Fixed: Object icons in the @mention menu are now displaying correctly`),
-	bullet(`Fixed: Divider blocks can now (again) be created by using three dashes. Thanks, ${link('https://community.anytype.io/t/8109', 'philoup')}!`),
-	bullet(`Fixed: Object counter is now working properly when deleting from Bin. Thanks, ${link('https://community.anytype.io/t/8073', 'sambouwer')}!`),
-	bullet(`Fixed: Objects containing ellipses and ranges are now working properly in the @mention menu`),
-	bullet(`Fixed: Lines are no longer deleted when using spellcheck. Thanks, ${link('https://community.anytype.io/t/8104', 'f0ca')}!`),
-	bullet(`Fixed: Center & Right align for LaTeX blocks is now working properly. Thanks, ${link('https://community.anytype.io/t/7725', 'uz4a8')}!`),
+	bullet(
+		`Fixed: The "Views" dropdown menu in sets is now working properly. Thanks, ${link(
+			'https://community.anytype.io/t/7945',
+			'isle9'
+		)}!`
+	),
+	bullet(
+		`Fixed: Editing text relations is now working properly. Thanks, ${link(
+			'https://community.anytype.io/t/7793',
+			'dzlg'
+		)}!`
+	),
+	bullet(
+		`Fixed: The views list in sets is no longer collapsing when sidebar is open`
+	),
+	bullet(
+		`Fixed: Object icons in the @mention menu are now displaying correctly`
+	),
+	bullet(
+		`Fixed: Divider blocks can now (again) be created by using three dashes. Thanks, ${link(
+			'https://community.anytype.io/t/8109',
+			'philoup'
+		)}!`
+	),
+	bullet(
+		`Fixed: Object counter is now working properly when deleting from Bin. Thanks, ${link(
+			'https://community.anytype.io/t/8073',
+			'sambouwer'
+		)}!`
+	),
+	bullet(
+		`Fixed: Objects containing ellipses and ranges are now working properly in the @mention menu`
+	),
+	bullet(
+		`Fixed: Lines are no longer deleted when using spellcheck. Thanks, ${link(
+			'https://community.anytype.io/t/8104',
+			'f0ca'
+		)}!`
+	),
+	bullet(
+		`Fixed: Center & Right align for LaTeX blocks is now working properly. Thanks, ${link(
+			'https://community.anytype.io/t/7725',
+			'uz4a8'
+		)}!`
+	),
 
 	div(),
 	// --------------------------------------------//

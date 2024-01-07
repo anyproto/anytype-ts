@@ -1,22 +1,53 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .blocks {
-	.block.blockType { padding: 0px 0px 18px 0px !important; }
-	.block.blockType { 
-		.wrapMenu { visibility: hidden; }
-		.focusable.isFocused { background: none; }
-
-		.wrap { display: flex; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
-
-		.item { 
-			position: relative; padding: 3px 8px; border-radius: 2px; border-radius: 6px; border: 1px solid $colorShapePrimary; 
-			display: inline-block; display: flex; align-items: center; gap: 0px 4px; color: $colorTextSecondary; @include text-overflow-nw;
+	.block.blockType {
+		padding: 0px 0px 18px 0px !important;
+	}
+	.block.blockType {
+		.wrapMenu {
+			visibility: hidden;
 		}
-		.item.hover, .item.active { background: $colorShapeHighlightMedium; }
+		.focusable.isFocused {
+			background: none;
+		}
+
+		.wrap {
+			display: flex;
+			justify-content: flex-start;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
 
 		.item {
-			.icon { flex-shrink: 0; }
-			.icon.search { width: 12px; height: 12px; background-image: url('~img/icon/block/search.svg'); }
+			position: relative;
+			padding: 3px 8px;
+			border-radius: 2px;
+			border-radius: 6px;
+			border: 1px solid $colorShapePrimary;
+			display: inline-block;
+			display: flex;
+			align-items: center;
+			gap: 0px 4px;
+			color: $colorTextSecondary;
+			@include text-overflow-nw;
+		}
+		.item.hover,
+		.item.active {
+			background: $colorShapeHighlightMedium;
+		}
+
+		.item {
+			.icon {
+				flex-shrink: 0;
+			}
+			.icon.search {
+				width: 12px;
+				height: 12px;
+				background-image: url('~img/icon/block/search.svg');
+			}
 		}
 	}
 }

@@ -1,31 +1,78 @@
-@import "~scss/_vars";
+/** @format */
+
+@import '~scss/_vars';
 
 .menus {
-	.menu.menuDataviewGroupList { width: 360px; }
 	.menu.menuDataviewGroupList {
-		.content { padding: 0px; }
-		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px; }
+		width: 360px;
+	}
+	.menu.menuDataviewGroupList {
+		.content {
+			padding: 0px;
+		}
+		.wrap {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			padding: 0px;
+		}
 
-		.items { flex-grow: 1; }
-		.item { padding: 4px 10px; display: flex; }
+		.items {
+			flex-grow: 1;
+		}
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
-			.clickable { width: calc(100% - 60px); }
-			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+			padding: 4px 10px;
+			display: flex;
+		}
+		.item {
+			.icon.plus {
+				margin-right: 4px;
+				background-image: url('~img/icon/plus/menu0.svg');
+			}
+			.clickable {
+				width: calc(100% - 60px);
+			}
+			.switch {
+				position: absolute;
+				right: 16px;
+				top: 50%;
+				margin-top: -8px;
+			}
 
 			.cellContent {
-				.wrap { display: inline-block;  width: 100%; }
-				.tagItem { margin: 1px 4px 0px 0px; max-width: 130px; }
-				.more { margin: 1px 0px 0px 0px; vertical-align: top; }
-				.empty { display: inline-block; }
-				.over { white-space: nowrap; overflow: hidden; width: 100%; }
+				.wrap {
+					display: inline-block;
+					width: 100%;
+				}
+				.tagItem {
+					margin: 1px 4px 0px 0px;
+					max-width: 130px;
+				}
+				.more {
+					margin: 1px 0px 0px 0px;
+					vertical-align: top;
+				}
+				.empty {
+					display: inline-block;
+				}
+				.over {
+					white-space: nowrap;
+					overflow: hidden;
+					width: 100%;
+				}
 			}
 		}
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item:hover::before {
+			background: $colorShapeHighlightMedium;
+		}
 
-		.bottom { flex-shrink: 0; }
 		.bottom {
-			.line { margin-top: 0px; }
+			flex-shrink: 0;
+		}
+		.bottom {
+			.line {
+				margin-top: 0px;
+			}
 		}
 	}
 }
