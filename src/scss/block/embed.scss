@@ -59,6 +59,8 @@
 		.excalidraw { position: static; }
 		.excalidraw {
 			.scroll-back-to-content { position: absolute; }
+			.ToolIcon__icon { width: 28px; height: 28px; }
+			.Stack_horizontal { white-space: nowrap; @include text-small; }
 		}
 	}
 
