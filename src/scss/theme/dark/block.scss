@@ -302,15 +302,15 @@
     .block.blockEmbed {
 		.preview { background-color: $colorShapeHighlightLight; }
 		.preview {
-			.icon.embedLatex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
-			.icon.embedMermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
-			.icon.embedYoutube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
-			.icon.embedVimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
-			.icon.embedGoogleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
-			.icon.embedSoundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
-			.icon.embedChart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
-			.icon.embedMiro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
-			.icon.embedFigma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
+			.icon.embed-latex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
+			.icon.embed-mermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
+			.icon.embed-youtube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
+			.icon.embed-vimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
+			.icon.embed-googleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
+			.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
+			.icon.embed-chart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
+			.icon.embed-miro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
+			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
 		}
 
         .select { color: $colorTextPrimary; }

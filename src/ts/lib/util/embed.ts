@@ -86,7 +86,7 @@ class UtilEmbed {
 
 		switch (processor) {
 			case I.EmbedProcessor.Youtube: {
-				url = `https://www.youtube.com/embed/${this.getYoutubeId(url)}`;
+				url = `https://www.youtube.com/embed/${this.getYoutubePath(url)}`;
 				break;
 			};
 
@@ -174,9 +174,15 @@ class UtilEmbed {
 		return url;
 	};
 
-	getYoutubeId (url: string): string {
-		const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
-		return (m && m[2].length) ? m[2] : '';
+	getYoutubePath (url: string): string {
+		const pm = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+		const tm = url.match(/(\?t=|&t=)(\d+)/);
+
+		if (!pm || !pm[2].length) {
+			return '';
+		}
+
+		return pm[2] + ((tm && tm[2].length) ? `?start=${tm[2]}` : '');
 	};
 
 	getEnvironmentContent (processor: I.EmbedProcessor): { html: string; libs: string[]} {
