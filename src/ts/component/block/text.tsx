@@ -909,14 +909,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		Length[I.TextStyle.Quote] = 1;
 		Length[I.TextStyle.Code] = 3;
 
-		const menuOpenAdd = menuStore.isOpen('blockAdd');
-		const menuOpenMention = menuStore.isOpen('blockMention');
-		
 		let value = this.getValue();
 		let cmdParsed = false;
 
-		// const stopShort
-
+		const menuOpenAdd = menuStore.isOpen('blockAdd');
+		const menuOpenMention = menuStore.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
