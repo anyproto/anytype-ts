@@ -1,5 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
+import arrayMove from 'array-move';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
@@ -28,23 +30,49 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		super(props);
 
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
 		const { isExpanded } = this.state;
+		const { getId } = this.props;
 		const sections = this.getSections();
 		const { type } = commonStore;
+
+		const Items = SortableContainer(({ items }) => (
+			<div className="items">
+				{items.map((item, i) => (
+					<SortableItem key={i} {...item} index={i} />
+				))}
+			</div>
+		));
 
 		const Section = section => (
 			<div id={`section-${section.id}`} className="section">
 				{section.name ? <div className="name">{section.name}</div> : ''}
-				<div className="items">
-					{section.children.map((item, i) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
+
+				{section.id == 'pinned' ? (
+					<Items 
+						items={section.children}
+						axis="xy" 
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortEnd={this.onSortEnd}
+						helperClass="isDragging"
+						helperContainer={() => $(`#${getId()} #section-${section.id} .items`).get(0)}
+					/>
+				) : (
+					<div className="items">
+						{section.children.map((item, i) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				)}
 			</div>
 		);
+
+		const SortableItem = SortableElement(item => (<Item {...item} />));
 
 		const Item = (item: any) => {
 			const cn = [ 'item' ];
@@ -197,9 +225,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 
 			const librarySources = library.map(it => it.sourceObject);
-			const pinned = Storage.getPinnedTypes().map(id => dbStore.getTypeById(id)).filter(it => it);
+			const pinnedIds = Storage.getPinnedTypes();
+			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
 			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout));
-			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout));
+			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 
 			if (this.filter) {
 				objects.push({ 
@@ -450,6 +479,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	onOut (e: any, item: any) {
 		Preview.tooltipHide();
+	};
+
+	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
+		const pinned = Storage.getPinnedTypes();
+
+		Storage.setPinnedTypes(arrayMove(pinned, oldIndex, newIndex));
+		this.forceUpdate();
 	};
 
 	beforePosition () {
