@@ -87,7 +87,6 @@
 	"dependencies": {
 		"@electron/remote": "^2.1.1",
 		"@emoji-mart/data": "^1.1.2",
-		"@excalidraw/excalidraw": "^0.17.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
 		"@types/emoji-mart": "^3.0.13",
