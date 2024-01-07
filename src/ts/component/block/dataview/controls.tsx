@@ -104,7 +104,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			);
 		});
 
-		const Views = SortableContainer((item: any) => (
+		const Views = SortableContainer(() => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} />
