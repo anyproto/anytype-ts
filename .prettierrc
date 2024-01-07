@@ -1,0 +1,36 @@
+{
+	"trailingComma": "es5",
+	"tabWidth": 4,
+	"useTabs": true,
+	"singleQuote": true,
+	"semi": true,
+	"quoteProps": "as-needed",
+	"jsxSingleQuote": false,
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"arrowParens": "avoid",
+	"proseWrap": "never",
+	"htmlWhitespaceSensitivity": "ignore",
+	"endOfLine": "lf",
+	"singleAttributePerLine": false,
+	"overrides": [
+		{
+			"files": "*.html",
+			"options": {
+				"parser": "html"
+			}
+		},
+		{
+			"files": "*.css",
+			"options": {
+				"parser": "css"
+			}
+		},
+		{
+			"files": "*.scss",
+			"options": {
+				"parser": "css"
+			}
+		}
+	]
+}
