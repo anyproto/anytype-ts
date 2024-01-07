@@ -49,3 +49,4 @@ dist/css/theme/dark/prism.css
 dist/workers/lib
 dist/workers/pdf.min.js
 dist/workers/onboard.js
+dist/js/jquery.js
