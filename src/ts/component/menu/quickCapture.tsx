@@ -426,7 +426,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					switch (element.id) {
 
 						case 'open': {
-							UtilObject.openAuto(item);
+							UtilObject.openAuto({ ...item, id: item.itemId });
 							break;
 						};
 
@@ -445,7 +445,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall(item, true);
+								Action.uninstall({ ...item, id: item.itemId }, true);
 							};
 							break;
 						};
