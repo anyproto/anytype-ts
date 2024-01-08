@@ -48,7 +48,7 @@
 		.plusButton { z-index: 10; }
 		.plusButton { 
 			.icon { 
-				background-color: $colorShapeSecondary; background-image: url('~img/icon/table/plus.svg'); background-size: 10px; opacity: 0; 
+				background-color: var(--color-shape-secondary); background-image: url('~img/icon/table/plus.svg'); background-size: 10px; opacity: 0; 
 				transition: $transitionAllCommon; width: 100%; height: 100%; border-radius: 4px;
 			}
 		}
@@ -56,7 +56,7 @@
 		.plusButton.horizontal { height: 18px; width: 100%; left: 0px; bottom: -18px; padding-top: 4px; }
 		.plusButton.circle { position: absolute; height: 18px; width: 18px; right: -18px; bottom: 0px; padding-top: 4px; padding-left: 4px; opacity: 1; }
 		.plusButton.circle {
-			.icon { border-radius: 50%; background-color: $colorShapeSecondary; }
+			.icon { border-radius: 50%; background-color: var(--color-shape-secondary); }
 		}
 		
 		.plusButton:hover, .plusButton.active {
@@ -70,9 +70,9 @@
 			.handleColumn { display: block; border-color: $colorSystemAccent100; }
 		}
 		
-		.row { display: grid; position: relative; border-right: 1px solid $colorShapePrimary; }
+		.row { display: grid; position: relative; border-right: 1px solid var(--color-shape-primary); }
 		.row:first-child { border-radius: 4px 4px 0px 0px; }
-		.row:last-child { border-bottom: 1px solid $colorShapePrimary; border-radius: 0px 0px 4px 4px; }
+		.row:last-child { border-bottom: 1px solid var(--color-shape-primary); border-radius: 0px 0px 4px 4px; }
 
 		.row:first-child .cell:first-child { border-radius: 4px 0px 0px 0px; }
 		.row:first-child .cell:first-child {
@@ -98,13 +98,13 @@
 		}
 
 		.row.isHeader {
-			.cell { background-color: $colorShapeTertiary; }
+			.cell { background-color: var(--color-shape-tertiary); }
 			.block { font-weight: 500; }
 		}
 
 		.cell { 
 			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: $colorBgPrimary;
-			color: $colorShapePrimary; border-left: 1px solid $colorShapePrimary; border-top: 1px solid $colorShapePrimary;
+			color: var(--color-shape-primary); border-left: 1px solid var(--color-shape-primary); border-top: 1px solid var(--color-shape-primary);
 		}
 
 		.cell.isHighlightedColumn.isFirst { border-radius: 4px 4px 0px 0px; }
@@ -174,7 +174,7 @@
 				} 
 			}
 			.icon.menu:hover {
-				.inner { box-shadow: 0px 0px 0px 1px $colorShapePrimary; background-color: $colorBgPrimary; }
+				.inner { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); background-color: $colorBgPrimary; }
 			}
 
 			.block.blockText { @include text-common; }

@@ -31,7 +31,7 @@
 	}
 
 	.headerBanner {
-		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: $colorShapeTertiary;
+		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: var(--color-shape-tertiary);
 		-webkit-app-region: no-drag; 
 	}
 	.headerBanner {
@@ -52,7 +52,7 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon:hover, .icon.hover { background-color: $colorShapeTertiary; }
+	.icon:hover, .icon.hover { background-color: var(--color-shape-tertiary); }
 
 	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
 	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
@@ -109,7 +109,7 @@
 		.name { @include text-overflow-nw; }
 		.iconObject { flex-shrink: 0; }
 	}
-	.path:hover { border-color: $colorShapeSecondary; }
+	.path:hover { border-color: var(--color-shape-secondary); }
 }
 
 .header.mainGraph {

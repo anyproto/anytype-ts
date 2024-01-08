@@ -6,14 +6,14 @@
 		.content { padding: 0px; }
 		.form { padding: 8px 0px; }
 		.wrap { padding: 0px 16px 8px 16px; }
-		.line { height: 1px; margin: 8px 0px; background: $colorShapeSecondary; }
-		.input { border: 1px solid $colorShapeSecondary; padding: 0px 8px; }
+		.line { height: 1px; margin: 8px 0px; background: var(--color-shape-secondary); }
+		.input { border: 1px solid var(--color-shape-secondary); padding: 0px 8px; }
 		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item.disabled:hover::before { opacity: 0; }
 
 		.item.withCaption {
@@ -63,7 +63,7 @@
 			.icon.lock { margin: 0px; }
 			.icon.dnd { 
 				width: 12px; height: calc(100% - 2px); background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; left: 12px; top: 1px;
-				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid $colorShapeSecondary; border-radius: 12px; 
+				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid var(--color-shape-secondary); border-radius: 12px; 
 			}
 			.icon.dnd:hover { 
 				background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
@@ -79,7 +79,7 @@
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
 				flex-shrink: 0; padding: 6px; color: var(--color-text-secondary); display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
-			.info.canEdit:hover { background: $colorShapeHighlightLight; }
+			.info.canEdit:hover { background: var(--color-shape-highlight-light); }
 
 			.cellContent { min-height: 22px; }
 			.cellContent {
@@ -92,7 +92,7 @@
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background $transitionCommon; 
 				position: relative; margin-right: 6px;
 			}
-			.cell.canEdit:hover { background: $colorShapeHighlightLight; }
+			.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }

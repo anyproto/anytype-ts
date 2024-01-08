@@ -14,7 +14,7 @@
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
-		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 1px 4px; }
+		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
 
 		markupemoji { display: inline; user-select: all; }
 		markupemoji * { user-select: all; }
@@ -187,7 +187,7 @@
 	
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout {
-		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: $colorShapeTertiary; }
+		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
 			> .selectable { position: static; }
 			> .selectable {
@@ -218,7 +218,7 @@
 
 	.block.blockText.textCode { padding: 6px 0px; }
 	.block.blockText.textCode {
-		> .wrapContent { border-radius: 2px; background-color: $colorShapeTertiary; }
+		> .wrapContent { border-radius: 2px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
 			> .selectable { border-radius: 6px; }
 			> .selectable {

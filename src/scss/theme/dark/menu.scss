@@ -37,21 +37,21 @@
     /* Vertical */
 
     .menu.vertical {
-        .tabs { border-color: $colorShapeSecondary; }
+        .tabs { border-color: var(--color-shape-secondary); }
 
         .titleWrapper {
             .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
         }
 
-        .line { background: $colorShapeSecondary; }
-        .section::after { background: $colorShapeSecondary; }
-		.separator .inner { background: $colorShapeSecondary; }
+        .line { background: var(--color-shape-secondary); }
+        .section::after { background: var(--color-shape-secondary); }
+		.separator .inner { background: var(--color-shape-secondary); }
 
         .item { background: none; }
 		.item::before { background: rgba(238, 238, 238, 0); }
-        .item.hover::before { background: $colorShapeHighlightMedium; }
+        .item.hover::before { background: var(--color-shape-highlight-medium); }
         .item {
-            .icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }
+            .icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
             .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
 			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
         }
@@ -62,14 +62,14 @@
     /* Horizontal */
 
     .menu.horizontal {
-        .section { border-color: $colorShapeSecondary; }
+        .section { border-color: var(--color-shape-secondary); }
     }
 
     /* MenuBlockAdd */
 
     .menu.menuBlockAdd {
         .item.isBig {
-            .iconObject { background: $colorShapeTertiary; }
+            .iconObject { background: var(--color-shape-tertiary); }
 
             .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph1.svg'); }
             
@@ -85,20 +85,20 @@
 			.icon.textCallout { background-image: url('#{$themePath}/icon/menu/action/block/text/callout1.svg'); }
         }
 
-        .sectionName::before { background-color: $colorShapeSecondary; }
+        .sectionName::before { background-color: var(--color-shape-secondary); }
     }
 
     /* MenuSmile */
 
     .menu.menuSmile {
-        .head { border-color: $colorShapeSecondary; }
+        .head { border-color: var(--color-shape-secondary); }
 
 		.body.gallery {
-			.foot { border-color: $colorShapeSecondary; }
-			.item.active { background: $colorShapeHighlightMedium; }
+			.foot { border-color: var(--color-shape-secondary); }
+			.item.active { background: var(--color-shape-highlight-medium); }
 
 			.foot {
-				.icon:hover { background-color: $colorShapeHighlightMedium; }
+				.icon:hover { background-color: var(--color-shape-highlight-medium); }
 				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
 				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
 				.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
@@ -115,13 +115,13 @@
 	/* MenuSmileSkin */
 
 	.menu.menuSmileSkin {
-		.item.active { background: $colorShapeHighlightMedium; }
+		.item.active { background: var(--color-shape-highlight-medium); }
     }
 
     /* MenuBlockCover */
 
     .menu.menuBlockCover {
-        .head { border-color: $colorShapeSecondary; }
+        .head { border-color: var(--color-shape-secondary); }
     }
 
     /* MenuBlockRelationView */
@@ -129,13 +129,13 @@
     .menu.menuBlockRelationView {
 		.item {
 			.icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-        	.info.canEdit:hover { background: $colorShapeHighlightMedium; }
-        	.cell.canEdit:hover { background: $colorShapeHighlightMedium; }
-			.icon.fav:hover { background-color: $colorShapeHighlightMedium; }
+        	.info.canEdit:hover { background: var(--color-shape-highlight-medium); }
+        	.cell.canEdit:hover { background: var(--color-shape-highlight-medium); }
+			.icon.fav:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
         .item.add:hover { 
-            .info { background: $colorShapeHighlightMedium; }
+            .info { background: var(--color-shape-highlight-medium); }
 			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
         }
     }
@@ -143,15 +143,15 @@
     /* MenuBlockRelationEdit */
 
     .menu.menuBlockRelationEdit {
-        .input { border-color: $colorShapePrimary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .input { border-color: var(--color-shape-primary); }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
      /* MenuDataviewRelationEdit */
 
      .menu.menuDataviewRelationEdit {
-        .input { border-color: $colorShapePrimary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .input { border-color: var(--color-shape-primary); }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
     /* MenuDataviewText */
@@ -163,15 +163,15 @@
     /* MenuDataviewRelationList */
 
     .menu.menuDataviewRelationList {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
     /* MenuDataviewFileValues */
 
     .menu.menuDataviewFileValues {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item {
-            .icon.more { background-color: $colorShapeHighlightMedium; }
+            .icon.more { background-color: var(--color-shape-highlight-medium); }
         }
     }
 
@@ -186,22 +186,22 @@
     /* MenuDataviewOptionEdit */
 
     .menu.menuDataviewOptionEdit {
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
 	}
 
     /* MenuSearchObject */
 
     .menu.menuSearchObject.big {
         .item {
-            .iconObject { background: $colorShapeTertiary; }
+            .iconObject { background: var(--color-shape-tertiary); }
         }
     }
 
     /* MenuThreadList */
 
     .menu.menuThreadList {
-        .item { border-color: $colorShapeSecondary; }
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .item { border-color: var(--color-shape-secondary); }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
 
         .item {
             .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
@@ -211,13 +211,13 @@
     /* MenuBlockMore */
 
     .menu.menuBlockMore {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
     /* MenuHelp */
 
     .menu.menuHelp {
-        .item:hover::before { background: $colorShapeHighlightMedium; }
+        .item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
     /* MenuDataviewCalendar */
@@ -235,13 +235,13 @@
     /* MenuBlockLatex */
 
     .menu.menuBlockLatex.isTemplate {
-        .item > .inner { border-color: $colorShapePrimary; }
+        .item > .inner { border-color: var(--color-shape-primary); }
     }
 
     /* MenuBlockContext */
 
     .menu.menuBlockContext {
-		.icon:hover { background-color: $colorShapeHighlightMedium; }
+		.icon:hover { background-color: var(--color-shape-highlight-medium); }
 
         .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
 		.icon.active.kbd { background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg'); }
@@ -255,7 +255,7 @@
 
 	.menu.menuBlockLink {
 		.item {
-			.iconObject { background-color: $colorShapeTertiary; }
+			.iconObject { background-color: var(--color-shape-tertiary); }
 		}
 	}
 
@@ -268,13 +268,13 @@
 			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
             }
 
-            .item:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+            .item:hover { box-shadow: 0px 0px 0px 1px var(--color-shape-primary) inset; }
             .item:hover {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
 			}
 
-            .item.active { background: $colorShapeHighlightMedium; }
+            .item.active { background: var(--color-shape-highlight-medium); }
 			.item.active {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
@@ -282,8 +282,8 @@
         }
 
         .buttons {
-            .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
-            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+            .button.grey { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
+            .button.grey:hover { box-shadow: 0px 0px 0px 1px var(--color-shape-primary) inset; }
         }
     }
 
@@ -292,8 +292,8 @@
 	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
 		a { color: $colorBgPrimary; }
-		video { border-color: $colorShapeSecondary; }
-		.highlight { background: $colorShapeSecondary; color: $colorSystemAccent100; }
+		video { border-color: var(--color-shape-secondary); }
+		.highlight { background: var(--color-shape-secondary); color: $colorSystemAccent100; }
 
         .bottom {
             .round {
@@ -301,8 +301,8 @@
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
             .steps {
-                .step:not(.active) { background: $colorShapeSecondary; }
-                .step:not(.active):hover { background: $colorShapePrimary; }
+                .step:not(.active) { background: var(--color-shape-secondary); }
+                .step:not(.active):hover { background: var(--color-shape-primary); }
             }
             .category { color: #5c5a54; }
         }
@@ -312,7 +312,7 @@
 
 	.menu.menuSearchText {
 		.buttons {
-			.line { background: $colorShapeSecondary; }
+			.line { background: var(--color-shape-secondary); }
 		}
 	}
 
@@ -326,7 +326,7 @@
 
     .menu.menuDataviewViewLayout {
         .layouts {
-            .layout { border-color: $colorShapeSecondary; }
+            .layout { border-color: var(--color-shape-secondary); }
             .layout {
                 .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid0.svg'); }
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list0.svg'); }
@@ -350,13 +350,13 @@
     /* MenuDataviewTemplateList */
 
     .menu.menuDataviewTemplateList {
-        .emptySearch { border-color: $colorShapePrimary; }
+        .emptySearch { border-color: var(--color-shape-primary); }
 		.items {
 			.item {
 				.icon.more:hover { background-color: unset; }
 
 				.previewObject { background-color: $colorBgPrimary; }
-				.previewObject::before { background-color: $colorShapeHighlightMedium; }
+				.previewObject::before { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
     }
@@ -389,19 +389,19 @@
 
 	.menu.menuSelect.spaceSelect {
 		.item {
-			.icon.add { border-color: $colorShapeSecondary; }
+			.icon.add { border-color: var(--color-shape-secondary); }
 		}
 	}
 
 	.menu.menuSelect.withFullDescripion {
 		.item.withDescription {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
+			.iconObject { background-color: var(--color-shape-highlight-medium); }
 		}
 	}
 
 	.menu.menuSelect.featuredLinks {
 		.item {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
+			.iconObject { background-color: var(--color-shape-highlight-medium); }
 		}
 	}
 
@@ -410,7 +410,7 @@
 	.menuQuickCapture { background: none; box-shadow: none; }
 	.menuQuickCapture.isExpanded { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 	.menuQuickCapture {
-		.item { background-color: $colorShapeTertiary; }
-		.item.hover:before { background: $colorShapeHighlightMedium; }
+		.item { background-color: var(--color-shape-tertiary); }
+		.item.hover:before { background: var(--color-shape-highlight-medium); }
 	}
 }

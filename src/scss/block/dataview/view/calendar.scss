@@ -5,7 +5,7 @@
 		.viewContent.viewCalendar { position: relative; height: 100%; }
 		.viewContent.viewCalendar {
 			.table { 
-				border-color: $colorShapeSecondary; border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
+				border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
 			}
 
 			.table {
@@ -13,7 +13,7 @@
 				.head { flex-shrink: 0; }
 				.head {
 					.item { 
-						@include text-small; padding: 2px 10px; border-color: $colorShapeSecondary; border-style: solid;
+						@include text-small; padding: 2px 10px; border-color: var(--color-shape-secondary); border-style: solid;
 						border-right-width: 1px; border-bottom-width: 1px; text-align: right;
 					}
 				}
@@ -22,7 +22,7 @@
 			}
 
 			.day { 
-				text-align: left; vertical-align: top; border-color: $colorShapeSecondary; border-style: solid; display: flex; flex-direction: column;
+				text-align: left; vertical-align: top; border-color: var(--color-shape-secondary); border-style: solid; display: flex; flex-direction: column;
 				border-right-width: 1px; border-top-width: 1px; padding: 6px 4px; position: relative; height: 136px;
 			}
 			.day.first { border-top-width: 0px; }
@@ -56,7 +56,7 @@
 					content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
 					pointer-events: none;
 				}
-				.item:hover::before { background: $colorShapeHighlightMedium; }
+				.item:hover::before { background: var(--color-shape-highlight-medium); }
 
 				.item.more { display: block; color: var(--color-text-secondary); }
 			}

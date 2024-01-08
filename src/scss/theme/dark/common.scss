@@ -33,8 +33,8 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; }
-    .isMultiSelect.tagColor-default { background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+	.isMultiSelect.archive { background-color: var(--color-shape-highlight-medium); }
+    .isMultiSelect.tagColor-default { background: unset !important; box-shadow: 0px 0px 0px 1px var(--color-shape-primary) inset; }
     .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isMultiSelect.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
     .isMultiSelect.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
@@ -50,7 +50,7 @@ html.themeDark {
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
 	{ background-color: $colorSystemSelection; }
 
-	.brokenMedia { border-color: $colorShapePrimary; }
+	.brokenMedia { border-color: var(--color-shape-primary); }
 	.brokenMedia {
 		img:before { background: $colorBgSecondary; }
 	}
@@ -59,12 +59,12 @@ html.themeDark {
     .icon.import-roam { background-image: url('#{$themePath}/icon/import/roam.svg'); }
 
 	.objectManagerWrapper {
-        .controls .side.left .element:hover { background-color: $colorShapeHighlightMedium; }
+        .controls .side.left .element:hover { background-color: var(--color-shape-highlight-medium); }
         .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
         .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
         .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
         .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
-		.controls, .emptySearch { border-color: $colorShapePrimary; }
+		.controls, .emptySearch { border-color: var(--color-shape-primary); }
 	}
 
     /* Components */
@@ -76,7 +76,7 @@ html.themeDark {
 			100% { background-color: #fff; }
 		}
 
-        .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
+        .loader { border-color: var(--color-shape-primary); border-left-color: $colorSystemAccent100; }
 		.dot { animation-name: dots-dark; border-color: $colorControlAccent; }
     }
 
@@ -89,7 +89,7 @@ html.themeDark {
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
 
             .input-drag {
-                .back { background: $colorShapeHighlightMedium; }
+                .back { background: var(--color-shape-highlight-medium); }
             }
         }
     }
@@ -103,19 +103,19 @@ html.themeDark {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.blank { border-color: $colorShapePrimary; }
+    .button.blank { border-color: var(--color-shape-primary); }
     .button.blank:not(.disabled):hover,
-    .button.blank:not(.disabled).hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
+    .button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
 	.button.red,
-    .button.red.blank { border-color: $colorShapePrimary; background: none; color: $colorRed; }
+    .button.red.blank { border-color: var(--color-shape-primary); background: none; color: $colorRed; }
     .button.red:hover,
     .button.red.hover,
     .button.red.blank:hover,
     .button.red.blank.hover { border-color: #581f0c; background: #311107; }
 
     .filter {
-        .line { background: $colorShapeSecondary; }
+        .line { background: var(--color-shape-secondary); }
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
@@ -124,28 +124,28 @@ html.themeDark {
 
     .textarea { background: none; }
 
-    .switch { background: $colorShapeSecondary; }
+    .switch { background: var(--color-shape-secondary); }
 
 	.textareaWrap { background-color: $colorBgSecondary; }
 
-    .select { border-color: $colorShapePrimary; }
-    .select:hover, .select.active { background: $colorShapeHighlightMedium; }
+    .select { border-color: var(--color-shape-primary); }
+    .select:hover, .select.active { background: var(--color-shape-highlight-medium); }
     .select {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorShapeHighlightMedium; border-color: transparent; }
+    .inputWithFile { background: var(--color-shape-highlight-medium); border-color: transparent; }
 
     .listPreviewObject {
-        .item.add { border-color: $colorShapePrimary; }
-        .item:before { background: $colorShapeHighlightMedium; }
+        .item.add { border-color: var(--color-shape-primary); }
+        .item:before { background: var(--color-shape-highlight-medium); }
 
         .item {
             > .icon.more:hover,
-            > .icon.more.hover { background-color: $colorShapeHighlightMedium; }
-            > .defaultLabel { background: $colorShapeTertiary; }
+            > .icon.more.hover { background-color: var(--color-shape-highlight-medium); }
+            > .defaultLabel { background: var(--color-shape-tertiary); }
         }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -155,32 +155,32 @@ html.themeDark {
 
     .deleteWrapper { background: $colorBgPrimary; }
 
-	.sync { background-color: $colorShapeSecondary;}
+	.sync { background-color: var(--color-shape-secondary);}
 
     /* PreviewObject */
 
     .previewObject {
-        .border { border-color: $colorShapePrimary; }
-        .loaderWrapper { border-color: $colorShapePrimary; }
+        .border { border-color: var(--color-shape-primary); }
+        .loaderWrapper { border-color: var(--color-shape-primary); }
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
-        .moreWrapper { background: $colorShapeTertiary; }
+        .moreWrapper { background: var(--color-shape-tertiary); }
         .heading {
-            .iconObject { background-color: $colorShapeTertiary; }
+            .iconObject { background-color: var(--color-shape-tertiary); }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
 
-            .featured { background: $colorShapeSecondary; }
-            .bullet { background: $colorShapeSecondary; }
+            .featured { background: var(--color-shape-secondary); }
+            .bullet { background: var(--color-shape-secondary); }
         }
 
         .blocks {
             .element {
-                .line { background: $colorShapeSecondary !important; }
+                .line { background: var(--color-shape-secondary) !important; }
 
                 .inner {
 					.icon.hl { background-image: url('#{$themePath}/icon/object/preview/hl.svg'); }
 
                     .bookmark {
-                        .side.left { border-color: $colorShapePrimary; }
+                        .side.left { border-color: var(--color-shape-primary); }
                     }
                 }
             }
@@ -190,7 +190,7 @@ html.themeDark {
 	.previewObject.small,
     .previewObject.medium {
 		.heading {
-			  .featured { background: $colorShapeSecondary; }
+			  .featured { background: var(--color-shape-secondary); }
 		}
 	}
 
@@ -198,14 +198,14 @@ html.themeDark {
 
     .previewWrapper {
         .content { background: $colorBgSecondary; }
-        .head { border-color: $colorShapeSecondary; }
+        .head { border-color: var(--color-shape-secondary); }
 
         .previewLink {
-            .img { border-color: $colorShapeSecondary; }
+            .img { border-color: var(--color-shape-secondary); }
         }
     }
 
-	.previewGraph { background: $colorBgSecondary; border-color: $colorShapePrimary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.previewGraph { background: $colorBgSecondary; border-color: var(--color-shape-primary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* Pager */
 
@@ -226,13 +226,13 @@ html.themeDark {
     .progress {
         .inner { background: $colorBgSecondary; }
         .inner {
-            .bar { background: $colorShapeHighlightMedium; }
+            .bar { background: var(--color-shape-highlight-medium); }
         }
     }
 
 	.progressBar {
 		.bar {
-			.fill.empty { background-color: $colorShapeTertiary; }
+			.fill.empty { background-color: var(--color-shape-tertiary); }
 		}
 	}
 
@@ -253,12 +253,12 @@ html.themeDark {
     .iconObject.c112,
     .iconObject.c128,
     .iconObject.withLetter
-    { background-color: $colorShapeTertiary; }
+    { background-color: var(--color-shape-tertiary); }
 
     /* EditorControls */
 
     .editorControls {
-        .btn { background: $colorShapeSecondary; }
+        .btn { background: var(--color-shape-secondary); }
 ы
         .btn {
             .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
@@ -279,19 +279,19 @@ html.themeDark {
     .header.isCommon { background: $colorBgPrimary; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-		.path:hover { background-color: $colorShapeHighlightMedium; }
+		.path:hover { background-color: var(--color-shape-highlight-medium); }
 
-        .icon:hover, .icon.hover { background-color: $colorShapeHighlightMedium; }
+        .icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
         .tabs {
-            .tab.active, .tab:hover { border-color: $colorShapePrimary; }
+            .tab.active, .tab:hover { border-color: var(--color-shape-primary); }
         }
 
-        .headerBanner { background: $colorShapeTertiary; }
+        .headerBanner { background: var(--color-shape-tertiary); }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 	.header.isCommon.active {
-		.path { background-color: $colorShapeHighlightMedium; }
+		.path { background-color: var(--color-shape-highlight-medium); }
 	}
 
     .header.mainHistory { background: $colorBgPrimary; }
@@ -310,7 +310,7 @@ html.themeDark {
     /* Footer */
 
     .footer {
-        .iconWrap .bg { background-color: $colorShapeSecondary; border-color: $colorShapeSecondary; }
+        .iconWrap .bg { background-color: var(--color-shape-secondary); border-color: var(--color-shape-secondary); }
     }
 
     /* Sidebar */
@@ -319,10 +319,10 @@ html.themeDark {
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
+			.icon:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.resize-h .resize-handle::after { background-color: $colorShapeSecondary; }
+		.resize-h .resize-handle::after { background-color: var(--color-shape-secondary); }
     }
 
 	/* Navigation */
@@ -345,13 +345,13 @@ html.themeDark {
 	.notifications {
 		.head {
 			.icon { background-color: $colorBgPrimary; border-color: $colorBgSecondary; }
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
+			.icon:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.notification {	background: $colorBgSecondary; @include shadow; border: 0px; }
 
 		.notification {
-			.icon.delete { border-color: $colorShapeSecondary; background-color: $colorBgSecondary; }
+			.icon.delete { border-color: var(--color-shape-secondary); background-color: $colorBgSecondary; }
 		}
 	}
 

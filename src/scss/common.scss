@@ -137,7 +137,7 @@ search.active { background: orange !important; }
 .textColor-teal { color: $colorTeal !important; }
 .textColor-lime { color: $colorLime !important; }
 
-.bgColor-grey { background: $colorShapeTertiary !important; }
+.bgColor-grey { background: var(--color-shape-tertiary) !important; }
 .bgColor-yellow { background: #fef9cc !important; }
 .bgColor-orange { background: #fef3c5 !important; }
 .bgColor-red { background: #ffebe5 !important; }
@@ -148,8 +148,8 @@ search.active { background: orange !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
-.isMultiSelect.archive { color: var(--color-text-secondary); background: $colorShapeTertiary; }
-.isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: $colorBgPrimary !important; box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
+.isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
+.isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: $colorBgPrimary !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
 .isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
 .isMultiSelect.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
@@ -175,7 +175,7 @@ search.active { background: orange !important; }
 .isSelect.tagColor-lime { color: $colorLime !important; }
 
 .brokenMedia { 
-	@include text-common; position: relative; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorShapeSecondary; 
+	@include text-common; position: relative; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px var(--color-shape-secondary); 
 	color: $colorControlActive; height: 44px;
 }
 .brokenMedia {

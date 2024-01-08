@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-$colorShapeTertiary: #2b2b2b;
+var(--color-shape-tertiary): #2b2b2b;
 $colorError: #8a351a;
 
 $colorDark: #060606;
@@ -94,11 +94,11 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px $colorShapePrimary; }
+	.input { height: 40px; border: solid 1px var(--color-shape-primary); }
 
 	.header { width: 100% !important; }
 	.header {
-		.icon:hover { background-color: $colorShapeTertiary; }
+		.icon:hover { background-color: var(--color-shape-tertiary); }
 	}
 	.footer { width: 100% !important; }
 
@@ -167,7 +167,7 @@ html.bodyAuthDeleted {
 .pageAuthInvite {
 	.frame { padding: 64px; }
 	.label { width: 500px; }
-	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorShapePrimary; font-family: 'Plex'; margin-bottom: 32px; }
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px var(--color-shape-primary); font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinCheck {

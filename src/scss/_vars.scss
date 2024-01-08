@@ -5,16 +5,16 @@
 	--color-text-secondary: #949494;
 	--color-text-tertiary: #bfbfbf;
 	--color-text-inversion: #fff;
+
+	/* Shape */
+
+	--color-shape-primary: #e3e3e3;
+	--color-shape-secondary: #ebebeb;
+	--color-shape-tertiary: #f2f2f2;
+
+	--color-shape-highlight-medium: rgba(79, 79, 79, 0.08);
+	--color-shape-highlight-light: rgba(79, 79, 79, 0.04);
 }
-
-/* Shape */
-
-$colorShapePrimary: #e3e3e3;
-$colorShapeSecondary: #ebebeb;
-$colorShapeTertiary: #f2f2f2;
-
-$colorShapeHighlightMedium: rgba(79, 79, 79, 0.08);
-$colorShapeHighlightLight: rgba(79, 79, 79, 0.04);
 
 /* Control */
 

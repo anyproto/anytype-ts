@@ -9,7 +9,7 @@
 
 	.block.blockEmbed { 
 		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
-		.wrap.isEditing { padding: 8px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
+		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			.preview { display: none; }
@@ -27,7 +27,7 @@
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 
 		.preview { 
-			display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; 
+			display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; 
 			background-size: 40px; background-position: center; background-repeat: no-repeat;
 		}
 		
@@ -38,7 +38,7 @@
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
 			#input { 
-				background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; @include text-common; 
+				background: $colorBgPrimary; border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
 				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
 			}
 			#placeholder { padding: 6px 12px; }

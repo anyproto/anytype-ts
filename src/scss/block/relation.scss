@@ -37,7 +37,7 @@
 		}
 
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
-		.cell.canEdit:hover { background: $colorShapeHighlightLight; }
+		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
 		.cell.c-select { padding: 8px; line-height: 18px; }
 		.cell.c-select {

@@ -15,7 +15,7 @@
 		}
 
 		.highlight { 
-			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: var(--color-text-primary); 
+			background: var(--color-shape-secondary); white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: var(--color-text-primary); 
 			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
 		}
 		a { color: var(--color-text-inversion); text-decoration: underline; }
@@ -24,7 +24,7 @@
 			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
 		}
 
-		video { margin-top: 12px; border-radius: 4px; border: 1px solid $colorShapeSecondary; cursor: zoom-in; }
+		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		
 		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
@@ -54,9 +54,9 @@
 			.steps {
 				.step {
 					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
-					background: $colorShapeTertiary; transition: $transitionAllCommon;
+					background: var(--color-shape-tertiary); transition: $transitionAllCommon;
 				}
-				.step:hover { background: $colorShapePrimary; }
+				.step:hover { background: var(--color-shape-primary); }
 				.step.active,
 				.step.active:hover { background: $colorSystemAccent100; cursor: default; }
 				.step:last-of-type { margin-right: 0px; }

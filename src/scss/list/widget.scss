@@ -18,11 +18,11 @@
 			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: $colorBgPrimary; 
 			color: var(--color-text-secondary); font-weight: 400; white-space: nowrap;
 		}
-		.button:hover { background-color: $colorShapeTertiary; }
+		.button:hover { background-color: var(--color-shape-tertiary); }
 
-		.button.disabled { background: $colorShapeTertiary; max-width: 80px; }
+		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
 		.button.edit { 
-			box-shadow: 0px 0px; background: $colorShapeHighlightMedium; border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
+			box-shadow: 0px 0px; background: var(--color-shape-highlight-medium); border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
 			padding: 0px 10px;
 		}
 	}

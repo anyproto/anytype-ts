@@ -5,6 +5,15 @@
 	--color-text-secondary: #8d8d8d;
 	--color-text-tertiary: #505050;
 	--color-text-inversion: #171717;
+
+	/* Shape */
+
+	--color-shape-primary: #555;
+	--color-shape-secondary: #3f3f3f;
+	--color-shape-tertiary: #2b2b2b;
+
+	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
+	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
 }
 
 $themePath: '~img/theme/dark';
@@ -15,15 +24,6 @@ $colorControlAccent: #d4d4d4;
 $colorControlActive: #9a9a9a;
 $colorControlInactive: #464646;
 $colorControlOnBg: #fff;
-
-/* Shape */
-
-$colorShapePrimary: #555;
-$colorShapeSecondary: #3f3f3f;
-$colorShapeTertiary: #2b2b2b;
-
-$colorShapeHighlightMedium: rgba(238, 238, 238, 0.12);
-$colorShapeHighlightLight: rgba(238, 238, 238, 0.06);
 
 /* Background */
 

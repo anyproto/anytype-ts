@@ -25,8 +25,8 @@
 	.menu.menuThreadList { width: 272px; }
 	.menu.menuThreadList {
 		.content { padding: 0px; }
-		.item { padding: 11px 16px; border-bottom: 1px solid $colorShapeSecondary; }
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item { padding: 11px 16px; border-bottom: 1px solid var(--color-shape-secondary); }
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item:last-child { border: 0px; }
 
 		.item {

@@ -16,7 +16,7 @@
 		}
 
 		.screenWrap { 
-			height: 480px; background: $colorShapeHighlightLight; margin: 0px -56px 20px -56px; padding: 20px 56px; overflow: hidden;
+			height: 480px; background: var(--color-shape-highlight-light); margin: 0px -56px 20px -56px; padding: 20px 56px; overflow: hidden;
 			position: relative;
 		}
 		.screenWrap {
@@ -31,7 +31,7 @@
 			.icon.arrow { 
 				position: absolute; width: 44px; height: 44px; top: 50%; margin-top: -22px; background-color: $colorBgPrimary; z-index: 1; 
 				border-radius: 50%; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); background-image: url('~img/arrow/usecase.svg'); background-size: 20px;
-				transition: $transitionAllCommon; border: 1px solid $colorShapePrimary;
+				transition: $transitionAllCommon; border: 1px solid var(--color-shape-primary);
 			}
 			.icon.arrow.hide { opacity: 0; }
 			.icon.arrow.left { left: 24px; transform: rotateZ(180deg); }
@@ -46,7 +46,7 @@
 			.side.right { flex-shrink: 0; width: 220px; padding-left: 16px; }
 			.side.right {
 				.tags {
-					.tagItem { @include text-small; margin: 0px 8px 8px 0px; background: $colorShapeHighlightMedium; color: var(--color-text-secondary); }
+					.tagItem { @include text-small; margin: 0px 8px 8px 0px; background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); }
 				}
 				.label { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; }
 				.label:last-child { margin: 0px; }

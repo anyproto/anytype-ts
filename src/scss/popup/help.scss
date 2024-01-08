@@ -21,7 +21,7 @@
 		}
 
 		.content { padding: 56px 80px 40px 80px; }
-		.highlight { color: $colorRed; background: $colorShapeTertiary; white-space: nowrap; }
+		.highlight { color: $colorRed; background: var(--color-shape-tertiary); white-space: nowrap; }
 
 		.buttons { text-align: center; }
 	}

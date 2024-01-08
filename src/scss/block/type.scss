@@ -9,10 +9,10 @@
 		.wrap { display: flex; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
 
 		.item { 
-			position: relative; padding: 3px 8px; border-radius: 2px; border-radius: 6px; border: 1px solid $colorShapePrimary; 
+			position: relative; padding: 3px 8px; border-radius: 2px; border-radius: 6px; border: 1px solid var(--color-shape-primary); 
 			display: inline-block; display: flex; align-items: center; gap: 0px 4px; color: var(--color-text-secondary); @include text-overflow-nw;
 		}
-		.item.hover, .item.active { background: $colorShapeHighlightMedium; }
+		.item.hover, .item.active { background: var(--color-shape-highlight-medium); }
 
 		.item {
 			.icon { flex-shrink: 0; }

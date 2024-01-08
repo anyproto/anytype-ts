@@ -12,8 +12,8 @@
     /* PopupSearch */
 
     .popup.popupSearch {
-        .head { border-color: $colorShapeSecondary; }
-        .item.active { background-color: $colorShapeHighlightMedium; }
+        .head { border-color: var(--color-shape-secondary); }
+        .item.active { background-color: var(--color-shape-highlight-medium); }
     }
 
     /* PopupSettings */
@@ -23,34 +23,34 @@
 		.mainSides {
 			> .side.left { background: $colorBgSecondary; }
 			> .side.left {
-				.space:hover, .space.active { background: $colorShapeHighlightMedium; }
-				.item:hover, .item.active { background: $colorShapeHighlightMedium; }
+				.space:hover, .space.active { background: var(--color-shape-highlight-medium); }
+				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
 				}
 
-				.iconObject.withLetter { background-color: $colorShapeTertiary; }
+				.iconObject.withLetter { background-color: var(--color-shape-tertiary); }
 			}
 
 			> .side.right {
 				.head {
 					.inner { background: $colorBgPrimary; }
-					.element:hover { background-color: $colorShapeHighlightMedium; }
+					.element:hover { background-color: var(--color-shape-highlight-medium); }
 				}
 
-				.row { border-color: $colorShapeSecondary; }
+				.row { border-color: var(--color-shape-secondary); }
 
 				.input,
-				.select { border-color: $colorShapePrimary; }
+				.select { border-color: var(--color-shape-primary); }
 
-				.select:hover { background-color: $colorShapeHighlightMedium; }
+				.select:hover { background-color: var(--color-shape-highlight-medium); }
 
 				.actionItems,
-				.actionItems > .item { border-color: $colorShapeSecondary; }
+				.actionItems > .item { border-color: var(--color-shape-secondary); }
 
-				.phraseWrapper { background-color: $colorShapeTertiary; }
+				.phraseWrapper { background-color: var(--color-shape-tertiary); }
 				.phraseWrapper {
-					.icon.see { background-color: $colorShapeTertiary; }
+					.icon.see { background-color: var(--color-shape-tertiary); }
 				}
 			}
 		}
@@ -60,14 +60,14 @@
 			.sections {
 				.spaceHeader {
 					.headerContent {
-						.spaceType { background-color: $colorShapeHighlightMedium; }
+						.spaceType { background-color: var(--color-shape-highlight-medium); }
 					}	
 				}
 
 				.section {
-					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent { border-color: var(--color-shape-secondary); }
 					.sectionContent {
-						.item { border-color: $colorShapeSecondary; }
+						.item { border-color: var(--color-shape-secondary); }
 						.item {
 							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 						}
@@ -76,9 +76,9 @@
 			}
 			.sections {
 				.section {
-					.sectionContent { border-color: $colorShapeSecondary; }
+					.sectionContent { border-color: var(--color-shape-secondary); }
 					.sectionContent {
-						.item { border-color: $colorShapeSecondary; }
+						.item { border-color: var(--color-shape-secondary); }
 						.item {
 							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 						}
@@ -92,7 +92,7 @@
 		}
 
 		.side.right.tabDataManagement {
-			.iconObject { background: $colorShapeHighlightMedium; }
+			.iconObject { background: var(--color-shape-highlight-medium); }
 		}
 
         .side.right.tabPhrase {
@@ -101,8 +101,8 @@
 
 		.side.right.tabAccount {
 			.sections .section {
-				.input { border-color: $colorShapeSecondary; }
-				.input:hover { border-color: $colorShapePrimary; }
+				.input { border-color: var(--color-shape-secondary); }
+				.input:hover { border-color: var(--color-shape-primary); }
 				.input:focus:not(.isReadonly) { border-color: $colorSystemAccent100; }
 			}
 		}
@@ -112,8 +112,8 @@
 
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
-            .item { border-color: $colorShapeSecondary; }
-            .item:hover, .item.active { border-color: $colorShapePrimary; }
+            .item { border-color: var(--color-shape-secondary); }
+            .item:hover, .item.active { border-color: var(--color-shape-primary); }
         }
 
 		.side.right.tabImportNotion {
@@ -131,7 +131,7 @@
 		}
 
 		.side.right.tabImportNotionHelp {
-			.list img { border-color: $colorShapePrimary; }
+			.list img { border-color: var(--color-shape-primary); }
 		}
 
 		.side.right.tabAppearance {
@@ -140,7 +140,7 @@
 			}
 
 			.btn.dark {
-				.bg { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
+				.bg { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
@@ -148,7 +148,7 @@
 					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
 				}
 				.bg::before { left: 0px; background: #fff; border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 0px 14px 14px 0px; }
+				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
@@ -161,7 +161,7 @@
 		}
 
 		.side.right.tabDelete {
-			.check { border-color: $colorShapePrimary; }
+			.check { border-color: var(--color-shape-primary); }
 		}
     }
     
@@ -170,12 +170,12 @@
     .popup.popupShortcut {
         .body {
             .section {
-                .name { border-color: $colorShapeSecondary; }
+                .name { border-color: var(--color-shape-secondary); }
                 .items {
-                    .item { border-color: $colorShapeSecondary; }
+                    .item { border-color: var(--color-shape-secondary); }
                 }
             }
-            .section > .descr { border-color: $colorShapeSecondary; }
+            .section > .descr { border-color: var(--color-shape-secondary); }
         }
     }
 
@@ -193,19 +193,19 @@
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
 		}
 
-        .highlight { color: $colorSystemAccent100; background: $colorShapeHighlightMedium; }
+        .highlight { color: $colorSystemAccent100; background: var(--color-shape-highlight-medium); }
 	}
 
     /* PopupPrompt */
 
     .popup.popupPrompt {
-        .input { background: $colorBgPrimary; border-color: $colorShapePrimary; }
+        .input { background: $colorBgPrimary; border-color: var(--color-shape-primary); }
     }
 
     /* PopupExport */
 
     .popup.popupExport {
-        .row { border-color: $colorShapePrimary; }
+        .row { border-color: var(--color-shape-primary); }
     }
 
 	/* PopupMigration */
@@ -217,17 +217,17 @@
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
-		.screenWrap { background: $colorShapeHighlightMedium; }
+		.screenWrap { background: var(--color-shape-highlight-medium); }
 		.screenWrap {
 			.icon.arrow { 
-				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: $colorShapeSecondary;
+				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: var(--color-shape-secondary);
 			}
 		}
 
 		.footerWrap {
 			.side.right {
 				.tags {
-					.tagItem { background: $colorShapeHighlightMedium; }
+					.tagItem { background: var(--color-shape-highlight-medium); }
 				}
 			}
 		}
@@ -237,7 +237,7 @@
 		.objectManagerWrapper {
 			.items {
 				.item {
-					.iconObject { background-color: $colorShapeTertiary; }
+					.iconObject { background-color: var(--color-shape-tertiary); }
 				}
 			}
 		}

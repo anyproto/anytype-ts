@@ -8,20 +8,20 @@
 	#loader { background: $colorBgPrimary !important; }
 
     .wrapper {
-        .side.right { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
+        .side.right { background: $colorBgPrimary; border-color: var(--color-shape-secondary); }
         .side.right {
-            .bottom { border-color: $colorShapeSecondary; }
+            .bottom { border-color: var(--color-shape-secondary); }
             .filter { background: none; }
         }
 
         .section {
             .item { background: $colorBgPrimary; }
-            .item:hover::before { background: $colorShapeHighlightMedium; }
+            .item:hover::before { background: var(--color-shape-highlight-medium); }
         }
     }
 
     .footer {
-        .icon { background-color: $colorShapeSecondary; }
+        .icon { background-color: var(--color-shape-secondary); }
     }
 }
 
@@ -29,16 +29,16 @@
 
 .pageMainStore {
     .body {
-		.emptySearch { border-color: $colorShapePrimary; }
+		.emptySearch { border-color: var(--color-shape-primary); }
 
 		.mid {
-			.filter { border-color: $colorShapePrimary; }
+			.filter { border-color: var(--color-shape-primary); }
 		}
 
         .items {
             .item {
-                .flex { border-color: $colorShapeSecondary; } 
-				.flex:hover {  border-color: $colorShapePrimary; background-color: $colorShapeHighlightMedium; }
+                .flex { border-color: var(--color-shape-secondary); } 
+				.flex:hover {  border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
 
 				.buttons {
 					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
@@ -73,7 +73,7 @@
 
         .section.relation {
             .item.canEdit, .item.add {
-				.clickable:hover { background: $colorShapeHighlightMedium; }
+				.clickable:hover { background: var(--color-shape-highlight-medium); }
 			}
 
 			.item.add {
@@ -83,11 +83,11 @@
 			}
         }
 
-        table { border-color: $colorShapeSecondary; }
+        table { border-color: var(--color-shape-secondary); }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
+            .cellHead .name { border-color: var(--color-shape-secondary); }
+            .cell { border-color: var(--color-shape-secondary); }
+            tbody { border-color: var(--color-shape-secondary); }
         }
     }
 }
@@ -97,11 +97,11 @@
 
 .pageMainRelation {
     .wrapper {
-        table { border-color: $colorShapeSecondary; }
+        table { border-color: var(--color-shape-secondary); }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
+            .cellHead .name { border-color: var(--color-shape-secondary); }
+            .cell { border-color: var(--color-shape-secondary); }
+            tbody { border-color: var(--color-shape-secondary); }
         }
     }
 }
@@ -111,12 +111,12 @@
 
 .pageMainNavigation {
 	.wrapper > #loader { background: $colorBgPrimary; }
-    .selected { border-color: $colorShapePrimary; }
+    .selected { border-color: var(--color-shape-primary); }
 
     .items {
-        .item { border-color: $colorShapePrimary; }
+        .item { border-color: var(--color-shape-primary); }
         .item {
-			.iconObject { background: $colorShapeTertiary; }
+			.iconObject { background: var(--color-shape-tertiary); }
 			.iconObject.isTask { background: none; }
         }
     }
@@ -125,11 +125,11 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
+    .list { background: $colorBgPrimary; border-color: var(--color-shape-secondary); }
     .list {
         .section.fix { background: $colorBgPrimary; }
 
-        .item:hover, .item.active { background: $colorShapeHighlightMedium; }
+        .item:hover, .item.active { background: var(--color-shape-highlight-medium); }
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
@@ -140,7 +140,7 @@
 
 .pageMainBookmark {
     .wrapper {
-        .item.add:hover { background: $colorShapeHighlightMedium; }
+        .item.add:hover { background: var(--color-shape-highlight-medium); }
     }
 }
 
@@ -148,7 +148,7 @@
 
 .pageMainEmpty {
     .wrapper {
-        .row { border-color: $colorShapePrimary; }
+        .row { border-color: var(--color-shape-primary); }
     }
 }
 
@@ -160,10 +160,10 @@
 			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
 		}
 
-		.controls { border-color: $colorShapePrimary; }
+		.controls { border-color: var(--color-shape-primary); }
 		.controls {
 			.side.left {
-				.element:hover { background-color: $colorShapeHighlightMedium; }
+				.element:hover { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
 
@@ -171,7 +171,7 @@
 			.items { height: 100%; }
 			.items {
 				.item {
-					.iconObject { background-color: $colorShapeTertiary; }
+					.iconObject { background-color: var(--color-shape-tertiary); }
 				}
 			}
 		}

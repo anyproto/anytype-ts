@@ -14,7 +14,7 @@
 	}
 
 	.block.blockDiv.divLine {
-		.line {  height: 1px; border-bottom: 1px solid $colorShapePrimary; }
+		.line {  height: 1px; border-bottom: 1px solid var(--color-shape-primary); }
 	}
 
 	.block.blockDiv.divDot {

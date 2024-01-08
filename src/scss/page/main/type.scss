@@ -56,7 +56,7 @@
 			}
 			.item.canEdit {
 				.clickable { }
-				.clickable:hover { background: $colorShapeHighlightLight; }
+				.clickable:hover { background: var(--color-shape-highlight-light); }
 			}
 
 			.item.add { line-height: 20px; }
@@ -75,7 +75,7 @@
 			.title { margin-bottom: 10px; }
 			.content { line-height: 20px; color: var(--color-text-secondary); }
 			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
-			.select:hover, .select.active { background: $colorShapeHighlightLight; }
+			.select:hover, .select.active { background: var(--color-shape-highlight-light); }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.name { display: inline-block; vertical-align: middle; }

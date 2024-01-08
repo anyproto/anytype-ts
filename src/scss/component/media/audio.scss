@@ -29,7 +29,7 @@
             .icon { width: 6px; height: 6px; border: 0px; background: none;  }
             .bullet { width: 6px; height: 6px; border-radius: 100%; background: $colorSystemAccent100; }
             .fill { background: $colorSystemAccent100; }
-            .back { background: $colorShapeHighlightMedium; }
+            .back { background: var(--color-shape-highlight-medium); }
         }
 
         #time { margin: 6px 0px; width: 100%; display: block; }

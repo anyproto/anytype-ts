@@ -42,11 +42,11 @@
 		}
 
 		.item.active { 
-			.icon.more { background-color: $colorShapeHighlightMedium; }
+			.icon.more { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.item::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorShapeHighlightMedium; z-index: 1; pointer-events: none;
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
 			opacity: 0;
 		}
 		.item:hover::before { opacity: 1; }
@@ -69,8 +69,8 @@
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
 				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
-				.icon:hover { background-color: $colorShapeHighlightMedium; }
-				.icon.active { opacity: 1; background-color: $colorShapeHighlightMedium; }
+				.icon:hover { background-color: var(--color-shape-highlight-medium); }
+				.icon.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			}
 		}
@@ -98,7 +98,7 @@
 		.item {
 			.info { width: 100%; }
 			.inner { padding: 8px; gap: 0px 12px; }
-			.iconObject { background: $colorShapeTertiary; border-radius: 10px; }
+			.iconObject { background: var(--color-shape-tertiary); border-radius: 10px; }
 		}
 		.item:hover, .item.active {
 			.info { width: calc(100% - 36px); }
