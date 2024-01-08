@@ -32,7 +32,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		);
 
 		const Section = (item: any) => (
-			<div className={[ 'section', item.className ? item.className : '' ].join(' ')}>
+			<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
