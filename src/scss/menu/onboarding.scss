@@ -18,7 +18,7 @@
 			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: var(--color-text-primary); 
 			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
 		}
-		a { color: $colorTextInversion; text-decoration: underline; }
+		a { color: var(--color-text-inversion); text-decoration: underline; }
 
 		.icon.close { 
 			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');

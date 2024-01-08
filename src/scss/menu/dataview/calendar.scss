@@ -72,7 +72,7 @@
 			}
 		}
 		.day.active {
-			.number { padding: 0px; color: $colorTextInversion; }
+			.number { padding: 0px; color: var(--color-text-inversion); }
 			.number {
 				.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
 			}

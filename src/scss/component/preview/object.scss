@@ -157,7 +157,7 @@
 
 .previewObject.blank {
 	.heading {
-		.name { color: $colorTextTertiary; }
+		.name { color: var(--color-text-tertiary); }
 	}
 }
 

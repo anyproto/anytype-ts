@@ -1,11 +1,5 @@
 @import "~scss/_vars";
 
-:root {
-	--color-text-secondary: #8d8d8d;
-}
-
-$colorPrimary: #d4d4d4;
-$colorTextTertiary: #505050;
 $colorShapeTertiary: #2b2b2b;
 $colorError: #8a351a;
 
@@ -20,28 +14,32 @@ $colorErrorBackground: #240e07;
 $shadow: 0px 0px 0px 1px #252525;
 
 html.bodyIndex, html.bodyAuth {
+	--color-text-primary: #d4d4d4;
+	--color-text-secondary: #8d8d8d;
+	--color-text-tertiary: #505050;
+
 	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
 }
 
 html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.popup { 
-		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: $colorPrimary; }
+		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: var(--color-text-primary); }
 
-		.button.disabled { color: $colorTextTertiary }
+		.button.disabled { color: var(--color-text-tertiary) }
 
-		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
+		.button.black { color: var(--color-text-primary); background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
 
-		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
+		.button.blank { border-color: $colorButtonStroke; color: var(--color-text-primary); background: none; }
 		.button.blank:hover { background: $colorButtonBlankHover; }
 	}
 
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		h1 { font-size: 18px; margin-bottom: 16px; color: $colorPrimary; }
-		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
+		h1 { font-size: 18px; margin-bottom: 16px; color: var(--color-text-primary); }
+		b { display: block; font-weight: 700; color: var(--color-text-primary); margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
 		ul.last { margin: 0px; }
@@ -49,10 +47,10 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 
 	#popupSettingsOnboarding-innerWrap {
 		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
-		.label.small { color: $colorTextTertiary; }
+		.label.small { color: var(--color-text-tertiary); }
 		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
 		.select {
-			.name { color: $colorTextInversion !important; }
+			.name { color: var(--color-text-inversion) !important; }
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
 		}
 	}
@@ -64,12 +62,12 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 		}
 		.menu.menuAccountPath {
 			.label { color: var(--color-text-secondary); }
-			.label.path { color: $colorPrimary; }
+			.label.path { color: var(--color-text-primary); }
 		}
 	}
 
 	.dotIndicator {
-    	span.active { background-color: $colorPrimary; }
+    	span.active { background-color: var(--color-text-primary); }
 	}
 
 	.tooltip { 
@@ -78,7 +76,7 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	}
 	.tooltip {
 		.txt { line-height: 22px; }
-		b { display: block; font-weight: 500; color: $colorPrimary; }
+		b { display: block; font-weight: 500; color: var(--color-text-primary); }
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 
@@ -112,20 +110,20 @@ html.bodyAuthDeleted {
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
-	.moreInfo { @include text-small; color: $colorTextTertiary; margin: 16px auto 0px auto; width: 192px; }
+	.moreInfo { @include text-small; color: var(--color-text-tertiary); margin: 16px auto 0px auto; width: 192px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; @include text-common; }
-	.button.disabled { color: $colorTextTertiary; }
+	.button.disabled { color: var(--color-text-tertiary); }
 	
-	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
+	.button.black { color: var(--color-text-primary) !important; background: $colorButtonStroke !important; }
 	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
 
-	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
+	.button.blank { border-color: $colorButtonStroke !important; color: var(--color-text-primary) !important; background: none; }
 	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
 	.small { color: var(--color-text-secondary); }
-	.small:hover { color: $colorPrimary; }
+	.small:hover { color: var(--color-text-primary); }
 
 	.error { color: $colorError; margin: 0.3em 0px; }
 	.withError { background: $colorErrorBackground; }
@@ -149,7 +147,7 @@ html.bodyAuthDeleted {
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary); width: 384px; }
 
 	.footer {
-		.label.disclaimer { color: $colorTextTertiary; }
+		.label.disclaimer { color: var(--color-text-tertiary); }
 	}
 
 	@media (max-width: 464px) {
@@ -200,7 +198,7 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { @include text-header3; color: $colorPrimary; }
+	.title { @include text-header3; color: var(--color-text-primary); }
 	.label { @include text-paragraph; color: var(--color-text-secondary); }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
@@ -237,7 +235,7 @@ html.bodyAuthDeleted {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.tooltipLink { color: $colorPrimary; }
+	.tooltipLink { color: var(--color-text-primary); }
 	.tooltipLink:hover { text-decoration: underline; }
 
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
@@ -247,16 +245,16 @@ html.bodyAuthDeleted {
 	}
 
 	.inputWrapper {
-		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: var(--color-text-primary); font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
-		.input::placeholder { color: $colorTextTertiary !important; }
+		.input::placeholder { color: var(--color-text-tertiary) !important; }
 	}
 }
 
 .pageAuthDeleted {
 	canvas { height: 100vh; width: 100vw; }
 
-	.title { color: $colorPrimary; margin: 0px 0px 10px 0px; }
+	.title { color: var(--color-text-primary); margin: 0px 0px 10px 0px; }
 	.frame { width: 500px; }
 	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
 

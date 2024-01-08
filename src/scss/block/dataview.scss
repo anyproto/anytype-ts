@@ -76,7 +76,7 @@
 			.editableWrap { cursor: text; }
 		}
 		.dataviewHead.isDeleted {
-			.editableWrap { color: $colorTextTertiary; }
+			.editableWrap { color: var(--color-text-tertiary); }
 			#head-source-select { display: none; }
 		}
 		.dataviewHead.isCollection {

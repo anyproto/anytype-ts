@@ -29,10 +29,6 @@
 
 .pageMainStore {
     .body {
-		.tabs {
-			.tab { color: var(--color-text-secondary); }
-		}
-
 		.emptySearch { border-color: $colorShapePrimary; }
 
 		.mid {
@@ -50,8 +46,6 @@
 					.icon.check:hover { background-image: url('#{$themePath}/icon/store/check1.svg'); }
 					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
 					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
-
-					.button { color: var(--color-text-secondary); }
 				}
             }
         }
@@ -63,7 +57,6 @@
 .pageMainType {
     .wrapper {
         .section.template {
-			.btn { color: var(--color-text-secondary); }
 			.btn {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
@@ -79,9 +72,6 @@
 		}
 
         .section.relation {
-            .item {
-                .name { color: var(--color-text-secondary); }
-            }
             .item.canEdit, .item.add {
 				.clickable:hover { background: $colorShapeHighlightMedium; }
 			}
@@ -89,14 +79,13 @@
 			.item.add {
 				.clickable:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-					.name { color: var(--color-text-secondary); }
 				}
 			}
         }
 
         table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+            .cellHead .name { border-color: $colorShapeSecondary; }
             .cell { border-color: $colorShapeSecondary; }
             tbody { border-color: $colorShapeSecondary; }
         }
@@ -110,7 +99,7 @@
     .wrapper {
         table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+            .cellHead .name { border-color: $colorShapeSecondary; }
             .cell { border-color: $colorShapeSecondary; }
             tbody { border-color: $colorShapeSecondary; }
         }
@@ -123,17 +112,12 @@
 .pageMainNavigation {
 	.wrapper > #loader { background: $colorBgPrimary; }
     .selected { border-color: $colorShapePrimary; }
-    .selected {
-        .descr { color: var(--color-text-secondary); }
-    }
 
     .items {
         .item { border-color: $colorShapePrimary; }
         .item {
 			.iconObject { background: $colorShapeTertiary; }
 			.iconObject.isTask { background: none; }
-
-            .descr { color: var(--color-text-secondary); }
         }
     }
 }
@@ -147,7 +131,6 @@
 
         .item:hover, .item.active { background: $colorShapeHighlightMedium; }
         .item {
-            .name { color: var(--color-text-secondary); }
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
     }

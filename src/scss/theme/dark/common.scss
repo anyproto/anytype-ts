@@ -19,9 +19,6 @@ html.themeDark {
     .cover.coverAudio::after { display: none; }
     .cover.type2.black { background-color: #000 !important; }
 
-    .empty, .emptyText { color: $colorTextTertiary; }
-    .placeholder { color: $colorTextTertiary; }
-    ::-webkit-input-placeholder { color: $colorTextTertiary !important; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: $colorSystemSelection; }
 
@@ -36,7 +33,7 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; color: var(--color-text-secondary); }
+	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; }
     .isMultiSelect.tagColor-default { background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
     .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isMultiSelect.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
@@ -99,7 +96,7 @@ html.themeDark {
 
     /* Button */
 
-	.button.black { background: $colorControlAccent; color: $colorTextInversion; }
+	.button.black { background: $colorControlAccent; }
 	.button.black:hover,
     .button.black.hover { background: $colorControlActive }
 	.button.black {
@@ -123,10 +120,6 @@ html.themeDark {
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
 
-	.emptySearch {
-		.label { color: var(--color-text-secondary); }
-	}
-
     .frame { background: $colorBgPrimary; }
 
     .textarea { background: none; }
@@ -143,10 +136,7 @@ html.themeDark {
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorShapeHighlightMedium; color: var(--color-text-secondary); border-color: transparent; }
-    .inputWithFile {
-        .input::placeholder { color: var(--color-text-secondary); }
-    }
+    .inputWithFile { background: $colorShapeHighlightMedium; border-color: transparent; }
 
     .listPreviewObject {
         .item.add { border-color: $colorShapePrimary; }
@@ -155,7 +145,7 @@ html.themeDark {
         .item {
             > .icon.more:hover,
             > .icon.more.hover { background-color: $colorShapeHighlightMedium; }
-            > .defaultLabel { background: $colorShapeTertiary; color: var(--color-text-secondary); }
+            > .defaultLabel { background: $colorShapeTertiary; }
         }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -165,7 +155,7 @@ html.themeDark {
 
     .deleteWrapper { background: $colorBgPrimary; }
 
-	.sync { background-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+	.sync { background-color: $colorShapeSecondary;}
 
     /* PreviewObject */
 
@@ -197,12 +187,6 @@ html.themeDark {
         }
     }
 
-    .previewObject.blank {
-        .heading {
-            .name { color: var(--color-text-secondary); }
-        }
-    }
-
 	.previewObject.small,
     .previewObject.medium {
 		.heading {
@@ -214,11 +198,9 @@ html.themeDark {
 
     .previewWrapper {
         .content { background: $colorBgSecondary; }
-        .head { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+        .head { border-color: $colorShapeSecondary; }
 
         .previewLink {
-            .descr { color: var(--color-text-secondary); }
-            .link { color: var(--color-text-secondary); }
             .img { border-color: $colorShapeSecondary; }
         }
     }
@@ -244,7 +226,6 @@ html.themeDark {
     .progress {
         .inner { background: $colorBgSecondary; }
         .inner {
-			.fill { background: var(--color-text-secondary); }
             .bar { background: $colorShapeHighlightMedium; }
         }
     }
@@ -277,7 +258,7 @@ html.themeDark {
     /* EditorControls */
 
     .editorControls {
-        .btn { background: $colorShapeSecondary; color: var(--color-text-secondary); }
+        .btn { background: $colorShapeSecondary; }
 ы
         .btn {
             .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
@@ -302,7 +283,6 @@ html.themeDark {
 
         .icon:hover, .icon.hover { background-color: $colorShapeHighlightMedium; }
 
-        .tabs { color: var(--color-text-secondary); }
         .tabs {
             .tab.active, .tab:hover { border-color: $colorShapePrimary; }
         }
@@ -317,7 +297,6 @@ html.themeDark {
     .header.mainHistory { background: $colorBgPrimary; }
     .header.mainHistory {
         .side {
-            .item { color: var(--color-text-secondary); }
             .item {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
             }
@@ -353,27 +332,10 @@ html.themeDark {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
-    @import "./menu.scss";
-    @import "./popup.scss";
-    @import "./page.scss";
-    @import "./block.scss";
-	@import "./widget.scss";
-
     /* Cells */
-
-    .cellContent {
-        .more { color: var(--color-text-secondary); }
-    }
 
     .cell.isEditing {
         .cellContent { background: $colorBgPrimary; }
-    }
-
-    .cellContent.c-url, 
-    .cellContent.c-email, 
-    .cellContent.c-phone 
-    {
-        .name { border-color: var(--color-text-secondary); }
     }
 
 	/* Notifications */
@@ -392,6 +354,12 @@ html.themeDark {
 			.icon.delete { border-color: $colorShapeSecondary; background-color: $colorBgSecondary; }
 		}
 	}
+
+	@import "./menu.scss";
+    @import "./popup.scss";
+    @import "./page.scss";
+    @import "./block.scss";
+	@import "./widget.scss";
 }
 
 html.platformWindows.themeDark, html.platformLinux.themeDark {

@@ -14,7 +14,6 @@
 	.head::before { background-color: $colorShapeHighlightMedium; }
 
 	.icon.remove .inner { background-color: $colorShapeSecondary; }
-	.icon.remove:hover .inner { background-color: $colorTextTertiary; }
 }
 
 .widget.active {
@@ -51,10 +50,6 @@
 .widget.widgetList, .widget.widgetCompact {
 	#viewSelect { border-color: $colorShapeSecondary; }
 	#viewSelect {
-		.viewList {
-			.viewItem { color: var(--color-text-secondary); }
-		}
-
 		.select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
 		}

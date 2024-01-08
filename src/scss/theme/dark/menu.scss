@@ -41,7 +41,6 @@
 
         .titleWrapper {
             .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
-            .title { color: var(--color-text-secondary); }
         }
 
         .line { background: $colorShapeSecondary; }
@@ -92,10 +91,10 @@
     /* MenuSmile */
 
     .menu.menuSmile {
-        .head { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+        .head { border-color: $colorShapeSecondary; }
 
 		.body.gallery {
-			.foot { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+			.foot { border-color: $colorShapeSecondary; }
 			.item.active { background: $colorShapeHighlightMedium; }
 
 			.foot {
@@ -122,20 +121,16 @@
     /* MenuBlockCover */
 
     .menu.menuBlockCover {
-        .head { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
+        .head { border-color: $colorShapeSecondary; }
     }
 
     /* MenuBlockRelationView */
 
     .menu.menuBlockRelationView {
 		.item {
-			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-
-			.info { color: var(--color-text-secondary); }
+			.icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
         	.info.canEdit:hover { background: $colorShapeHighlightMedium; }
-
         	.cell.canEdit:hover { background: $colorShapeHighlightMedium; }
-
 			.icon.fav:hover { background-color: $colorShapeHighlightMedium; }
 		}
 
@@ -188,14 +183,6 @@
         }
     }
 
-    /* MenuDataviewSort */
-
-    .menu.menuDataviewSort {
-        .item {
-            .select.grey { color: var(--color-text-secondary); }
-        }
-    }
-
     /* MenuDataviewOptionEdit */
 
     .menu.menuDataviewOptionEdit {
@@ -232,12 +219,6 @@
     .menu.menuHelp {
         .item:hover::before { background: $colorShapeHighlightMedium; }
     }
-
-    /* MenuButton */
-
-	.menu.menuButton {
-		.item { color: var(--color-text-secondary); }
-	}
 
     /* MenuDataviewCalendar */
 
@@ -301,7 +282,7 @@
         }
 
         .buttons {
-            .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; color: var(--color-text-secondary); }
+            .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; }
             .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
         }
     }
@@ -339,9 +320,6 @@
 
 	.menu.menuDataviewCreateBookmark {
 		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
-		.buttons {
-			.button { color: var(--color-text-secondary); }
-		}
 	}
 
     /* MenuDataviewViewLayout */
@@ -392,6 +370,7 @@
 
 	/* MenuSpace */
 
+	.menu.menuSpace { color: var(--color-text-primary); }
 	.menu.menuSpace { 
 		.head {
 			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }
