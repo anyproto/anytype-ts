@@ -50,8 +50,8 @@ class MenuStore {
 		param.data = param.data || {};
 
 		if (param.isSub) {
-			param.noAnimation = true;
-			param.passThrough = true;
+			param.noAnimation = ('undefined' != typeof(param.noAnimation)) ? param.noAnimation : true;
+			param.passThrough = ('undefined' != typeof(param.passThrough)) ? param.passThrough : true;
 		};
 
 		return param;

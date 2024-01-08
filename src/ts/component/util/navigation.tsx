@@ -33,7 +33,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${alt} + Shift + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() },
+			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${alt} + Shift + N`, onClick: this.onAdd, onMouseEnter: () => this.onQuickCapture() },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		];
@@ -52,6 +52,15 @@ const Navigation = observer(class Navigation extends React.Component {
 							cn.push('disabled');
 						};
 
+						let onMouseEnter = null;
+						if (!item.disabled) {
+							if (item.onMouseEnter) {
+								onMouseEnter = item.onMouseEnter;
+							} else {
+								onMouseEnter = e => this.onTooltipShow(e, item.tooltip, item.caption);
+							};
+						};
+						
 						return (
 							<div 
 								key={item.id} 
@@ -59,7 +68,7 @@ const Navigation = observer(class Navigation extends React.Component {
 								onClick={item.onClick}
 								onContextMenu={item.onContextMenu}
 								className={cn.join(' ')}
-								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
+								onMouseEnter={onMouseEnter}
 								onMouseLeave={e => Preview.tooltipHide(false)}
 							>
 								<Icon className={item.id} />
@@ -133,6 +142,31 @@ const Navigation = observer(class Navigation extends React.Component {
 		} else {
 			keyboard.onSpaceMenu(false);
 		};
+	};
+
+	onQuickCapture () {
+		const element = '#button-navigation-plus';
+
+		menuStore.open('quickCapture', {
+			element,
+			className: 'fixed',
+			classNameWrap: 'fromNavigation',
+			type: I.MenuType.Horizontal,
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			isSub: true,
+			noAnimation: false,
+			noFlipY: true,
+			offsetY: -20,
+			onOpen: (context) => {
+				$(element).addClass('active');
+
+				$(`#${context.getId()}`).off('mouseleave').on('mouseleave', () => {
+					menuStore.close('quickCapture');
+				});
+			},
+			onClose: () => $(element).removeClass('active'),
+		});
 	};
 
 	resize () {
