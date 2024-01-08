@@ -5,8 +5,8 @@
     }
 
     .elements {
-        .btn.white { background: $colorShapeSecondary; color: var(--color-text-primary); }
-        .btn.white:hover { background: $colorBgPrimary; color: var(--color-text-primary); }
+        .btn.white { background: $colorShapeSecondary; }
+        .btn.white:hover { background: $colorBgPrimary; }
 
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
@@ -25,8 +25,7 @@
     .block {
         .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
 
-		.emptyToggle { color: $colorTextSecondary; }
-		.emptyToggle:hover { color: var(--color-text-primary); }
+		.emptyToggle { color: var(--color-text-secondary); }
 
 		.colResize {
 			.line { background: $colorShapeSecondary; }
@@ -48,7 +47,7 @@
 
 	/* BlockFeatured */
 
-	.block.blockFeatured { color: $colorTextSecondary; }
+	.block.blockFeatured { color: var(--color-text-secondary); }
     .block.blockFeatured {
         .cellContent:hover, .cellContent.hover { background: $colorShapeHighlightMedium; }
     }
@@ -81,7 +80,6 @@
 			.icon { background-image: url('#{$themePath}/arrow/loadMore0.svg'); }
 		}
 
-		.loadMore:hover { color: var(--color-text-primary); }
 		.loadMore:hover {
 			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
 		}
@@ -99,11 +97,8 @@
 		}
 
 		.dataviewEmpty { border-color: $colorShapeSecondary; }
-		.dataviewEmpty {
-			.button { color: var(--color-text-primary); }
-		}
 
-		.dataviewHead { border-color: $colorShapeSecondary; color: var(--color-text-primary); }
+		.dataviewHead { border-color: $colorShapeSecondary; }
 		.dataviewHead {
 			.icon:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
@@ -112,19 +107,16 @@
         .dataviewControls {
 			> .sides {
 				> .side.right {
-					.filter { color: var(--color-text-primary); }
-
 					.buttonWrap.withSelect {
 						.button.select { border-left-color: rgba(23,23,23,0.1); }
 						.button.select:after { background-image:  url('~img/arrow/button/black.svg'); }
 					}
 				}
 			}
-            .viewItem { color: $colorTextSecondary; }
+            .viewItem { color: var(--color-text-secondary); }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
-            .viewItem:hover, .viewItem.active { color: var(--color-text-primary); }
             .viewItem.isDragging { background: $colorShapeHighlightMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorShapeHighlightMedium; }
@@ -134,9 +126,7 @@
 		.dataviewControls::after { background-color: $colorShapeSecondary; }
 
 		.dataviewSelection {
-			.side.left { color: var(--color-text-primary); }
 			.side.right {
-				.element { color: var(--color-text-primary); }
 				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
@@ -146,9 +136,8 @@
 
         .viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorTextSecondary; }
+			.cell.add { color: var(--color-text-secondary); }
 			.cell.add {
-				.btn:hover { color: var(--color-text-primary); }
 				.btn:hover {
 					.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 				}
@@ -174,17 +163,6 @@
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
-        .viewContent.viewList, .viewContent.viewGallery, .viewContent.viewBoard {
-            .cellContent.isName { color: var(--color-text-primary); }
-        }
-
-		.viewContent.viewGallery, 
-		.viewContent.viewBoard {
-			.card {
-				.cellContent.c-description { color: var(--color-text-primary); }
-			}
-		}
-
         .viewContent.viewGallery {
             .card { background: $colorBgPrimary; border-color: $colorShapeTertiary; }
 			.card:hover { border-color: $colorShapeSecondary; background: rgba(166, 166, 166, 0.04); }
@@ -207,7 +185,7 @@
 				}
 			}
 			.column.withColor {
-				.head .empty { color: $colorTextSecondary; }
+				.head .empty { color: var(--color-text-secondary); }
 			}
 
 			.card.add:hover, .card:hover .cardContent { border-color: $colorShapePrimary; }
@@ -249,7 +227,7 @@
     /* BlockType */
 
     .block.blockType {
-        .item { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+        .item { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
         .item.hover { background: $colorShapeHighlightMedium; }
     }
 
@@ -257,8 +235,7 @@
 
     .block.blockText {
         markupcode { background: $colorShapeHighlightMedium; color: $colorSystemAccent100; }
-		markuplink, markupobject { border-color: $colorTextSecondary; }
-		markuplink:hover, markupobject:hover { border-color: var(--color-text-primary); }
+		markuplink, markupobject { border-color: var(--color-text-secondary); }
     }
 
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
@@ -267,7 +244,7 @@
     /* BlockLink */
 
     .block.blockLink {
-        .loading, .deleted { color: $colorTextSecondary; }
+        .loading, .deleted { color: var(--color-text-secondary); }
 
 		.linkCard.c48.withIcon {
 			.iconObject { background-color: $colorShapeTertiary; }
@@ -279,11 +256,6 @@
 		}
 	}
 
-	.block.blockLink.text:hover {
-		.linkCard {
-			.cardName .name { border-color: var(--color-text-primary); }
-		}
-	}
 	.block.blockLink.card:hover {
 		.linkCard {
 			.side.left, .side.right { border-color: $colorShapePrimary; }
@@ -313,23 +285,21 @@
 			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
 		}
 
-        .select { color: var(--color-text-primary); }
         .wrap.isEditing { background-color: $colorShapeHighlightLight; }
         #input { background: $colorShapeSecondary; border-color: $colorShapeHighlightLight; }
-		#placeholder { color: $colorTextSecondary; }
+		#placeholder { color: var(--color-text-secondary); }
     }
 
     /* BlockBookmark */
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-		.deleted { color: $colorTextSecondary; }
+		.deleted { color: var(--color-text-secondary); }
 
         .inner { border-color: transparent; background-color: $colorShapeHighlightMedium; }
         .inner {
-			.name { color: var(--color-text-primary); }
-    	    .descr { color: $colorTextSecondary; }
-	        .link { color: $colorTextSecondary; }
+    	    .descr { color: var(--color-text-secondary); }
+	        .link { color: var(--color-text-secondary); }
 
             .side.right { border-color: $colorShapeTertiary; }
         }
@@ -338,8 +308,8 @@
     /* BlockTableOfContenst */
 
 	.block.blockTableOfContents { 
-		.item { color: $colorTextSecondary; }
-		.item:hover span { border-color: $colorTextSecondary; }
+		.item { color: var(--color-text-secondary); }
+		.item:hover span { border-color: var(--color-text-secondary); }
 	}
 
 	/* BlockTable */
@@ -359,8 +329,6 @@
 
 		.cell { background: $colorBgPrimary; border-color: $colorShapePrimary; }
 		.cell {
-			.block { color: var(--color-text-primary); }
-
 			.icon.menu:hover {
 				.inner { box-shadow: 0px 0px; background-color: $colorShapePrimary; }
 			}

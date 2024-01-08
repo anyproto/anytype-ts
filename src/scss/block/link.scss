@@ -41,12 +41,12 @@
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
 
-			.cardType { @include text-small; color: $colorTextSecondary; line-height: 16px; margin: 2px 0px 0px 0px; }
+			.cardType { @include text-small; color: var(--color-text-secondary); line-height: 16px; margin: 2px 0px 0px 0px; }
 			.cardType:empty { margin: 0px; }
 			.cardType {
 				.item { position: relative; display: inline-block; vertical-align: top; margin: 0px 10px 0px 0px; }
 				.item::after { 
-					content: ""; display: block; position: absolute; right: -6px; top: 50%; width: 2px; height: 2px; background: $colorTextSecondary; 
+					content: ""; display: block; position: absolute; right: -6px; top: 50%; width: 2px; height: 2px; background: var(--color-text-secondary); 
 					margin: -1px 0px 0px 0px;
 				}
 
@@ -120,7 +120,7 @@
 				.description { @include text-overflow-nw; width: 100%; }
 			}
 
-			.cardType { @include text-small; @include text-overflow-nw; color: $colorTextSecondary; flex-shrink: 0; flex-grow: 0; }
+			.cardType { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); flex-shrink: 0; flex-grow: 0; }
 		}
 
 		.linkCard.c2 {

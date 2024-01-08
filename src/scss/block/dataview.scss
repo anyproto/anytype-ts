@@ -15,7 +15,7 @@
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 
-			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorTextSecondary;
+			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: var(--color-text-secondary);
 			transition: $transitionAllCommon;
 		}
 		.loadMore {
@@ -50,7 +50,7 @@
 		}
 
 		.dataviewEmpty { 
-			color: $colorTextSecondary; display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
+			color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; border-top: 1px solid $colorShapeSecondary; 
 			text-align: center; padding: 16px 0px; height: 300px;
 		}
 		.dataviewEmpty.withHead { border-top: 0px; }

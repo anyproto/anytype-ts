@@ -1,7 +1,10 @@
 @import "~scss/_vars";
 
+:root {
+	--color-text-secondary: #8d8d8d;
+}
+
 $colorPrimary: #d4d4d4;
-$colorTextSecondary: #8d8d8d;
 $colorTextTertiary: #505050;
 $colorShapeTertiary: #2b2b2b;
 $colorError: #8a351a;
@@ -17,7 +20,7 @@ $colorErrorBackground: #240e07;
 $shadow: 0px 0px 0px 1px #252525;
 
 html.bodyIndex, html.bodyAuth {
-	body { background: $colorDark !important; color: $colorTextSecondary; overflow: hidden; }
+	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
 }
 
@@ -60,7 +63,7 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 			.item { background: $colorPopUp; }
 		}
 		.menu.menuAccountPath {
-			.label { color: $colorTextSecondary; }
+			.label { color: var(--color-text-secondary); }
 			.label.path { color: $colorPrimary; }
 		}
 	}
@@ -70,7 +73,7 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	}
 
 	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorTextSecondary; box-shadow: $shadow !important; @include text-common; 
+		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: var(--color-text-secondary); box-shadow: $shadow !important; @include text-common; 
 		white-space: normal;
 	}
 	.tooltip {
@@ -121,7 +124,7 @@ html.bodyAuthDeleted {
 	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
 	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
-	.small { color: $colorTextSecondary; }
+	.small { color: var(--color-text-secondary); }
 	.small:hover { color: $colorPrimary; }
 
 	.error { color: $colorError; margin: 0.3em 0px; }
@@ -143,7 +146,7 @@ html.bodyAuthDeleted {
 		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
-	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: $colorTextSecondary; width: 384px; }
+	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary); width: 384px; }
 
 	.footer {
 		.label.disclaimer { color: $colorTextTertiary; }
@@ -198,7 +201,7 @@ html.bodyAuthDeleted {
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-header3; color: $colorPrimary; }
-	.label { @include text-paragraph; color: $colorTextSecondary; }
+	.label { @include text-paragraph; color: var(--color-text-secondary); }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 	.bottom {
@@ -259,7 +262,7 @@ html.bodyAuthDeleted {
 
 	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid $colorTextSecondary; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid var(--color-text-secondary); border-radius: 100%; width: 64px; height: 64px; }
 	}
 
 	.button { width: 320px; }

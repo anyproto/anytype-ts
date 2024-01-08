@@ -22,7 +22,7 @@
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 4px; @include text-small; color: $colorTextSecondary; }
+				.cellContent { margin-bottom: 4px; @include text-small; color: var(--color-text-secondary); }
 				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }

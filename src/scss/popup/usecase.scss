@@ -12,7 +12,7 @@
 			.side.right { flex-shrink: 0; }
 
 			.title { @include text-header1; }
-			.label { @include text-small; color: $colorTextSecondary;  }
+			.label { @include text-small; color: var(--color-text-secondary);  }
 		}
 
 		.screenWrap { 
@@ -46,9 +46,9 @@
 			.side.right { flex-shrink: 0; width: 220px; padding-left: 16px; }
 			.side.right {
 				.tags {
-					.tagItem { @include text-small; margin: 0px 8px 8px 0px; background: $colorShapeHighlightMedium; color: $colorTextSecondary; }
+					.tagItem { @include text-small; margin: 0px 8px 8px 0px; background: $colorShapeHighlightMedium; color: var(--color-text-secondary); }
 				}
-				.label { @include text-small; color: $colorTextSecondary; margin: 0px 0px 8px 0px; }
+				.label { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; }
 				.label:last-child { margin: 0px; }
 			}
 		}

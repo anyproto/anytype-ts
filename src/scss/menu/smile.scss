@@ -90,7 +90,7 @@
 					display: block; 
 				}
 				.label {
-					span { color: $colorTextSecondary; }
+					span { color: var(--color-text-secondary); }
 				}
 			}
 		}

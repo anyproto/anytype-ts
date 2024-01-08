@@ -24,7 +24,7 @@
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
 
 			.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; margin-bottom: 2px; }
-			.descr { @include text-small; line-height: 16px; color: $colorTextSecondary; margin-bottom: 4px; @include clamp2; }
+			.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); margin-bottom: 4px; @include clamp2; }
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		
@@ -46,7 +46,7 @@
 		}
 
 		.link { 
-			@include text-small; height: 18px; line-height: 18px; color: $colorTextSecondary; @include text-overflow-nw; display: flex; gap: 0px 6px;
+			@include text-small; height: 18px; line-height: 18px; color: var(--color-text-secondary); @include text-overflow-nw; display: flex; gap: 0px 6px;
 			align-items: center; 
 		}
 		.img { position: absolute; width: calc(100% + 4px); top: 0px; left: -2px; height: 100%; object-fit: cover; display: block; }

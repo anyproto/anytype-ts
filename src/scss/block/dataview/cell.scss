@@ -45,7 +45,7 @@
 	.name { display: inline-block; vertical-align: top; }
 	.empty { vertical-align: top; display: none; }
 
-	.more { display: inline-block; vertical-align: middle; @include text-small; color: $colorTextSecondary; }
+	.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }
 }
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }

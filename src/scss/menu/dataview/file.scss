@@ -16,7 +16,7 @@
 	.menu.menuDataviewFileValues {
 		.content { padding-bottom: 0px; }
 
-		.item { display: flex; color: $colorTextSecondary; }
+		.item { display: flex; color: var(--color-text-secondary); }
 		.item {
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }

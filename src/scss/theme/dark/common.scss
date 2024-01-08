@@ -7,8 +7,7 @@ html.themeDark {
 
     body { background: $colorBgPrimary; color-scheme: dark; }
 
-    a { color: var(--color-text-primary); }
-    a:hover { color: $colorOrange; }
+    a:hover { color: $colorSystemAccent100; }
 
     #root-loader { background: $colorBgPrimary; }
 	#globalFade { background: $colorBgPrimary; }
@@ -26,8 +25,6 @@ html.themeDark {
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: $colorSystemSelection; }
 
-    .textColor-default { color: var(--color-text-primary) !important; }
-
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
     .bgColor-orange { background: rgba(255, 181, 34, 0.25) !important; }
@@ -39,8 +36,8 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; color: $colorTextSecondary; }
-    .isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; color: var(--color-text-secondary); }
+    .isMultiSelect.tagColor-default { background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
     .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isMultiSelect.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
     .isMultiSelect.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
@@ -51,8 +48,6 @@ html.themeDark {
     .isMultiSelect.tagColor-ice { color: $colorIce !important; background: rgba(42, 167, 238, 0.25) !important; }
     .isMultiSelect.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
     .isMultiSelect.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
-
-    .isSelect.tagColor-default { color: var(--color-text-primary) !important; }
 
 	.selectable.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
@@ -89,7 +84,6 @@ html.themeDark {
     }
 
     .mediaAudio {
-        .controls { color: var(--color-text-primary); }
         .controls {
             .icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
@@ -112,7 +106,7 @@ html.themeDark {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.blank { color: var(--color-text-primary); border-color: $colorShapePrimary; }
+    .button.blank { border-color: $colorShapePrimary; }
     .button.blank:not(.disabled):hover,
     .button.blank:not(.disabled).hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
 
@@ -130,8 +124,7 @@ html.themeDark {
     }
 
 	.emptySearch {
-		b { color: var(--color-text-primary); }
-		.label { color: $colorTextSecondary; }
+		.label { color: var(--color-text-secondary); }
 	}
 
     .frame { background: $colorBgPrimary; }
@@ -150,12 +143,9 @@ html.themeDark {
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorShapeHighlightMedium; color: $colorTextSecondary; border-color: transparent; }
+    .inputWithFile { background: $colorShapeHighlightMedium; color: var(--color-text-secondary); border-color: transparent; }
     .inputWithFile {
-        .input::placeholder { color: $colorTextSecondary; }
-        .fileWrap:hover .border { color: var(--color-text-primary); }
-
-        #url { color: var(--color-text-primary); }
+        .input::placeholder { color: var(--color-text-secondary); }
     }
 
     .listPreviewObject {
@@ -165,7 +155,7 @@ html.themeDark {
         .item {
             > .icon.more:hover,
             > .icon.more.hover { background-color: $colorShapeHighlightMedium; }
-            > .defaultLabel { background: $colorShapeTertiary; color: $colorTextSecondary; }
+            > .defaultLabel { background: $colorShapeTertiary; color: var(--color-text-secondary); }
         }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -175,7 +165,7 @@ html.themeDark {
 
     .deleteWrapper { background: $colorBgPrimary; }
 
-	.sync { background-color: $colorShapeSecondary; color: $colorTextSecondary; }
+	.sync { background-color: $colorShapeSecondary; color: var(--color-text-secondary); }
 
     /* PreviewObject */
 
@@ -185,7 +175,7 @@ html.themeDark {
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .moreWrapper { background: $colorShapeTertiary; }
         .heading {
-            .iconObject { background-color: $colorShapeTertiary; box-shadow: 0px 0px 0px 1px var(--color-text-primary) inset; }
+            .iconObject { background-color: $colorShapeTertiary; }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
 
             .featured { background: $colorShapeSecondary; }
@@ -209,7 +199,7 @@ html.themeDark {
 
     .previewObject.blank {
         .heading {
-            .name { color: $colorTextSecondary; }
+            .name { color: var(--color-text-secondary); }
         }
     }
 
@@ -224,15 +214,11 @@ html.themeDark {
 
     .previewWrapper {
         .content { background: $colorBgSecondary; }
-        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-        .head {
-            .item:hover { color: var(--color-text-primary); }
-        }
+        .head { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
 
         .previewLink {
-            .name { color: var(--color-text-primary); }
-            .descr { color: $colorTextSecondary; }
-            .link { color: $colorTextSecondary; }
+            .descr { color: var(--color-text-secondary); }
+            .link { color: var(--color-text-secondary); }
             .img { border-color: $colorShapeSecondary; }
         }
     }
@@ -242,9 +228,7 @@ html.themeDark {
     /* Pager */
 
     .pager {
-        .pageItem:hover { color: var(--color-text-primary); }
-        .pageItem.active { color: $colorOrange; }
-        .pageItem.list:hover { color: var(--color-text-primary); }
+        .pageItem.active { color: $colorSystemAccent100; }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
@@ -260,8 +244,7 @@ html.themeDark {
     .progress {
         .inner { background: $colorBgSecondary; }
         .inner {
-			.fill { background: $colorTextSecondary; }
-            .label { color: var(--color-text-primary); }
+			.fill { background: var(--color-text-secondary); }
             .bar { background: $colorShapeHighlightMedium; }
         }
     }
@@ -272,7 +255,6 @@ html.themeDark {
 		}
 	}
 
-    .tooltip { background: $colorShapeSecondary; color: var(--color-text-primary); }
     .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
@@ -295,9 +277,8 @@ html.themeDark {
     /* EditorControls */
 
     .editorControls {
-        .btn { background: $colorShapeSecondary; color: $colorTextSecondary; }
-        .btn:hover { color: var(--color-text-primary); }
-
+        .btn { background: $colorShapeSecondary; color: var(--color-text-secondary); }
+ы
         .btn {
             .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
             .icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
@@ -317,33 +298,31 @@ html.themeDark {
     .header.isCommon { background: $colorBgPrimary; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-		.path:hover { background-color: $colorShapeHighlightMedium; color: var(--color-text-primary); }
+		.path:hover { background-color: $colorShapeHighlightMedium; }
 
         .icon:hover, .icon.hover { background-color: $colorShapeHighlightMedium; }
 
-        .tabs { color: $colorTextSecondary; }
+        .tabs { color: var(--color-text-secondary); }
         .tabs {
-            .tab.active, .tab:hover { color: var(--color-text-primary); border-color: $colorShapePrimary; }
+            .tab.active, .tab:hover { border-color: $colorShapePrimary; }
         }
 
-        .headerBanner { background: $colorShapeTertiary; color: var(--color-text-primary); }
+        .headerBanner { background: $colorShapeTertiary; }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 	.header.isCommon.active {
-		.path { background-color: $colorShapeHighlightMedium; color: var(--color-text-primary); }
+		.path { background-color: $colorShapeHighlightMedium; }
 	}
 
     .header.mainHistory { background: $colorBgPrimary; }
     .header.mainHistory {
         .side {
-            .item { color: $colorTextSecondary; }
+            .item { color: var(--color-text-secondary); }
             .item {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
             }
         }
         
-		.item.grey:hover { color: var(--color-text-primary); }
-
 		.item:hover {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
@@ -357,7 +336,7 @@ html.themeDark {
 
     /* Sidebar */
 
-    .sidebar { background-color: $colorBgSecondary; color: var(--color-text-primary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
+    .sidebar { background-color: $colorBgSecondary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
@@ -383,23 +362,18 @@ html.themeDark {
     /* Cells */
 
     .cellContent {
-        .more { color: $colorTextSecondary; }
+        .more { color: var(--color-text-secondary); }
     }
 
     .cell.isEditing {
         .cellContent { background: $colorBgPrimary; }
     }
 
-    .cell.isEditing.c-select, .cell.isEditing.c-object {
-        #entry { color: var(--color-text-primary); }
-    }
-
     .cellContent.c-url, 
     .cellContent.c-email, 
     .cellContent.c-phone 
     {
-        .name { border-color: $colorTextSecondary; }
-        .name:hover { color: var(--color-text-primary); border-color: var(--color-text-primary); }
+        .name { border-color: var(--color-text-secondary); }
     }
 
 	/* Notifications */

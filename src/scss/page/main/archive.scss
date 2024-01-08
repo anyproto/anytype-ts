@@ -32,7 +32,7 @@
 					.iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: $colorShapeTertiary; }
 
 					.name { @include text-overflow-nw; width: 100%; }
-					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorTextSecondary; }
+					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); }
 				}
 			}
 		}

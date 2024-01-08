@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .sync { 
-	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: $colorTextSecondary; background: $colorShapeTertiary; 
+	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary); background: $colorShapeTertiary; 
 	border-radius: 4px; padding: 0px 6px; gap: 0px 4px;
 }
 .sync {

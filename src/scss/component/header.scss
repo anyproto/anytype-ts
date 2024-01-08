@@ -84,13 +84,13 @@
 	}
 
 	.item { 
-		color: $colorTextSecondary; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
+		color: var(--color-text-secondary); transition: $transitionAllCommon; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
 	}
 	.item {
 		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
 	}
-	.item.orange { color: $colorOrange !important; font-weight: 500; }
+	.item.orange { color: $colorSystemAccent100 !important; font-weight: 500; }
 	
 	.item.grey:hover { color: var(--color-text-primary); }
 	.item.orange:hover { color: $colorSystemAccent100 !important; }

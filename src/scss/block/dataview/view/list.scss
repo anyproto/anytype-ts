@@ -7,7 +7,7 @@
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
 		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
-			.row.isDone * { color: $colorTextSecondary; }
+			.row.isDone * { color: var(--color-text-secondary); }
 			.row.isEditing {
 				.cellContent:not(.isName) { display: none; }
 			}
@@ -16,13 +16,13 @@
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: default !important; color: $colorTextSecondary;
+				cursor: default !important; color: var(--color-text-secondary);
 			}
 			.cellContent:last-child { margin: 0px; }
 			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
 
 			.cellContent::before { 
-				content: ""; width: 2px; height: 2px; border-radius: 50%; background: $colorTextSecondary; display: inline-block; 
+				content: ""; width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); display: inline-block; 
 				vertical-align: middle; margin: 0px 6px; 
 			}
 			.cellContent.first::before { display: none; }
@@ -60,7 +60,7 @@
 
 			.cellContent.c-url, 
 			.cellContent.c-email, 
-			.cellContent.c-phone { color: $colorTextSecondary; cursor: default !important; }
+			.cellContent.c-phone { color: var(--color-text-secondary); cursor: default !important; }
 
 			.cellContent.c-url, 
 			.cellContent.c-email, 

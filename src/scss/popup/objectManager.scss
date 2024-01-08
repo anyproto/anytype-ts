@@ -19,7 +19,7 @@
 				.objectClickArea { width: calc(100% - 30px); }
 
 				.name { @include text-overflow-nw; width: 100%; }
-				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorTextSecondary; }
+				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); }
 			}
 		}
 		.emptySearch { height: 238px; }

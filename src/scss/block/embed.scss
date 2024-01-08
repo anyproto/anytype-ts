@@ -105,7 +105,7 @@
 		.selectWrap { text-align: left; }
 		.selectWrap {
 			.select { 
-				border: 0px; color: $colorTextSecondary; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+				border: 0px; color: var(--color-text-secondary); @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
 				display: none; margin-bottom: 8px;
 			}
 			.select {

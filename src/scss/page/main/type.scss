@@ -27,7 +27,7 @@
 
 		.section.template {
 			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorTextSecondary; 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: var(--color-text-secondary); 
 				transition: $transitionAllCommon;
 			}
 			.btn {
@@ -52,7 +52,7 @@
 				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionAllCommon; border-radius: 4px; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorTextSecondary; }
+				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: var(--color-text-secondary); }
 			}
 			.item.canEdit {
 				.clickable { }
@@ -62,7 +62,7 @@
 			.item.add { line-height: 20px; }
 			.item.add {
 				.icon { transition: $transitionAllCommon; }
-				.name { color: $colorTextSecondary; transition: $transitionAllCommon; }
+				.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
 
 				.clickable:hover {
 					.name { color: var(--color-text-primary); } 
@@ -73,7 +73,7 @@
 
 		.section.layout {
 			.title { margin-bottom: 10px; }
-			.content { line-height: 20px; color: $colorTextSecondary; }
+			.content { line-height: 20px; color: var(--color-text-secondary); }
 			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
 			.select:hover, .select.active { background: $colorShapeHighlightLight; }
 

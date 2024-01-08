@@ -14,7 +14,7 @@
             .column {
 				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 
-                .head { cursor: grab; color: $colorTextSecondary; width: 100%; position: relative; padding: 8px 16px 0px 16px; }
+                .head { cursor: grab; color: var(--color-text-secondary); width: 100%; position: relative; padding: 8px 16px 0px 16px; }
 				.head * { cursor: grab; }
 				.head {
 					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
@@ -25,7 +25,7 @@
 
 					.cellContent { width: 100%; display: inline; }
 					.cellContent {
-						.empty { display: block; line-height: 24px; color: $colorTextSecondary; }
+						.empty { display: block; line-height: 24px; color: var(--color-text-secondary); }
 						.wrap { display: inline-block; white-space: nowrap; width: 100%; }
 						.tagItem { max-width: 100%; }
 						.more { vertical-align: top; }

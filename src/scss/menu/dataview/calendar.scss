@@ -30,7 +30,7 @@
 		.foot { padding: 0px 16px; }
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn.clear { color: $colorTextSecondary; }
+			.btn.clear { color: var(--color-text-secondary); }
 			.btn:last-child { margin: 0px; }
 			.btn:hover { color: $colorSystemAccent100; }
 		}
@@ -78,7 +78,7 @@
 			}
 		}
 		.day.other {
-			.number { color: $colorTextSecondary; }
+			.number { color: var(--color-text-secondary); }
 		}
 
 		.items { overflow-y: auto; flex-grow: 1; height: calc(100% - 24px); max-height: 250px; }

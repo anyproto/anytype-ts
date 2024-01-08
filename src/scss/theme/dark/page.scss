@@ -30,8 +30,7 @@
 .pageMainStore {
     .body {
 		.tabs {
-			.tab { color: $colorTextSecondary; }
-			.tab:hover, .tab.active { color: var(--color-text-primary); }
+			.tab { color: var(--color-text-secondary); }
 		}
 
 		.emptySearch { border-color: $colorShapePrimary; }
@@ -52,8 +51,7 @@
 					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
 					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
 
-					.button { color: $colorTextSecondary; }
-					.button:hover { color: var(--color-text-primary); }
+					.button { color: var(--color-text-secondary); }
 				}
             }
         }
@@ -65,12 +63,11 @@
 .pageMainType {
     .wrapper {
         .section.template {
-			.btn { color: $colorTextSecondary; }
+			.btn { color: var(--color-text-secondary); }
 			.btn {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
 
-			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
 			}
@@ -83,7 +80,7 @@
 
         .section.relation {
             .item {
-                .name { color: $colorTextSecondary; }
+                .name { color: var(--color-text-secondary); }
             }
             .item.canEdit, .item.add {
 				.clickable:hover { background: $colorShapeHighlightMedium; }
@@ -92,14 +89,14 @@
 			.item.add {
 				.clickable:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-					.name { color: $colorTextSecondary; }
+					.name { color: var(--color-text-secondary); }
 				}
 			}
         }
 
         table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+            .cellHead .name { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
             .cell { border-color: $colorShapeSecondary; }
             tbody { border-color: $colorShapeSecondary; }
         }
@@ -113,7 +110,7 @@
     .wrapper {
         table { border-color: $colorShapeSecondary; }
         table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
+            .cellHead .name { border-color: $colorShapeSecondary; color: var(--color-text-secondary); }
             .cell { border-color: $colorShapeSecondary; }
             tbody { border-color: $colorShapeSecondary; }
         }
@@ -127,7 +124,7 @@
 	.wrapper > #loader { background: $colorBgPrimary; }
     .selected { border-color: $colorShapePrimary; }
     .selected {
-        .descr { color: $colorTextSecondary; }
+        .descr { color: var(--color-text-secondary); }
     }
 
     .items {
@@ -136,7 +133,7 @@
 			.iconObject { background: $colorShapeTertiary; }
 			.iconObject.isTask { background: none; }
 
-            .descr { color: $colorTextSecondary; }
+            .descr { color: var(--color-text-secondary); }
         }
     }
 }
@@ -150,7 +147,7 @@
 
         .item:hover, .item.active { background: $colorShapeHighlightMedium; }
         .item {
-            .name { color: $colorTextSecondary; }
+            .name { color: var(--color-text-secondary); }
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
     }

@@ -1,10 +1,10 @@
 .listWidget {
 	> .buttons {
-		.button, .button.edit { background-color: $colorShapeSecondary; color: var(--color-text-primary); }
+		.button, .button.edit { background-color: $colorShapeSecondary; }
 	}
 }
 
-.widget { background-color: $colorBgPrimary; color: var(--color-text-primary); border-color: $colorShapeSecondary !important;  }
+.widget { background-color: $colorBgPrimary; border-color: $colorShapeSecondary !important;  }
 .widget {
 	.iconWrap:hover, .iconWrap.active { background-color: $colorShapeHighlightMedium; }
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
@@ -52,8 +52,7 @@
 	#viewSelect { border-color: $colorShapeSecondary; }
 	#viewSelect {
 		.viewList {
-			.viewItem { color: $colorTextSecondary; }
-			.viewItem:hover, .viewItem.active { color: var(--color-text-primary); }
+			.viewItem { color: var(--color-text-secondary); }
 		}
 
 		.select {

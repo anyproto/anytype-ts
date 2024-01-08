@@ -49,7 +49,7 @@
 				.icon.toggle { background-image: url('~img/icon/object/preview/toggle.svg'); }
 
 				.number {
-					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: $colorTextSecondary; margin-right: 4px; flex-shrink: 0;
+					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: var(--color-text-secondary); margin-right: 4px; flex-shrink: 0;
 					vertical-align: top;
 				}
 

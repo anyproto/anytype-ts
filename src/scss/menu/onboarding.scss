@@ -6,7 +6,7 @@
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
 
-		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: $colorTextSecondary; margin: 0px 0px 8px 0px; }
+		.category { @include text-small; font-weight: 500; letter-spacing: -0.12px; color: var(--color-text-secondary); margin: 0px 0px 8px 0px; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }

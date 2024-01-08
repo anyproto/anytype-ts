@@ -58,7 +58,7 @@
 				}
 				.item:hover::before { background: $colorShapeHighlightMedium; }
 
-				.item.more { display: block; color: $colorTextSecondary; }
+				.item.more { display: block; color: var(--color-text-secondary); }
 			}
         }
     }

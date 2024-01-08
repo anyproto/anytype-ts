@@ -14,7 +14,7 @@
     .popup.popupSearch {
         .head { border-color: $colorShapeSecondary; }
         .item {
-            .descr { color: $colorTextSecondary; }
+            .descr { color: var(--color-text-secondary); }
         }
         .item.active { background-color: $colorShapeHighlightMedium; }
     }
@@ -41,16 +41,13 @@
 					.element:hover { background-color: $colorShapeHighlightMedium; }
 				}
 
-				.label.section, .label.small, .label.grey { color: $colorTextSecondary; }
+				.label.section, .label.small, .label.grey { color: var(--color-text-secondary); }
 				.row { border-color: $colorShapeSecondary; }
 
 				.input,
 				.select { border-color: $colorShapePrimary; }
 
-				.select { color: $colorTextSecondary; }
-				.select {
-					.item { color: var(--color-text-primary); }
-				}
+				.select { color: var(--color-text-secondary); }
 				.select:hover { background-color: $colorShapeHighlightMedium; }
 
 				.actionItems,
@@ -125,11 +122,10 @@
         }
 
 		.side.right.tabImportNotion {
-			.btn { color: $colorTextSecondary; }
+			.btn { color: var(--color-text-secondary); }
 			.btn {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
 			}
-			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
 			}
@@ -145,7 +141,7 @@
 		}
 
 		.side.right.tabAppearance {
-			.btn { color: $colorTextSecondary; }
+			.btn { color: var(--color-text-secondary); }
 
 			.btn.light { 
 				.bg { background-color: #fff; }
@@ -164,7 +160,6 @@
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
-			.btn.active { color: var(--color-text-primary); }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -182,10 +177,7 @@
 
     .popup.popupShortcut {
         .head {
-            .tabs { color: $colorTextSecondary; }
-            .tabs {
-                .item:hover, .item.active { color: var(--color-text-primary); }
-            }
+            .tabs { color: var(--color-text-secondary); }
         }
 
         .body {
@@ -194,7 +186,7 @@
                 .items {
                     .item { border-color: $colorShapeSecondary; }
                     .item {
-                        .key { color: $colorTextSecondary; }
+                        .key { color: var(--color-text-secondary); }
                     }
                 }
             }
@@ -211,13 +203,13 @@
     /* PopupHelp */
 
     .popup.popupHelp {
-		.head { color: $colorTextSecondary; }
+		.head { color: var(--color-text-secondary); }
 		.head {
 			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
 		}
 
-        .highlight { color: $colorOrange; background: $colorShapeHighlightMedium; }
+        .highlight { color: $colorSystemAccent100; background: $colorShapeHighlightMedium; }
 	}
 
     /* PopupPrompt */
@@ -242,7 +234,7 @@
 
 	.popup.popupUsecase {
 		.titleWrap {
-			.label { color: $colorTextSecondary;  }
+			.label { color: var(--color-text-secondary);  }
 		}
 
 		.screenWrap { background: $colorShapeHighlightMedium; }
@@ -255,9 +247,9 @@
 		.footerWrap {
 			.side.right {
 				.tags {
-					.tagItem { background: $colorShapeHighlightMedium; color: $colorTextSecondary; }
+					.tagItem { background: $colorShapeHighlightMedium; color: var(--color-text-secondary); }
 				}
-				.label { color: $colorTextSecondary; }
+				.label { color: var(--color-text-secondary); }
 			}
 		}
 	}

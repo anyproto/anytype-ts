@@ -81,7 +81,7 @@
 					.icon.plus:hover { background-image: url('~img/icon/store/plus1.svg'); }
 
 					.button { 
-						@include text-common; opacity: 0; background: none; color: $colorTextSecondary; border-radius: 0px; padding: 0px; height: 1em; 
+						@include text-common; opacity: 0; background: none; color: var(--color-text-secondary); border-radius: 0px; padding: 0px; height: 1em; 
 						line-height: 1em; cursor: default;
 					}
 					.button:hover { color: var(--color-text-primary); }

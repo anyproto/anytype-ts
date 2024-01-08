@@ -77,7 +77,7 @@
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
-				flex-shrink: 0; padding: 6px; color: $colorTextSecondary; display: flex; gap: 0px 6px; align-items: center; position: relative;
+				flex-shrink: 0; padding: 6px; color: var(--color-text-secondary); display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
 			.info.canEdit:hover { background: $colorShapeHighlightLight; }
 

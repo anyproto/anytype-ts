@@ -25,8 +25,8 @@
 				.icon.arrow { display: none; }
 			}
 
-			.condition { color: $colorTextSecondary; margin-right: 4px; }
-			.value { color: $colorTextSecondary; white-space: nowrap; overflow: hidden; line-height: 22px; }
+			.condition { color: var(--color-text-secondary); margin-right: 4px; }
+			.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; line-height: 22px; }
 
 			.tagItem { margin: 2px 4px 0px 0px; vertical-align: top; }
 

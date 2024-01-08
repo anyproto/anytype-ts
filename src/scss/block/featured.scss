@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockFeatured { 
-		@include text-common; line-height: 28px; color: $colorTextSecondary; padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
+		@include text-common; line-height: 28px; color: var(--color-text-secondary); padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
 		margin-top: -3px;
 	}
 	.block.blockFeatured {
@@ -11,7 +11,7 @@
 
 		.wrap { white-space: normal; }
 
-		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorTextSecondary; display: inline-block; vertical-align: middle; margin: 0px 2px; }
+		.bullet { width: 4px; height: 4px; border-radius: 100%; background: var(--color-text-secondary); display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
 		.cell.canEdit {
 			.cellContent {
