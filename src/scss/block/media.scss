@@ -31,7 +31,7 @@
 			.info {
 				.name { height: 24px; line-height: 24px; display: inline-block; vertical-align: top; @include text-overflow-nw; }
 				.size {
-					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorControlActive; margin: 0px 8px;
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: var(--color-control-active); margin: 0px 8px;
 					display: inline-block; vertical-align: top;
 				}
 			}

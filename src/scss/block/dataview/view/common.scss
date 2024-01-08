@@ -5,7 +5,7 @@
 
 		.viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorControlActive; line-height: 20px; width: 100%; display: block; }
+			.cell.add { color: var(--color-control-active); line-height: 20px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; transition: $transitionAllCommon; }
 				.btn:hover { color: var(--color-text-primary); }
@@ -73,7 +73,7 @@
 			.row:hover {
 				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
 				.icon.dnd:hover {
-					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+					background-image: url('~img/icon/block/menu2.svg') !important; border-color: var(--color-system-accent-100); box-shadow: 0px 0px 0px 1px var(--color-system-accent-100);
 				}
 			}
 		}

@@ -29,7 +29,7 @@
 	}
 
 	.menu.menuSelect.button {
-		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: $colorControlActive; font-weight: 500; }
+		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: var(--color-control-active); font-weight: 500; }
 		.item:hover { color: var(--color-text-primary); }
 		.item:last-child { margin-right: 0px; }
 	}

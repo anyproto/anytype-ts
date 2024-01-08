@@ -4,24 +4,10 @@
 /* PageMainGraph */
 
 .pageMainGraph {
-    canvas { background: $colorBgPrimary; }
-	#loader { background: $colorBgPrimary !important; }
-
     .wrapper {
-        .side.right { background: $colorBgPrimary; border-color: var(--color-shape-secondary); }
         .side.right {
-            .bottom { border-color: var(--color-shape-secondary); }
             .filter { background: none; }
         }
-
-        .section {
-            .item { background: $colorBgPrimary; }
-            .item:hover::before { background: var(--color-shape-highlight-medium); }
-        }
-    }
-
-    .footer {
-        .icon { background-color: var(--color-shape-secondary); }
     }
 }
 
@@ -71,17 +57,10 @@
         }
     }
 }
-.pageMainType > div > #loader { background: $colorBgPrimary; }
-
-/* PageMainRelation */
-
-.pageMainRelation > div > #loader { background: $colorBgPrimary; }
 
 /* PageMainNavigation */
 
 .pageMainNavigation {
-	.wrapper > #loader { background: $colorBgPrimary; }
-
     .items {
         .item {
 			.iconObject.isTask { background: none; }
@@ -92,10 +71,7 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBgPrimary; }
     .list {
-        .section.fix { background: $colorBgPrimary; }
-
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }

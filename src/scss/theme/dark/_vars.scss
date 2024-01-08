@@ -14,28 +14,24 @@
 
 	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
 	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
+
+	/* Control */
+
+	--color-control-accent: #d4d4d4;
+	--color-control-active: #9a9a9a;
+	--color-control-inactive: #464646;
+	--color-control-bg: #fff;
+
+	/* Background */
+
+	--color-bg-primary: #171717;
+	--color-bg-secondary: #252525;
+	--color-bg-tertiary: #464646;
+	--color-bg-loader: rgba(0,0,0,0.7);
+
+	/* System */
+
+	--color-system-selection: rgba(24, 163, 241, 0.15);
 }
 
 $themePath: '~img/theme/dark';
-
-/* Control */
-
-$colorControlAccent: #d4d4d4;
-$colorControlActive: #9a9a9a;
-$colorControlInactive: #464646;
-$colorControlOnBg: #fff;
-
-/* Background */
-
-$colorBgPrimary: #171717;
-$colorBgSecondary: #252525;
-$colorBgTertiary: #464646;
-$colorBgLoader: rgba(0,0,0,0.7);
-
-/* System */
-
-$colorSystemAccent100: #ffb522;
-$colorSystemAccent50: #ffd15b;
-$colorSystemAccent25: #ffee94;
-$colorSystemSelection: rgba(24, 163, 241, 0.15);
-$colorSystemDropZone: rgba(255, 187, 44, 0.25);

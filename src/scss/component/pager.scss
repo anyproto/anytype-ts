@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pager { 
-    text-align: center; color: $colorControlActive; white-space: nowrap; @include text-common; user-select: none; 
+    text-align: center; color: var(--color-control-active); white-space: nowrap; @include text-common; user-select: none; 
     line-height: 20px; display: flex; align-items: center; justify-content: center; gap: 0px 8px;
 }
 .pager.isShort { gap: 0px 18px; }
@@ -13,7 +13,7 @@
     .pageItem:hover, .pageItem.active { color: var(--color-text-primary); }
 
     .pageItem.list { cursor: default; }
-    .pageItem.list:hover { color: $colorControlActive; }
+    .pageItem.list:hover { color: var(--color-control-active); }
 	
 	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; vertical-align: top; line-height: 24px; }
 

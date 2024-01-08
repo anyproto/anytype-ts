@@ -83,7 +83,7 @@
 			.editableWrap.isEmpty { min-width: 160px; }
 		}
 
-		.dataviewControls { font-weight: 500; color: $colorControlActive; position: relative; }
+		.dataviewControls { font-weight: 500; color: var(--color-control-active); position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: 0px; }
 
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
@@ -137,7 +137,7 @@
 
 			.viewItem { 
 				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
-				max-width: 300px; color: $colorControlActive;
+				max-width: 300px; color: var(--color-control-active);
 			}
 			.viewItem { 
 				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
@@ -183,7 +183,7 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
-			.scrollWrap { background: $colorBgPrimary; }
+			.scrollWrap { background: var(--color-bg-primary); }
 		}
 
 		.viewContent {

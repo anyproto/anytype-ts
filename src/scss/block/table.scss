@@ -26,11 +26,11 @@
 		.handle {
 			.inner { height: 22px; width: 2px; padding: 2px 0px; position: relative; }
 			.inner::after {
-				content: ""; display: block; background-color: $colorSystemAccent100; width: 100%; height: 100%; background-position: center;
+				content: ""; display: block; background-color: var(--color-system-accent-100); width: 100%; height: 100%; background-position: center;
 				background-repeat: no-repeat; border-radius: 3px; position: relative; z-index: 1;
 			}
 			.inner::before {
-				content: ""; height: 100%; width: 2px; position: absolute; left: 50%; margin-left: -1px; top: 0px; background: $colorBgPrimary; z-index: 0;
+				content: ""; height: 100%; width: 2px; position: absolute; left: 50%; margin-left: -1px; top: 0px; background: var(--color-bg-primary); z-index: 0;
 			}
 		}
 		.handle:hover, .handle.isActive {
@@ -67,7 +67,7 @@
 
 		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
 		.table.isClone {
-			.handleColumn { display: block; border-color: $colorSystemAccent100; }
+			.handleColumn { display: block; border-color: var(--color-system-accent-100); }
 		}
 		
 		.row { display: grid; position: relative; border-right: 1px solid var(--color-shape-primary); }
@@ -103,7 +103,7 @@
 		}
 
 		.cell { 
-			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: $colorBgPrimary;
+			@include text-common; vertical-align: top; position: relative; cursor: text; flex-shrink: 0; background: var(--color-bg-primary);
 			color: var(--color-shape-primary); border-left: 1px solid var(--color-shape-primary); border-top: 1px solid var(--color-shape-primary);
 		}
 
@@ -174,7 +174,7 @@
 				} 
 			}
 			.icon.menu:hover {
-				.inner { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); background-color: $colorBgPrimary; }
+				.inner { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); background-color: var(--color-bg-primary); }
 			}
 
 			.block.blockText { @include text-common; }

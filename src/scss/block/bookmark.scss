@@ -6,7 +6,7 @@
 		.focusable { border-radius: 4px; }
 		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-secondary); height: 48px; width: 100%; }
 
-		.deleted { display: flex; gap: 0px 6px; align-items: center; color: $colorControlActive; }
+		.deleted { display: flex; gap: 0px 6px; align-items: center; color: var(--color-control-active); }
         .deleted {
 			.icon.ghost { width: 24px; height: 24px; }
             .name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; margin: 0px; }

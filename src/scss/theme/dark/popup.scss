@@ -5,15 +5,7 @@
     /* Common */
 
     .popup {
-        .innerWrap { background: $colorBgPrimary; box-shadow: 0px 0px 0px 1px $colorBgSecondary; }
-        #loader { background: $colorBgLoader; }
-    }
-
-    /* PopupSearch */
-
-    .popup.popupSearch {
-        .head { border-color: var(--color-shape-secondary); }
-        .item.active { background-color: var(--color-shape-highlight-medium); }
+        .innerWrap { box-shadow: 0px 0px 0px 1px var(--color-bg-secondary); }
     }
 
     /* PopupSettings */
@@ -21,16 +13,10 @@
     .popup.popupSettings, .popup.popupSettingsOnboarding {
 		
 		.mainSides {
-			> .side.left { background: $colorBgSecondary; }
+			> .side.left { background: var(--color-bg-secondary); }
 			> .side.left {
 				.item {
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
-				}
-			}
-
-			> .side.right {
-				.head {
-					.inner { background: $colorBgPrimary; }
 				}
 			}
 		}
@@ -54,20 +40,6 @@
 						}
 					}
 				}
-			}
-		}
-
-		.side.right.tabSpaceCreate {
-			.loaderWrapper { background-color: $colorBgLoader; }
-		}
-
-        .side.right.tabPhrase {
-            .qrWrap { background: $colorControlActive; }
-        }
-
-		.side.right.tabAccount {
-			.sections .section {
-				.input:focus:not(.isReadonly) { border-color: $colorSystemAccent100; }
 			}
 		}
 
@@ -114,26 +86,6 @@
 		}
     }
     
-    /* PopupShortcuts */
-
-    .popup.popupShortcut {
-        .body {
-            .section {
-                .name { border-color: var(--color-shape-secondary); }
-                .items {
-                    .item { border-color: var(--color-shape-secondary); }
-                }
-            }
-            .section > .descr { border-color: var(--color-shape-secondary); }
-        }
-    }
-
-	/* PopupPreview */
-
-	.popup.popupPreview {
-		#loader { background: $colorBgPrimary; }
-	}
-
     /* PopupHelp */
 
     .popup.popupHelp {
@@ -141,27 +93,19 @@
 			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
 		}
-
-        .highlight { color: $colorSystemAccent100; background: var(--color-shape-highlight-medium); }
 	}
-
-    /* PopupPrompt */
-
-    .popup.popupPrompt {
-        .input { background: $colorBgPrimary; }
-    }
 
 	/* PopupMigration */
 
 	.popup.popupMigration {
-		.qrWrap { background-color: $colorBgSecondary; }
+		.qrWrap { background-color: var(--color-bg-secondary); }
 	}
 
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
 		.screenWrap {
-			.icon.arrow { background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); }
+			.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
 		}
 	}
 

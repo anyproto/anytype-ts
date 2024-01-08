@@ -4,7 +4,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: $colorBgPrimary;
+	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow-x: hidden; overflow-y: auto; background: var(--color-bg-primary);
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
@@ -18,7 +18,7 @@ body.isFullScreen {
 }
 
 :focus { outline: 0px; }
-::selection { background-color: $colorSystemSelection; }
+::selection { background-color: var(--color-system-selection); }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
@@ -48,7 +48,7 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 #globalFade { 
-	position: fixed; z-index: 999; background: $colorBgPrimary; left: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0;
+	position: fixed; z-index: 999; background: var(--color-bg-primary); left: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0;
 	transition: opacity 0.25s ease-in-out;
 }
 #globalFade.show { opacity: 1; }
@@ -105,37 +105,37 @@ a { color: var(--color-text-primary); }
 search { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
 search.active { background: orange !important; }
 
-.dropTarget.isOver.middle { background: $colorSystemDropZone !important; }
-.dropTarget.isOver.top { box-shadow: 0px -2px 0px $colorSystemAccent100; }
-.dropTarget.isOver.bottom { box-shadow: 0px 2px 0px $colorSystemAccent100; }
-.dropTarget.isOver.left { box-shadow: -2px 0px 0px $colorSystemAccent100; }
-.dropTarget.isOver.right { box-shadow: 2px 0px 0px $colorSystemAccent100; }
+.dropTarget.isOver.middle { background: var(--color-system-drop-zone) !important; }
+.dropTarget.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100); }
+.dropTarget.isOver.bottom { box-shadow: 0px 2px 0px var(--color-system-accent-100); }
+.dropTarget.isOver.left { box-shadow: -2px 0px 0px var(--color-system-accent-100); }
+.dropTarget.isOver.right { box-shadow: 2px 0px 0px var(--color-system-accent-100); }
 
 /* DropTarget for Layout.Row */
-.dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px $colorSystemAccent100 inset; }
-.dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px $colorSystemAccent100 inset; }
+.dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
+.dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px var(--color-system-accent-100) inset; }
 
 .isSelectionSelected { position: relative; }
 
 .selectable.isSelectionSelected::after, 
 .block.isSelectionSelected > .wrapContent > .selectable::after 
 { 
-	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: $colorSystemSelection;
+	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: var(--color-system-selection);
 	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;
 }
 
 .textColor-default { color: var(--color-text-primary) !important; }
 .textColor-black { color: var(--color-text-primary) !important; }
-.textColor-grey { color: $colorControlActive !important; }
-.textColor-yellow { color: $colorYellow !important; }
-.textColor-orange { color: $colorOrange !important; }
-.textColor-red { color: $colorRed !important; }
-.textColor-pink { color: $colorPink !important; }
-.textColor-purple { color: $colorPurple !important; }
-.textColor-blue { color: $colorBlue !important; }
-.textColor-ice { color: $colorIce !important; }
-.textColor-teal { color: $colorTeal !important; }
-.textColor-lime { color: $colorLime !important; }
+.textColor-grey { color: var(--color-control-active) !important; }
+.textColor-yellow { color: var(--color-yellow) !important; }
+.textColor-orange { color: var(--color-orange) !important; }
+.textColor-red { color: var(--color-red) !important; }
+.textColor-pink { color: var(--color-pink) !important; }
+.textColor-purple { color: var(--color-purple) !important; }
+.textColor-blue { color: var(--color-blue) !important; }
+.textColor-ice { color: var(--color-ice) !important; }
+.textColor-teal { color: var(--color-teal) !important; }
+.textColor-lime { color: var(--color-lime) !important; }
 
 .bgColor-grey { background: var(--color-shape-tertiary) !important; }
 .bgColor-yellow { background: #fef9cc !important; }
@@ -149,39 +149,39 @@ search.active { background: orange !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
-.isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: $colorBgPrimary !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
+.isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: var(--color-bg-primary) !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
 .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
 .isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
 .isMultiSelect.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
 .isMultiSelect.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
 .isMultiSelect.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
 .isMultiSelect.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
-.isMultiSelect.tagColor-blue { color: $colorBlue !important; background: #dce1fb !important; }
+.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #dce1fb !important; }
 .isMultiSelect.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
 .isMultiSelect.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
 .isMultiSelect.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
 
 .isSelect.tagColor-default { color: var(--color-text-primary) !important; }
 .isSelect.tagColor-black { color: var(--color-text-primary) !important; }
-.isSelect.tagColor-grey { color: $colorControlActive !important; }
-.isSelect.tagColor-yellow { color: $colorYellow !important; }
-.isSelect.tagColor-orange { color: $colorOrange !important; }
-.isSelect.tagColor-red { color: $colorRed !important; }
-.isSelect.tagColor-pink { color: $colorPink !important; }
-.isSelect.tagColor-purple { color: $colorPurple !important; }
-.isSelect.tagColor-blue { color: $colorBlue !important; }
-.isSelect.tagColor-ice { color: $colorIce !important; }
-.isSelect.tagColor-teal { color: $colorTeal !important; }
-.isSelect.tagColor-lime { color: $colorLime !important; }
+.isSelect.tagColor-grey { color: var(--color-control-active) !important; }
+.isSelect.tagColor-yellow { color: var(--color-yellow) !important; }
+.isSelect.tagColor-orange { color: var(--color-orange) !important; }
+.isSelect.tagColor-red { color: var(--color-red) !important; }
+.isSelect.tagColor-pink { color: var(--color-pink) !important; }
+.isSelect.tagColor-purple { color: var(--color-purple) !important; }
+.isSelect.tagColor-blue { color: var(--color-blue) !important; }
+.isSelect.tagColor-ice { color: var(--color-ice) !important; }
+.isSelect.tagColor-teal { color: var(--color-teal) !important; }
+.isSelect.tagColor-lime { color: var(--color-lime) !important; }
 
 .brokenMedia { 
 	@include text-common; position: relative; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px var(--color-shape-secondary); 
-	color: $colorControlActive; height: 44px;
+	color: var(--color-control-active); height: 44px;
 }
 .brokenMedia {
 	img:before { 
 		content: " "; display: block; position: absolute; left: 0px; top: 0px; height: 100%; width: 100%;
-		background: $colorBgPrimary; border-radius: inherit;
+		background: var(--color-bg-primary); border-radius: inherit;
 	}
 
 	img:after { 

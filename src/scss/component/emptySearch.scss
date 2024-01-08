@@ -4,5 +4,5 @@
 .emptySearch {
 	b { display: block; font-weight: 400; color: var(--color-text-primary); }
 	span { @include text-overflow-nw; max-width: 100%; display: block; }
-	.txt { line-height: 24px; color: $colorControlActive; width: 100%; }
+	.txt { line-height: 24px; color: var(--color-control-active); width: 100%; }
 }

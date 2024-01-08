@@ -8,7 +8,7 @@
 
 			.card { 
 				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 
-				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; background: $colorBgPrimary;
+				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; background: var(--color-bg-primary);
 				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
 			}
 
@@ -21,7 +21,7 @@
 			.card {
 				.dropTarget { height: 100%; }
 				.dropTarget.isOver { box-shadow: 0px 0px; }
-				.dropTarget.isOver::before { content: ""; position: absolute; background: $colorSystemAccent100; width: 2px; height: 100%; border-radius: 2px; top: 0px; }
+				.dropTarget.isOver::before { content: ""; position: absolute; background: var(--color-system-accent-100); width: 2px; height: 100%; border-radius: 2px; top: 0px; }
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
@@ -87,7 +87,7 @@
 				.itemContent > .inner { padding-top: 12px; }
 			}
 
-			.card.isEditing { border: 2px solid $colorSystemAccent100; }
+			.card.isEditing { border: 2px solid var(--color-system-accent-100); }
 			.card.isEditing {
 				.inner { padding: 15px; }
 			}

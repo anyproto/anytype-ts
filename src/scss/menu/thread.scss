@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuThreadList,
 	.menu.menuThreadStatus {
-		.description { color: $colorControlActive; display: flex; flex-direction: row; align-items: center; }
+		.description { color: var(--color-control-active); display: flex; flex-direction: row; align-items: center; }
 		
 		.item { line-height: 22px; }
 
@@ -12,9 +12,9 @@
 
 		.icon { margin-right: 9px; }
 
-		.red { color: $colorRed; }
-		.orange { color: $colorSystemAccent100; }
-		.green { color: $colorGreen; }
+		.red { color: var(--color-red); }
+		.orange { color: var(--color-system-accent-100); }
+		.green { color: var(--color-green); }
 	}
 
 	.menu.menuThreadStatus { width: 360px; }

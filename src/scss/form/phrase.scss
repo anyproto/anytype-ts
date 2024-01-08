@@ -19,14 +19,14 @@ $colorErrorBackground: #240e07;
 	.word:empty { margin: 0px; }
 
 	.bg { border-radius: 8px; filter: blur(10px); }
-	.bg-orange { background: $colorOrange !important; user-select: none !important; }
-	.bg-red { background: $colorRed !important; }
-	.bg-pink { background: $colorPink !important; }
-	.bg-purple { background: $colorPurple !important; }
-	.bg-blue { background: $colorBlue !important; }
-	.bg-ice { background: $colorIce !important; }
-	.bg-lime { background: $colorLime !important; }
-	.bg-green { background: $colorGreen !important; }
+	.bg-orange { background: var(--color-orange) !important; user-select: none !important; }
+	.bg-red { background: var(--color-red) !important; }
+	.bg-pink { background: var(--color-pink) !important; }
+	.bg-purple { background: var(--color-purple) !important; }
+	.bg-blue { background: var(--color-blue) !important; }
+	.bg-ice { background: var(--color-ice) !important; }
+	.bg-lime { background: var(--color-lime) !important; }
+	.bg-green { background: var(--color-green) !important; }
 
 	.placeholder { color: var(--color-text-tertiary); top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	#entry { 

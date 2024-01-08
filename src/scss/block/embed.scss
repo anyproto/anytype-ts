@@ -38,7 +38,7 @@
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
 			#input { 
-				background: $colorBgPrimary; border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
+				background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
 				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
 			}
 			#placeholder { padding: 6px 12px; }

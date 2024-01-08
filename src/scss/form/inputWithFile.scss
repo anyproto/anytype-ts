@@ -1,17 +1,17 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	padding: 11px 13px; border-radius: 4px; border: solid 1px var(--color-shape-secondary); color: $colorControlActive; @include text-common; 
+	padding: 11px 13px; border-radius: 4px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active); @include text-common; 
 	transition: background 0.05s ease-in-out, border $transitionCommon; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
 }
 .inputWithFile:hover { border-color: var(--color-shape-primary); }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 0.05em solid $colorControlActive; display: inline-block; line-height: 1; transition: $transitionAllCommon; }
+	.fileWrap .border { border-bottom: 0.05em solid var(--color-control-active); display: inline-block; line-height: 1; transition: $transitionAllCommon; }
 	.fileWrap:hover .border { color: var(--color-text-primary); }
 
-	.input::placeholder { color: $colorControlActive; }
+	.input::placeholder { color: var(--color-control-active); }
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }
@@ -29,7 +29,7 @@
 .inputWithFile.isReadonly {
 	.urlToggle { cursor: default; }
 	.border { border: 0px; cursor: default; }
-	.fileWrap:hover .border { color: $colorControlActive; }
+	.fileWrap:hover .border { color: var(--color-control-active); }
 }
 
 .inputWithFile.isSmall {

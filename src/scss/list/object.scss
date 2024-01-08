@@ -3,7 +3,7 @@
 .listObject {
 	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid var(--color-shape-secondary); table-layout: fixed; border-top: 1px solid var(--color-shape-secondary); }
 	table {
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
+		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 
 		.cellHead { 
 			text-align: left; color: var(--color-text-secondary); padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 

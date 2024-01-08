@@ -82,7 +82,7 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: $colorSystemAccent100; }
+		.loader { border-color: #555; border-left-color: var(--color-system-accent-100); }
 		.dot { border-color: #fff; }
 	}
 }
@@ -131,8 +131,8 @@ html.bodyAuthDeleted {
 
 	.loaderWrapper {
 		@keyframes dots-white {
-			0% { background-color: $colorBgPrimary; }
-			32% { background-color: $colorBgPrimary; }
+			0% { background-color: var(--color-bg-primary); }
+			32% { background-color: var(--color-bg-primary); }
 			100% { background-color: rgba(0,0,0,0); }
 		}
 		.dots .dot { animation-name: dots-white; }
@@ -179,7 +179,7 @@ html.bodyAuthDeleted {
 			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: $colorSystemAccent100; }
+		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100); }
 	}
 }
 
@@ -265,5 +265,5 @@ html.bodyAuthDeleted {
 	}
 
 	.button { width: 320px; }
-	.remove { color: $colorRed; }
+	.remove { color: var(--color-red); }
 }

@@ -31,7 +31,7 @@
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
-				background: $colorSystemAccent100; transition: $transitionAllCommon;
+				background: var(--color-system-accent-100); transition: $transitionAllCommon;
 			}
 			.round:hover { background: #F09C0E; }
 			.round {
@@ -58,11 +58,11 @@
 				}
 				.step:hover { background: var(--color-shape-primary); }
 				.step.active,
-				.step.active:hover { background: $colorSystemAccent100; cursor: default; }
+				.step.active:hover { background: var(--color-system-accent-100); cursor: default; }
 				.step:last-of-type { margin-right: 0px; }
 			}
 
-			.number { @include text-small; flex-grow: 1; text-align: center; color: $colorControlActive;  }
+			.number { @include text-small; flex-grow: 1; text-align: center; color: var(--color-control-active);  }
 
 			b { font-weight: 500; }
 		}

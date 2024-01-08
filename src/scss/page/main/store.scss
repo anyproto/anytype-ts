@@ -39,7 +39,7 @@
 		.tabs {
 			.tab { 
 				display: inline-block; font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
-				color: $colorControlActive; transition: $transitionAllCommon;
+				color: var(--color-control-active); transition: $transitionAllCommon;
 			}
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}

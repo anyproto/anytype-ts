@@ -14,7 +14,7 @@
 			.side.right { text-align: right; }
 		}
 		.head {
-			.date { color: $colorControlActive; margin-bottom: 6px; }
+			.date { color: var(--color-control-active); margin-bottom: 6px; }
 			.sides { margin-bottom: 10px; }
 			.side.left {
 				.select { margin-left: -4px; }
@@ -32,7 +32,7 @@
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn.clear { color: var(--color-text-secondary); }
 			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorSystemAccent100; }
+			.btn:hover { color: var(--color-system-accent-100); }
 		}
 
 		.day { 
@@ -40,13 +40,13 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
+		.day:hover { background: var(--color-system-accent-25); color: var(--color-system-accent-100) !important; }
 
-		.day.th { color: $colorControlActive; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorControlActive !important; }
+		.day.th { color: var(--color-control-active); cursor: default; }
+		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }
 		
-		.day.active { color: $colorSystemAccent100; }
-		.day.other { color: $colorControlActive; }
+		.day.active { color: var(--color-system-accent-100); }
+		.day.other { color: var(--color-control-active); }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		
@@ -74,7 +74,7 @@
 		.day.active {
 			.number { padding: 0px; color: var(--color-text-inversion); }
 			.number {
-				.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
+				.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
 			}
 		}
 		.day.other {

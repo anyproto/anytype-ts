@@ -5,7 +5,7 @@
 	.blocks { margin-left: -48px; }
 
 	.note { 
-		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: $colorBgPrimary; position: absolute; 
+		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: var(--color-bg-primary); position: absolute; 
 		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
 	}
 	.note {
@@ -42,7 +42,7 @@
 	}
 	
 	.btn { 
-		background: $colorBgPrimary; font-weight: 500; font-size: 14px; color: $colorControlActive; display: inline-block; 
+		background: var(--color-bg-primary); font-weight: 500; font-size: 14px; color: var(--color-control-active); display: inline-block; 
 		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px; display: flex; 
 		flex-direction: row; align-items: center;
 	}
@@ -64,7 +64,7 @@
 }
 .editorControls:hover, .editorControls.hover, .editorControls.active { opacity: 1; }
 
-.editorControls.isDraggingOver { background: $colorSystemDropZone; }
+.editorControls.isDraggingOver { background: var(--color-system-drop-zone); }
 
 .editorWrapper.isResizing #editorSize { visibility: visible; }
 

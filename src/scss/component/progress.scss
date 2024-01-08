@@ -13,13 +13,13 @@
 .progress {
 	.inner { 
 		position: absolute; left: 50%; top: 50%; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); height: 72px; width: 384px; cursor: grab;
-		border-radius: 12px; text-align: center; background: $colorBgPrimary; overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
+		border-radius: 12px; text-align: center; background: var(--color-bg-primary); overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
 		transition-property: opacity, transform; transition-duration: 0.05s; transition-timing-function: ease-in-out; pointer-events: all;
 	}
 	.inner {
 		.label { position: absolute; left: 16px; top: 12px; z-index: 1; color: var(--color-text-primary); white-space: nowrap; @include text-paragraph; }
 		.bar { width: calc(100% - 32px); height: 8px; background: var(--color-shape-tertiary); overflow: hidden; border-radius: 8px; position: absolute; bottom: 16px; left: 16px; }
-		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: $colorControlAccent; transition: width 0.2s linear; }
+		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: var(--color-control-accent); transition: width 0.2s linear; }
 	}
 	
 	.icon.close { width: 20px; height: 20px; position: absolute; top: 14px; right: 14px; background-image: url('~img/icon/progress/close0.svg'); }

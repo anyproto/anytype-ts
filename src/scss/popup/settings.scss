@@ -58,7 +58,7 @@
 					.name { @include text-common; @include text-overflow-nw; font-weight: 600; }
 				}
 
-				.select { transition: none; border: 0px; color: $colorControlActive; max-width: 100%; }
+				.select { transition: none; border: 0px; color: var(--color-control-active); max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
 				}
@@ -72,7 +72,7 @@
 					width: 100%; margin: 0px 0px 14px 0px; position: sticky; top: 0px; left: 0px; z-index: 10; 
 				}
 				.head {
-					.inner { display: flex; flex-direction: row; align-items: center; background: $colorBgPrimary; padding: 22px 0px; }
+					.inner { display: flex; flex-direction: row; align-items: center; background: var(--color-bg-primary); padding: 22px 0px; }
 
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
@@ -92,7 +92,7 @@
 					padding: 14px 0px 13px 0px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-shape-secondary); 
 					align-items: center; @include text-paragraph;
 				}
-				.row.red { color: $colorRed; }
+				.row.red { color: var(--color-red); }
 				.row {
 					> .input { width: 50%; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
 					> .input.short { width: 30px; padding: 0px 4px; }
@@ -112,7 +112,7 @@
 
 				.iconWrapper { position: relative; }
 				.iconWrapper {
-					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: $colorBgLoader; }
+					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: var(--color-bg-loader); }
 
 					.iconObject { flex-shrink: 0; }
 					.iconObject::after {
@@ -131,7 +131,7 @@
 				.actionItems {
 					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid var(--color-shape-secondary); }
 					> .item:last-child { border-bottom: 0; }
-					> .item.red { color: $colorRed; }
+					> .item.red { color: var(--color-red); }
 					> .item {
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
@@ -176,7 +176,7 @@
 					.title { @include text-header3; margin: 0; }
 					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid var(--color-shape-secondary); border-radius: 10px; }
 					.input:hover:not(.isReadonly) { border-color: var(--color-shape-primary); }
-					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorSystemAccent100; padding: 5px 11px; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: var(--color-system-accent-100); padding: 5px 11px; }
 					.input.isReadonly { background-color: unset; }
 
 					.inputWrapper.withIcon { position: relative; }
@@ -260,7 +260,7 @@
 							.storageLabel { margin-bottom: 12px; line-height: 18px; }
 							.storageLabel {
 								.label { display: inline; }
-								.label.extend { color: $colorRed; }
+								.label.extend { color: var(--color-red); }
 							}
 						}
 					}
@@ -305,7 +305,7 @@
 			}
 
 			.sections { margin: 0px 0px 24px 0px; }
-			.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
+			.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--color-bg-loader); z-index: 1; }
 
 			.select {
 				.item {
@@ -326,7 +326,7 @@
 		.side.right.tabDataManagement {
 			.description {
 				.label { display: inline; }
-				.label.extend { color: $colorRed; }
+				.label.extend { color: var(--color-red); }
 			}
 
 			.storageUsage {
@@ -417,13 +417,13 @@
 			}
 
 			.btn.dark {
-				.bg { background: $colorControlAccent; }
+				.bg { background: var(--color-control-accent); }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
 				.bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
 				.bg::before { left: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; background: $colorControlAccent; border-radius: 0px 14px 14px 0px; }
+				.bg::after { right: 0px; background: var(--color-control-accent); border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
@@ -478,7 +478,7 @@
 		.side.right.tabImportNotion, 
 		.side.right.tabImportNotionHelp {
 			.icon.logo { background-image: url('~img/icon/import/notion.svg'); }
-			a { font-weight: bold; text-decoration: none; color: $colorControlActive; }
+			a { font-weight: bold; text-decoration: none; color: var(--color-control-active); }
 		}
 
 		.side.right.tabImportNotion {
@@ -486,7 +486,7 @@
 			.inputWrapper { 
 				.input { height: 36px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 				.input:hover { border-color: var(--color-shape-primary); }
-				.input:focus { border-color: $colorSystemAccent100; }
+				.input:focus { border-color: var(--color-system-accent-100); }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }

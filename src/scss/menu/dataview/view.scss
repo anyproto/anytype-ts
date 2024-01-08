@@ -50,9 +50,9 @@
 
 			.layout:hover { background-color: var(--color-shape-highlight-light); }
 
-			.layout.active { border: 2px solid $colorSystemAccent100; }
+			.layout.active { border: 2px solid var(--color-system-accent-100); }
 			.layout.active {
-				.label { font-weight: 500; color: $colorSystemAccent100; }
+				.label { font-weight: 500; color: var(--color-system-accent-100); }
 				.icon.view.c0 { background-image: url('~img/icon/dataview/layout/grid1.svg'); }
 				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list1.svg'); }
 				.icon.view.c2 { background-image: url('~img/icon/dataview/layout/gallery1.svg'); }

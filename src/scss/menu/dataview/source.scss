@@ -8,7 +8,7 @@
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
 		.item {
-			.grey { color: $colorControlActive; }
+			.grey { color: var(--color-control-active); }
 			.iconObject { margin-right: 10px; }
 
 			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }

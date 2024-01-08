@@ -19,9 +19,9 @@
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: var(--color-shape-tertiary); border-radius: 8px; margin: 0px 0px 2px 0px; box-shadow: 0px 0px 0px 2px $colorBgPrimary inset; }
+		.iconObject { display: inline-block; background-color: var(--color-shape-tertiary); border-radius: 8px; margin: 0px 0px 2px 0px; box-shadow: 0px 0px 0px 2px var(--color-bg-primary) inset; }
 		.iconObject {
-			.iconImage { border: 2px solid $colorBgPrimary; }
+			.iconImage { border: 2px solid var(--color-bg-primary); }
 		}
 		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; box-shadow: 0px 0px !important; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; width: 100%; }
@@ -29,7 +29,7 @@
 
 		.featured { width: 25px; height: 4px; background: var(--color-shape-secondary); }
 		.featured {
-			.bullet { width: 2px; height: 2px; border-radius: 50%; background: $colorControlActive; display: inline-block; vertical-align: middle; margin: -1px 4px 0px 4px; }
+			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-control-active); display: inline-block; vertical-align: middle; margin: -1px 4px 0px 4px; }
 		}
 	}
 

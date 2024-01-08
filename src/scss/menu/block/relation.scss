@@ -66,7 +66,7 @@
 				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid var(--color-shape-secondary); border-radius: 12px; 
 			}
 			.icon.dnd:hover { 
-				background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+				background-image: url('~img/icon/block/menu2.svg') !important; border-color: var(--color-system-accent-100); box-shadow: 0px 0px 0px 1px var(--color-system-accent-100);
 			}
 
 			.icon.fav {

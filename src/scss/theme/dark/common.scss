@@ -5,12 +5,7 @@ html.themeDark {
 
     /* Common */
 
-    body { background: $colorBgPrimary; color-scheme: dark; }
-
-    a:hover { color: $colorSystemAccent100; }
-
-    #root-loader { background: $colorBgPrimary; }
-	#globalFade { background: $colorBgPrimary; }
+    body { color-scheme: dark; }
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -20,7 +15,7 @@ html.themeDark {
     .cover.type2.black { background-color: #000 !important; }
 
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
-	::selection { background-color: $colorSystemSelection; }
+	::selection { background-color: var(--color-system-selection); }
 
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
@@ -35,22 +30,22 @@ html.themeDark {
 
     .isMultiSelect.tagColor-default { background: unset !important; }
     .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
-    .isMultiSelect.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
-    .isMultiSelect.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-red { color: $colorRed !important; background: rgba(245, 85, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-pink { color: $colorPink !important; background: rgba(229, 28, 160, 0.25) !important; }
-    .isMultiSelect.tagColor-purple { color: $colorPurple !important; background: rgba(171, 80, 204, 0.25) !important; }
-    .isMultiSelect.tagColor-blue { color: $colorBlue !important; background: rgba(62, 88, 235, 0.25) !important; }
-    .isMultiSelect.tagColor-ice { color: $colorIce !important; background: rgba(42, 167, 238, 0.25) !important; }
-    .isMultiSelect.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
-    .isMultiSelect.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
+    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: rgba(236, 217, 27, 0.25) !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: rgba(255, 181, 34, 0.25) !important; }
+    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: rgba(245, 85, 34, 0.25) !important; }
+    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: rgba(229, 28, 160, 0.25) !important; }
+    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: rgba(171, 80, 204, 0.25) !important; }
+    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: rgba(62, 88, 235, 0.25) !important; }
+    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: rgba(42, 167, 238, 0.25) !important; }
+    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: rgba(15, 200, 186, 0.25) !important; }
+    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: rgba(93, 212, 0, 0.25) !important; }
 
 	.selectable.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
-	{ background-color: $colorSystemSelection; }
+	{ background-color: var(--color-system-selection); }
 
 	.brokenMedia {
-		img:before { background: $colorBgSecondary; }
+		img:before { background: var(--color-bg-secondary); }
 	}
 
 	.icon.import-notion { background-image: url('#{$themePath}/icon/import/notion.svg'); }
@@ -67,13 +62,10 @@ html.themeDark {
 
     .loaderWrapper {
 		@keyframes dots-dark {
-			0% { background-color: $colorBgPrimary; }
-			32% { background-color: $colorBgPrimary; }
 			100% { background-color: #fff; }
 		}
 
-        .loader { border-left-color: $colorSystemAccent100; }
-		.dot { animation-name: dots-dark; border-color: $colorControlAccent; }
+		.dot { animation-name: dots-dark; }
     }
 
     .mediaAudio {
@@ -83,24 +75,17 @@ html.themeDark {
 
             .icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-
-            .input-drag {
-                .back { background: var(--color-shape-highlight-medium); }
-            }
         }
     }
 
     /* Button */
 
-	.button.black { background: $colorControlAccent; }
-	.button.black:hover,
-    .button.black.hover { background: $colorControlActive }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
 	.button.red,
-    .button.red.blank { background: none; color: $colorRed; }
+    .button.red.blank { background: none; }
     .button.red:hover,
     .button.red.hover,
     .button.red.blank:hover,
@@ -111,10 +96,8 @@ html.themeDark {
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
 
-    .frame { background: $colorBgPrimary; }
-
     .textarea { background: none; }
-	.textareaWrap { background-color: $colorBgSecondary; }
+	.textareaWrap { background-color: var(--color-bg-secondary); }
 
     .select {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
@@ -125,18 +108,10 @@ html.themeDark {
     .inputWithFile { border-color: transparent; }
 
     .listPreviewObject {
-        .item {
-            > .icon.more:hover,
-            > .icon.more.hover { background-color: var(--color-shape-highlight-medium); }
-            > .defaultLabel { background: var(--color-shape-tertiary); }
-        }
-
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
-
-    .deleteWrapper { background: $colorBgPrimary; }
 
     /* PreviewObject */
 
@@ -158,16 +133,14 @@ html.themeDark {
     /* Preview */
 
     .previewWrapper {
-        .content { background: $colorBgSecondary; }
+        .content { background: var(--color-bg-secondary); }
     }
 
-	.previewGraph { background: $colorBgSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.previewGraph { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* Pager */
 
     .pager {
-        .pageItem.active { color: $colorSystemAccent100; }
-
         .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
@@ -180,10 +153,10 @@ html.themeDark {
     /* Progress */
 
     .progress {
-        .inner { background: $colorBgSecondary; }
+        .inner { background: var(--color-bg-secondary); }
     }
 
-    .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
+    .tooltip.big { background: var(--color-bg-secondary); border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 
@@ -208,13 +181,11 @@ html.themeDark {
 
     /* Header */
 
-    .header.isCommon { background: $colorBgPrimary; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 
-    .header.mainHistory { background: $colorBgPrimary; }
     .header.mainHistory {
         .side {
             .item {
@@ -229,7 +200,7 @@ html.themeDark {
 
     /* Sidebar */
 
-    .sidebar { background-color: $colorBgSecondary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
+    .sidebar { background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
 
 	/* Navigation */
@@ -239,25 +210,19 @@ html.themeDark {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
-    /* Cells */
-
-    .cell.isEditing {
-        .cellContent { background: $colorBgPrimary; }
-    }
-
 	/* Notifications */
 
 	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
 	.notifications {
 		.head {
-			.icon { background-color: $colorBgPrimary; border-color: $colorBgSecondary; }
+			.icon { border-color: var(--color-bg-secondary); }
 		}
 
-		.notification {	background: $colorBgSecondary; @include shadow; border: 0px; }
+		.notification {	background: var(--color-bg-secondary); @include shadow; border: 0px; }
 
 		.notification {
-			.icon.delete { background-color: $colorBgSecondary; }
+			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
 

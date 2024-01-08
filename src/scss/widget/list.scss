@@ -14,7 +14,7 @@
 			.inner { padding: 0px 16px; white-space: nowrap; }
 
 			.viewItem { 
-				@include text-common; font-weight: 500; color: $colorControlActive; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
+				@include text-common; font-weight: 500; color: var(--color-control-active); transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
 				vertical-align: top;
 			}
 			.viewItem:last-child { margin: 0px; }

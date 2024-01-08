@@ -10,7 +10,7 @@
 
 	.head { display: none; flex-direction: row; justify-content: flex-end; align-items: center; margin: 0px 0px 14px 0px; gap: 0px 8px; flex-shrink: 0; }
 	.head {
-		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: $colorBgPrimary; @include border; transition: $transitionAllCommon; }
+		.icon { width: 24px; height: 24px; border-radius: 50%; background-color: var(--color-bg-primary); @include border; transition: $transitionAllCommon; }
 		.icon:hover { background-color: var(--color-shape-highlight-light); }
 		.icon.hide { background-image: url('~img/icon/notification/hide.svg'); background-size: 12px 8px; }
 		.icon.clear { background-image: url('~img/icon/notification/delete.svg'); background-size: 10px; }
@@ -19,7 +19,7 @@
 	.body { flex-grow: 1; position: relative; }
 
 	.notification {
-		width: 100%; min-height: 70px; background: $colorBgPrimary; border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
+		width: 100%; min-height: 70px; background: var(--color-bg-primary); border-radius: 12px; @include border; position: absolute; bottom: 0px; padding: 16px;
     	transform-origin: 50% 0%; transition-timing-function: ease-in-out; transition-duration: 0.2s; transition-property: transform, opacity, bottom; 
 		opacity: 1; user-select: none; @include shadow;
 	}
@@ -28,7 +28,7 @@
 
 	.notification {
 		.icon.delete { 
-			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: $colorBgPrimary; 
+			width: 24px; height: 24px; border-radius: 50%; position: absolute; background-color: var(--color-bg-primary); 
 			@include border; top: -8px; left: -8px; background-image: url('~img/icon/notification/delete.svg');
 			background-size: 10px; transition: $transitionAllCommon; opacity: 0;
 		}
