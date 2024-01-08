@@ -211,6 +211,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	getSections () {
 		const { isExpanded } = this.state;
 		const { space, type } = commonStore;
+		const pinnedIds = Storage.getPinnedTypes();
+		const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
 
 		let sections: any[] = [];
 		let items: any[] = [];
@@ -225,9 +227,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 
 			const librarySources = library.map(it => it.sourceObject);
-			const pinnedIds = Storage.getPinnedTypes();
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
-			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout));
+			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 
 			if (this.filter) {
@@ -253,14 +253,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = Storage.getPinnedTypes();
-			const pinnedItems = pinned.map(id => dbStore.getTypeById(id)).filter(it => it);
-
-			items = UtilData.getObjectTypesForNewObject().filter(it => !pinned.includes(it.id));
-			items = items.slice(0, 5 - pinnedItems.length);
+			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
+			items = items.slice(0, 5 - pinned.length);
 			items.push(dbStore.getSetType());
 			items.push(dbStore.getCollectionType());
-			items = [].concat(pinnedItems, items);
+			items = [].concat(pinned, items);
 			items = items.filter(it => it);
 			
 			items = items.map((it, i) => {
