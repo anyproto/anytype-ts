@@ -65,7 +65,7 @@
 			.card:hover { border-color: $colorShapeSecondary; background: $colorShapeHighlightLight; }
 			.card:hover {
 				.cover {
-					.inner { color: $colorTextPrimary; }
+					.inner { color: var(--color-text-primary); }
 					.inner .icon.plus { background-image: url('~img/icon/plus/gallery-cover1.svg'); }
 				}
 

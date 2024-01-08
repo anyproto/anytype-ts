@@ -49,4 +49,4 @@ input.button { line-height: 1; }
 	letter-spacing: 0.1px; 
 }
 .button.simple:hover,
-.button.simple.hover { color: $colorTextPrimary; }
+.button.simple.hover { color: var(--color-text-primary); }

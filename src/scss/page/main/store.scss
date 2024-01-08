@@ -41,7 +41,7 @@
 				display: inline-block; font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
 				color: $colorControlActive; transition: $transitionAllCommon;
 			}
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 
 		.loaderWrapper { position: relative !important; }
@@ -84,7 +84,7 @@
 						@include text-common; opacity: 0; background: none; color: $colorTextSecondary; border-radius: 0px; padding: 0px; height: 1em; 
 						line-height: 1em; cursor: default;
 					}
-					.button:hover { color: $colorTextPrimary; }
+					.button:hover { color: var(--color-text-primary); }
 				}
 			}
 			.item:hover {

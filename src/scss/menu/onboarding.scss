@@ -15,7 +15,7 @@
 		}
 
 		.highlight { 
-			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorTextPrimary; 
+			background: $colorShapeSecondary; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: var(--color-text-primary); 
 			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
 		}
 		a { color: $colorTextInversion; text-decoration: underline; }

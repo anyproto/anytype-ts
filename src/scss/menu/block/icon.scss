@@ -127,11 +127,11 @@
 		.icon.color {
 			.inner { 
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
-				background: $colorTextPrimary; 
+				background: var(--color-text-primary); 
 			}
 			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; background: $colorBgPrimary; }
 			
-			.inner.textColor-black { background: $colorTextPrimary; }
+			.inner.textColor-black { background: var(--color-text-primary); }
 			.inner.textColor-grey { background: $colorControlActive; }
 			.inner.textColor-yellow { background: $colorYellow; }
 			.inner.textColor-orange { background: $colorOrange; }

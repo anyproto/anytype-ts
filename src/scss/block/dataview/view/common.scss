@@ -8,7 +8,7 @@
 			.cell.add { color: $colorControlActive; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; transition: $transitionAllCommon; }
-				.btn:hover { color: $colorTextPrimary; }
+				.btn:hover { color: var(--color-text-primary); }
 				.btn:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				}
@@ -26,12 +26,12 @@
 				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
-				.cellContent.c-description { color: $colorTextPrimary; }
+				.cellContent.c-description { color: var(--color-text-primary); }
 				.cellContent {
 					.more { vertical-align: top; height: 18px; }
 				}
 
-				.cellContent.isName { @include text-paragraph; color: $colorTextPrimary; display: flex; gap: 0px 6px; position: relative; }
+				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
 					.name {

@@ -154,7 +154,7 @@
 				}
 				.select:hover { background: $colorShapeHighlightMedium; }
 				.select {
-					.item { border-bottom: 0; color: $colorTextPrimary; }
+					.item { border-bottom: 0; color: var(--color-text-primary); }
 					.item {
 						.iconObject { display: none; }
 						.name { line-height: 20px; }
@@ -427,7 +427,7 @@
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
-			.btn.active { color: $colorTextPrimary; }
+			.btn.active { color: var(--color-text-primary); }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -445,7 +445,7 @@
 			}
 			.select:hover { background: $colorShapeHighlightMedium; }
 			.select {
-				.item { border-bottom: 0; color: $colorTextPrimary; }
+				.item { border-bottom: 0; color: var(--color-text-primary); }
 				.icon.arrow { right: 3px !important; }
 			}
 		}
@@ -467,7 +467,7 @@
 				.item { width: auto; }
 			}
 
-			.item:hover { border-color: $colorTextPrimary; }
+			.item:hover { border-color: var(--color-text-primary); }
 
 			.item {
 				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
@@ -503,7 +503,7 @@
 				.btn {
 					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }
 				}
-				.btn:hover { color: $colorTextPrimary; }
+				.btn:hover { color: var(--color-text-primary); }
 				.btn:hover {
 					.icon.help { background-image: url('~img/icon/popup/settings/help1.svg'); }
 				}

@@ -22,7 +22,7 @@
 
 		.button.disabled { background: $colorShapeTertiary; max-width: 80px; }
 		.button.edit { 
-			box-shadow: 0px 0px; background: $colorShapeHighlightMedium; border-radius: 6px; @include text-common; color: $colorTextPrimary; line-height: 26px; width: auto;
+			box-shadow: 0px 0px; background: $colorShapeHighlightMedium; border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
 			padding: 0px 10px;
 		}
 	}

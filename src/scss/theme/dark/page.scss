@@ -31,7 +31,7 @@
     .body {
 		.tabs {
 			.tab { color: $colorTextSecondary; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 
 		.emptySearch { border-color: $colorShapePrimary; }
@@ -53,7 +53,7 @@
 					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
 
 					.button { color: $colorTextSecondary; }
-					.button:hover { color: $colorTextPrimary; }
+					.button:hover { color: var(--color-text-primary); }
 				}
             }
         }
@@ -70,7 +70,7 @@
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
 
-			.btn:hover { color: $colorTextPrimary; }
+			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
 			}

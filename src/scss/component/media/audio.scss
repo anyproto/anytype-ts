@@ -2,7 +2,7 @@
 
 .mediaAudio { width: 100%; }
 .mediaAudio {
-    .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: $colorTextPrimary; }
+    .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: var(--color-text-primary); }
     .controls {
 		.input-drag { 
 			.icon { cursor: default; }

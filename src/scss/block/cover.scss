@@ -11,7 +11,7 @@
 	}
 	.loaderWrapper {
 		.loader { 
-			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorBgPrimary; border-left: 2px solid $colorTextPrimary; 
+			left: auto; top: 16px; right: 16px; margin: 0px; border-color: $colorBgPrimary; border-left: 2px solid var(--color-text-primary); 
 		}
 	}
 

@@ -5,8 +5,8 @@
     }
 
     .elements {
-        .btn.white { background: $colorShapeSecondary; color: $colorTextPrimary; }
-        .btn.white:hover { background: $colorBgPrimary; color: $colorTextPrimary; }
+        .btn.white { background: $colorShapeSecondary; color: var(--color-text-primary); }
+        .btn.white:hover { background: $colorBgPrimary; color: var(--color-text-primary); }
 
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
@@ -26,7 +26,7 @@
         .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
 
 		.emptyToggle { color: $colorTextSecondary; }
-		.emptyToggle:hover { color: $colorTextPrimary; }
+		.emptyToggle:hover { color: var(--color-text-primary); }
 
 		.colResize {
 			.line { background: $colorShapeSecondary; }
@@ -81,7 +81,7 @@
 			.icon { background-image: url('#{$themePath}/arrow/loadMore0.svg'); }
 		}
 
-		.loadMore:hover { color: $colorTextPrimary; }
+		.loadMore:hover { color: var(--color-text-primary); }
 		.loadMore:hover {
 			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
 		}
@@ -100,10 +100,10 @@
 
 		.dataviewEmpty { border-color: $colorShapeSecondary; }
 		.dataviewEmpty {
-			.button { color: $colorTextPrimary; }
+			.button { color: var(--color-text-primary); }
 		}
 
-		.dataviewHead { border-color: $colorShapeSecondary; color: $colorTextPrimary; }
+		.dataviewHead { border-color: $colorShapeSecondary; color: var(--color-text-primary); }
 		.dataviewHead {
 			.icon:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
@@ -112,7 +112,7 @@
         .dataviewControls {
 			> .sides {
 				> .side.right {
-					.filter { color: $colorTextPrimary; }
+					.filter { color: var(--color-text-primary); }
 
 					.buttonWrap.withSelect {
 						.button.select { border-left-color: rgba(23,23,23,0.1); }
@@ -124,7 +124,7 @@
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
-            .viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
+            .viewItem:hover, .viewItem.active { color: var(--color-text-primary); }
             .viewItem.isDragging { background: $colorShapeHighlightMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorShapeHighlightMedium; }
@@ -134,9 +134,9 @@
 		.dataviewControls::after { background-color: $colorShapeSecondary; }
 
 		.dataviewSelection {
-			.side.left { color: $colorTextPrimary; }
+			.side.left { color: var(--color-text-primary); }
 			.side.right {
-				.element { color: $colorTextPrimary; }
+				.element { color: var(--color-text-primary); }
 				.element:hover { background-color: $colorShapeHighlightMedium; }
 			}
 		}
@@ -148,7 +148,7 @@
 		.viewContent.viewList {
 			.cell.add { color: $colorTextSecondary; }
 			.cell.add {
-				.btn:hover { color: $colorTextPrimary; }
+				.btn:hover { color: var(--color-text-primary); }
 				.btn:hover {
 					.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 				}
@@ -175,13 +175,13 @@
         }
 
         .viewContent.viewList, .viewContent.viewGallery, .viewContent.viewBoard {
-            .cellContent.isName { color: $colorTextPrimary; }
+            .cellContent.isName { color: var(--color-text-primary); }
         }
 
 		.viewContent.viewGallery, 
 		.viewContent.viewBoard {
 			.card {
-				.cellContent.c-description { color: $colorTextPrimary; }
+				.cellContent.c-description { color: var(--color-text-primary); }
 			}
 		}
 
@@ -258,7 +258,7 @@
     .block.blockText {
         markupcode { background: $colorShapeHighlightMedium; color: $colorSystemAccent100; }
 		markuplink, markupobject { border-color: $colorTextSecondary; }
-		markuplink:hover, markupobject:hover { border-color: $colorTextPrimary; }
+		markuplink:hover, markupobject:hover { border-color: var(--color-text-primary); }
     }
 
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
@@ -281,7 +281,7 @@
 
 	.block.blockLink.text:hover {
 		.linkCard {
-			.cardName .name { border-color: $colorTextPrimary; }
+			.cardName .name { border-color: var(--color-text-primary); }
 		}
 	}
 	.block.blockLink.card:hover {
@@ -313,7 +313,7 @@
 			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
 		}
 
-        .select { color: $colorTextPrimary; }
+        .select { color: var(--color-text-primary); }
         .wrap.isEditing { background-color: $colorShapeHighlightLight; }
         #input { background: $colorShapeSecondary; border-color: $colorShapeHighlightLight; }
 		#placeholder { color: $colorTextSecondary; }
@@ -327,7 +327,7 @@
 
         .inner { border-color: transparent; background-color: $colorShapeHighlightMedium; }
         .inner {
-			.name { color: $colorTextPrimary; }
+			.name { color: var(--color-text-primary); }
     	    .descr { color: $colorTextSecondary; }
 	        .link { color: $colorTextSecondary; }
 
@@ -359,7 +359,7 @@
 
 		.cell { background: $colorBgPrimary; border-color: $colorShapePrimary; }
 		.cell {
-			.block { color: $colorTextPrimary; }
+			.block { color: var(--color-text-primary); }
 
 			.icon.menu:hover {
 				.inner { box-shadow: 0px 0px; background-color: $colorShapePrimary; }

@@ -65,14 +65,14 @@
 		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorShapeSecondary; white-space: nowrap; font-weight: 700; color: $colorControlActive; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; margin-right: 16px; position: relative; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 			.tab:last-child { margin: 0px; }
 		}
 
 		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
 		.titleWrapper {
 			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
-			.title { @include text-common; font-weight: 600; color: $colorTextPrimary; padding: 0; }
+			.title { @include text-common; font-weight: 600; color: var(--color-text-primary); padding: 0; }
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }

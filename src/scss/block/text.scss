@@ -46,7 +46,7 @@
 		markupmention.withImage.c28 name markupBgcolor:first-child { margin-left: -27px; padding-left: 27px; }
 		markupmention.withImage.c32 name markupBgcolor:first-child { margin-left: -34px; padding-left: 34px; }
 		markupmention:hover {
-			name::before { border-color: $colorTextPrimary; }
+			name::before { border-color: var(--color-text-primary); }
 		}
 
 		markupbold { font-weight: 600; }

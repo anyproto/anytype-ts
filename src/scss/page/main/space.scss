@@ -40,7 +40,7 @@
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
 			}
-			.btn:hover { color: $colorTextPrimary; }
+			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}

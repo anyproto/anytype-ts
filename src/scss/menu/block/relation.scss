@@ -41,7 +41,7 @@
 		.sections { display: flex; flex-direction: column; height: 100%; }
 
 		.section { padding: 0px; }
-		.section > .name { @include text-common; padding: 7px 32px; position: relative; color: $colorTextPrimary; margin: 0px; }
+		.section > .name { @include text-common; padding: 7px 32px; position: relative; color: var(--color-text-primary); margin: 0px; }
 		.section:last-child::after { display: none; }
 		.section::after { margin: 16px 32px; }
 
@@ -162,7 +162,7 @@
 			.info { width: 100%; transition: $transitionAllCommon; }
 		}
 		.item.add:hover { 
-            .info { color: $colorTextPrimary; } 
+            .info { color: var(--color-text-primary); } 
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
         }
 	}

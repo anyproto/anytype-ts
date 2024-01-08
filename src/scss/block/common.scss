@@ -46,7 +46,7 @@
 			display: none; margin-left: 28px; color: $colorControlActive; position: relative; z-index: 2;
 			@include text-overflow-nw;
 		}
-		.emptyToggle:hover { color: $colorTextPrimary; }
+		.emptyToggle:hover { color: var(--color-text-primary); }
 	}
 
 	.block.index0 { padding-top: 0px !important; }

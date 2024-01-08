@@ -2,9 +2,9 @@
 
 .previewLink {
 	.link { @include text-small; height: 18px; margin-bottom: 2px; color: $colorTextSecondary; @include text-overflow-nw;  }
-	.name { @include text-common; font-weight: 500; height: 22px; color: $colorTextPrimary; @include text-overflow-nw; margin-bottom: 2px; }
+	.name { @include text-common; font-weight: 500; height: 22px; color: var(--color-text-primary); @include text-overflow-nw; margin-bottom: 2px; }
 	.descr { 
-		@include text-small; @include clamp2; height: 36px; color: $colorTextPrimary; margin: 2px 0px 0px 0px;
+		@include text-small; @include clamp2; height: 36px; color: var(--color-text-primary); margin: 2px 0px 0px 0px;
 	}
 		
 	.img {

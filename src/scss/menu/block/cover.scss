@@ -13,7 +13,7 @@
 		}
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn:hover, .btn.active { color: $colorTextPrimary; }
+			.btn:hover, .btn.active { color: var(--color-text-primary); }
 			.btn:last-child { margin: 0px; }
 		}
 		

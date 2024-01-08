@@ -39,7 +39,7 @@
     .menu.vertical {
         .tabs { border-color: $colorShapeSecondary; }
         .tabs {
-            .tab:hover, .tab.active { color: $colorTextPrimary; }
+            .tab:hover, .tab.active { color: var(--color-text-primary); }
         }
 
         .titleWrapper {
@@ -97,7 +97,7 @@
     .menu.menuSmile {
         .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
         .head {
-            .btn:hover, .btn.active { color: $colorTextPrimary; }
+            .btn:hover, .btn.active { color: var(--color-text-primary); }
         }
 
 		.body.gallery {
@@ -130,14 +130,14 @@
     .menu.menuBlockCover {
         .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
         .head {
-            .btn:hover, .btn.active { color: $colorTextPrimary; }
+            .btn:hover, .btn.active { color: var(--color-text-primary); }
         }
     }
 
     /* MenuBlockRelationView */
 
     .menu.menuBlockRelationView {
-        .section > .name { color: $colorTextPrimary; }
+        .section > .name { color: var(--color-text-primary); }
 
 		.item {
 			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
@@ -151,7 +151,7 @@
 		}
 
         .item.add:hover { 
-            .info { background: $colorShapeHighlightMedium; color: $colorTextPrimary; }
+            .info { background: $colorShapeHighlightMedium; color: var(--color-text-primary); }
 			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
         }
     }
@@ -185,7 +185,7 @@
     /* MenuDataviewFileValues */
 
     .menu.menuDataviewFileValues {
-		.item { color: $colorTextPrimary; }
+		.item { color: var(--color-text-primary); }
         .item:hover::before { background: $colorShapeHighlightMedium; }
 		.item {
             .icon.more { background-color: $colorShapeHighlightMedium; }
@@ -249,7 +249,7 @@
 
 	.menu.menuButton {
 		.item { color: $colorTextSecondary; }
-		.item:hover { color: $colorTextPrimary; }
+		.item:hover { color: var(--color-text-primary); }
 	}
 
     /* MenuDataviewCalendar */
@@ -290,7 +290,7 @@
 			.iconObject { background-color: $colorShapeTertiary; }
 		}
 
-		.item.add { color: $colorTextPrimary; }
+		.item.add { color: var(--color-text-primary); }
 	}
 
     /* MenuBlockLinkSettings */
@@ -303,13 +303,13 @@
 			    .icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card0.svg'); }
             }
 
-            .item:hover { color: $colorTextPrimary; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+            .item:hover { color: var(--color-text-primary); box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
             .item:hover {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text1.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
 			}
 
-            .item.active { color: $colorTextPrimary; background: $colorShapeHighlightMedium; }
+            .item.active { color: var(--color-text-primary); background: $colorShapeHighlightMedium; }
 			.item.active {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }
@@ -318,7 +318,7 @@
 
         .buttons {
             .button.grey { box-shadow: 0px 0px 0px 1px $colorShapeSecondary inset; color: $colorTextSecondary; }
-            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; color: $colorTextPrimary; }
+            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; color: var(--color-text-primary); }
         }
     }
 
@@ -359,7 +359,7 @@
 		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
 		.buttons {
 			.button { color: $colorTextSecondary; }
-			.button:hover { color: $colorTextPrimary; }
+			.button:hover { color: var(--color-text-primary); }
 		}
 	}
 
@@ -411,7 +411,7 @@
 
 	/* MenuSpace */
 
-	.menu.menuSpace { color: $colorTextPrimary; }
+	.menu.menuSpace { color: var(--color-text-primary); }
 	.menu.menuSpace { 
 		.head {
 			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }

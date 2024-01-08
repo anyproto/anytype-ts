@@ -156,7 +156,7 @@
 
 	.block.blockLink.text:hover {
 		.linkCard {
-			.cardName .name { border-color: $colorTextPrimary; }
+			.cardName .name { border-color: var(--color-text-primary); }
 		}
 	}
 

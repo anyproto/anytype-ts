@@ -49,7 +49,7 @@
 
 				.select { color: $colorTextSecondary; }
 				.select {
-					.item { color: $colorTextPrimary; }
+					.item { color: var(--color-text-primary); }
 				}
 				.select:hover { background-color: $colorShapeHighlightMedium; }
 
@@ -129,7 +129,7 @@
 			.btn {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
 			}
-			.btn:hover { color: $colorTextPrimary; }
+			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help1.svg'); }
 			}
@@ -164,7 +164,7 @@
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
-			.btn.active { color: $colorTextPrimary; }
+			.btn.active { color: var(--color-text-primary); }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -184,7 +184,7 @@
         .head {
             .tabs { color: $colorTextSecondary; }
             .tabs {
-                .item:hover, .item.active { color: $colorTextPrimary; }
+                .item:hover, .item.active { color: var(--color-text-primary); }
             }
         }
 
