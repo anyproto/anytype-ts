@@ -400,14 +400,23 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { className, classNameWrap } = param;
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canDefault = !UtilObject.getSetLayouts().includes(item.recommendedLayout);
+		const canDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
-		const options = [
+		let options: any[] = [
 			{ id: 'open', name: translate('menuQuickCaptureOpenType') },
 			{ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) },
-			canDefault ? { id: 'default', name: translate('commonSetDefault') } : null,
-			{ isDiv: true },
-			{ id: 'remove', name: translate('commonDelete'), color: 'red' },
 		];
+
+		if (canDefault) {
+			options.push({ id: 'default', name: translate('commonSetDefault') });
+		};
+
+		if (canDelete) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+			]);
+		};
 
 		menuStore.open('select', {
 			element: `#${getId()} #item-${item.id}`,
