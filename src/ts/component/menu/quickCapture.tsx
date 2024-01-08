@@ -212,7 +212,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { isExpanded } = this.state;
 		const { space, type } = commonStore;
 		const pinnedIds = Storage.getPinnedTypes();
-		const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
 
 		let sections: any[] = [];
 		let items: any[] = [];
@@ -226,6 +225,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return it;
 			});
 
+			const pinned = items.filter(it => pinnedIds.includes(it.id));
 			const librarySources = library.map(it => it.sourceObject);
 			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
@@ -253,6 +253,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
+			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
+
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, 5 - pinned.length);
 			items.push(dbStore.getSetType());
