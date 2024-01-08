@@ -23,34 +23,14 @@
 		.mainSides {
 			> .side.left { background: $colorBgSecondary; }
 			> .side.left {
-				.space:hover, .space.active { background: var(--color-shape-highlight-medium); }
-				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon.logout { background-image: url('#{$themePath}/icon/popup/settings/logout.svg'); }
 				}
-
-				.iconObject.withLetter { background-color: var(--color-shape-tertiary); }
 			}
 
 			> .side.right {
 				.head {
 					.inner { background: $colorBgPrimary; }
-					.element:hover { background-color: var(--color-shape-highlight-medium); }
-				}
-
-				.row { border-color: var(--color-shape-secondary); }
-
-				.input,
-				.select { border-color: var(--color-shape-primary); }
-
-				.select:hover { background-color: var(--color-shape-highlight-medium); }
-
-				.actionItems,
-				.actionItems > .item { border-color: var(--color-shape-secondary); }
-
-				.phraseWrapper { background-color: var(--color-shape-tertiary); }
-				.phraseWrapper {
-					.icon.see { background-color: var(--color-shape-tertiary); }
 				}
 			}
 		}
@@ -58,16 +38,8 @@
 		.side.right.tabSpaceIndex,
 		.side.right.tabSpaceCreate {
 			.sections {
-				.spaceHeader {
-					.headerContent {
-						.spaceType { background-color: var(--color-shape-highlight-medium); }
-					}	
-				}
-
 				.section {
-					.sectionContent { border-color: var(--color-shape-secondary); }
 					.sectionContent {
-						.item { border-color: var(--color-shape-secondary); }
 						.item {
 							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 						}
@@ -76,9 +48,7 @@
 			}
 			.sections {
 				.section {
-					.sectionContent { border-color: var(--color-shape-secondary); }
 					.sectionContent {
-						.item { border-color: var(--color-shape-secondary); }
 						.item {
 							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 						}
@@ -91,30 +61,18 @@
 			.loaderWrapper { background-color: $colorBgLoader; }
 		}
 
-		.side.right.tabDataManagement {
-			.iconObject { background: var(--color-shape-highlight-medium); }
-		}
-
         .side.right.tabPhrase {
             .qrWrap { background: $colorControlActive; }
         }
 
 		.side.right.tabAccount {
 			.sections .section {
-				.input { border-color: var(--color-shape-secondary); }
-				.input:hover { border-color: var(--color-shape-primary); }
 				.input:focus:not(.isReadonly) { border-color: $colorSystemAccent100; }
 			}
 		}
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
 		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
-
-        .side.right.tabImportIndex, 
-		.side.right.tabExportIndex {
-            .item { border-color: var(--color-shape-secondary); }
-            .item:hover, .item.active { border-color: var(--color-shape-primary); }
-        }
 
 		.side.right.tabImportNotion {
 			.btn {
@@ -130,17 +88,12 @@
 			.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
 		}
 
-		.side.right.tabImportNotionHelp {
-			.list img { border-color: var(--color-shape-primary); }
-		}
-
 		.side.right.tabAppearance {
 			.btn.light { 
 				.bg { background-color: #fff; }
 			}
 
 			.btn.dark {
-				.bg { box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
@@ -148,7 +101,7 @@
 					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
 				}
 				.bg::before { left: 0px; background: #fff; border-radius: 14px 0px 0px 14px; }
-				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary); border-radius: 0px 14px 14px 0px; }
+				.bg::after { right: 0px; border-radius: 0px 14px 14px 0px; }
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
@@ -158,10 +111,6 @@
 			.btn.system.active {
 				.bg::before { box-shadow: 0px 0px; }
 			}
-		}
-
-		.side.right.tabDelete {
-			.check { border-color: var(--color-shape-primary); }
 		}
     }
     
@@ -199,13 +148,7 @@
     /* PopupPrompt */
 
     .popup.popupPrompt {
-        .input { background: $colorBgPrimary; border-color: var(--color-shape-primary); }
-    }
-
-    /* PopupExport */
-
-    .popup.popupExport {
-        .row { border-color: var(--color-shape-primary); }
+        .input { background: $colorBgPrimary; }
     }
 
 	/* PopupMigration */
@@ -217,29 +160,8 @@
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
-		.screenWrap { background: var(--color-shape-highlight-medium); }
 		.screenWrap {
-			.icon.arrow { 
-				background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); border-color: var(--color-shape-secondary);
-			}
-		}
-
-		.footerWrap {
-			.side.right {
-				.tags {
-					.tagItem { background: var(--color-shape-highlight-medium); }
-				}
-			}
-		}
-	}
-
-	.popup.popupObjectManager {
-		.objectManagerWrapper {
-			.items {
-				.item {
-					.iconObject { background-color: var(--color-shape-tertiary); }
-				}
-			}
+			.icon.arrow { background-color: $colorBgSecondary; background-image: url('#{$themePath}/arrow/usecase.svg'); }
 		}
 	}
 

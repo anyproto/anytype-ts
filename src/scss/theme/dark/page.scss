@@ -29,17 +29,8 @@
 
 .pageMainStore {
     .body {
-		.emptySearch { border-color: var(--color-shape-primary); }
-
-		.mid {
-			.filter { border-color: var(--color-shape-primary); }
-		}
-
         .items {
             .item {
-                .flex { border-color: var(--color-shape-secondary); } 
-				.flex:hover {  border-color: var(--color-shape-primary); background-color: var(--color-shape-highlight-medium); }
-
 				.buttons {
 					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
 					.icon.check { background-image: url('#{$themePath}/icon/store/check0.svg'); }
@@ -72,22 +63,11 @@
 		}
 
         .section.relation {
-            .item.canEdit, .item.add {
-				.clickable:hover { background: var(--color-shape-highlight-medium); }
-			}
-
 			.item.add {
 				.clickable:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
 				}
 			}
-        }
-
-        table { border-color: var(--color-shape-secondary); }
-        table {
-            .cellHead .name { border-color: var(--color-shape-secondary); }
-            .cell { border-color: var(--color-shape-secondary); }
-            tbody { border-color: var(--color-shape-secondary); }
         }
     }
 }
@@ -95,28 +75,15 @@
 
 /* PageMainRelation */
 
-.pageMainRelation {
-    .wrapper {
-        table { border-color: var(--color-shape-secondary); }
-        table {
-            .cellHead .name { border-color: var(--color-shape-secondary); }
-            .cell { border-color: var(--color-shape-secondary); }
-            tbody { border-color: var(--color-shape-secondary); }
-        }
-    }
-}
 .pageMainRelation > div > #loader { background: $colorBgPrimary; }
 
 /* PageMainNavigation */
 
 .pageMainNavigation {
 	.wrapper > #loader { background: $colorBgPrimary; }
-    .selected { border-color: var(--color-shape-primary); }
 
     .items {
-        .item { border-color: var(--color-shape-primary); }
         .item {
-			.iconObject { background: var(--color-shape-tertiary); }
 			.iconObject.isTask { background: none; }
         }
     }
@@ -125,30 +92,13 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBgPrimary; border-color: var(--color-shape-secondary); }
+    .list { background: $colorBgPrimary; }
     .list {
         .section.fix { background: $colorBgPrimary; }
 
-        .item:hover, .item.active { background: var(--color-shape-highlight-medium); }
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
-    }
-}
-
-/* PageMainBookmark */
-
-.pageMainBookmark {
-    .wrapper {
-        .item.add:hover { background: var(--color-shape-highlight-medium); }
-    }
-}
-
-/* PageMainEmpty */
-
-.pageMainEmpty {
-    .wrapper {
-        .row { border-color: var(--color-shape-primary); }
     }
 }
 
@@ -158,22 +108,6 @@
 	.wrapper {
 		.titleWrapper {
 			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
-		}
-
-		.controls { border-color: var(--color-shape-primary); }
-		.controls {
-			.side.left {
-				.element:hover { background-color: var(--color-shape-highlight-medium); }
-			}
-		}
-
-		.objectManagerWrapper {
-			.items { height: 100%; }
-			.items {
-				.item {
-					.iconObject { background-color: var(--color-shape-tertiary); }
-				}
-			}
 		}
 	}
 }

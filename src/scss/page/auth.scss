@@ -1,6 +1,5 @@
 @import "~scss/_vars";
 
-var(--color-shape-tertiary): #2b2b2b;
 $colorError: #8a351a;
 
 $colorDark: #060606;
@@ -17,6 +16,8 @@ html.bodyIndex, html.bodyAuth {
 	--color-text-primary: #d4d4d4;
 	--color-text-secondary: #8d8d8d;
 	--color-text-tertiary: #505050;
+
+	--color-shape-tertiary: #2b2b2b;
 
 	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
