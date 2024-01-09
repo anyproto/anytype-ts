@@ -708,6 +708,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relation = dbStore.getRelationByKey(relationKey);
 		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const filters = [];
+
+		if (relation.objectTypes && relation.objectTypes.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: relation.objectTypes });
+		};
 
 		menuStore.closeAll(Constant.menuIds.cell, () => {
 			menuStore.open('dataviewObjectValues', {
@@ -722,6 +727,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					subId: rootId,
 					value,
+					filters,
 					relation: observable.box(relation),
 					onChange: (v: any, callBack?: () => void) => {
 						console.log('CHANGE: ', v);
