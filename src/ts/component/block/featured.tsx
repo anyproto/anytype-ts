@@ -730,7 +730,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filters,
 					relation: observable.box(relation),
 					onChange: (v: any, callBack?: () => void) => {
-						console.log('CHANGE: ', v);
 						const details = [
 							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
 						];
