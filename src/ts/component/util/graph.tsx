@@ -7,6 +7,7 @@ import { PreviewDefault } from 'Component';
 import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Theme from 'json/theme.json';
 
 interface Props {
 	id?: string;
@@ -100,6 +101,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
+		const theme = commonStore.getThemeClass();
 
 		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
@@ -123,7 +125,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			density,
 			nodes: this.nodes,
 			edges: this.edges,
-			theme: commonStore.getThemeClass(),
+			theme: theme,
+			colors: Theme[theme],
 			settings: commonStore.graph,
 			rootId,
 		}, [ transfer ]);

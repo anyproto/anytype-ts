@@ -123,6 +123,8 @@ init = (param) => {
 };
 
 initTheme = (theme) => {
+	console.log('THEME', theme);
+
 	switch (theme) {
 		default:
 			hoverAlpha = 0.3;
