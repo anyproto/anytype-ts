@@ -132,12 +132,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onFocus={this.onFocusBlock}
 			>
 				<div className="valueWrap resizable" style={css}>
+					{select}
+
 					<div className="preview" onClick={this.onPreview} />
 					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
-					{select}
 					{source}
 					{resize}
 
