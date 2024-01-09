@@ -4,7 +4,7 @@
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
 	.block.blockText {
 		.placeholder { display: none; }
-		.disabled { color: $colorControlActive; opacity: 1 !important; }
+		.disabled { color: var(--color-control-active); opacity: 1 !important; }
 
 		/* Markup */
 
@@ -14,7 +14,7 @@
 		smile * { display: inline; vertical-align: middle; }
 		smile .loaderWrapper { display: inline-block; }
 
-		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: $colorShapeSecondary; padding: 1px 4px; }
+		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
 
 		markupemoji { display: inline; user-select: all; }
 		markupemoji * { user-select: all; }
@@ -46,7 +46,7 @@
 		markupmention.withImage.c28 name markupBgcolor:first-child { margin-left: -27px; padding-left: 27px; }
 		markupmention.withImage.c32 name markupBgcolor:first-child { margin-left: -34px; padding-left: 34px; }
 		markupmention:hover {
-			name::before { border-color: $colorTextPrimary; }
+			name::before { border-color: var(--color-text-primary); }
 		}
 
 		markupbold { font-weight: 600; }
@@ -102,7 +102,7 @@
 
 	/* IsChecked */
 
-	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorControlActive !important; }
+	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: var(--color-control-active) !important; }
 
 	/* Title */
 
@@ -115,7 +115,7 @@
 				> .dropTarget {
 					> .flex {
 						> .editableWrap {
-							.placeholder { color: $colorControlActive; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
+							.placeholder { color: var(--color-control-active); position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
 						}
 					}
 				}
@@ -187,7 +187,7 @@
 	
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout {
-		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: $colorShapeTertiary; }
+		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
 			> .selectable { position: static; }
 			> .selectable {
@@ -205,7 +205,7 @@
 			}
 
 			> .dropTarget.targetBot { display: block; height: 16px; position: static; }
-			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorSystemAccent100 inset; }
+			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
 
 			> .children { padding-right: 16px; }
 		}
@@ -218,7 +218,7 @@
 
 	.block.blockText.textCode { padding: 6px 0px; }
 	.block.blockText.textCode {
-		> .wrapContent { border-radius: 2px; background-color: $colorShapeTertiary; }
+		> .wrapContent { border-radius: 2px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
 			> .selectable { border-radius: 6px; }
 			> .selectable {
@@ -233,7 +233,7 @@
 
 						.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
 						.additional {
-							.select { border: 0px; color: $colorControlActive; border-radius: 0px; padding: 0px 20px 0px 0px; }
+							.select { border: 0px; color: var(--color-control-active); border-radius: 0px; padding: 0px 20px 0px 0px; }
 							.select {
 								.item { @include text-common; }
 								.name { overflow: visible; }
@@ -246,7 +246,7 @@
 							}
 							.buttons {
 								.btn { 
-									padding: 0px; height: 20px; line-height: 20px; color: $colorControlActive; @include text-common; 
+									padding: 0px; height: 20px; line-height: 20px; color: var(--color-control-active); @include text-common; 
 									display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
 								}
 								.btn {
@@ -283,7 +283,7 @@
 	.block.blockText.textNumbered > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textCheckbox > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textToggle > .wrapContent > .dropTarget.targetBot.isOver.bottom
-	{ box-shadow: 0px -2px 0px $colorSystemAccent100 inset; }
+	{ box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
 
 	.block.blockText.textParagraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.textHeader1 > .wrapContent.bgColor > .selectable > .dropTarget,

@@ -3,12 +3,12 @@
 .progressBar {
     .bar { position: relative; overflow: hidden; height: 12px; border-radius: 4px; display: flex; flex-direction: row; gap: 0px 2px; }
     .bar {
-		.fill { height: 100%; background-color: $colorSystemAccent25; min-width: 6px; }
-		.fill.isActive { background-color: $colorSystemAccent100; }
-		.fill.empty { background-color: $colorShapeTertiary; }
+		.fill { height: 100%; background-color: var(--color-system-accent-25); min-width: 6px; }
+		.fill.isActive { background-color: var(--color-system-accent-100); }
+		.fill.empty { background-color: var(--color-shape-tertiary); }
 	}
     .labels { display: flex; justify-content: space-between; }
     .labels {
-		.label { @include text-small; padding-top: 8px; color: $colorTextSecondary; }
+		.label { @include text-small; padding-top: 8px; color: var(--color-text-secondary); }
 	}
 }
