@@ -10,20 +10,8 @@ const NotificationGallery = observer(class NotificationGallery extends React.Com
 		const { item, onButton } = this.props;
 		const { payload } = item;
 		const { errorCode, spaceId, name } = payload;
-		const lang = errorCode ? 'error' : 'success';
-		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 
-		let title = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-title`));
-		let text = translate(UtilCommon.toCamelCase(`notification-gallery-${lang}-text`));
 		let buttons = [];
-
-		if (errorCode) {
-			text = UtilCommon.sprintf(text, name);
-		} else {
-			title = UtilCommon.sprintf(title, name);
-			text = UtilCommon.sprintf(text, space.name);
-		};
-
 		if (!errorCode && (spaceId != commonStore.space)) {
 			buttons = buttons.concat([
 				{ id: 'space', text: 'Go to space' }
@@ -32,8 +20,8 @@ const NotificationGallery = observer(class NotificationGallery extends React.Com
 
 		return (
 			<React.Fragment>
-				<Title text={title} />
-				<Label text={text} />
+				<Title text={item.title} />
+				<Label text={item.text} />
 
 				<div className="buttons">
 					{buttons.map((item: any, i: number) => (

@@ -204,7 +204,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	componentDidMount(): void {
 		this.rebind();
-		this.initToggle();
+		this.forceUpdate();
 	};
 
 	componentDidUpdate(): void {
@@ -631,10 +631,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-			return false;
-		};
-
 		const { layout } = block.content;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content || {};
@@ -655,6 +651,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
 				allowed = false;
 			};
+		} else
+		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+			allowed = false;
 		};
 
 		return allowed;

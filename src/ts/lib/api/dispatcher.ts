@@ -156,6 +156,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
+		const currentWindow = window.Electron.currentWindow();
+		const { windowId } = currentWindow;
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -970,7 +972,15 @@ class Dispatcher {
 				};
 
 				case 'notificationSend': {
-					notificationStore.add(Mapper.From.Notification(data.getNotification()));
+					const item = new M.Notification(Mapper.From.Notification(data.getNotification()));
+
+					notificationStore.add(item);
+
+					if ((windowId == 1) && !window.Electron.isFocused()) {
+						new window.Notification(item.title, { body: item.text }).onclick = () => { 
+							window.Electron.focus();
+						};
+					};
 					break;
 				};
 

@@ -1,4 +1,5 @@
 const { app, shell, BrowserWindow } = require('electron');
+const { is } = require('electron-util');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
@@ -122,7 +123,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, true);
+		this.exit(win, '', true);
 	};
 
 	updateCancel (win) {
@@ -189,6 +190,12 @@ class Api {
 		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
 
 		this.setConfig(win, { languages });
+	};
+
+	setBadge (win, t) {
+		if (is.macos) {
+			app.dock.setBadge(t);
+		};
 	};
 
 };

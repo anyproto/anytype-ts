@@ -1,6 +1,6 @@
 document.body.onload = function () {
     $(function () {
-        var link = $('lnk, a');
+        var link = $('markuplink, a');
 		var block = $('.block');
 		var bookmark = $('.block.blockBookmark .inner');
 

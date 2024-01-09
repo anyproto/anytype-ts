@@ -3,8 +3,8 @@
 .menus {
 	.menu.menuButton { white-space: nowrap; height: 44px; line-height: 44px; padding: 0px 14px; }
 	.menu.menuButton {
-		.item { display: inline-block; @include text-common; margin-right: 16px; color: $colorControlActive; transition: $transitionAllCommon; }
-		.item:hover { color: $colorTextPrimary; }
+		.item { display: inline-block; @include text-common; margin-right: 16px; color: var(--color-control-active); transition: $transitionAllCommon; }
+		.item:hover { color: var(--color-text-primary); }
 		.item:last-child { margin: 0px; }
 	}	
 }

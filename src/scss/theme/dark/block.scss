@@ -1,13 +1,7 @@
 .block.blockCover {
     .loaderWrapper { background: rgba(0,0,0,0.3); }
-    .loaderWrapper {
-        .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
-    }
 
     .elements {
-        .btn.white { background: $colorShapeSecondary; color: $colorTextPrimary; }
-        .btn.white:hover { background: $colorBgPrimary; color: $colorTextPrimary; }
-
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
@@ -15,8 +9,6 @@
 			.icon.relation { background-image: url('#{$themePath}/icon/add/relation1.svg'); }
 		}
     }
-
-    .author a:hover { color: $colorSystemAccent100; }
 }
 
 .blocks {
@@ -24,34 +16,8 @@
 
     .block {
         .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
-
-		.emptyToggle { color: $colorTextSecondary; }
-		.emptyToggle:hover { color: $colorTextPrimary; }
-
-		.colResize {
-			.line { background: $colorShapeSecondary; }
-		}
     }
     .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
-
-    /* BlockIconPage */
-
-    .block.blockIconPage {
-        .iconObject { box-shadow: 0px 0px 0px 2px $colorBgPrimary; }
-    }
-
-    /* BlockIconUser */
-
-    .block.blockIconUser {
-        .iconObject { box-shadow: 0px 0px 0px 2px $colorBgPrimary; }
-    }
-
-	/* BlockFeatured */
-
-	.block.blockFeatured { color: $colorTextSecondary; }
-    .block.blockFeatured {
-        .cellContent:hover, .cellContent.hover { background: $colorShapeHighlightMedium; }
-    }
 
     /* BlockFile */
 
@@ -59,29 +25,19 @@
         .loaderWrapper { border: 0px; }
     }
 
-	/* BlockRelation */
-
-	.block.blockRelation {
-        .cell.canEdit:hover { background: $colorShapeHighlightMedium; }
-    }
-
     /* BlockMedia */
 
     .block.blockMedia {
         .loaderWrapper { border: 0px; }
-        .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorShapePrimary; }
     }
-    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorShapeHighlightMedium; }
 
     /* BlockDataview */
 
     .block.blockDataview {
-		.loadMore { border-color: $colorShapePrimary; }
 		.loadMore {
 			.icon { background-image: url('#{$themePath}/arrow/loadMore0.svg'); }
 		}
 
-		.loadMore:hover { color: $colorTextPrimary; }
 		.loadMore:hover {
 			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
 		}
@@ -93,62 +49,31 @@
 
 		.dateSelect {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); border-radius: 4px; }
-			.icon.arrow:hover { background-color: $colorShapeHighlightMedium; }
-
-			.btn:hover { background-color: $colorShapeHighlightMedium; }
 		}
 
-		.dataviewEmpty { border-color: $colorShapeSecondary; }
-		.dataviewEmpty {
-			.button { color: $colorTextPrimary; }
-		}
-
-		.dataviewHead { border-color: $colorShapeSecondary; color: $colorTextPrimary; }
 		.dataviewHead {
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
 			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
 		}
 
         .dataviewControls {
 			> .sides {
 				> .side.right {
-					.filter { color: $colorTextPrimary; }
-
 					.buttonWrap.withSelect {
 						.button.select { border-left-color: rgba(23,23,23,0.1); }
 						.button.select:after { background-image:  url('~img/arrow/button/black.svg'); }
 					}
 				}
 			}
-            .viewItem { color: $colorTextSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
-            .viewItem:hover, .viewItem.active { color: $colorTextPrimary; }
-            .viewItem.isDragging { background: $colorShapeHighlightMedium; }
-
-			.icon:hover, .icon.active { background-color: $colorShapeHighlightMedium; }
 			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.btn-sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
-		.dataviewControls::after { background-color: $colorShapeSecondary; }
-
-		.dataviewSelection {
-			.side.left { color: $colorTextPrimary; }
-			.side.right {
-				.element { color: $colorTextPrimary; }
-				.element:hover { background-color: $colorShapeHighlightMedium; }
-			}
-		}
-
-        .cellHead.isDragging { background: $colorShapeHighlightMedium; }
-		.cellHead.isDragging::after { background-color: $colorShapeHighlightMedium; }
 
         .viewContent.viewGrid,
 		.viewContent.viewList {
-			.cell.add { color: $colorTextSecondary; }
 			.cell.add {
-				.btn:hover { color: $colorTextPrimary; }
 				.btn:hover {
 					.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 				}
@@ -156,12 +81,8 @@
 		}
 
         .viewContent.viewGrid {
-            .row { box-shadow: 0px 1px $colorShapeSecondary inset; }
 			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
 
-			.loadMore { box-shadow: 0px 1px $colorShapeSecondary inset; border-color: $colorShapeSecondary; }
-
-			.cellHead .resize .line { background-color: $colorShapeSecondary; }
 			.cellHead.cellKeyHover::after, 
 			.cellHead.active::after,
 			.cellHead.isDragging::after { background-color: rgba(223, 221, 208, 0.04); }
@@ -174,195 +95,56 @@
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
-        .viewContent.viewList, .viewContent.viewGallery, .viewContent.viewBoard {
-            .cellContent.isName { color: $colorTextPrimary; }
-        }
-
-		.viewContent.viewGallery, 
-		.viewContent.viewBoard {
-			.card {
-				.cellContent.c-description { color: $colorTextPrimary; }
-			}
-		}
-
         .viewContent.viewGallery {
-            .card { background: $colorBgPrimary; border-color: $colorShapeTertiary; }
-			.card:hover { border-color: $colorShapeSecondary; background: rgba(166, 166, 166, 0.04); }
-            .card {
-                .cover { border-color: $colorShapePrimary; background-color: $colorShapeSecondary; }
-            }
-
-			.card.isEditing { border: 2px solid $colorSystemAccent100; }
+			.card:hover { background: rgba(166, 166, 166, 0.04); }
         }
 
         .viewContent.viewBoard {
-			.ghost { border-color: $colorSystemAccent100; }
-            .cardContent { background: $colorBgSecondary; border-color: $colorShapeTertiary; }
-			.card.add { background: $colorBgSecondary; border-color: $colorShapeSecondary; }
+            .cardContent { background: var(--color-bg-secondary); }
+			.card.add { background: var(--color-bg-secondary); }
 
-			.column {
-				.head { background: $colorBgPrimary; }
-				.side.right {
-					.icon:hover { background-color: $colorShapeSecondary; }
-				}
-			}
-			.column.withColor {
-				.head .empty { color: $colorTextSecondary; }
-			}
-
-			.card.add:hover, .card:hover .cardContent { border-color: $colorShapePrimary; }
 			.card.add:hover {
                 .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
             }
-
-			.card.isEditing {
-				.cardContent { border: 2px solid $colorSystemAccent100; }
-			}
         }
-
-		.viewContent.viewCalendar {
-			.table, .day { border-color: $colorShapeSecondary; }
-			.table {
-				.head {
-					.item { border-color: $colorShapeSecondary; }
-				}
-			}
-
-			.day.other {
-				.number { color: $colorTextTertiary; }
-			}
-
-			.day {
-				.item:hover::before { background: $colorShapeHighlightMedium; }
-			}
-		}
-
-		.viewContent.viewGraph {
-			canvas { background: $colorBgPrimary; }
-		}
-
-		.content {
-			.scrollWrap { background: $colorBgPrimary; }
-		}
-    }
-
-    /* BlockType */
-
-    .block.blockType {
-        .item { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-        .item.hover { background: $colorShapeHighlightMedium; }
     }
 
     /* BlockText */
 
-    .block.blockText {
-        kbd { background: $colorShapeHighlightMedium; color: $colorSystemAccent100; }
-		lnk, obj { border-color: $colorTextSecondary; }
-		lnk:hover, obj:hover { border-color: $colorTextPrimary; }
-    }
-
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
     .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
-
-    /* BlockLink */
-
-    .block.blockLink {
-        .loading, .deleted { color: $colorTextSecondary; }
-
-		.linkCard.c48.withIcon {
-			.iconObject { background-color: $colorShapeTertiary; }
-		}
-    }
-	.block.blockLink.card {
-		.linkCard {
-			.side.left, .side.right { border-color: $colorShapeTertiary; }
-		}
-	}
-
-	.block.blockLink.text:hover {
-		.linkCard {
-			.cardName .name { border-color: $colorTextPrimary; }
-		}
-	}
-	.block.blockLink.card:hover {
-		.linkCard {
-			.side.left, .side.right { border-color: $colorShapePrimary; }
-		}
-	}
-
-    /* BlockDiv */
-
-    .block.blockDiv {
-        .line { border-color: $colorShapePrimary; }
-        .dot { background: $colorShapePrimary !important; }
-    }
 
     /* BlockEmbed */
 
     .block.blockEmbed {
-		.preview { background-color: $colorShapeHighlightLight; }
 		.preview {
-			.icon.embedLatex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
-			.icon.embedMermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
-			.icon.embedYoutube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
-			.icon.embedVimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
-			.icon.embedGoogleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
-			.icon.embedSoundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
-			.icon.embedChart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
-			.icon.embedMiro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
-			.icon.embedFigma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
+			.icon.embed-latex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
+			.icon.embed-mermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
+			.icon.embed-youtube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
+			.icon.embed-vimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
+			.icon.embed-googleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
+			.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
+			.icon.embed-chart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
+			.icon.embed-miro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
+			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
 		}
-
-        .select { color: $colorTextPrimary; }
-        .wrap.isEditing { background-color: $colorShapeHighlightLight; }
-        #input { background: $colorShapeSecondary; border-color: $colorShapeHighlightLight; }
-		#placeholder { color: $colorTextSecondary; }
     }
 
     /* BlockBookmark */
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-		.deleted { color: $colorTextSecondary; }
-
-        .inner { border-color: transparent; background-color: $colorShapeHighlightMedium; }
-        .inner {
-			.name { color: $colorTextPrimary; }
-    	    .descr { color: $colorTextSecondary; }
-	        .link { color: $colorTextSecondary; }
-
-            .side.right { border-color: $colorShapeTertiary; }
-        }
+        .inner { border-color: transparent; }
     }
-
-    /* BlockTableOfContenst */
-
-	.block.blockTableOfContents { 
-		.item { color: $colorTextSecondary; }
-		.item:hover span { border-color: $colorTextSecondary; }
-	}
 
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: $colorShapeTertiary; background-image: url('#{$themePath}/icon/table/plus.svg'); }
-		.plusButton.circle .icon { background-color: $colorShapeTertiary; }
+		.plusButton .icon { background-image: url('#{$themePath}/icon/table/plus.svg'); }
 
-		.handle { 
-			.inner::before { background-color: $colorBgPrimary; }
-		}
-		
-		.row { border-color: $colorShapePrimary; }
-		.row.isHeader {
-			.cell { background-color: $colorShapeHighlightMedium; }
-		}
-
-		.cell { background: $colorBgPrimary; border-color: $colorShapePrimary; }
 		.cell {
-			.block { color: $colorTextPrimary; }
-
 			.icon.menu:hover {
-				.inner { box-shadow: 0px 0px; background-color: $colorShapePrimary; }
+				.inner { box-shadow: 0px 0px; }
 			}
 		}
 	}

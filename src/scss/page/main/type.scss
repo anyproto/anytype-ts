@@ -27,13 +27,13 @@
 
 		.section.template {
 			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorTextSecondary; 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: var(--color-text-secondary); 
 				transition: $transitionAllCommon;
 			}
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
 			}
-			.btn:hover { color: $colorTextPrimary; }
+			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}
@@ -52,20 +52,20 @@
 				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionAllCommon; border-radius: 4px; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorTextSecondary; }
+				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: var(--color-text-secondary); }
 			}
 			.item.canEdit {
 				.clickable { }
-				.clickable:hover { background: $colorShapeHighlightLight; }
+				.clickable:hover { background: var(--color-shape-highlight-light); }
 			}
 
 			.item.add { line-height: 20px; }
 			.item.add {
 				.icon { transition: $transitionAllCommon; }
-				.name { color: $colorTextSecondary; transition: $transitionAllCommon; }
+				.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
 
 				.clickable:hover {
-					.name { color: $colorTextPrimary; } 
+					.name { color: var(--color-text-primary); } 
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				}
 			}
@@ -73,9 +73,9 @@
 
 		.section.layout {
 			.title { margin-bottom: 10px; }
-			.content { line-height: 20px; color: $colorTextSecondary; }
+			.content { line-height: 20px; color: var(--color-text-secondary); }
 			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
-			.select:hover, .select.isFocused { background: $colorShapeHighlightLight; }
+			.select:hover, .select.isFocused { background: var(--color-shape-highlight-light); }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.name { display: inline-block; vertical-align: middle; }
@@ -83,4 +83,4 @@
 	}
 }
 
-.pageMainType > div > #loader { position: fixed; top: 0px; width: 100%; height: 100%; background: $colorBgPrimary; z-index: 5; }
+.pageMainType > div > #loader { position: fixed; top: 0px; width: 100%; height: 100%; background: var(--color-bg-primary); z-index: 5; }

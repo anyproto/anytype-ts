@@ -14,12 +14,12 @@
 	}
 
 	.block.blockDiv.divLine {
-		.line {  height: 1px; border-bottom: 1px solid $colorShapePrimary; }
+		.line {  height: 1px; border-bottom: 1px solid var(--color-shape-primary); }
 	}
 
 	.block.blockDiv.divDot {
 		.dots { height: 2px; margin-top: -1px; white-space: nowrap; }
-		.dot { width: 2px; height: 2px; background: $colorControlAccent; margin-right: 18px; display: inline-block; vertical-align: top; }
+		.dot { width: 2px; height: 2px; background: var(--color-control-accent); margin-right: 18px; display: inline-block; vertical-align: top; }
 		.dot:last-child { margin: 0px; }
 	}
 }

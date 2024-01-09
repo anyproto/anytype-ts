@@ -43,7 +43,7 @@ class CommonStore {
 	public pinTimeId = 0;
 	public isFullScreen = false;
 	public autoSidebarValue = false;
-	public isSidebarFixedValue = false;
+	public isSidebarFixedValue = null;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
@@ -170,7 +170,11 @@ class CommonStore {
 	};
 
 	get isSidebarFixed(): boolean {
-		return Boolean(this.isSidebarFixedValue) || Storage.get('isSidebarFixed');
+		if (this.isSidebarFixedValue === null) {
+			this.isSidebarFixedValue = !!Storage.get('isSidebarFixed');
+		};
+
+		return !!this.isSidebarFixedValue;
 	};
 
 	get theme(): string {

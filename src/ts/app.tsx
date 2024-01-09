@@ -153,6 +153,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				<DragProvider>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
+					<Navigation />
 
 					<Page {...this.props} />
 				</DragProvider>
@@ -186,6 +187,12 @@ class App extends React.Component<object, State> {
 
 	render () {
 		const { loading } = this.state;
+		const platform = UtilCommon.getPlatform();
+
+		let drag = null;
+		if (platform == I.Platform.Mac) {
+			drag = <div id="drag" />;
+		};
 		
 		return (
 			<Router history={history}>
@@ -200,15 +207,14 @@ class App extends React.Component<object, State> {
 							</div>
 						) : ''}
 
+						{drag}
+						<div id="tooltipContainer" />
+						<div id="globalFade" />
+
 						<PreviewIndex />
 						<Progress />
 						<Toast />
-						<Navigation />
 						<ListNotification key="listNotification" />
-
-						<div id="tooltipContainer" />
-						<div id="drag" />
-						<div id="globalFade" />
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (

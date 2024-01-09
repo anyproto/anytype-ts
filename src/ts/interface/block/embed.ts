@@ -20,6 +20,7 @@ export enum EmbedProcessor {
 	GithubGist		 = 15,
 	Codepen			 = 16,
 	Bilibili		 = 17,
+	Excalidraw		 = 18,
 };
 
 export interface ContentEmbed {

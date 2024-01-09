@@ -23,7 +23,7 @@
 				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
 		}
-		.item > .inner { border: 1px solid $colorShapeSecondary; border-radius: 4px; height: 78px; overflow: hidden; line-height: 74px; }
+		.item > .inner { border: 1px solid var(--color-shape-secondary); border-radius: 4px; height: 78px; overflow: hidden; line-height: 74px; }
 
 		.sectionName { padding: 5px 0px; }
 		.item.empty { padding: 12px 14px; }

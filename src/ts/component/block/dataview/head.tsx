@@ -168,6 +168,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);
 			};
 
+			if (isNew) {
+				this.menuContext?.close();
+				this.setEditing(true);
+			};
+
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
 		};
 
@@ -240,7 +245,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		switch (item.id) {
 			case 'editTitle': {
-				this.setState({ isEditing: true });
+				this.setEditing(true);
 				break;
 			};
 
@@ -267,7 +272,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		keyboard.setFocus(false);
 
 		this.save();
-		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
+		window.setTimeout(() => this.setEditing(false), 40);
 	};
 
 	onKeyDown (e: any) {
@@ -366,6 +371,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 		analytics.event('InlineSetOpenFullscreen');
+	};
+
+	setEditing (v: boolean) {
+		this.setState({ isEditing: v });
 	};
 
 });

@@ -87,6 +87,7 @@ class WindowManager {
 
 			webPreferences: {
 				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+				devTools: is.development,
 			},
 		};
 
@@ -128,13 +129,7 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		if (is.development) {
-			win.loadURL(`http://localhost:${port}`);
-			win.toggleDevTools();
-		} else {
-			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
-		};
-
+		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 

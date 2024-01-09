@@ -5,13 +5,7 @@ html.themeDark {
 
     /* Common */
 
-    body { background: $colorBgPrimary; color: $colorTextPrimary; color-scheme: dark; }
-
-    a { color: $colorTextPrimary; }
-    a:hover { color: $colorOrange; }
-
-    #root-loader { background: $colorBgPrimary; }
-	#globalFade { background: $colorBgPrimary; }
+    body { color-scheme: dark; }
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -20,13 +14,8 @@ html.themeDark {
     .cover.coverAudio::after { display: none; }
     .cover.type2.black { background-color: #000 !important; }
 
-    .empty, .emptyText { color: $colorTextTertiary; }
-    .placeholder { color: $colorTextTertiary; }
-    ::-webkit-input-placeholder { color: $colorTextTertiary !important; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
-	::selection { background-color: $colorSystemSelection; }
-
-    .textColor-default { color: $colorTextPrimary !important; }
+	::selection { background-color: var(--color-system-selection); }
 
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
@@ -39,111 +28,76 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isMultiSelect.archive { background-color: $colorShapeHighlightMedium; color: $colorTextSecondary; }
-    .isMultiSelect.tagColor-default { color: $colorTextPrimary !important; background: unset !important; box-shadow: 0px 0px 0px 1px $colorShapePrimary inset; }
+    .isMultiSelect.tagColor-default { background: unset !important; }
     .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
-    .isMultiSelect.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
-    .isMultiSelect.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-red { color: $colorRed !important; background: rgba(245, 85, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-pink { color: $colorPink !important; background: rgba(229, 28, 160, 0.25) !important; }
-    .isMultiSelect.tagColor-purple { color: $colorPurple !important; background: rgba(171, 80, 204, 0.25) !important; }
-    .isMultiSelect.tagColor-blue { color: $colorBlue !important; background: rgba(62, 88, 235, 0.25) !important; }
-    .isMultiSelect.tagColor-ice { color: $colorIce !important; background: rgba(42, 167, 238, 0.25) !important; }
-    .isMultiSelect.tagColor-teal { color: $colorTeal !important; background: rgba(15, 200, 186, 0.25) !important; }
-    .isMultiSelect.tagColor-lime { color: $colorLime !important; background: rgba(93, 212, 0, 0.25) !important; }
-
-    .isSelect.tagColor-default { color: $colorTextPrimary !important; }
+    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: rgba(236, 217, 27, 0.25) !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: rgba(255, 181, 34, 0.25) !important; }
+    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: rgba(245, 85, 34, 0.25) !important; }
+    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: rgba(229, 28, 160, 0.25) !important; }
+    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: rgba(171, 80, 204, 0.25) !important; }
+    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: rgba(62, 88, 235, 0.25) !important; }
+    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: rgba(42, 167, 238, 0.25) !important; }
+    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: rgba(15, 200, 186, 0.25) !important; }
+    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: rgba(93, 212, 0, 0.25) !important; }
 
 	.selectable.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
-	{ background-color: $colorSystemSelection; }
+	{ background-color: var(--color-system-selection); }
 
-	.brokenMedia { border-color: $colorShapePrimary; }
 	.brokenMedia {
-		img:before { background: $colorBgSecondary; }
+		img:before { background: var(--color-bg-secondary); }
 	}
 
 	.icon.import-notion { background-image: url('#{$themePath}/icon/import/notion.svg'); }
     .icon.import-roam { background-image: url('#{$themePath}/icon/import/roam.svg'); }
 
 	.objectManagerWrapper {
-        .controls .side.left .element:hover { background-color: $colorShapeHighlightMedium; }
         .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
         .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
         .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
         .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
-		.controls, .emptySearch { border-color: $colorShapePrimary; }
 	}
 
     /* Components */
 
     .loaderWrapper {
 		@keyframes dots-dark {
-			0% { background-color: $colorBgPrimary; }
-			32% { background-color: $colorBgPrimary; }
 			100% { background-color: #fff; }
 		}
 
-        .loader { border-color: $colorShapePrimary; border-left-color: $colorSystemAccent100; }
-		.dot { animation-name: dots-dark; border-color: $colorControlAccent; }
+		.dot { animation-name: dots-dark; }
     }
 
     .mediaAudio {
-        .controls { color: $colorTextPrimary; }
         .controls {
             .icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
 
             .icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-
-            .input-drag {
-                .back { background: $colorShapeHighlightMedium; }
-            }
         }
     }
 
     /* Button */
 
-	.button.black { background: $colorControlAccent; color: $colorTextInversion; }
-	.button.black:hover,
-    .button.black.hover { background: $colorControlActive }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.blank { color: $colorTextPrimary; border-color: $colorShapePrimary; }
-    .button.blank:not(.disabled):hover,
-    .button.blank:not(.disabled).hover { border-color: $colorShapePrimary; background: $colorShapeHighlightMedium; }
-
 	.button.red,
-    .button.red.blank { border-color: $colorShapePrimary; background: none; color: $colorRed; }
+    .button.red.blank { background: none; }
     .button.red:hover,
     .button.red.hover,
     .button.red.blank:hover,
     .button.red.blank.hover { border-color: #581f0c; background: #311107; }
 
     .filter {
-        .line { background: $colorShapeSecondary; }
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
 
-	.emptySearch {
-		b { color: $colorTextPrimary; }
-		.label { color: $colorTextSecondary; }
-	}
-
-    .frame { background: $colorBgPrimary; }
-
     .textarea { background: none; }
-
-    .switch { background: $colorShapeSecondary; }
-
-	.textareaWrap { background-color: $colorBgSecondary; }
-
-    .select { border-color: $colorShapePrimary; }
-    .select:hover, .select.isFocused { background: $colorShapeHighlightMedium; }
+	.textareaWrap { background-color: var(--color-bg-secondary); }
 
     .select {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
@@ -151,102 +105,42 @@ html.themeDark {
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorShapeHighlightMedium; color: $colorTextSecondary; border-color: transparent; }
-    .inputWithFile {
-        .input::placeholder { color: $colorTextSecondary; }
-        .fileWrap:hover .border { color: $colorTextPrimary; }
-
-        #url { color: $colorTextPrimary; }
-    }
+    .inputWithFile { border-color: transparent; }
 
     .listPreviewObject {
-        .item.add { border-color: $colorShapePrimary; }
-        .item:before { background: $colorShapeHighlightMedium; }
-
-        .item {
-            > .icon.more:hover,
-            > .icon.more.hover { background-color: $colorShapeHighlightMedium; }
-            > .defaultLabel { background: $colorShapeTertiary; color: $colorTextSecondary; }
-        }
-
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
     }
 
-    .deleteWrapper { background: $colorBgPrimary; }
-
-	.sync { background-color: $colorShapeSecondary; color: $colorTextSecondary; }
-
     /* PreviewObject */
 
     .previewObject {
-        .border { border-color: $colorShapePrimary; }
-        .loaderWrapper { border-color: $colorShapePrimary; }
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
-        .moreWrapper { background: $colorShapeTertiary; }
         .heading {
-            .iconObject { background-color: $colorShapeTertiary; box-shadow: 0px 0px 0px 1px $colorTextPrimary inset; }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
-
-            .featured { background: $colorShapeSecondary; }
-            .bullet { background: $colorShapeSecondary; }
         }
 
         .blocks {
             .element {
-                .line { background: $colorShapeSecondary !important; }
-
                 .inner {
 					.icon.hl { background-image: url('#{$themePath}/icon/object/preview/hl.svg'); }
-
-                    .bookmark {
-                        .side.left { border-color: $colorShapePrimary; }
-                    }
                 }
             }
         }
     }
 
-    .previewObject.blank {
-        .heading {
-            .name { color: $colorTextSecondary; }
-        }
-    }
-
-	.previewObject.small,
-    .previewObject.medium {
-		.heading {
-			  .featured { background: $colorShapeSecondary; }
-		}
-	}
-
     /* Preview */
 
     .previewWrapper {
-        .content { background: $colorBgSecondary; }
-        .head { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-        .head {
-            .item:hover { color: $colorTextPrimary; }
-        }
-
-        .previewLink {
-            .name { color: $colorTextPrimary; }
-            .descr { color: $colorTextSecondary; }
-            .link { color: $colorTextSecondary; }
-            .img { border-color: $colorShapeSecondary; }
-        }
+        .content { background: var(--color-bg-secondary); }
     }
 
-	.previewGraph { background: $colorBgSecondary; border-color: $colorShapePrimary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.previewGraph { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* Pager */
 
     .pager {
-        .pageItem:hover { color: $colorTextPrimary; }
-        .pageItem.active { color: $colorOrange; }
-        .pageItem.list:hover { color: $colorTextPrimary; }
-
         .icon.arrow { background-image: url('#{$themePath}/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
@@ -259,46 +153,19 @@ html.themeDark {
     /* Progress */
 
     .progress {
-        .inner { background: $colorBgSecondary; }
-        .inner {
-			.fill { background: $colorTextSecondary; }
-            .label { color: $colorTextPrimary; }
-            .bar { background: $colorShapeHighlightMedium; }
-        }
+        .inner { background: var(--color-bg-secondary); }
     }
 
-	.progressBar {
-		.bar {
-			.fill.empty { background-color: $colorShapeTertiary; }
-		}
-	}
-
-    .tooltip { background: $colorShapeSecondary; color: $colorTextPrimary; }
-    .tooltip.big { background: $colorBgSecondary; border: 1px solid rgba(229, 229, 229, 0.1); }
+	.tooltip { color: var(--color-text-primary); }
+    .tooltip.big { background: var(--color-bg-secondary); border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 
     .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
-    /* IconObject */
-
-    .iconObject.c40.isRelation, 
-    .iconObject.c48.isRelation,
-    .iconObject.c56, 
-    .iconObject.c64,
-    .iconObject.c80,
-    .iconObject.c96,
-    .iconObject.c112,
-    .iconObject.c128,
-    .iconObject.withLetter
-    { background-color: $colorShapeTertiary; }
-
     /* EditorControls */
 
     .editorControls {
-        .btn { background: $colorShapeSecondary; color: $colorTextSecondary; }
-        .btn:hover { color: $colorTextPrimary; }
-
         .btn {
             .icon.icon { background-image: url('#{$themePath}/icon/add/icon0.svg'); }
             .icon.addCover { background-image: url('#{$themePath}/icon/add/cover0.svg'); }
@@ -315,58 +182,27 @@ html.themeDark {
 
     /* Header */
 
-    .header.isCommon { background: $colorBgPrimary; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-		.path:hover { background-color: $colorShapeHighlightMedium; color: $colorTextPrimary; }
-
-        .icon:hover, .icon.hover { background-color: $colorShapeHighlightMedium; }
-
-        .tabs { color: $colorTextSecondary; }
-        .tabs {
-            .tab.active, .tab:hover { color: $colorTextPrimary; border-color: $colorShapePrimary; }
-        }
-
-        .headerBanner { background: $colorShapeTertiary; color: $colorTextPrimary; }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
-	.header.isCommon.active {
-		.path { background-color: $colorShapeHighlightMedium; color: $colorTextPrimary; }
-	}
 
-    .header.mainHistory { background: $colorBgPrimary; }
     .header.mainHistory {
         .side {
-            .item { color: $colorTextSecondary; }
             .item {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
             }
         }
         
-		.item.grey:hover { color: $colorTextPrimary; }
-
 		.item:hover {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
 		}
     }
 
-    /* Footer */
-
-    .footer {
-        .iconWrap .bg { background-color: $colorShapeSecondary; border-color: $colorShapeSecondary; }
-    }
-
     /* Sidebar */
 
-    .sidebar { background-color: $colorBgSecondary; color: $colorTextPrimary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
+    .sidebar { background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
-    .sidebar {
-		> .head {
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
-		}
-
-		.resize-h .resize-handle::after { background-color: $colorShapeSecondary; }
-    }
 
 	/* Navigation */
 
@@ -375,50 +211,27 @@ html.themeDark {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
 
-    @import "./menu.scss";
-    @import "./popup.scss";
-    @import "./page.scss";
-    @import "./block.scss";
-	@import "./widget.scss";
-
-    /* Cells */
-
-    .cellContent {
-        .more { color: $colorTextSecondary; }
-    }
-
-    .cell.isEditing {
-        .cellContent { background: $colorBgPrimary; }
-    }
-
-    .cell.isEditing.c-select, .cell.isEditing.c-object {
-        #entry { color: $colorTextPrimary; }
-    }
-
-    .cellContent.c-url, 
-    .cellContent.c-email, 
-    .cellContent.c-phone 
-    {
-        .name { border-color: $colorTextSecondary; }
-        .name:hover { color: $colorTextPrimary; border-color: $colorTextPrimary; }
-    }
-
 	/* Notifications */
 
 	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
 	.notifications {
 		.head {
-			.icon { background-color: $colorBgPrimary; border-color: $colorBgSecondary; }
-			.icon:hover { background-color: $colorShapeHighlightMedium; }
+			.icon { border-color: var(--color-bg-secondary); }
 		}
 
-		.notification {	background: $colorBgSecondary; @include shadow; border: 0px; }
+		.notification {	background: var(--color-bg-secondary); @include shadow; border: 0px; }
 
 		.notification {
-			.icon.delete { border-color: $colorShapeSecondary; background-color: $colorBgSecondary; }
+			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+	@import "./menu.scss";
+    @import "./popup.scss";
+    @import "./page.scss";
+    @import "./block.scss";
+	@import "./widget.scss";
 }
 
 html.platformWindows.themeDark, html.platformLinux.themeDark {

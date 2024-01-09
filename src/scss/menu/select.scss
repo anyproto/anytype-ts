@@ -29,8 +29,8 @@
 	}
 
 	.menu.menuSelect.button {
-		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: $colorControlActive; font-weight: 500; }
-		.item:hover { color: $colorTextPrimary; }
+		.item { white-space: nowrap; display: inline-block; margin-right: 16px; color: var(--color-control-active); font-weight: 500; }
+		.item:hover { color: var(--color-text-primary); }
 		.item:last-child { margin-right: 0px; }
 	}
 
@@ -43,7 +43,7 @@
 
 		.item.withDescription { height: auto; }
 		.item.withDescription {
-			.iconObject { background-color: $colorShapeHighlightMedium; }
+			.iconObject { background-color: var(--color-shape-highlight-medium); }
 			.descr { overflow: visible; white-space: normal; height: auto; }
 		}
 	}
@@ -62,7 +62,7 @@
 		.item { padding: 4px 16px; }
 		.item {
 			.icon.add {
-				border-radius: 8px; border: 1px solid $colorShapeSecondary; background-color: $colorShapeHighlightLight;
+				border-radius: 8px; border: 1px solid var(--color-shape-secondary); background-color: var(--color-shape-highlight-light);
 				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
 			}
 			.iconObject, .icon { margin: 0px; }
@@ -76,7 +76,7 @@
 		.titleWrapper { padding-bottom: 0px; }
 		.item {
 			.info { width: 100%; }
-			.iconObject { margin: 0px; background-color: $colorShapeHighlightMedium; }
+			.iconObject { margin: 0px; background-color: var(--color-shape-highlight-medium); }
 		}
 	}
 }

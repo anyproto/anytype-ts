@@ -71,35 +71,36 @@ class UtilMenu {
 		const { config } = commonStore;
 
 		let ret = [
-			{ id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
-			{ id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
-			{ id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
-			{ id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
-			{ id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
-			{ id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
-			{ id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
-			{ id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+			{ id: I.EmbedProcessor.Latex, name: 'LaTeX' },
+			{ id: I.EmbedProcessor.Mermaid, name: 'Mermaid' },
+			{ id: I.EmbedProcessor.Chart, name: 'Chart' },
+			{ id: I.EmbedProcessor.Youtube, name: 'Youtube' },
+			{ id: I.EmbedProcessor.Vimeo, name: 'Vimeo' },
+			{ id: I.EmbedProcessor.Soundcloud, name: 'Soundcloud' },
+			{ id: I.EmbedProcessor.GoogleMaps, name: 'Google maps' },
+			{ id: I.EmbedProcessor.Miro, name: 'Miro' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
-				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
+				{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 
-				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
-				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
-				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
-				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
-				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
-				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
-				{ id: I.EmbedProcessor.GithubGist, icon: 'githubGist', name: 'Github Gist' },
-				{ id: I.EmbedProcessor.Codepen, icon: 'codepen', name: 'Codepen' },
-				{ id: I.EmbedProcessor.Bilibili, icon: 'bilibili', name: 'Bilibili' },
+				{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
+				{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
+				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
+				{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
+				{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
+				{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
+				{ id: I.EmbedProcessor.GithubGist, name: 'Github Gist' },
+				{ id: I.EmbedProcessor.Codepen, name: 'Codepen' },
+				{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
+				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 			]);
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
+			it.icon = `embed-${UtilCommon.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
@@ -107,7 +108,7 @@ class UtilMenu {
 	getBlockObject () {
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
 		let i = 0;
@@ -365,7 +366,7 @@ class UtilMenu {
 		const getWeight = (s: string) => {
 			let w = 0;
 			if (s.toLowerCase() == f.toLowerCase()) {
-				w = 10000;
+				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
@@ -399,23 +400,28 @@ class UtilMenu {
 				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
-				} else 
-				if (c.name && c.name.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.name);
-				} else 
-				if (c.description && c.description.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.description);
-				} else
-				if (c.aliases && c.aliases.length) {
+				};
+
+				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
+							c._sortWeight_ = getWeight(alias);
 							ret = true;
 							break;
 						};
 					};
 				};
+
+				if (!ret && c.name && c.name.match(regC)) {
+					ret = true;
+					c._sortWeight_ = getWeight(c.name);
+				};
+
+				if (!ret && c.description && c.description.match(regC)) {
+					ret = true;
+					c._sortWeight_ = getWeight(c.description);
+				};
+				
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});

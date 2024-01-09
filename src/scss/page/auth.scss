@@ -1,9 +1,5 @@
 @import "~scss/_vars";
 
-$colorPrimary: #d4d4d4;
-$colorTextSecondary: #8d8d8d;
-$colorTextTertiary: #505050;
-$colorShapeTertiary: #2b2b2b;
 $colorError: #8a351a;
 
 $colorDark: #060606;
@@ -17,28 +13,34 @@ $colorErrorBackground: #240e07;
 $shadow: 0px 0px 0px 1px #252525;
 
 html.bodyIndex, html.bodyAuth {
-	body { background: $colorDark !important; color: $colorTextSecondary; overflow: hidden; }
+	--color-text-primary: #d4d4d4;
+	--color-text-secondary: #8d8d8d;
+	--color-text-tertiary: #505050;
+
+	--color-shape-tertiary: #2b2b2b;
+
+	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
 }
 
 html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.popup { 
-		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: $colorPrimary; }
+		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: var(--color-text-primary); }
 
-		.button.disabled { color: $colorTextTertiary }
+		.button.disabled { color: var(--color-text-tertiary) }
 
-		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
+		.button.black { color: var(--color-text-primary); background: $colorButtonStroke; }
 		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
 
-		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
+		.button.blank { border-color: $colorButtonStroke; color: var(--color-text-primary); background: none; }
 		.button.blank:hover { background: $colorButtonBlankHover; }
 	}
 
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		h1 { font-size: 18px; margin-bottom: 16px; color: $colorPrimary; }
-		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
+		h1 { font-size: 18px; margin-bottom: 16px; color: var(--color-text-primary); }
+		b { display: block; font-weight: 700; color: var(--color-text-primary); margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
 		ul.last { margin: 0px; }
@@ -46,10 +48,10 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 
 	#popupSettingsOnboarding-innerWrap {
 		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
-		.label.small { color: $colorTextTertiary; }
+		.label.small { color: var(--color-text-tertiary); }
 		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
 		.select {
-			.name { color: $colorTextInversion !important; }
+			.name { color: var(--color-text-inversion) !important; }
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
 		}
 	}
@@ -60,27 +62,27 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 			.item { background: $colorPopUp; }
 		}
 		.menu.menuAccountPath {
-			.label { color: $colorTextSecondary; }
-			.label.path { color: $colorPrimary; }
+			.label { color: var(--color-text-secondary); }
+			.label.path { color: var(--color-text-primary); }
 		}
 	}
 
 	.dotIndicator {
-    	span.active { background-color: $colorPrimary; }
+    	span.active { background-color: var(--color-text-primary); }
 	}
 
 	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorTextSecondary; box-shadow: $shadow !important; @include text-common; 
+		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: var(--color-text-secondary); box-shadow: $shadow !important; @include text-common; 
 		white-space: normal;
 	}
 	.tooltip {
 		.txt { line-height: 22px; }
-		b { display: block; font-weight: 500; color: $colorPrimary; }
+		b { display: block; font-weight: 500; color: var(--color-text-primary); }
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: $colorSystemAccent100; }
+		.loader { border-color: #555; border-left-color: var(--color-system-accent-100); }
 		.dot { border-color: #fff; }
 	}
 }
@@ -93,11 +95,11 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px $colorShapePrimary; }
+	.input { height: 40px; border: solid 1px var(--color-shape-primary); }
 
 	.header { width: 100% !important; }
 	.header {
-		.icon:hover { background-color: $colorShapeTertiary; }
+		.icon:hover { background-color: var(--color-shape-tertiary); }
 	}
 	.footer { width: 100% !important; }
 
@@ -109,28 +111,28 @@ html.bodyAuthDeleted {
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
-	.moreInfo { @include text-small; color: $colorTextTertiary; margin: 16px auto 0px auto; width: 192px; }
+	.moreInfo { @include text-small; color: var(--color-text-tertiary); margin: 16px auto 0px auto; width: 192px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; @include text-common; }
-	.button.disabled { color: $colorTextTertiary; }
+	.button.disabled { color: var(--color-text-tertiary); }
 	
-	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
+	.button.black { color: var(--color-text-primary) !important; background: $colorButtonStroke !important; }
 	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
 
-	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
+	.button.blank { border-color: $colorButtonStroke !important; color: var(--color-text-primary) !important; background: none; }
 	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
-	.small { color: $colorTextSecondary; }
-	.small:hover { color: $colorPrimary; }
+	.small { color: var(--color-text-secondary); }
+	.small:hover { color: var(--color-text-primary); }
 
 	.error { color: $colorError; margin: 0.3em 0px; }
 	.withError { background: $colorErrorBackground; }
 
 	.loaderWrapper {
 		@keyframes dots-white {
-			0% { background-color: $colorBgPrimary; }
-			32% { background-color: $colorBgPrimary; }
+			0% { background-color: var(--color-bg-primary); }
+			32% { background-color: var(--color-bg-primary); }
 			100% { background-color: rgba(0,0,0,0); }
 		}
 		.dots .dot { animation-name: dots-white; }
@@ -143,10 +145,10 @@ html.bodyAuthDeleted {
 		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
-	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: $colorTextSecondary; width: 384px; }
+	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary); width: 384px; }
 
 	.footer {
-		.label.disclaimer { color: $colorTextTertiary; }
+		.label.disclaimer { color: var(--color-text-tertiary); }
 	}
 
 	@media (max-width: 464px) {
@@ -166,7 +168,7 @@ html.bodyAuthDeleted {
 .pageAuthInvite {
 	.frame { padding: 64px; }
 	.label { width: 500px; }
-	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorShapePrimary; font-family: 'Plex'; margin-bottom: 32px; }
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px var(--color-shape-primary); font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinCheck {
@@ -177,7 +179,7 @@ html.bodyAuthDeleted {
 			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: $colorSystemAccent100; }
+		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100); }
 	}
 }
 
@@ -197,8 +199,8 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { @include text-header3; color: $colorPrimary; }
-	.label { @include text-paragraph; color: $colorTextSecondary; }
+	.title { @include text-header3; color: var(--color-text-primary); }
+	.label { @include text-paragraph; color: var(--color-text-secondary); }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 	.bottom {
@@ -234,7 +236,7 @@ html.bodyAuthDeleted {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.tooltipLink { color: $colorPrimary; }
+	.tooltipLink { color: var(--color-text-primary); }
 	.tooltipLink:hover { text-decoration: underline; }
 
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
@@ -244,24 +246,24 @@ html.bodyAuthDeleted {
 	}
 
 	.inputWrapper {
-		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: var(--color-text-primary); font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
-		.input::placeholder { color: $colorTextTertiary !important; }
+		.input::placeholder { color: var(--color-text-tertiary) !important; }
 	}
 }
 
 .pageAuthDeleted {
 	canvas { height: 100vh; width: 100vw; }
 
-	.title { color: $colorPrimary; margin: 0px 0px 10px 0px; }
+	.title { color: var(--color-text-primary); margin: 0px 0px 10px 0px; }
 	.frame { width: 500px; }
 	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
 
 	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid $colorTextSecondary; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid var(--color-text-secondary); border-radius: 100%; width: 64px; height: 64px; }
 	}
 
 	.button { width: 320px; }
-	.remove { color: $colorRed; }
+	.remove { color: var(--color-red); }
 }

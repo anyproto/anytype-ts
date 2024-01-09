@@ -1,14 +1,18 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
+import Excalidraw from 'excalidraw';
 import { Icon, Label, Editable, Dimmer } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
+
+import 'excalidraw/dist/excalidraw.min.css';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -16,18 +20,20 @@ require('katex/dist/contrib/mhchem');
 interface State {
 	isShowing: boolean;
 	isEditing: boolean;
+	width: number;
 };
 
 const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
 	text = '';
-	timeout = 0;
+	timeoutChange = 0;
 	node = null;
 	refEditable = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
+		width: 0,
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -78,7 +84,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let empty = '';
 		let placeholder = '';
 
-		if (UtilEmbed.allowBlockResize(processor)) {
+		if (UtilEmbed.allowBlockResize(processor) && text) {
 			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
 		};
 
@@ -126,10 +132,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			>
 				<div className="valueWrap resizable" style={css}>
 					<div className="preview" onClick={this.onPreview} />
-					<div id="value" onClick={this.onEdit} />
+					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 
-					{empty ? <Label text={empty} className="label empty" onClick={this.onEdit} /> : ''}					
+					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
 					{select}
 					{source}
 					{resize}
@@ -157,6 +163,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.resize();
 		this.init();
 		this.onScroll();
 	};
@@ -171,6 +178,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.unbind();
 
 		$(`#d${this.getContainerId()}`).remove();
+
+		window.clearTimeout(this.timeoutChange);
 	};
 
 	init () {
@@ -191,26 +200,27 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		this.unbind();
 
-		win.on(`mousedown.${block.id}`, (e: any) => {
-			if (!this._isMounted || !isEditing || menuStore.isOpen('blockLatex')) {
-				return;
-			};
+		if (isEditing) {
+			win.on(`mousedown.${block.id}`, (e: any) => {
+				if (!this._isMounted || menuStore.isOpen('blockLatex')) {
+					return;
+				};
 
-			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
-				return;
-			};
+				if ($(e.target).parents(`#block-${block.id}`).length > 0) {
+					return;
+				};
 
-			e.stopPropagation();
+				e.stopPropagation();
 
-			menuStore.close('blockLatex');
-			window.clearTimeout(this.timeout);
+				menuStore.close('blockLatex');
 
-			this.placeholderCheck();
-			this.save(() => { 
-				this.setEditing(false);
-				menuStore.close('previewLatex');
+				this.placeholderCheck();
+				this.save(() => { 
+					this.setEditing(false);
+					menuStore.close('previewLatex');
+				});
 			});
-		});
+		};
 
 		win.on(`online.${block.id} offline.${block.id}`, () => {
 			if (isShowing && navigator.onLine) {
@@ -228,7 +238,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'mousedown', 'online', 'offline', 'scroll' ];
+		const events = [ 'mousedown', 'online', 'offline', 'scroll', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -256,6 +266,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setEditing (isEditing: boolean) {
+		const { block } = this.props;
+
 		if (this.state.isEditing == isEditing) {
 			return;
 		};
@@ -265,6 +277,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			if (isEditing) {
 				const length = this.text.length;
 				this.setRange({ from: length, to: length });
+			} else {
+				$(window).off(`mousedown.${block.id}`);
 			};
 		});
 	};
@@ -397,8 +411,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	onBlurInput () {
 		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
-
 		this.save();
 	};
 
@@ -518,9 +530,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return '';
 		};
 
-		const { isShowing } = this.state;
+		const { isShowing, width } = this.state;
 		const { block } = this.props;
-		const { processor } = block.content;
+		const { fields, content } = block;
+		const { processor } = content;
 		const node = $(this.node);
 		const value = node.find('#value');
 
@@ -667,8 +680,39 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
 					
-					value.html(error.html());
+					if (error.length) {
+						value.html(error.html());
+					};
 				});
+				break;
+			};
+
+			case I.EmbedProcessor.Excalidraw: {
+				let data = [];
+				try {
+					data = JSON.parse(this.text);
+				} catch (e) { 
+					console.error(e);
+				};
+
+				const w = width * (fields.width || 1);
+				const component = (
+					<Excalidraw 
+						initialData={data} 
+						width={w} 
+						height={w}
+						onChange={(elements) => {
+							window.clearTimeout(this.timeoutChange);
+							this.timeoutChange = window.setTimeout(() => {
+								this.text = JSON.stringify(elements);
+								this.setValue(this.text);
+								this.save();
+							}, 50);
+						}}
+					/>
+				);
+
+				ReactDOM.render(component, node.find('#value').get(0));
 				break;
 			};
 		};
@@ -680,7 +724,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	onEdit (e: any) {
 		const { readonly } = this.props;
-		
 		if (readonly) {
 			return;
 		};
@@ -823,6 +866,17 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 
 	resize () {
+		const { block } = this.props;
+		const { processor } = block.content;
+
+		if (processor == I.EmbedProcessor.Excalidraw) {
+			const node = $(this.node);
+			const value = node.find('#value');
+
+			console.log(value.width());
+
+			this.setState({ width: value.width() });
+		};
 	};
 
 });
