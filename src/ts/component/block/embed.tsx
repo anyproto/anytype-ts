@@ -91,7 +91,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				source = <Icon className="source" onClick={this.onEdit} />;
+				source = <Icon className="source" onMouseDown={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 
 				if (!text) {
@@ -627,7 +627,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 							const { height, blockId } = oe.data;
 
 							if (blockId == block.id) {
-								iframe.css({ height });
+								iframe.css({ height: Math.max(80, height) });
 							};
 						});
 					};
