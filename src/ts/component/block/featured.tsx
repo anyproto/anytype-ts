@@ -723,12 +723,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					subId: rootId,
 					value,
 					relation: observable.box(relation),
-					onChange: (v: any) => {
+					onChange: (v: any, callBack?: () => void) => {
 						console.log('CHANGE: ', v);
 						const details = [
 							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
 						];
 						C.ObjectSetDetails(rootId, details);
+
+						if (callBack) {
+							callBack();
+						};
 					}
 				}
 			});

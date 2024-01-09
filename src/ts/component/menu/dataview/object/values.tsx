@@ -195,7 +195,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.filter(it => !it.isHidden);
 		};
 
-		value.unshift({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
+		value.push({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
 		return value;
 	};
 
@@ -220,6 +220,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
+			vertical: I.MenuDirection.Center,
+			offsetX: width,
 			width,
 			passThrough: true,
 			noAnimation: true,
