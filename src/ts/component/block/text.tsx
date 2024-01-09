@@ -598,7 +598,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const items = node.find('latex');
+		const items = node.find(Mark.getTag(I.MarkType.Latex));
 
 		items.each((i: number, item: any) => {
 			item = $(item);
