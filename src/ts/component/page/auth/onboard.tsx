@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Action } from 'Lib';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Action, Storage } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
@@ -231,7 +231,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				this.accountCreate(() => next());
 			};
 		} else {
-			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
+			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
+				Storage.initPinnedTypes();
+			}));
 
 			if (!name) {
 				analytics.event('ScreenOnboardingSkipName');

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
+import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, Storage, UtilCommon, Preview, translate } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate } from 'Lib';
 
-class Navigation extends React.Component {
+const Navigation = observer(class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
@@ -33,7 +33,7 @@ class Navigation extends React.Component {
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${alt} + Shift + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() },
+			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / Ctrl + ${alt} + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		];
@@ -104,10 +104,7 @@ class Navigation extends React.Component {
 
 	rebind () {
 		this.unbind();
-
-		const win = $(window);
-		win.on('resize.navigation', () => this.resize());
-		win.on('sidebarResize.navigation', () => this.forceUpdate());
+		$(window).on('resize.navigation sidebarResize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -170,6 +167,6 @@ class Navigation extends React.Component {
 		};
 	};
 	
-};
+});
 
 export default Navigation;

@@ -14,13 +14,13 @@
 	
 	.popup {
 		.innerWrap { 
-			position: absolute; left: 0px; top: 50%; z-index: 1; background: $colorBgPrimary; border-radius: 12px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
+			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 12px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
 			opacity: 0; transform: scale3d(0.9,0.9,1); transition-duration: 0.3s; transition-property: transform, opacity; transition-timing-function: $easeInQuint;
 			overflow-x: hidden; overflow-y: auto; overscroll-behavior: none;
 		}
 
 		.dimmer { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; transition: opacity 0.3s $easeInQuint; opacity: 0; }
-		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: $colorBgLoader; }
+		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: var(--color-bg-loader); }
 	}
 }
 

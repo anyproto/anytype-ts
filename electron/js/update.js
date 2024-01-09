@@ -144,8 +144,11 @@ class UpdateManager {
 	};
 
 	setTimeout () {
+		const { config } = ConfigManager;
+		const t = Number(config.updateTimeout) || TIMEOUT_UPDATE;
+
 		this.clearTimeout();
-		this.timeout = setTimeout(() => { this.checkUpdate(true); }, TIMEOUT_UPDATE);
+		this.timeout = setTimeout(() => this.checkUpdate(true), t);
 	};
 
 	clearTimeout () {
