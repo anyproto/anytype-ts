@@ -1,11 +1,7 @@
 import { I, Relation, UtilCommon, UtilFile, UtilSmile } from 'Lib';
 import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
-
-const bgColor = {
-	'': '#000',
-	dark: '#252525',
-};
+import Theme from 'json/theme.json';
 
 class UtilGraph {
 
@@ -101,7 +97,7 @@ class UtilGraph {
 		grd.addColorStop(1, to);
 
 		if (small) {
-			ctx.fillStyle = bgColor[theme];
+			ctx.fillStyle = Theme[theme].graph.iconBg;
 			ctx.fillRect(0, 0, w, w);
 		};
 

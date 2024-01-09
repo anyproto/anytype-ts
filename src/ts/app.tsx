@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
+import mermaid from 'mermaid';
 import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
@@ -14,7 +15,6 @@ import {
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
-import * as Docs from 'Docs';
 
 configure({ enforceActions: 'never' });
 
@@ -107,7 +107,6 @@ if (!window.Electron.isPackaged) {
 			Animation,
 			Onboarding,
 			Survey,
-			Docs,
 			Encode, 
 			Decode,
 			translate,
@@ -324,7 +323,7 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		raf(() => { anim.removeClass('from'); });
+		raf(() => anim.removeClass('from'));
 
 		const cb = () => {
 			window.setTimeout(() => {
