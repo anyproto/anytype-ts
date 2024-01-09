@@ -564,6 +564,15 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
+	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
+		const idx1 = ids.indexOf(c1.id);
+		const idx2 = ids.indexOf(c2.id);
+
+		if (idx1 > idx2) return 1;
+		if (idx1 < idx2) return -1;
+		return 0;
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },

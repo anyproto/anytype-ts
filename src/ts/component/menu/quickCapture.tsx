@@ -30,6 +30,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		super(props);
 
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
@@ -58,6 +59,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						lockToContainerEdges={true}
 						transitionDuration={150}
 						distance={10}
+						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEnd}
 						helperClass="isDragging"
 						helperContainer={() => $(`#${getId()} #section-${section.id} .items`).get(0)}
@@ -225,7 +227,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return it;
 			});
 
-			const pinned = items.filter(it => pinnedIds.includes(it.id));
+			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => UtilData.sortByPinnedTypes(c1, c2, pinnedIds));
 			const librarySources = library.map(it => it.sourceObject);
 			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
@@ -487,12 +489,21 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		Preview.tooltipHide();
 	};
 
+	onSortStart () {
+		keyboard.disableSelection(true);
+		$(this.node).addClass('isDragging');
+		$('body').addClass('grab');
+	};
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		const pinned = Storage.getPinnedTypes();
 
 		Storage.setPinnedTypes(arrayMove(pinned, oldIndex, newIndex));
 		this.forceUpdate();
+
+		keyboard.disableSelection(false);
+		$('body').removeClass('grab');
 	};
 
 	beforePosition () {
@@ -501,6 +512,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		node.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+
+			item.css({ width: Math.ceil(item.outerWidth()) });
 		});
 	};
 
