@@ -18,7 +18,7 @@
 				.element { display: flex; flex-direction: row; align-items: center; gap: 0px 4px;  }
 				.element {
 					.name { @include text-overflow-nw; max-width: 120px; }
-					.condition { @include text-overflow-nw; max-width: 120px; color: $colorTextSecondary; }
+					.condition { @include text-overflow-nw; max-width: 120px; color: var(--color-text-secondary); }
 				}
 			}
 			.parsedFilters:empty { display: none; }
