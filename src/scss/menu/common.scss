@@ -19,7 +19,7 @@
 	
 	.menu { 
 		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: $colorBgPrimary; opacity: 0; transform: scale3d(0.9,0.9,1);
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: var(--color-bg-primary); opacity: 0; transform: scale3d(0.9,0.9,1);
 		transition: opacity 0.15s $easeInQuint, transform 0.15s $easeInQuint;
 	}
 	.menu.fixed { position: fixed; }
@@ -56,30 +56,29 @@
 	.menu.vertical {
 		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__List { padding: 8px 0px; }
+		.loaderWrapper { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 8px; background: var(--color-bg-loader); }
 
-		.loaderWrapper { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 8px; background: $colorBgLoader; }
-
-		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorShapeSecondary; white-space: nowrap; font-weight: 700; color: $colorControlActive; }
+		.tabs { padding: 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); white-space: nowrap; font-weight: 700; color: var(--color-control-active); }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; margin-right: 16px; position: relative; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 			.tab:last-child { margin: 0px; }
 		}
 
 		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
 		.titleWrapper {
 			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
-			.title { @include text-common; font-weight: 600; color: $colorTextPrimary; padding: 0; }
+			.title { @include text-common; font-weight: 600; color: var(--color-text-primary); padding: 0; }
 		}
 		
 		.inputWrap { padding: 0px 14px 8px 14px; }
-		.input { border: 1px solid $colorShapeSecondary; padding: 0px 8px; }
+		.input { border: 1px solid var(--color-shape-secondary); padding: 0px 8px; }
 	
-		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorControlActive; }
+		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: var(--color-control-active); }
 
-		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorShapeSecondary; }
+		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: var(--color-shape-secondary); }
 	
-		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; width: 100%; background: $colorBgPrimary; }
+		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; width: 100%; background: var(--color-bg-primary); }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadonly { cursor: default; }
 		
@@ -87,7 +86,7 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
 			pointer-events: none;
 		}
-		.item.hover::before { background: $colorShapeHighlightMedium; }
+		.item.hover::before { background: var(--color-shape-highlight-medium) !important; }
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
@@ -111,7 +110,7 @@
 				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
-			.icon.delete:hover, .icon.more:hover { background-color: $colorShapeHighlightMedium; }
+			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
@@ -138,7 +137,7 @@
 		.item.withDescription {
 			.iconMain, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
 			
-			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorTextSecondary; }
+			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: var(--color-text-secondary); }
 			.descr:empty { display: none; }
 
 			.info { line-height: 40px; width: calc(100% - 16px); }
@@ -163,7 +162,7 @@
 			}
 
 			.caption { 
-				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorTextSecondary; @include text-small; text-align: right;
+				@include text-overflow-nw; display: inline-block; vertical-align: top; color: var(--color-text-secondary); @include text-small; text-align: right;
 				flex-shrink: 0; line-height: 20px;
 			}
 
@@ -183,15 +182,15 @@
 			.clickable { display: flex; }
 		}
 
-		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorShapeSecondary; }
-		.sectionName { padding: 5px 14px; @include text-small; color: $colorTextSecondary; font-weight: 500; }
+		.line { height: 1px; margin: 8px 14px 7px 14px; background: var(--color-shape-secondary); }
+		.sectionName { padding: 5px 14px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
-		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorShapeSecondary; display: block; }
+		.section::after { content: ""; height: 1px; margin: 8px 14px 0px 14px; background: var(--color-shape-secondary); display: block; }
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorTextSecondary; display: block; font-weight: 500; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: var(--color-text-secondary); display: block; font-weight: 500; }
 		.section > .name:empty { display: none; }
 		.section > .inputWrap { padding-bottom: 0px; }
 		.section.noLine::after { display: none; }
@@ -199,7 +198,7 @@
 
 	.menu.horizontal {
 		.content { display: flex; }
-		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorShapeSecondary; white-space: nowrap; position: relative; }
+		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid var(--color-shape-secondary); white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
 		.icon { width: 20px; height: 20px; margin-right: 12px; }

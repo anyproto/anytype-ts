@@ -148,7 +148,6 @@ const Theme = {
 	}
 };
 
-
 const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	node: any = null;

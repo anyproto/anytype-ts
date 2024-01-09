@@ -164,7 +164,7 @@ class MenuStore {
 	};
 
 	isAnimating (id: string): boolean {
-		return this.isAnimatingFlag.get(id);
+		return !!this.isAnimatingFlag.get(id);
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {

@@ -25,6 +25,8 @@ export interface Notification {
 	createTime: number;
 	isLocal: boolean;
 	payload: any;
+	title?: string;
+	text?: string;
 };
 
 export interface NotificationPayloadImport {

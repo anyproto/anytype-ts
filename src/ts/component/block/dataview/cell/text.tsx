@@ -450,7 +450,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
-		UtilObject.setDone(recordId, !record.done, () => this.forceUpdate());
+		UtilObject.setDone(recordId, !record.done, () => {
+			if (this._isMounted) {
+				this.forceUpdate();
+			};
+		});
 	};
 
 	onCompositionStart () {

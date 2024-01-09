@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
@@ -18,6 +18,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	refFilter = null;
+	refHead = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -49,6 +50,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const isAllowedObject = this.props.isAllowedObject();
 		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
 		const cmd = keyboard.cmdSymbol();
+		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 
 		if (isAllowedTemplate) {
 			buttonWrapCn.push('withSelect');
@@ -61,7 +63,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		let head = null;
 		if (isInline) {
 			cn.push('isInline');
-			head = <Head {...this.props} />;
+			head = <Head ref={ref => this.refHead = ref} {...this.props} />;
 		};
 
 		const buttons = [
@@ -102,7 +104,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			);
 		});
 
-		const Views = SortableContainer((item: any) => (
+		const Views = SortableContainer(() => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} />
@@ -163,7 +165,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 								<Button
 									id={`button-${block.id}-add-record`}
 									className="addRecord c28"
-									tooltip={translate('blockDataviewCreateNew')}
+									tooltip={tooltip}
 									text={translate('commonNew')}
 									onClick={e => onRecordAdd(e, -1)}
 								/>
@@ -263,7 +265,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
-		const node = $(this.node);
 
 		const param: any = { 
 			element,
@@ -271,12 +272,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			offsetY: 10,
 			noFlipY: true,
 			onOpen: () => {
-				node.addClass('active');
 				obj.addClass('active');
+				this.toggleHoverArea(true);
 			},
 			onClose: () => {
-				node.removeClass('active');
 				obj.removeClass('active');
+				this.toggleHoverArea(false);
 			},
 			onBack: (id) => {
 				menuStore.replace(id, component, { ...param, noAnimation: true });
@@ -416,11 +417,14 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup, isInline } = this.props;
+		const { block, isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
+		const obj = $(`#block-${block.id}`);
+		const hoverArea = obj.find('.hoverArea');
 
 		this.refFilter.setActive(true);
+		this.toggleHoverArea(true);
 
 		if (!isInline) {
 			this.refFilter.focus();
@@ -453,8 +457,17 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.refFilter.setActive(false);
 		this.refFilter.setValue('');
 		this.refFilter.blur();
+		this.toggleHoverArea(false);
 
 		this.props.onFilterChange('');
+	};
+
+	toggleHoverArea (v: boolean) {
+		const { block } = this.props;
+		const obj = $(`#block-${block.id}`);
+		const hoverArea = obj.find('.hoverArea');
+
+		v ? hoverArea.addClass('active') : hoverArea.removeClass('active');
 	};
 
 	resize () {

@@ -34,6 +34,6 @@
 			.info { padding-left: 52px; }
 		}
 
-		.item.add { color: $colorTextPrimary; }
+		.item.add { color: var(--color-text-primary); }
 	}
 }

@@ -21,7 +21,7 @@
 				.over { white-space: nowrap; overflow: hidden; width: 100%; }
 			}
 		}
-		.item:hover::before { background: $colorShapeHighlightMedium; }
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
 
 		.bottom { flex-shrink: 0; }
 		.bottom {

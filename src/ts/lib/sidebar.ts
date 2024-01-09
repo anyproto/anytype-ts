@@ -10,6 +10,7 @@ interface SidebarData {
 	width: number;
 	height: number;
 	snap: I.MenuDirection.Left | I.MenuDirection.Right | null;
+	isClosed: boolean;
 };
 
 const SNAP_THRESHOLD = 30;
@@ -24,6 +25,7 @@ class Sidebar {
 		width: 0,
 		height: 0,
 		snap: I.MenuDirection.Left,
+		isClosed: false,
 	};
 	obj: JQuery<HTMLElement> = null;
 	page: JQuery<HTMLElement> = null;
@@ -42,6 +44,10 @@ class Sidebar {
 
 		const stored = Storage.get('sidebar');
 		if (stored) {
+			if ('undefined' == typeof(stored.isClosed)) {
+				stored.isClosed = !stored.width;
+			};
+
 			this.set(stored);
 		} else {
 			commonStore.autoSidebarSet(true);
@@ -57,6 +63,7 @@ class Sidebar {
 				y,
 				x: 0,
 				snap: I.MenuDirection.Left,
+				isClosed: false,
 			});
 
 			this.resizePage();
@@ -65,7 +72,6 @@ class Sidebar {
 
 	initObjects () {
 		this.obj = $('#sidebar');
-		this.page = $('#page.isFull');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
@@ -173,7 +179,7 @@ class Sidebar {
 				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))
 			) {
 				css.top = y;
-				css.height = height;
+				css.height = this.limitHeight(height);
 				css.transform = `translate3d(0px,0px,0px)`;
 			} else {
 				css.top = 0;
@@ -248,7 +254,7 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.addClass('anim').removeClass('active');
+		this.obj.css({ transform: '' }).addClass('anim').removeClass('active');
 		this.removeAnimation();
 	};
 
@@ -259,7 +265,8 @@ class Sidebar {
 
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
-		this.setWidth(0, true);
+		this.setStyle({ width: 0 });
+		this.set({ isClosed: true });
 		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
@@ -270,19 +277,22 @@ class Sidebar {
 
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
-		this.setWidth(width);
+		this.setStyle({ width });
+		this.set({ isClosed: false });
 		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	toggleOpenClose () {
 		if (!this.isAnimating) {
-			this.data.width ? this.close() : this.open(Constant.size.sidebar.width.default);
+			this.data.isClosed ? this.open(this.data.width) : this.close();
 		};
 	};
 
 	toggleExpandCollapse () {
-		if (!this.data.width) {
-			this.setWidth(Constant.size.sidebar.width.default);
+		const { isClosed, width } = this.data;
+
+		if (isClosed) {
+			this.set({ width, isClosed: false }, true);
 			$(window).trigger('resize');
 		};
 
@@ -321,9 +331,7 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (UtilCommon.objectLength(set)) {
-			this.set(set, true);
-		};
+		this.set(set);
 	};
 
 	resizePage () {
@@ -362,6 +370,7 @@ class Sidebar {
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {
 				dummy = this.dummyRight;
+
 				this.header.addClass('snapRight');
 				this.footer.addClass('snapRight');
 
@@ -417,11 +426,7 @@ class Sidebar {
 
 		this.save();
 		this.resizePage();
-		this.setStyle();
-	};
-
-	setWidth (width: number, force?: boolean): void {
-		this.set({ width }, force);
+		this.setStyle(this.data);
 	};
 
 	public setAnimating (v: boolean) {
@@ -432,12 +437,12 @@ class Sidebar {
 		this.isDragging = v;
 	};
 
-	private setStyle (): void {
+	private setStyle (v: Partial<SidebarData>): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
 
-		const { x, y, width, height, snap } = this.data;
+		const { x, y, width, height, snap, isClosed } = v;
 		const css: any = { left: '', right: '', width };
 		const cn = [];
 
@@ -456,6 +461,14 @@ class Sidebar {
 		};
 		if (snap == I.MenuDirection.Right) {
 			cn.push('right');
+		};
+
+		if (this.isDragging) {
+			cn.push('active');
+		};
+
+		if (isClosed) {
+			css.width = 0;
 		};
 
 		this.obj.removeClass('left right fixed');
@@ -498,7 +511,7 @@ class Sidebar {
 	 */
 	private getMaxHeight (): number {
 		const { wh } = UtilCommon.getWindowDimensions();
-		return wh - UtilCommon.sizeHeader() - 52 - 10;
+		return wh - UtilCommon.sizeHeader() * 2;
 	};
 
 	/**

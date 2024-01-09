@@ -1,5 +1,5 @@
 import { observable, action, computed, makeObservable, set } from 'mobx';
-import { I, M } from 'Lib';
+import { I, M, Renderer } from 'Lib';
 
 class NotificationStore {
 
@@ -15,15 +15,17 @@ class NotificationStore {
     };
 
     get list (): I.Notification[] {
-		return this.itemList;
+		return this.itemList || [];
 	};
 
 	set (list: I.Notification[]): void {
 		this.itemList = list.map(it => new M.Notification(it));
+		this.setBadge();
 	};
 
 	add (item: I.Notification): void {
-		this.itemList.unshift(new M.Notification(item));
+		this.itemList.unshift(item);
+		this.setBadge();
 	};
 
 	update (item: I.Notification): void {
@@ -36,10 +38,15 @@ class NotificationStore {
 
 	delete (id: string) {
 		this.itemList = this.itemList.filter(it => it.id != id);
+		this.setBadge();
 	};
 
 	clear () {
 		this.itemList = [];
+	};
+
+	setBadge () {
+		Renderer.send('setBadge', String(this.list.length || ''));
 	};
 
 };

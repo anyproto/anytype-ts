@@ -328,7 +328,6 @@ class Dataview {
 
 	getTypeId (rootId: string, blockId: string, objectId: string, viewId?: string) {
 		const view = this.getView(rootId, blockId, viewId);
-
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id).length;
@@ -357,6 +356,22 @@ class Dataview {
 		};
 
 		return typeId;
+	};
+
+	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {
+		const isCollection = this.isCollection(rootId, blockId);
+
+		if (isCollection) {
+			return translate('blockDataviewCreateNewTooltipCollection');
+		} else {
+			const typeId = this.getTypeId(rootId, blockId, objectId, viewId);
+			const type = dbStore.getTypeById(typeId);
+
+			if (type) {
+				return UtilCommon.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
+			};
+		};
+		return translate('blockDataviewCreateNew');
 	};
 
 };

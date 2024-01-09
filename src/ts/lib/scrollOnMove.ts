@@ -66,6 +66,7 @@ class ScrollOnMove {
 
 		const maxScrollX = this.documentWidth - this.viewportWidth; 
 		const maxScrollY = this.documentHeight - this.viewportHeight;
+
 		let currentScrollX = 0;
 		let currentScrollY = 0;
 		let container;
@@ -85,9 +86,10 @@ class ScrollOnMove {
 		const canScrollDown = (currentScrollY < maxScrollY);
 		const canScrollLeft = (currentScrollX > 0);
 		const canScrollRight = (currentScrollX < maxScrollX);
+		const maxStep = 10;
+
 		let nextScrollX = currentScrollX;
 		let nextScrollY = currentScrollY;
-		const maxStep = 10;
 		let intensity = 0;
 
 		if (isInLeftEdge && canScrollLeft) {

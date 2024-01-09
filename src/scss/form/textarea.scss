@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
-.textareaWrap { overflow: hidden; background: $colorShapeTertiary; border-radius: 8px; }
+.textareaWrap { overflow: hidden; background: var(--color-shape-tertiary); border-radius: 8px; }
 .textarea { 
 	padding: 20px 24px; width: 100%; resize: none; @include text-common; border: 0px; color: inherit; display: block; font-family: 'Plex'; 
 	background: none; 
 }
-.textarea::placeholder { color: $colorShapePrimary; }
+.textarea::placeholder { color: var(--color-shape-primary); }
