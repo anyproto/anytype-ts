@@ -126,7 +126,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			nodes: this.nodes,
 			edges: this.edges,
 			theme: theme,
-			colors: Theme[theme],
+			colors: Theme[theme].graph || {},
 			settings: commonStore.graph,
 			rootId,
 		}, [ transfer ]);

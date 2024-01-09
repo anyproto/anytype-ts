@@ -61,14 +61,13 @@ let nodes = [];
 let edges = [];
 let images = {};
 let simulation = null;
-let Color = {};
 let frame = 0;
 let selected = [];
 let settings = {};
 let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
-let hoverAlpha = 0.2;
+let hoverAlpha = 0.3;
 let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
 let rootId = '';
@@ -94,7 +93,7 @@ init = (param) => {
 	initFonts();
 
 	ctx.lineCap = 'round';
-	ctx.fillStyle = Color.bg;
+	ctx.fillStyle = data.colors.bg;
 	
 	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
@@ -123,33 +122,9 @@ init = (param) => {
 };
 
 initTheme = (theme) => {
-	console.log('THEME', theme);
-
 	switch (theme) {
-		default:
-			hoverAlpha = 0.3;
-			Color = {
-				bg: '#fff',
-				link: '#dfddd0',
-				arrow: '#b6b6b6',
-				node: '#b6b6b6',
-				text: '#b6b6b6',
-				highlight: '#ffb522',
-				selected: '#2aa7ee',
-			}; 
-			break;
-
 		case 'dark':
 			hoverAlpha = 0.2;
-			Color = {
-				bg: '#171717',
-				link: '#3f3f3f',
-				arrow: '#555',
-				node: '#9a9a9a',
-				text: '#8d8d8d',
-				highlight: '#ffb522',
-				selected: '#2aa7ee',
-			};
 			break;
 	};
 };
@@ -378,18 +353,16 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const showName = isOver && d.name && settings.label;
 	const lineWidth = getLineWidth();
 
-	let colorLink = Color.link;
-	let colorArrow = Color.arrow;
-	let colorText = Color.text;
+	let colorLink = data.colors.link;
+	let colorArrow = data.colors.arrow;
+	let colorText = data.colors.text;
 
 	if (isHovering) {
 		ctx.globalAlpha = hoverAlpha;
 	};
 
 	if (isOver) {
-		colorLink = Color.highlight;
-		colorArrow = Color.highlight;
-		colorText = Color.highlight;
+		colorLink = colorArrow = colorText = data.colors.highlight;
 		ctx.globalAlpha = 1;
 	};
 
@@ -418,7 +391,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 		ctx.strokeStyle = colorLink;
 		ctx.lineWidth = lineWidth * 3;
-		ctx.fillStyle = Color.bg;
+		ctx.fillStyle = data.colors.bg;
 		ctx.fill();
 		ctx.stroke();
 
@@ -457,8 +430,8 @@ drawNode = (d) => {
 	const diameter = radius * 2;
 	const isSelected = selected.includes(d.id);
 	
-	let colorNode = Color.node;
-	let colorText = Color.text;
+	let colorNode = data.colors.node;
+	let colorText = data.colors.text;
 	let colorLine = '';
 	let lineWidth = 0;
 
@@ -479,17 +452,13 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver || (root && (d.id == root.id))) {
-		colorNode = Color.highlight;
-		colorText = Color.highlight;
-		colorLine = Color.highlight;
+		colorNode = colorText = colorLine = data.colors.highlight;
 		lineWidth = getLineWidth() * 3;
 		ctx.globalAlpha = 1;
 	};
 
 	if (isSelected) {
-		colorNode = Color.selected;
-		colorText = Color.selected;
-		colorLine = Color.selected;
+		colorNode = colorText = colorLine = data.colors.selected;
 	};
 
 	if (d.isOver || isSelected) {
@@ -501,7 +470,7 @@ drawNode = (d) => {
 
 		if (lineWidth) {
 			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
-			ctx.fillStyle = Color.bg;
+			ctx.fillStyle = data.colors.bg;
 			ctx.fill();
 
 			ctx.strokeStyle = colorLine;
@@ -524,7 +493,7 @@ drawNode = (d) => {
 				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
 			};
 	
-			ctx.fillStyle = Color.bg;
+			ctx.fillStyle = data.colors.bg;
 			ctx.fill();
 			ctx.clip();
 	
@@ -558,7 +527,7 @@ drawNode = (d) => {
 		// Rectangle
 		ctx.save();
 		ctx.translate(d.x, d.y);
-		ctx.fillStyle = Color.bg;
+		ctx.fillStyle = data.colors.bg;
 		util.rect(left, top + diameter + offset, tw, th);
 		ctx.fill();
 
