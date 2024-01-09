@@ -95,9 +95,6 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
-	Util.log('info', 'CreateWindow: ' + deeplinkingUrl + ' ' + JSON.stringify(process.argv));
-
-
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	mainWindow.on('close', (e) => {
@@ -141,8 +138,6 @@ function createWindow () {
 			console.error('[Api] method not defined:', cmd);
 		};
 	});
-
-	
 };
 
 app.on('ready', () => {

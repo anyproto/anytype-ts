@@ -422,7 +422,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = UtilCommon.objectCopy(this.getBlocks(rootId, it => it.isText()));
+		const blocks = this.getBlocks(rootId, it => it.isText());
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
@@ -431,6 +431,7 @@ class BlockStore {
 				continue;
 			};
 
+			marks = UtilCommon.objectCopy(marks);
 			marks.sort(Mark.sort);
 
 			let { text } = block.content;

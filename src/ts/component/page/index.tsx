@@ -235,9 +235,14 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		if (!Onboarding.isCompleted('dashboard')) {
 			Onboarding.start('dashboard', false, false);
-		} else
-		if (!Onboarding.isCompleted('navigation') && !$('#navigationPanel').hasClass('hide')) {
-			Onboarding.start('navigation', false, false);
+		} else 
+		if (!$('#navigationPanel').hasClass('hide')) {
+			if (!Onboarding.isCompleted('space')) {
+				Onboarding.start('space', false, false);
+			} else
+			if (!Onboarding.isCompleted('quickCapture')) {
+				Onboarding.start('quickCapture', false, false);
+			};
 		};
 	};
 

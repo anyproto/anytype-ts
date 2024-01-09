@@ -70,4 +70,5 @@ export enum ObjectOrigin {
 	SharingExtension = 5,
 	Usecase			 = 6,
 	Builtin			 = 7,
+	Bookmark		 = 8,
 };

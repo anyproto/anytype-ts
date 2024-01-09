@@ -288,11 +288,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
 					onChange: (param: string) => {
-						if (!mark && !param) {
-							return;
+						if (param) {
+							Storage.set(storageKey, param);
 						};
-
-						Storage.set(storageKey, param);
 
 						marks = Mark.toggle(marks, { type, param, range: { from, to } });
 						menuStore.updateData(this.props.id, { marks });

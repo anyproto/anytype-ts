@@ -459,6 +459,8 @@
 	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
+	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
 	"blockDataviewSearch": "Search",
 
@@ -1263,7 +1265,11 @@
 
 	"menuQuickCaptureSearchObjectTypes": "Search object types...",
 	"menuQuickCaptureGroups": "Lists",
+	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureOpenType": "Open type",
+	"menuQuickCapturePin": "Pin on top",
+	"menuQuickCaptureUnpin": "Unpin",
 
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
@@ -1607,6 +1613,7 @@
 	"origin5": "Mobile sharing extension",
 	"origin6": "Use case",
 	"origin7": "Library installed",
+	"origin8": "Bookmark",
 
 	"emojiCategoryPeople": "Smileys & People",
 	"emojiCategoryNature": "Animals & Nature",
@@ -1627,10 +1634,10 @@
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
-	"notificationGallerySuccessTitle": "\"%s\" was installed",
-	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
-	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryImportSuccessTitle": "\"%s\" was installed",
+	"notificationGalleryImportSuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryImportErrorTitle": "Something went wrong",
+	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"

@@ -7,7 +7,7 @@ import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, Ut
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
