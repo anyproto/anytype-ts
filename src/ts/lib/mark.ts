@@ -3,20 +3,11 @@ import { I, UtilCommon, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 const Tags = {};
-Tags[I.MarkType.Strike]		 = 'markupStrike';
-Tags[I.MarkType.Code]		 = 'markupCode';
-Tags[I.MarkType.Italic]		 = 'markupItalic';
-Tags[I.MarkType.Bold]		 = 'markupBold';
-Tags[I.MarkType.Underline]	 = 'markupUnderline';
-Tags[I.MarkType.Link]		 = 'markupLink';
-Tags[I.MarkType.Color]		 = 'markupColor';
-Tags[I.MarkType.BgColor]	 = 'markupBgcolor';
-Tags[I.MarkType.Mention]	 = 'markupMention';
-Tags[I.MarkType.Emoji]		 = 'markupEmoji';
-Tags[I.MarkType.Object]		 = 'markupObject';
-Tags[I.MarkType.Latex]		 = 'markupLatex';
-
-const LCTags = Object.values(Tags).map(it => String(it).toLowerCase());
+for (const i in I.MarkType) {
+	if (!isNaN(Number(i))) {
+		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+	};
+};
 
 const Patterns = {
 	'-→': '⟶',
@@ -469,7 +460,7 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = LCTags.indexOf(p2);
+			const type = Object.values(Tags).indexOf(p2);
 
 			if (type < 0) {
 				return;
@@ -539,7 +530,8 @@ class Mark {
 				};
 
 				if (check) {
-					marks = this.adjust(marks, from, -p2.length * 2);
+					marks = this.adjust(marks, from, -p2.length);
+					marks = this.adjust(marks, to, -p4.length);
 					marks.push({ type: item.type, range: { from, to }, param: '' });
 
 					text = text.replace(s, replace);

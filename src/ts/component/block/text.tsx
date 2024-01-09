@@ -428,9 +428,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const object = detailStore.get(rootId, param, []);
 			
 			let tt = '';
-			if (object.isArchived) {
-				tt = translate('commonArchived');
-			};
 			if (object.isDeleted) {
 				tt = translate('commonDeletedObject');
 			};
@@ -440,7 +437,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (!param || element.hasClass('disabled')) {
+			if (!param || object.isDeleted) {
 				return;
 			};
 
@@ -451,6 +448,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
+				object,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -819,7 +817,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (range.to) {
-				let parsed = this.checkMarkOnBackspace(value);
+				const parsed = this.checkMarkOnBackspace(value);
 
 				if (parsed.save) {
 					e.preventDefault();
@@ -899,12 +897,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
+
+			if (menuStore.isOpen('selectPasteUrl')) {
+				menuStore.close('selectPasteUrl');
+			};
 		};
 
-		if (menuStore.isOpen('selectPasteUrl')) {
-			menuStore.close('selectPasteUrl');
-		};
-		
 		onKeyDown(e, value, this.marks, range, this.props);
 	};
 	
@@ -938,12 +936,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		Length[I.TextStyle.Quote] = 1;
 		Length[I.TextStyle.Code] = 3;
 
-		const menuOpenAdd = menuStore.isOpen('blockAdd');
-		const menuOpenMention = menuStore.isOpen('blockMention');
-		
 		let value = this.getValue();
 		let cmdParsed = false;
 
+		const menuOpenAdd = menuStore.isOpen('blockAdd');
+		const menuOpenMention = menuStore.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
@@ -983,7 +980,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd && !isInsideTable) { 
+		if (canOpenMenuAdd && (!isInsideTable && !block.isTextCode())) { 
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onMenuAdd(id, UtilCommon.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
@@ -1008,7 +1005,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			cmdParsed = true;
 		};
 
-		if (newBlock.type && !isInsideTable) {
+		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
 			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
 				this.setValue(value.replace(divReg, ''));
 				
@@ -1018,7 +1015,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Parse markdown commands
-		if (block.canHaveMarks() && !isInsideTable) {
+		if (block.canHaveMarks() && (!isInsideTable && !block.isTextCode())) {
 			for (const k in Markdown) {
 				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];

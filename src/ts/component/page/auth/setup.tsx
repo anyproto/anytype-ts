@@ -94,7 +94,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const { match } = this.props;
 		const { account, walletPath } = authStore;
 
-		switch (match.params.id) {
+		switch (match?.params?.id) {
 			case 'init': {
 				this.init(); 
 				break;

@@ -123,10 +123,20 @@ class Editable extends React.Component<Props> {
 	};
 
 	init () {
-		const node = $(this.node);
+		const pl = this.placeholder ? this.placeholder.length : 0;
+		const el = this.editable ? this.editable.length : 0;
 
-		this.placeholder = node.find('#placeholder');
-		this.editable = node.find('.editable');
+		if (pl && el) {
+			return;
+		};
+
+		const node = $(this.node);
+		if (!pl) {
+			this.placeholder = node.find('#placeholder');
+		};
+		if (!el) {
+			this.editable = node.find('.editable');
+		};
 	};
 
 	placeholderCheck () {

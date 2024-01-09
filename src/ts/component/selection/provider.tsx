@@ -585,6 +585,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	setIsSelecting (v: boolean) {
 		this.isSelecting = v;
+
+		const html = $('html');
+		v ? html.addClass('isSelecting') : html.removeClass('isSelecting');
 	};
 	
 });

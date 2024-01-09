@@ -131,10 +131,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
+				<div className={cnc.join(' ')}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
-							<div className="relationItem cardName">
+							<div className="relationItem cardName" onClick={this.onClick}>
 								{icon}
 								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
 								{archive}
@@ -362,7 +362,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			UtilCommon.textStyle(name, { border: 0.4 });
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-			rect.width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
+			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
 	};
 

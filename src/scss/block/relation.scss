@@ -17,19 +17,19 @@
 			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
 			display: flex; align-items: flex-start; gap: 0px 6px;
 		}
-		.info.noValue { width: 100%; color: $colorTextTertiary; }
+		.info.noValue { width: 100%; color: var(--color-text-tertiary); }
 
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				color: $colorTextSecondary; width: 100%;
+				color: var(--color-text-secondary); width: 100%;
 			}
 			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 			.icon.ghost { width: 20px; height: 20px; }
 		}
 
 		.wrap.isDeleted {
-			.info .name { color: $colorTextSecondary; }
+			.info .name { color: var(--color-text-secondary); }
 		}
 
 		.cellContent.canEdit {
@@ -37,7 +37,7 @@
 		}
 
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
-		.cell.canEdit:hover { background: $colorShapeHighlightLight; }
+		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
 		.cell.c-select { padding: 8px; line-height: 18px; }
 		.cell.c-select {

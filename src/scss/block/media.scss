@@ -15,7 +15,7 @@
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
 		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
 
-		.loaderWrapper { border-radius: 4px; border: solid 1px $colorShapePrimary; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-primary); height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
@@ -23,7 +23,7 @@
 		video { width: 100%; }
 
 		.pdfWrapper { 
-			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorShapePrimary;
+			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary);
 			border-radius: 0px; display: inline-flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {
@@ -31,7 +31,7 @@
 			.info {
 				.name { height: 24px; line-height: 24px; display: inline-block; vertical-align: top; @include text-overflow-nw; }
 				.size {
-					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorControlActive; margin: 0px 8px;
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: var(--color-control-active); margin: 0px 8px;
 					display: inline-block; vertical-align: top;
 				}
 			}
@@ -89,7 +89,7 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorShapeTertiary; }
+	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: var(--color-shape-tertiary); }
 	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
 
 	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }

@@ -26,6 +26,8 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	currentWindow: () => getCurrentWindow(),
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
+	isFocused: () => getCurrentWindow().isFocused(),
+	focus: () => getCurrentWindow().focus(),
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 

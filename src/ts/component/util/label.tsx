@@ -9,6 +9,7 @@ interface Props {
 	dataset?: any;
 	onMouseEnter?: (e: any) => void;
 	onMouseLeave?: (e: any) => void;
+	onMouseDown?: (e: any) => void;
 	onClick?: (e: any) => void;
 };
 
@@ -17,7 +18,7 @@ class Label extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { id, text, className, dataset, onClick } = this.props;
+		const { id, text, className, dataset, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'label' ];
 
 		if (className) {
@@ -30,9 +31,10 @@ class Label extends React.Component<Props> {
 				id={id} 
 				className={cn.join(' ')} 
 				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
-				onClick={onClick} 
-				onMouseEnter={this.props.onMouseEnter}
-				onMouseLeave={this.props.onMouseLeave}
+				onClick={onClick}
+				onMouseDown={onMouseDown} 
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
 				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);

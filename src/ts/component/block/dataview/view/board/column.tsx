@@ -33,8 +33,9 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget } = this.props;
 		const view = getView();
+		const target = getTarget();
 		const subId = getSubId();
 		const items = this.getItems();
 		const { total } = dbStore.getMeta(subId, '');
@@ -46,6 +47,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
 		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
 		const isAllowedObject = this.props.isAllowedObject();
+		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
@@ -92,7 +94,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 						<div className="side right">
 							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
-							{isAllowedObject ? <Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={e => this.onAdd(e, -1)} /> : ''}
+							{isAllowedObject ? <Icon className="add" tooltip={tooltip} onClick={e => this.onAdd(e, -1)} /> : ''}
 						</div>
 					</div>
 

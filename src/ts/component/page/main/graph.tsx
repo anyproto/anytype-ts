@@ -51,6 +51,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						key="graph"
 						{...this.props} 
 						ref={ref => this.refGraph = ref} 
+						id="global"
 						rootId={rootId} 
 						data={this.data}
 					/>
