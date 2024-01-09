@@ -23,9 +23,9 @@ class UtilDate {
 
 		if ((y >= 0) && (y < 1000)) { 
 			t = new Date(y + 1000, m, d, h, i, s, 0);
-  			t.setUTCFullYear(t.getFullYear() - 1000); 
+			t.setUTCFullYear(t.getFullYear() - 1000); 
 		} else {
-			t = new Date(y, m, d, h, i, s, 0)
+			t = new Date(y, m, d, h, i, s, 0);
 		};
 
 		return Math.floor(t.getTime() / 1000);

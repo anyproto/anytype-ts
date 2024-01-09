@@ -37,6 +37,7 @@ module.exports = {
 		'no-case-declarations': 'off',
 		'no-console': 'off',
 		'no-var': 'warn',
+		'no-extra-semi': 'off',
 
 		// unused vars
 		'no-unused-vars': 'off',

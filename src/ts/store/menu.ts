@@ -78,7 +78,7 @@ class MenuStore {
 		if (idx >= 0) {
 			set(this.menuList[idx], { id: newId, param });
 		} else {
-			this.menuList.push({ id: newId, param })
+			this.menuList.push({ id: newId, param });
 		};
 	};
 

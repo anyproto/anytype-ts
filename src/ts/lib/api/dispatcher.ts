@@ -1021,7 +1021,7 @@ class Dispatcher {
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]))
+		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
@@ -1156,7 +1156,8 @@ class Dispatcher {
 			return;
 		};
 
-		let t0 = performance.now();
+		const t0 = performance.now();
+
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;

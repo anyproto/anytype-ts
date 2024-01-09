@@ -97,7 +97,7 @@ for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf'
 	File[key] = require(`img/icon/file/${key}.svg`).default;
 };
 
-for (let i in I.RelationType) {
+for (const i in I.RelationType) {
 	const it = Number(i);
 
 	if (isNaN(Number(it)) || [ I.RelationType.Icon, I.RelationType.Relations ].includes(it)) {
