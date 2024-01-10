@@ -643,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.persist();
 
 		const { onKeyDown, rootId, block, isInsideTable } = this.props;
-		const { id } = block;
+		const { id,content:{text} } = block;
 
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
@@ -702,12 +702,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
 		};
-
-		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
+		[];
+		const twineOpen = [ '[', '{', '\'', '\"', '(', '【','「','（','“','‘' ];
 		const twineClose = {
 			'[': ']',
 			'{': '}',
-			'(': ')'
+			'(': ')',
+			'【': '】',
+			'「': '」',
+			'（': '）',
+			'“': '”',
+			'‘': '’',
+
 		};
 
 		for (let i = 0; i < 9; ++i) {
@@ -843,8 +849,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
-
-		if (range && (range.from != range.to) && twineOpen.includes(key)) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && twineOpen.includes(key)) {
 			e.preventDefault();
 
 			const l = e.key.length;
@@ -859,7 +864,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				focus.set(block.id, { from: range.from + l, to: range.to + l });
 				focus.apply();
 			});
-
+			{}
 			ret = true;
 		};
 		if (ret) {
