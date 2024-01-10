@@ -231,6 +231,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		});
 
 		if (this.filter != filter.text) {
+			this.n = 0;
 			this.filter = filter.text;
 			this.forceUpdate();
 			return;
