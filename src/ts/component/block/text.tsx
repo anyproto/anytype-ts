@@ -703,7 +703,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		};
 		[];
-		const twineOpen = [ '[', '{', '\'', '\"', '(', '【','「','（','“','‘' ];
+		const twineOpen = [ '[', '{', '\'', '\"', '`', '(', '【', '「', '（', '“', '‘' ];
 		const twineClose = {
 			'[': ']',
 			'{': '}',
