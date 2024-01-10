@@ -713,7 +713,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'（': '）',
 			'“': '”',
 			'‘': '’',
-
 		};
 
 		for (let i = 0; i < 9; ++i) {
