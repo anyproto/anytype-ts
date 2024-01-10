@@ -26,7 +26,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	init = false;
 	top = 0;
 	frame = 0;
-	containerOffset: { left: number, top: number } | null = null;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -68,15 +67,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const isPopup = keyboard.isPopup();
 		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
-		const scrollContainer = UtilCommon.getScrollContainer(isPopup);
 
 		this.init = true;
 		this.objects = container.find('.dropTarget.isDroppable');
 
-		if (isPopup && container.length) {
-			this.containerOffset = scrollContainer.offset();
-		};
-		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
 			const data = {
