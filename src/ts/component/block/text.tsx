@@ -850,7 +850,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
-		if (range && ((range.from != range.to) || block.isTextCode()) && twinePairs[key]) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
 			const l = e.key.length;
