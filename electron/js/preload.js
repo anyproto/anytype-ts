@@ -52,6 +52,10 @@ contextBridge.exposeInMainWorld('Electron', {
 		return fp;
 	},
 
+	filePath (...args) {
+		return path.join(...args);
+	},
+
 	dirname: fp => path.dirname(fp),
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),

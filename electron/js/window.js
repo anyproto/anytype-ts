@@ -22,9 +22,8 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { languages, zoom, hideMenuBar } = ConfigManager.config;
+		const { hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
