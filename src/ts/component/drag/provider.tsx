@@ -26,6 +26,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	init = false;
 	top = 0;
 	frame = 0;
+	containerOffset: { left: number, top: number } | null = null;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -67,9 +68,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const isPopup = keyboard.isPopup();
 		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
+		const scrollContainer = UtilCommon.getScrollContainer(isPopup);
 
 		this.init = true;
 		this.objects = container.find('.dropTarget.isDroppable');
+
+		if (isPopup && container.length) {
+			this.containerOffset = scrollContainer.offset();
+		};
 		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
@@ -238,8 +244,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		win.on('drag.drag', (e: any) => { this.onDrag(e); });
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 
-		container.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
-		sidebar.off('scroll.drag').on('scroll.drag', throttle((e: any) => { this.onScroll(); }, 20));
+		container.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));
+		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));
 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
@@ -260,12 +266,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const isPopup = keyboard.isPopup();
-		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
-		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
-
 		this.initData();
-		this.checkNodes(e, e.pageX, e.pageY + diff);
+		this.checkNodes(e, e.pageX, e.pageY);
 	};
 
 	onDrag (e: any) {
@@ -498,17 +500,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onScroll () {
-		if (!keyboard.isDragging) {
-			return;
-		};
-
-		const isPopup = keyboard.isPopup();
-		const container = UtilCommon.getScrollContainer(isPopup);
-		const top = container.scrollTop();
-
-		for (const [ key, value ] of this.objectData) {
-			const rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
-			this.objectData.set(key, { ...value, y: rect.y + top });
+		if (keyboard.isDragging) {
+			for (const [ key, value ] of this.objectData) {
+				const { left, top } = value.obj.offset();
+				this.objectData.set(key, { ...value, x: left, y: top });
+			};
 		};
 	};
 
