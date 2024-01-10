@@ -643,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.persist();
 
 		const { onKeyDown, rootId, block, isInsideTable } = this.props;
-		const { id,content:{text} } = block;
+		const { id } = block;
 
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
@@ -702,12 +702,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
 		};
-		[];
-		const twineOpen = [ '[', '{', '\'', '\"', '`', '(', '【', '「', '（', '“', '‘' ];
-		const twineClose = {
+		
+		const twinePairs = {
 			'[': ']',
 			'{': '}',
 			'(': ')',
+			'`':'`',
+			'\'':'\'',
+			'\"':'\"',
 			'【': '】',
 			'「': '」',
 			'（': '）',
@@ -848,12 +850,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
-		if (range && ((range.from != range.to) || block.isTextCode()) && twineOpen.includes(key)) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && twinePair[key]) {
 			e.preventDefault();
 
 			const l = e.key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twineClose[key] || key;
+			const closingSymbol = twinePair[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
 
@@ -863,7 +865,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				focus.set(block.id, { from: range.from + l, to: range.to + l });
 				focus.apply();
 			});
-			{}
+
 			ret = true;
 		};
 		if (ret) {
