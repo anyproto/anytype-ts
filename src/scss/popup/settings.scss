@@ -429,7 +429,7 @@
 
 			.btn.active { color: var(--color-text-primary); }
 			.btn.active {
-				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
+				.bg { box-shadow: 0px 0px 0px 2px var(--color-system-accent-25); }
 			}
 			.btn.system.active {
 				.bg::before { box-shadow: 0px 0px; }

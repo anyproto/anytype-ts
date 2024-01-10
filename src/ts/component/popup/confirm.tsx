@@ -90,9 +90,9 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 
 			this.n += dir;
 			if (this.n < 0) {
-				this.n = buttons.length - 1
+				this.n = buttons.length - 1;
 			};
-			if (this.n >= buttons.length) {
+			if (this.n > buttons.length - 1) {
 				this.n = 0;
 			};
 

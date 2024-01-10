@@ -702,12 +702,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
 		};
-
-		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
-		const twineClose = {
+		
+		const twinePairs = {
 			'[': ']',
 			'{': '}',
-			'(': ')'
+			'(': ')',
+			'`':'`',
+			'\'':'\'',
+			'\"':'\"',
+			'【': '】',
+			'「': '」',
+			'（': '）',
+			'“': '”',
+			'‘': '’',
 		};
 
 		for (let i = 0; i < 9; ++i) {
@@ -843,13 +850,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
-
-		if (range && (range.from != range.to) && twineOpen.includes(key)) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
 			const l = e.key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twineClose[key] || key;
+			const closingSymbol = twinePairs[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
 

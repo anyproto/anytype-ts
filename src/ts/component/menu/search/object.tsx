@@ -202,6 +202,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems();
 
 		if (this.filter != filter) {
+			this.n = 0;
 			this.filter = filter;
 			this.reload();
 			return;

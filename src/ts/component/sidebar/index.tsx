@@ -238,7 +238,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onHandleClick () {
-		if (!this.movedX) {
+		if (!this.movedX && commonStore.isSidebarFixed) {
 			sidebar.toggleOpenClose();
 		};
 	};

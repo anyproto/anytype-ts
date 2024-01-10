@@ -58,7 +58,7 @@ class Analytics {
 			includeReferrer: true,
 			platform,
 			trackingOptions: {
-    			ipAddress: false,
+				ipAddress: false,
 			},
 		});
 

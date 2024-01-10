@@ -214,10 +214,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		if (isBoard || isCalendar) {
 			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
+			const name = isBoard ? translate('menuDataviewViewEditGroupBy') : translate('menuDataviewViewEditDate');
 
 			settings.push({ 
 				id: 'groupRelationKey', 
-				name: translate('menuDataviewViewEditGroupBy'), 
+				name, 
 				caption: (groupOption ? groupOption.name : translate('commonSelect')), 
 				arrow: true,
 			});

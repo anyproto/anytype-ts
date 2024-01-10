@@ -11,6 +11,7 @@ import { Icon, Label, Editable, Dimmer } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
+import Theme from 'json/theme.json';
 
 import 'excalidraw/dist/excalidraw.min.css';
 
@@ -90,7 +91,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				source = <Icon className="source" onClick={this.onEdit} />;
+				source = <Icon className="source" onMouseDown={this.onEdit} />;
 				placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 
 				if (!text) {
@@ -131,12 +132,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onFocus={this.onFocusBlock}
 			>
 				<div className="valueWrap resizable" style={css}>
+					{select}
+
 					<div className="preview" onClick={this.onPreview} />
 					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
-					{select}
 					{source}
 					{resize}
 
@@ -625,7 +627,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 							const { height, blockId } = oe.data;
 
 							if (blockId == block.id) {
-								iframe.css({ height });
+								iframe.css({ height: Math.max(80, height) });
 							};
 						});
 					};
@@ -671,6 +673,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
+				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid || {};
+
+				mermaid.mermaidAPI.initialize({
+					theme: 'base',
+					themeVariables: theme,
+				});
+
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
 					value.html(res.svg || this.text);
 

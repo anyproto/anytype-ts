@@ -5,6 +5,7 @@ import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
+import Theme from 'json/theme.json';
 
 interface Props {
 	id?: string;
@@ -96,7 +97,7 @@ for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf'
 	File[key] = require(`img/icon/file/${key}.svg`).default;
 };
 
-for (let i in I.RelationType) {
+for (const i in I.RelationType) {
 	const it = Number(i);
 
 	if (isNaN(Number(it)) || [ I.RelationType.Icon, I.RelationType.Relations ].includes(it)) {
@@ -111,24 +112,6 @@ for (let i in I.RelationType) {
 
 const Ghost = require('img/icon/ghost.svg').default;
 
-const BgColor = {
-	grey:	 '#f2f2f2',
-	black:	 '#252525',
-	brown:	 '#b6b6b6',
-	orange:	 '#ffb522',
-	red:	 '#f55522',
-	purple:	 '#ab50cc',
-	blue:	 '#3e58eb',
-	teal:	 '#0fc8ba',
-	lime:	 '#5dd400',
-	green:	 '#57c600',
-};
-
-const Color = {
-	'':		 '#b6b6b6',
-	dark:	 '#dfddd3'
-};
-
 const CheckboxTask = {
 	'': {
 		0: require('img/icon/object/checkbox0.svg').default,
@@ -140,12 +123,6 @@ const CheckboxTask = {
 		1: require('img/theme/dark/icon/object/checkbox1.svg').default,
 		2: require('img/icon/object/checkbox2.svg').default,
 	},
-};
-
-const Theme = {
-	dark: {
-		grey: '#484843',
-	}
 };
 
 const IconObject = observer(class IconObject extends React.Component<Props> {
@@ -498,17 +475,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	svgBgColor () {
-		const { color } = this.props;
-		const theme = commonStore.getThemeClass();
-
-		if (Theme[theme] && Theme[theme][color]) {
-			return Theme[theme][color];
-		};
-		return BgColor[color];
+		return Theme[commonStore.getThemeClass()].icon.bg[this.props.color];
 	};
 
 	svgColor () {
-		return Color[commonStore.getThemeClass()];
+		return Theme[commonStore.getThemeClass()].icon.text;
 	};
 
 	userSvg (): string {
