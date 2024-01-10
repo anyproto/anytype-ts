@@ -234,6 +234,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			selection.hide();
 		};
 
+		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		$(`#block-${block.id}`).addClass('isResizing');
 		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
@@ -283,6 +284,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		win.off('mousemove.media mouseup.media');
 		$(`#block-${block.id}`).removeClass('isResizing');
 		keyboard.disableSelection(false);
+		keyboard.setResize(false);
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },

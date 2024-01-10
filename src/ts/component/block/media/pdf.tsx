@@ -294,6 +294,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 		$(`#block-${block.id}`).addClass('isResizing');
 
+		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
 		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
@@ -342,6 +343,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 		win.off('mousemove.media mouseup.media');
 		keyboard.disableSelection(false);
+		keyboard.setResize(false);
 		
 		this.height = 0;
 
