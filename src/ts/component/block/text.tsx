@@ -850,12 +850,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
-		if (range && ((range.from != range.to) || block.isTextCode()) && twinePair[key]) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && twinePairs[key]) {
 			e.preventDefault();
 
 			const l = e.key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twinePair[key] || key;
+			const closingSymbol = twinePairs[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
 
