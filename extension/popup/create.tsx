@@ -123,7 +123,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 														text={item.name}
 														color={item.color}
 														canEdit={true} 
-														className={Relation.selectClassName(I.RelationType.Tag)}
+														className={Relation.selectClassName(I.RelationType.MultiSelect)}
 														onRemove={() => this.onValueRemove(item.id)}
 													/>
 												</span>

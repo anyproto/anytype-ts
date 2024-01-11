@@ -8,16 +8,16 @@ html.anytypeWebclipper-popup { width: 268px; }
 		.menu.vertical { width: calc(100% - 32px); left: 16px; }
 	}
 
-	.input, .select, .textarea { @include text-small; border: 1px solid $colorShapeSecondary; width: 100%; border-radius: 1px; }
+	.input, .select, .textarea { @include text-small; border: 1px solid var(--color-shape-secondary); width: 100%; border-radius: 1px; }
 
 	.input, .select { height: 32px; padding: 0px 10px; }
 	.select { display: flex; align-items: center; }
 	.textarea { padding: 10px; resize: none; height: 68px; display: block; }
 	.buttons { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; margin: 16px 0px 0px 0px; }
-	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorBgLoader; z-index: 10; }
+	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 10; }
 	.error { @include text-small; margin: 1em 0px 0px 0px; }
 
-	.isFocused { border-color: $colorIce !important; box-shadow: 0px 0px 0px 1px $colorIce; }
+	.isFocused { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice); }
 
 	.page.pageIndex, .page.pageChallenge { padding: 50px 16px; text-align: center; }
 
@@ -26,9 +26,9 @@ html.anytypeWebclipper-popup { width: 268px; }
 		.row { margin: 0px 0px 10px 0px; }
 		.row:last-child { margin: 0px; }
 
-		.label { @include text-small; color: $colorTextSecondary; margin: 0px 0px 4px 0px; }
+		.label { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; }
 
-		.box { border: 1px solid $colorShapeSecondary; border-radius: 1px; min-height: 32px; }
+		.box { border: 1px solid var(--color-shape-secondary); border-radius: 1px; min-height: 32px; }
 		.box {
 			.value { padding: 6px 10px 0px 10px; }
 			.value {
