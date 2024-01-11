@@ -1232,6 +1232,17 @@ const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
+const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateFromUrl.Request();
+
+	//request.setDetails(Encode.struct(details));
+	request.setSpaceid(spaceId);
+	request.setObjecttypeuniquekey(typeKey);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
+};
+
 const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 
@@ -2024,6 +2035,7 @@ export {
 	ObjectCreate,
 	ObjectCreateSet,
 	ObjectCreateBookmark,
+	ObjectCreateFromUrl,
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,

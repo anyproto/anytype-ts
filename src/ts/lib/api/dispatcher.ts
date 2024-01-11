@@ -230,7 +230,6 @@ class Dispatcher {
 					const challenge = data.getChallenge();
 					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
 
-					win.focus();
 					win.addEventListener('load', () => win.postMessage({ 
 						challenge,
 						theme: commonStore.getThemeClass(),

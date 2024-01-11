@@ -19,7 +19,6 @@ const MAX_LENGTH = 320;
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
 	details: any = {
-		source: '',
 		type: '',
 		tag: [],
 	};
@@ -29,8 +28,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	refSpace: any = null;
 	refType: any = null;
 	refComment: any = null;
-
 	isCreating = false;
+	url = '';
 
 	state = {
 		isLoading: false,
@@ -216,7 +215,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.refName.setValue(tab.title);
 			this.refName.focus();
 
-			this.details.source = tab.url;
+			this.url = tab.url;
 		});
 	};
 
@@ -428,7 +427,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		delete(details.type);
 
-		C.ObjectCreate(details, [], '', type, commonStore.space, (message: any) => {
+		C.ObjectCreateFromUrl(details, commonStore.space, type, this.url, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
