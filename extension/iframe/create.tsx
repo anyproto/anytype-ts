@@ -2,13 +2,15 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader } from 'Component';
-import { I } from 'Lib';
-import { blockStore } from 'Store';
+import { I, C, M } from 'Lib';
+import { blockStore, extensionStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
 	error: string;
 };
+
+const ROOT_ID = 'preview';
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
 
@@ -16,6 +18,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		isLoading: false,
 		error: '',
 	};
+	html = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -25,9 +28,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { isLoading, error } = this.state;
-		const rootId = '';
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId);
+		const { html } = extensionStore;
+		const childrenIds = blockStore.getChildrenIds(ROOT_ID, ROOT_ID);
+		const children = blockStore.getChildren(ROOT_ID, ROOT_ID);
+		const length = children.length;
+
+		console.log(html, childrenIds, children, length);
 
 		return (
 			<div className="page pageIndex">
@@ -47,7 +53,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						<Block 
 							key={block.id} 
 							{...this.props}
-							rootId={rootId}
+							rootId={ROOT_ID}
 							index={i}
 							block={block}
 							getWrapperWidth={() => this.getWrapperWidth()}
@@ -59,11 +65,43 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		);
 	};
 
-	componentDidMount(): void {
-		this.load();
+	componentDidUpdate (): void {
+		this.init();
 	};
 
-	load () {
+	init () {
+		const { html } = extensionStore;
+
+		if (html == this.html) {
+			return;
+		};
+
+		this.html = html;
+
+		C.BlockPreview(html, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const structure: any[] = [];
+			const blocks = message.blocks.map(it => new M.Block(it));
+
+			blocks.unshift(new M.Block({
+				id: ROOT_ID,
+				type: I.BlockType.Page,
+				childrenIds: message.blocks.map(it => it.id),
+				content: {},
+			}));
+
+			blocks.forEach((block: any) => {
+				structure.push({ id: block.id, childrenIds: block.childrenIds });
+			});
+
+			blockStore.set(ROOT_ID, blocks);
+			blockStore.setStructure(ROOT_ID, structure);
+
+			this.forceUpdate();
+		});
 	};
 
 	getWrapperWidth () {

@@ -38,6 +38,7 @@ const rootStore = {
 	dbStore,
 	menuStore,
 	popupStore,
+	extensionStore,
 };
 
 declare global {
@@ -113,6 +114,12 @@ class Iframe extends React.Component {
 					Util.init(serverPort, gatewayPort);
 					Util.authorize(appKey, () => UtilRouter.go('/create', {}));
 					break;
+
+				case 'clickMenu': {
+					extensionStore.setHtml(msg.html);
+					break;
+				};
+
 			};
 
 			/*

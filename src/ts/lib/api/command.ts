@@ -378,6 +378,14 @@ const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
 };
 
+const BlockPreview = (html: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Preview.Request();
+
+	request.setHtml(html);
+
+	dispatcher.request(BlockPreview.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
@@ -1913,6 +1921,7 @@ export {
 	BlockPaste,
 	BlockCreate,
 	BlockSetFields,
+	BlockPreview,
 
 	BlockListMoveToExistingObject,
 	BlockListConvertToObjects,

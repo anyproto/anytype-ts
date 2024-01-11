@@ -309,6 +309,11 @@ export const BlockListConvertToObjects = (response: Rpc.Block.ListConvertToObjec
 	};
 };
 
+export const BlockPreview = (response: Rpc.Block.Preview.Response) => {
+	return {
+		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+	};
+};
 
 export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDataview.CreateFromExistingObject.Response) => {
 	return {

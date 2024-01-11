@@ -83,10 +83,12 @@
 		return true;
 	});
 
-	initMenu = () => {
+	initMenu = async () => {
 		if (isInitMenu) {
 			return;
 		};
+
+		const tab = await getActiveTab();
 
 		isInitMenu = true;
 
@@ -96,7 +98,29 @@
 			contexts: [ 'selection' ]
 		});
 
-		chrome.contextMenus.onClicked.addListener(() => sendToActiveTab({ type: 'clickMenu' }));
+		chrome.contextMenus.onClicked.addListener(() => {
+			chrome.scripting.executeScript({
+				target: { tabId: tab.id },
+				function: () => {
+					const sel = window.getSelection();
+
+					let html = '';
+					if (sel.rangeCount) {
+						const container = document.createElement("div");
+						for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+							container.appendChild(sel.getRangeAt(i).cloneContents());
+						};
+						html = container.innerHTML;
+					};
+
+					return html;
+				}
+			}, res => {
+				if (res.length) {
+					sendToTab(tab, { type: 'clickMenu', html: res[0].result });
+				};
+			});
+		});
 	};
 
 	getActiveTab = async () => {
