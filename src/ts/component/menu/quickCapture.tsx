@@ -11,6 +11,8 @@ interface State {
 	isExpanded: boolean;
 };
 
+const LIMIT_PINNED = 5;
+
 class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	n = 0;
@@ -255,10 +257,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
+			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
-			items = items.slice(0, 5 - pinned.length);
+			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(dbStore.getSetType());
 			items.push(dbStore.getCollectionType());
 			items = [].concat(pinned, items);
@@ -400,16 +402,25 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			return;
 		};
 
+		if ([ 'add', 'search' ].includes(item.itemId)) {
+			return;
+		};
+
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
+		const type = dbStore.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
-		const canDefault = !UtilObject.getSetLayouts().includes(item.recommendedLayout);
-		const canDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const canPin = type.isInstalled;
+		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
+		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let options: any[] = [
 			{ id: 'open', name: translate('menuQuickCaptureOpenType') },
-			{ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) },
 		];
+
+		if (canPin) {
+			options.push({ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) });
+		};
 
 		if (canDefault) {
 			options.push({ id: 'default', name: translate('commonSetDefault') });

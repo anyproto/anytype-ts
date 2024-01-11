@@ -829,6 +829,14 @@ class UtilCommon {
 		return path;
 	};
 
+	injectCss (id: string, css: string) {
+		const head = $('head');
+		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
+
+		head.find(`#${id}`).remove();
+		head.append(element);
+	};
+
 };
 
 export default new UtilCommon();

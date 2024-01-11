@@ -300,7 +300,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
+		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked, css } = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
@@ -325,6 +325,10 @@ class App extends React.Component<object, State> {
 		};
 
 		raf(() => anim.removeClass('from'));
+
+		if (css) {
+			UtilCommon.injectCss('anytype-custom-css', css);
+		};
 
 		const cb = () => {
 			window.setTimeout(() => {

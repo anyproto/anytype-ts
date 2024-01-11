@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.37.3",
+	"version": "0.37.6-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -107,7 +107,6 @@
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
 		"excalidraw": "^0.6.4",
-		"file-type": "^12.4.2",
 		"findandreplacedomtext": "^0.4.6",
 		"google-protobuf": "^3.14.0",
 		"grpc-web": "^1.4.2",
@@ -139,7 +138,6 @@
 		"react-router-dom": "^5.2.0",
 		"react-sortable-hoc": "^1.11.0",
 		"react-virtualized": "^9.22.3",
-		"read-chunk": "^3.2.0",
 		"sanitize-filename": "^1.6.3",
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
@@ -260,6 +258,10 @@
 			{
 				"from": "node_modules/file-type",
 				"to": "node_modules/file-type"
+			},
+			{
+				"from": "node_modules/pify",
+				"to": "node_modules/pify"
 			},
 			{
 				"from": "node_modules/@electron",

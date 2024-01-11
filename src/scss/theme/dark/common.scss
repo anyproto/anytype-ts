@@ -52,6 +52,8 @@ html.themeDark {
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: var(--color-system-selection); }
 
+	.iconObject.withOption.isSpaceView { background: #000 !important; }
+
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
     .bgColor-orange { background: rgba(255, 181, 34, 0.25) !important; }

@@ -131,7 +131,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div className="valueWrap resizable" style={css}>
+				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select}
 
 					<div className="preview" onClick={this.onPreview} />
@@ -236,6 +236,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
+		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
 	};
 
 	unbind () {
@@ -558,7 +559,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const sandbox = [ 'allow-scripts' ];
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
-				let iframe = node.find('iframe');
+				let iframe = node.find('#receiver');
 				let text = this.text;
 				let allowScript = false;
 
@@ -794,8 +795,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(this.node);
-		
+
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.embed mouseup.embed');
 		
@@ -803,7 +803,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			selection.hide();
 		};
 
+		keyboard.setResize(true);
 		keyboard.disableSelection(true);
+
 		$(`#block-${block.id}`).addClass('isResizing');
 		win.on('mousemove.embed', e => this.onResizeMove(e, checkMax));
 		win.on('mouseup.embed', e => this.onResizeEnd(e, checkMax));
@@ -818,7 +820,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 		
 		const node = $(this.node);
-		const wrap = node.find('.valueWrap');
+		const wrap = node.find('#valueWrap');
 		
 		if (!wrap.length) {
 			return;
@@ -838,20 +840,26 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const node = $(this.node);
-		const wrap = node.find('.valueWrap');
+		const wrap = node.find('#valueWrap');
 		
 		if (!wrap.length) {
 			return;
 		};
 
+		const iframe = node.find('#receiver');
+
+		iframe.css({ height: 'auto' });
+
 		const win = $(window);
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
+		keyboard.setResize(false);
+		keyboard.disableSelection(false);
+
 		win.off('mousemove.embed mouseup.embed');
 		$(`#block-${block.id}`).removeClass('isResizing');
-		keyboard.disableSelection(false);
-		
+
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
@@ -873,6 +881,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		return Math.min(1, Math.max(0, w / rect.width));
 	};
 
+
+	onResizeInit () {
+		console.log('onResizeInit');
+	};
 
 	resize () {
 		const { block } = this.props;
