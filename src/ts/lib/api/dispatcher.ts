@@ -156,7 +156,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const currentWindow = window.Electron.currentWindow();
+		const electron = UtilCommon.getElectron();
+		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		
 		if (traceId) {
@@ -221,7 +222,7 @@ class Dispatcher {
 				};
 
 				case 'accountLinkChallenge': {
-					if (UtilCommon.getElectron().currentWindow().windowId !== 1) {
+					if (electron.currentWindow().windowId !== 1) {
 						break;
 					};
 
@@ -976,10 +977,8 @@ class Dispatcher {
 
 					notificationStore.add(item);
 
-					if ((windowId == 1) && !window.Electron.isFocused()) {
-						new window.Notification(item.title, { body: item.text }).onclick = () => { 
-							window.Electron.focus();
-						};
+					if ((windowId == 1) && !currentWindow.isFocused()) {
+						new window.Notification(item.title, { body: item.text }).onclick = () => currentWindow.focus();
 					};
 					break;
 				};
