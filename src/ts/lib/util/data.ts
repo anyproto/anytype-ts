@@ -488,7 +488,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
+		const object = detailStore.get(rootId, blockId, [ 'iconImage', 'iconEmoji', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
