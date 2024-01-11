@@ -247,6 +247,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Facebook,
 		].includes(p);
 	};
 
