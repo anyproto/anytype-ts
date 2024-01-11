@@ -514,7 +514,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	getValue (): string {
-		return this.refEditable.getTextValue();
+		return String(this.refEditable?.getTextValue() || '');
 	};
 
 	updateRect () {
