@@ -11,6 +11,8 @@ interface State {
 	isExpanded: boolean;
 };
 
+const LIMIT_PINNED = 5;
+
 class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	n = 0;
@@ -255,10 +257,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
+			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
-			items = items.slice(0, 5 - pinned.length);
+			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(dbStore.getSetType());
 			items.push(dbStore.getCollectionType());
 			items = [].concat(pinned, items);
