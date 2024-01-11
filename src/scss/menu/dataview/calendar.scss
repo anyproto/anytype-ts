@@ -43,7 +43,7 @@
 		.day:nth-child(7n + 7) { margin: 0px; }
 		.day:hover { background: var(--color-system-accent-25); }
 
-		.day.th { color: var(--color-control-active); cursor: default; font-size: 12px; }
+		.day.th { color: var(--color-control-active); cursor: default; @include text-small; }
 		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }
 
 		.day.today { font-weight: 600; }

@@ -25,6 +25,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 
 		const today = UtilDate.now();
 		const tomorrow = today + 86400;
+		const dayToday = UtilDate.today();
 		const days = [];
 		const months = [];
 		const years = [];
@@ -90,7 +91,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						if (m != item.m) {
 							cn.push('other');
 						};
-						if (UtilDate.today() == UtilDate.timestamp(item.y, item.m, item.d)) {
+						if (dayToday == UtilDate.timestamp(item.y, item.m, item.d)) {
 							cn.push('today');
 						};
 						if ((d == item.d) && (m == item.m) && (y == item.y)) {
