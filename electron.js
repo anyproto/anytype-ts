@@ -163,18 +163,18 @@ app.on('second-instance', (event, argv) => {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
 	};
 
-	if (mainWindow) {
-		if (deeplinkingUrl) {
-			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
-		};
-
-		if (mainWindow.isMinimized()) {
-			mainWindow.restore();
-		};
-
-		mainWindow.show();
-		mainWindow.focus();
+	if (!mainWindow || !deeplinkingUrl) {
+		return;
 	};
+
+	Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	mainWindow.show();
+	mainWindow.focus();
 });
 
 app.on('before-quit', (e) => {
