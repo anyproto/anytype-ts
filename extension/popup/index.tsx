@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, Storage, dispatcher } from 'Lib';
-import { authStore, commonStore, extensionStore } from 'Store';
+import { I, C, UtilRouter, Storage } from 'Lib';
+import { extensionStore } from 'Store';
 import Url from 'json/url.json';
 
 import Util from '../lib/util';

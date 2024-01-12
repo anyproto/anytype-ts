@@ -33,8 +33,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const children = blockStore.getChildren(ROOT_ID, ROOT_ID);
 		const length = children.length;
 
-		console.log(html, childrenIds, children, length);
-
 		return (
 			<div className="page pageIndex">
 				{isLoading ? <Loader type="loader" /> : ''}
@@ -72,7 +70,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	init () {
 		const { html } = extensionStore;
 
-		if (html == this.html) {
+		if (!html || (html == this.html)) {
 			return;
 		};
 

@@ -102,7 +102,7 @@ class Iframe extends React.Component {
 
 	componentDidMount () {
 		UtilRouter.init(history);
-		
+
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			console.log('[Iframe]', msg, sender);
@@ -113,21 +113,18 @@ class Iframe extends React.Component {
 
 					Util.init(serverPort, gatewayPort);
 					Util.authorize(appKey, () => UtilRouter.go('/create', {}));
+
+					sendResponse({});
 					break;
 
 				case 'clickMenu': {
 					extensionStore.setHtml(msg.html);
+
+					sendResponse({});
 					break;
 				};
 
 			};
-
-			/*
-			let res = null;
-			if (res) {
-				sendResponse({ type: msg.type, ref: 'iframe' });
-			};
-			*/
 			return true;
 		});
 	};
