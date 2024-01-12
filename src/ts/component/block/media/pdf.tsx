@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { InputWithFile, Loader, Error, Pager, Icon } from 'Component';
+import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf } from 'Component';
 import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
 import Constant from 'json/constant.json';
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
@@ -24,6 +24,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 	_isMounted = false;
 	node: any = null;
+	refMedia = null;
 	height = 0;
 
 	constructor (props: I.BlockComponent) {
@@ -112,20 +113,15 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 							<span className="size">{UtilFile.size(sizeInBytes)}</span>
 						</div>
 
-						<Document
-							file={commonStore.fileUrl(hash)}
-							onLoadSuccess={this.onDocumentLoad}
-							renderMode="canvas"
-							loading={<Loader />}
+						<MediaPdf 
+							id={`pdf-block-${id}`}
+							ref={ref => this.refMedia = ref}
+							src={commonStore.fileUrl(hash)}
+							page={page}
+							onDocumentLoad={this.onDocumentLoad}
+							onPageRender={this.onPageRender}
 							onClick={this.onClick}
-						>
-							<Page 
-								pageNumber={page} 
-								loading={<Loader />}
-								dpi={300}
-								onRenderSuccess={this.onPageRender}
-							/>
-						</Document>
+						/>
 
 						{pager}
 
@@ -270,6 +266,8 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		if (wrap.length) {
 			wrap.css({ width: (this.getWidth(true, 0) * 100) + '%' });
 		};
+
+		this.refMedia?.resize();
 	};
 
 	onResizeStart (e: any, checkMax: boolean) {
@@ -318,6 +316,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		wrap.css({ width: (w * 100) + '%' });
+		this.refMedia?.resize();
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {

@@ -15,6 +15,9 @@ import {
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 configure({ enforceActions: 'never' });
 
@@ -22,6 +25,8 @@ import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
 import 'swiper/scss';
+import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
+import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';
