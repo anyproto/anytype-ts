@@ -24,3 +24,5 @@ latest-linux.yml
 *.yml
 *.yaml
 nmh.log
+[0-9]*.js
+[0-9]*.js.map
