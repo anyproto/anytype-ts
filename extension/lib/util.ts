@@ -68,6 +68,10 @@ class Util {
 			UtilData.createsSubscriptions(onSuccess);
 		});
 	};
+
+	optionMapper (it: any) {
+		return it._empty_ ? null : { ...it, object: (!it.iconEmoji ? it : null) };
+	};
 	
 };
 

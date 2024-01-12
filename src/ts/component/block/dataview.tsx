@@ -986,7 +986,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
 		};
 
-		const menuParam = Object.assign({
+		menuStore.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
 			data: {
@@ -999,9 +999,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				addParam,
 				onSelect,
 			}
-		}, param || {});
-
-		menuStore.open('searchObject', menuParam);
+		}, param || {}));
 	};
 
 	onSourceTypeSelect (obj: any) {

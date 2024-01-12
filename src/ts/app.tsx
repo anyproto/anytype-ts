@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import mermaid from 'mermaid';
 import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';

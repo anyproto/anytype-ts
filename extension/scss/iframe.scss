@@ -6,10 +6,11 @@
 		padding: 0px 16px; position: fixed; left: 0px; top: 0px; width: 100%; background: #fff; z-index: 9;
 	}
 	.head {
-		.side { display: flex; flex-direction: row; align-items: center; width: 50%; }
-		.side.right { justify-content: flex-end; gap: 0px 14px; }
+		.side { display: flex; flex-direction: row; align-items: center; width: 50%; gap: 0px 14px; }
+		.side.right { justify-content: flex-end; }
 
-		.button.simple { @include text-common; font-weight: 500; }
+		.button.simple { @include text-common; font-weight: 500; cursor: pointer; height: 32px; line-height: 32px; }
+		.select { cursor: pointer; }
 	}
 
 	.blocks { padding: 96px 48px 48px 0px; }

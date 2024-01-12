@@ -56,16 +56,6 @@
 		});
 	});
 
-	chrome.tabs.onActivated.addListener(tab => {
-		console.log('[onActivated]', tab);
-
-		chrome.tabs.get(tab.tabId, info => {
-			console.log('[Tab]', info);
-
-			chrome.tabs.sendMessage(tab.tabId, { type: 'HELLO' });
-		});
-	});
-
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		switch (msg.type) {
 			case 'getPorts': {

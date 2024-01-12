@@ -224,16 +224,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getSpaces () {
-		return this.getObjects(Constant.subId.space).map(it => this.mapper(it)).filter(it => it);
+		return dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it })).filter(it => it)
 	};
 
 	getTypes () {
 		const layouts = UtilObject.getPageLayouts();
-		return this.getObjects(Constant.subId.type).map(it => this.mapper(it)).filter(it => this.filter(it)).filter(it => layouts.includes(it.recommendedLayout));
-	};
-
-	mapper (it: any) {
-		return it._empty_ ? null : { ...it, object: (!it.iconEmoji ? it : null) };
+		return this.getObjects(Constant.subId.type).map(Util.optionMapper).filter(this.filter).filter(it => layouts.includes(it.recommendedLayout));
 	};
 
 	filter (it: any) {

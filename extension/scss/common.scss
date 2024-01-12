@@ -53,17 +53,8 @@ html.anytypeWebclipper-popup {
 	--color-green: #57c600;
 
 	@import "~scss/common.scss";
-	@import "~scss/component/loader.scss";
-	@import "~scss/component/tag.scss";
-
-	@import "~scss/form/button.scss";
-	@import "~scss/form/select.scss";
-	@import "~scss/form/filter.scss";
-
-	@import "~scss/component/error.scss";
-	@import "~scss/component/icon.scss";
-	@import "~scss/component/iconObject.scss";
-
+	@import "~scss/form/common.scss";
+	@import "~scss/component/common.scss";
 	@import "~scss/menu/common.scss";
 	@import "~scss/block/common";
 
@@ -74,7 +65,7 @@ html.anytypeWebclipper-popup {
 
 	.menus {
 		.menu.vertical {
-			.wrap, .items, .scrollArea, .ReactVirtualized__List { border-radius: inherit; }
+			.item { cursor: pointer; }
 		}
 	}
 

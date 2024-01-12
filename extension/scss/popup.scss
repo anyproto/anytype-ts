@@ -5,6 +5,9 @@ html.anytypeWebclipper-popup { width: 268px; }
 
 	.menus {
 		.menu.vertical { width: calc(100% - 32px); left: 16px; }
+		.menu.vertical {
+			.wrap, .items, .scrollArea, .ReactVirtualized__List { border-radius: inherit; }
+		}
 	}
 
 	.input, .select, .textarea { @include text-small; border: 1px solid var(--color-shape-secondary); width: 100%; border-radius: 1px; }
