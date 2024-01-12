@@ -43,24 +43,26 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	componentDidMount(): void {
-		this.getPorts();
+		this.checkPorts();
 	};
 
-	getPorts (onError?: () => void): void {
+	checkPorts (onError?: () => void): void {
 		Util.sendMessage({ type: 'getPorts' }, response => {
-			console.log('[Popup] getPorts', response);
+			Util.sendMessage({ type: 'checkPorts' }, response => {
+				console.log('[Popup] checkPorts', response);
 
-			if (!response.ports || !response.ports.length) {
-				this.setState({ error: 'Automatic pairing failed, please open the app' });
+				if (!response.ports || !response.ports.length) {
+					this.setState({ error: 'Automatic pairing failed, please open the app' });
 
-				if (onError) {
-					onError();
+					if (onError) {
+						onError();
+					};
+					return;
 				};
-				return;
-			};
 
-			Util.init(response.ports[1], response.ports[2]);
-			this.login();
+				Util.init(response.ports[1], response.ports[2]);
+				this.login();
+			});
 		});
 	};
 
@@ -89,11 +91,18 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	onOpen () {
+		const { serverPort, gatewayPort } = extensionStore;
+
+		if (serverPort && gatewayPort) {
+			this.login();
+			return;
+		};
+
 		let cnt = 0;
 
 		Util.sendMessage({ type: 'launchApp' }, response => {
 			this.interval = setInterval(() => {
-				this.getPorts(() => {
+				this.checkPorts(() => {
 					cnt++;
 
 					if (cnt >= 30) {

@@ -260,10 +260,6 @@
 				"to": "node_modules/file-type"
 			},
 			{
-				"from": "node_modules/pify",
-				"to": "node_modules/pify"
-			},
-			{
 				"from": "node_modules/@electron",
 				"to": "node_modules/@electron"
 			},

@@ -148,11 +148,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 								</div>
 							</div>
 						</div>
-
-						<div className="row">
-							<Label text="Comment" />
-							<Textarea ref={ref => this.refComment = ref} placeholder="Add text" />
-						</div>
 					</div>
 
 					<div className="buttons">

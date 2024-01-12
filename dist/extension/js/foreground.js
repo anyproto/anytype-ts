@@ -2,14 +2,25 @@
 
 	const extensionId = 'jkmhmgghdjjbafmkgjmplhemjjnkligf';
 	const body = document.querySelector('body');
+	const container = document.createElement('div');
+	const dimmer = document.createElement('div');
 	const iframe = document.createElement('iframe');
 
 	if (body && !document.getElementById(iframe.id)) {
-		body.appendChild(iframe);
+		body.appendChild(container);
 	};
+
+	container.id = [ 'anytypeWebclipper', 'container' ].join('-');
+	container.appendChild(iframe);
+	container.appendChild(dimmer);
 
 	iframe.id = [ 'anytypeWebclipper', 'iframe' ].join('-');
 	iframe.src = chrome.runtime.getURL('iframe/index.html');
+
+	dimmer.className = 'dimmer';
+	dimmer.addEventListener('click', () => {
+		container.style.display = 'none';
+	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		console.log('[Foreground]', msg, sender);
@@ -20,11 +31,11 @@
 
 		switch (msg.type) {
 			case 'clickMenu':
-				iframe.style.display = 'block';
+				container.style.display = 'block';
 				break;
 
 			case 'hide':
-				iframe.style.display = 'none';
+				container.style.display = 'none';
 				break;
 		};
 		
@@ -40,7 +51,7 @@
 		const { data } = e;
 		switch (data.type) {
 			case 'clickClose':
-				iframe.style.display = 'none';
+				container.style.display = 'none';
 				break;
 		};
 	});

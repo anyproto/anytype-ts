@@ -43,7 +43,8 @@ const installNativeMessagingHost = () => {
 		name: APP_NAME,
 		description: 'Anytype desktop <-> web clipper bridge',
 		type: 'stdio',
-		allowed_origins: [`chrome-extension://${EXTENSION_ID}/`],
+		allowed_origins: [ `chrome-extension://${EXTENSION_ID}/` ],
+		path: getManifestPath(),
 	};
 
 	switch (platform) {
@@ -64,15 +65,36 @@ const installNativeMessagingHost = () => {
 	};
 };
 
-const installToWindows = (manifest) => {
-	const destination = path.join(USER_PATH, 'browsers');
-	manifest.path = getManifestPath();
-	writeManifest(path.join(destination, 'chrome.json'), manifest);
+const installToMacOS = (manifest) => {
+	const dirs = getDarwinDirectory();
 
+	for (const [ key, value ] of Object.entries(dirs)) {
+		if (existsSync(value)) {
+			const p = path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME);
+			
+			writeManifest(p, manifest).catch(e => {
+				console.log(`Error writing manifest for ${key}. ${e}`);
+			});
+		} else {
+			console.log(`Warning: ${key} not found skipping.`);
+		};
+	};
+};
+
+const installToLinux = (manifest) => {
+	const dir = `${getHomeDir()}/.config/google-chrome/`;
+
+	writeManifest(`${dir}NativeMessagingHosts/${MANIFEST_FILENAME}`, manifest);
+};
+
+const installToWindows = (manifest) => {
+	const dir = path.join(USER_PATH, 'browsers');
+
+	writeManifest(path.join(dir, 'chrome.json'), manifest);
 	createWindowsRegistry(
 		'HKCU\\SOFTWARE\\Google\\Chrome',
 		`HKCU\\SOFTWARE\\Google\\Chrome\\NativeMessagingHosts\\${APP_NAME}`,
-		path.join(destination, 'chrome.json')
+		path.join(dir, 'chrome.json')
 	);
 };
 
@@ -119,29 +141,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 	};
 };
 
-const installToMacOS = (manifest) => {
-	const nmhs = getDarwinNMHDirectory();
-	manifest.path = getManifestPath();
-
-	for (const [key, value] of Object.entries(nmhs)) {
-		if (existsSync(value)) {
-			const p = path.join(
-				value,
-				'NativeMessagingHosts',
-				MANIFEST_FILENAME
-			);
-			console.log(p);
-
-			writeManifest(p, manifest).catch((e) =>
-				console.log(`Error writing manifest for ${key}. ${e}`)
-			);
-		} else {
-			console.log(`Warning: ${key} not found skipping.`);
-		};
-	};
-};
-
-const getDarwinNMHDirectory = () => {
+const getDarwinDirectory = () => {
 	const HOME_DIR = getHomeDir();
 	/* eslint-disable no-useless-escape */
 	return {
@@ -160,23 +160,12 @@ const getDarwinNMHDirectory = () => {
 	/* eslint-enable no-useless-escape */
 };
 
-const installToLinux = (manifest) => {
-	manifest.path = getManifestPath();
-	const config_dir = `${getHomeDir()}/.config/google-chrome/`;
-
-	if (existsSync(config_dir)) {
-		writeManifest(
-			`${config_dir}NativeMessagingHosts/${MANIFEST_FILENAME}`,
-			manifest
-		);
-	};
-};
-
 const writeManifest = async (destination, manifest) => {
 	if (!existsSync(path.dirname(destination))) {
 		await mkdir(path.dirname(destination));
 	};
-	writeFile(destination, JSON.stringify(manifest, null, 2), console.log);
+
+	writeFile(destination, JSON.stringify(manifest, null, 2), {}, console.log);
 };
 
 module.exports = { installNativeMessagingHost };

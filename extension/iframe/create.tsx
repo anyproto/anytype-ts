@@ -55,12 +55,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 							onChange={this.onSpaceChange}
 							menuParam={{
 								horizontal: I.MenuDirection.Center,
-								data: { maxHeight: 120 }
+								data: { maxHeight: 360 }
 							}}
 						/>
 
 						<div id="select" className="select" onMouseDown={this.onSelect}>
-							<div className="name">{object ? object.name : translate('commonSelect')}</div>
+							<div className="name">{object ? object.name : translate('commonSelectObject')}</div>
 							<Icon className="arrow light" />
 						</div>
 					</div>

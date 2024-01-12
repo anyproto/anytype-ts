@@ -16,6 +16,7 @@
 
 		switch (msg.type) {
 			case 'launchApp': {
+				sendToActiveTab({ type: 'launchApp', res: msg.response });
 				break;
 			};
 
@@ -57,19 +58,33 @@
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+		console.log('[Background]', msg.type);
+
+		const res = {};
+
 		switch (msg.type) {
+			case 'launchApp': {
+				native.postMessage({ type: 'launchApp' });
+				break;
+			};
+
 			case 'getPorts': {
-				sendResponse({ ports });
+				native.postMessage({ type: 'getPorts' });
+				break;
+			};
+
+			case 'checkPorts': {
+				res.ports = ports;
 				break;
 			};
 
 			case 'init': {
 				initMenu();
-				sendToActiveTab({ ports });
 				break;
 			};
-
 		};
+
+		sendResponse(res);
 		return true;
 	});
 
