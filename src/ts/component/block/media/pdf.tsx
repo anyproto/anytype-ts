@@ -3,8 +3,7 @@ import { InputWithFile, Loader, Error, Pager, Icon } from 'Component';
 import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Document, Page } from 'react-pdf';
-import { pdfjs } from 'react-pdf';
+import { Document, Page, pdfjs } from 'react-pdf';
 import Constant from 'json/constant.json';
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
