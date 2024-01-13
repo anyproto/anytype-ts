@@ -397,11 +397,6 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
-		};
-
 		text = String(text || '');
 		marks = marks || [];
 
@@ -409,11 +404,7 @@ class UtilData {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		});
+		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {

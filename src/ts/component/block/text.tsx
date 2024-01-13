@@ -1186,11 +1186,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		UtilData.blockSetText(rootId, block.id, value, marks, update, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+		UtilData.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {
