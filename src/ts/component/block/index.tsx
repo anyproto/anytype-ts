@@ -89,7 +89,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canDropMiddle = false;
 		let blockComponent = null;
 		let additional = null;
-		let renderChildren = !isInsideTable && block.canHaveChildren();
+		let renderChildren = !isInsideTable;
 
 		if (className) {
 			cn.push(className);
@@ -107,7 +107,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
-				canDropMiddle = canDrop && renderChildren;
+				canDropMiddle = canDrop && block.canHaveChildren();
+				renderChildren = false;
 
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
@@ -240,6 +241,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Featured: {
 				canDrop = false;
+				renderChildren = false;
 				blockComponent = <BlockFeatured key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -247,6 +249,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.Type: {
 				canSelect = false;
 				canDrop = false;
+				renderChildren = false;
 				blockComponent = <BlockType key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -257,11 +260,13 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Table: {
+				renderChildren = false;
 				blockComponent = <BlockTable key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 
 			case I.BlockType.TableOfContents: {
+				renderChildren = false;
 				blockComponent = <BlockTableOfContents key={key} ref={setRef} {...this.props} />;
 				break;
 			};
