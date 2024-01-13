@@ -15,9 +15,8 @@ import {
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
-import { pdfjs } from 'react-pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
+require('pdfjs-dist/build/pdf.worker.entry.js');
 
 configure({ enforceActions: 'never' });
 
