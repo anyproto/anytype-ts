@@ -116,9 +116,16 @@ html.themeDark {
 
     /* Button */
 
+	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
+	.button.black:hover,
+    .button.black.hover { background: var(--color-control-active); }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
+
+    .button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
+    .button.blank:not(.disabled):hover,
+    .button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
 	.button.red,
     .button.red.blank { background: none; }
