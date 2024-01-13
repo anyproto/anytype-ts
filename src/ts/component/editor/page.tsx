@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
+import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
@@ -2216,13 +2216,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	isReadonly () {
-		const { rootId } = this.props;
 		const { isDeleted } = this.state;
-
 		if (isDeleted) {
 			return true;
 		};
 
+		const { rootId } = this.props;
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		if (!allowed) {
 			return true;
