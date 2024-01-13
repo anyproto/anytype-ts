@@ -32,7 +32,7 @@ class DetailStore {
 			return;
 		};
 
-		const map = observable.map(new Map());
+		const map = new Map();
 
 		for (const item of items) {
 			const list: Detail[] = [];
