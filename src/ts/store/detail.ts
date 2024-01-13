@@ -32,7 +32,7 @@ class DetailStore {
 			return;
 		};
 
-		const map = new Map();
+		const map = observable.map(new Map());
 
 		for (const item of items) {
 			const list: Detail[] = [];
@@ -139,8 +139,10 @@ class DetailStore {
 		};
 
 		if (keys && keys.length) {
-			const list = this.getDetailList(rootId, id).filter(it => !keys.includes(it.relationKey));
-			map.set(id, list);
+			const item = { id, details: {} };
+			keys.forEach(key => item.details[key] = null);
+
+			this.update(rootId, item, false);
 		} else {
 			map.set(id, []);
 		};
