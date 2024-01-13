@@ -307,31 +307,26 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (block.isLayoutColumn() && canDrop) {
-			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
-
-			if (lastId) {
-				targetColumn = (
-					<DropTarget 
-						{...this.props} 
-						isTargetColumn={true} 
-						rootId={rootId} 
-						id={lastId} 
-						style={style} 
-						type={type} 
-						dropType={I.DropType.Block} 
-						canDropMiddle={canDropMiddle} 
-						onClick={this.onEmptyColumn} 
-					/>
-				);
-			};
+			targetColumn = (
+				<DropTarget 
+					{...this.props} 
+					isTargetColumn={true} 
+					rootId={rootId} 
+					id={block.id} 
+					style={style} 
+					type={type} 
+					dropType={I.DropType.Block} 
+					canDropMiddle={canDropMiddle} 
+					onClick={this.onEmptyColumn} 
+				/>
+			);
 		};
 		
 		if (canSelect) {
 			object = (
 				<div 
 					id={`selectable-${id}`} 
-					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
+					className={[ 'selectable', `type-${I.SelectType.Block}` ].join(' ')} 
 					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}

@@ -353,6 +353,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		// DropTarget type
 		switch (targetType) {
 			case I.DropType.Block: {
+
+				// Drop into column is targeting last block
+				if (this.hoverData.isTargetCol) {
+					const childrenIds = blockStore.getChildrenIds(targetContextId, targetId);
+				
+					targetId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
+				};
+
 				const target = blockStore.getLeaf(targetContextId, targetId);
 				
 				if (target) {
@@ -645,6 +653,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 
 			if (this.position != I.BlockPosition.None) {
+
 				// You can only drop inside of menu items
 				if (this.hoverData.dropType == I.DropType.Menu) {
 					this.setPosition(I.BlockPosition.InnerFirst);

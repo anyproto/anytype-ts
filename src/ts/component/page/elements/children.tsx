@@ -8,7 +8,9 @@ const Children = observer(class Children extends React.Component<I.BlockComponen
 	
 	render () {
 		const { rootId } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
+		const length = childrenIds.length;
 
 		return (
 			<React.Fragment>
