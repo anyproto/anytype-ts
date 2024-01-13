@@ -2,6 +2,9 @@
     .loaderWrapper { background: rgba(0,0,0,0.3); }
 
     .elements {
+		.btn.white { background: var(--color-shape-secondary); color: var(--color-text-primary); }
+        .btn.white:hover { background: var(--color-bg-primary); color: var(--color-text-primary); }
+
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
