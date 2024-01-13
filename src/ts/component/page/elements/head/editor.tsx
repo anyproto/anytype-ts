@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { trace } from 'mobx';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -26,8 +25,6 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 	};
 
 	render (): any {
-		trace();
-
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
