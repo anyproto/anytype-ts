@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import ControlButtons from 'Component/page/elements/controlButtons';
+import ControlButtons from 'Component/page/elements/head/controlButtons';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
