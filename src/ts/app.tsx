@@ -118,7 +118,7 @@ if (!window.Electron.isPackaged) {
 	};
 };
 
-/* 
+/*
 spy(event => {
 	if (event.type == 'action') {
 		console.log('[Mobx].event', event.name, event.arguments);

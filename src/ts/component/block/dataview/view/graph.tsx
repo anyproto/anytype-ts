@@ -61,7 +61,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 100);
+			this.timeoutLoading = window.setTimeout(() => this.setLoading(false), 100);
 		};
 	};
 
