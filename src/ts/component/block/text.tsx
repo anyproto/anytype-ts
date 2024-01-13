@@ -850,6 +850,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
+
 		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
@@ -868,6 +869,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			ret = true;
 		};
+
 		if (ret) {
 			return;
 		};
@@ -968,9 +970,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				this.onMention();
-			});
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
 		};
 

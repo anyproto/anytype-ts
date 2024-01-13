@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, UtilObject, UtilData, keyboard, sidebar, translate, Action } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
-import HeaderBanner from 'Component/page/head/banner';
+import HeaderBanner from 'Component/page/elements/banner';
 import Constant from 'json/constant.json';
 
 interface State {

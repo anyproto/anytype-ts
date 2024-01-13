@@ -1,9 +1,8 @@
 @import "~scss/_vars";
 
+$themePath: '~img/theme/dark';
+
 html.themeDark {
-
-	$themePath: '~img/theme/dark';
-
 	/* Text */
 
 	--color-text-primary: #dcdcdc;
