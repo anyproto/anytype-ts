@@ -1908,7 +1908,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	blockMerge (focused: I.Block, dir: number, length: number) {
 		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
-
 		if (!next) {
 			return;
 		};
@@ -2017,13 +2016,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	blockRemove (focused?: I.Block) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
+		const ids = selection.get(I.SelectType.Block);
 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
-		const ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
-
 		if (ids.length) {
 			blockIds = [ ...ids ];
 		} else 
@@ -2031,8 +2029,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			blockIds = [ focused.id ];
 		};
 
-		blockIds = blockIds.filter((it: string) => {  
-			const block = blockStore.getLeaf(rootId, it);
+		blockIds = blockIds.filter(id => {  
+			const block = blockStore.getLeaf(rootId, id);
 			return block && block.isDeletable();
 		});
 
@@ -2041,24 +2039,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		focus.clear(true);
+
 		let next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
 
 		C.BlockListDelete(rootId, blockIds, (message: any) => {
-			if (message.error.code) {
+			if (message.error.code || !next) {
 				return;
 			};
-			
-			if (next) {
-				const parent = blockStore.getHighestParent(rootId, next.id);
 
-				// If highest parent is closed toggle, next is parent
-				if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
-					next = parent;
-				};
+			const parent = blockStore.getHighestParent(rootId, next.id);
 
-				const length = next.getLength();
-				this.focus(next.id, length, length, true);
+			// If highest parent is closed toggle, next is parent
+			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+				next = parent;
 			};
+
+			const length = next.getLength();
+			this.focus(next.id, length, length, true);
+
+			selection.clear();
 		});
 	};
 	

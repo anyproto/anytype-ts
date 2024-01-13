@@ -128,6 +128,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			let n = 1;
 			if (descr) n++;
 			if (withType && type) n++;
+
 			cnc.push('c' + n);
 
 			element = (

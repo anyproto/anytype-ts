@@ -397,6 +397,11 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
 		text = String(text || '');
 		marks = marks || [];
 
