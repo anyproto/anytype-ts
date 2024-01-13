@@ -82,6 +82,7 @@ import ObjectType from './util/object/type';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
+import MediaPdf from './util/media/pdf';
 
 import ProgressBar from './util/progressBar';
 
@@ -164,6 +165,7 @@ export {
 
 	MediaAudio,
 	MediaVideo,
+	MediaPdf,
 
 	ProgressBar
 };
