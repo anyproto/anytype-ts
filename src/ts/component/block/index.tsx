@@ -89,7 +89,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canDropMiddle = false;
 		let blockComponent = null;
 		let additional = null;
-		let renderChildren = !isInsideTable;
+		let renderChildren = !isInsideTable && block.canHaveChildren();
 
 		if (className) {
 			cn.push(className);
@@ -107,7 +107,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
-				canDropMiddle = canDrop && block.canHaveChildren();
+				canDropMiddle = canDrop && renderChildren;
 
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
@@ -257,7 +257,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Table: {
-				renderChildren = false;
 				blockComponent = <BlockTable key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -348,16 +347,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={'block-' + id} 
+				id={`block-${id}`} 
 				className={cn.join(' ')} 
 				style={css}
-				{...UtilCommon.dataProps({ id })}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
+				{...UtilCommon.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 
-						id={'button-block-menu-' + id} 
+						id={`button-block-menu-${id}`} 
 						className="dnd" 
 						draggable={true} 
 						onDragStart={this.onDragStart} 
@@ -373,7 +372,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 					{renderChildren ? (
 						<ListChildren 
-							key={'block-children-' + id} 
+							key={`block-children-${id}`} 
 							{...this.props} 
 							onMouseMove={this.onMouseMove} 
 							onMouseLeave={this.onMouseLeave} 

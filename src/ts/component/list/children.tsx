@@ -86,19 +86,29 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 						cn.push('last');
 					};
 
-					return (
-						<React.Fragment key={item.id}>
-							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
-							<Block 
-								key={'block-' + item.id} 
-								{...this.props} 
-								block={item} 
-								css={css} 
-								className={cn.join(' ')} 
-								index={index + '-' + i} 
-							/>
-						</React.Fragment>
+					const block = (
+						<Block 
+							key={`block-${item.id}`} 
+							{...this.props} 
+							block={item} 
+							css={css} 
+							className={cn.join(' ')} 
+							index={index + '-' + i} 
+						/>
 					);
+
+					let ret = null;
+					if (isRow) {
+						ret = (
+							<React.Fragment key={item.id}>
+								{(i > 0) && isRow ? <ColResize index={i} /> : ''}
+								{block}
+							</React.Fragment>
+						);
+					} else {
+						ret = block;
+					};
+					return ret;
 				})}
 			</div>
 		);

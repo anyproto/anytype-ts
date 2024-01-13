@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, Storage } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
-import Controls from 'Component/page/head/controls';
-import HeadSimple from 'Component/page/head/simple';
+import Controls from 'Component/page/elements/controls';
+import HeadSimple from 'Component/page/elements/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 

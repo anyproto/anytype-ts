@@ -6,8 +6,9 @@ import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
-import Controls from 'Component/page/head/controls';
-import PageHeadEdit from 'Component/page/head/edit';
+import Controls from 'Component/page/elements/controls';
+import PageHeadEditor from 'Component/page/elements/head/editor';
+import Children from 'Component/page/elements/children';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -85,11 +86,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return null;
 		};
 		
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
-		const length = childrenIds.length;
 		const width = root.fields?.width;
-		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 		const readonly = this.isReadonly();
 
 		return (
@@ -104,14 +101,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={() => this.focusTitle()} 
+					onLayoutSelect={this.focusTitle} 
 				/>
 				
-				<div id={'editor-' + rootId} className="editor">
+				<div id={`editor-${rootId}`} className="editor">
 					<div className="blocks">
 						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
-						<PageHeadEdit 
+						<PageHeadEditor 
 							{...this.props} 
 							ref={ref => this.refHeader = ref}
 							onKeyDown={this.onKeyDownBlock}
@@ -123,24 +120,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
-					
-						{children.map((block: I.Block, i: number) => (
-							<Block 
-								key={'block-' + block.id} 
-								{...this.props}
-								index={i}
-								block={block}
-								onKeyDown={this.onKeyDownBlock}
-								onKeyUp={this.onKeyUpBlock}  
-								onMenuAdd={this.onMenuAdd}
-								onCopy={this.onCopy}
-								onPaste={this.onPaste}
-								readonly={readonly}
-								blockRemove={this.blockRemove}
-								getWrapperWidth={this.getWrapperWidth}
-								setLoading={this.setLoading}
-							/>
-						))}
+
+						<Children 
+							{...this.props}
+							onKeyDown={this.onKeyDownBlock}
+							onKeyUp={this.onKeyUpBlock}  
+							onMenuAdd={this.onMenuAdd}
+							onCopy={this.onCopy}
+							onPaste={this.onPaste}
+							readonly={readonly}
+							blockRemove={this.blockRemove}
+							getWrapperWidth={this.getWrapperWidth}
+							setLoading={this.setLoading}
+						/>
 					</div>
 					
 					<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
@@ -2225,14 +2217,23 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	isReadonly () {
 		const { rootId } = this.props;
 		const { isDeleted } = this.state;
-		const object = detailStore.get(rootId, rootId, [ 'isArchived' ], true);
-		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
-		if (isDeleted || object.isArchived) {
+		if (isDeleted) {
 			return true;
 		};
-		return root?.isLocked() || !allowed;
+
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		if (!allowed) {
+			return true;
+		};
+
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root || root.isLocked()) {
+			return true;
+		};
+
+		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+		return object.isArchived || object.isDeleted;
 	};
 
 	setLoading (v: boolean): void {
