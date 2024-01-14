@@ -69,7 +69,7 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
-	getKorkiHtml (content: string): string {
+	getKrokiHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
@@ -277,7 +277,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
-			I.EmbedProcessor.Korki,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
