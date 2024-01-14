@@ -168,6 +168,12 @@
                 .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
+
+			.steps {
+                .step:not(.active) { background: var(--color-shape-secondary); }
+                .step:not(.active):hover { background: var(--color-shape-primary); }
+            }
+
             .category { color: #5c5a54; }
         }
 	}

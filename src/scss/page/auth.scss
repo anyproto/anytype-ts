@@ -1,39 +1,33 @@
 @import "~scss/_vars";
 
-$colorError: #8a351a;
-
-$colorDark: #060606;
-$colorButtonStroke: #252525;
-$colorButtonBlackHover: rgba(37, 37, 37, 0.8);
-$colorButtonBlankHover: rgba(23, 23, 23, 0.8);
-$colorInputOpaque: #17171799;
-$colorPopUp: #141414;
-$colorErrorBackground: #240e07;
-
-$shadow: 0px 0px 0px 1px #252525;
-
 html.bodyIndex, html.bodyAuth {
-	--color-text-primary: #d4d4d4;
-	--color-text-secondary: #8d8d8d;
-	--color-text-tertiary: #505050;
+	--color-bg-primary: #060606 !important;
 
-	--color-shape-tertiary: #2b2b2b;
+	--color-text-primary: #d4d4d4 !important;
+	--color-text-secondary: #8d8d8d !important;
+	--color-text-tertiary: #505050 !important;
 
-	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
+	--color-shape-tertiary: #2b2b2b !important;
+
+	--color-button-stroke: #252525 !important;
+	--color-button-black-hover: rgba(37, 37, 37, 0.8) !important;
+	--color-button-blank-hover: rgba(23, 23, 23, 0.8) !important;
+
+	--color-input-opaque: #17171799 !important;
+	--color-popup: #141414 !important;
+
+	--color-error: #8a351a !important;
+	--color-error-background: #240e07 !important;
+
+	--shadow: 0px 0px 0px 1px var(--color-button-stroke);
+
+	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
 }
 
 html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.popup { 
-		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: var(--color-text-primary); }
-
-		.button.disabled { color: var(--color-text-tertiary) }
-
-		.button.black { color: var(--color-text-primary); background: $colorButtonStroke; }
-		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
-
-		.button.blank { border-color: $colorButtonStroke; color: var(--color-text-primary); background: none; }
-		.button.blank:hover { background: $colorButtonBlankHover; }
+		.innerWrap { background: var(--color-popup); box-shadow: var(--shadow); color: var(--color-text-primary); }
 	}
 
 	#popupConfirm-innerWrap {
@@ -47,19 +41,19 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	}
 
 	#popupSettingsOnboarding-innerWrap {
-		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
+		.actionItems, .actionItems .item { border-color: var(--color-button-stroke); }
 		.label.small { color: var(--color-text-tertiary); }
-		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
+
+		.select { background: var(--color-button-stroke); border-color: var(--color-button-stroke); }
 		.select {
-			.name { color: var(--color-text-inversion) !important; }
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
 		}
 	}
 
 	.menus {
-		.menu.vertical { background: $colorPopUp; box-shadow: $shadow; }
+		.menu.vertical { background: var(--color-popup); box-shadow: var(--shadow); }
 		.menu.vertical {
-			.item { background: $colorPopUp; }
+			.item { background: var(--color-popup); }
 		}
 		.menu.menuAccountPath {
 			.label { color: var(--color-text-secondary); }
@@ -72,7 +66,7 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	}
 
 	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: var(--color-text-secondary); box-shadow: $shadow !important; @include text-common; 
+		width: 410px; padding: 12px 16px; background: var(--color-popup); color: var(--color-text-secondary); box-shadow: var(--shadow); @include text-common; 
 		white-space: normal;
 	}
 	.tooltip {
@@ -85,6 +79,14 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 		.loader { border-color: #555; border-left-color: var(--color-system-accent-100); }
 		.dot { border-color: #fff; }
 	}
+
+	.button.disabled { color: var(--color-text-tertiary) }
+
+	.button.black { color: var(--color-text-primary); background: var(--color-button-stroke); }
+	.button.black:not(.disabled):hover { background: var(--color-control-active); }
+
+	.button.blank { border-color: var(--color-button-stroke); color: var(--color-text-primary); background: none; }
+	.button:not(.disabled):hover{ background: var(--color-button-blank-hover); }
 }
 
 html.bodyAuthDeleted {
@@ -117,17 +119,11 @@ html.bodyAuthDeleted {
 	.button { width: 192px; @include text-common; }
 	.button.disabled { color: var(--color-text-tertiary); }
 	
-	.button.black { color: var(--color-text-primary) !important; background: $colorButtonStroke !important; }
-	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
-
-	.button.blank { border-color: $colorButtonStroke !important; color: var(--color-text-primary) !important; background: none; }
-	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
-
 	.small { color: var(--color-text-secondary); }
 	.small:hover { color: var(--color-text-primary); }
 
-	.error { color: $colorError; margin: 0.3em 0px; }
-	.withError { background: $colorErrorBackground; }
+	.error { color: var(--color-error); margin: 0.3em 0px; }
+	.withError { background: var(--color-error-background); }
 
 	.loaderWrapper {
 		@keyframes dots-white {
@@ -176,7 +172,7 @@ html.bodyAuthDeleted {
 	.pin { display: flex; gap: 0px 8px; flex-direction: row; }
 	.pin {
 		.input { 
-			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
+			width: 86px; height: 86px; border-radius: 24px; background: var(--color-input-opaque); padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
 		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100); }
@@ -246,9 +242,9 @@ html.bodyAuthDeleted {
 	}
 
 	.inputWrapper {
-		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: var(--color-text-primary); font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input { border-radius: 26px; border: none; background: var(--color-input-opaque); color: var(--color-text-primary); font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
-		.input::placeholder { color: var(--color-text-tertiary) !important; }
+		.input::placeholder { color: var(--color-text-tertiary); }
 	}
 }
 
