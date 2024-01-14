@@ -79,6 +79,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Soundcloud, name: 'Soundcloud' },
 			{ id: I.EmbedProcessor.GoogleMaps, name: 'Google maps' },
 			{ id: I.EmbedProcessor.Miro, name: 'Miro' },
+			{ id: I.EmbedProcessor.Korki, name: 'Korki' },
 		];
 
 		if (config.experimental) {
@@ -95,6 +96,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Codepen, name: 'Codepen' },
 				{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+				
 			]);
 		};
 

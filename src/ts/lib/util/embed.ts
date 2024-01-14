@@ -69,6 +69,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	getKorkiHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -273,6 +277,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Korki,
 		].includes(p);
 	};
 

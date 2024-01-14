@@ -20,6 +20,7 @@ export enum EmbedProcessor {
 	Codepen			 = 16,
 	Bilibili		 = 17,
 	Excalidraw		 = 18,
+	Korki 			 = 19,
 };
 
 export interface ContentEmbed {
