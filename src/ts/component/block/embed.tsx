@@ -232,7 +232,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		if (UtilEmbed.allowScroll(processor)) {
+		if (!UtilEmbed.allowAutoRender(processor)) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
@@ -248,10 +248,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		if (!this._isMounted || !UtilEmbed.allowScroll(processor) || UtilEmbed.allowAutoRender(processor)) {
+		if (!this._isMounted) {
 			return;
 		};
 

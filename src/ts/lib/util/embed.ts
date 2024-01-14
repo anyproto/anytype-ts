@@ -312,13 +312,6 @@ class UtilEmbed {
 		].includes(p);
 	};
 
-	// Render blocks on scroll
-	allowScroll (p: I.EmbedProcessor) {
-		return ![ 
-			I.EmbedProcessor.Latex,
-		].includes(p);
-	};
-
 	// Render blocks on mount
 	allowAutoRender (p: I.EmbedProcessor) {
 		return [ 
@@ -331,6 +324,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Graphviz,
 		].includes(p);
 	};
 
