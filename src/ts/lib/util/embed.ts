@@ -352,6 +352,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
