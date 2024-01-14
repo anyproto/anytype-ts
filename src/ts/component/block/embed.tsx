@@ -733,7 +733,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
-					value.html(res.renderSVGElement('digraph { a -> b }'));
+					value.html(res.renderSVGElement(this.text));
 				});
 				break;
 			};
