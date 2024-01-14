@@ -341,11 +341,11 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { walletPath, networkConfig } = authStore;
+		const { accountPath, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], accountPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -357,7 +357,7 @@ class Action {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
+					C.AccountSelect(accountId, accountPath, mode, path, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};

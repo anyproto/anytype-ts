@@ -9,10 +9,6 @@ const protocol = 'anytype';
 const remote = require('@electron/remote/main');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
-if (is.development) {
-	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
-};
-
 // Fix notifications app name
 if (is.windows) {
     app.setAppUserModelId(app.name);
@@ -26,9 +22,6 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
-
-const userPath = Util.userPath();
-const logPath = Util.logPath();
 const csp = [];
 
 for (let i in Cors) {
@@ -72,19 +65,32 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 };
 
 remote.initialize();
-storage.setDataPath(userPath);
 Util.setAppPath(path.join(__dirname));
-Util.mkDir(logPath);
-
-if (process.env.ANYTYPE_USE_SIDE_SERVER) {
-	// use the grpc server started from the outside
-	Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
-	waitLibraryPromise = Promise.resolve();
-} else {
-	waitLibraryPromise = Server.start(binPath, userPath);
-};
 
 function waitForLibraryAndCreateWindows () {
+	let userDataPath = ConfigManager.config.userDataPath || app.getPath('userData');
+
+	console.log('userDataPath1', userDataPath);
+
+	if (is.development) {
+		userDataPath = path.join(userDataPath, '_dev');
+	};
+
+	console.log('userDataPath2', userDataPath);
+
+	app.setPath('userData', userDataPath);
+	storage.setDataPath(userDataPath);
+
+	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
+		// use the grpc server started from the outside
+		Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
+		waitLibraryPromise = Promise.resolve();
+	} else {
+		waitLibraryPromise = Server.start(binPath, userDataPath);
+	};
+
+	Util.mkDir(Util.logPath());
+
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();

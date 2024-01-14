@@ -15,11 +15,13 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.onUpload = this.onUpload.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onPathClick = this.onPathClick.bind(this);
+		this.onChangeStorage = this.onChangeStorage.bind(this);
 	};
 
 	render () {
 		const { mode, path } = this.config;
 		const { interfaceLang } = commonStore;
+		const userPath = window.Electron.userPath;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
@@ -72,13 +74,21 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						</div>
 						{mode == I.NetworkMode.Custom ? (
 							<div className="item">
-								<div onClick={this.onPathClick}>
+								<div onClick={() => this.onPathClick(path)}>
 									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 									{path ? <Label className="small" text={UtilCommon.shorten(path, 32)} /> : ''}
 								</div>
 								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
 							</div>
 						) : ''}
+
+						<div className="item">
+							<div onClick={() => this.onPathClick(userPath)}>
+								<Label text={translate('popupSettingsOnboardingStoragePath')} />
+								<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
+							</div>
+							<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+						</div>
 					</div>
 
 					<div className="buttons">
@@ -119,14 +129,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.props.close();
 	};
 
-	onPathClick () {
-		const { path } = this.config;
-
-		if (path) {
-			Renderer.send('pathOpen', window.Electron.dirname(path));
-		};
+	onPathClick (path: string) {
+		Renderer.send('pathOpen', window.Electron.dirname(path));
 	};
-	
+
+	onChangeStorage () {
+		Action.openDir({}, (paths: string[]) => {
+			Renderer.send('setUserDataPath', paths[0]);
+		});
+	};
+
 });
 
 export default PopupSettingsOnboarding;

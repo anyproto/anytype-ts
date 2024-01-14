@@ -33,11 +33,11 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	};
 
 	componentDidMount () {
-		const { walletPath, phrase } = authStore;
+		const { accountPath, phrase } = authStore;
 		
 		authStore.accountListClear();
 
-		C.WalletRecover(walletPath, phrase, () => {
+		C.WalletRecover(accountPath, phrase, () => {
 			UtilData.createSession(() => {
 				C.AccountRecover((message) => {
 					if (message.error.code) {

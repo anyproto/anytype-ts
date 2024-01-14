@@ -209,6 +209,11 @@ class Api {
 		};
 	};
 
+	setUserDataPath (win, p) {
+		this.setConfig(win, { userDataPath: p });
+		app.setPath('userData', p);
+	};
+
 };
 
 module.exports = new Api();

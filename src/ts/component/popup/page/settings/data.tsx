@@ -21,10 +21,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     render () {
         const { onPage } = this.props;
         const { localUsage } = commonStore.spaceStorage;
-        const { walletPath, accountPath } = authStore;
-        const { config } = commonStore;
         const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
-        const canMove = config.experimental;
 
         return (
             <React.Fragment>
@@ -45,19 +42,11 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 							<Button color="blank" className="c28" text={translate('popupSettingsDataManagementOffloadFiles')} onClick={this.onOffload} />
 						</div>
                     </div>
-
-                    {canMove ? (
-                        <div id="row-location" className="item accountLocation" onClick={this.onLocationMove}>
-                            <Label text={translate('popupSettingsAccountMoveTitle')} />
-                            <Label className="locationLabel" text={walletPath == accountPath ? 'Default' : 'Custom'} />
-                        </div>
-                    ) : ''}
                 </div>
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
                 <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
                 <Button className="c36" onClick={() => { onPage('delete'); }} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-
             </React.Fragment>
         );
     };

@@ -106,15 +106,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				if (!phraseVisible) {
 					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
 				};
-
-				if (config.experimental) {
-					footer = (
-						<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-							<Icon className="gear" />
-							{translate('pageAuthOnboardAccountDataLocation')}
-						</div>
-					);
-				};
 				break;
 			};
 		};
@@ -272,10 +263,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	accountCreate (callBack?: () => void) {
 		this.refNext.setLoading(true);
 
-		const { name, walletPath, networkConfig } = authStore;
+		const { name, accountPath, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
 
-		C.WalletCreate(walletPath, (message) => {
+		C.WalletCreate(accountPath, (message) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 				return;

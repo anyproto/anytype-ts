@@ -317,7 +317,6 @@ class App extends React.Component<object, State> {
 		commonStore.themeSet(config.theme);
 		commonStore.languagesSet(languages);
 
-		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);
 
 		analytics.init();
