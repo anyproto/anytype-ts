@@ -713,7 +713,7 @@
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
-	"popupSettingsOnboardingStoragePath": "Data path",
+	"popupSettingsOnboardingStoragePath": "Account Data Location",
 
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
