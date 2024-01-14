@@ -96,6 +96,7 @@ class UtilMenu {
 				{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
+				{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			]);
 		};
 

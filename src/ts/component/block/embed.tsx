@@ -4,6 +4,7 @@ import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
+import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import Excalidraw from 'excalidraw';
@@ -727,6 +728,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				);
 
 				ReactDOM.render(component, node.find('#value').get(0));
+				break;
+			};
+
+			case I.EmbedProcessor.Graphviz: {
+				viz().then(res => {
+					value.html(res.renderSVGElement('digraph { a -> b }'));
+				});
 				break;
 			};
 		};
