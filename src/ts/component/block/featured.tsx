@@ -689,8 +689,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
 		const relation = dbStore.getRelationByKey(relationKey);
-		const value = Number(object[relationKey] || UtilDate.now());
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		let value = null;
+		let noDateSelected = false;
+
+		if (object[relationKey]) {
+			value = Number(object[relationKey]);
+		} else {
+			value = Number(UtilDate.now());
+			noDateSelected = true;
+		};
 
 		menuStore.closeAll(Constant.menuIds.cell, () => {
 			menuStore.open('dataviewCalendar', {
@@ -701,6 +710,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				title: relation.name,
 				data: {
 					value,
+					noDateSelected,
 					onChange: (v: number) => {
 						const details = [
 							{ key: relationKey, value: Relation.formatValue(relation, v, true) },

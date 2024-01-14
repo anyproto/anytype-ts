@@ -120,8 +120,9 @@
         .select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
-        .day:hover { background: #f9d77e; color: #ad8620 !important; }
-        .day.th:hover { background: none; }
+        .select:hover { background-color: var(--color-shape-highlight-medium); }
+        .day:hover { background: #f9d77e; color: #483308 !important; }
+        .day.th:hover { background: none; color: #9a9a9a !important; }
     }
 
     /* MenuBlockContext */
