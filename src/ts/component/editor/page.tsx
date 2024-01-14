@@ -21,7 +21,7 @@ interface State {
 	isDeleted: boolean;
 };
 
-const THROTTLE = 40;
+const THROTTLE = 50;
 const BUTTON_OFFSET = 10;
 
 const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
@@ -31,11 +31,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	id = '';
 	hoverId = '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
-	scrollTop = 0;
+	winScrollTop = 0;
+	containerScrollTop = 0;
 	uiHidden = false;
 	width = 0;
 	refHeader: any = null;
 	refControls: any = null;
+	buttonAdd = null;
+	blockFeatured = null;
+	container = null;
+	containerRect = null;
 	dir = 0;
 
 	state = {
@@ -145,9 +150,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	componentDidMount () {
 		this._isMounted = true;
+
 		this.resizePage();
 		this.rebind();
 		this.open();
+		this.initNodes();
 
 		keyboard.disableClose(false);
 	};
@@ -160,6 +167,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.open();
 		this.resizePage();
 		this.checkDeleted();
+		this.initNodes();
 
 		focus.apply();
 		blockStore.updateNumbers(rootId);
@@ -169,7 +177,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			resizable.trigger('resizeInit');
 		};
 
-		UtilCommon.getScrollContainer(isPopup).scrollTop(this.scrollTop);
+		UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 	};
 	
 	componentWillUnmount () {
@@ -181,6 +189,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
 		Renderer.remove('commandEditor');
+	};
+
+	initNodes () {
+		const node = $(this.node);
+
+		this.container = node.find('.editor');
+		this.buttonAdd = node.find('#button-block-add');
+		this.blockFeatured = node.find(`#block-${Constant.blockId.featured}`);
 	};
 
 	getWrapperWidth (): number {
@@ -236,11 +252,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
+			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
 			this.setLoading(false);
 			
-			UtilCommon.getScrollContainer(isPopup).scrollTop(this.scrollTop);
+			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
 				onOpen();
@@ -366,7 +382,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				focus.restore();
 				focus.apply(); 
 			};
-			container.scrollTop(this.scrollTop);
+			container.scrollTop(this.containerScrollTop);
 		});
 
 		win.on('resize.editor' + namespace, () => this.resizePage());
@@ -375,17 +391,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	onMouseMove (e: any) {
-		if (!this._isMounted) {
+		if (
+			!this._isMounted || 
+			!this.buttonAdd.length || 
+			!this.container.length
+		) {
 			return;
 		};
 		
 		const { isLoading } = this.state;
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
-		const root = blockStore.getLeaf(rootId, rootId);
 		const readonly = this.isReadonly();
 		const node = $(this.node);
-		const button = node.find('#button-block-add');
 		const menuOpen = menuStore.isOpen() && !menuStore.isOpen('onboarding');
 
 		const clear = () => {
@@ -396,15 +414,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const out = () => {
 			window.clearTimeout(this.timeoutMove);
 			this.timeoutMove = window.setTimeout(() => {
-				button.removeClass('show');
+				this.buttonAdd.removeClass('show');
 				clear();
 			}, 30);
 		};
 
 		if (
-			!root || 
 			readonly || 
-			(root && root.isLocked()) || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
 			(selection && selection.isSelecting) || 
@@ -416,31 +432,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const win = $(window);
-		const container = node.find('.editor');
-		
-		if (!container.length) {
-			return;
-		};
-
-		const featured = node.find(`#block-${Constant.blockId.featured}`);
-		const st = win.scrollTop();
 		const { pageX, pageY } = e;
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = blockStore.getBlocks(rootId, it => it.canCreateBlock());
 
 		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 
-		if (featured.length) {
-			offset = featured.offset().top + featured.outerHeight() - BUTTON_OFFSET;
+		if (this.blockFeatured.length) {
+			offset = this.blockFeatured.offset().top + this.blockFeatured.outerHeight() - BUTTON_OFFSET;
 		};
 
 		for (const block of blocks) {
-			if (!block.canCreateBlock()) {
-				continue;
-			};
-
 			const obj = $(`#block-${block.id}`);
 			if (!obj.length || obj.hasClass('noPlus')) {
 				continue;
@@ -448,7 +451,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 
-			rect.y += st;
+			rect.y += this.winScrollTop;
 
 			if (block.isDataview()) {
 				rect.height = 88;
@@ -480,13 +483,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+			rectContainer = (this.container.get(0) as Element).getBoundingClientRect() as DOMRect;
 
 			if (
 				(pageX >= x) && 
 				(pageX <= x + Constant.size.blockMenu) && 
 				(pageY >= offset + BUTTON_OFFSET) && 
-				(pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)
+				(pageY <= this.winScrollTop + rectContainer.height + offset + BUTTON_OFFSET)
 			) {
 				this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			};
@@ -499,10 +502,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			const buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
+			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - this.winScrollTop;
 			
 			clear();
-			button.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
+			this.buttonAdd.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
 			hovered.addClass('showMenu');
 
 			if (pageX <= x + 20) {
@@ -1602,9 +1605,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onScroll () {
 		const { rootId, isPopup } = this.props;
+		const win = $(window);
 		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 
-		this.scrollTop = top;
+		this.containerScrollTop = top;
+		this.winScrollTop = win.scrollTop();
 
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Preview.previewHide(false);
