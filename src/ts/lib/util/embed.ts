@@ -233,6 +233,7 @@ class UtilEmbed {
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Graphviz: return 'dot';
 		};
 	};
 
