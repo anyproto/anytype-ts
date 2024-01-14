@@ -674,12 +674,20 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid || {};
+				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid;
 
-				mermaid.mermaidAPI.initialize({
-					theme: 'base',
-					themeVariables: theme,
-				});
+				if (theme) {
+					for (let k in theme) {
+						if (!theme[k]) {
+							delete(theme[k]);
+						};
+					};
+
+					mermaid.mermaidAPI.initialize({
+						theme: 'base',
+						themeVariables: theme,
+					});
+				};
 
 				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
 					value.html(res.svg || this.text);

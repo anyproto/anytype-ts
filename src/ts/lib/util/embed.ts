@@ -70,7 +70,7 @@ class UtilEmbed {
 	};
 
 	getKrokiHtml (content: string): string {
-		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+		return `<img src="${content}" />`;
 	};
 
 	getProcessorByUrl (url: string): I.EmbedProcessor {
@@ -308,6 +308,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
