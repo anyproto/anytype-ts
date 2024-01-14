@@ -41,13 +41,13 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: var(--color-system-accent-25); }
+		.day:hover { background: #FFF2D7; }
 
 		.day.th { color: var(--color-control-active); cursor: default; @include text-small; }
 		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }
 
-		.day.today { font-weight: 600; }
-		.day.active, .day.active:hover { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
+		.day.today, .day.active { font-weight: 600; }
+		.day.active, .day.active:hover { background: var(--color-system-accent-100) !important; color: var(--color-text-inversion) !important; }
 		.day.other { color: var(--color-control-active); }
 		
 		.line { margin: 8px 16px 11px 16px; }

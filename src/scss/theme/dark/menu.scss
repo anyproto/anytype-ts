@@ -121,7 +121,7 @@
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
-        .day:hover { background: #f9d77e; color: #483308 !important; }
+        .day:hover { background: #483308; color: var(--color-text-primary); }
         .day.th:hover { background: none; color: #9a9a9a !important; }
     }
 
