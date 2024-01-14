@@ -49,9 +49,9 @@ html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDele
 	#popupSettingsOnboarding-innerWrap {
 		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
 		.label.small { color: var(--color-text-tertiary); }
+
 		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
 		.select {
-			.name { color: var(--color-text-inversion) !important; }
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
 		}
 	}

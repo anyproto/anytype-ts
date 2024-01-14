@@ -84,21 +84,17 @@ class Util {
 
 	dataPath () {
 		const { channel } = ConfigManager.config;
+		const envPath = process.env.DATA_PATH;
 		const dataPath = [];
 
-		if (process.env.DATA_PATH) {
-			this.mkDir(process.env.DATA_PATH);
-			dataPath.push(process.env.DATA_PATH);
+		if (envPath) {
+			this.mkDir(envPath);
+			dataPath.push(envPath);
 		} else {
 			dataPath.push(this.userPath());
-
-			if (is.development) {
-				dataPath.push('dev');
-			} else 
-			if ([ 'alpha', 'beta' ].includes(channel)) {
+			if (!is.development && [ 'alpha', 'beta' ].includes(channel)) {
 				dataPath.push(channel);
 			};
-
 			dataPath.push('data');
 		};
 

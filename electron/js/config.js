@@ -40,6 +40,8 @@ class ConfigManager {
 		this.checkChannel();
 		this.checkTheme();
 
+		console.log(storage);
+
 		console.log('[ConfigManager].set:', this.config);
 
 		storage.set(CONFIG_NAME, this.config, (error) => {

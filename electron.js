@@ -14,6 +14,8 @@ if (is.windows) {
     app.setAppUserModelId(app.name);
 };
 
+storage.setDataPath(app.getPath('userData'));
+
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
 const UpdateManager = require('./electron/js/update.js');
@@ -70,16 +72,11 @@ Util.setAppPath(path.join(__dirname));
 function waitForLibraryAndCreateWindows () {
 	let userDataPath = ConfigManager.config.userDataPath || app.getPath('userData');
 
-	console.log('userDataPath1', userDataPath);
-
 	if (is.development) {
 		userDataPath = path.join(userDataPath, '_dev');
 	};
 
-	console.log('userDataPath2', userDataPath);
-
 	app.setPath('userData', userDataPath);
-	storage.setDataPath(userDataPath);
 
 	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 		// use the grpc server started from the outside
