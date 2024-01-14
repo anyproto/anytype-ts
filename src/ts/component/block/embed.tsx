@@ -683,13 +683,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						};
 					};
 
-					mermaid.mermaidAPI.initialize({
-						theme: 'base',
-						themeVariables: theme,
-					});
+					mermaid.initialize({ theme: 'base', themeVariables: theme });
 				};
 
-				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
+				mermaid.render(this.getContainerId(), this.text).then(res => {
 					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
@@ -697,7 +694,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
-					
 					if (error.length) {
 						value.html(error.html());
 					};
