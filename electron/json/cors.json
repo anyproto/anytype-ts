@@ -168,7 +168,8 @@
 		"https://t.me",
 		"https://codepen.io",
 		"https://cdpn.io",
-		"https://*.bilibili.com"
+		"https://*.bilibili.com",
+		"https://kroki.io"
 	],
 
 	"worker-src": [ 
