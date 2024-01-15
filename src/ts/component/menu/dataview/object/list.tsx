@@ -113,7 +113,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter
-						className="v2"
+						className="outlined"
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholderFocus}
 						value={filter}

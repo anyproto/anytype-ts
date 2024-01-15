@@ -103,7 +103,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter
-						className="v2"
+						className="outlined"
 						icon="search"
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholder} 
