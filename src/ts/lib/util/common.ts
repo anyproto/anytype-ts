@@ -827,6 +827,16 @@ class UtilCommon {
 		head.append(element);
 	};
 
+	uint8ToString (u8a: Uint8Array): string {
+		const CHUNK = 0x8000;
+		const c = [];
+
+		for (let i = 0; i < u8a.length; i += CHUNK) {
+			c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK)));
+		};
+		return c.join('');
+	};
+
 };
 
 export default new UtilCommon();
