@@ -114,6 +114,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				{!noFilter ? (
 					<Filter
 						className="outlined"
+						icon="search"
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholderFocus}
 						value={filter}
