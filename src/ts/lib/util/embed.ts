@@ -237,26 +237,6 @@ class UtilEmbed {
 		};
 	};
 
-	// Allow to use same origin in iframe sandbox
-	allowSameOrigin (p: I.EmbedProcessor) {
-		return [ 
-			I.EmbedProcessor.Youtube, 
-			I.EmbedProcessor.Vimeo, 
-			I.EmbedProcessor.Soundcloud, 
-			I.EmbedProcessor.GoogleMaps, 
-			I.EmbedProcessor.Miro, 
-			I.EmbedProcessor.Figma,
-			I.EmbedProcessor.Twitter,
-			I.EmbedProcessor.Reddit,
-			I.EmbedProcessor.Instagram,
-			I.EmbedProcessor.Telegram,
-			I.EmbedProcessor.Codepen,
-			I.EmbedProcessor.Bilibili,
-			I.EmbedProcessor.Facebook,
-			I.EmbedProcessor.Chart,
-		].includes(p);
-	};
-
 	// Allow to use presentation mode in iframe sandbox
 	allowPresentation (p: I.EmbedProcessor) {
 		return [ 

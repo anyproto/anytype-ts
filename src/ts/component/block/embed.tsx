@@ -565,16 +565,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		switch (processor) {
 			default: {
-				const sandbox = [ 'allow-scripts' ];
+				const sandbox = [ 'allow-scripts', 'allow-same-origin' ];
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
 				let text = this.text;
 				let allowScript = false;
-
-				if (UtilEmbed.allowSameOrigin(processor)) {
-					sandbox.push('allow-same-origin');
-				};
 
 				if (UtilEmbed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
