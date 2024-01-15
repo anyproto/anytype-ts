@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 import { observable, set } from 'mobx';
-import Commands from 'protobuf/pb/protos/commands_pb';
-import Events from 'protobuf/pb/protos/events_pb';
-import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
+import Commands from 'dist/lib/pb/protos/commands_pb';
+import Events from 'dist/lib/pb/protos/events_pb';
+import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
 import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
 import * as Response from './response';

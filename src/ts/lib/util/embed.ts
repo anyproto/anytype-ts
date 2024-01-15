@@ -69,6 +69,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	getKrokiHtml (content: string): string {
+		return `<img src="${content}" />`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -229,6 +233,7 @@ class UtilEmbed {
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Graphviz: return 'dot';
 		};
 	};
 
@@ -247,6 +252,8 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Facebook,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
@@ -272,6 +279,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
@@ -302,13 +310,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
-		].includes(p);
-	};
-
-	// Render blocks on scroll
-	allowScroll (p: I.EmbedProcessor) {
-		return ![ 
-			I.EmbedProcessor.Latex,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
@@ -324,6 +326,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Graphviz,
 		].includes(p);
 	};
 
@@ -345,6 +348,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 

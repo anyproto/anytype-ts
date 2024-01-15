@@ -119,7 +119,6 @@ class MenuManager {
 				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
 					{ label: Util.translate('electronMenuNewWindow'), accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
-					{ label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
 
 					Separator,
 

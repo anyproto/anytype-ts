@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewGallery { padding: 0px; }
+		.viewContent.viewGallery { padding: 0px 0px 80px 0px; }
 		.viewContent.viewGallery {
 			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 14px; }
 
@@ -101,10 +101,9 @@
 			}
 		}
 	}
-}
 
-.blocks {
 	.block.blockDataview.isInline {
+		.viewContent.viewGallery { padding: 0px; }
 		.viewContent.viewGallery {
 			.galleryWrap { margin: 0px; display: grid; gap: 16px; }
 			.galleryWrap.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }

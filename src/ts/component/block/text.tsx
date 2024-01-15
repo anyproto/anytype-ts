@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram',
+	'wolfram', 'dot',
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -665,6 +665,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const saveKeys: any[] = [
 			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: `${cmd}+shift+arrowleft` },
+			{ key: `${cmd}+shift+arrowright` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
@@ -850,6 +852,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
+
 		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
@@ -868,6 +871,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			ret = true;
 		};
+
 		if (ret) {
 			return;
 		};
@@ -968,9 +972,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				this.onMention();
-			});
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
 		};
 
@@ -1186,11 +1188,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		UtilData.blockSetText(rootId, block.id, value, marks, update, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+		UtilData.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {

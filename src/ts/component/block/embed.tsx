@@ -4,6 +4,7 @@ import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import mermaid from 'mermaid';
+import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import Excalidraw from 'excalidraw';
@@ -231,7 +232,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 		});
 
-		if (UtilEmbed.allowScroll(processor)) {
+		if (!UtilEmbed.allowAutoRender(processor)) {
 			win.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
@@ -247,10 +248,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		const { block } = this.props;
-		const { processor } = block.content;
-
-		if (!this._isMounted || !UtilEmbed.allowScroll(processor) || UtilEmbed.allowAutoRender(processor)) {
+		if (!this._isMounted) {
 			return;
 		};
 
@@ -514,7 +512,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	getValue (): string {
-		return this.refEditable.getTextValue();
+		return String(this.refEditable?.getTextValue() || '');
 	};
 
 	updateRect () {
@@ -674,14 +672,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid || {};
+				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid;
 
-				mermaid.mermaidAPI.initialize({
-					theme: 'base',
-					themeVariables: theme,
-				});
+				if (theme) {
+					for (let k in theme) {
+						if (!theme[k]) {
+							delete(theme[k]);
+						};
+					};
 
-				mermaid.mermaidAPI.render(this.getContainerId(), this.text).then(res => {
+					mermaid.initialize({ theme: 'base', themeVariables: theme });
+				};
+
+				mermaid.render(this.getContainerId(), this.text).then(res => {
 					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
@@ -689,7 +692,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
-					
 					if (error.length) {
 						value.html(error.html());
 					};
@@ -723,6 +725,17 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				);
 
 				ReactDOM.render(component, node.find('#value').get(0));
+				break;
+			};
+
+			case I.EmbedProcessor.Graphviz: {
+				viz().then(res => {
+					try {
+						value.html(res.renderSVGElement(this.text));
+					} catch (e) {
+						console.error(e);
+					};
+				});
 				break;
 			};
 		};

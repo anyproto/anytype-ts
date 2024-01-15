@@ -83,6 +83,10 @@ class MediaVideo extends React.Component<Props> {
 		const node = $(this.node);
 		const video = node.find('video');
 
+		if (!video.length) {
+			return;
+		};
+
 		video.get(0).controls = false;
 		node.removeClass('isPlaying');
 

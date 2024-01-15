@@ -106,6 +106,7 @@
 		"https://gist.github.com",
 		"https://codepen.io",
 		"https://www.facebook.com",
+		"https://*.fbcdn.net",
 		"https://*.bilibili.com",
 		"https://*.bilibili.tv",
 		"https://*.bilivideo.cn:*",
@@ -167,7 +168,8 @@
 		"https://t.me",
 		"https://codepen.io",
 		"https://cdpn.io",
-		"https://*.bilibili.com"
+		"https://*.bilibili.com",
+		"https://kroki.io"
 	],
 
 	"worker-src": [ 

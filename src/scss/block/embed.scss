@@ -73,6 +73,9 @@
 	.block.blockEmbed.isChart .preview { background-image: url('~img/icon/block/embed/chart.svg'); }
 	.block.blockEmbed.isMiro .preview { background-image: url('~img/icon/block/embed/miro.svg'); }
 	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
+	.block.blockEmbed.isGraphviz {
+		#value svg { height: auto; }
+	}
 
 	.block.blockEmbed.isTwitter,
 	.block.blockEmbed.isReddit {
