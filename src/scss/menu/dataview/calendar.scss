@@ -37,17 +37,15 @@
 		}
 
 		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; 
-			border-radius: 4px;
+			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: #fff2d7; }
+		.day:not(.th):not(.active):hover { background: #fff2d7; }
 
-		.day.th { color: var(--color-control-active); cursor: default; @include text-small; }
-		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }
+		.day.th { color: var(--color-control-active); @include text-small; }
 
 		.day.today, .day.active { font-weight: 600; }
-		.day.active, .day.active:hover { background: var(--color-system-accent-100) !important; color: var(--color-text-inversion) !important; }
+		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
 		
 		.line { margin: 8px 16px 11px 16px; }

@@ -121,8 +121,7 @@
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
-        .day:hover { background: #483308; color: var(--color-text-primary); }
-        .day.th:hover { background: none; color: var(--color-control-active) !important; }
+        .day:not(.th):not(.active):hover { background: #483308; color: var(--color-text-primary); }
     }
 
     /* MenuBlockContext */
