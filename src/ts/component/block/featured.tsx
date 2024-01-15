@@ -692,13 +692,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
 		let value = null;
-		let noDateSelected = false;
+		let isEmpty = false;
 
 		if (object[relationKey]) {
 			value = Number(object[relationKey]);
 		} else {
 			value = Number(UtilDate.now());
-			noDateSelected = true;
+			isEmpty = true;
 		};
 
 		menuStore.closeAll(Constant.menuIds.cell, () => {
@@ -710,7 +710,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				title: relation.name,
 				data: {
 					value,
-					noDateSelected,
+					isEmpty,
 					onChange: (v: number) => {
 						const details = [
 							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
