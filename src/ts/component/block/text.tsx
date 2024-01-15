@@ -665,6 +665,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const saveKeys: any[] = [
 			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: `${cmd}+shift+arrowleft` },
+			{ key: `${cmd}+shift+arrowright` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
