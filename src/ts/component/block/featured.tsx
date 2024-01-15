@@ -94,7 +94,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -605,12 +605,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (relation.format) {
 			case I.RelationType.Object: {
-				this.onObject(e, relationKey);
+				this.onCellObject(e, relationKey);
 				break;
 			};
 
 			case I.RelationType.Date: {
-				this.onDate(e, relationKey);
+				this.onCellDate(e, relationKey);
 				break;
 			};
 
@@ -701,7 +701,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
-	onObject (e: React.MouseEvent, relationKey: string) {
+	onCellObject (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
@@ -744,7 +744,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
-	onDate (e: React.MouseEvent, relationKey: string) {
+	onCellDate (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);

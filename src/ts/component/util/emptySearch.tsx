@@ -14,10 +14,10 @@ class EmptySearch extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { text } = this.props;
+		const { text, style } = this.props;
 		
 		return (
-			<div ref={node => this.node = node} {...this.props} className="emptySearch">
+			<div ref={node => this.node = node} style={style} className="emptySearch">
 				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 			</div>
 		);

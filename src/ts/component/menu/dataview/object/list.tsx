@@ -256,7 +256,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			filters.forEach((filter) => {
 				const { relationKey, condition, value } = filter;
 
-				if (relationKey == 'type' && condition == I.FilterCondition.In) {
+				if ((relationKey == 'type') && (condition == I.FilterCondition.In)) {
 					value.forEach((typeId) => {
 						const type = dbStore.getTypeById(typeId);
 
@@ -277,7 +277,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				types.push(`+${l - limit}`);
 			};
 
-			ret.unshift({ isSection: true, name: `${UtilCommon.plural(types, translate('pluralTypeLC'))}: ${types.join(', ')}`});
+			ret.unshift({ isSection: true, name: `${UtilCommon.plural(types, translate('pluralObjectType'))}: ${types.join(', ')}`});
 		};
 
 		if (data.filter && canAdd) {
