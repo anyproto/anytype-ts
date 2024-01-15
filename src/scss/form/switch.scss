@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
 .switch { 
-	width: 26px; height: 16px; background: $colorShapeSecondary; border-radius: 16px; position: relative; 
+	width: 26px; height: 16px; background: var(--color-shape-secondary); border-radius: 16px; position: relative; 
 	display: inline-block; vertical-align: middle;
 }
 .switch {
 	.inner { 
-		width: 12px; height: 12px; border-radius: 100%; background: $colorBgPrimary; position: absolute; left: 2px; top: 2px;
+		width: 12px; height: 12px; border-radius: 100%; background: var(--color-bg-primary); position: absolute; left: 2px; top: 2px;
 		transition: $transitionAllCommon; box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.1);
 	}	
 }
@@ -15,9 +15,9 @@
 	.inner { width: 20px; height: 20px; }
 }
 
-.switch.active { background: $colorTextSecondary; }
-.switch.green.active { background: $colorLime; }
-.switch.orange.active { background: $colorSystemAccent50; }
+.switch.active { background: var(--color-text-secondary); }
+.switch.green.active { background: var(--color-lime); }
+.switch.orange.active { background: var(--color-system-accent-50); }
 .switch.isReadonly { cursor: default; }
 
 .switch.active {

@@ -10,7 +10,6 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 
 	_isMounted = false;
 	node: any = null;
-	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -262,11 +261,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 	
 	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -274,10 +269,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			const { getWrapperWidth } = this.props;
 			const node = $(this.node);
 			const inner = node.find('.inner');
-			const rect = (node.get(0) as Element).getBoundingClientRect();
-			const mw = getWrapperWidth();
 
-			rect.width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
+			inner.width() <= getWrapperWidth() / 2 ? inner.addClass('isVertical') : inner.removeClass('isVertical');
 		});
 	};
 

@@ -527,7 +527,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy + eh + offsetY;
 
 					// Switch
-					if (!noFlipY && (y >= wh - height - BORDER)) {
+					if (!noFlipY && (y >= wh - height - 80)) {
 						y = oy - height - offsetY;
 					};
 					break;

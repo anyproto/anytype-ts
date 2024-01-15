@@ -2,6 +2,6 @@
 
 .dotIndicator { display: flex; justify-content: center; align-items: center; gap: 0px 6px; }
 .dotIndicator {
-    span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: $colorTextPrimary; }
-    span.active { background-color: $colorShapePrimary; opacity: 0.9; }
+    span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-text-primary); }
+    span.active { background-color: var(--color-shape-primary); opacity: 0.9; }
 }

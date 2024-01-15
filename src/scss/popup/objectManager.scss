@@ -15,11 +15,11 @@
 
 			.item { gap: 0px 12px; }
 			.item {
-				.iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: $colorShapeTertiary; }
+				.iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: var(--color-shape-tertiary); }
 				.objectClickArea { width: calc(100% - 30px); }
 
 				.name { @include text-overflow-nw; width: 100%; }
-				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorTextSecondary; }
+				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: var(--color-text-secondary); }
 			}
 		}
 		.emptySearch { height: 238px; }

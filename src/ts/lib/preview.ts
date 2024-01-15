@@ -31,6 +31,7 @@ class Preview {
 		delay: 0,
 	};
 	delayTooltip = 0;
+	isPreviewOpen = false;
 
   /**
    * Displays a tooltip with the given text and position relative to the specified element.
@@ -190,6 +191,8 @@ class Preview {
 		} else {
 			commonStore.previewSet(param);
 		};
+
+		this.isPreviewOpen = true;
 	};
 
 	/**
@@ -197,8 +200,11 @@ class Preview {
 	 * @param force - hide the preview immediately, without 250ms delay
 	 */
 	previewHide (force?: boolean) {
-		const obj = $('#preview');
+		if (!this.isPreviewOpen) {
+			return;
+		};
 
+		const obj = $('#preview');
 		const cb = () => {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
@@ -215,6 +221,8 @@ class Preview {
 			obj.css({ opacity: 0, transform: 'translateY(0%)' });
 			this.timeout.preview = window.setTimeout(() => cb(), DELAY_PREVIEW);
 		};
+
+		this.isPreviewOpen = false;
 	};
 
 	/**

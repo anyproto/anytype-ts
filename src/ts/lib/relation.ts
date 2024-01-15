@@ -567,7 +567,7 @@ class Relation {
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		return { flags, details }
+		return { flags, details };
 	};
 
 	systemKeys () {

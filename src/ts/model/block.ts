@@ -58,7 +58,7 @@ class Block implements I.Block {
 
 		makeObservable(this, {
 			layout: observable,
-			type: observable,
+			//type: observable,
 			hAlign: observable,
 			vAlign: observable,
 			bgColor: observable,

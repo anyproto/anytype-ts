@@ -251,6 +251,7 @@ class UtilData {
 						};
 					});
 
+					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
@@ -396,6 +397,11 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
 		text = String(text || '');
 		marks = marks || [];
 
@@ -403,11 +409,7 @@ class UtilData {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		});
+		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
@@ -418,7 +420,7 @@ class UtilData {
 
 		const diff = needle.length - (to - from);
 		const text = UtilCommon.stringInsert(block.content.text, needle, from, to);
-		const marks = Mark.adjust(block.content.marks, 0, diff);
+		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
@@ -482,8 +484,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
-		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
@@ -563,22 +564,13 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
-	sortByLastUsedTypes (items: any[]) {
-		const lastUsedTypes = Storage.getLastUsedTypes();
+	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
+		const idx1 = ids.indexOf(c1.id);
+		const idx2 = ids.indexOf(c2.id);
 
-		return items.sort((c1: any, c2: any) => {
-			const idx1 = lastUsedTypes.indexOf(c1.id);
-			const idx2 = lastUsedTypes.indexOf(c2.id);
-			const is1 = idx1 >= 0;
-			const is2 = idx2 >= 0;
-
-			if (!is1 && is2) return 1;
-			if (is1 && !is2) return -1;
-
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
+		if (idx1 > idx2) return 1;
+		if (idx1 < idx2) return -1;
+		return 0;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

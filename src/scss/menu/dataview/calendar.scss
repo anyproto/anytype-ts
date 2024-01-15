@@ -14,14 +14,15 @@
 			.side.right { text-align: right; }
 		}
 		.head {
-			.date { color: $colorControlActive; margin-bottom: 6px; }
+			.date { color: var(--color-control-active); margin-bottom: 6px; }
 			.sides { margin-bottom: 10px; }
 			.side.left {
 				.select { margin-left: -4px; }
 			}
 			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
 			.side.right {
-				.btn { width: 20px; height: 20px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); }
+				.btn { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; border-radius: 4px; }
+				.btn:hover { background-color: var(--color-shape-highlight-medium); }
 				.btn.prevMonth { transform: rotateZ(180deg); }
 			}
 		}
@@ -30,9 +31,9 @@
 		.foot { padding: 0px 16px; }
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
-			.btn.clear { color: $colorTextSecondary; }
+			.btn.clear { color: var(--color-text-secondary); }
 			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorSystemAccent100; }
+			.btn:hover { color: var(--color-system-accent-100); }
 		}
 
 		.day { 
@@ -40,18 +41,19 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: $colorSystemAccent25; color: $colorSystemAccent100 !important; }
+		.day:hover { background: var(--color-system-accent-25); }
 
-		.day.th { color: $colorControlActive; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorControlActive !important; }
-		
-		.day.active { color: $colorSystemAccent100; }
-		.day.other { color: $colorControlActive; }
+		.day.th { color: var(--color-control-active); cursor: default; @include text-small; }
+		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }
+
+		.day.today { font-weight: 600; }
+		.day.active, .day.active:hover { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
+		.day.other { color: var(--color-control-active); }
 		
 		.line { margin: 8px 16px 11px 16px; }
 		
 		.input { 
-			height: 28px; border-radius: 4px; border: solid 1px $colorShapePrimary; margin-bottom: 10px; padding: 0px 10px;
+			height: 28px; border-radius: 4px; border: solid 1px var(--color-shape-primary); margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
 
@@ -72,13 +74,13 @@
 			}
 		}
 		.day.active {
-			.number { padding: 0px; color: $colorTextInversion; }
+			.number { padding: 0px; color: var(--color-text-inversion); }
 			.number {
-				.inner { background-color: $colorSystemAccent100; border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
+				.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
 			}
 		}
 		.day.other {
-			.number { color: $colorTextSecondary; }
+			.number { color: var(--color-text-secondary); }
 		}
 
 		.items { overflow-y: auto; flex-grow: 1; height: calc(100% - 24px); max-height: 250px; }

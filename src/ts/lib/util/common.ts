@@ -6,6 +6,8 @@ import Errors from 'json/error.json';
 import Text from 'json/text.json';
 import DOMPurify from 'dompurify';
 
+const TEST_HTML = /<[^>]*>/;
+
 class UtilCommon {
 
 	sprintf (...args: any[]) {
@@ -128,26 +130,35 @@ class UtilCommon {
 	};
 	
 	toUpperCamelCase (str: string) {
-		const s = this.toCamelCase(str);
-		return s.substring(0, 1).toUpperCase() + s.substring(1, s.length);
+		if (!str) {
+			return '';
+		};
+
+		return this.toCamelCase(str).replace(/^[a-z]/, char => char.toUpperCase());
 	};
 	
-	toCamelCase (str: string) {
-		const s = String(str || '').replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
-			return String(p1 || '').toUpperCase();
-		});
-		return s.substring(0, 1).toLowerCase() + s.substring(1, s.length);
+	toCamelCase (str: string): string {
+		if (!str) {
+			return '';
+		};
+
+		return String(str || '').replace(/[_-\s]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
 	};
 
 	fromCamelCase (str: string, symbol: string) {
-		return str.replace(/([A-Z]{1})/g, (str: string, p1: string) => symbol + p1.toLowerCase());
-	};
-
-	ucFirst (s: string): string {
-		if (!s) {
+		if (!str) {
 			return '';
 		};
-		return s.substring(0, 1).toUpperCase() + s.substring(1, s.length).toLowerCase();
+
+		return String(str || '').replace(/([A-Z]{1})/g, (_, char) => symbol + char.toLowerCase());
+	};
+
+	ucFirst (str: string): string {
+		if (!str) {
+			return '';
+		};
+
+		return String(str || '').charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
 
 	objectCopy (o: any): any {
@@ -790,7 +801,13 @@ class UtilCommon {
 	};
 
 	sanitize (s: string): string {
-		return DOMPurify.sanitize(String(s || ''), { 
+		s = String(s || '');
+
+		if (!TEST_HTML.test(s)) {
+			return s;
+		};
+
+		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: [ 
 				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
 				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
@@ -800,6 +817,14 @@ class UtilCommon {
 			],
 			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
+	};
+
+	injectCss (id: string, css: string) {
+		const head = $('head');
+		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
+
+		head.find(`#${id}`).remove();
+		head.append(element);
 	};
 
 };

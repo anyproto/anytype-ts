@@ -659,6 +659,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				dbStore.recordsSet(subId, '', records);
 			};
 
+			if ([ I.ViewType.Graph ].includes(view.type)) {
+				const refGraph = this.refView?.refGraph;
+				if (refGraph) {
+					refGraph.addNewNode(object.id, '', null, () => {
+						refGraph.setRootId(object.id);
+					});
+				};
+			};
+
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				UtilObject.openPopup(object);
 			} else {
@@ -767,16 +776,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateId: this.getDefaultTemplateId(),
 				route,
 				onTypeChange: (id) => {
-					if (id != this.getTypeId()) {
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-
-						analytics.event('DefaultTypeChange', { route });
+					if (!view || (id == this.getTypeId())) {
+						return;
 					};
+
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+					analytics.event('DefaultTypeChange', { route });
 				},
 				onSetDefault: (item) => {
-					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+					if (view) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+					};
 				},
 				onSelect: (item: any) => {
+					if (!view) {
+						return;
+					};
+
 					const typeId = this.getTypeId();
 					const type = dbStore.getTypeById(typeId);
 
@@ -951,6 +967,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (message.views && message.views.length) {
 					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
+				};
+
+				if (isNew) {
+					this.refControls?.refHead?.setEditing(true);
 				};
 
 				if (isInline) {
@@ -1334,6 +1354,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
+			const { block, getWrapperWidth } = this.props;
+
+			if (getWrapperWidth) {
+				const node = $(this.node);
+				const obj = $(`#block-${block.id}`);
+
+				node.width() <= getWrapperWidth() / 2 ? obj.addClass('isVertical') : obj.removeClass('isVertical');
+			};
+
 			if (this.refControls && this.refControls.resize) {
 				this.refControls.resize();
 			};

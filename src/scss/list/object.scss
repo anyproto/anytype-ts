@@ -1,18 +1,18 @@
 @import "~scss/_vars";
 
 .listObject {
-	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid $colorShapeSecondary; table-layout: fixed; border-top: 1px solid $colorShapeSecondary; }
+	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid var(--color-shape-secondary); table-layout: fixed; border-top: 1px solid var(--color-shape-secondary); }
 	table {
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorControlActive; }
+		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 
 		.cellHead { 
-			text-align: left; color: $colorTextSecondary; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			text-align: left; color: var(--color-text-secondary); padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
 			@include text-overflow-nw; width: 25%;
 		}
 		.cellHead {
 			.name { 
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
-				@include text-overflow-nw; border-right: 1px solid $colorShapeSecondary;
+				@include text-overflow-nw; border-right: 1px solid var(--color-shape-secondary);
 			}
 		}
 		.cellHead:first-child { width: 50%; }
@@ -20,10 +20,10 @@
 			.name { border: 0px; }
 		}
 
-		tbody { border-top: 1px solid $colorShapeSecondary; }
+		tbody { border-top: 1px solid var(--color-shape-secondary); }
 
 		.cell { 
-			padding: 14px; border-bottom: 1px solid $colorShapeSecondary; vertical-align: top; position: relative; word-break: break-word; 
+			padding: 14px; border-bottom: 1px solid var(--color-shape-secondary); vertical-align: top; position: relative; word-break: break-word; 
 		}
 
 		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }

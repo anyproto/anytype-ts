@@ -28,7 +28,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { className } = this.props;
+		const { block, className } = this.props;
 		const cn = [ 'viewContent', className ];
 
 		return (
@@ -41,6 +41,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						key="graph"
 						{...this.props} 
 						ref={ref => this.refGraph = ref} 
+						id={block.id}
 						rootId="" 
 						data={this.data}
 					/>
@@ -60,7 +61,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 100);
+			this.timeoutLoading = window.setTimeout(() => this.setLoading(false), 100);
 		};
 	};
 
@@ -88,9 +89,14 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { getView } = this.props;
+		const { getView, getSearchIds } = this.props;
 		const view = getView();
+		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+
+		if (searchIds) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
 
 		this.setLoading(true);
 
@@ -143,23 +149,25 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	resize () {
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
 
 		if (!node || !node.length) {
 			return;
 		};
 
-		node.css({ width: 0, height: 0, marginLeft: 0 });
+		if (!isInline) {
+			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-		const container = UtilCommon.getPageContainer(isPopup);
-		const cw = container.width();
-		const ch = container.height();
-		const mw = cw - PADDING * 2;
-		const margin = (cw - mw) / 2;
-		const { top } = node.offset();
+			const container = UtilCommon.getPageContainer(isPopup);
+			const cw = container.width();
+			const ch = container.height();
+			const mw = cw - PADDING * 2;
+			const margin = (cw - mw) / 2;
+			const { top } = node.offset();
 
-		node.css({ width: cw, height: Math.max(600, ch - top - 90), marginLeft: -margin - 2 });
+			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
+		};
 
 		if (this.refGraph) {
 			this.refGraph.resize();

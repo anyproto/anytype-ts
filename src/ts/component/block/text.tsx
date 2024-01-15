@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram',
+	'wolfram', 'dot',
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -424,9 +424,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const object = detailStore.get(rootId, param, []);
 			
 			let tt = '';
-			if (object.isArchived) {
-				tt = translate('commonArchived');
-			};
 			if (object.isDeleted) {
 				tt = translate('commonDeletedObject');
 			};
@@ -436,7 +433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			if (!param || element.hasClass('disabled')) {
+			if (!param || object.isDeleted) {
 				return;
 			};
 
@@ -447,6 +444,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
+				object,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -667,6 +665,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const saveKeys: any[] = [
 			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: `${cmd}+shift+arrowleft` },
+			{ key: `${cmd}+shift+arrowright` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
@@ -704,12 +704,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				saveKeys.push({ key: `arrowright, arrowdown` });
 			};
 		};
-
-		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
-		const twineClose = {
+		
+		const twinePairs = {
 			'[': ']',
 			'{': '}',
-			'(': ')'
+			'(': ')',
+			'`':'`',
+			'\'':'\'',
+			'\"':'\"',
+			'【': '】',
+			'「': '」',
+			'（': '）',
+			'“': '”',
+			'‘': '’',
 		};
 
 		for (let i = 0; i < 9; ++i) {
@@ -792,7 +799,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (range.to) {
-				let parsed = this.checkMarkOnBackspace(value);
+				const parsed = this.checkMarkOnBackspace(value);
 
 				if (parsed.save) {
 					e.preventDefault();
@@ -846,12 +853,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		if (range && (range.from != range.to) && twineOpen.includes(key)) {
+		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
 			const l = e.key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twineClose[key] || key;
+			const closingSymbol = twinePairs[key] || key;
 
 			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
 
@@ -864,6 +871,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			ret = true;
 		};
+
 		if (ret) {
 			return;
 		};
@@ -872,12 +880,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
+
+			if (menuStore.isOpen('selectPasteUrl')) {
+				menuStore.close('selectPasteUrl');
+			};
 		};
 
-		if (menuStore.isOpen('selectPasteUrl')) {
-			menuStore.close('selectPasteUrl');
-		};
-		
 		onKeyDown(e, value, this.marks, range, this.props);
 	};
 	
@@ -911,12 +919,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		Length[I.TextStyle.Quote] = 1;
 		Length[I.TextStyle.Code] = 3;
 
-		const menuOpenAdd = menuStore.isOpen('blockAdd');
-		const menuOpenMention = menuStore.isOpen('blockMention');
-		
 		let value = this.getValue();
 		let cmdParsed = false;
 
+		const menuOpenAdd = menuStore.isOpen('blockAdd');
+		const menuOpenMention = menuStore.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
@@ -956,7 +963,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Open add menu
-		if (canOpenMenuAdd && !isInsideTable) { 
+		if (canOpenMenuAdd && (!isInsideTable && !block.isTextCode())) { 
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onMenuAdd(id, UtilCommon.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
@@ -965,9 +972,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				this.onMention();
-			});
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
 		};
 
@@ -981,7 +986,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			cmdParsed = true;
 		};
 
-		if (newBlock.type && !isInsideTable) {
+		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
 			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
 				this.setValue(value.replace(divReg, ''));
 				
@@ -991,7 +996,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Parse markdown commands
-		if (block.canHaveMarks() && !isInsideTable) {
+		if (block.canHaveMarks() && (!isInsideTable && !block.isTextCode())) {
 			for (const k in Markdown) {
 				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
@@ -1183,11 +1188,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		UtilData.blockSetText(rootId, block.id, value, marks, update, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+		UtilData.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	
 	setMarks (marks: I.Mark[]) {

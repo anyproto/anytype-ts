@@ -9,7 +9,7 @@
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; align-items: center; }
 		.item {
-			.grey { color: $colorControlActive; }
+			.grey { color: var(--color-control-active); }
 			.iconObject { margin-right: 10px; }
 
 			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
@@ -36,8 +36,8 @@
 				.name { @include text-overflow-nw; width: 100%; }
 				.flex { line-height: 20px; }
 
-				.condition { color: $colorTextSecondary; margin-right: 4px; }
-				.value { color: $colorTextSecondary; white-space: nowrap; overflow: hidden; }
+				.condition { color: var(--color-text-secondary); margin-right: 4px; }
+				.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
 			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }

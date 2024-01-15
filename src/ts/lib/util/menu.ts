@@ -30,11 +30,11 @@ class UtilMenu {
 	getBlockText () {
 		return [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
-			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1' ] },
-			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2' ] },
-			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3' ] },
-			{ id: I.TextStyle.Quote, lang: 'Quote' },
-			{ id: I.TextStyle.Callout, lang: 'Callout' },
+			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1', 'header1' ] },
+			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2', 'header2' ] },
+			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3', 'header3' ] },
+			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: [ 'quote' ] },
+			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = UtilData.blockTextClass(it.id);
@@ -44,10 +44,10 @@ class UtilMenu {
 	
 	getBlockList () {
 		return [
-			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo' ] },
-			{ id: I.TextStyle.Bulleted, lang: 'Bulleted' },
-			{ id: I.TextStyle.Numbered, lang: 'Numbered' },
-			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
+			{ id: I.TextStyle.Checkbox, lang: 'Checkbox', aliases: [ 'todo', 'checkbox' ] },
+			{ id: I.TextStyle.Bulleted, lang: 'Bulleted', aliases: [ 'bulleted list' ] },
+			{ id: I.TextStyle.Numbered, lang: 'Numbered', aliases: [ 'numbered list' ] },
+			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: [ 'toggle' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
 			it.icon = UtilData.blockTextClass(it.id);
@@ -57,13 +57,13 @@ class UtilMenu {
 
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image' },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video' },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio' },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf' },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image', aliases: [ 'image', 'picture' ] },
+			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video', aliases: [ 'video' ] },
+			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio', aliases: [ 'audio' ] },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -71,33 +71,38 @@ class UtilMenu {
 		const { config } = commonStore;
 
 		let ret = [
-			{ id: I.EmbedProcessor.Latex, icon: 'latex', name: 'LaTeX' },
-			{ id: I.EmbedProcessor.Mermaid, icon: 'mermaid', name: 'Mermaid' },
-			{ id: I.EmbedProcessor.Chart, icon: 'chart', name: 'Chart' },
-			{ id: I.EmbedProcessor.Youtube, icon: 'youtube', name: 'Youtube' },
-			{ id: I.EmbedProcessor.Vimeo, icon: 'vimeo', name: 'Vimeo' },
-			{ id: I.EmbedProcessor.Soundcloud, icon: 'soundcloud', name: 'Soundcloud' },
-			{ id: I.EmbedProcessor.GoogleMaps, icon: 'googleMaps', name: 'Google maps' },
-			{ id: I.EmbedProcessor.Miro, icon: 'miro', name: 'Miro' },
+			{ id: I.EmbedProcessor.Latex, name: 'LaTeX' },
+			{ id: I.EmbedProcessor.Mermaid, name: 'Mermaid' },
+			{ id: I.EmbedProcessor.Chart, name: 'Chart' },
+			{ id: I.EmbedProcessor.Youtube, name: 'Youtube' },
+			{ id: I.EmbedProcessor.Vimeo, name: 'Vimeo' },
+			{ id: I.EmbedProcessor.Soundcloud, name: 'Soundcloud' },
+			{ id: I.EmbedProcessor.GoogleMaps, name: 'Google maps' },
+			{ id: I.EmbedProcessor.Miro, name: 'Miro' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
-				{ id: I.EmbedProcessor.Figma, icon: 'figma', name: 'Figma' },
+				{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 
-				{ id: I.EmbedProcessor.Twitter, icon: 'twitter', name: 'X (Twitter)' },
-				{ id: I.EmbedProcessor.OpenStreetMap, icon: 'openStreetMap', name: 'Open Street Map' },
-				{ id: I.EmbedProcessor.Reddit, icon: 'reddit', name: 'Reddit' },
-				{ id: I.EmbedProcessor.Facebook, icon: 'facebook', name: 'Facebook' },
-				{ id: I.EmbedProcessor.Instagram, icon: 'instagram', name: 'Instagram' },
-				{ id: I.EmbedProcessor.Telegram, icon: 'telegram', name: 'Telegram' },
-				{ id: I.EmbedProcessor.GithubGist, icon: 'githubGist', name: 'Github Gist' },
+				{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
+				{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
+				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
+				{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
+				{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
+				{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
+				{ id: I.EmbedProcessor.GithubGist, name: 'Github Gist' },
+				{ id: I.EmbedProcessor.Codepen, name: 'Codepen' },
+				{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
+				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+				{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
+				{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			]);
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = UtilCommon.toCamelCase(`embed-${it.icon}`);
+			it.icon = `embed-${UtilCommon.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
@@ -105,7 +110,7 @@ class UtilMenu {
 	getBlockObject () {
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
 		let i = 0;
@@ -127,12 +132,12 @@ class UtilMenu {
 
 	getBlockOther () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline collection' ] },
+			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban', 'inline set' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -363,7 +368,7 @@ class UtilMenu {
 		const getWeight = (s: string) => {
 			let w = 0;
 			if (s.toLowerCase() == f.toLowerCase()) {
-				w = 10000;
+				w += 10000;
 			} else
 			if (s.match(regS)) {
 				w = 1000;
@@ -397,23 +402,28 @@ class UtilMenu {
 				c._sortWeight_ = 0;
 				if (c.skipFilter) {
 					ret = true;
-				} else 
-				if (c.name && c.name.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.name);
-				} else 
-				if (c.description && c.description.match(regC)) {
-					ret = true;
-					c._sortWeight_ = getWeight(c.description);
-				} else
-				if (c.aliases && c.aliases.length) {
+				};
+
+				if (!ret && c.aliases && c.aliases.length) {
 					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
+							c._sortWeight_ = getWeight(alias);
 							ret = true;
 							break;
 						};
 					};
 				};
+
+				if (!ret && c.name && c.name.match(regC)) {
+					ret = true;
+					c._sortWeight_ = getWeight(c.name);
+				};
+
+				if (!ret && c.description && c.description.match(regC)) {
+					ret = true;
+					c._sortWeight_ = getWeight(c.description);
+				};
+				
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});

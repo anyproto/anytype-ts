@@ -4,7 +4,7 @@
 	> .body { overflow: hidden; height: 100%; }
 
 	#loader { 
-		position: fixed; top: 0px; width: 100%; height: 100%; background: $colorBgPrimary !important; z-index: 11; 
+		position: fixed; top: 0px; width: 100%; height: 100%; background: var(--color-bg-primary) !important; z-index: 11; 
 		transition: opacity $transitionCommon;
 	}
 
@@ -13,6 +13,6 @@
     #graphWrapper { width: 100%; height: 100%; }
     #graph { width: 100%; height: 100%; }
 
-    canvas { width: 100%; height: 100%; background: $colorBgPrimary; display: block; }
+    canvas { width: 100%; height: 100%; background: var(--color-bg-primary); display: block; }
 	canvas.move { cursor: move; }
 }
