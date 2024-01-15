@@ -730,7 +730,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
-					value.html(res.renderSVGElement(this.text));
+					try {
+						value.html(res.renderSVGElement(this.text));
+					} catch (e) {
+						console.error(e);
+					};
 				});
 				break;
 			};

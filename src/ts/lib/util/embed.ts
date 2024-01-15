@@ -253,6 +253,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Facebook,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
