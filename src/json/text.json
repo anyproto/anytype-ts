@@ -128,6 +128,7 @@
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralType": "Object Type|Object Types",
+	"pluralTypeLC": "Object type|Object types",
 	"pluralUCRelation": "Relation|Relations",
 	"pluralLinks": "link from|links from",
 	"pluralBacklinks": "link to|links to",
@@ -1102,6 +1103,7 @@
 	"menuDataviewObjectTypeEditName": "Object Type name",
 	"menuDataviewObjectTypeEditLayout": "Layout",
 	"menuDataviewObjectListFind": "Find an object",
+	"menuDataviewObjectListEmptySearch": "There are no objects",
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
@@ -1134,6 +1136,7 @@
 	"menuDataviewGroupEditHideColumn": "Hide Column",
 
 	"menuDataviewObjectValuesAddObject": "Add object",
+	"menuDataviewObjectValuesEmptySearch": "There are no values",
 
 	"menuDataviewOptionListFilterOrCreateOptions": "Filter or create options...",
 	"menuDataviewOptionListFilterOptions": "Filter options...",

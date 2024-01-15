@@ -5,6 +5,7 @@ import { UtilCommon } from 'Lib';
 
 interface Props {
 	text: string;
+	style?: any;
 };
 
 class EmptySearch extends React.Component<Props> {
@@ -16,7 +17,7 @@ class EmptySearch extends React.Component<Props> {
 		const { text } = this.props;
 		
 		return (
-			<div ref={node => this.node = node} className="emptySearch">
+			<div ref={node => this.node = node} {...this.props} className="emptySearch">
 				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
 			</div>
 		);

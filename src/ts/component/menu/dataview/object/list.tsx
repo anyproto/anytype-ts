@@ -16,6 +16,7 @@ const LIMIT_HEIGHT = 20;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
 const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<I.Menu, State> {
@@ -67,7 +68,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						<div className="inner" />
 					</div>
 				);
-			} else if (item.id == 'add') {
+			} else
+			if (item.isEmpty) {
+				content = <EmptySearch style={param.style} text={translate('menuDataviewObjectListEmptySearch')} />;
+			}  else
+			if (item.isSection) {
+				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+			} else
+			if (item.id == 'add') {
 				content = (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
@@ -235,9 +243,42 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, filters } = data;
 		const value = Relation.getArrayValue(data.value);
 		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const types = [];
+
+		if (!ret.length) {
+			ret.push({ isEmpty: true });
+		};
+
+		if (filters && filters.length) {
+			filters.forEach((filter) => {
+				const { relationKey, condition, value } = filter;
+
+				if (relationKey == 'type' && condition == I.FilterCondition.In) {
+					value.forEach((typeId) => {
+						const type = dbStore.getTypeById(typeId);
+
+						if (type && type.name) {
+							types.push(type.name);
+						};
+					});
+				};
+			});
+		};
+
+		if (types.length) {
+			const l = types.length;
+			const limit = 2;
+
+			if (l > limit) {
+				types.splice(limit, l - limit);
+				types.push(`+${l - limit}`);
+			};
+
+			ret.unshift({ isSection: true, name: `${UtilCommon.plural(types, translate('pluralTypeLC'))}: ${types.join(', ')}`});
+		};
 
 		if (data.filter && canAdd) {
 			if (ret.length) {
@@ -373,6 +414,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		let h = HEIGHT_ITEM;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isEmpty) h = HEIGHT_EMPTY;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
