@@ -41,7 +41,7 @@
 			border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:hover { background: #FFF2D7; }
+		.day:hover { background: #fff2d7; }
 
 		.day.th { color: var(--color-control-active); cursor: default; @include text-small; }
 		.day.th:hover { background: none; font-weight: 400; color: var(--color-control-active) !important; }

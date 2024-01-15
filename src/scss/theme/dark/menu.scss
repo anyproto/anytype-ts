@@ -122,7 +122,7 @@
 		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
         .day:hover { background: #483308; color: var(--color-text-primary); }
-        .day.th:hover { background: none; color: #9a9a9a !important; }
+        .day.th:hover { background: none; color: var(--color-control-active) !important; }
     }
 
     /* MenuBlockContext */
