@@ -360,8 +360,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const mw = getWrapperWidth();
 			const name = node.find('.cardName');
 
-			UtilCommon.textStyle(name, { border: 0.4 });
-
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
