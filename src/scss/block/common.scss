@@ -22,10 +22,10 @@
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
-			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorShapeSecondary; border-radius: 12px; 
+			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid var(--color-shape-secondary); border-radius: 12px; 
 		}
 		.icon.dnd:hover { 
-			background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100;
+			background-image: url('~img/icon/block/menu2.svg') !important; border-color: var(--color-system-accent-100); box-shadow: 0px 0px 0px 1px var(--color-system-accent-100);
 		}
 
 		.inputWithFile { position: relative; }
@@ -35,7 +35,7 @@
 		.colResize {
 			.inner { position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; }
 			.line { 
-				height: 100%; width: 2px; background: $colorShapeSecondary; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
+				height: 100%; width: 2px; background: var(--color-shape-secondary); position: absolute; left: 50%; top: 0px; margin-left: -1px; 
 				border-radius: 2px;
 			}
 		}
@@ -43,10 +43,10 @@
 		.focusable { border-radius: inherit; }
 		
 		.emptyToggle { 
-			display: none; margin-left: 28px; color: $colorControlActive; position: relative; z-index: 2;
+			display: none; margin-left: 28px; color: var(--color-control-active); position: relative; z-index: 2;
 			@include text-overflow-nw;
 		}
-		.emptyToggle:hover { color: $colorTextPrimary; }
+		.emptyToggle:hover { color: var(--color-text-primary); }
 	}
 
 	.block.index0 { padding-top: 0px !important; }
@@ -72,11 +72,11 @@
 	}
 	
 	.block.isAdding.top::before {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorSystemAccent100; position: absolute; right: 0px; top: -2px;
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-system-accent-100); position: absolute; right: 0px; top: -2px;
 	}
 	
 	.block.isAdding.bottom::after {
-		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorSystemAccent100; position: absolute; right: 0px; bottom: -2px;
+		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: var(--color-system-accent-100); position: absolute; right: 0px; bottom: -2px;
 	}
 	
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }

@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget { background: $colorBgPrimary; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
+.widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { 
@@ -15,8 +15,8 @@
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-		.iconWrap:hover { background-color: $colorShapeHighlightMedium; }
-		.iconWrap.active { opacity: 1; background-color: $colorShapeHighlightMedium; }
+		.iconWrap:hover { background-color: var(--color-shape-highlight-medium); }
+		.iconWrap.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
@@ -34,19 +34,19 @@
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
-	.label.empty { text-align: center; @include text-small; color: $colorTextSecondary; white-space: nowrap; }
+	.label.empty { text-align: center; @include text-small; white-space: nowrap; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
-			height: 20px; width: 20px; border-radius: 50%; background-color: $colorBgPrimary;
+			height: 20px; width: 20px; border-radius: 50%; background-color: var(--color-bg-primary);
 			background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); 
 			background-repeat: no-repeat; background-position: center; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
 		}
 	}
-	.icon.remove:hover .inner { background-color: $colorShapeTertiary; }
+	.icon.remove:hover .inner { background-color: var(--color-shape-tertiary); }
 
 	> .dropTarget { position: absolute; left: 0px; width: 100%; height: 20px; }
 	> .dropTarget.isOver { box-shadow: 0px 0px !important; }
@@ -54,7 +54,7 @@
 	> .dropTarget.targetBot { bottom: -7px; }
 
 	> .dropTarget.isOver::before { 
-		content: ""; position: absolute; background: $colorSystemAccent100; width: calc(100% - 24px); height: 2px; border-radius: 2px; left: 12px;
+		content: ""; position: absolute; background: var(--color-system-accent-100); width: calc(100% - 24px); height: 2px; border-radius: 2px; left: 12px;
 	}
 	> .dropTarget.targetTop.isOver::before { top: 0px; }
 	> .dropTarget.targetBot.isOver::before { bottom: 0px; }
@@ -64,12 +64,12 @@
 	.head {
 		.clickable { width: calc(100% - 60px); }
 		.buttons { display: flex; }
-		.iconWrap.options { background-color: $colorShapeHighlightMedium; }
+		.iconWrap.options { background-color: var(--color-shape-highlight-medium); }
 	}
 }
 
 .widget.isPreview {
-	.head { border-bottom: 1px solid $colorShapeSecondary; margin: 0px 0px 16px 0px; padding: 20px 16px 16px 10px; }
+	.head { border-bottom: 1px solid var(--color-shape-secondary); margin: 0px 0px 16px 0px; padding: 20px 16px 16px 10px; }
 	.head::before { top: 18px; }
 	.head > .flex > .clickable { width: calc(100% - 30px); }
 }

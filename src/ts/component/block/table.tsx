@@ -344,6 +344,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 				},
 				onOver: (e: any, item: any) => {
+					if (menuStore.isAnimating(menuContext.props.id)) {
+						return;
+					};
+
 					if (!menuContext) {
 						return;
 					};
@@ -1178,7 +1182,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { rootId } = this.props;
 
-		C.BlockTableColumnMove(rootId, id, targetId, position);
+		C.BlockTableColumnMove(this.props.rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);

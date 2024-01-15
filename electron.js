@@ -13,6 +13,11 @@ if (is.development) {
 	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
 };
 
+// Fix notifications app name
+if (is.windows) {
+    app.setAppUserModelId(app.name);
+};
+
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
 const UpdateManager = require('./electron/js/update.js');
@@ -95,9 +100,6 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
-	Util.log('info', 'CreateWindow: ' + deeplinkingUrl + ' ' + JSON.stringify(process.argv));
-
-
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
 	mainWindow.on('close', (e) => {
@@ -141,8 +143,6 @@ function createWindow () {
 			console.error('[Api] method not defined:', cmd);
 		};
 	});
-
-	
 };
 
 app.on('ready', () => {

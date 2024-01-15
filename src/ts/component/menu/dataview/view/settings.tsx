@@ -208,20 +208,18 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		if (readonly || !block) {
+		let view = data.view.get();
+
+		if (readonly || !block || !view) {
 			return;
 		};
-
-		const current = data.view.get();
 
 		if (withName) {
 			this.param.name = this.getViewName();
 		};
 
-		let view = data.view.get();
 		view = Object.assign(view, this.param);
-
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, onSave);
 	};
 
 	getSections () {

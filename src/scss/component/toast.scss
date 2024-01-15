@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .toast {
-    position: fixed; left: 0px; top: 0px; border-radius: 8px; background: $colorControlAccent; padding: 11px 16px; text-transform: none;
-    @include text-common; color: $colorBgPrimary; display: none; z-index: 1000; white-space: nowrap; transition-duration: 0.25s;
+    position: fixed; left: 0px; top: 0px; border-radius: 8px; background: var(--color-control-accent); padding: 11px 16px; text-transform: none;
+    @include text-common; color: var(--color-bg-primary); display: none; z-index: 1000; white-space: nowrap; transition-duration: 0.25s;
 	transition-property: opacity, transform; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); 
 }
 
@@ -24,7 +24,7 @@
 		.buttons { display: flex; gap: 0px 12px; margin-left: 32px; }
 		.buttons {
 			.button { 
-				@include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; color: $colorBgPrimary; 
+				@include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; color: var(--color-bg-primary); 
 			}
 			.button:hover { background-color: transparent; }
 			.button:hover {

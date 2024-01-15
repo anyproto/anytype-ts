@@ -34,13 +34,13 @@
 		.section.template { width: 704px; margin: 0px auto 14px auto; }
 		.section.template {
 			.btn { 
-				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorTextSecondary; 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: var(--color-text-secondary); 
 				transition: $transitionAllCommon;
 			}
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
 			}
-			.btn:hover { color: $colorTextPrimary; }
+			.btn:hover { color: var(--color-text-primary); }
 			.btn:hover {
 				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
 			}

@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 .select { 
-	border-radius: 4px; border: solid 1px $colorShapePrimary; display: inline-block; vertical-align: middle;
+	border-radius: 4px; border: solid 1px var(--color-shape-primary); display: inline-block; vertical-align: middle;
 	transition: $transitionAllCommon; position: relative; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 20px 3px 6px; line-height: 20px !important;
 }
-.select:hover, .select.active { background: $colorShapeTertiary; }
+.select:hover, .select.active { background: var(--color-shape-tertiary); }
 
 .select {
 	.icon { transition: none; }

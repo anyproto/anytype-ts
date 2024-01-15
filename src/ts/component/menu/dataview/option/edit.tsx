@@ -184,20 +184,17 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { param, close, id } = this.props;
 		const { data } = param;
 		const { option, onChange } = data;
-		const relation = data.relation.get();
-
-		let value = Relation.getArrayValue(data.value);
-		value = value.filter(it => it != option.id);
+		const value = Relation.getArrayValue(data.value).filter(it => it != option.id);
 
 		C.RelationListRemoveOption([ option.id ], false);
 
 		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', {
-			value: value,
-			relation: observable.box(relation),
-		});
+		menuStore.updateData('dataviewOptionList', { value });
 
-		onChange(value);
+		if (onChange) {
+			onChange(value);
+		};
+
 		close();
 	};
 

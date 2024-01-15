@@ -21,7 +21,7 @@
 
 		.filter { padding-top: 8px; }
 
-		.label { color: $colorControlActive; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
+		.label { color: var(--color-control-active); @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
     }
 
     .menu.menuDataviewFilterList,

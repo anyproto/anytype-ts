@@ -31,7 +31,10 @@ class Server {
 					};
 					
 					const args = [ '127.0.0.1:0', '127.0.0.1:0' ];
-					this.cp = childProcess.spawn(binPath, args, { env: env });
+					this.cp = childProcess.spawn(binPath, args, { 
+						windowsHide: false,
+						env,
+					});
 				} catch (err) {
 					console.error('[Server] Process start error: ', err.toString());
 					reject(err);

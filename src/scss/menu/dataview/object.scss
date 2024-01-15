@@ -18,7 +18,7 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
-		.label { color: $colorControlActive; @include text-common; padding: 0px 16px; }
+		.label { color: var(--color-control-active); @include text-common; padding: 0px 16px; }
 
 		.filter { flex-shrink: 0; }
 	}
@@ -45,7 +45,7 @@
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
 				opacity: 0; z-index: 1; transition: none;
 			}
-			.icon.delete:hover { background-color: $colorShapeHighlightMedium; }
+			.icon.delete:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 		.item.hover, .item:hover {
 			.clickable { width: calc(100% - 44px) !important; }

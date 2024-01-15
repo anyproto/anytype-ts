@@ -27,10 +27,6 @@ const HEIGHT_ITEM = 40;
 const ID_RECENT = 'recent';
 const ID_BLANK = 'blank';
 
-const BLANK_ITEM = {
-	itemId: ID_BLANK
-};
-
 class MenuSmile extends React.Component<I.Menu, State> {
 
 	node: any = null;
@@ -220,17 +216,39 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			content = <Loader />;
 		};
 
+		let buttons: any[] = [];
+
+		if (!noHead) {
+			if (!noGallery) {
+				buttons = buttons.concat([
+					{ text: translate('menuSmileRandom'), onClick: this.onRandom },
+					{ text: translate('menuSmileGallery'), onClick: () => this.onTab(Tab.Gallery), isActive: (tab == Tab.Gallery) },
+				]);
+			};
+			if (!noUpload) {
+				buttons.push({ text: translate('menuSmileUpload'), onClick: () => this.onTab(Tab.Upload), isActive: (tab == Tab.Upload) });
+			};
+			if (!noRemove) {
+				buttons.push({ text: translate('commonRemove'), onClick: this.onRemove });
+			};
+		};
+
 		return (
 			<div 
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				{!noHead ? (
+				{buttons.length ? (
 					<div className="head">
-						{!noGallery ? <div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div> : ''}
-						{!noGallery ? <div className="btn" onClick={() => this.onTab(Tab.Gallery)}>{translate('menuSmileGallery')}</div> : ''}
-						{!noUpload ? <div className="btn" onClick={() => this.onTab(Tab.Upload)}>{translate('menuSmileUpload')}</div> : ''}
-						{!noRemove ? <div className="btn" onClick={this.onRemove}>{translate('commonRemove')}</div> : ''}
+						{buttons.map((item, i) => (
+							<div 
+								key={i} 
+								className={[ 'btn', (item.isActive ? 'active' : '') ].join(' ')} 
+								onClick={item.onClick}
+							>
+								{item.text}
+							</div>
+						))}
 					</div>
 				) : ''}
 				

@@ -89,7 +89,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canDropMiddle = false;
 		let blockComponent = null;
 		let additional = null;
-		let renderChildren = !isInsideTable;
+		let renderChildren = block.isLayout();
 
 		if (className) {
 			cn.push(className);
@@ -108,6 +108,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		switch (type) {
 			case I.BlockType.Text: {
 				canDropMiddle = canDrop && block.canHaveChildren();
+				renderChildren = !isInsideTable && block.canHaveChildren();
 
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
@@ -229,6 +230,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.Cover: {
 				canSelect = false;
 				canDrop = false;
+
 				blockComponent = <BlockCover key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -240,6 +242,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Featured: {
 				canDrop = false;
+
 				blockComponent = <BlockFeatured key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -247,6 +250,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			case I.BlockType.Type: {
 				canSelect = false;
 				canDrop = false;
+
 				blockComponent = <BlockType key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -257,7 +261,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Table: {
-				renderChildren = false;
 				blockComponent = <BlockTable key={key} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -304,31 +307,26 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (block.isLayoutColumn() && canDrop) {
-			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-			const lastId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
-
-			if (lastId) {
-				targetColumn = (
-					<DropTarget 
-						{...this.props} 
-						isTargetColumn={true} 
-						rootId={rootId} 
-						id={lastId} 
-						style={style} 
-						type={type} 
-						dropType={I.DropType.Block} 
-						canDropMiddle={canDropMiddle} 
-						onClick={this.onEmptyColumn} 
-					/>
-				);
-			};
+			targetColumn = (
+				<DropTarget 
+					{...this.props} 
+					isTargetColumn={true} 
+					rootId={rootId} 
+					id={block.id} 
+					style={style} 
+					type={type} 
+					dropType={I.DropType.Block} 
+					canDropMiddle={canDropMiddle} 
+					onClick={this.onEmptyColumn} 
+				/>
+			);
 		};
 		
 		if (canSelect) {
 			object = (
 				<div 
 					id={`selectable-${id}`} 
-					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
+					className={[ 'selectable', `type-${I.SelectType.Block}` ].join(' ')} 
 					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
@@ -348,16 +346,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={'block-' + id} 
+				id={`block-${id}`} 
 				className={cn.join(' ')} 
 				style={css}
-				{...UtilCommon.dataProps({ id })}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
+				{...UtilCommon.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 
-						id={'button-block-menu-' + id} 
+						id={`button-block-menu-${id}`} 
 						className="dnd" 
 						draggable={true} 
 						onDragStart={this.onDragStart} 
@@ -373,7 +371,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 					{renderChildren ? (
 						<ListChildren 
-							key={'block-children-' + id} 
+							key={`block-children-${id}`} 
 							{...this.props} 
 							onMouseMove={this.onMouseMove} 
 							onMouseLeave={this.onMouseLeave} 
@@ -489,7 +487,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable()) {
+		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
 		};
 

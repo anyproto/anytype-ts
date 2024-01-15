@@ -180,7 +180,7 @@ export default {
         showConfetti: true,
 		onComplete: (force: boolean) => {
 			if (!$('#navigationPanel').hasClass('hide')) {
-				Onboarding.start('navigation', keyboard.isPopup(), force);
+				Onboarding.start('space', keyboard.isPopup(), force);
 			};
 		},
         items: [
@@ -384,7 +384,35 @@ export default {
 		}
 	),
 
-	navigation: () => (
+	space: () => (
+		{
+			onComplete: (force: boolean) => {
+				if (!$('#navigationPanel').hasClass('hide')) {
+					Onboarding.start('quickCapture', keyboard.isPopup(), force);
+				};
+			},
+
+			items: [
+				{
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-profile',
+					}
+				},
+			],
+
+			param: {
+				classNameWrap: 'fixed',
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Center,
+				offsetY: -24,
+				noButton: true,
+			},
+		}
+	),
+
+	quickCapture: () => (
 		{
 			items: [
 				{
@@ -392,13 +420,6 @@ export default {
 					description: translate('onboardingQuickCaptureDescription'),
 					param: {
 						element: '#navigationPanel #button-navigation-plus',
-					}
-				},
-				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
-					param: {
-						element: '#navigationPanel #button-navigation-profile',
 					}
 				},
 			],

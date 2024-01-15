@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 import { observable, set } from 'mobx';
-import Commands from 'protobuf/pb/protos/commands_pb';
-import Events from 'protobuf/pb/protos/events_pb';
-import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
+import Commands from 'dist/lib/pb/protos/commands_pb';
+import Events from 'dist/lib/pb/protos/events_pb';
+import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
 import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
 import * as Response from './response';
@@ -155,6 +155,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
+		const currentWindow = window.Electron.currentWindow();
+		const { windowId } = currentWindow;
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -949,7 +951,15 @@ class Dispatcher {
 				};
 
 				case 'notificationSend': {
-					notificationStore.add(Mapper.From.Notification(data.getNotification()));
+					const item = new M.Notification(Mapper.From.Notification(data.getNotification()));
+
+					notificationStore.add(item);
+
+					if ((windowId == 1) && !window.Electron.isFocused()) {
+						new window.Notification(item.title, { body: item.text }).onclick = () => { 
+							window.Electron.focus();
+						};
+					};
 					break;
 				};
 
@@ -1011,7 +1021,7 @@ class Dispatcher {
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]))
+		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
@@ -1146,7 +1156,8 @@ class Dispatcher {
 			return;
 		};
 
-		let t0 = performance.now();
+		const t0 = performance.now();
+
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;
