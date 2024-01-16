@@ -1,9 +1,8 @@
 @import "~scss/_vars";
 
+$themePath: '~img/theme/dark';
+
 html.themeDark {
-
-	$themePath: '~img/theme/dark';
-
 	/* Text */
 
 	--color-text-primary: #dcdcdc;
@@ -36,6 +35,8 @@ html.themeDark {
 
 	/* System */
 
+	--color-system-accent-50: #9f6b00;
+	--color-system-accent-25: #f09c0e;
 	--color-system-selection: rgba(24, 163, 241, 0.15);
 
     /* Common */
@@ -115,11 +116,23 @@ html.themeDark {
         }
     }
 
+	.switch { background: var(--color-shape-secondary); }
+	.switch {
+		.inner { background-color: #fff; }
+	}
+
     /* Button */
 
+	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
+	.button.black:hover,
+    .button.black.hover { background: var(--color-control-active); }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
+
+    .button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
+    .button.blank:not(.disabled):hover,
+    .button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
 	.button.red,
     .button.red.blank { background: none; }
@@ -142,7 +155,7 @@ html.themeDark {
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { border-color: transparent; }
+    .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 
     .listPreviewObject {
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }

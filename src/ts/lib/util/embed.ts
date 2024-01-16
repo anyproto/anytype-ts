@@ -69,6 +69,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	getKrokiHtml (content: string): string {
+		return `<img src="${content}" />`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -229,26 +233,8 @@ class UtilEmbed {
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Graphviz: return 'dot';
 		};
-	};
-
-	// Allow to use same origin in iframe sandbox
-	allowSameOrigin (p: I.EmbedProcessor) {
-		return [ 
-			I.EmbedProcessor.Youtube, 
-			I.EmbedProcessor.Vimeo, 
-			I.EmbedProcessor.Soundcloud, 
-			I.EmbedProcessor.GoogleMaps, 
-			I.EmbedProcessor.Miro, 
-			I.EmbedProcessor.Figma,
-			I.EmbedProcessor.Twitter,
-			I.EmbedProcessor.Reddit,
-			I.EmbedProcessor.Instagram,
-			I.EmbedProcessor.Telegram,
-			I.EmbedProcessor.Codepen,
-			I.EmbedProcessor.Bilibili,
-			I.EmbedProcessor.Facebook,
-		].includes(p);
 	};
 
 	// Allow to use presentation mode in iframe sandbox
@@ -273,6 +259,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
@@ -290,7 +277,9 @@ class UtilEmbed {
 
 	// Allow block resizing
 	allowBlockResize (p: I.EmbedProcessor) {
-		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(p);
+		return ![ 
+			I.EmbedProcessor.Latex, 
+		].includes(p);
 	};
 
 	// Use iframe height instead of fixed aspect ratio
@@ -303,13 +292,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
-		].includes(p);
-	};
-
-	// Render blocks on scroll
-	allowScroll (p: I.EmbedProcessor) {
-		return ![ 
-			I.EmbedProcessor.Latex,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
@@ -325,6 +308,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Graphviz,
 		].includes(p);
 	};
 
@@ -346,6 +330,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 

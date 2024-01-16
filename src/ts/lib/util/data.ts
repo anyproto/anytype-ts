@@ -412,11 +412,7 @@ class UtilData {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		});
+		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
@@ -491,8 +487,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
-		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {

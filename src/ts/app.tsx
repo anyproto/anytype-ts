@@ -15,12 +15,16 @@ import {
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
 
+require('pdfjs-dist/build/pdf.worker.entry.js');
+
 configure({ enforceActions: 'never' });
 
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
 import 'swiper/scss';
+import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
+import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
 import 'scss/component/common.scss';
@@ -528,8 +532,6 @@ class App extends React.Component<object, State> {
 		keyboard.disableContextOpen(true);
 
 		const win = $(window);
-		const rootId = keyboard.getRootId();
-		const { focused, range } = focus.state;
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
 		const isInput = element.is('input');
@@ -552,7 +554,11 @@ class App extends React.Component<object, State> {
 					raf(() => {
 						switch (item.id) {
 							default: {
-								if (focused) {
+								const { focused, range } = focus.state;
+								const rootId = keyboard.getRootId();
+								const block = blockStore.getLeaf(rootId, focused);
+
+								if (block && block.isText()) {
 									focus.apply();
 
 									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());

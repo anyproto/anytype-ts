@@ -14,7 +14,7 @@ interface Props {
 	options: I.Option[];
 	noFilter: boolean;
 	isMultiple?: boolean;
-	showOnHover?: boolean;
+	showOn?: string;
 	readonly?: boolean;
 	menuParam?: Partial<I.MenuParam>;
 	onChange? (id: any): void;
@@ -30,6 +30,7 @@ class Select extends React.Component<Props, State> {
 	public static defaultProps = {
 		initial: '',
 		noFilter: true,
+		showOn: 'click',
 	};
 	
 	_isMounted = false;
@@ -46,7 +47,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className, arrowClassName, readonly, showOnHover } = this.props;
+		const { id, className, arrowClassName, readonly, showOn } = this.props;
 		const { options } = this.state;
 		const cn = [ 'select' ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
@@ -72,14 +73,28 @@ class Select extends React.Component<Props, State> {
 			current.push(options[0]);
 		};
 
-		const onClick = showOnHover ? null : this.show;
-		const onMouseEnter = showOnHover ? this.show : null;
+		let onClick = null;
+		let onMouseDown = null;
+		let onMouseEnter = null;
+
+		if (showOn == 'mouseDown') {
+			onMouseDown = this.show;
+		};
+
+		if (showOn == 'click') {
+			onClick = this.show;
+		};
+
+		if (showOn == 'mouseEnter') {
+			onMouseEnter = this.show;
+		};
 
 		return (
 			<div 
 				id={`select-${id}`} 
 				className={cn.join(' ')} 
 				onClick={onClick} 
+				onMouseDown={onMouseDown}
 				onMouseEnter={onMouseEnter}
 			>
 				{current ? (

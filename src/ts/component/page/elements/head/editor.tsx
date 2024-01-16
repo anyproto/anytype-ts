@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard, translate } from 'Lib';
+import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
@@ -9,7 +9,7 @@ interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
 
-const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> {
+const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Props> {
 	
 	node: any = null;
 	refDrag: any = null;
@@ -130,4 +130,4 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 
 });
 
-export default PageHeadEdit;
+export default PageHeadEditor;

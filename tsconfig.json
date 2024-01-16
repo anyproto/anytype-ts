@@ -53,8 +53,8 @@
             "Store": [
                 "ts/store",
             ],
-            "protobuf/*": [
-                "../dist/lib/*"
+			"dist/*": [
+                "../dist/*"
             ],
           }
     },
