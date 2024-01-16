@@ -277,7 +277,9 @@ class UtilEmbed {
 
 	// Allow block resizing
 	allowBlockResize (p: I.EmbedProcessor) {
-		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(p);
+		return ![ 
+			I.EmbedProcessor.Latex, 
+		].includes(p);
 	};
 
 	// Use iframe height instead of fixed aspect ratio
