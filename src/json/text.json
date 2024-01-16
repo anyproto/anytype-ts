@@ -595,6 +595,7 @@
 	"popupSettingsAppearanceColorModeButtonSystem": "System",
 	"popupSettingsAppearancePersonalisation": "Personalisation",
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
+	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
@@ -996,9 +997,6 @@
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
-
-	"menuCalendarToday": "Today",
-	"menuCalendarTomorrow": "Tomorrow",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
