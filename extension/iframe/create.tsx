@@ -120,12 +120,14 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			const structure: any[] = [];
 			const blocks = message.blocks.map(it => new M.Block(it));
 
+			/*
 			blocks.unshift(new M.Block({
 				id: ROOT_ID,
 				type: I.BlockType.Page,
 				childrenIds: message.blocks.map(it => it.id),
 				content: {},
 			}));
+			*/
 
 			blocks.forEach((block: any) => {
 				structure.push({ id: block.id, childrenIds: block.childrenIds });

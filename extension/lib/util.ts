@@ -70,7 +70,7 @@ class Util {
 	};
 
 	optionMapper (it: any) {
-		return it._empty_ ? null : { ...it, object: (!it.iconEmoji ? it : null) };
+		return it._empty_ ? null : { ...it, object: it };
 	};
 	
 };

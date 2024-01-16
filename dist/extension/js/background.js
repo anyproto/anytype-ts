@@ -93,8 +93,6 @@
 			return;
 		};
 
-		const tab = await getActiveTab();
-
 		isInitMenu = true;
 
 		chrome.contextMenus.create({
@@ -103,7 +101,9 @@
 			contexts: [ 'selection' ]
 		});
 
-		chrome.contextMenus.onClicked.addListener(() => {
+		chrome.contextMenus.onClicked.addListener(async () => {
+			const tab = await getActiveTab();
+
 			chrome.scripting.executeScript({
 				target: { tabId: tab.id },
 				function: () => {

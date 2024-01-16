@@ -149,6 +149,13 @@ export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Respons
 	};
 };
 
+export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
+	return {
+		objectId: response.getObjectid(),
+		details: Decode.struct(response.getDetails()),
+	};
+};
+
 export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
 	return {
 		objectId: response.getObjectid(),

@@ -81,7 +81,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 								onChange={this.onSpaceChange}
 								menuParam={{
 									horizontal: I.MenuDirection.Center,
-									data: { maxHeight: 120 }
+									data: { maxHeight: 180 }
 								}}
 							/>
 						</div>
@@ -97,7 +97,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 								onChange={this.onTypeChange}
 								menuParam={{
 									horizontal: I.MenuDirection.Center,
-									data: { maxHeight: 120 }
+									data: { maxHeight: 180 }
 								}}
 							/>
 						</div>
@@ -191,10 +191,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		const value = this.details.type || options[0].id;
+		this.details.type = this.details.type || options[0].id;
 
 		this.refType.setOptions(options);
-		this.refType.setValue(value);
+		this.refType.setValue(this.details.type);
 	};
 
 	initName () {
@@ -224,7 +224,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	getTypes () {
 		const layouts = UtilObject.getPageLayouts();
-		return this.getObjects(Constant.subId.type).map(Util.optionMapper).filter(this.filter).filter(it => layouts.includes(it.recommendedLayout));
+		return this.getObjects(Constant.subId.type).
+			map(Util.optionMapper).
+			filter(this.filter).
+			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == commonStore.space)).
+			sort(UtilData.sortByName);
 	};
 
 	filter (it: any) {

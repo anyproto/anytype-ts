@@ -1243,7 +1243,7 @@ const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message
 const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
-	//request.setDetails(Encode.struct(details));
+	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
