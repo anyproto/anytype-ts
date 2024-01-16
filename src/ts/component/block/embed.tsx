@@ -671,6 +671,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
+					fleqn: true,
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				}));
 

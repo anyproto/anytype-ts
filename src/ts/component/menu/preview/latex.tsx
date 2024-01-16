@@ -15,6 +15,7 @@ class MenuPreviewLatex extends React.Component<I.Menu> {
 			displayMode: true,
 			throwOnError: false,
 			output: 'html',
+			fleqn: true,
 			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 		});
 
