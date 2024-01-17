@@ -8,7 +8,7 @@ import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import Excalidraw from 'excalidraw';
-import { Icon, Label, Editable, Dimmer, Select } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -145,6 +145,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					{source}
 					{resize}
 
+					<Error id="error" />
 					<Dimmer />
 				</div>
 
@@ -550,6 +551,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = content;
 		const node = $(this.node);
 		const value = node.find('#value');
+		const error = node.find('#error');
+
+		error.text('').hide();
 
 		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
 			value.html('');
@@ -754,6 +758,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						value.html(res.renderSVGElement(this.text));
 					} catch (e) {
 						console.error(e);
+						error.text(e.message).show();
 					};
 				});
 				break;

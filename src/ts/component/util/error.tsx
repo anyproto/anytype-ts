@@ -2,7 +2,8 @@ import * as React from 'react';
 import { I, UtilCommon } from 'Lib';
 
 interface Props {
-	text: string;
+	id?: string;
+	text?: string;
 	className?: string;
 	dataset?: any;
 };
@@ -15,10 +16,10 @@ class Error extends React.Component<Props> {
 	};
 
 	render () {
-		const { text, className, dataset } = this.props;
+		const { id, text, className, dataset } = this.props;
 		const cn = [ 'error' ];
 
-		if (!text) {
+		if (!text && !id) {
 			return null;
 		};
 
@@ -28,6 +29,7 @@ class Error extends React.Component<Props> {
 		
 		return (
 			<div 
+				id={id}
 				className={cn.join(' ')}
 				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
 				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
