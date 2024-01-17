@@ -427,13 +427,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			offset += HEIGHT_EMPTY;
 		};
 
-
-		// height = Math.max(canAdd ? 36 : 172, height);
-
-
-
-		console.log('ITEMS LENGTH: ', items.length);
-
 		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
