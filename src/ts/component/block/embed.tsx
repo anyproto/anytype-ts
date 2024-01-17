@@ -626,34 +626,27 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
-					if (processor == I.EmbedProcessor.Kroki) {
-						if (!text.match(/^https:\/\/kroki.io"/)) {
-							const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
-							const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-							const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
+					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io"/)) {
+						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
+						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
+						const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
 
-							text = `https://kroki.io/${type}/svg/${result}`;
-							this.refType?.setValue(type);
-						};
+						text = `https://kroki.io/${type}/svg/${result}`;
+						this.refType?.setValue(type);
 					};
 
-					if (processor == I.EmbedProcessor.Telegram) {
+					if (block.isEmbedTelegram()) {
 						const m = text.match(/post="([^"]+)"/);
 
 						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
-					if (processor == I.EmbedProcessor.GithubGist) {
+					if (block.isEmbedGithubGist()) {
 						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
 					};
 
-					if (processor == I.EmbedProcessor.Sketchfab) {
-						if (text.match(/<(iframe|script)/)) {
-							const iframeReg = /<iframe.*?<\/iframe>/;
-							const iframeStr = text.match(iframeReg)?.[0] || '';
-
-							text = iframeStr;
-						};
+					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
+						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
