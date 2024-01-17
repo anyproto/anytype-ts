@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Title, Label, Select, Button, IconObject, ObjectName, Filter } from 'Component';
-import { I, translate, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
+import { detailStore } from 'Store';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
 
@@ -160,13 +161,20 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 	};
 
 	load () {
-		/*
+
+		console.log('HERE')
+
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: 'ot-profile' }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page }
 		];
 
-		C.ObjectSearch(filters, [], [], filter, 0, 0, (message: any) => {
+		UtilData.search({
+			filters,
+			sorts: [],
+			fullText: filter,
+		}, (message: any) => {
+			console.log('MESSAGE: ', message)
 			if (message.error.code || !message.records.length) {
 				return;
 			};
@@ -174,7 +182,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 			this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
 			this.forceUpdate();
 		});
-		*/
+
 	};
 
 	resize () {
