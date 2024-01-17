@@ -34,6 +34,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	timeoutChange = 0;
 	node = null;
 	refEditable = null;
+	refType = null
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -97,8 +98,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			select = (
 				<Select 
 					id={`block-${block.id}-select`} 
+					ref={ref => this.refType = ref}
 					value={type} 
-					options={this.getKrokiOptions()} 
+					options={UtilEmbed.getKrokiOptions()} 
 					arrowClassName="light" 
 					onChange={this.onKrokiTypeChange}
 					showOn="mouseDown"
@@ -402,13 +404,29 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const text = cb.getData('text/plain');
+		const { block } = this.props;
+		const { fields } = block;
+		const data = e.clipboardData || e.originalEvent.clipboardData;
+		const text = data.getData('text/plain');
 		const to = range.end + text.length;
+		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
 
-		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.from, range.to));
-		this.setRange({ from: to, to });
-		this.save();
+		const cb = () => {
+			this.setValue(value);
+			this.setRange({ from: to, to });
+			this.save();
+		};
+
+		if (block.isEmbedKroki()) {
+			const type = UtilEmbed.getKrokiType(value);
+			if (type && (type != fields.type)) {
+				this.onKrokiTypeChange(type, cb);
+			} else {
+				cb();
+			};
+		} else {
+			cb();
+		};
 	};
 
 	onFocusInput () {
@@ -420,13 +438,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.save();
 	};
 
-	onKrokiTypeChange (type: string) {
+	onKrokiTypeChange (type: string, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const { fields } = block;
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: block.id, fields: { ...fields, type } },
-		]);
+		], callBack);
 	};
 
 	onLatexTemplate (e: any) {
@@ -610,9 +628,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						if (!text.match(/^https:\/\/kroki.io"/)) {
 							const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 							const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-							const type = fields.type || this.getKrokiOptions()[0].id;
+							const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
 
 							text = `https://kroki.io/${type}/svg/${result}`;
+							this.refType?.setValue(type);
 						};
 					};
 
@@ -917,38 +936,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	getKrokiOptions () {
-		return [
-			{ id: 'blockdiag', name: 'BlockDiag' },
-			{ id: 'bpmn', name: 'BPMN' },
-			{ id: 'bytefield', name: 'Bytefield' },
-			{ id: 'seqdiag', name: 'SeqDiag' },
-			{ id: 'actdiag', name: 'ActDiag' },
-			{ id: 'nwdiag', name: 'NwDiag' },
-			{ id: 'packetdiag', name: 'PacketDiag' },
-			{ id: 'rackdiag', name: 'RackDiag' },
-			{ id: 'c4plantuml', name: 'C4 with PlantUML' },
-			{ id: 'd2', name: 'D2' },
-			{ id: 'dbml', name: 'DBML' },
-			{ id: 'ditaa', name: 'Ditaa' },
-			{ id: 'erd', name: 'Erd' },
-			{ id: 'excalidraw', name: 'Excalidraw' },
-			{ id: 'graphviz', name: 'GraphViz' },
-			{ id: 'mermaid', name: 'Mermaid' },
-			{ id: 'nomnoml', name: 'Nomnoml' },
-			{ id: 'pikchr', name: 'Pikchr' },
-			{ id: 'plantuml', name: 'PlantUML' },
-			{ id: 'structurizr', name: 'Structurizr' },
-			{ id: 'svgbob', name: 'Svgbob' },
-			{ id: 'symbolator', name: 'Symbolator' },
-			{ id: 'tikz', name: 'TikZ' },
-			{ id: 'vega', name: 'Vega' },
-			{ id: 'vegalite', name: 'Vega-Lite' },
-			{ id: 'wavedrom', name: 'WaveDrom' },
-			{ id: 'wireviz', name: 'WireViz' },
-		];
 	};
 
 	fixAsarPath (path: string): string {

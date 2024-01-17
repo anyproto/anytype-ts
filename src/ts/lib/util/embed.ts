@@ -233,8 +233,53 @@ class UtilEmbed {
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Kroki:
 			case I.EmbedProcessor.Graphviz: return 'dot';
 		};
+	};
+
+	getKrokiOptions () {
+		return [
+			{ id: 'blockdiag', name: 'BlockDiag' },
+			{ id: 'bpmn', name: 'BPMN' },
+			{ id: 'bytefield', name: 'Bytefield' },
+			{ id: 'seqdiag', name: 'SeqDiag' },
+			{ id: 'actdiag', name: 'ActDiag' },
+			{ id: 'nwdiag', name: 'NwDiag' },
+			{ id: 'packetdiag', name: 'PacketDiag' },
+			{ id: 'rackdiag', name: 'RackDiag' },
+			{ id: 'c4plantuml', name: 'C4 with PlantUML' },
+			{ id: 'd2', name: 'D2' },
+			{ id: 'dbml', name: 'DBML' },
+			{ id: 'ditaa', name: 'Ditaa' },
+			{ id: 'erd', name: 'Erd' },
+			{ id: 'excalidraw', name: 'Excalidraw' },
+			{ id: 'graphviz', name: 'GraphViz' },
+			{ id: 'mermaid', name: 'Mermaid' },
+			{ id: 'nomnoml', name: 'Nomnoml' },
+			{ id: 'pikchr', name: 'Pikchr' },
+			{ id: 'plantuml', name: 'PlantUML' },
+			{ id: 'structurizr', name: 'Structurizr' },
+			{ id: 'svgbob', name: 'Svgbob' },
+			{ id: 'symbolator', name: 'Symbolator' },
+			{ id: 'tikz', name: 'TikZ' },
+			{ id: 'vega', name: 'Vega' },
+			{ id: 'vegalite', name: 'Vega-Lite' },
+			{ id: 'wavedrom', name: 'WaveDrom' },
+			{ id: 'wireviz', name: 'WireViz' },
+		];
+	};
+
+	getKrokiType (s: string): string {
+		const options = this.getKrokiOptions();
+
+		for (const option of options) {
+			if (s.match(new RegExp(`^${option.id}`))) {
+				return option.id;
+			};
+		};
+
+		return '';
 	};
 
 	// Allow to use presentation mode in iframe sandbox

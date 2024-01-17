@@ -379,7 +379,6 @@ class Block implements I.Block {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Kroki);
 	};
 	
-	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
 	};
