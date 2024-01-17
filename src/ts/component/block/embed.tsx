@@ -758,7 +758,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						value.html(res.renderSVGElement(this.text));
 					} catch (e) {
 						console.error(e);
-						error.text(e.message).show();
+						error.text(e.toString()).show();
 					};
 				});
 				break;
