@@ -274,6 +274,7 @@ class UtilEmbed {
 			{ id: 'svgbob', name: 'Svgbob' },
 			{ id: 'symbolator', name: 'Symbolator' },
 			{ id: 'tikz', name: 'TikZ' },
+			{ id: 'umlet', name: 'UMlet' },
 			{ id: 'vega', name: 'Vega' },
 			{ id: 'vegalite', name: 'Vega-Lite' },
 			{ id: 'wavedrom', name: 'WaveDrom' },
