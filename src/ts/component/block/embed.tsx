@@ -34,7 +34,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	timeoutChange = 0;
 	node = null;
 	refEditable = null;
-	refType = null
+	refType = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -645,6 +645,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					if (processor == I.EmbedProcessor.GithubGist) {
 						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+					};
+
+					if (processor == I.EmbedProcessor.Sketchfab) {
+						if (text.match(/<(iframe|script)/)) {
+							const iframeReg = /<iframe.*?<\/iframe>/;
+							const iframeStr = text.match(iframeReg)?.[0] || '';
+
+							text = iframeStr;
+						};
 					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
