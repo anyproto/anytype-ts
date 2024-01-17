@@ -156,7 +156,16 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Bilibili: {
-				const { pathname, searchParams } = new URL(url);
+				let pathname = '';
+				let searchParam: any = null;
+
+				try {
+					const a = new URL(url);
+
+					pathname = a.pathname;
+					searchParam = a.searchParams;
+				} catch (e) { /**/ };
+
 				if (!pathname) {
 					break;
 				};
@@ -167,7 +176,7 @@ class UtilEmbed {
 				};
 
 				const bvid = pathname.split('/')[2];
-				const [ p = 1, t = 0 ] = [ searchParams.get('p'), searchParams.get('t') ];
+				const [ p = 1, t = 0 ] = [ searchParam.get('p'), searchParam.get('t') ];
 
 				if (bvid) {
 					url = `https://player.bilibili.com/player.html?bvid=${bvid}&p=${p}&t=${t}&high_quality=1&autoplay=0`;
