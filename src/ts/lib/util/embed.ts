@@ -73,6 +73,10 @@ class UtilEmbed {
 		return `<img src="${content}" />`;
 	};
 
+	getSketchfabHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -316,6 +320,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Sketchfab
 		].includes(p);
 	};
 
