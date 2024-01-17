@@ -199,14 +199,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								viewType={I.ViewType.Grid}
 								bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
-								iconSize={iconSize}
+								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}
 								readonly={!canEdit}
 								isInline={true}
 								idPrefix={PREFIX + block.id}
 								elementMapper={this.elementMapper}
 								showTooltip={true}
 								tooltipX={I.MenuDirection.Left}
-								arrayLimit={2}
+								arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
 								withLabel={true}
