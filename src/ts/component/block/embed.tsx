@@ -645,10 +645,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
 					};
 
-					if (processor == I.EmbedProcessor.Sketchfab && text.match(/<(iframe|script)/)) {
-						const iframeReg = /<iframe.*?<\/iframe>/;
-						const iframeStr = text.match(iframeReg)?.[0] || '';
-						text = iframeStr;
+					if (processor == I.EmbedProcessor.Sketchfab) {
+						if (text.match(/<(iframe|script)/)) {
+							const iframeReg = /<iframe.*?<\/iframe>/;
+							const iframeStr = text.match(iframeReg)?.[0] || '';
+
+							text = iframeStr;
+						};
 					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {

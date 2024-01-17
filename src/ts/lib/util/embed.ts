@@ -320,7 +320,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Kroki,
-			I.EmbedProcessor.Sketchfab
+			I.EmbedProcessor.Sketchfab,
 		].includes(p);
 	};
 
