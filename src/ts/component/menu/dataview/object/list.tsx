@@ -30,6 +30,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	cache: any = {};
 	offset = 0;
 	items: any[] = [];
+	typeNames: string = '';
 	refFilter: any = null;
 	refList: any = null;
 	top = 0;
@@ -68,9 +69,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						<div className="inner" />
 					</div>
 				);
-			} else
-			if (item.isEmpty) {
-				content = <EmptySearch style={param.style} text={translate('menuDataviewObjectListEmptySearch')} />;
 			}  else
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
@@ -168,6 +166,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		this.resize();
 		this.focus();
 		this.load(true);
+		this.checkType();
 	};
 
 	componentDidUpdate () {
@@ -248,29 +247,15 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const value = Relation.getArrayValue(data.value);
 		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
 
-		if (!ret.length) {
-			ret.push({ isEmpty: true });
-		};
-
-		if (types && types.length) {
-			const objectTypes = types.map(id => dbStore.getTypeById(id)).filter(it => it && it.name);
-			const names = objectTypes.map(it => it.name);
-			const l = names.length;
-			const limit = 2;
-
-			if (l > limit) {
-				names.splice(limit, l - limit);
-				names.push(`+${l - limit}`);
-			};
-
-			ret.unshift({ isSection: true, name: `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`});
-		};
-
 		if (data.filter && canAdd) {
-			if (ret.length) {
+			if (ret.length || this.typeNames) {
 				ret.push({ isDiv: true });
 			};
 			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+		};
+
+		if (ret.length && this.typeNames) {
+			ret.unshift({ isSection: true, name: this.typeNames });
 		};
 
 		return ret;
@@ -330,6 +315,26 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				this.forceUpdate();
 			};
 		});
+	};
+
+	checkType () {
+		const { param } = this.props;
+		const { data } = param;
+		const { types } = data;
+
+		if (types && types.length) {
+			const objectTypes = types.map(id => dbStore.getTypeById(id)).filter(it => it && it.name);
+			const names = objectTypes.map(it => it.name);
+			const l = names.length;
+			const limit = 2;
+
+			if (l > limit) {
+				names.splice(limit, l - limit);
+				names.push(`+${l - limit}`);
+			};
+
+			this.typeNames = `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		};
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -409,13 +414,28 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
-		const { noFilter, canAdd } = data;
+		const { noFilter, canAdd, filter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 
-		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		let offset = 16;
 
-		height = Math.max(canAdd ? 44 : 180, height);
+		if (!noFilter) {
+			offset += 36;
+		};
+		if (!items.length) {
+			offset += HEIGHT_EMPTY;
+		};
+
+
+		// height = Math.max(canAdd ? 36 : 172, height);
+
+
+
+		console.log('ITEMS LENGTH: ', items.length);
+
+		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
+		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
 		obj.css({ height });
 		position();

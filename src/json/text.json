@@ -78,7 +78,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object %s",
+	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
