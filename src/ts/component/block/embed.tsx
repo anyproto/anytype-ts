@@ -626,7 +626,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
-					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io"/)) {
+					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
 						const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;

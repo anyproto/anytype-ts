@@ -11,6 +11,7 @@ DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
 DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
 DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
+DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
