@@ -261,7 +261,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { top } = node.offset();
 		const bot = top + node.height();
 
-		this.setShowing((bot > st) && (top < st + wh));
+		if ((bot > st) && (top < st + wh)) {
+			this.setShowing(true);
+		};
 	};
 
 	getContainerId () {
