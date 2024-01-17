@@ -58,7 +58,7 @@ class Block implements I.Block {
 
 		makeObservable(this, {
 			layout: observable,
-			type: observable,
+			//type: observable,
 			hAlign: observable,
 			vAlign: observable,
 			bgColor: observable,
@@ -374,6 +374,11 @@ class Block implements I.Block {
 	isEmbedLatex (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Latex);
 	};
+
+	isEmbedKroki (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Kroki);
+	};
+	
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;

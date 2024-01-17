@@ -377,6 +377,7 @@ class Mark {
 	};
 
 	cleanHtml (html: string) {
+		html = String(html || '');
 		html = html.replace(/&nbsp;/g, ' ');
 		html = html.replace(/<br\/?>/g, '\n');
 

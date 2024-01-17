@@ -11,6 +11,8 @@ interface State {
 	isExpanded: boolean;
 };
 
+const LIMIT_PINNED = 5;
+
 class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	n = 0;
@@ -30,6 +32,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		super(props);
 
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
@@ -58,6 +61,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						lockToContainerEdges={true}
 						transitionDuration={150}
 						distance={10}
+						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEnd}
 						helperClass="isDragging"
 						helperContainer={() => $(`#${getId()} #section-${section.id} .items`).get(0)}
@@ -225,7 +229,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return it;
 			});
 
-			const pinned = items.filter(it => pinnedIds.includes(it.id));
+			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => UtilData.sortByPinnedTypes(c1, c2, pinnedIds));
 			const librarySources = library.map(it => it.sourceObject);
 			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
@@ -253,10 +257,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it);
+			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
-			items = items.slice(0, 5 - pinned.length);
+			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(dbStore.getSetType());
 			items.push(dbStore.getCollectionType());
 			items = [].concat(pinned, items);
@@ -398,16 +402,25 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			return;
 		};
 
+		if ([ 'add', 'search' ].includes(item.itemId)) {
+			return;
+		};
+
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
+		const type = dbStore.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
-		const canDefault = !UtilObject.getSetLayouts().includes(item.recommendedLayout);
-		const canDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const canPin = type.isInstalled;
+		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
+		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let options: any[] = [
 			{ id: 'open', name: translate('menuQuickCaptureOpenType') },
-			{ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) },
 		];
+
+		if (canPin) {
+			options.push({ id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) });
+		};
 
 		if (canDefault) {
 			options.push({ id: 'default', name: translate('commonSetDefault') });
@@ -487,12 +500,21 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		Preview.tooltipHide();
 	};
 
+	onSortStart () {
+		keyboard.disableSelection(true);
+		$(this.node).addClass('isDragging');
+		$('body').addClass('grab');
+	};
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		const pinned = Storage.getPinnedTypes();
 
 		Storage.setPinnedTypes(arrayMove(pinned, oldIndex, newIndex));
 		this.forceUpdate();
+
+		keyboard.disableSelection(false);
+		$('body').removeClass('grab');
 	};
 
 	beforePosition () {
@@ -501,6 +523,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		node.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+
+			item.css({ width: Math.ceil(item.outerWidth()) });
 		});
 	};
 

@@ -50,7 +50,7 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
-        .viewContent.viewGrid { width: 100%; position: relative; }
+        .viewContent.viewGrid { width: 100%; position: relative; padding: 0px 0px 80px 0px; }
 		.viewContent.viewGrid {
 			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
 
@@ -141,6 +141,7 @@
     }
 
 	.block.blockDataview.isInline {
+		.viewContent.viewGrid { padding: 0px; }
 		.viewContent.viewGrid {
 			.row { height: 40px; }
 

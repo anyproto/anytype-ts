@@ -45,9 +45,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		let arrow = null;
 		let onArrowClick = null;
 
+		/*
 		if (layout == I.ObjectLayout.Collection) {
 			arrow = <Icon className="collection" />;
 		} else
+		*/
 		if (layout == I.ObjectLayout.Set) {
 			arrow = <Icon className="set" />;
 		} else

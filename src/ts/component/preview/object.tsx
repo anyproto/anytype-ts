@@ -440,7 +440,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			onMouseLeave(e);
 		};
 
-		 $(this.node).removeClass('hover');
+		$(this.node).removeClass('hover');
 	};
 
 	load () {

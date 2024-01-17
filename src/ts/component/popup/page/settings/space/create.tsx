@@ -204,7 +204,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			this.setState({ isLoading: false });
 
 			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime,  });
+				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
 				analytics.event('SelectUsecase', { type: usecase });
 
 				if (onCreate) {

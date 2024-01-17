@@ -42,13 +42,14 @@ class CommonStore {
 	public defaultType = '';
 	public pinTimeId = 0;
 	public isFullScreen = false;
-	public autoSidebarValue = false;
-	public isSidebarFixedValue = null;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
 	public techSpaceId = '';
 	public notionToken = '';
+	public autoSidebarValue = null;
+	public isSidebarFixedValue = null;
+	public showRelativeDatesValue = null;
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -165,15 +166,11 @@ class CommonStore {
 	};
 
 	get autoSidebar(): boolean {
-		return Boolean(this.autoSidebarValue || Storage.get('autoSidebar'));
+		return this.boolGet('autoSidebar');
 	};
 
 	get isSidebarFixed(): boolean {
-		if (this.isSidebarFixedValue === null) {
-			this.isSidebarFixedValue = !!Storage.get('isSidebarFixed');
-		};
-
-		return !!this.isSidebarFixedValue;
+		return this.boolGet('isSidebarFixed');
 	};
 
 	get theme(): string {
@@ -203,6 +200,10 @@ class CommonStore {
 
 	get interfaceLang (): string {
 		return this.config.interfaceLang || Constant.default.interfaceLang;
+	};
+
+	get showRelativeDates (): boolean {
+		return this.boolGet('showRelativeDates');
 	};
 
     gatewaySet (v: string) {
@@ -305,15 +306,15 @@ class CommonStore {
 	};
 
 	autoSidebarSet (v: boolean) {
-		this.autoSidebarValue = Boolean(v);
-
-		Storage.set('autoSidebar', this.autoSidebarValue);
+		this.boolSet('autoSidebar', v);
 	};
 
 	isSidebarFixedSet (v: boolean) {
-		this.isSidebarFixedValue = Boolean(v);
+		this.boolSet('isSidebarFixed', v);
+	};
 
-		Storage.set('isSidebarFixed', this.isSidebarFixedValue);
+	showRelativeDatesSet (v: boolean) {
+		this.boolSet('showRelativeDates', v);
 	};
 
 	fullscreenSet (v: boolean) {
@@ -336,6 +337,21 @@ class CommonStore {
 
 	notionTokenSet (v: string) {
 		this.notionToken = v;
+	};
+
+	boolGet (k: string) {
+		const tk = `${k}Value`;
+		if (this[tk] === null) {
+			this[tk] = Storage.get(k);
+		};
+		return !!this[tk];
+	};
+
+	boolSet (k: string, v: boolean) {
+		v = Boolean(v);
+
+		this[`${k}Value`] = v;
+		Storage.set(k, v);
 	};
 
 	getThemeClass () {

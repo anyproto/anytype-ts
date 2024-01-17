@@ -192,6 +192,7 @@ export interface Block {
 
 	isEmbed?(): boolean;
 	isEmbedLatex?(): boolean;
+	isEmbedKroki?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

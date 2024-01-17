@@ -61,7 +61,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 100);
+			this.timeoutLoading = window.setTimeout(() => this.setLoading(false), 100);
 		};
 	};
 
@@ -166,7 +166,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			const margin = (cw - mw) / 2;
 			const { top } = node.offset();
 
-			node.css({ width: cw, height: Math.max(600, ch - top), marginLeft: -margin - 2 });
+			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
 		};
 
 		if (this.refGraph) {

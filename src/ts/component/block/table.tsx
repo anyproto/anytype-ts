@@ -1182,7 +1182,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { rootId } = this.props;
 
-		C.BlockTableColumnMove(rootId, id, targetId, position);
+		C.BlockTableColumnMove(this.props.rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);

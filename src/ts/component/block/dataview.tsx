@@ -776,16 +776,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateId: this.getDefaultTemplateId(),
 				route,
 				onTypeChange: (id) => {
-					if (id != this.getTypeId()) {
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-
-						analytics.event('DefaultTypeChange', { route });
+					if (!view || (id == this.getTypeId())) {
+						return;
 					};
+
+					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+					analytics.event('DefaultTypeChange', { route });
 				},
 				onSetDefault: (item) => {
-					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+					if (view) {
+						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+					};
 				},
 				onSelect: (item: any) => {
+					if (!view) {
+						return;
+					};
+
 					const typeId = this.getTypeId();
 					const type = dbStore.getTypeById(typeId);
 

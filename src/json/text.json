@@ -595,6 +595,7 @@
 	"popupSettingsAppearanceColorModeButtonSystem": "System",
 	"popupSettingsAppearancePersonalisation": "Personalisation",
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
+	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
@@ -836,7 +837,6 @@
 	"popupShortcutBasics": "Basics",
 	"popupShortcutMainBasics1": "Create new Object",
 	"popupShortcutMainBasics2": "New Anytype window",
-	"popupShortcutMainBasics3": "Create a new Object in new window",
 	"popupShortcutMainBasics4": "Opens Object in new window from search interface",
 	"popupShortcutMainBasics5": "Toggle fullscreen",
 	"popupShortcutMainBasics6": "Undo",
@@ -997,9 +997,6 @@
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
-
-	"menuCalendarToday": "Today",
-	"menuCalendarTomorrow": "Tomorrow",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -1169,6 +1166,7 @@
 	"menuDataviewViewEditCardSize": "Card size",
 	"menuDataviewViewEditFitMedia": "Fit media",
 	"menuDataviewViewEditGroupBy": "Group by",
+	"menuDataviewViewEditDate": "Date relation",
 	"menuDataviewViewEditColorColumns": "Color columns",
 	"menuDataviewViewEditShowIcon": "Show icon",
 	"menuDataviewViewEditPageLimit": "Page limit",
