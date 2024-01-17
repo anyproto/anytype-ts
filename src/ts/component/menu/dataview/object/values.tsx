@@ -285,7 +285,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const relation = data.relation.get();
 
 		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - 1, newIndex - 1);
+		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
 
 		onChange(value, () => menuStore.updateData(id, { value }));
