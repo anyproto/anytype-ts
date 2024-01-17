@@ -309,6 +309,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Graphviz,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
