@@ -604,8 +604,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						if (!text.match(/^https:\/\/kroki.io"/)) {
 							const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 							const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
+							const type = fields.type || this.getKrokiOptions()[0].id;
 
-							text = `https://kroki.io/${fields.type}/svg/${result}`;
+							text = `https://kroki.io/${type}/svg/${result}`;
 						};
 					};
 
