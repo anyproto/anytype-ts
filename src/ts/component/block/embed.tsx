@@ -164,6 +164,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					onKeyDown={this.onKeyDownInput}
 					onInput={this.onChange}
 					onPaste={this.onPaste}
+					onMouseDown={this.onSelect}
 				/>
 			</div>
 		);
@@ -831,11 +832,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const win = $(window);
-
 		keyboard.disableSelection(true);
 
-		win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
+		const win = $(window);
+		win.off('mouseup.embed').on('mouseup.embed', () => {	
 			keyboard.disableSelection(false);
 			win.off('mouseup.embed');
 		});
