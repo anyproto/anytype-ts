@@ -244,41 +244,26 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filters } = data;
+		const { canAdd, types } = data;
 		const value = Relation.getArrayValue(data.value);
 		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
-		const types = [];
 
 		if (!ret.length) {
 			ret.push({ isEmpty: true });
 		};
 
-		if (filters && filters.length) {
-			filters.forEach((filter) => {
-				const { relationKey, condition, value } = filter;
-
-				if ((relationKey == 'type') && (condition == I.FilterCondition.In)) {
-					value.forEach((typeId) => {
-						const type = dbStore.getTypeById(typeId);
-
-						if (type && type.name) {
-							types.push(type.name);
-						};
-					});
-				};
-			});
-		};
-
-		if (types.length) {
-			const l = types.length;
+		if (types && types.length) {
+			const objectTypes = types.map(id => dbStore.getTypeById(id)).filter(it => it && it.name);
+			const names = objectTypes.map(it => it.name);
+			const l = names.length;
 			const limit = 2;
 
 			if (l > limit) {
-				types.splice(limit, l - limit);
-				types.push(`+${l - limit}`);
+				names.splice(limit, l - limit);
+				names.push(`+${l - limit}`);
 			};
 
-			ret.unshift({ isSection: true, name: `${UtilCommon.plural(types, translate('pluralObjectType'))}: ${types.join(', ')}`});
+			ret.unshift({ isSection: true, name: `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`});
 		};
 
 		if (data.filter && canAdd) {
@@ -304,6 +289,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (types && types.length) {
 			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
+
 			if (map.length) {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
 			};
