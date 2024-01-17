@@ -6,6 +6,9 @@
 	}
 
 	.menu.menuBlockAction { width: 240px; }
+	.menu.menuBlockAction {
+		.content { padding-top: 12px; }
+	}
 
 	.menu.menuBlockMore { width: 256px; }
 	.menu.menuBlockMore {

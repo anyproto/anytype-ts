@@ -36,7 +36,7 @@
 		.titleWrapper { padding-bottom: 0px; }
 		.content { padding: 0px; }
 
-		.item { padding: 4px 16px 4px 10px; }
+		.item:not(.add) { padding: 4px 16px 4px 12px; }
 		.item {
 			.name { @include text-overflow-nw; }
 			.clickable { width: calc(100% - 24px) !important; }

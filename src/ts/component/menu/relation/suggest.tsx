@@ -470,7 +470,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 38 : 0)));
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 42 : 0)));
 
 		obj.css({ height });
 		position();
