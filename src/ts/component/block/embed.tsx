@@ -248,7 +248,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'mousedown', 'online', 'offline', 'scroll', 'resize' ];
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -287,7 +287,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const length = this.text.length;
 				this.setRange({ from: length, to: length });
 			} else {
-				$(window).off(`mousedown.${block.id}`);
+				$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
+				keyboard.disableSelection(false);
 			};
 		});
 	};
@@ -832,12 +833,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
+		const { block } = this.props;
+
 		keyboard.disableSelection(true);
 
 		const win = $(window);
-		win.off('mouseup.embed').on('mouseup.embed', () => {	
+		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	
 			keyboard.disableSelection(false);
-			win.off('mouseup.embed');
+			win.off(`mouseup.${block.id}`);
 		});
 	};
 
@@ -854,7 +857,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
-		win.off('mousemove.embed mouseup.embed');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
 		if (selection) {
 			selection.hide();
@@ -864,8 +867,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(true);
 
 		$(`#block-${block.id}`).addClass('isResizing');
-		win.on('mousemove.embed', e => this.onResizeMove(e, checkMax));
-		win.on('mouseup.embed', e => this.onResizeEnd(e, checkMax));
+		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
+		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
 	
 	onResizeMove (e: any, checkMax: boolean) {
@@ -914,7 +917,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
-		win.off('mousemove.embed mouseup.embed');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		$(`#block-${block.id}`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [

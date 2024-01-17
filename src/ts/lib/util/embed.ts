@@ -55,9 +55,14 @@ class UtilEmbed {
 	};
 
 	getCodepenHtml (content: string): string {
-		const a = new URL(content);
-		const p = a.pathname.split('/');
+		let p = [];
 
+		try {
+			const a = new URL(content);
+
+			p = a.pathname.split('/');
+		} catch (e) { /**/ };
+		
 		if (!p.length) {
 			return '';
 		};
@@ -350,6 +355,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
@@ -389,6 +395,7 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
