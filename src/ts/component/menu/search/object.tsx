@@ -140,7 +140,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => this.refFilter = ref} 
+						ref={ref => this.refFilter = ref}
+						className="outlined"
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -529,7 +530,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 44);
+		let height = 16 + (noFilter ? 0 : 38);
 		if (!items.length) {
 			height = isLoading ? height + 40 : 160;
 		} else {

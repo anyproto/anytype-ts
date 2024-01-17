@@ -381,11 +381,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 	resize () {
 		const { getId, position, param } = this.props;
-		const { data } = param;
+		const { data, title } = param;
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = noFilter ? 16 : 50;
+		const offset = 16 + (noFilter ? 0 : 38);
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });

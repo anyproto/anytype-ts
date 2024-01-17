@@ -421,7 +421,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		let offset = 16;
 
 		if (!noFilter) {
-			offset += 36;
+			offset += 42;
 		};
 		if (!items.length) {
 			offset += HEIGHT_EMPTY;

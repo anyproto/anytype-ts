@@ -7,11 +7,11 @@
 		.content { padding: 0px; transition: none; }
 		
 		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.wrap.withFilter { padding-top: 8px; }
+		.wrap.withFilter { padding-top: 12px; }
 		.wrap.withFilter {
-			.items { height: calc(100% - 36px); }
-			.emptySearch { height: calc(100% - 36px); }
-			.loaderWrapper { top: 44px; height: calc(100% - 36px); }
+			.items { height: calc(100% - 30px); }
+			.emptySearch { height: calc(100% - 30px); }
+			.loaderWrapper { top: 30px; height: calc(100% - 30px); }
 		}
 
 		.items { height: 100%; }

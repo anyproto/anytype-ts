@@ -107,7 +107,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => this.refFilter = ref} 
+						ref={ref => this.refFilter = ref}
+						className="outlined"
 						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -468,7 +469,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 44 : 0)));
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 38 : 0)));
 
 		obj.css({ height });
 		position();
