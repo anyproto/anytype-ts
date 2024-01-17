@@ -69,7 +69,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { width, type } = fields || {};
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-		const text = String(content.text || '').trim();
+		const text = String(content.text || '');
 		const css: any = {};
 
 		if (width) {
@@ -518,7 +518,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setText (text: string) {
-		this.text = String(text || '').trim();
+		this.text = String(text || '');
 	};
 
 	setValue (value: string) {
@@ -812,7 +812,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const value = this.getValue().trim();
+		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
 		C.BlockLatexSetText(rootId, block.id, value, callBack);

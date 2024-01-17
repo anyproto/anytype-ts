@@ -95,8 +95,10 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Vimeo: {
-				const a = new URL(url);
-				url = `https://player.vimeo.com/video${a.pathname}`;
+				try {
+					const a = new URL(url);
+					url = `https://player.vimeo.com/video${a.pathname}`;
+				} catch (e) { /**/ };
 				break;
 			};
 
