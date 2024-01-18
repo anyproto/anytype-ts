@@ -320,8 +320,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		items.each((i: number, item) => this.textStyle($(item)));
-
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
 			const sr = UtilCommon.getSelectionRange();
@@ -406,8 +404,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
 			};
-
-			this.textStyle(item);
 		});
 
 		items.off('mouseenter.object mouseleave.object');
@@ -520,8 +516,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 			});
 
-			this.textStyle(item);
-
 			name.off('mouseenter.mention');
 			name.on('mouseenter.mention', e => {
 				const sr = UtilCommon.getSelectionRange();
@@ -586,10 +580,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
-	};
-
-	textStyle (obj: any) {
-		UtilCommon.textStyle(obj, { border: 0.4 });
 	};
 
 	emojiParam (style: I.TextStyle) {

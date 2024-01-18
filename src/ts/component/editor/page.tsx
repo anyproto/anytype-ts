@@ -371,17 +371,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		win.on('focus.editor' + namespace, () => {
 			const isPopupOpen = popupStore.isOpen('', [ 'page' ]);
-			const isMenuOpen = menuStore.isOpen();
-			const isMenuContextOpen = menuStore.isOpen('blockContext');
+			const isMenuOpen = menuStore.isOpen('', '', [ 'blockContext' ]);
 
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && (!isMenuOpen || isMenuContextOpen) && !isPopupOpen) {
+			if (!ids.length && !isMenuOpen && !isPopupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
+
 			container.scrollTop(this.containerScrollTop);
 		});
 

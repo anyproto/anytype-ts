@@ -35,6 +35,8 @@ html.themeDark {
 
 	/* System */
 
+	--color-system-accent-50: #9f6b00;
+	--color-system-accent-25: #f09c0e;
 	--color-system-selection: rgba(24, 163, 241, 0.15);
 
     /* Common */
@@ -113,6 +115,11 @@ html.themeDark {
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
         }
     }
+
+	.switch { background: var(--color-shape-secondary); }
+	.switch {
+		.inner { background-color: #fff; }
+	}
 
     /* Button */
 

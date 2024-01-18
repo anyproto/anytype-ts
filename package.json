@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.37.7-alpha",
+	"version": "0.37.12-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -124,6 +124,7 @@
 		"mobx-react": "^7.5.2",
 		"node-gyp": "^9.0.0",
 		"os": "^0.1.1",
+		"pako": "^2.1.0",
 		"pdfjs-dist": "^2.14.305",
 		"prismjs": "^1.21.0",
 		"qrcode.react": "^1.0.1",
@@ -252,10 +253,6 @@
 			{
 				"from": "node_modules/file-type",
 				"to": "node_modules/file-type"
-			},
-			{
-				"from": "node_modules/pify",
-				"to": "node_modules/pify"
 			},
 			{
 				"from": "node_modules/@electron",

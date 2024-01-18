@@ -374,6 +374,22 @@ class Block implements I.Block {
 	isEmbedLatex (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Latex);
 	};
+
+	isEmbedKroki (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Kroki);
+	};
+
+	isEmbedTelegram (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Telegram);
+	};
+
+	isEmbedGithubGist (): boolean { 
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.GithubGist);
+	};
+
+	isEmbedSketchfab (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;

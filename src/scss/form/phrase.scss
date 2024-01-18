@@ -1,15 +1,10 @@
 @import "~scss/_vars";
 
-$colorInputOpaque: #17171799;
-$colorErrorBackground: #240e07;
-
 .phraseWrapper {
-	border-radius: 24px; background: $colorInputOpaque; width: 100%; position: relative; padding: 23px 48px;
+	border-radius: 24px; background: #17171799; width: 100%; position: relative; padding: 23px 48px;
 	font-size: 18px; line-height: 38px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
-	--color-text-tertiary: #505050;
-
 	.phraseInnerWrapper { word-break: break-word; min-height: 38px; position: relative; z-index: 1; }
 
 	.word { 
@@ -47,4 +42,4 @@ $colorErrorBackground: #240e07;
 .phraseWrapper.isReadonly {
 	#entry { display: none; }
 }
-.phraseWrapper.hasError { background: $colorErrorBackground; }
+.phraseWrapper.hasError { background: #240e07; }

@@ -53,6 +53,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					displayMode: true,
 					throwOnError: false,
 					output: 'html',
+					fleqn: false,
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				});
 
