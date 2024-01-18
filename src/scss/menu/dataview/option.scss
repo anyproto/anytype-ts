@@ -10,12 +10,12 @@
 				.items { height: 100%; }
 			}
 
-			.items { height: calc(100% - 34px); }
+			.items { height: calc(100% - 38px); }
 		}
 
 		.item {
 			.clickable { width: calc(100% - 20px); }
-			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
+			.buttons { display: none; position: absolute; right: 14px; top: 4px; }
 		}
 		.item:hover, .item.hover {
 			.clickable { width: calc(100% - 24px); }
@@ -30,7 +30,8 @@
 	.menu.menuDataviewOptionEdit { width: 256px; }
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
-		.filter { margin-bottom: 8px; }
+		.filter { padding-left: 16px; padding-right: 16px; margin-bottom: 8px; }
+		.item { padding-left: 16px; padding-right: 16px; }
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item.active::before { z-index: 1; }
 
@@ -67,8 +68,9 @@
 
 	.menu.menuDataviewOptionList.featuredRelation {
 		.titleWrapper { padding-bottom: 0px; }
+		.filter { padding-top: 8px; }
 		.item {
-			.icon.chk { right: 8px; }
+			.icon.chk { right: 14px; }
 		}
 		.item:hover, .item.hover {
 			.buttons { display: block; }

@@ -58,7 +58,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					ref={ref => this.refName = ref}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'v2 textColor-' + this.color}
+					className={'outlined textColor-' + this.color}
 					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
@@ -194,7 +194,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		if (onChange) {
 			onChange(value);
 		};
-		
+
 		close();
 	};
 

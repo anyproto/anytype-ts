@@ -92,8 +92,9 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		return (
 			<div className="wrap">
-				<Filter 
-					ref={ref => this.refFilter = ref} 
+				<Filter
+					ref={ref => this.refFilter = ref}
+					className="outlined"
 					placeholderFocus={translate('commonFilterObjects')}
 					value={filter}
 					onChange={this.onFilterChange} 
