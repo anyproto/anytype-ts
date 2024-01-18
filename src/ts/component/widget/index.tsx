@@ -512,7 +512,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { targetBlockId } = child.content;
 		const space = UtilObject.getSpaceview();
 		const templateType = dbStore.getTemplateType();
- 		const sorts = [];
+		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },

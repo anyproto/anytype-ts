@@ -4,6 +4,9 @@
     .menu.menuQuickCapture { box-shadow: none; background: none; position: fixed; }
     .menu.menuQuickCapture {
         .wrap { display: flex; flex-direction: column; width: 100%; }
+		.wrap.isDragging {
+			.item.hover:before { display: none; }
+		}
 		
 		.filter { @include text-paragraph; padding: 0px 16px; }
 		.filter {
@@ -13,15 +16,16 @@
 		}
 
 		.section { height: auto; padding: 0px; border: 0px; }
-		.section > .name { @include text-small; color: $colorTextSecondary; padding: 4px 0px; margin: 0px 0px 4px 0px; width: 100%; flex-shrink: 0; }
+		.section > .name { @include text-small; color: var(--color-text-secondary); padding: 4px 0px; margin: 0px 0px 4px 0px; width: 100%; flex-shrink: 0; }
 
 		.items { display: flex; gap: 0px 8px; }
 
 		.item {
 			position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; gap: 0px 8px; padding: 0px 14px;
-			background: $colorBgPrimary; border: 1px solid $colorShapeHighlightMedium; border-radius: 10px; overflow: hidden;
+			background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: 10px; overflow: hidden;
 			box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.07); transition: $transitionAllCommon; max-width: 200px; font-weight: 500;
 		}
+		.item.isDragging { z-index: 1; width: auto; }
 		.item {
 			.icon { margin-right: 0; flex-shrink: 0; }
 			.iconObject { flex-shrink: 0; }
@@ -31,12 +35,12 @@
 			.name { width: calc(100% - 20px); }
 		}
 		.item.hover:before { 
-			content: ''; position: absolute; z-index: 0; width: 100%; height: 100%; left: 0px; top: 0px; background: $colorShapeHighlightLight; 
+			content: ''; position: absolute; z-index: 0; width: 100%; height: 100%; left: 0px; top: 0px; background: var(--color-shape-highlight-light); 
 		}
     }
 
     .menu.menuQuickCapture.isExpanded { 
-		width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: $colorBgPrimary; padding: 0px; border-radius: 12px; 
+		width: 600px; box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.20); background: var(--color-bg-primary); padding: 0px; border-radius: 12px; 
 	}
     .menu.menuQuickCapture.isExpanded {
 		.wrap { height: 312px; }
@@ -45,7 +49,7 @@
 		.items { flex-wrap: wrap; gap: 8px;  }
 		.item { box-shadow: none; }
 		.item.isDefault {
-			border-color: $colorSystemAccent100; box-shadow: 0px 0px 0px 1px $colorSystemAccent100 inset !important;
+			border-color: var(--color-system-accent-100); box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset !important;
 		}
     }
 }

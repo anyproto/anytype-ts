@@ -22,9 +22,8 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { languages, zoom, hideMenuBar } = ConfigManager.config;
+		const { hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -87,7 +86,6 @@ class WindowManager {
 
 			webPreferences: {
 				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
-				devTools: is.development,
 			},
 		};
 
@@ -132,6 +130,10 @@ class WindowManager {
 		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
+
+		if (is.development) {
+			win.toggleDevTools();
+		};
 
 		return win;
 	};

@@ -2,34 +2,34 @@
 
 .previewObject { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
 .previewObject {
-	.loaderWrapper { width: 100%; height: 100% !important; margin: 0px; border: 1px solid $colorShapeSecondary; border-radius: 8px; }
+	.loaderWrapper { width: 100%; height: 100% !important; margin: 0px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/icon/type/logo.svg'); z-index: 1; }
 
 	.moreWrapper {
 		position: absolute; z-index: 2; right: 8px; top: 8px; border-radius: 6px; width: 28px; height: 28px; display: flex;
-		align-items: center; justify-content: center; background: $colorShapeTertiary; opacity: 0; transition: $transitionAllCommon;
+		align-items: center; justify-content: center; background: var(--color-shape-tertiary); opacity: 0; transition: $transitionAllCommon;
 	}
 	.moreWrapper {
 		.icon { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); }
 	}
 
 	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
-	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid $colorShapeSecondary; border-radius: 8px; z-index: 1; }
+	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid var(--color-shape-secondary); border-radius: 8px; z-index: 1; }
 	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: $colorShapeTertiary; border-radius: 8px; margin: 0px 0px 2px 0px; box-shadow: 0px 0px 0px 2px $colorBgPrimary inset; }
+		.iconObject { display: inline-block; background-color: var(--color-shape-tertiary); border-radius: 8px; margin: 0px 0px 2px 0px; box-shadow: 0px 0px 0px 2px var(--color-bg-primary) inset; }
 		.iconObject {
-			.iconImage { border: 2px solid $colorBgPrimary; }
+			.iconImage { border: 2px solid var(--color-bg-primary); }
 		}
 		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; box-shadow: 0px 0px !important; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 700; position: relative; width: 100%; }
 		.description { @include text-small; @include text-overflow-nw; }
 
-		.featured { width: 25px; height: 4px; background: $colorShapeSecondary; }
+		.featured { width: 25px; height: 4px; background: var(--color-shape-secondary); }
 		.featured {
-			.bullet { width: 2px; height: 2px; border-radius: 50%; background: $colorControlActive; display: inline-block; vertical-align: middle; margin: -1px 4px 0px 4px; }
+			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-control-active); display: inline-block; vertical-align: middle; margin: -1px 4px 0px 4px; }
 		}
 	}
 
@@ -49,7 +49,7 @@
 				.icon.toggle { background-image: url('~img/icon/object/preview/toggle.svg'); }
 
 				.number {
-					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: $colorTextSecondary; margin-right: 4px; flex-shrink: 0;
+					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: var(--color-text-secondary); margin-right: 4px; flex-shrink: 0;
 					vertical-align: top;
 				}
 
@@ -64,7 +64,7 @@
 				.bookmark {
 					.line { height: 4px; }
 
-					.side.left { width: 66.66%; border: 1px solid $colorShapeSecondary; border-right: 0px; border-radius: 8px 0px 0px 8px; padding: 15px 16px 12px 16px; }
+					.side.left { width: 66.66%; border: 1px solid var(--color-shape-secondary); border-right: 0px; border-radius: 8px 0px 0px 8px; padding: 15px 16px 12px 16px; }
 					.side.left {
 						.name { margin-bottom: 10px; }
 						.name {
@@ -89,7 +89,7 @@
 					}
 				}
 
-				.line { margin: 5px 0px; height: 6px; background: $colorShapeSecondary; display: inline-block; vertical-align: top; width: 100%; }
+				.line { margin: 5px 0px; height: 6px; background: var(--color-shape-secondary); display: inline-block; vertical-align: top; width: 100%; }
 				.line.odd { width: 50%; }
 			}
 			.children { width: 100%; }
@@ -157,7 +157,7 @@
 
 .previewObject.blank {
 	.heading {
-		.name { color: $colorTextTertiary; }
+		.name { color: var(--color-text-tertiary); }
 	}
 }
 

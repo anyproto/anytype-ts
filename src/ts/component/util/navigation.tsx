@@ -33,7 +33,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${alt} + Shift + N`, onClick: this.onAdd, onMouseEnter: () => this.onQuickCapture() },
+			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / Ctrl + ${alt} + N`, onClick: this.onAdd, onMouseEnter: () => this.onQuickCapture() },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		];

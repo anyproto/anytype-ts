@@ -35,7 +35,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	constructor (props: Props) {
 		super(props);
 		
-		this.onSortStart = this.onSortStart.bind(this)
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 

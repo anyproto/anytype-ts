@@ -168,6 +168,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				window.setTimeout(() => loadData(message.views[0].id, 0, true), 50);
 			};
 
+			if (isNew) {
+				this.menuContext?.close();
+				this.setEditing(true);
+			};
+
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
 		};
 

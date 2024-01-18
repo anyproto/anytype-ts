@@ -1,0 +1,22 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "extensions": {
+        "recommendations": [
+            "aaron-bond.better-comments",
+            "github.copilot",
+            "eamodio.gitlens",
+            "timonwong.shellcheck",
+            "dbaeumer.vscode-eslint"
+        ]
+    },
+    "settings": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
+        "debug.inlineValues": "on"
+    }
+}

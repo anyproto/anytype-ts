@@ -250,7 +250,7 @@ class Keyboard {
 				this.pageCreate({}, 'Shortcut');
 			});
 
-			this.shortcut(`alt+shift+n`, e, () => {
+			this.shortcut(`ctrl+alt+n`, e, () => {
 				e.preventDefault();
 				this.onQuickCapture();
 			});

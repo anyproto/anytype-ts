@@ -36,10 +36,10 @@
 		.layouts {
 			.layout {
 				width: 104px; height: 88px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-				border: 1px solid $colorShapeSecondary; border-radius: 8px;
+				border: 1px solid var(--color-shape-secondary); border-radius: 8px;
 			}
 			.layout {
-				.label { @include text-small; color: $colorTextSecondary; }
+				.label { @include text-small; color: var(--color-text-secondary); }
 				.icon.view { width: 56px; height: 56px; }
 				.icon.view.c0 { background-image: url('~img/icon/dataview/layout/grid0.svg'); }
 				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list0.svg'); }
@@ -48,11 +48,11 @@
 				.icon.view.c4 { background-image: url('~img/icon/dataview/layout/calendar0.svg'); }
 			}
 
-			.layout:hover { background-color: $colorShapeHighlightLight; }
+			.layout:hover { background-color: var(--color-shape-highlight-light); }
 
-			.layout.active { border: 2px solid $colorOrange; }
+			.layout.active { border: 2px solid var(--color-system-accent-100); }
 			.layout.active {
-				.label { font-weight: 500; color: $colorOrange; }
+				.label { font-weight: 500; color: var(--color-system-accent-100); }
 				.icon.view.c0 { background-image: url('~img/icon/dataview/layout/grid1.svg'); }
 				.icon.view.c1 { background-image: url('~img/icon/dataview/layout/list1.svg'); }
 				.icon.view.c2 { background-image: url('~img/icon/dataview/layout/gallery1.svg'); }

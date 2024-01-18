@@ -231,7 +231,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				this.accountCreate(() => next());
 			};
 		} else {
-			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }));
+			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
+				Storage.initPinnedTypes();
+			}));
 
 			if (!name) {
 				analytics.event('ScreenOnboardingSkipName');
@@ -300,7 +302,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.isSidebarFixedSet(true);
 
 					UtilData.onInfo(message.account.info);
-					Storage.initPinnedTypes();
 					Renderer.send('keytarSet', message.account.id, phrase);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });

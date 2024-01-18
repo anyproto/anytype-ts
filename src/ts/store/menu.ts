@@ -78,7 +78,7 @@ class MenuStore {
 		if (idx >= 0) {
 			set(this.menuList[idx], { id: newId, param });
 		} else {
-			this.menuList.push({ id: newId, param })
+			this.menuList.push({ id: newId, param });
 		};
 	};
 
@@ -169,6 +169,13 @@ class MenuStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
+		if (!items.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
 		const timeout = this.getTimeout(items);
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));

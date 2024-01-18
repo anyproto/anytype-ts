@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics } from 'Lib';
+import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics, Storage } from 'Lib';
 import { authStore, dbStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -227,7 +227,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				page: 'spaceCreate', 
 				isSpace: true,
 				onCreate: (id) => {
-					UtilRouter.switchSpace(id, '');
+					UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
 					analytics.event('SwitchSpace');
 				},
 			}, 
