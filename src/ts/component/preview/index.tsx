@@ -105,7 +105,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 		const { preview } = commonStore;
 		const { type, target } = preview;
-		const { object } = this.state;
+		const object = this.state.object || preview.object;
 
 		switch (type) {
 			case I.PreviewType.Link: {

@@ -389,11 +389,11 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             sources: sources || [],
 			collectionId: collectionId || ''
         }, (message) => {
-           this.setState({ isLoading: false });
+			this.setState({ isLoading: false });
 
-		   if (onAfterLoad) {
-			   onAfterLoad(message);
-		   };
+			if (onAfterLoad) {
+				onAfterLoad(message);
+			};
         });
     };
 

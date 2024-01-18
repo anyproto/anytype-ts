@@ -35,7 +35,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	constructor (props: Props) {
 		super(props);
 		
-		this.onSortStart = this.onSortStart.bind(this)
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
@@ -58,10 +58,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let content = null;
 
-		if (isLoading) {
-			content = <Loader />;
-		} else
-		if (!length) {
+		if (!isLoading && !length) {
 			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
 		} else
 		if (isPreview) {
@@ -211,6 +208,9 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 				};
 			});
 		};
+
+		this.initCache();
+		this.forceUpdate();
 	};
 
 	componentDidUpdate (): void {
@@ -219,29 +219,29 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const view = Dataview.getView(rootId, BLOCK_ID);
-		const records = this.getRecords();		
 
 		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
 			this.load(viewId);
 		};
 
+		this.initCache();
+		this.resize();
+	};
+
+	componentWillUnmount(): void {
+		C.ObjectSearchUnsubscribe([ dbStore.getSubId(this.getRootId(), BLOCK_ID) ]);
+	};
+
+	initCache () {
 		if (!this.cache) {
+			const records = this.getRecords();
+
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: this.getRowHeight(),
 				keyMapper: i => records[i],
 			});
 		};
-
-		this.resize();
-	};
-
-	componentWillUnmount(): void {
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-
-		dbStore.recordsClear(subId, '');
-		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
 	updateData () {

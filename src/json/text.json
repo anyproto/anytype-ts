@@ -459,6 +459,8 @@
 	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
+	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
 	"blockDataviewSearch": "Search",
 
@@ -569,7 +571,6 @@
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsAccountAnytypeIdentityAccountId": "Account ID",
 	"popupSettingsAccountTitle": "Profile",
 	"popupSettingsAccountDeleteTitle": "Delete Account",
 	"popupSettingsAccountMoveTitle": "Account Data Location",
@@ -593,6 +594,7 @@
 	"popupSettingsAppearanceColorModeButtonSystem": "System",
 	"popupSettingsAppearancePersonalisation": "Personalisation",
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
+	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
@@ -834,7 +836,6 @@
 	"popupShortcutBasics": "Basics",
 	"popupShortcutMainBasics1": "Create new Object",
 	"popupShortcutMainBasics2": "New Anytype window",
-	"popupShortcutMainBasics3": "Create a new Object in new window",
 	"popupShortcutMainBasics4": "Opens Object in new window from search interface",
 	"popupShortcutMainBasics5": "Toggle fullscreen",
 	"popupShortcutMainBasics6": "Undo",
@@ -998,9 +999,6 @@
 	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
-
-	"menuCalendarToday": "Today",
-	"menuCalendarTomorrow": "Tomorrow",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -1170,6 +1168,7 @@
 	"menuDataviewViewEditCardSize": "Card size",
 	"menuDataviewViewEditFitMedia": "Fit media",
 	"menuDataviewViewEditGroupBy": "Group by",
+	"menuDataviewViewEditDate": "Date relation",
 	"menuDataviewViewEditColorColumns": "Color columns",
 	"menuDataviewViewEditShowIcon": "Show icon",
 	"menuDataviewViewEditPageLimit": "Page limit",
@@ -1266,7 +1265,11 @@
 
 	"menuQuickCaptureSearchObjectTypes": "Search object types...",
 	"menuQuickCaptureGroups": "Lists",
+	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureOpenType": "Open type",
+	"menuQuickCapturePin": "Pin on top",
+	"menuQuickCaptureUnpin": "Unpin",
 
 	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
@@ -1555,7 +1558,7 @@
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
 	"libKeyboardLibraryVersion": "Library version",
-	"libKeyboardAccountID": "Account ID",
+	"libKeyboardAccountID": "Anytype Identity",
 	"libKeyboardAnalyticsID": "Analytics ID",
 	"libKeyboardDeviceID": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
@@ -1610,6 +1613,7 @@
 	"origin5": "Mobile sharing extension",
 	"origin6": "Use case",
 	"origin7": "Library installed",
+	"origin8": "Bookmark",
 
 	"emojiCategoryPeople": "Smileys & People",
 	"emojiCategoryNature": "Animals & Nature",
@@ -1630,10 +1634,10 @@
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
-	"notificationGallerySuccessTitle": "\"%s\" was installed",
-	"notificationGallerySuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
-	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryImportSuccessTitle": "\"%s\" was installed",
+	"notificationGalleryImportSuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
+	"notificationGalleryImportErrorTitle": "Something went wrong",
+	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"

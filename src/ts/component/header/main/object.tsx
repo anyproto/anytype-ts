@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilObject, UtilData, keyboard, sidebar, translate, Action } from 'Lib';
-import { blockStore, detailStore, popupStore, dbStore } from 'Store';
-import HeaderBanner from 'Component/page/head/banner';
+import { Icon, IconObject, Sync, ObjectName } from 'Component';
+import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
+import { blockStore, detailStore, popupStore } from 'Store';
+import HeaderBanner from 'Component/page/elements/head/banner';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -36,18 +36,23 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
+		const bannerProps: any = {};
 
 		let center = null;
+		let banner = null;
 
 		if (object.isArchived) {
-			center = <HeaderBanner type={I.BannerType.IsArchived} object={object} />;
+			banner = I.BannerType.IsArchived;
 		} else
 		if (UtilObject.isTemplate(object.type)) {
-			center = <HeaderBanner type={I.BannerType.IsTemplate} object={object} />;
+			banner = I.BannerType.IsTemplate;
 		} else
 		if (allowedTemplateSelect && templatesCnt) {
-			center = <HeaderBanner type={I.BannerType.TemplateSelect} object={object} count={templatesCnt + 1} isPopup={isPopup} />;
-		} else {
+			banner = I.BannerType.TemplateSelect;
+			bannerProps.count = templatesCnt + 1;
+		};
+
+		if (!banner) {
 			center = (
 				<div
 					id="path"
@@ -63,6 +68,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					</div>
 				</div>
 			);
+		} else {
+			center = <HeaderBanner type={banner} object={object} isPopup={isPopup} {...bannerProps} />;
 		};
 
 		return (
@@ -92,11 +99,14 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	componentDidMount () {
-		keyboard.setWindowTitle();
-		this.updateTemplatesCnt();
+		this.init();
 	};
 
 	componentDidUpdate () {
+		this.init();
+	};
+
+	init () {
 		keyboard.setWindowTitle();
 		this.updateTemplatesCnt();
 	};
@@ -179,6 +189,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			};
 		});
 	};
+
 });
 
 export default HeaderMainObject;

@@ -7,7 +7,7 @@
 		.side.right { padding-top: 25px; }
 	}
 
-	.blocks > .empty { width: 100%; text-align: center; color: $colorTextSecondary; @include text-header3; }
+	.blocks > .empty { width: 100%; text-align: center; color: var(--color-text-secondary); @include text-header3; }
 
 	.blocks.horizontal { width: 704px; flex-direction: column; }
 	.blocks.horizontal {
@@ -27,7 +27,7 @@
 		.block.blockMedia {
 			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
 		}
-		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: $colorShapeHighlightMedium; }
+		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: var(--color-shape-highlight-medium); }
 	}
 
 	.blocks {
@@ -41,7 +41,7 @@
 		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
 		.descr:empty { display: none; }
 
-		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorShapeHighlightMedium; }
+		.block.blockMedia { padding: 0px; border-radius: 6px; background: var(--color-shape-highlight-medium); }
 		.block.blockMedia {
 			.wrap { position: static; overflow: visible; width: 100%; height: 100%; }
 			.selectable, .dropTarget { height: 100%; }
@@ -51,7 +51,7 @@
 
 		.block.blockRelation {
 			.icon.relation { display: none; }
-			.info .name { color: $colorTextSecondary; }
+			.info .name { color: var(--color-text-secondary); }
 		}
 
 		.buttons { margin: 16px 0px 40px 0px; display: flex; flex-direction: row; gap: 0px 16px; }

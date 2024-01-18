@@ -176,7 +176,8 @@ class AuthStore {
 	logout (mainWindow: boolean, removeData: boolean) {
 		if (mainWindow) {
 			C.AccountStop(removeData, () => {
-				C.WalletCloseSession(this.token)
+				C.WalletCloseSession(this.token);
+
                 this.tokenSet('');
 			});
 

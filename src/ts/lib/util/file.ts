@@ -13,17 +13,6 @@ const UNITS = {
 
 class UtilFile {
 
-	fromPath (path: string) {
-		const { buffer, type } = window.Electron.fileParam(path);
-		if (!type) {
-			return null;
-		};
-
-		const fn = path.split('/');
-		const file = new File([ new Blob([ buffer ]) ], fn[fn.length - 1], { type: type.mime });
-		return file;
-	};
-
 	size (v: number): string {
 		v = Number(v) || 0;
 

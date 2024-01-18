@@ -1,4 +1,7 @@
 const { app, shell, BrowserWindow } = require('electron');
+const { is } = require('electron-util');
+const fs = require('fs');
+const path = require('path');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
@@ -18,6 +21,13 @@ class Api {
 	isPinChecked = false;
 
 	appOnLoad (win) {
+		const cssPath = path.join(Util.userPath(), 'custom.css');
+
+		let css = '';
+		if (fs.existsSync(cssPath)) {
+			css = fs.readFileSync(cssPath, 'utf8');
+		};
+
 		Util.send(win, 'init', {
 			dataPath: Util.dataPath(),
 			config: ConfigManager.config,
@@ -28,6 +38,7 @@ class Api {
 			phrase: this.phrase,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
+			css: String(css || ''),
 		});
 
 		win.route = '';
@@ -123,7 +134,7 @@ class Api {
 	};
 
 	updateConfirm (win) {
-		this.exit(win, true);
+		this.exit(win, '', true);
 	};
 
 	updateCancel (win) {
@@ -190,6 +201,12 @@ class Api {
 		win.webContents.session.setSpellCheckerEnabled(languages.length ? true : false);
 
 		this.setConfig(win, { languages });
+	};
+
+	setBadge (win, t) {
+		if (is.macos) {
+			app.dock.setBadge(t);
+		};
 	};
 
 };

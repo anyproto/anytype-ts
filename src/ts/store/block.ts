@@ -124,21 +124,12 @@ class BlockStore {
 			});
 		});
 
-		for (const [ id, item ] of map.entries()) {
-			(item.childrenIds || []).map((it: string) => {
-				const check = map.get(it);
-				if (check && (check.parentId != id)) {
-					check.parentId = id;
-					map.set(it, check);
-				};
-			});
-		};
+		this.treeMap.set(rootId, map);
+		this.updateStructureParents(rootId);
 
 		for (const [ id, item ] of map.entries()) {
 			map.set(id, new M.BlockStructure(item));
 		};
-
-		this.treeMap.set(rootId, map);
 	};
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
@@ -146,20 +137,23 @@ class BlockStore {
 
 		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
-			element = new M.BlockStructure({ parentId: '', childrenIds });
+			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};
 
-		map.set(blockId, element);
+		this.updateStructureParents(rootId);
+	};
 
-		// Update parentId
+	updateStructureParents (rootId: string) {
+		const map = this.getMap(rootId);
+
 		for (const [ id, item ] of map.entries()) {
-			(item.childrenIds || []).map((it: string) => {
-				const check = map.get(it);
-				if (check && (check.parentId != id)) {
-					check.parentId = id;
-					map.set(it, check);
+			(item.childrenIds || []).forEach(childId => {
+				const child = map.get(childId);
+				if (child && (child.parentId !== id)) {
+					child.parentId = id;
+					map.set(childId, child);
 				};
 			});
 		};
@@ -382,6 +376,17 @@ class BlockStore {
 		return ret;
 	};
 
+	getTableData (rootId: string, blockId: string) {
+		const childrenIds = this.getChildrenIds(rootId, blockId);
+		const children = this.getChildren(rootId, blockId);
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = columnContainer ? this.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
+		const rows = rowContainer ? this.getChildren(rootId, rowContainer.id, it => it.isTableRow()) : [];
+
+		return { childrenIds, columnContainer, columns, rowContainer, rows };
+	};
+
     getRestrictions (rootId: string, blockId: string) {
 		const map = this.restrictionMap.get(rootId);
 		if (!map) {
@@ -422,7 +427,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = UtilCommon.objectCopy(this.getBlocks(rootId, it => it.isText()));
+		const blocks = this.getBlocks(rootId, it => it.isText());
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
@@ -431,6 +436,7 @@ class BlockStore {
 				continue;
 			};
 
+			marks = UtilCommon.objectCopy(marks);
 			marks.sort(Mark.sort);
 
 			let { text } = block.content;
@@ -495,70 +501,22 @@ class BlockStore {
 
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
-
-		let change = false;
-		if (check) {
-			if (!this.checkBlockTypeExists(rootId)) {
-				header.childrenIds.unshift(Constant.blockId.type);
-				change = true;
-			};
-		} else {
-			header.childrenIds = header.childrenIds.filter(it => it != Constant.blockId.type);
-			change = true;
-		};
+		const exists = this.checkBlockTypeExists(rootId);
+		const change = (check && !exists) || (!check && exists);
 		
+		let childrenIds = header.childrenIds || [];
 		if (change) {
-			this.updateStructure(rootId, Constant.blockId.header, header.childrenIds);
+			childrenIds = exists ? childrenIds.filter(it => it != Constant.blockId.type) : [ Constant.blockId.type ].concat(childrenIds);
+		};
+
+		if (change) {
+			this.updateStructure(rootId, Constant.blockId.header, childrenIds);
 		};
 	};
 
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, Constant.blockId.header);
 		return header ? header.childrenIds.includes(Constant.blockId.type) : false;
-	};
-
-	updateWidgetViews (rootId: string) {
-		this.triggerWidgetEvent('updateWidgetViews', rootId);
-	};
-
-	updateWidgetData (rootId: string) {
-		this.triggerWidgetEvent('updateWidgetData', rootId);
-	};
-
-	triggerWidgetEvent (code: string, rootId: string) {
-		const win = $(window);
-		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
-
-		blocks.forEach(block => {
-			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
-			if (children.length) {
-				win.trigger(`${code}.${block.id}`);
-			};
-		});
-	};
-
-	getTableData (rootId: string, blockId: string) {
-		const childrenIds = this.getChildrenIds(rootId, blockId);
-		const children = this.getChildren(rootId, blockId);
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = columnContainer ? this.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
-		const rows = rowContainer ? this.unwrapTree([ this.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
-
-		return { childrenIds, columnContainer, columns, rowContainer, rows };
-	};
-
-	closeRecentWidgets () {
-		const { recentEdit, recentOpen } = Constant.widgetId;
-		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
-
-		if (blocks.length) {
-			blocks.forEach(it => {
-				if (it.parentId) {
-					Storage.setToggle('widget', it.parentId, true);
-				};
-			});
-		};
 	};
 
 	getLayoutIds (rootId: string, ids: string[]) {
@@ -586,6 +544,39 @@ class BlockStore {
 		};
 		
 		return ret;
+	};
+
+	updateWidgetViews (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetViews', rootId);
+	};
+
+	updateWidgetData (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetData', rootId);
+	};
+
+	triggerWidgetEvent (code: string, rootId: string) {
+		const win = $(window);
+		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
+
+		blocks.forEach(block => {
+			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
+			if (children.length) {
+				win.trigger(`${code}.${block.id}`);
+			};
+		});
+	};
+
+	closeRecentWidgets () {
+		const { recentEdit, recentOpen } = Constant.widgetId;
+		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
+
+		if (blocks.length) {
+			blocks.forEach(it => {
+				if (it.parentId) {
+					Storage.setToggle('widget', it.parentId, true);
+				};
+			});
+		};
 	};
 
 };

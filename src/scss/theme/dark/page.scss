@@ -1,27 +1,12 @@
 @import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
 
 /* PageMainGraph */
 
 .pageMainGraph {
-    canvas { background: $colorBgPrimary; }
-	#loader { background: $colorBgPrimary !important; }
-
     .wrapper {
-        .side.right { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
         .side.right {
-            .bottom { border-color: $colorShapeSecondary; }
             .filter { background: none; }
         }
-
-        .section {
-            .item { background: $colorBgPrimary; }
-            .item:hover::before { background: $colorShapeHighlightMedium; }
-        }
-    }
-
-    .footer {
-        .icon { background-color: $colorShapeSecondary; }
     }
 }
 
@@ -29,31 +14,14 @@
 
 .pageMainStore {
     .body {
-		.tabs {
-			.tab { color: $colorTextSecondary; }
-			.tab:hover, .tab.active { color: $colorTextPrimary; }
-		}
-
-		.emptySearch { border-color: $colorShapePrimary; }
-
-		.mid {
-			.filter { border-color: $colorShapePrimary; }
-		}
-
         .items {
             .item {
-                .flex { border-color: $colorShapeSecondary; } 
-				.flex:hover {  border-color: $colorShapePrimary; background-color: $colorShapeHighlightMedium; }
-
 				.buttons {
 					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
 					.icon.check { background-image: url('#{$themePath}/icon/store/check0.svg'); }
 					.icon.check:hover { background-image: url('#{$themePath}/icon/store/check1.svg'); }
 					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
 					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
-
-					.button { color: $colorTextSecondary; }
-					.button:hover { color: $colorTextPrimary; }
 				}
             }
         }
@@ -65,12 +33,10 @@
 .pageMainType {
     .wrapper {
         .section.template {
-			.btn { color: $colorTextSecondary; }
 			.btn {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template0.svg'); }
 			}
 
-			.btn:hover { color: $colorTextPrimary; }
 			.btn:hover {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/template1.svg'); }
 			}
@@ -82,61 +48,21 @@
 		}
 
         .section.relation {
-            .item {
-                .name { color: $colorTextSecondary; }
-            }
-            .item.canEdit, .item.add {
-				.clickable:hover { background: $colorShapeHighlightMedium; }
-			}
-
 			.item.add {
 				.clickable:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
-					.name { color: $colorTextSecondary; }
 				}
 			}
         }
-
-        table { border-color: $colorShapeSecondary; }
-        table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
-        }
     }
 }
-.pageMainType > div > #loader { background: $colorBgPrimary; }
-
-/* PageMainRelation */
-
-.pageMainRelation {
-    .wrapper {
-        table { border-color: $colorShapeSecondary; }
-        table {
-            .cellHead .name { border-color: $colorShapeSecondary; color: $colorTextSecondary; }
-            .cell { border-color: $colorShapeSecondary; }
-            tbody { border-color: $colorShapeSecondary; }
-        }
-    }
-}
-.pageMainRelation > div > #loader { background: $colorBgPrimary; }
 
 /* PageMainNavigation */
 
 .pageMainNavigation {
-	.wrapper > #loader { background: $colorBgPrimary; }
-    .selected { border-color: $colorShapePrimary; }
-    .selected {
-        .descr { color: $colorTextSecondary; }
-    }
-
     .items {
-        .item { border-color: $colorShapePrimary; }
         .item {
-			.iconObject { background: $colorShapeTertiary; }
 			.iconObject.isTask { background: none; }
-
-            .descr { color: $colorTextSecondary; }
         }
     }
 }
@@ -144,31 +70,10 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list { background: $colorBgPrimary; border-color: $colorShapeSecondary; }
     .list {
-        .section.fix { background: $colorBgPrimary; }
-
-        .item:hover, .item.active { background: $colorShapeHighlightMedium; }
         .item {
-            .name { color: $colorTextSecondary; }
             .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
         }
-    }
-}
-
-/* PageMainBookmark */
-
-.pageMainBookmark {
-    .wrapper {
-        .item.add:hover { background: $colorShapeHighlightMedium; }
-    }
-}
-
-/* PageMainEmpty */
-
-.pageMainEmpty {
-    .wrapper {
-        .row { border-color: $colorShapePrimary; }
     }
 }
 
@@ -178,22 +83,6 @@
 	.wrapper {
 		.titleWrapper {
 			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
-		}
-
-		.controls { border-color: $colorShapePrimary; }
-		.controls {
-			.side.left {
-				.element:hover { background-color: $colorShapeHighlightMedium; }
-			}
-		}
-
-		.objectManagerWrapper {
-			.items { height: 100%; }
-			.items {
-				.item {
-					.iconObject { background-color: $colorShapeTertiary; }
-				}
-			}
 		}
 	}
 }

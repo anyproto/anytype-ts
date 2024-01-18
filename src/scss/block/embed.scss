@@ -9,11 +9,12 @@
 
 	.block.blockEmbed { 
 		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
-		.wrap.isEditing { padding: 8px; background-color: $colorShapeHighlightLight; border-radius: 4px; }
+		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			.preview { display: none; }
 			.editableWrap, .icon.source { display: block; }
+			.select { display: inline-block; }
 		}
 		.wrap.withPreview {
 			.preview { display: block; }
@@ -23,22 +24,22 @@
 			.editableWrap { margin: 0px; }
 		}
 
+		.selectWrap { text-align: left; }
+		.selectWrap {
+			.select { 
+				border: 0px; color: var(--color-text-secondary); @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; display: none; 
+				margin-bottom: 8px; 
+			}
+			.select {
+				.name { overflow: visible; }
+				.icon.arrow.light { background-image: url('~img/arrow/select/secondary.svg') !important; }
+			}
+			.select:hover, .select.active { background: none; }
+		}
+
 		.valueWrap { position: relative; width: 100%; }
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
-
-		.preview { 
-			display: none; position: relative; aspect-ratio: 16/9; background-color: $colorShapeHighlightLight; border-radius: 4px; 
-			background-size: 40px; background-position: center; background-repeat: no-repeat;
-		}
-		.preview.embedLatex { background-image: url('~img/icon/block/embed/latex.svg'); }
-		.preview.embedMermaid { background-image: url('~img/icon/block/embed/mermaid.svg'); }
-		.preview.embedYoutube { background-image: url('~img/icon/block/embed/youtube.svg'); }
-		.preview.embedVimeo { background-image: url('~img/icon/block/embed/vimeo.svg'); }
-		.preview.embedGoogleMaps { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
-		.preview.embedSoundcloud { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
-		.preview.embedChart { background-image: url('~img/icon/block/embed/chart.svg'); }
-		.preview.embedMiro { background-image: url('~img/icon/block/embed/miro.svg'); }
-		.preview.embedFigma { background-image: url('~img/icon/block/embed/figma.svg'); }
+		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
@@ -47,7 +48,7 @@
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
 			#input { 
-				background: $colorBgPrimary; border: 1px solid $colorShapeSecondary; text-align: left; padding: 6px 12px; @include text-common; 
+				background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
 				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
 			}
 			#placeholder { padding: 6px 12px; }
@@ -64,17 +65,18 @@
 		}
 
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
+
+		.excalidraw { position: static; }
+		.excalidraw {
+			.scroll-back-to-content { position: absolute; }
+			.ToolIcon__icon { width: 20px; height: 20px; }
+			.Stack_horizontal { white-space: nowrap; @include text-small; }
+		}
 	}
 
-	.block.blockEmbed.isLatex .preview { background-image: url('~img/icon/block/embed/latex.svg'); }
-	.block.blockEmbed.isMermaid .preview { background-image: url('~img/icon/block/embed/mermaid.svg'); }
-	.block.blockEmbed.isYoutube .preview { background-image: url('~img/icon/block/embed/youtube.svg'); }
-	.block.blockEmbed.isVimeo .preview { background-image: url('~img/icon/block/embed/vimeo.svg'); }
-	.block.blockEmbed.isGoogleMaps .preview { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
-	.block.blockEmbed.isSoundcloudd .preview { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
-	.block.blockEmbed.isChart .preview { background-image: url('~img/icon/block/embed/chart.svg'); }
-	.block.blockEmbed.isMiro .preview { background-image: url('~img/icon/block/embed/miro.svg'); }
-	.block.blockEmbed.isFigma .preview { background-image: url('~img/icon/block/embed/figma.svg'); }
+	.block.blockEmbed.isGraphviz {
+		#value svg { height: auto; }
+	}
 
 	.block.blockEmbed.isTwitter,
 	.block.blockEmbed.isReddit {
@@ -98,28 +100,17 @@
 	}
 
 	.block.blockEmbed.isLatex {
-		.wrap.isEditing {
-			.select { display: inline-block; }
-		}
-
-		.icon.source { display: none !important; }
-
-		.selectWrap { text-align: left; }
-		.selectWrap {
-			.select { 
-				border: 0px; color: $colorTextSecondary; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
-				display: none; margin-bottom: 8px;
-			}
-			.select {
-				.name { overflow: visible; }
-				.icon.arrow.light { background-image: url('~img/arrow/select/secondary.svg') !important; }
-			}
-			.select:hover, .select.active { background: none; }
-		}
-
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }
 		.katex .base { margin-top: 2px; margin-bottom: 2px; }
+	}
+}
+
+html.isSelecting {
+	.blocks {
+		.block.blockEmbed {
+			.dimmer { display: block; }
+		}
 	}
 }

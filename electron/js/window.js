@@ -22,9 +22,8 @@ class WindowManager {
 	list = new Set();
 
 	create (options, param) {
-		const Api = require('./api.js');
 		const { route, isChild } = options;
-		const { languages, zoom, hideMenuBar } = ConfigManager.config;
+		const { hideMenuBar } = ConfigManager.config;
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
@@ -62,10 +61,9 @@ class WindowManager {
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
 
-		win.webContents.on('context-menu', (e, param) => Util.send(win, 'spellcheck', param));
-
-		Api.setSpellingLang(win, languages);
-		Api.setZoom(win, zoom);
+		win.webContents.on('context-menu', (e, param) => {
+			Util.send(win, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
+		});
 
 		if (hideMenuBar) {
 			win.setMenuBarVisibility(false);
@@ -129,15 +127,13 @@ class WindowManager {
 			state.manage(win);
 		};
 
-		if (is.development) {
-			win.loadURL(`http://localhost:${port}`);
-			win.toggleDevTools();
-		} else {
-			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
-		};
-
+		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
+
+		if (is.development) {
+			win.toggleDevTools();
+		};
 
 		return win;
 	};

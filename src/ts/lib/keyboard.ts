@@ -45,13 +45,7 @@ class Keyboard {
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
-		win.off('mousemove.common beforeunload.common blur.common');
-		
-		win.on('mousemove.common', (e: any) => {
-			this.initPinCheck();
-			this.disableMouse(false);
-			this.onMouseMove(e);
-		});
+		win.on('mousemove.common', e => this.onMouseMove(e));
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
@@ -111,12 +105,17 @@ class Keyboard {
 	};
 
 	onMouseMove (e: any) {
+		this.initPinCheck();
+		this.disableMouse(false);
+
 		this.mouse = {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
 
-		sidebar.onMouseMove();
+		if (this.isMain()) {
+			sidebar.onMouseMove();
+		};
 	};
 	
 	onKeyDown (e: any) {
@@ -134,7 +133,7 @@ class Keyboard {
 				return;
 			};
 
-			sidebar.toggleOpenClose();
+			commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
 		});
 
 		// Navigation
@@ -251,7 +250,7 @@ class Keyboard {
 				this.pageCreate({}, 'Shortcut');
 			});
 
-			this.shortcut(`alt+shift+n`, e, () => {
+			this.shortcut(`ctrl+alt+n`, e, () => {
 				e.preventDefault();
 				this.onQuickCapture();
 			});
@@ -933,14 +932,6 @@ class Keyboard {
 
 	initPinCheck () {
 		const { account } = authStore;
-		const { pinTime } = commonStore;
-		const pin = Storage.get('pin');
-
-		if (!pin) {
-			this.setPinChecked(true);
-			return;
-		};
-
 		const check = () => {
 			const pin = Storage.get('pin');
 			if (!pin) {
@@ -963,7 +954,7 @@ class Keyboard {
 			this.setPinChecked(false);
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
-		}, pinTime);
+		}, commonStore.pinTime);
 	};
 
 	restoreSource () {

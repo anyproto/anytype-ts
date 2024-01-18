@@ -10,7 +10,6 @@ export enum EmbedProcessor {
 	GoogleMaps 		 = 6,
 	Miro 	 		 = 7,
 	Figma 	 		 = 8,
-
 	Twitter			 = 9,
 	OpenStreetMap	 = 10,
 	Reddit			 = 11,
@@ -18,6 +17,12 @@ export enum EmbedProcessor {
 	Instagram		 = 13,
 	Telegram		 = 14,
 	GithubGist		 = 15,
+	Codepen			 = 16,
+	Bilibili		 = 17,
+	Excalidraw		 = 18,
+	Kroki 			 = 19,
+	Graphviz		 = 20,
+	Sketchfab		 = 21,
 };
 
 export interface ContentEmbed {
