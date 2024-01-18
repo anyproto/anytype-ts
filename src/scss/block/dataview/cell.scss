@@ -77,7 +77,7 @@
 	.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element:last-child { margin-right: 0px; }
 	.element {
-		.iconObject { margin: 0px; }
+		.iconObject { margin: 0px !important; }
 		.flex { align-items: center; gap: 0px 4px; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
@@ -85,7 +85,7 @@
 .cellContent.c-object.canEdit {
 	.element { cursor: grab; }
 	.element {
-		.icon.objectRemove { cursor: default; }
+		.icon.objectRemove { cursor: default; display: none; }
 	}
 }
 
@@ -144,7 +144,7 @@
 		.element { margin: 0px !important; }
 		.element {
 			.icon.objectRemove { 
-				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0;
+				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0; display: block;
 				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
 			}
 			.icon.objectRemove:hover { opacity: 0.8; }
