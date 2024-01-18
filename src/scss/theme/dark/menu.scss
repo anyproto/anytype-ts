@@ -1,5 +1,4 @@
 @import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
 
 .menus {
 
@@ -121,8 +120,8 @@
         .select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
-        .day:hover { background: #f9d77e; color: #ad8620 !important; }
-        .day.th:hover { background: none; }
+        .select:hover { background-color: var(--color-shape-highlight-medium); }
+        .day:not(.th):not(.active):hover { background: var(--color-system-drop-zone); }
     }
 
     /* MenuBlockContext */
@@ -169,6 +168,12 @@
                 .icon.arrow { background-image: url('#{$themePath}/arrow/onboarding.svg'); }
                 .icon.tick { background-image: url('#{$themePath}/icon/menu/onboarding/tick.svg'); }
             }
+
+			.steps {
+                .step:not(.active) { background: var(--color-shape-secondary); }
+                .step:not(.active):hover { background: var(--color-shape-primary); }
+            }
+
             .category { color: #5c5a54; }
         }
 	}
@@ -231,7 +236,6 @@
 			.item.add {
 				.iconWrap { background-image: url('#{$themePath}/icon/plus/space.svg'); }
 			}
-
 			.item.hover { background-color: rgba(255, 255, 255, 0.1); }
 		}
 	}

@@ -397,6 +397,11 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
 		text = String(text || '');
 		marks = marks || [];
 
@@ -404,11 +409,7 @@ class UtilData {
 			blockStore.updateContent(rootId, blockId, { text, marks });
 		};
 
-		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		});
+		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
@@ -483,8 +484,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
-		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
@@ -562,6 +562,15 @@ class UtilData {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
+		const idx1 = ids.indexOf(c1.id);
+		const idx2 = ids.indexOf(c2.id);
+
+		if (idx1 > idx2) return 1;
+		if (idx1 < idx2) return -1;
+		return 0;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

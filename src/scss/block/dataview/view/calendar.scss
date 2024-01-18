@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewCalendar { position: relative; height: 100%; }
+		.viewContent.viewCalendar { position: relative; height: 100%; padding: 0px; }
 		.viewContent.viewCalendar {
 			.table { 
 				border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
@@ -18,7 +18,7 @@
 					}
 				}
 
-				.body { overflow: overlay; flex-grow: 1; }
+				.body { overflow: overlay; }
 			}
 
 			.day { 

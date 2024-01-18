@@ -40,6 +40,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
+		const { showRelativeDates } = commonStore;
 		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
 		const record = getRecord(recordId);
 		
@@ -171,7 +172,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = UtilDate.dayString(value);
+					const day = showRelativeDates ? UtilDate.dayString(value) : null;
 					const date = day ? day : UtilDate.date(UtilDate.dateFormat(viewRelation.dateFormat), value);
 					const time = UtilDate.date(UtilData.timeFormat(viewRelation.timeFormat), value);
 					

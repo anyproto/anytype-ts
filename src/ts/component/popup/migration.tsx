@@ -4,20 +4,11 @@ import { Title, Label, Button } from 'Component';
 import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
+import Theme from 'json/theme.json';
 import Url from 'json/url.json';
 
 interface State {
 	step: number;
-};
-
-const fgColor = {
-	'': '#000',
-	dark: '#d4d4d4',
-};
-
-const bgColor = {
-	'': '#f2f2f2',
-	dark: '#252525',
 };
 
 const PopupMigration = observer(class PopupMigration extends React.Component<I.Popup, State> {
@@ -44,7 +35,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationOnboardingText2')} />
 
 						<div className="qrWrap">
-							<QRCode value={Url.download} fgColor={fgColor[theme]} bgColor={bgColor[theme]} size={100} />
+							<QRCode value={Url.download} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={100} />
 						</div>
 
 						<Label text={translate('popupMigrationOnboardingText3')} />
@@ -65,7 +56,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationImportText2')} />
 
 						<div className="qrWrap">
-							<QRCode value={Url.download} fgColor={fgColor[theme]} bgColor={bgColor[theme]} size={100} />
+							<QRCode value={Url.download} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={100} />
 						</div>
 
 						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />

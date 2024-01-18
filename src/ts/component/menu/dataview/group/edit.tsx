@@ -128,6 +128,11 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		const { data } = param;
 		const { rootId, blockId, groupId, getView } = data;
 		const view = getView();
+		
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		const groups = dbStore.getGroups(rootId, blockId);
 		const update: any[] = [];

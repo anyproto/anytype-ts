@@ -87,10 +87,10 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 					};
 
 					return (
-						<React.Fragment key={item.id}>
+						<React.Fragment key={`block-child-${item.id}`}>
 							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
 							<Block 
-								key={'block-' + item.id} 
+								key={`block-${item.id}`} 
 								{...this.props} 
 								block={item} 
 								css={css} 

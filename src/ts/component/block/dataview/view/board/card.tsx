@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Cell, DropTarget, Icon } from 'Component';
+import { Cell } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, groupId, id, recordId, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -28,24 +28,28 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				{relations.map((relation: any, i: number) => (
-					<Cell
-						key={'board-cell-' + view.id + relation.relationKey}
-						{...this.props}
-						getRecord={() => record}
-						subId={subId}
-						ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
-						relationKey={relation.relationKey}
-						viewType={view.type}
-						idPrefix={idPrefix}
-						arrayLimit={2}
-						showTooltip={true}
-						tooltipX={I.MenuDirection.Left}
-						onClick={e => this.onCellClick(e, relation)}
-						iconSize={relation.relationKey == 'name' ? 20 : 18}
-						withName={true}
-					/>
-				))}
+				{relations.map((relation: any, i: number) => {
+					const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+					return (
+						<Cell
+							elementId={id}
+							key={'board-cell-' + view.id + relation.relationKey}
+							{...this.props}
+							getRecord={() => record}
+							subId={subId}
+							ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
+							relationKey={relation.relationKey}
+							viewType={view.type}
+							idPrefix={idPrefix}
+							arrayLimit={2}
+							showTooltip={true}
+							tooltipX={I.MenuDirection.Left}
+							onClick={e => this.onCellClick(e, relation)}
+							iconSize={relation.relationKey == 'name' ? 20 : 18}
+							withName={true}
+						/>
+					);
+				})}
 			</div>
 		);
 

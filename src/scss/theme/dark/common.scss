@@ -1,7 +1,43 @@
 @import "~scss/_vars";
-@import "~scss/theme/dark/_vars";
+
+$themePath: '~img/theme/dark';
 
 html.themeDark {
+	/* Text */
+
+	--color-text-primary: #dcdcdc;
+	--color-text-secondary: #8d8d8d;
+	--color-text-tertiary: #505050;
+	--color-text-inversion: #171717;
+
+	/* Shape */
+
+	--color-shape-primary: #555;
+	--color-shape-secondary: #3f3f3f;
+	--color-shape-tertiary: #2b2b2b;
+
+	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
+	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
+
+	/* Control */
+
+	--color-control-accent: #d4d4d4;
+	--color-control-active: #9a9a9a;
+	--color-control-inactive: #464646;
+	--color-control-bg: #fff;
+
+	/* Background */
+
+	--color-bg-primary: #171717;
+	--color-bg-secondary: #252525;
+	--color-bg-tertiary: #464646;
+	--color-bg-loader: rgba(0,0,0,0.7);
+
+	/* System */
+
+	--color-system-accent-50: #9f6b00;
+	--color-system-accent-25: #f09c0e;
+	--color-system-selection: rgba(24, 163, 241, 0.15);
 
     /* Common */
 
@@ -16,6 +52,8 @@ html.themeDark {
 
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: var(--color-system-selection); }
+
+	.iconObject.withOption.isSpaceView { background: #000 !important; }
 
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
@@ -78,11 +116,23 @@ html.themeDark {
         }
     }
 
+	.switch { background: var(--color-shape-secondary); }
+	.switch {
+		.inner { background-color: #fff; }
+	}
+
     /* Button */
 
+	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
+	.button.black:hover,
+    .button.black.hover { background: var(--color-control-active); }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
+
+    .button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
+    .button.blank:not(.disabled):hover,
+    .button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
 	.button.red,
     .button.red.blank { background: none; }
@@ -105,7 +155,7 @@ html.themeDark {
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { border-color: transparent; }
+    .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 
     .listPreviewObject {
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }

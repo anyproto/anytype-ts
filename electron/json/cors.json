@@ -25,7 +25,8 @@
 		"blob:", 
 		"file://*", 
 		"https://*.googlevideo.com",
-		"https://scontent.cdninstagram.com"
+		"https://scontent.cdninstagram.com",
+		"https://media.sketchfab.com"
 	],
 
 	"style-src": [ 
@@ -50,7 +51,8 @@
 		"https://cpwebassets.codepen.io",
 		"https://cdnjs.cloudflare.com",
 		"https://*.bilibili.com",
-		"https://s1.hdslb.com"
+		"https://s1.hdslb.com",
+		"https://static.sketchfab.com"
 	],
 
 	"font-src": [ 
@@ -66,7 +68,8 @@
 		"https://*.twimg.com",
 		"https://*.fbcdn.net",
 		"https://static.cdninstagram.com",
-		"https://telegram.org"
+		"https://telegram.org",
+		"https://static.sketchfab.com"
 	],
 
 	"connect-src": [ 
@@ -106,13 +109,16 @@
 		"https://gist.github.com",
 		"https://codepen.io",
 		"https://www.facebook.com",
+		"https://*.fbcdn.net",
 		"https://*.bilibili.com",
 		"https://*.bilibili.tv",
 		"https://*.bilivideo.cn:*",
 		"https://*.bilivideo.com",
 		"https://*.hdslb.com",
 		"wss://*.bilibili.com:*",
-		"wss://*.biliapi.net"
+		"wss://*.biliapi.net",
+		"https://sketchfab.com",
+		"https://media.sketchfab.com"
 	],
 
 	"script-src-elem": [
@@ -145,7 +151,8 @@
 		"https://cpwebassets.codepen.io",
 		"https://codepen.io",
 		"https://cdnjs.cloudflare.com",
-		"https://*.hdslb.com"
+		"https://*.hdslb.com",
+		"https://static.sketchfab.com"
 	],
 
 	"frame-src": [
@@ -167,7 +174,9 @@
 		"https://t.me",
 		"https://codepen.io",
 		"https://cdpn.io",
-		"https://*.bilibili.com"
+		"https://*.bilibili.com",
+		"https://kroki.io",
+		"https://sketchfab.com"
 	],
 
 	"worker-src": [ 

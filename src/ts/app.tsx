@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
+import mermaid from 'mermaid';
 import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
@@ -14,7 +15,8 @@ import {
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
 } from 'Lib';
-import * as Docs from 'Docs';
+
+require('pdfjs-dist/build/pdf.worker.entry.js');
 
 configure({ enforceActions: 'never' });
 
@@ -22,6 +24,8 @@ import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
 import 'react-virtualized/styles.css';
 import 'swiper/scss';
+import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
+import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
 import 'scss/debug.scss';
@@ -107,7 +111,6 @@ if (!window.Electron.isPackaged) {
 			Animation,
 			Onboarding,
 			Survey,
-			Docs,
 			Encode, 
 			Decode,
 			translate,
@@ -300,7 +303,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked } = data;
+		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked, css } = data;
 		const win = $(window);
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
@@ -324,7 +327,11 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		raf(() => { anim.removeClass('from'); });
+		raf(() => anim.removeClass('from'));
+
+		if (css) {
+			UtilCommon.injectCss('anytype-custom-css', css);
+		};
 
 		const cb = () => {
 			window.setTimeout(() => {
@@ -525,8 +532,6 @@ class App extends React.Component<object, State> {
 		keyboard.disableContextOpen(true);
 
 		const win = $(window);
-		const rootId = keyboard.getRootId();
-		const { focused, range } = focus.state;
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
 		const isInput = element.is('input');
@@ -549,7 +554,11 @@ class App extends React.Component<object, State> {
 					raf(() => {
 						switch (item.id) {
 							default: {
-								if (focused) {
+								const { focused, range } = focus.state;
+								const rootId = keyboard.getRootId();
+								const block = blockStore.getLeaf(rootId, focused);
+
+								if (block && block.isText()) {
 									focus.apply();
 
 									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());

@@ -2,6 +2,9 @@
     .loaderWrapper { background: rgba(0,0,0,0.3); }
 
     .elements {
+		.btn.white { background: var(--color-shape-secondary); color: var(--color-text-primary); }
+        .btn.white:hover { background: var(--color-bg-primary); color: var(--color-text-primary); }
+
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('#{$themePath}/icon/add/cover1.svg'); }
@@ -113,22 +116,6 @@
 
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
     .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
-
-    /* BlockEmbed */
-
-    .block.blockEmbed {
-		.preview {
-			.icon.embed-latex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
-			.icon.embed-mermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
-			.icon.embed-youtube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
-			.icon.embed-vimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
-			.icon.embed-googleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
-			.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
-			.icon.embed-chart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
-			.icon.embed-miro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
-			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
-		}
-    }
 
     /* BlockBookmark */
 

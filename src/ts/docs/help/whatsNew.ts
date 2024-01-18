@@ -356,6 +356,8 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
+
 	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
 	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
@@ -404,7 +406,6 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	/*
 	h1(`2023: Ready, Set... Declutter 😎`),
 	text(`Welcome to the first release of the new year! After some major refactoring work in the last quarter of 2022, we're pleased to deliver an update that we hope will allow you to clear the clutter from your account and start the new year with a clean, productive slate.`),
 
