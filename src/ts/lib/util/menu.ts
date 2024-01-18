@@ -96,6 +96,7 @@ class UtilMenu {
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+				{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			]);
 		};
 
