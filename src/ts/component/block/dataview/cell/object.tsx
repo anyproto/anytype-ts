@@ -225,7 +225,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(id => detailStore.get(subId, id, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 
 		return value;
 	};
