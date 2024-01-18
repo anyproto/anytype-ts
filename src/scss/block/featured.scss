@@ -39,7 +39,7 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: middle; }
+			.more { vertical-align: middle; margin-top: -2px; }
 			.label { display: inline; vertical-align: middle; }
 		}
 
@@ -65,8 +65,8 @@
 		}
 
 		.cellContent.c-object {
-			.iconObject { display: inline-block; margin-top: -1px; margin-right: 4px; }
-			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
+			.iconObject { display: inline-block; vertical-align: middle; }
+			.iconObject * { position: static; vertical-align: top; margin: 0px; }
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
