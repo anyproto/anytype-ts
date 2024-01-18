@@ -69,7 +69,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 					<div className="side right">
 						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
-						<div className="btn" onClick={this.onToday}>{translate('menuCalendarToday')}</div>
+						<div className="btn" onClick={this.onToday}>{translate('commonToday')}</div>
 						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
 					</div>
 				</div>
