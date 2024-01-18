@@ -8,7 +8,7 @@ import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import Excalidraw from 'excalidraw';
-import { Icon, Label, Editable, Dimmer, Select } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -34,6 +34,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	timeoutChange = 0;
 	node = null;
 	refEditable = null;
+	refType = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -68,7 +69,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { width, type } = fields || {};
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
-		const text = String(content.text || '').trim();
+		const text = String(content.text || '');
 		const css: any = {};
 
 		if (width) {
@@ -97,8 +98,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			select = (
 				<Select 
 					id={`block-${block.id}-select`} 
+					ref={ref => this.refType = ref}
 					value={type} 
-					options={this.getKrokiOptions()} 
+					options={UtilEmbed.getKrokiOptions()} 
 					arrowClassName="light" 
 					onChange={this.onKrokiTypeChange}
 					showOn="mouseDown"
@@ -145,6 +147,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					{source}
 					{resize}
 
+					<Error id="error" />
 					<Dimmer />
 				</div>
 
@@ -161,6 +164,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					onKeyDown={this.onKeyDownInput}
 					onInput={this.onChange}
 					onPaste={this.onPaste}
+					onMouseDown={this.onSelect}
 				/>
 			</div>
 		);
@@ -239,12 +243,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
+
 		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
+		node.on('edit', e => this.onEdit(e));
 	};
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'mousedown', 'online', 'offline', 'scroll', 'resize' ];
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -261,7 +267,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { top } = node.offset();
 		const bot = top + node.height();
 
-		this.setShowing((bot > st) && (top < st + wh));
+		if ((bot > st) && (top < st + wh)) {
+			this.setShowing(true);
+		};
 	};
 
 	getContainerId () {
@@ -281,7 +289,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const length = this.text.length;
 				this.setRange({ from: length, to: length });
 			} else {
-				$(window).off(`mousedown.${block.id}`);
+				$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
+				keyboard.disableSelection(false);
 			};
 		});
 	};
@@ -399,13 +408,29 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const text = cb.getData('text/plain');
+		const { block } = this.props;
+		const { fields } = block;
+		const data = e.clipboardData || e.originalEvent.clipboardData;
+		const text = data.getData('text/plain');
 		const to = range.end + text.length;
+		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
 
-		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.from, range.to));
-		this.setRange({ from: to, to });
-		this.save();
+		const cb = () => {
+			this.setValue(value);
+			this.setRange({ from: to, to });
+			this.save();
+		};
+
+		if (block.isEmbedKroki()) {
+			const type = UtilEmbed.getKrokiType(value);
+			if (type && (type != fields.type)) {
+				this.onKrokiTypeChange(type, cb);
+			} else {
+				cb();
+			};
+		} else {
+			cb();
+		};
 	};
 
 	onFocusInput () {
@@ -417,13 +442,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.save();
 	};
 
-	onKrokiTypeChange (type: string) {
+	onKrokiTypeChange (type: string, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const { fields } = block;
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: block.id, fields: { ...fields, type } },
-		]);
+		], callBack);
 	};
 
 	onLatexTemplate (e: any) {
@@ -497,7 +522,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setText (text: string) {
-		this.text = String(text || '').trim();
+		this.text = String(text || '');
 	};
 
 	setValue (value: string) {
@@ -548,6 +573,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = content;
 		const node = $(this.node);
 		const value = node.find('#value');
+		const error = node.find('#error');
+
+		error.text('').hide();
 
 		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
 			value.html('');
@@ -600,24 +628,27 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
-					if (processor == I.EmbedProcessor.Kroki) {
-						if (!text.match(/^https:\/\/kroki.io"/)) {
-							const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
-							const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-							const type = fields.type || this.getKrokiOptions()[0].id;
+					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
+						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
+						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
+						const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
 
-							text = `https://kroki.io/${type}/svg/${result}`;
-						};
+						text = `https://kroki.io/${type}/svg/${result}`;
+						this.refType?.setValue(type);
 					};
 
-					if (processor == I.EmbedProcessor.Telegram) {
+					if (block.isEmbedTelegram()) {
 						const m = text.match(/post="([^"]+)"/);
 
 						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
-					if (processor == I.EmbedProcessor.GithubGist) {
-						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+					if (block.isEmbedGithubGist()) {
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					};
+
+					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
+						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
@@ -752,6 +783,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						value.html(res.renderSVGElement(this.text));
 					} catch (e) {
 						console.error(e);
+						error.text(e.toString()).show();
 					};
 				});
 				break;
@@ -786,7 +818,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const value = this.getValue().trim();
+		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
@@ -805,13 +837,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const win = $(window);
+		const { block } = this.props;
 
 		keyboard.disableSelection(true);
 
-		win.off('mouseup.embed').on('mouseup.embed', (e: any) => {	
+		const win = $(window);
+		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	
 			keyboard.disableSelection(false);
-			win.off('mouseup.embed');
+			win.off(`mouseup.${block.id}`);
 		});
 	};
 
@@ -828,7 +861,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
-		win.off('mousemove.embed mouseup.embed');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
 		if (selection) {
 			selection.hide();
@@ -838,8 +871,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(true);
 
 		$(`#block-${block.id}`).addClass('isResizing');
-		win.on('mousemove.embed', e => this.onResizeMove(e, checkMax));
-		win.on('mouseup.embed', e => this.onResizeEnd(e, checkMax));
+		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
+		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
 	
 	onResizeMove (e: any, checkMax: boolean) {
@@ -888,7 +921,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
-		win.off('mousemove.embed mouseup.embed');
+		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		$(`#block-${block.id}`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
@@ -910,38 +943,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	getKrokiOptions () {
-		return [
-			{ id: 'blockdiag', name: 'BlockDiag' },
-			{ id: 'bpmn', name: 'BPMN' },
-			{ id: 'bytefield', name: 'Bytefield' },
-			{ id: 'seqdiag', name: 'SeqDiag' },
-			{ id: 'actdiag', name: 'ActDiag' },
-			{ id: 'nwdiag', name: 'NwDiag' },
-			{ id: 'packetdiag', name: 'PacketDiag' },
-			{ id: 'rackdiag', name: 'RackDiag' },
-			{ id: 'c4plantuml', name: 'C4 with PlantUML' },
-			{ id: 'd2', name: 'D2' },
-			{ id: 'dbml', name: 'DBML' },
-			{ id: 'ditaa', name: 'Ditaa' },
-			{ id: 'erd', name: 'Erd' },
-			{ id: 'excalidraw', name: 'Excalidraw' },
-			{ id: 'graphviz', name: 'GraphViz' },
-			{ id: 'mermaid', name: 'Mermaid' },
-			{ id: 'nomnoml', name: 'Nomnoml' },
-			{ id: 'pikchr', name: 'Pikchr' },
-			{ id: 'plantuml', name: 'PlantUML' },
-			{ id: 'structurizr', name: 'Structurizr' },
-			{ id: 'svgbob', name: 'Svgbob' },
-			{ id: 'symbolator', name: 'Symbolator' },
-			{ id: 'tikz', name: 'TikZ' },
-			{ id: 'vega', name: 'Vega' },
-			{ id: 'vegalite', name: 'Vega-Lite' },
-			{ id: 'wavedrom', name: 'WaveDrom' },
-			{ id: 'wireviz', name: 'WireViz' },
-		];
 	};
 
 	fixAsarPath (path: string): string {

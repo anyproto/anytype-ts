@@ -258,7 +258,7 @@ export const Mapper = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
-				fields: Decode.struct(obj.getFields()),
+				fields: Decode.struct(obj.getFields()) || {},
 				hAlign: obj.getAlign(),
 				vAlign: obj.getVerticalalign(),
 				bgColor: obj.getBackgroundcolor(),
