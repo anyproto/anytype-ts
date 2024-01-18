@@ -245,7 +245,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd, types } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const ret = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 
 		if (data.filter && canAdd) {
 			if (ret.length || this.typeNames) {

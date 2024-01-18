@@ -31,7 +31,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />

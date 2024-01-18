@@ -31,7 +31,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));

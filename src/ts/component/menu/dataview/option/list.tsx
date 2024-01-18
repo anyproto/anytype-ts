@@ -358,6 +358,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
+		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+
 		if (filterMapper) {
 			items = items.filter(filterMapper);
 		};

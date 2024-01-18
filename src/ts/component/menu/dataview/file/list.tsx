@@ -195,7 +195,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
