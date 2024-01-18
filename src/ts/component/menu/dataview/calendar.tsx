@@ -19,7 +19,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value } = data;
+		const { value, isEmpty } = data;
 		const items = this.getData();
 		const { d, m, y } = UtilDate.getCalendarDateParam(value);
 
@@ -94,7 +94,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						if (dayToday == UtilDate.timestamp(item.y, item.m, item.d)) {
 							cn.push('today');
 						};
-						if ((d == item.d) && (m == item.m) && (y == item.y)) {
+						if (((d == item.d) && (m == item.m) && (y == item.y)) && !isEmpty) {
 							cn.push('active');
 						};
 						return (
@@ -115,8 +115,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				<div className="foot">
 					<div className="sides">
 						<div className="side left">
-							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true)}>{translate('menuCalendarToday')}</div>
-							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('menuCalendarTomorrow')}</div>
+							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true)}>{translate('commonToday')}</div>
+							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
 						</div>
 						<div className="side right">
 							<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>

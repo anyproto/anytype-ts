@@ -27,14 +27,14 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
 			return (
-				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => this.onOver(e, item)}>
 					<IconObject size={40} object={item} forceLetter={true} />
-					<div className="txt" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div className="txt" onClick={e => this.onClick(e, item)}>
 						<div className="name">{item.name}</div>
 						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
-						{canDelete ? <Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+						{canDelete ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
 					</div>
 				</form>
 			);
@@ -61,8 +61,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd} 
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseEnter={() => this.props.setHover({ id: 'add' })} 
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>
@@ -124,7 +124,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onRemove (e: any, item: any) {
-		this.save(this.getValue().filter(it => it != item.id));
+		this.save(this.getValueIds().filter(it => it != item.id));
 	};
 
 	onOver (e: any, item: any) {
@@ -163,6 +163,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { data } = param;
 		const { objectId, blockId } = data;
 
+		console.log(JSON.stringify(value, null, 3));
+
 		C.ObjectSetSource(objectId, value, () => {
 			if (blockId) {
 				$(window).trigger(`updateDataviewData.${blockId}`);
@@ -184,6 +186,10 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		return [].
 			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type)).
 			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation));
+	};
+
+	getValueIds () {
+		return this.getValue().map(it => it.id);
 	};
 
 	getItems () {

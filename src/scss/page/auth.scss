@@ -1,90 +1,90 @@
 @import "~scss/_vars";
 
-$colorError: #8a351a;
-
-$colorDark: #060606;
-$colorButtonStroke: #252525;
-$colorButtonBlackHover: rgba(37, 37, 37, 0.8);
-$colorButtonBlankHover: rgba(23, 23, 23, 0.8);
-$colorInputOpaque: #17171799;
-$colorPopUp: #141414;
-$colorErrorBackground: #240e07;
-
-$shadow: 0px 0px 0px 1px #252525;
-
 html.bodyIndex, html.bodyAuth {
+	--color-bg-primary: #060606 !important;
+
 	--color-text-primary: #d4d4d4;
-	--color-text-secondary: #8d8d8d;
+	--color-text-secondary: #8d8d8d !important;
 	--color-text-tertiary: #505050;
 
 	--color-shape-tertiary: #2b2b2b;
 
-	body { background: $colorDark !important; color: var(--color-text-secondary); overflow: hidden; }
+	--color-button-stroke: #252525;
+	--color-button-black-hover: rgba(37, 37, 37, 0.8);
+	--color-button-blank-hover: rgba(23, 23, 23, 0.8);
+
+	--color-input-opaque: #17171799;
+	--color-popup: #141414;
+
+	--color-error: #8a351a;
+	--color-error-background: #240e07;
+
+	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
+
+	body { background: var(--color-bg-primary); color: var(--color-text-secondary); overflow: hidden; }
 	.navigationPanel { display: none !important; }
-}
 
-html.bodyIndexIndex, html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.popup { 
-		.innerWrap { background: $colorPopUp; box-shadow: $shadow; color: var(--color-text-primary); }
-
-		.button.disabled { color: var(--color-text-tertiary) }
-
-		.button.black { color: var(--color-text-primary); background: $colorButtonStroke; }
-		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
-
-		.button.blank { border-color: $colorButtonStroke; color: var(--color-text-primary); background: none; }
-		.button.blank:hover { background: $colorButtonBlankHover; }
+		.innerWrap { background: var(--color-popup) !important;; box-shadow: var(--shadow) !important; color: var(--color-text-primary) !important; }
 	}
 
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		h1 { font-size: 18px; margin-bottom: 16px; color: var(--color-text-primary); }
-		b { display: block; font-weight: 700; color: var(--color-text-primary); margin-bottom: 8px; }
+		h1 { font-size: 18px; margin-bottom: 16px; color: var(--color-text-primary) !important; }
+		b { display: block; font-weight: 700; color: var(--color-text-primary) !important; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
 		ul.last { margin: 0px; }
 	}
 
 	#popupSettingsOnboarding-innerWrap {
-		.actionItems, .actionItems .item { border-color: $colorButtonStroke; }
-		.label.small { color: var(--color-text-tertiary); }
+		.actionItems, .actionItems .item { border-color: var(--color-button-stroke) !important; }
+		.label.small { color: var(--color-text-tertiary) !important; }
 
-		.select { background: $colorButtonStroke; border-color: $colorButtonStroke; }
+		.select { background: var(--color-button-stroke) !important; border-color: var(--color-button-stroke) !important; }
 		.select {
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
 		}
 	}
 
 	.menus {
-		.menu.vertical { background: $colorPopUp; box-shadow: $shadow; }
+		.menu.vertical { background: var(--color-popup) !important; box-shadow: var(--shadow) !important; }
 		.menu.vertical {
-			.item { background: $colorPopUp; }
+			.item { background: var(--color-popup) !important; }
 		}
 		.menu.menuAccountPath {
-			.label { color: var(--color-text-secondary); }
-			.label.path { color: var(--color-text-primary); }
+			.label { color: var(--color-text-secondary) !important; }
+			.label.path { color: var(--color-text-primary) !important; }
 		}
 	}
 
 	.dotIndicator {
-    	span.active { background-color: var(--color-text-primary); }
+    	span.active { background-color: var(--color-text-primary) !important; }
 	}
 
 	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: var(--color-text-secondary); box-shadow: $shadow !important; @include text-common; 
+		width: 410px; padding: 12px 16px; background: var(--color-popup) !important; color: var(--color-text-secondary) !important; box-shadow: var(--shadow) !important; @include text-common; 
 		white-space: normal;
 	}
 	.tooltip {
 		.txt { line-height: 22px; }
-		b { display: block; font-weight: 500; color: var(--color-text-primary); }
+		b { display: block; font-weight: 500; color: var(--color-text-primary) !important; }
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 
 	.loaderWrapper {
-		.loader { border-color: #555; border-left-color: var(--color-system-accent-100); }
+		.loader { border-color: #555; border-left-color: var(--color-system-accent-100) !important; }
 		.dot { border-color: #fff; }
 	}
+
+	.button.disabled { color: var(--color-text-tertiary) }
+
+	.button.black { background: var(--color-button-stroke) !important; color: var(--color-text-primary) !important;  }
+	.button.black:not(.disabled):hover { background: var(--color-button-black-hover) !important; color: var(--color-text-primary) !important; }
+
+	.button.blank { border-color: var(--color-button-stroke) !important; color: var(--color-text-primary) !important; background: none; }
+	.button:not(.disabled):hover{ background: var(--color-button-blank-hover) !important; }
 }
 
 html.bodyAuthDeleted {
@@ -95,11 +95,11 @@ html.bodyAuthDeleted {
 
 .pageAuth, .pageIndex {
 	.frame { text-align: center; background: none !important; }
-	.input { height: 40px; border: solid 1px var(--color-shape-primary); }
+	.input { height: 40px; border: solid 1px var(--color-shape-primary) !important; }
 
 	.header { width: 100% !important; }
 	.header {
-		.icon:hover { background-color: var(--color-shape-tertiary); }
+		.icon:hover { background-color: var(--color-shape-tertiary) !important; }
 	}
 	.footer { width: 100% !important; }
 
@@ -111,28 +111,22 @@ html.bodyAuthDeleted {
 	
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
-	.moreInfo { @include text-small; color: var(--color-text-tertiary); margin: 16px auto 0px auto; width: 192px; }
+	.moreInfo { @include text-small; color: var(--color-text-tertiary) !important; margin: 16px auto 0px auto; width: 192px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; @include text-common; }
-	.button.disabled { color: var(--color-text-tertiary); }
+	.button.disabled { color: var(--color-text-tertiary) !important; }
 	
-	.button.black { color: var(--color-text-primary) !important; background: $colorButtonStroke !important; }
-	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
+	.small { color: var(--color-text-secondary) !important; }
+	.small:hover { color: var(--color-text-primary) !important; }
 
-	.button.blank { border-color: $colorButtonStroke !important; color: var(--color-text-primary) !important; background: none; }
-	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
-
-	.small { color: var(--color-text-secondary); }
-	.small:hover { color: var(--color-text-primary); }
-
-	.error { color: $colorError; margin: 0.3em 0px; }
-	.withError { background: $colorErrorBackground; }
+	.error { color: var(--color-error) !important; margin: 0.3em 0px; }
+	.withError { background: var(--color-error-background) !important; }
 
 	.loaderWrapper {
 		@keyframes dots-white {
-			0% { background-color: var(--color-bg-primary); }
-			32% { background-color: var(--color-bg-primary); }
+			0% { background-color: var(--color-bg-primary) !important; }
+			32% { background-color: var(--color-bg-primary) !important; }
 			100% { background-color: rgba(0,0,0,0); }
 		}
 		.dots .dot { animation-name: dots-white; }
@@ -145,10 +139,10 @@ html.bodyAuthDeleted {
 		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
-	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary); width: 384px; }
+	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 384px; }
 
 	.footer {
-		.label.disclaimer { color: var(--color-text-tertiary); }
+		.label.disclaimer { color: var(--color-text-tertiary) !important; }
 	}
 
 	@media (max-width: 464px) {
@@ -168,7 +162,7 @@ html.bodyAuthDeleted {
 .pageAuthInvite {
 	.frame { padding: 64px; }
 	.label { width: 500px; }
-	.input { text-align: center; border: solid 0px; border-bottom: solid 1px var(--color-shape-primary); font-family: 'Plex'; margin-bottom: 32px; }
+	.input { text-align: center; border: solid 0px; border-bottom: solid 1px var(--color-shape-primary) !important; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinCheck {
@@ -176,10 +170,10 @@ html.bodyAuthDeleted {
 	.pin { display: flex; gap: 0px 8px; flex-direction: row; }
 	.pin {
 		.input { 
-			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
+			width: 86px; height: 86px; border-radius: 24px; background: var(--color-input-opaque) !important; padding: 0px; text-align: center; 
 			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
 		}
-		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100); }
+		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100) !important; }
 	}
 }
 
@@ -199,8 +193,8 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { @include text-header3; color: var(--color-text-primary); }
-	.label { @include text-paragraph; color: var(--color-text-secondary); }
+	.title { @include text-header3; color: var(--color-text-primary) !important; }
+	.label { @include text-paragraph; color: var(--color-text-secondary) !important; }
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
 }
 
@@ -222,7 +216,7 @@ html.bodyAuthDeleted {
 	.label { width: 415px; }
 	.button { min-width: 192px; width: auto; }
 
-	.tooltipLink { color: var(--color-text-primary); }
+	.tooltipLink { color: var(--color-text-primary) !important; }
 	.tooltipLink:hover { text-decoration: underline; }
 
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
@@ -232,7 +226,7 @@ html.bodyAuthDeleted {
 	}
 
 	.inputWrapper {
-		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: var(--color-text-primary); font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input { border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
 		.input:hover { filter: brightness(1.2) }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
 	}
@@ -241,15 +235,15 @@ html.bodyAuthDeleted {
 .pageAuthDeleted {
 	canvas { height: 100vh; width: 100vw; }
 
-	.title { color: var(--color-text-primary); margin: 0px 0px 10px 0px; }
+	.title { color: var(--color-text-primary) !important; margin: 0px 0px 10px 0px; }
 	.frame { width: 500px; }
 	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
 
 	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid var(--color-text-secondary); border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid var(--color-text-secondary) !important; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
 	.button { width: 320px; }
-	.remove { color: var(--color-red); }
+	.remove { color: var(--color-red) !important; }
 }

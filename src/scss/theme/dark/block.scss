@@ -117,22 +117,6 @@
     .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
     .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
 
-    /* BlockEmbed */
-
-    .block.blockEmbed {
-		.preview {
-			.icon.embed-latex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
-			.icon.embed-mermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
-			.icon.embed-youtube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
-			.icon.embed-vimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
-			.icon.embed-googleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
-			.icon.embed-soundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
-			.icon.embed-chart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
-			.icon.embed-miro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
-			.icon.embed-figma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
-		}
-    }
-
     /* BlockBookmark */
 
     .block.blockBookmark {

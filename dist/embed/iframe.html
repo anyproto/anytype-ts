@@ -18,6 +18,7 @@
 			}
 
 			#root { font-size: 0px; }
+			iframe { margin: 0px !important; display: inline-block !important; }
 
 			.twitter-tweet, .instagram-media { margin: 0px !important; display: inline-flex !important; }
 			.gist-file { margin: 0px !important; }
@@ -25,6 +26,9 @@
 
 			html.align1 .twitter-tweet, body.align1 .instagram-media { justify-content: center; }
 			html.align2 .twitter-tweet, body.align2 .instagram-media { justify-content: flex-end; }
+
+			html.isChart canvas { background: #fff; }
+			html.isKroki #root img { max-width: 100%; background: #fff; }
 		</style>
 	</head>
 	<body>

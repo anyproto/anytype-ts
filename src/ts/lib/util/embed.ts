@@ -11,6 +11,7 @@ DOMAINS[I.EmbedProcessor.OpenStreetMap] = [ 'openstreetmap.org\/\#map' ];
 DOMAINS[I.EmbedProcessor.Telegram] = [ 't.me' ];
 DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
 DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
+DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -55,9 +56,14 @@ class UtilEmbed {
 	};
 
 	getCodepenHtml (content: string): string {
-		const a = new URL(content);
-		const p = a.pathname.split('/');
+		let p = [];
 
+		try {
+			const a = new URL(content);
+
+			p = a.pathname.split('/');
+		} catch (e) { /**/ };
+		
 		if (!p.length) {
 			return '';
 		};
@@ -66,6 +72,14 @@ class UtilEmbed {
 	};
 
 	getBilibiliHtml (content: string): string {
+		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
+	};
+
+	getKrokiHtml (content: string): string {
+		return `<img src="${content}" />`;
+	};
+
+	getSketchfabHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
@@ -91,8 +105,10 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Vimeo: {
-				const a = new URL(url);
-				url = `https://player.vimeo.com/video${a.pathname}`;
+				try {
+					const a = new URL(url);
+					url = `https://player.vimeo.com/video${a.pathname}`;
+				} catch (e) { /**/ };
 				break;
 			};
 
@@ -150,7 +166,16 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Bilibili: {
-				const { pathname, searchParams } = new URL(url);
+				let pathname = '';
+				let searchParam: any = null;
+
+				try {
+					const a = new URL(url);
+
+					pathname = a.pathname;
+					searchParam = a.searchParams;
+				} catch (e) { /**/ };
+
 				if (!pathname) {
 					break;
 				};
@@ -161,7 +186,7 @@ class UtilEmbed {
 				};
 
 				const bvid = pathname.split('/')[2];
-				const [ p = 1, t = 0 ] = [ searchParams.get('p'), searchParams.get('t') ];
+				const [ p = 1, t = 0 ] = [ searchParam.get('p'), searchParam.get('t') ];
 
 				if (bvid) {
 					url = `https://player.bilibili.com/player.html?bvid=${bvid}&p=${p}&t=${t}&high_quality=1&autoplay=0`;
@@ -229,26 +254,54 @@ class UtilEmbed {
 			case I.EmbedProcessor.Latex: return 'latex';
 			case I.EmbedProcessor.Mermaid: return 'yaml';
 			case I.EmbedProcessor.Chart: return 'js';
+			case I.EmbedProcessor.Kroki:
+			case I.EmbedProcessor.Graphviz: return 'dot';
 		};
 	};
 
-	// Allow to use same origin in iframe sandbox
-	allowSameOrigin (p: I.EmbedProcessor) {
-		return [ 
-			I.EmbedProcessor.Youtube, 
-			I.EmbedProcessor.Vimeo, 
-			I.EmbedProcessor.Soundcloud, 
-			I.EmbedProcessor.GoogleMaps, 
-			I.EmbedProcessor.Miro, 
-			I.EmbedProcessor.Figma,
-			I.EmbedProcessor.Twitter,
-			I.EmbedProcessor.Reddit,
-			I.EmbedProcessor.Instagram,
-			I.EmbedProcessor.Telegram,
-			I.EmbedProcessor.Codepen,
-			I.EmbedProcessor.Bilibili,
-			I.EmbedProcessor.Facebook,
-		].includes(p);
+	getKrokiOptions () {
+		return [
+			{ id: 'blockdiag', name: 'BlockDiag' },
+			{ id: 'bpmn', name: 'BPMN' },
+			{ id: 'bytefield', name: 'Bytefield' },
+			{ id: 'seqdiag', name: 'SeqDiag' },
+			{ id: 'actdiag', name: 'ActDiag' },
+			{ id: 'nwdiag', name: 'NwDiag' },
+			{ id: 'packetdiag', name: 'PacketDiag' },
+			{ id: 'rackdiag', name: 'RackDiag' },
+			{ id: 'c4plantuml', name: 'C4 with PlantUML' },
+			{ id: 'd2', name: 'D2' },
+			{ id: 'dbml', name: 'DBML' },
+			{ id: 'ditaa', name: 'Ditaa' },
+			{ id: 'erd', name: 'Erd' },
+			{ id: 'excalidraw', name: 'Excalidraw' },
+			{ id: 'graphviz', name: 'GraphViz' },
+			{ id: 'mermaid', name: 'Mermaid' },
+			{ id: 'nomnoml', name: 'Nomnoml' },
+			{ id: 'pikchr', name: 'Pikchr' },
+			{ id: 'plantuml', name: 'PlantUML' },
+			{ id: 'structurizr', name: 'Structurizr' },
+			{ id: 'svgbob', name: 'Svgbob' },
+			{ id: 'symbolator', name: 'Symbolator' },
+			{ id: 'tikz', name: 'TikZ' },
+			{ id: 'umlet', name: 'UMlet' },
+			{ id: 'vega', name: 'Vega' },
+			{ id: 'vegalite', name: 'Vega-Lite' },
+			{ id: 'wavedrom', name: 'WaveDrom' },
+			{ id: 'wireviz', name: 'WireViz' },
+		];
+	};
+
+	getKrokiType (s: string): string {
+		const options = this.getKrokiOptions();
+
+		for (const option of options) {
+			if (s.match(new RegExp(`^${option.id}`))) {
+				return option.id;
+			};
+		};
+
+		return '';
 	};
 
 	// Allow to use presentation mode in iframe sandbox
@@ -273,6 +326,8 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Sketchfab,
 		].includes(p);
 	};
 
@@ -290,7 +345,9 @@ class UtilEmbed {
 
 	// Allow block resizing
 	allowBlockResize (p: I.EmbedProcessor) {
-		return ![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid, I.EmbedProcessor.Chart ].includes(p);
+		return ![ 
+			I.EmbedProcessor.Latex, 
+		].includes(p);
 	};
 
 	// Use iframe height instead of fixed aspect ratio
@@ -303,13 +360,8 @@ class UtilEmbed {
 			I.EmbedProcessor.Telegram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
-		].includes(p);
-	};
-
-	// Render blocks on scroll
-	allowScroll (p: I.EmbedProcessor) {
-		return ![ 
-			I.EmbedProcessor.Latex,
+			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 
@@ -325,6 +377,8 @@ class UtilEmbed {
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Bilibili,
+			I.EmbedProcessor.Graphviz,
+			I.EmbedProcessor.Kroki,
 		].includes(p);
 	};
 
@@ -346,6 +400,8 @@ class UtilEmbed {
 			I.EmbedProcessor.Instagram,
 			I.EmbedProcessor.GithubGist,
 			I.EmbedProcessor.Codepen,
+			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Chart,
 		].includes(p);
 	};
 

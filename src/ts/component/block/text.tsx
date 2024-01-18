@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram',
+	'wolfram', 'dot',
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -320,8 +320,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		items.each((i: number, item) => this.textStyle($(item)));
-
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
 			const sr = UtilCommon.getSelectionRange();
@@ -406,8 +404,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
 			};
-
-			this.textStyle(item);
 		});
 
 		items.off('mouseenter.object mouseleave.object');
@@ -520,8 +516,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 			});
 
-			this.textStyle(item);
-
 			name.off('mouseenter.mention');
 			name.on('mouseenter.mention', e => {
 				const sr = UtilCommon.getSelectionRange();
@@ -586,10 +580,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
 		});
-	};
-
-	textStyle (obj: any) {
-		UtilCommon.textStyle(obj, { border: 0.4 });
 	};
 
 	emojiParam (style: I.TextStyle) {
@@ -665,6 +655,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const saveKeys: any[] = [
 			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
+			{ key: `${cmd}+shift+arrowleft` },
+			{ key: `${cmd}+shift+arrowright` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
