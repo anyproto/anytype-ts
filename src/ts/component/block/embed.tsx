@@ -644,7 +644,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					if (block.isEmbedGithubGist()) {
-						allowScript = !!text.match(/src="https:\/\/gist.github.com([^"]+)"/);
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
