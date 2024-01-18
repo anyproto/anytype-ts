@@ -243,7 +243,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
+
 		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
+		node.on('edit', e => this.onEdit(e));
 	};
 
 	unbind () {
