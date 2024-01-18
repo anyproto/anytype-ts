@@ -1,5 +1,5 @@
-import { Rpc } from 'protobuf/pb/protos/commands_pb';
-import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
+import { Rpc } from 'dist/lib/pb/protos/commands_pb';
+import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { I, M, UtilCommon, Encode, Decode } from 'Lib';
 
 export const Mapper = {
@@ -261,7 +261,7 @@ export const Mapper = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
-				fields: Decode.struct(obj.getFields()),
+				fields: Decode.struct(obj.getFields()) || {},
 				hAlign: obj.getAlign(),
 				vAlign: obj.getVerticalalign(),
 				bgColor: obj.getBackgroundcolor(),

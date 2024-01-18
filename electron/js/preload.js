@@ -3,8 +3,6 @@ const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@el
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const readChunk = require('read-chunk');
-const fileType = require('file-type');
 const userPath = app.getPath('userData');
 const tmpPath = app.getPath('temp');
 const logPath = path.join(userPath, 'logs');
@@ -31,14 +29,6 @@ contextBridge.exposeInMainWorld('Electron', {
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
-	fileParam: (path) => {
-		const stat = fs.statSync(path);
-		const buffer = readChunk.sync(path, 0, stat.size);
-		const type = fileType(buffer);
-
-		return { buffer, type };
-	},
-
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');
 		options = options || {};
@@ -50,6 +40,10 @@ contextBridge.exposeInMainWorld('Electron', {
 
 		fs.writeFileSync(fp, data, options);
 		return fp;
+	},
+
+	filePath (...args) {
+		return path.join(...args);
 	},
 
 	dirname: fp => path.dirname(fp),

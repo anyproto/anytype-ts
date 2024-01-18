@@ -231,6 +231,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		});
 
 		if (this.filter != filter.text) {
+			this.n = 0;
 			this.filter = filter.text;
 			this.forceUpdate();
 			return;
@@ -467,6 +468,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		const text = String(data.text || '');
 		const length = text.length;
+
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
@@ -624,9 +626,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
 						};
 
-						// Auto-open BlockLatex edit mode
+						// Auto-open BlockEmbed edit mode
 						if (param.type == I.BlockType.Embed) {
-							window.setTimeout(() => { $(`#block-${newBlockId} #value`).trigger('click'); }, Constant.delay.menu);
+							window.setTimeout(() => { $(`#block-${newBlockId} .focusable`).trigger('edit'); }, Constant.delay.menu);
 						};
 
 						if (param.type == I.BlockType.Dataview) {

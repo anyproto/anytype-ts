@@ -143,16 +143,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const view = data.view.get();
 
-		if (readonly || !block) {
+		if (readonly || !block || !view) {
 			return;
 		};
 	
-		const view = data.view.get();
 		const isBoard = this.param.type == I.ViewType.Board;
 		const isCalendar = this.param.type == I.ViewType.Calendar;
-		const current = data.view.get();
-		const clearGroups = isBoard && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
+		const clearGroups = isBoard && this.param.groupRelationKey && (view.groupRelationKey != this.param.groupRelationKey);
 
 		if (isCalendar && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = 'lastModifiedDate';
@@ -174,10 +173,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			view.name = this.param.name;
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, () => {
 			if (clearGroups) {
-				Dataview.groupUpdate(rootId, blockId, current.id, []);
-				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
+				Dataview.groupUpdate(rootId, blockId, view.id, []);
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, onSave);
 			} else 
 			if (onSave) {
 				onSave();
@@ -214,10 +213,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		if (isBoard || isCalendar) {
 			const groupOption = Relation.getGroupOption(rootId, blockId, type, groupRelationKey);
+			const name = isBoard ? translate('menuDataviewViewEditGroupBy') : translate('menuDataviewViewEditDate');
 
 			settings.push({ 
 				id: 'groupRelationKey', 
-				name: translate('menuDataviewViewEditGroupBy'), 
+				name, 
 				caption: (groupOption ? groupOption.name : translate('commonSelect')), 
 				arrow: true,
 			});

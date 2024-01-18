@@ -79,7 +79,7 @@ class ConfigManager {
 		let channels = ChannelSettings.map((it) => {
 			return { id: it.id, label: Util.translate(it.lang), type: 'radio', checked: (this.config.channel == it.id) };
 		});
-		if (!this.config.sudo) {
+		if (!this.config.sudo && !version.match('alpha')) {
 			channels = channels.filter(it => it.id != 'alpha');
 		};
 		return channels;

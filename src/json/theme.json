@@ -57,23 +57,7 @@
 			"fontFamily": "Helvetica, Arial, sans-serif",
 			"fontSize": "14px",
 			"background": "#171717",
-			"lineColor": "#ffb522",
-			"primaryColor": "",
-			"primaryTextColor": "",
-			"secondaryColor": "",
-			"primaryBorderColor": "",
-			"secondaryBorderColor": "",
-			"secondaryTextColor": "",
-			"tertiaryColor": "",
-			"tertiaryBorderColor": "",
-			"tertiaryTextColor": "",
-			"noteBkgColor": "",
-			"noteTextColor": "",
-			"noteBorderColor": "",
-			"textColor": "",
-			"mainBkg": "",
-			"errorBkgColor": "",
-			"errorTextColor": ""
+			"lineColor": "#ffb522"
 		},
 
 		"qr": {
