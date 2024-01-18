@@ -156,11 +156,12 @@ class DetailStore {
 		};
 		
 		if (withKeys) {
-			let keys = [ 'id', ...withKeys ];
+			let keys: any = [ 'id', ...withKeys ];
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-			list = list.filter(it => keys.includes(it.relationKey));
+			keys = new Set(keys);
+			list = list.filter(it => keys.has(it.relationKey));
 		};
 
 		const object = { id };
