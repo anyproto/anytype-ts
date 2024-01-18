@@ -164,7 +164,12 @@ class DetailStore {
 		};
 
 		const object = { id };
-		list.forEach(it => object[it.relationKey] = it.value);
+
+		for (let i = 0; i < list.length; i++) {
+			const { relationKey, value } = list[i];
+
+			object[relationKey] = value;
+		};
 
 		return this.mapper(object);
 	};
