@@ -4,6 +4,7 @@
 	.menu.menuRelationSuggest {
 		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.filter { padding-top: 12px; }
 		.items { height: 100%; }
 
 		.item {

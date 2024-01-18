@@ -44,8 +44,8 @@
 		}
 
 		.cellContent.c-select {
-			.over { display: inline; }	
-			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
+			.over { display: inline; }
+			.tagItem { margin: -2px 6px 0px 0px; vertical-align: middle; }
 			.tagItem:last-child { margin-right: 0px; }
 			.tagItem.isStatus { line-height: 16px; }
 			.more { margin: 0px; vertical-align: middle; }
@@ -62,6 +62,11 @@
 
 		.cellContent.c-object, .cellContent.c-file {
 			.element { cursor: default; }
+		}
+
+		.cellContent.c-object {
+			.iconObject { display: inline-block; margin-top: -1px; margin-right: 4px; }
+			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }

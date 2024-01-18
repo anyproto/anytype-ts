@@ -78,7 +78,7 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object %s",
+	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -127,7 +127,7 @@
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
-	"pluralType": "Object Type|Object Types",
+	"pluralObjectType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
 	"pluralLinks": "link from|links from",
 	"pluralBacklinks": "link to|links to",
@@ -987,6 +987,9 @@
 	"popupUsecaseMenuLabel": "Install experience to",
 	"popupUsecaseSpaceCreate": "Create new space",
 
+	"popupRelationValueRemoveTitle": "Are you sure?",
+	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
+
 	"menuAccountPeer": "%d\/%d peers",
 	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
@@ -1097,6 +1100,7 @@
 	"menuDataviewObjectTypeEditName": "Object Type name",
 	"menuDataviewObjectTypeEditLayout": "Layout",
 	"menuDataviewObjectListFind": "Find an object",
+	"menuDataviewObjectListEmptySearch": "There are no objects",
 
 	"menuDataviewViewEditName": "View name",
 	"menuDataviewFilterListEmpty": "No filters applied to this View",
@@ -1129,6 +1133,7 @@
 	"menuDataviewGroupEditHideColumn": "Hide Column",
 
 	"menuDataviewObjectValuesAddObject": "Add object",
+	"menuDataviewObjectValuesEmptySearch": "There are no values",
 
 	"menuDataviewOptionListFilterOrCreateOptions": "Filter or create options...",
 	"menuDataviewOptionListFilterOptions": "Filter options...",

@@ -2,10 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Tag, Filter } from 'Component';
+import { Icon, Tag, Filter, DragBox } from 'Component';
 import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
+import arrayMove from 'array-move';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -101,7 +102,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		return (
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
-					<Filter 
+					<Filter
+						className="outlined"
+						icon="search"
 						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholder} 
 						value={filter}
@@ -225,12 +228,22 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { cellRef } = data;
+		const value = Relation.getArrayValue(data.value);
+		const id = item.id;
 
 		if (cellRef) {
 			cellRef.clear();
 		};
 
-		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
+		if (id == 'add') {
+			this.onOptionAdd();
+		} else
+		if (value.includes(id)) {
+			this.onValueRemove(id);
+		} else {
+			this.onValueAdd(id);
+		};
+
 		this.onFilterChange('');
 	};
 
@@ -240,6 +253,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { onChange, maxCount } = data;
 
 		let value = Relation.getArrayValue(data.value);
+
 		value.push(id);
 		value = UtilCommon.arrayUnique(value);
 
@@ -251,6 +265,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
+		menuStore.updateData(this.props.id, { value });
+		onChange(value);
+	};
+
+	onValueRemove (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		const value = Relation.getArrayValue(data.value);
+		const idx = value.indexOf(id);
+
+		value.splice(idx, 1);
 		menuStore.updateData(this.props.id, { value });
 		onChange(value);
 	};
@@ -332,6 +358,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
+		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
+
 		if (filterMapper) {
 			items = items.filter(filterMapper);
 		};
@@ -350,18 +378,16 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
-		items = items.filter(it => !value.includes(it.id));
-
 		return items.concat(ret);
 	};
 
 	resize () {
 		const { getId, position, param } = this.props;
-		const { data } = param;
+		const { data, title } = param;
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = noFilter ? 16 : 58;
+		const offset = 16 + (noFilter ? 0 : 38);
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
