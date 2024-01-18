@@ -228,12 +228,22 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { cellRef } = data;
+		const value = Relation.getArrayValue(data.value);
+		const id = item.id;
 
 		if (cellRef) {
 			cellRef.clear();
 		};
 
-		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
+		if (id == 'add') {
+			this.onOptionAdd();
+		} else
+		if (value.includes(id)) {
+			this.onValueRemove(id);
+		} else {
+			this.onValueAdd(id);
+		};
+
 		this.onFilterChange('');
 	};
 
@@ -243,11 +253,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { onChange, maxCount } = data;
 
 		let value = Relation.getArrayValue(data.value);
-
-		if (value.includes(id)) {
-			this.onValueRemove(id);
-			return;
-		};
 
 		value.push(id);
 		value = UtilCommon.arrayUnique(value);

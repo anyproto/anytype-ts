@@ -733,7 +733,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
 		const relation = dbStore.getRelationByKey(relationKey);
-		const value = object[relationKey];
+		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
 		menuStore.closeAll(Constant.menuIds.cell, () => {
