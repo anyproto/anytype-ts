@@ -145,6 +145,10 @@ html.themeDark {
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
+    .filter.v2 {
+        .icon.clear { background-image: url('#{$themePath}/icon/filter/clear0.svg') !important; }
+        .icon.clear:hover { background-image: url('#{$themePath}/icon/filter/clear1.svg') !important; }
+    }
 
     .textarea { background: none; }
 	.textareaWrap { background-color: var(--color-bg-secondary); }

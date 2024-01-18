@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
@@ -607,6 +608,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(relation.format)) {
+			this.onCellSelect(e, relationKey);
+			return;
+		};
+
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
@@ -718,6 +724,43 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						C.ObjectSetDetails(rootId, details);
 					}
 				}
+			});
+		});
+	};
+
+	onCellSelect (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = Relation.getArrayValue(object[relationKey]);
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewOptionList', {
+				element: `#${elementId}`,
+				className: 'featuredRelation',
+				horizontal: I.MenuDirection.Left,
+				noFlipY: true,
+				offsetY: 4,
+				title: relation.name,
+				onClose: () => {
+					menuStore.closeAll();
+				},
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					value,
+					relation: observable.box(relation),
+					maxCount: relation.maxCount,
+					canAdd: true,
+					onChange: (v) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+					}
+				},
 			});
 		});
 	};
