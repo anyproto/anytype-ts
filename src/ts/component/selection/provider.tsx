@@ -197,6 +197,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
+		const isPopup = keyboard.isPopup();
+		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
 		this.moved = true;
@@ -233,8 +235,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
-
-		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		this.moved = true;
 	};
 	
