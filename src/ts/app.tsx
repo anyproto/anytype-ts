@@ -235,15 +235,7 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			popupStore.open('settings', { data: { page: 'spaceInvite', isSpace: true }});
-
-			// popupStore.open('confirm', {
-			// 	data: {
-			// 		title: 'Leave and unjoin the space',
-			// 		text: 'This space will be removed from<br />your devices and you will no longer have access to it',
-			// 		textConfirm: 'Leave and unjoin',
-			// 	},
-			// });
+			popupStore.open('settings', { data: { page: 'spaceShare', isSpace: true }});
 		}, 1000);
 	};
 

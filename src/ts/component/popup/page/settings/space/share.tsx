@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Select, Button, IconObject, ObjectName, Filter } from 'Component';
+import { Title, Label, Button, Filter, IconObject, ObjectName, Select } from 'Component';
 import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'Store';
@@ -10,7 +10,7 @@ const HEIGHT = 44;
 const LIMIT = 5;
 const FILTER_LIMIT = 20;
 
-const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends React.Component<I.PopupSettings> {
+const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
 
 	node: any = null;
 	team: any[] = [];
@@ -27,21 +27,12 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 	};
 
 	render () {
-		if (!this.cache) {
-			return null;
-		};
-
-		const { onPage } = this.props;
-		const space = {
-			name: 'Anytype Space',
-		};
-
 		const memberOptions = [
 			{ id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
 			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
 			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
 			{ id: '', name: '', isDiv: true },
-			{ id: 'remove', name: translate('popupSettingsSpaceTeamRemoveMember'), icon: 'remove' }
+			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), icon: 'remove' }
 		];
 
 		const length = this.team.length;
@@ -83,53 +74,69 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 		};
 
 		return (
-			<div ref={node => this.node = node}>
+			<React.Fragment>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-				<Title text={UtilCommon.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
-				<Label className="counter" text={UtilCommon.sprintf(translate('popupSettingsSpaceTeamMembers'), length)} />
+				<Title text={translate('popupSettingsSpaceShareTitle')} />
 
-				{length > FILTER_LIMIT ? (
-					<Filter
-						ref={ref => this.refFilter = ref}
-						value={this.filter}
-						onChange={() => { this.load(); }}
-					/>
+				<div className="section sectionInvite">
+					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
+					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
+
+					<div className="inviteLinkWrapper">
+
+					</div>
+
+					<div className="invitesLimit">{translate('popupSettingsSpaceShareInvitesLimit')}</div>
+				</div>
+
+				{this.cache ? (
+					<div ref={node => this.node = node} className="section sectionMembers">
+						<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
+
+						{length > FILTER_LIMIT ? (
+							<Filter
+								ref={ref => this.refFilter = ref}
+								value={this.filter}
+								onChange={() => { this.load(); }}
+							/>
+						) : ''}
+
+						<div id="list" className="rows">
+							<InfiniteLoader
+								isRowLoaded={({ index }) => !!this.team[index]}
+								loadMoreRows={() => {}}
+								rowCount={length}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered, registerChild }) => {
+									return (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													ref={ref => this.refList = ref}
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													deferredMeasurmentCache={this.cache}
+													rowCount={length}
+													rowHeight={HEIGHT}
+													onRowsRendered={onRowsRendered}
+													rowRenderer={rowRenderer}
+													onScroll={this.onScroll}
+													overscanRowCount={LIMIT}
+												/>
+											)}
+										</AutoSizer>
+									);
+								}}
+							</InfiniteLoader>
+						</div>
+
+						<div className="buttons">
+							<Button className="c36" text={translate('popupSettingsSpaceShareStopSharing')} />
+						</div>
+					</div>
 				) : ''}
-
-				<div id="list" className="rows">
-					<InfiniteLoader
-						isRowLoaded={({ index }) => !!this.team[index]}
-						loadMoreRows={() => {}}
-						rowCount={length}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => {
-							return (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											height={Number(height) || 0}
-											width={Number(width) || 0}
-											deferredMeasurmentCache={this.cache}
-											rowCount={length}
-											rowHeight={HEIGHT}
-											onRowsRendered={onRowsRendered}
-											rowRenderer={rowRenderer}
-											onScroll={this.onScroll}
-											overscanRowCount={LIMIT}
-										/>
-									)}
-								</AutoSizer>
-							);
-						}}
-					</InfiniteLoader>
-				</div>
-
-				<div className="buttons">
-					<Button className="c36" onClick={() => onPage('spaceInvite')} text={translate('popupSettingsSpaceTeamButton')} />
-				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
@@ -166,7 +173,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Human }
 		];
 
 		UtilData.search({
@@ -195,7 +202,6 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 		list.css({ height });
 		position();
 	};
-
 });
 
-export default PopupSettingsSpaceTeam;
+export default PopupSettingsSpaceShare;

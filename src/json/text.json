@@ -688,19 +688,20 @@
 
 	"popupSettingsLogout": "Log out",
 
-	"popupSettingsSpaceInviteTitle": "Invite link",
-	"popupSettingsSpaceInviteMemberRights": "Member rights",
-	"popupSettingsSpaceInviteMemberTypeTextReader": "Reader can see space contents (objects and members) but can\u2019t edit objects or space settings, or invite other members to collaborate",
-	"popupSettingsSpaceInviteMemberTypeTextEditor": "Editor can can edit objects and invite other members to collaborate but can\u2019t edit space settings.",
-	"popupSettingsSpaceInviteMemberTypeTextAdmin": "Admin can do everything in this space including moving it to the bin.",
-	"popupSettingsSpaceInviteButton": "Copy invite link",
-
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
-	"popupSettingsSpaceTeam": "%s team",
-	"popupSettingsSpaceTeamTitle": "Space team",
-	"popupSettingsSpaceTeamMembers": "%s members",
-	"popupSettingsSpaceTeamButton": "Invite members",
+	"popupSettingsSpaceShareTitle": "Share space",
+	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
+	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
+	"popupSettingsSpaceShareInvitesLimit": "You can add up to 7 members",
+
+	"popupSettingsSpaceShareMembersAndRequestsTitle": "Members and requests",
+	"popupSettingsSpaceShareRemoveMember": "Remove member",
+	"popupSettingsSpaceShareStopSharing": "Stop sharing",
+
+	"popupSettingsSpaceMemberTypeReader": "Reader",
+	"popupSettingsSpaceMemberTypeEditor": "Editor",
+	"popupSettingsSpaceMemberTypeAdmin": "Admin",
 
 	"popupSettingsSpaceLeave": "Leave %s?",
 	"popupSettingsSpaceLeaveTitle": "Leave space",
@@ -819,14 +820,6 @@
 	"popupSettingsImportNotionIntegrationList32": "Select document → ... → Add Connections → Confirm Integration",
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
-
-	"popupSettingsSpaceMemberTypeReader": "Reader",
-	"popupSettingsSpaceMemberTypeEditor": "Editor",
-	"popupSettingsSpaceMemberTypeAdmin": "Admin",
-
-	"popupSettingsSpaceAnytypeSpace": "Anytype Space",
-
-	"popupSettingsSpaceTeamRemoveMember": "Remove member",
 
 	"popupShortcutMain": "Main",
 	"popupShortcutNavigation": "Navigation",
