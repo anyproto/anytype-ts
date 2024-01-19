@@ -628,6 +628,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
+					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -637,22 +638,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						this.refType?.setValue(type);
 					};
 
-					if (block.isEmbedTelegram()) {
-						const m = text.match(/post="([^"]+)"/);
-
-						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
-					};
-
-					if (block.isEmbedGithubGist()) {
-						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (block.isEmbedGithubGist()) {
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					};
+
+					if (block.isEmbedTelegram()) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
 					if (allowScript) {

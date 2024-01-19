@@ -2,8 +2,6 @@
 
 .blocks {
 
-	$tableBorderOrange: #ffcf6f;
-
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
 		.scrollWrap { width: 100%; padding: 5px; line-height: 0px; }
@@ -13,7 +11,7 @@
 
 		#selectionFrameContainer { position: absolute; left: 0px; top: 0px; pointer-events: none; z-index: 10; }
 		#selectionFrameContainer {
-			.selectionFrame { border: 2px solid $tableBorderOrange; position: absolute; border-radius: 4px; }
+			.selectionFrame { border: 2px solid var(--color-system-accent-50); position: absolute; border-radius: 4px; }
 			.selectionFrame.left { border-width: 0px; border-left-width: 2px; border-radius: 0px; }
 			.selectionFrame.right { border-width: 0px; border-right-width: 2px; border-radius: 0px; }
 			.selectionFrame.top { border-width: 0px; border-top-width: 2px; border-radius: 0px; }
@@ -65,7 +63,7 @@
 
 		.table { display: block; border-collapse: collapse; position: relative; border-radius: 4px; }
 
-		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
+		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid var(--color-system-accent-50); }
 		.table.isClone {
 			.handleColumn { display: block; border-color: var(--color-system-accent-100); }
 		}
@@ -123,7 +121,7 @@
 
 		.cell.isHighlightedCell {
 			.icon.menu { 
-				.inner { border-color: $tableBorderOrange; box-shadow: 0px 0px 0px 2px $tableBorderOrange; }
+				.inner { border-color: var(--color-system-accent-50); box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 			}
 		}
 
