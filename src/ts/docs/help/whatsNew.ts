@@ -39,6 +39,7 @@ export default [
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
+	bullet(`Sketchfab models (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 	bullet(`Kroki diagrams (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 	bullet(`Bilibili videos (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 

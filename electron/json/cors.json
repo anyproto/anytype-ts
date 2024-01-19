@@ -118,7 +118,8 @@
 		"wss://*.bilibili.com:*",
 		"wss://*.biliapi.net",
 		"https://sketchfab.com",
-		"https://media.sketchfab.com"
+		"https://media.sketchfab.com",
+		"https://sentry.io"
 	],
 
 	"script-src-elem": [

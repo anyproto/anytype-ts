@@ -91,12 +91,12 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
+			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
-				{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			]);
 		};
 
