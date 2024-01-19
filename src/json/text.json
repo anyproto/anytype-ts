@@ -115,6 +115,7 @@
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
 	"commonNewObject": "New Object",
+	"commonCopyLink": "Copy link",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -691,6 +692,7 @@
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
 	"popupSettingsSpaceShareTitle": "Share space",
+	"popupSettingsSpaceShareMoreInfo": "More info",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to 7 members",
@@ -1056,7 +1058,6 @@
 	"menuBlockMoreMoveTo": "Move to",
 	"menuBlockMoreVersionHistory": "Version History",
 	"menuBlockMoreExport": "Export",
-	"menuBlockMoreCopyLink": "Copy link",
 	"menuBlockMoreReloadFromSource": "Reload from Source",
 	"menuBlockMoreCreateObject": "Create Object",
 	"menuBlockMoreUseAsTemplate": "Use as a Template",
@@ -1103,7 +1104,6 @@
 	"menuDataviewUrlActionGo7": "Open link",
 	"menuDataviewUrlActionGo8": "Mail to",
 	"menuDataviewUrlActionGo9": "Call to",
-	"menuDataviewUrlActionGoCopy": "Copy link",
 	"menuDataviewUrlActionGoReload": "Reload from source",
 
 	"menuDataviewContextNoAvailableActions": "No available actions",
@@ -1266,7 +1266,6 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
-	"previewCopy": "Copy Link",
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",

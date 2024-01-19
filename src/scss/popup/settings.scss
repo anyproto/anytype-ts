@@ -383,6 +383,36 @@
 			}
 		}
 
+		.side.right.tabSpaceShare {
+			.titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; }
+			.titleWrapper {
+				.title { margin-bottom: 0px; }
+				.info { display: flex; align-items: center; @include text-common; color: var(--color-text-secondary); }
+				.info {
+					.icon { width: 14px; height: 14px; margin-left: 6px; background-image: url('~img/icon/info.svg'); }
+				}
+			}
+
+			.section {
+				.title { @include text-header3; }
+				.label { @include text-paragraph; }
+			}
+
+			.section.sectionInvite { margin-bottom: 36px; }
+			.section.sectionInvite {
+				.title,
+				.label { margin-bottom: 8px; }
+
+				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; }
+				.inviteLinkWrapper {
+					.input { width: 100%; line-height: 40px; height: 40px; border-radius: 8px; padding: 0px 10px; border: 1px solid var(--color-shape-secondary); background: none; }
+					.input.isReadonly { color: var(--color-text-secondary); }
+					.button { flex-shrink: 0; margin: 0px 12px 0px 8px; }
+					.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/refresh.svg'); }
+				}
+			}
+		}
+
 		.side.right.tabLogout {
 			.inputs { margin: 0px 0px 24px 0px; }
 			.buttons { display: flex; gap: 0px 16px; }

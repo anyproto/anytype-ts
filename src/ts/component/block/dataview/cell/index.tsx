@@ -351,7 +351,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				const options = [
 					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('menuDataviewUrlActionGoCopy') },
+					{ id: 'copy', icon: 'copy', name: translate('commonCopyLink') },
 				];
 				if (relation.relationKey == 'source') {
 					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });

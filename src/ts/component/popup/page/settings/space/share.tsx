@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Button, Filter, IconObject, ObjectName, Select } from 'Component';
+import { Title, Label, Icon, Input, Button, Filter, IconObject, ObjectName, Select } from 'Component';
 import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'Store';
@@ -11,6 +11,8 @@ const LIMIT = 5;
 const FILTER_LIMIT = 20;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
+
+	inviteLink: string = 'https://anytype.io/ibafyreifibafyreiffhfg6rxuerttufhfg6rxuerttu';
 
 	node: any = null;
 	team: any[] = [];
@@ -76,14 +78,26 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		return (
 			<React.Fragment>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-				<Title text={translate('popupSettingsSpaceShareTitle')} />
+
+				<div className="titleWrapper">
+					<Title text={translate('popupSettingsSpaceShareTitle')} />
+
+					<div className="info">
+						<span>{translate('popupSettingsSpaceShareMoreInfo')}</span>
+						<Icon className="question" />
+					</div>
+				</div>
 
 				<div className="section sectionInvite">
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
 					<div className="inviteLinkWrapper">
-
+						<Input readonly={true} value={this.inviteLink} />
+						<Button onClick={() => UtilCommon.clipboardCopy({ text: this.inviteLink })} className="c40 black" text={translate('commonCopyLink')} />
+						<div className="refresh" onClick={this.refreshInviteLink}>
+							<Icon />
+						</div>
 					</div>
 
 					<div className="invitesLimit">{translate('popupSettingsSpaceShareInvitesLimit')}</div>
@@ -168,9 +182,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	load () {
-
-		console.log('HERE')
-
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Human }
@@ -181,7 +192,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			sorts: [],
 			fullText: filter,
 		}, (message: any) => {
-			console.log('MESSAGE: ', message)
 			if (message.error.code || !message.records.length) {
 				return;
 			};
@@ -190,6 +200,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			this.forceUpdate();
 		});
 
+	};
+
+	refreshInviteLink () {
+		// refresh logic goes here
 	};
 
 	resize () {
