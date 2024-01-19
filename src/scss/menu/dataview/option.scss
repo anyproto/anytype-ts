@@ -13,9 +13,10 @@
 			.items { height: calc(100% - 38px); }
 		}
 
+		.item { padding-top: 5px; padding-bottom: 5px; }
 		.item {
 			.clickable { width: calc(100% - 20px); }
-			.buttons { display: none; position: absolute; right: 6px; top: 4px; }
+			.buttons { display: none; position: absolute; right: 6px; top: 2px; }
 		}
 		.item:hover, .item.hover {
 			.clickable { width: calc(100% - 24px); }
@@ -27,15 +28,15 @@
 		}
 	}
 
-	.menu.menuDataviewOptionEdit { width: 256px; }
+	.menu.menuDataviewOptionEdit { width: 252px; }
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
-		.filter { padding-left: 16px; padding-right: 16px; margin-bottom: 8px; }
-		.item { padding-left: 16px; padding-right: 16px; }
+		.filter { margin-bottom: 8px; }
+
 		.item:hover::before { background: var(--color-shape-highlight-medium); }
 		.item.active::before { z-index: 1; }
 
-		.section.colorPicker { padding: 8px 16px 0px; }
+		.section.colorPicker { padding: 8px 14px 0px 14px; }
 		.section.colorPicker {
 			.items { width: 224px; display: flex; flex-wrap: wrap; gap: 8px; }
 			.items {

@@ -19,7 +19,7 @@ export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	title(`2024: Fresh Beginnings`),
-	text(`Refusing to succumb to the post-holiday blues, we’re kicking off the new year with a desktop-only release to address the valuable feedback we received after our latest update. This time around, we’ve also conducted an extensive cleanup to tackle longstanding bugs, ensuring a smoother experience for all users. Thanks to everyone who’s given feedback, reported bugs, and contributed to our ${link('', 'codebase')} and ${link('', 'Experience Gallery')}!`),
+	text(`Refusing to succumb to the post-holiday blues, we’re kicking off the new year with a desktop-only release to address the valuable feedback we received after our latest update. This time around, we’ve also conducted an extensive cleanup to tackle longstanding bugs, ensuring a smoother experience for all users. Thanks to everyone who’s given feedback, reported bugs, and contributed to our ${link('https://github.com/anyproto', 'codebase')} and ${link('https://gallery.any.coop/', 'Experience Gallery')}!`),
 
 	h2(`💎 Highlights of this Release:`),
 
@@ -35,10 +35,10 @@ export default [
 	bullet(`Telegram messages`),
 	bullet(`Figma public documents`),
 	bullet(`Open street maps`),
-	bullet(`Reddit posts`),
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
+	bullet(`Sketchfab models (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 	bullet(`Kroki diagrams (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 	bullet(`Bilibili videos (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
 
