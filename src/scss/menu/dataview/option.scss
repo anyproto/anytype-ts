@@ -15,7 +15,7 @@
 
 		.item {
 			.clickable { width: calc(100% - 20px); }
-			.buttons { display: none; position: absolute; right: 14px; top: 4px; }
+			.buttons { display: none; position: absolute; right: 6px; top: 4px; }
 		}
 		.item:hover, .item.hover {
 			.clickable { width: calc(100% - 24px); }
@@ -70,11 +70,11 @@
 		.titleWrapper { padding-bottom: 0px; }
 		.filter { padding-top: 8px; }
 		.item {
+			.buttons,
 			.icon.chk { right: 14px; }
 		}
 		.item:hover, .item.hover {
-			.buttons { display: block; }
-			.icon.chk { display: none; }
+			.icon.chk { right: 40px; }
 		}
 	}
 }
