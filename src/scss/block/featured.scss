@@ -65,8 +65,7 @@
 		}
 
 		.cellContent.c-object {
-			.iconObject { display: inline-block; vertical-align: middle; }
-			.iconObject * { position: static; vertical-align: top; margin: 0px; }
+			.iconObject { display: inline-block; vertical-align: middle; margin: -1px 6px 0px 0px !important; }
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
