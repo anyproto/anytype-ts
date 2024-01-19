@@ -38,6 +38,8 @@
 
 		.item:not(.add) { padding: 4px 16px 4px 12px; }
 		.item {
+			.icon.dnd { margin: 0px; }
+
 			.name { @include text-overflow-nw; }
 			.clickable { width: calc(100% - 24px) !important; }
 
