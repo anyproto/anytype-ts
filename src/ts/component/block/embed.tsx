@@ -637,12 +637,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						this.refType?.setValue(type);
 					};
 
-					if (block.isEmbedTelegram()) {
-						const m = text.match(/post="([^"]+)"/);
-
-						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
-					};
-
 					if (block.isEmbedGithubGist()) {
 						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
 					};
@@ -653,6 +647,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
 						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					};
+
+					if (block.isEmbedTelegram()) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
 					if (allowScript) {
