@@ -483,11 +483,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(view.id);
 		const subId = this.getSubId();
 		const item = detailStore.get(subId, recordId, keys);
-
-		if (!item) {
-			return {};
-		};
-
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
 		if (item.name == UtilObject.defaultName('Page')) {

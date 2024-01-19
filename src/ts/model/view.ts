@@ -75,12 +75,16 @@ class View implements I.View {
 		return this.type == I.ViewType.Board;
 	};
 
+	getRelations () {
+		return this.relations.filter(it => it);
+	};
+
 	getVisibleRelations () {
-		return this.relations.filter(it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		return this.getRelations().filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find(it => it && (it.relationKey == relationKey));
+		return this.getRelations().find(it => it.relationKey == relationKey);
 	};
 
 	getFilter (id: string) {
