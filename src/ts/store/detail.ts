@@ -158,11 +158,12 @@ class DetailStore {
 		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? Constant.defaultRelationKeys : []) ] : []);
 		const object = { id };
 
+		if (withKeys) {
+			list = list.filter(it => keys.has(it.relationKey));
+		};
+
 		for (let i = 0; i < list.length; i++) {
-			const key = list[i].relationKey;
-			if (!withKeys || keys.has(key)) {
-				object[key] = list[i].value;
-			};
+			object[list[i].relationKey] = list[i].value;
 		};
 
 		return this.mapper(object);
