@@ -777,12 +777,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				break;
 			};
 
-			case I.EmbedProcessor.Reddit: {
-				value.html(this.sanitize(text, false));
-				UtilCommon.addScript('embed-reddit', 'https://embed.reddit.com/widgets.js');
-				break;
-			};
-
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
 					try {
