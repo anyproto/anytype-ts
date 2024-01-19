@@ -35,7 +35,6 @@ export default [
 	bullet(`Telegram messages`),
 	bullet(`Figma public documents`),
 	bullet(`Open street maps`),
-	bullet(`Reddit posts`),
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
