@@ -283,7 +283,7 @@
 
 	"authLoginSubmit": "Log In",
 	"authLoginLostPhrase": "I've lost the Phrase",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover Recovery Phrase for you<\/h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Recovery Phrase for you<\/h1><p>Currently, there are no methods of accessing your recovery phrase, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
