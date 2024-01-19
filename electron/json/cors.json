@@ -177,7 +177,8 @@
 		"https://cdpn.io",
 		"https://*.bilibili.com",
 		"https://kroki.io",
-		"https://sketchfab.com"
+		"https://sketchfab.com",
+		"http://player.bilibili.com"
 	],
 
 	"worker-src": [ 
