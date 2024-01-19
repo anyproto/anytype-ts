@@ -50,6 +50,11 @@
 			.icon.delete:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 		.item.withCaption { gap: 0 2px; }
+		.item.withCaption {
+			.clickable {
+				.name { width: calc(100% - 16px); }
+			}
+		}
 		.item.hover, .item:hover {
 			.clickable { width: calc(100% - 44px) !important; }
 			.icon.delete { opacity: 1; }
