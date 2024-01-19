@@ -209,7 +209,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={relation.format == I.RelationType.Object ? 1 : 2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
-								withLabel={true}
+								withName={true}
 							/>
 						</span>
 					);
