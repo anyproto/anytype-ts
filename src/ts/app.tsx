@@ -235,7 +235,7 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			popupStore.open('settings', { data: { page: 'spaceShare', isSpace: true }});
+			popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }});
 		}, 1000);
 	};
 

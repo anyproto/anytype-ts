@@ -6,7 +6,7 @@ import { detailStore } from 'Store';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
 
-const HEIGHT = 48;
+const HEIGHT = 64;
 const LIMIT = 3;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
@@ -44,7 +44,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div className="side left">
 					<IconObject size={48} object={item} />
 					<ObjectName object={item} />
-					{item.isRequested ? <Label text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
+					{item.isRequested ? <Label className="tag" text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
 				</div>
 				<div className="side right">
 					{item.isRequested ? (
@@ -52,7 +52,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 							className="c36 blank"
 							text={translate('popupSettingsSpaceShareMembersViewRequest')}
 						/>
-						) : ( item.isOwner ? <span>owner</span> : (
+						) : ( item.isOwner ? <span className="owner">owner</span> : (
 							<Select
 								id="memberType"
 								value={'reader'}
@@ -149,7 +149,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div className="buttons">
-					<Button className="c36" text={translate('popupSettingsSpaceShareStopSharing')} />
+					<Button className="c40 blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
 			</React.Fragment>
 		);
