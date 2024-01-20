@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { Title, Label, Icon, Input, Button, Filter, IconObject, ObjectName, Select } from 'Component';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select } from 'Component';
 import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'Store';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
 
-const HEIGHT = 44;
-const LIMIT = 5;
-const FILTER_LIMIT = 20;
+const HEIGHT = 64;
+const LIMIT = 3;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
 
 	inviteLink: string = 'https://anytype.io/ibafyreifibafyreiffhfg6rxuerttufhfg6rxuerttu';
+	membersLimit: number = 7;
 
 	node: any = null;
 	team: any[] = [];
@@ -42,19 +42,28 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const Member = (item: any) => (
 			<div id={'item-' + item.id} className="row" style={item.style} >
 				<div className="side left">
-					<IconObject size={32} object={item} />
+					<IconObject size={48} object={item} />
 					<ObjectName object={item} />
+					{item.isRequested ? <Label className="tag" text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
 				</div>
 				<div className="side right">
-					<Select
-						id="memberType"
-						value={'reader'}
-						options={memberOptions}
-						arrowClassName="light"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-						onChange={(v: any) => {
-						}}
-					/>
+					{item.isRequested ? (
+						<Button
+							className="c36 blank"
+							text={translate('popupSettingsSpaceShareMembersViewRequest')}
+						/>
+						) : ( item.isOwner ? <span className="owner">owner</span> : (
+							<Select
+								id="memberType"
+								value={'reader'}
+								options={memberOptions}
+								arrowClassName="light"
+								menuParam={{ horizontal: I.MenuDirection.Right }}
+								onChange={(v: any) => {
+								}}
+							/>
+						)
+					)}
 				</div>
 			</div>
 		);
@@ -100,21 +109,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						</div>
 					</div>
 
-					<div className="invitesLimit">{translate('popupSettingsSpaceShareInvitesLimit')}</div>
+					<div className="invitesLimit">{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), this.membersLimit, UtilCommon.plural(this.membersLimit, translate('pluralMember')))}</div>
 				</div>
 
-				{this.cache ? (
-					<div ref={node => this.node = node} className="section sectionMembers">
-						<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
+				<div ref={node => this.node = node} className="section sectionMembers">
+					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
 
-						{length > FILTER_LIMIT ? (
-							<Filter
-								ref={ref => this.refFilter = ref}
-								value={this.filter}
-								onChange={() => { this.load(); }}
-							/>
-						) : ''}
-
+					{this.cache ? (
 						<div id="list" className="rows">
 							<InfiniteLoader
 								isRowLoaded={({ index }) => !!this.team[index]}
@@ -144,12 +145,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 								}}
 							</InfiniteLoader>
 						</div>
+					) : ''}
+				</div>
 
-						<div className="buttons">
-							<Button className="c36" text={translate('popupSettingsSpaceShareStopSharing')} />
-						</div>
-					</div>
-				) : ''}
+				<div className="buttons">
+					<Button className="c40 blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
+				</div>
 			</React.Fragment>
 		);
 	};
@@ -197,6 +198,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			};
 
 			this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
+
+			this.team[0].isRequested = true;
+			this.team[1].isEditor = true;
+			this.team[2].isOwner = true;
+
 			this.forceUpdate();
 		});
 

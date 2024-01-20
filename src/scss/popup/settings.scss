@@ -195,8 +195,12 @@
 		}
 
 		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
-			.spaceHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceHeader { margin-bottom: 32px; }
 			.spaceHeader {
+				.sides { display: flex; flex-wrap: nowrap; width: 100%; }
+				.sides {
+					.side.left { width: 100%; flex-wrap: nowrap; display: flex; align-items: center; }
+				}
 				.iconWrapper { width: 96px; }
 
 				.headerContent { margin-left: 24px; width: 100%; }
@@ -393,15 +397,15 @@
 				}
 			}
 
+			.section { margin-bottom: 36px; }
 			.section {
 				.title { @include text-header3; }
-				.label { @include text-paragraph; }
 			}
 
-			.section.sectionInvite { margin-bottom: 36px; }
 			.section.sectionInvite {
 				.title,
 				.label { margin-bottom: 8px; }
+				.label { @include text-paragraph; }
 
 				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; }
 				.inviteLinkWrapper {
@@ -410,6 +414,40 @@
 					.button { flex-shrink: 0; margin: 0px 12px 0px 8px; }
 					.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/refresh.svg'); }
 				}
+			}
+
+			.section.sectionMembers {
+				.title { margin-bottom: 18px; }
+
+				.row { border-bottom: 0px solid; padding: 0; }
+				.row {
+					.side { display: flex; gap: 0px 12px; align-items: center; }
+					.side.left {
+						.iconObject { flex-shrink: 0; }
+						.name,
+						.tag { @include text-common; }
+						.tag { line-height: 18px; padding: 0px 4px; border-radius: 3px; font-family: 'Inter'; background-color: #e8d0f1; color: #9f43c1; }
+					}
+
+					.side.right { margin-right: 16px;}
+					.side.right {
+						.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
+						.button.blank:not(.disabled):hover,
+						.button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
+
+						.select, .owner { @include text-common; }
+						.select { border: 0px solid; padding-right: 19px; }
+						.select {
+							.icon.arrow { right: -4px !important; }
+						}
+						.select:hover,
+						.select.hover { background-color: var(--color-bg-primary); }
+					}
+				}
+			}
+
+			.buttons {
+				.button { width: 100%; }
 			}
 		}
 
