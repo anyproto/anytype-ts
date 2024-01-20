@@ -317,7 +317,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (isSetOrCollection) {
-			const rootId = this.ref?.getRootId();
+			const rootId = this.getRootId();
 			if (!rootId) {
 				return;
 			};
@@ -643,8 +643,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			allowed = false;
 		};
 
-		if (UtilObject.isSetLayout(object.layout) && this.ref) {
-			const rootId = this.ref?.getRootId();
+		if (UtilObject.isSetLayout(object.layout)) {
+			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
 
@@ -657,6 +657,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		return allowed;
+	};
+
+	getRootId = (): string => {
+		const child = this.getTargetBlock();
+		if (!child) {
+			return '';
+		};
+
+		const { targetBlockId } = child.content;
+		return [ targetBlockId, 'widget', child.id ].join('-');
 	};
 
 	getLimit ({ limit, layout }): number {

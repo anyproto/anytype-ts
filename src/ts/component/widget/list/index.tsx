@@ -295,7 +295,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
 
-		return [ targetBlockId, this.getTraceId() ].join('-');
+		return [ targetBlockId, 'widget', block.id ].join('-');
 	};
 
 	load = (viewId: string) => {
