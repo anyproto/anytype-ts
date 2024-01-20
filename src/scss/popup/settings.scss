@@ -393,15 +393,15 @@
 				}
 			}
 
+			.section { margin-bottom: 36px; }
 			.section {
 				.title { @include text-header3; }
-				.label { @include text-paragraph; }
 			}
 
-			.section.sectionInvite { margin-bottom: 36px; }
 			.section.sectionInvite {
 				.title,
 				.label { margin-bottom: 8px; }
+				.label { @include text-paragraph; }
 
 				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; }
 				.inviteLinkWrapper {
@@ -410,6 +410,10 @@
 					.button { flex-shrink: 0; margin: 0px 12px 0px 8px; }
 					.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/refresh.svg'); }
 				}
+			}
+
+			.section.sectionMembers {
+				.title { margin-bottom: 18px; }
 			}
 		}
 
