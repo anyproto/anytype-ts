@@ -639,6 +639,7 @@
 	"popupSettingsDataManagementDeleteButton": "Delete account",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
+	"popupSettingsSpaceIndexShare": "Share",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",

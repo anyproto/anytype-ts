@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, Storage } from 'Lib';
 import { observer } from 'mobx-react';
@@ -31,6 +32,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
+		const { config } = commonStore;
 		const { localUsage, bytesLimit } = commonStore.spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
@@ -77,37 +79,44 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			<React.Fragment>
 
 				<div className="spaceHeader">
-					<div className="iconWrapper">
-						<IconObject
-							id="spaceIcon"
-							size={96}
-							object={space}
-							forceLetter={true}
-							canEdit={true}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
-							onUpload={this.onUpload}
-						/>
-					</div>
+					<div className="sides">
+						<div className="side left">
+							<div className="iconWrapper">
+								<IconObject
+									id="spaceIcon"
+									size={96}
+									object={space}
+									forceLetter={true}
+									canEdit={true}
+									menuParam={{ horizontal: I.MenuDirection.Center }}
+									onSelect={this.onSelect}
+									onUpload={this.onUpload}
+								/>
+							</div>
 
-					<div className="headerContent">
-						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
-							<Input
-								ref={ref => this.refName = ref}
-								value={this.checkName(space.name)}
-								onKeyUp={this.onName}
-								placeholder={UtilObject.defaultName('Page')}
-							/>
+							<div className="headerContent">
+								<div className="name">
+									<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
+									<Input
+										ref={ref => this.refName = ref}
+										value={this.checkName(space.name)}
+										onKeyUp={this.onName}
+										placeholder={UtilObject.defaultName('Page')}
+									/>
 
+								</div>
+
+								<Label
+									className="spaceType"
+									text={translate(`spaceType${space.spaceType}`)}
+									onMouseEnter={onSpaceTypeTooltip}
+									onMouseLeave={e => Preview.tooltipHide(false)}
+								/>
+							</div>
 						</div>
-
-						<Label
-							className="spaceType"
-							text={translate(`spaceType${space.spaceType}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
+						<div className="side right">
+							{config.experimental ? <Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} /> : ''}
+						</div>
 					</div>
 				</div>
 
@@ -272,7 +281,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);	
+		menuStore.closeAll([ 'select', 'searchObject' ]);
 	};
 
 	onDashboard () {
