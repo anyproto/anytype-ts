@@ -13,6 +13,7 @@ interface State {
 
 const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
+const LIMIT_TYPE = 2;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -30,7 +31,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	cache: any = {};
 	offset = 0;
 	items: any[] = [];
-	typeNames: string = '';
 	refFilter: any = null;
 	refList: any = null;
 	top = 0;
@@ -166,7 +166,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		this.resize();
 		this.focus();
 		this.load(true);
-		this.checkType();
 	};
 
 	componentDidUpdate () {
@@ -243,19 +242,20 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, types } = data;
+		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
 		const ret = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+		const typeNames = this.getTypeNames();
 
 		if (data.filter && canAdd) {
-			if (ret.length || this.typeNames) {
+			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
 			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
 		};
 
-		if (ret.length && this.typeNames) {
-			ret.unshift({ isSection: true, name: this.typeNames });
+		if (ret.length && typeNames) {
+			ret.unshift({ isSection: true, name: typeNames });
 		};
 
 		return ret;
@@ -317,24 +317,26 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		});
 	};
 
-	checkType () {
+	getTypeNames (): string {
 		const { param } = this.props;
 		const { data } = param;
 		const { types } = data;
 
-		if (types && types.length) {
-			const objectTypes = types.map(id => dbStore.getTypeById(id)).filter(it => it && it.name);
-			const names = objectTypes.map(it => it.name);
-			const l = names.length;
-			const limit = 2;
-
-			if (l > limit) {
-				names.splice(limit, l - limit);
-				names.push(`+${l - limit}`);
-			};
-
-			this.typeNames = `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		if (!types || !types.length) {
+			return;
 		};
+
+		const names = types.map(id => dbStore.getTypeById(id)).filter(it => it).map(it => it.name);
+		const l = names.length;
+
+		if (l > LIMIT_TYPE) {
+			const more = l - LIMIT_TYPE;
+
+			names.splice(LIMIT_TYPE, more);
+			names.push(`+${more}`);
+		};
+
+		return `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
