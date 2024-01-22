@@ -114,7 +114,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							</div>
 						</div>
 						<div className="side right">
-							<Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />
+							{config.experimental ? (
+								<Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />
+							) : ''}
 						</div>
 					</div>
 				</div>
