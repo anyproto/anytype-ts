@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select } from 'Component';
+import $ from 'jquery';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag } from 'Component';
 import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'Store';
@@ -34,7 +35,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
 			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
 			{ id: '', name: '', isDiv: true },
-			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), icon: 'remove' }
+			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
 		];
 
 		const length = this.team.length;
@@ -44,12 +45,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div className="side left">
 					<IconObject size={48} object={item} />
 					<ObjectName object={item} />
-					{item.isRequested ? <Label className="tag" text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
+					{item.isRequested ? <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
 				</div>
 				<div className="side right">
 					{item.isRequested ? (
 						<Button
-							className="c36 blank"
+							className="c36"
+							color="blank"
 							text={translate('popupSettingsSpaceShareMembersViewRequest')}
 						/>
 						) : ( item.isOwner ? <span className="owner">owner</span> : (
@@ -103,10 +105,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="inviteLinkWrapper">
 						<Input readonly={true} value={this.inviteLink} />
-						<Button onClick={() => UtilCommon.clipboardCopy({ text: this.inviteLink })} className="c40 black" text={translate('commonCopyLink')} />
-						<div className="refresh" onClick={this.refreshInviteLink}>
-							<Icon />
-						</div>
+						<Button onClick={this.onInviteCopy} className="c40" color="black" text={translate('commonCopyLink')} />
+						<Icon id="refreshInviteLink" className="refresh" onClick={this.onInviteRefresh} />
 					</div>
 
 					<div className="invitesLimit">{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), this.membersLimit, UtilCommon.plural(this.membersLimit, translate('pluralMember')))}</div>
@@ -149,7 +149,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div className="buttons">
-					<Button className="c40 blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
+					<Button className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
 			</React.Fragment>
 		);
@@ -183,7 +183,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	load () {
-		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Human }
 		];
@@ -191,7 +190,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		UtilData.search({
 			filters,
 			sorts: [],
-			fullText: filter,
 		}, (message: any) => {
 			if (message.error.code || !message.records.length) {
 				return;
@@ -208,8 +206,18 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	};
 
-	refreshInviteLink () {
+	onInviteCopy () {
+		UtilCommon.clipboardCopy({ text: this.inviteLink });
+	};
+
+	onInviteRefresh () {
+		$('#refreshInviteLink').addClass('loading');
+
 		// refresh logic goes here
+
+		window.setTimeout(() => {
+			$('#refreshInviteLink').removeClass('loading');
+		}, 2000);
 	};
 
 	resize () {

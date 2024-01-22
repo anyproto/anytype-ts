@@ -1,5 +1,4 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, Storage } from 'Lib';
 import { observer } from 'mobx-react';
@@ -115,7 +114,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							</div>
 						</div>
 						<div className="side right">
-							{config.experimental ? <Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} /> : ''}
+							<Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />
 						</div>
 					</div>
 				</div>

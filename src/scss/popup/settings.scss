@@ -302,7 +302,7 @@
 
 		.side.right.tabSpaceCreate {
 			> .title { margin: 0px 0px 24px 0px !important; }
-			.spaceHeader { margin: 0px 0px 16px 0px; }
+			.spaceHeader { display: flex; align-items: center; margin: 0px 0px 16px 0px; }
 			.spaceHeader {
 				.headerContent .name { margin-bottom: 12px; }
 				.iconObject:hover:after { opacity: 0 !important; }
@@ -413,6 +413,7 @@
 					.input.isReadonly { color: var(--color-text-secondary); }
 					.button { flex-shrink: 0; margin: 0px 12px 0px 8px; }
 					.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/refresh.svg'); }
+					.icon.loading { transform: translateZ(0); animation: rotate 0.8s infinite linear; }
 				}
 			}
 
@@ -424,9 +425,8 @@
 					.side { display: flex; gap: 0px 12px; align-items: center; }
 					.side.left {
 						.iconObject { flex-shrink: 0; }
-						.name,
-						.tag { @include text-common; }
-						.tag { line-height: 18px; padding: 0px 4px; border-radius: 3px; font-family: 'Inter'; background-color: #e8d0f1; color: #9f43c1; }
+						.name { @include text-common; }
+						.tagItem.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
 					}
 
 					.side.right { margin-right: 16px;}
