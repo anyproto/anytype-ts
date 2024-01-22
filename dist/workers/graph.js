@@ -67,6 +67,7 @@ let settings = {};
 let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
+let nodeMap = new Map();
 let hoverAlpha = 0.3;
 let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
@@ -768,7 +769,7 @@ const isLayoutBookmark = (d) => {
 };
 
 const getNodeById = (id) => {
-	return nodes.find(d => d.id == id);
+	return nodeMap.get(id);
 };
 
 const getNodeByCoords = (x, y) => {
@@ -784,7 +785,8 @@ const getFont = () => {
 };
 
 const getNodeMap = () => {
-	return new Map(nodes.map(d => [ d.id, d ]));
+	nodeMap = new Map(nodes.map(d => [ d.id, d ]));
+	return nodeMap;
 };
 
 const getCenter = (x, y) => {
