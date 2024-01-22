@@ -44,8 +44,8 @@
 			.clickable { width: calc(100% - 24px) !important; }
 
 			.icon.delete { 
-				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
-				opacity: 0; z-index: 1; transition: none;
+				width: 24px; height: 24px; background-size: 20px; right: 10px; border-radius: 4px; opacity: 0; z-index: 1; transition: none; position: static; 
+				margin: 0px;
 			}
 			.icon.delete:hover { background-color: var(--color-shape-highlight-medium); }
 		}
