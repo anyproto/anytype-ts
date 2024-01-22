@@ -248,7 +248,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
+		const types = this.getTypes();
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
@@ -258,11 +259,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		];
 
 		if (types && types.length) {
-			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
-
-			if (map.length) {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
-			};
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
 		};
 
 		if (clear) {
@@ -324,16 +321,21 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		return ret;
 	};
 
-	getTypeNames (): string {
+	getTypes () {
 		const { param } = this.props;
 		const { data } = param;
-		const { types } = data;
+
+		return (data.types || []).map(id => dbStore.getTypeById(id)).filter(it => it);
+	};
+
+	getTypeNames (): string {
+		const types = this.getTypes();
 
 		if (!types || !types.length) {
 			return '';
 		};
 
-		const names = types.map(id => dbStore.getTypeById(id)).filter(it => it).map(it => it.name);
+		const names = types.map(it => it.name);
 		const l = names.length;
 
 		if (l > LIMIT_TYPE) {
