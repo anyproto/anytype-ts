@@ -21,6 +21,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	render () {
 		const { mode, path } = this.config;
 		const { interfaceLang, config } = commonStore;
+		const { userDataPath } = config;
 		const userPath = window.Electron.userPath;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
@@ -86,9 +87,9 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 						{config.experimental ? (
 							<div className="item">
-								<div onClick={() => this.onPathClick(userPath)}>
+								<div onClick={() => this.onPathClick(userDataPath)}>
 									<Label text={translate('popupSettingsOnboardingStoragePath')} />
-									<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
+									<Label className="small" text={UtilCommon.shorten(userDataPath, 32)} />
 								</div>
 								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
 							</div>
