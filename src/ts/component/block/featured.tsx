@@ -717,6 +717,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				offsetY: 4,
 				noFlipX: true,
 				title: relation.name,
+				subIds: [ 'dataviewObjectList' ],
 				onClose: () => {
 					menuStore.closeAll();
 				},
