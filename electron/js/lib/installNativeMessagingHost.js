@@ -160,12 +160,18 @@ const getDarwinDirectory = () => {
 	/* eslint-enable no-useless-escape */
 };
 
-const writeManifest = async (destination, manifest) => {
-	if (!existsSync(path.dirname(destination))) {
-		await mkdir(path.dirname(destination));
+const writeManifest = async (dst, data) => {
+	if (!existsSync(path.dirname(dst))) {
+		await mkdir(path.dirname(dst));
 	};
 
-	writeFile(destination, JSON.stringify(manifest, null, 2), {}, console.log);
+	await writeFile(dst, JSON.stringify(data, null, 2), (err) => {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(`Manifest written: ${dst}`);
+		};
+	});
 };
 
 module.exports = { installNativeMessagingHost };
