@@ -8,11 +8,12 @@ import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
+const LIMIT_TYPE = 2;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -22,7 +23,7 @@ const HEIGHT_DIV = 16;
 const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -30,7 +31,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	cache: any = {};
 	offset = 0;
 	items: any[] = [];
-	typeNames: string = '';
 	refFilter: any = null;
 	refList: any = null;
 	top = 0;
@@ -47,7 +47,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	
 	render () {
 		const { param } = this.props;
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
@@ -120,13 +120,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : ''}
+				{isLoading ? <Loader /> : ''}
 
-				{!items.length && !loading ? (
+				{!items.length && !isLoading ? (
 					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
-				{this.cache && items.length && !loading ? (
+				{this.cache && items.length && !isLoading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -166,7 +166,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		this.resize();
 		this.focus();
 		this.load(true);
-		this.checkType();
 	};
 
 	componentDidUpdate () {
@@ -240,48 +239,31 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { canAdd, types } = data;
-		const value = Relation.getArrayValue(data.value);
-		const ret = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
-
-		if (data.filter && canAdd) {
-			if (ret.length || this.typeNames) {
-				ret.push({ isDiv: true });
-			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
-		};
-
-		if (ret.length && this.typeNames) {
-			ret.unshift({ isSection: true, name: this.typeNames });
-		};
-
-		return ret;
-	};
-	
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const { isLoading } = this.state;
+
+		if (isLoading) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
+		const types = this.getTypes();
+
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
-			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
-
-			if (map.length) {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
-			};
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		UtilData.search({
@@ -292,7 +274,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -310,31 +292,60 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			}));
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
 		});
 	};
 
-	checkType () {
+	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { types } = data;
+		const { canAdd } = data;
+		const value = Relation.getArrayValue(data.value);
+		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const typeNames = this.getTypeNames();
 
-		if (types && types.length) {
-			const objectTypes = types.map(id => dbStore.getTypeById(id)).filter(it => it && it.name);
-			const names = objectTypes.map(it => it.name);
-			const l = names.length;
-			const limit = 2;
-
-			if (l > limit) {
-				names.splice(limit, l - limit);
-				names.push(`+${l - limit}`);
-			};
-
-			this.typeNames = `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		if (typeNames) {
+			ret.unshift({ isSection: true, name: typeNames });
 		};
+
+		if (data.filter && canAdd) {
+			if (ret.length || typeNames) {
+				ret.push({ isDiv: true });
+			};
+			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+		};
+
+		return ret;
+	};
+
+	getTypes () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return (data.types || []).map(id => dbStore.getTypeById(id)).filter(it => it);
+	};
+
+	getTypeNames (): string {
+		const types = this.getTypes();
+
+		if (!types || !types.length) {
+			return '';
+		};
+
+		const names = types.map(it => it.name);
+		const l = names.length;
+
+		if (l > LIMIT_TYPE) {
+			const more = l - LIMIT_TYPE;
+
+			names.splice(LIMIT_TYPE, more);
+			names.push(`+${more}`);
+		};
+
+		return `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

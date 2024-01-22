@@ -65,14 +65,12 @@
 		}
 
 		.cellContent.c-object {
-			.iconObject { display: inline-block; vertical-align: middle; }
-			.iconObject * { position: static; vertical-align: top; margin: 0px; }
+			.iconObject { display: inline-block; vertical-align: middle; margin: -1px 6px 0px 0px !important; }
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
 		.cellContent.c-checkbox {
-			.icon { margin-top: -1px; }
-			.label { padding-left: 5px; }
+			.icon { margin: 0px 5px 0px 0px; }
 		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }

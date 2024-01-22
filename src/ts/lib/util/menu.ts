@@ -82,7 +82,6 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 			{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
 			{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
-			{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
 			{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
 			{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
@@ -91,12 +90,13 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
+			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
-				{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
 

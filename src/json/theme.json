@@ -55,9 +55,7 @@
 
 		"mermaid": {
 			"fontFamily": "Helvetica, Arial, sans-serif",
-			"fontSize": "14px",
-			"background": "#171717",
-			"lineColor": "#ffb522"
+			"fontSize": "14px"
 		},
 
 		"qr": {

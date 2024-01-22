@@ -43,7 +43,7 @@
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
-		#value svg { max-width: 100% !important; }
+		#value svg { max-width: 100% !important; background: #fff; }
 
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {

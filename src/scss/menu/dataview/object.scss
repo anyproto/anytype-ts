@@ -38,16 +38,23 @@
 
 		.item:not(.add) { padding: 4px 16px 4px 12px; }
 		.item {
+			.icon.dnd { margin: 0px; }
+
 			.name { @include text-overflow-nw; }
 			.clickable { width: calc(100% - 24px) !important; }
 
 			.icon.delete { 
-				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
-				opacity: 0; z-index: 1; transition: none;
+				width: 24px; height: 24px; background-size: 20px; right: 10px; border-radius: 4px; opacity: 0; z-index: 1; transition: none; position: static; 
+				margin: 0px;
 			}
 			.icon.delete:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 		.item.withCaption { gap: 0 2px; }
+		.item.withCaption {
+			.clickable {
+				.name { width: calc(100% - 16px); }
+			}
+		}
 		.item.hover, .item:hover {
 			.clickable { width: calc(100% - 44px) !important; }
 			.icon.delete { opacity: 1; }

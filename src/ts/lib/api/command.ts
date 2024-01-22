@@ -6,7 +6,7 @@ import Constant from 'json/constant.json';
 
 const Rpc = Commands.Rpc;
 
-const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
+export const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
 
 	request.setPlatform(platform);
@@ -15,7 +15,7 @@ const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: 
 	dispatcher.request(MetricsSetParameters.name, request, callBack);
 };
 
-const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
+export const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Process.Cancel.Request();
 
 	request.setId(id);
@@ -23,7 +23,7 @@ const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ProcessCancel.name, request, callBack);
 };
 
-const LinkPreview = (url: string, callBack?: (message: any) => void) => {
+export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.LinkPreview.Request();
 
 	request.setUrl(url);
@@ -31,7 +31,7 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
-const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
+export const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.DownloadManifest.Request();
 
 	request.setUrl(url);
@@ -41,19 +41,19 @@ const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
 
 // ---------------------- APP ---------------------- //
 
-const AppShutdown = (callBack?: (message: any) => void) => {
+export const AppShutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request(AppShutdown.name, request, callBack);
 };
 
-const AppGetVersion = (callBack?: (message: any) => void) => {
+export const AppGetVersion = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request(AppGetVersion.name, request, callBack);
 };
 
 // ---------------------- WALLET ---------------------- //
 
-const WalletCreate = (path: string, callBack?: (message: any) => void) => {
+export const WalletCreate = (path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.Create.Request();
 
 	request.setRootpath(path);
@@ -61,7 +61,7 @@ const WalletCreate = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request(WalletCreate.name, request, callBack);
 };
 
-const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any) => void) => {
+export const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.Recover.Request();
 
 	request.setRootpath(path);
@@ -70,7 +70,7 @@ const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any)
 	dispatcher.request(WalletRecover.name, request, callBack);
 };
 
-const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: any) => void) => {
+export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.Convert.Request();
 
 	request.setMnemonic(mnemonic);
@@ -79,7 +79,7 @@ const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: a
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
+export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
 	if (mnemonic) {
@@ -92,7 +92,7 @@ const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (messa
 	dispatcher.request(WalletCreateSession.name, request, callBack);
 };
 
-const WalletCloseSession = (token: string, callBack?: (message: any) => void) => {
+export const WalletCloseSession = (token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CloseSession.Request();
 
 	request.setToken(token);
@@ -102,7 +102,7 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
+export const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -111,7 +111,7 @@ const WorkspaceCreate = (details: any, usecase: I.Usecase, callBack?: (message: 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
 
-const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
+export const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Open.Request();
 
 	request.setSpaceid(spaceId);
@@ -119,7 +119,7 @@ const WorkspaceOpen = (spaceId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(WorkspaceOpen.name, request, callBack);
 };
 
-const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
+export const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Object.Add.Request();
 
 	request.setSpaceid(spaceId);
@@ -128,7 +128,7 @@ const WorkspaceObjectAdd = (spaceId:string, objectId: string, callBack?: (messag
 	dispatcher.request(WorkspaceObjectAdd.name, request, callBack);
 };
 
-const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any) => void) => {
+export const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Object.ListRemove.Request();
 
 	request.setObjectidsList(objectIds);
@@ -136,7 +136,7 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 	dispatcher.request(WorkspaceObjectListRemove.name, request, callBack);
 };
 
-const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
+export const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.SetInfo.Request();
 
 	request.setSpaceid(spaceId);
@@ -147,7 +147,7 @@ const WorkspaceSetInfo = (spaceId:string, details: any, callBack?: (message: any
 
 // ---------------------- SPACE ---------------------- //
 
-const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
+export const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.Delete.Request();
 
 	request.setSpaceid(spaceId);
@@ -157,7 +157,7 @@ const SpaceDelete = (spaceId:string, callBack?: (message: any) => void) => {
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 
 	request.setName(name);
@@ -170,13 +170,13 @@ const AccountCreate = (name: string, avatarPath: string, storePath: string, icon
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
 
-const AccountRecover = (callBack?: (message: any) => void) => {
+export const AccountRecover = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Recover.Request();
 
 	dispatcher.request(AccountRecover.name, request, callBack);
 };
 
-const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Select.Request();
 
 	request.setId(id);
@@ -187,7 +187,7 @@ const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkCon
 	dispatcher.request(AccountSelect.name, request, callBack);
 };
 
-const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
+export const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 
 	request.setRemovedata(removeData);
@@ -195,19 +195,19 @@ const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => 
 	dispatcher.request(AccountStop.name, request, callBack);
 };
 
-const AccountDelete = (callBack?: (message: any) => void) => {
+export const AccountDelete = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 
 	dispatcher.request(AccountDelete.name, request, callBack);
 };
 
-const AccountRevertDeletion = (callBack?: (message: any) => void) => {
+export const AccountRevertDeletion = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 
 	dispatcher.request(AccountRevertDeletion.name, request, callBack);
 };
 
-const AccountMove = (path: string, callBack?: (message: any) => void) => {
+export const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Move.Request();
 
 	request.setNewpath(path);
@@ -215,7 +215,7 @@ const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request(AccountMove.name, request, callBack);
 };
 
-const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
+export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.RecoverFromLegacyExport.Request();
 
 	request.setPath(path);
@@ -244,7 +244,7 @@ const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (
 
 // ---------------------- FILE ---------------------- //
 
-const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
+export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.File.Drop.Request();
 
 	request.setContextid(contextId);
@@ -255,7 +255,7 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 	dispatcher.request(FileDrop.name, request, callBack);
 };
 
-const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
+export const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
@@ -270,7 +270,7 @@ const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType
 	dispatcher.request(FileUpload.name, request, callBack);
 };
 
-const FileDownload = (hash: string, path: string, callBack?: (message: any) => void) => {
+export const FileDownload = (hash: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.File.Download.Request();
 
 	request.setHash(hash);
@@ -279,7 +279,7 @@ const FileDownload = (hash: string, path: string, callBack?: (message: any) => v
 	dispatcher.request(FileDownload.name, request, callBack);
 };
 
-const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
+export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.File.ListOffload.Request();
 
 	request.setOnlyidsList(ids);
@@ -289,13 +289,13 @@ const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message:
 };
 
 
-const FileNodeUsage = (callBack?: (message: any) => void) => {
+export const FileNodeUsage = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 
 	dispatcher.request(FileNodeUsage.name, request, callBack);
 };
 
-const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
+export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Navigation.GetObjectInfoWithLinks.Request();
 
 	request.setObjectid(pageId);
@@ -305,7 +305,7 @@ const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: a
 
 // ---------------------- BLOCK ---------------------- //
 
-const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
+export const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosition, block: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Create.Request();
 
 	request.setContextid(contextId);
@@ -316,7 +316,7 @@ const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosit
 	dispatcher.request(BlockCreate.name, request, callBack);
 };
 
-const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
+export const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.CreateFromExistingObject.Request();
 
 	request.setContextid(contextId);
@@ -326,7 +326,7 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
 };
 
-const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.SetCarriage.Request();
 
 	request.setContextid(contextId);
@@ -338,7 +338,7 @@ const BlockSetCarriage = (contextId: string, blockId: string, range: I.TextRange
 
 // ---------------------- BLOCK WIDGET ---------------------- //
 
-const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: string, callBack?: (message: any) => void) => {
+export const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockWidget.SetTargetId.Request();
 	
 	request.setContextid(contextId);
@@ -348,7 +348,7 @@ const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: st
 	dispatcher.request(BlockWidgetSetTargetId.name, request, callBack);
 };
 
-const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+export const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockWidget.SetLayout.Request();
 	
 	request.setContextid(contextId);
@@ -358,7 +358,7 @@ const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.Widg
 	dispatcher.request(BlockWidgetSetLayout.name, request, callBack);
 };
 
-const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, callBack?: (message: any) => void) => {
+export const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockWidget.SetLimit.Request();
 	
 	request.setContextid(contextId);
@@ -368,7 +368,7 @@ const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, 
 	dispatcher.request(BlockWidgetSetLimit.name, request, callBack);
 };
 
-const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
+export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockWidget.SetViewId.Request();
 
 	request.setContextid(contextId);
@@ -388,7 +388,7 @@ const BlockPreview = (html: string, callBack?: (message: any) => void) => {
 
 // ---------------------- BLOCK TEXT ---------------------- //
 
-const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], range: I.TextRange, callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
@@ -406,7 +406,7 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	dispatcher.request(BlockTextSetText.name, request, callBack);
 };
 
-const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
+export const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.SetChecked.Request();
 
 	request.setContextid(contextId);
@@ -416,7 +416,7 @@ const BlockTextSetChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.request(BlockTextSetChecked.name, request, callBack);
 };
 
-const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
+export const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string, iconImage: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.SetIcon.Request();
 
 	request.setContextid(contextId);
@@ -428,7 +428,7 @@ const BlockTextSetIcon = (contextId: string, blockId: string, iconEmoji: string,
 };
 
 
-const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
+export const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.SetFields.Request();
 
 	request.setContextid(contextId);
@@ -438,7 +438,7 @@ const BlockSetFields = (contextId: string, blockId: string, fields: any, callBac
 	dispatcher.request(BlockSetFields.name, request, callBack);
 };
 
-const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
+export const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Merge.Request();
 
 	request.setContextid(contextId);
@@ -448,7 +448,7 @@ const BlockMerge = (contextId: string, blockId1: string, blockId2: string, callB
 	dispatcher.request(BlockMerge.name, request, callBack);
 };
 
-const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, mode: I.BlockSplitMode, callBack?: (message: any) => void) => {
+export const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, style: I.TextStyle, mode: I.BlockSplitMode, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Split.Request();
 
 	request.setContextid(contextId);
@@ -460,7 +460,7 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 	dispatcher.request(BlockSplit.name, request, callBack);
 };
 
-const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.Fetch.Request();
 
 	request.setContextid(contextId);
@@ -470,7 +470,7 @@ const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, cal
 	dispatcher.request(BlockBookmarkFetch.name, request, callBack);
 };
 
-const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
+export const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, position: I.BlockPosition, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockBookmark.CreateAndFetch.Request();
 
 	request.setContextid(contextId);
@@ -481,7 +481,7 @@ const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, positi
 	dispatcher.request(BlockBookmarkCreateAndFetch.name, request, callBack);
 };
 
-const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
+export const BlockUpload = (contextId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Upload.Request();
 
 	request.setContextid(contextId);
@@ -492,7 +492,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 	dispatcher.request(BlockUpload.name, request, callBack);
 };
 
-const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Copy.Request();
@@ -504,7 +504,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 	dispatcher.request(BlockCopy.name, request, callBack);
 };
 
-const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Cut.Request();
@@ -516,7 +516,7 @@ const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, call
 	dispatcher.request(BlockCut.name, request, callBack);
 };
 
-const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
+export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
 	data = UtilCommon.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
@@ -534,7 +534,7 @@ const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, bl
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
 
-const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockListMoveToExistingObject = (contextId: string, targetContextId: string, targetId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListMoveToExistingObject.Request();
 
 	request.setContextid(contextId);
@@ -546,7 +546,7 @@ const BlockListMoveToExistingObject = (contextId: string, targetContextId: strin
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
+export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
@@ -556,7 +556,7 @@ const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKe
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };
 
-const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds: string[], targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListDuplicate.Request();
 
 	request.setContextid(contextId);
@@ -568,7 +568,7 @@ const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds
 	dispatcher.request(BlockListDuplicate.name, request, callBack);
 };
 
-const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+export const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListTurnInto.Request();
 
 	request.setContextid(contextId);
@@ -578,7 +578,7 @@ const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextS
 	dispatcher.request(BlockListTurnInto.name, request, callBack);
 };
 
-const BlockListDelete = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
+export const BlockListDelete = (contextId: string, blockIds: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListDelete.Request();
 
 	request.setContextid(contextId);
@@ -589,7 +589,7 @@ const BlockListDelete = (contextId: string, blockIds: any[], callBack?: (message
 
 // ---------------------- BLOCK DIV ---------------------- //
 
-const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+export const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDiv.ListSetStyle.Request();
 
 	request.setContextid(contextId);
@@ -601,7 +601,7 @@ const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.Te
 
 // ---------------------- BLOCK LATEX ---------------------- //
 
-const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+export const BlockLatexSetText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockLatex.SetText.Request();
 
 	request.setContextid(contextId);
@@ -613,7 +613,7 @@ const BlockLatexSetText = (contextId: string, blockId: string, text: string, cal
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -631,7 +631,7 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
 
-const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize: I.LinkIconSize, cardStyle: I.LinkCardStyle, description: I.LinkDescription, relations: string[], callBack?: (message: any) => void) => {
+export const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize: I.LinkIconSize, cardStyle: I.LinkCardStyle, description: I.LinkDescription, relations: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockLink.ListSetAppearance.Request();
 
 	request.setContextid(contextId);
@@ -646,7 +646,7 @@ const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize
 
 // ---------------------- BLOCK TABLE ---------------------- //
 
-const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow, callBack?: (message: any) => void) => {
+export const BlockTableCreate = (contextId: string, targetId: string, position: I.BlockPosition, rows: number, columns: number, withHeaderRow, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.Create.Request();
 
 	request.setContextid(contextId);
@@ -659,7 +659,7 @@ const BlockTableCreate = (contextId: string, targetId: string, position: I.Block
 	dispatcher.request(BlockTableCreate.name, request, callBack);
 };
 
-const BlockTableExpand = (contextId: string, targetId: string, rows: number, columns: number, callBack?: (message: any) => void) => {
+export const BlockTableExpand = (contextId: string, targetId: string, rows: number, columns: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.Expand.Request();
 
 	request.setContextid(contextId);
@@ -670,7 +670,7 @@ const BlockTableExpand = (contextId: string, targetId: string, rows: number, col
 	dispatcher.request(BlockTableExpand.name, request, callBack);
 };
 
-const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, callBack?: (message: any) => void) => {
+export const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.Sort.Request();
 
 	request.setContextid(contextId);
@@ -680,7 +680,7 @@ const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, c
 	dispatcher.request(BlockTableSort.name, request, callBack);
 };
 
-const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockTableRowCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowCreate.Request();
 
 	request.setContextid(contextId);
@@ -690,7 +690,7 @@ const BlockTableRowCreate = (contextId: string, targetId: string, position: I.Bl
 	dispatcher.request(BlockTableRowCreate.name, request, callBack);
 };
 
-const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowDuplicate.Request();
 
 	request.setContextid(contextId);
@@ -701,7 +701,7 @@ const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: st
 	dispatcher.request(BlockTableRowDuplicate.name, request, callBack);
 };
 
-const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+export const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowListFill.Request();
 
 	request.setContextid(contextId);
@@ -710,7 +710,7 @@ const BlockTableRowListFill = (contextId: string, blockIds: string[], callBack?:
 	dispatcher.request(BlockTableRowListFill.name, request, callBack);
 };
 
-const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+export const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowListClean.Request();
 
 	request.setContextid(contextId);
@@ -719,7 +719,7 @@ const BlockTableRowListClean = (contextId: string, blockIds: string[], callBack?
 	dispatcher.request(BlockTableRowListClean.name, request, callBack);
 };
 
-const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: boolean, callBack?: (message: any) => void) => {
+export const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.RowSetHeader.Request();
 
 	request.setContextid(contextId);
@@ -729,7 +729,7 @@ const BlockTableRowSetHeader = (contextId: string, targetId: string, isHeader: b
 	dispatcher.request(BlockTableRowSetHeader.name, request, callBack);
 };
 
-const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockTableColumnCreate = (contextId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnCreate.Request();
 
 	request.setContextid(contextId);
@@ -739,7 +739,7 @@ const BlockTableColumnCreate = (contextId: string, targetId: string, position: I
 	dispatcher.request(BlockTableColumnCreate.name, request, callBack);
 };
 
-const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
+export const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnDelete.Request();
 
 	request.setContextid(contextId);
@@ -748,7 +748,7 @@ const BlockTableColumnDelete = (contextId: string, targetId: string, callBack?: 
 	dispatcher.request(BlockTableColumnDelete.name, request, callBack);
 };
 
-const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnMove.Request();
 
 	request.setContextid(contextId);
@@ -759,7 +759,7 @@ const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId:
 	dispatcher.request(BlockTableColumnMove.name, request, callBack);
 };
 
-const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
+export const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId: string, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnDuplicate.Request();
 
 	request.setContextid(contextId);
@@ -770,7 +770,7 @@ const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId:
 	dispatcher.request(BlockTableColumnDuplicate.name, request, callBack);
 };
 
-const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+export const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockTable.ColumnListFill.Request();
 
 	request.setContextid(contextId);
@@ -781,7 +781,7 @@ const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBac
 
 // ---------------------- BLOCK FILE ---------------------- //
 
-const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
+export const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockFile.CreateAndUpload.Request();
 
 	request.setContextid(contextId);
@@ -793,7 +793,7 @@ const BlockFileCreateAndUpload = (contextId: string, targetId: string, position:
 	dispatcher.request(BlockFileCreateAndUpload.name, request, callBack);
 };
 
-const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
+export const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockFile.ListSetStyle.Request();
 
 	request.setContextid(contextId);
@@ -805,7 +805,7 @@ const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.F
 
 // ---------------------- BLOCK TEXT ---------------------- //
 
-const BlockTextListSetColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
+export const BlockTextListSetColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListSetColor.Request();
 
 	request.setContextid(contextId);
@@ -815,7 +815,7 @@ const BlockTextListSetColor = (contextId: string, blockIds: string[], color: str
 	dispatcher.request(BlockTextListSetColor.name, request, callBack);
 };
 
-const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
+export const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mark, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListSetMark.Request();
 
 	request.setContextid(contextId);
@@ -825,7 +825,7 @@ const BlockTextListSetMark = (contextId: string, blockIds: string[], mark: I.Mar
 	dispatcher.request(BlockTextListSetMark.name, request, callBack);
 };
 
-const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
+export const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.TextStyle, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListSetStyle.Request();
 
 	request.setContextid(contextId);
@@ -835,7 +835,7 @@ const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.T
 	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
 };
 
-const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+export const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListClearStyle.Request();
 
 	request.setContextid(contextId);
@@ -844,7 +844,7 @@ const BlockTextListClearStyle = (contextId: string, blockIds: string[], callBack
 	dispatcher.request(BlockTextListClearStyle.name, request, callBack);
 };
 
-const BlockTextListClearContent = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+export const BlockTextListClearContent = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockText.ListClearContent.Request();
 
 	request.setContextid(contextId);
@@ -853,7 +853,7 @@ const BlockTextListClearContent = (contextId: string, blockIds: string[], callBa
 	dispatcher.request(BlockTextListClearContent.name, request, callBack);
 };
 
-const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
+export const BlockListSetFields = (contextId: string, fields: any, callBack?: (message: any) => void) => {
 	fields = fields.map(Mapper.To.Fields);
 
 	const request = new Rpc.Block.ListSetFields.Request();
@@ -864,7 +864,7 @@ const BlockListSetFields = (contextId: string, fields: any, callBack?: (message:
 	dispatcher.request(BlockListSetFields.name, request, callBack);
 };
 
-const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
+export const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListSetBackgroundColor.Request();
 
 	request.setContextid(contextId);
@@ -874,7 +874,7 @@ const BlockListSetBackgroundColor = (contextId: string, blockIds: string[], colo
 	dispatcher.request(BlockListSetBackgroundColor.name, request, callBack);
 };
 
-const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockHAlign, callBack?: (message: any) => void) => {
+export const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.BlockHAlign, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListSetAlign.Request();
 
 	request.setContextid(contextId);
@@ -884,7 +884,7 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request(BlockListSetAlign.name, request, callBack);
 };
 
-const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align: I.BlockVAlign, callBack?: (message: any) => void) => {
+export const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align: I.BlockVAlign, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListSetVerticalAlign.Request();
 
 	request.setContextid(contextId);
@@ -894,7 +894,7 @@ const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align:
 	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
 
-const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, sources: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Create.Request();
 
 	request.setContextid(contextId);
@@ -905,7 +905,7 @@ const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, 
 	dispatcher.request(BlockDataviewViewCreate.name, request, callBack);
 };
 
-const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
+export const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: string, view: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Update.Request();
 
 	request.setContextid(contextId);
@@ -916,7 +916,7 @@ const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewViewUpdate.name, request, callBack);
 };
 
-const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
+export const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Delete.Request();
 
 	request.setContextid(contextId);
@@ -926,7 +926,7 @@ const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewViewDelete.name, request, callBack);
 };
 
-const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
+export const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.SetPosition.Request();
 
 	request.setContextid(contextId);
@@ -937,7 +937,7 @@ const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId
 	dispatcher.request(BlockDataviewViewSetPosition.name, request, callBack);
 };
 
-const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
+export const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewId: string, filter: I.Filter, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Filter.Add.Request();
 
 	request.setContextid(contextId);
@@ -948,7 +948,7 @@ const BlockDataviewFilterAdd = (contextId: string, blockId: string, viewId: stri
 	dispatcher.request(BlockDataviewFilterAdd.name, request, callBack);
 };
 
-const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Filter.Remove.Request();
 
 	request.setContextid(contextId);
@@ -959,7 +959,7 @@ const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: s
 	dispatcher.request(BlockDataviewFilterRemove.name, request, callBack);
 };
 
-const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: string, id: string, filter: I.Filter, callBack?: (message: any) => void) => {
+export const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: string, id: string, filter: I.Filter, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Filter.Replace.Request();
 
 	request.setContextid(contextId);
@@ -971,7 +971,7 @@ const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: 
 	dispatcher.request(BlockDataviewFilterReplace.name, request, callBack);
 };
 
-const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Filter.Sort.Request();
 
 	request.setContextid(contextId);
@@ -982,7 +982,7 @@ const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewFilterSort.name, request, callBack);
 };
 
-const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string, sort: I.Sort, callBack?: (message: any) => void) => {
+export const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string, sort: I.Sort, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Add.Request();
 
 	request.setContextid(contextId);
@@ -993,7 +993,7 @@ const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string
 	dispatcher.request(BlockDataviewSortAdd.name, request, callBack);
 };
 
-const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Remove.Request();
 
 	request.setContextid(contextId);
@@ -1004,7 +1004,7 @@ const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewSortRemove.name, request, callBack);
 };
 
-const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: string, id: string, sort: I.Sort, callBack?: (message: any) => void) => {
+export const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: string, id: string, sort: I.Sort, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Replace.Request();
 
 	request.setContextid(contextId);
@@ -1016,7 +1016,7 @@ const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: st
 	dispatcher.request(BlockDataviewSortReplace.name, request, callBack);
 };
 
-const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Sort.Request();
 
 	request.setContextid(contextId);
@@ -1027,7 +1027,7 @@ const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: strin
 	dispatcher.request(BlockDataviewSortSort.name, request, callBack);
 };
 
-const BlockDataviewViewRelationRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewViewRelationRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.ViewRelation.Remove.Request();
 
 	request.setContextid(contextId);
@@ -1038,7 +1038,7 @@ const BlockDataviewViewRelationRemove = (contextId: string, blockId: string, vie
 	dispatcher.request(BlockDataviewViewRelationRemove.name, request, callBack);
 };
 
-const BlockDataviewViewRelationReplace = (contextId: string, blockId: string, viewId: string, relationKey: string, relation: I.ViewRelation, callBack?: (message: any) => void) => {
+export const BlockDataviewViewRelationReplace = (contextId: string, blockId: string, viewId: string, relationKey: string, relation: I.ViewRelation, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.ViewRelation.Replace.Request();
 
 	request.setContextid(contextId);
@@ -1050,7 +1050,7 @@ const BlockDataviewViewRelationReplace = (contextId: string, blockId: string, vi
 	dispatcher.request(BlockDataviewViewRelationReplace.name, request, callBack);
 };
 
-const BlockDataviewViewRelationSort = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewViewRelationSort = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.ViewRelation.Sort.Request();
 
 	request.setContextid(contextId);
@@ -1061,7 +1061,7 @@ const BlockDataviewViewRelationSort = (contextId: string, blockId: string, viewI
 	dispatcher.request(BlockDataviewViewRelationSort.name, request, callBack);
 };
 
-const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.SetActive.Request();
 
 	request.setContextid(contextId);
@@ -1073,7 +1073,7 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
 
-const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
+export const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.GroupOrder.Update.Request();
 
 	request.setContextid(contextId);
@@ -1083,7 +1083,7 @@ const BlockDataviewGroupOrderUpdate = (contextId: string, blockId: string, order
 	dispatcher.request(BlockDataviewGroupOrderUpdate.name, request, callBack);
 };
 
-const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orders: any[], callBack?: (message: any) => void) => {
+export const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orders: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.ObjectOrder.Update.Request();
 
 	request.setContextid(contextId);
@@ -1093,7 +1093,7 @@ const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orde
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };
 
-const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
+export const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockRelation.SetKey.Request();
 
 	request.setContextid(contextId);
@@ -1103,7 +1103,7 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request(BlockRelationSetKey.name, request, callBack);
 };
 
-const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Add.Request();
 
 	request.setContextid(contextId);
@@ -1113,7 +1113,7 @@ const BlockDataviewRelationAdd = (contextId: string, blockId: string, relationKe
 	dispatcher.request(BlockDataviewRelationAdd.name, request, callBack);
 };
 
-const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Relation.Delete.Request();
 
 	request.setContextid(contextId);
@@ -1123,7 +1123,7 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, relatio
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
 };
 
-const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
+export const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.SetSource.Request();
 
 	request.setContextid(contextId);
@@ -1135,7 +1135,7 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 
 // ---------------------- BLOCK WIDGET ---------------------- //
 
-const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
+export const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
 
 	request.setContextid(contextId);
@@ -1150,7 +1150,7 @@ const BlockCreateWidget = (contextId: string, targetId: string, block: any, posi
 
 // ---------------------- HISTORY ---------------------- //
 
-const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
+export const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.ShowVersion.Request();
 
 	request.setObjectid(objectId);
@@ -1167,7 +1167,7 @@ const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (mes
 	});
 };
 
-const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
+export const HistorySetVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.SetVersion.Request();
 
 	request.setObjectid(objectId);
@@ -1176,7 +1176,7 @@ const HistorySetVersion = (objectId: string, versionId: string, callBack?: (mess
 	dispatcher.request(HistorySetVersion.name, request, callBack);
 };
 
-const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
+export const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.GetVersions.Request();
 
 	request.setObjectid(objectId);
@@ -1188,7 +1188,7 @@ const HistoryGetVersions = (objectId: string, lastVersionId: string, limit: numb
 
 // ---------------------- OBJECT TYPE ---------------------- //
 
-const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 
 	request.setObjecttypeurl(objectTypeId);
@@ -1197,7 +1197,7 @@ const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], cal
 	dispatcher.request(ObjectTypeRelationAdd.name, request, callBack);
 };
 
-const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 
 	request.setObjecttypeurl(objectTypeId);
@@ -1208,7 +1208,7 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKeys: string[], 
 
 // ---------------------- OBJECT ---------------------- //
 
-const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Create.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1220,7 +1220,7 @@ const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: string, t
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
 
-const ObjectCreateSet = (sources: string[], details: any, templateId: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateSet = (sources: string[], details: any, templateId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateSet.Request();
 
 	request.setSourceList(sources);
@@ -1231,7 +1231,7 @@ const ObjectCreateSet = (sources: string[], details: any, templateId: string, sp
 	dispatcher.request(ObjectCreateSet.name, request, callBack);
 };
 
-const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateBookmark.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1240,7 +1240,7 @@ const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (message
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
-const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
+export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1251,7 +1251,7 @@ const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
 
-const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1261,7 +1261,7 @@ const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: st
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
-const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
 
 	const request = new Rpc.Object.CreateRelation.Request();
@@ -1272,7 +1272,7 @@ const ObjectCreateRelation = (details: any, spaceId: string, callBack?: (message
 	dispatcher.request(ObjectCreateRelation.name, request, callBack);
 };
 
-const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateRelation.Request();
 
 	request.setDetails(Encode.struct(details));
@@ -1281,7 +1281,7 @@ const ObjectCreateRelationOption = (details: any, spaceId: string, callBack?: (m
 	dispatcher.request(ObjectCreateRelationOption.name, request, callBack);
 };
 
-const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
+export const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Relation.ListRemoveOption.Request();
 
 	request.setOptionidsList(optionIds);
@@ -1290,7 +1290,7 @@ const RelationListRemoveOption = (optionIds: string[], checkInObjects: boolean, 
 	dispatcher.request(RelationListRemoveOption.name, request, callBack);
 };
 
-const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
+export const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.BookmarkFetch.Request();
 
 	request.setContextid(contextId);
@@ -1299,7 +1299,7 @@ const ObjectBookmarkFetch = (contextId: string, url: string, callBack?: (message
 	dispatcher.request(ObjectBookmarkFetch.name, request, callBack);
 };
 
-const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Open.Request();
 
 	request.setObjectid(objectId);
@@ -1323,7 +1323,7 @@ const ObjectOpen = (objectId: string, traceId: string, spaceId: string, callBack
 	});
 };
 
-const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Show.Request();
 
 	request.setObjectid(objectId);
@@ -1342,7 +1342,7 @@ const ObjectShow = (objectId: string, traceId: string, spaceId: string, callBack
 };
 
 
-const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
+export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
 	request.setObjectid(objectId);
@@ -1351,7 +1351,7 @@ const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any
 	dispatcher.request(ObjectClose.name, request, callBack);
 };
 
-const ObjectUndo = (contextId: string, callBack?: (message: any) => void) => {
+export const ObjectUndo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Undo.Request();
 
 	request.setContextid(contextId);
@@ -1359,7 +1359,7 @@ const ObjectUndo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectUndo.name, request, callBack);
 };
 
-const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
+export const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Redo.Request();
 
 	request.setContextid(contextId);
@@ -1367,7 +1367,7 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, isNewSpace: boolean, callBack?: (message: any) => void) => {
+export const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, updateExisting: boolean, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1443,7 +1443,7 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
 
-const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
+export const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Notion.ValidateToken.Request();
 
 	request.setToken(token);
@@ -1451,7 +1451,7 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
 
-const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (message: any) => void) => {
+export const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportUseCase.Request();
 
 	request.setSpaceid(spaceId);
@@ -1460,7 +1460,7 @@ const ObjectImportUseCase = (spaceId: string, usecase: number, callBack?: (messa
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
 };
 
-const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
+export const ObjectImportExperience = (spaceId: string, url: string, title: string, isNewSpace: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ImportExperience.Request();
 
 	request.setSpaceid(spaceId);
@@ -1471,7 +1471,7 @@ const ObjectImportExperience = (spaceId: string, url: string, title: string, isN
 	dispatcher.request(ObjectImportExperience.name, request, callBack);
 };
 
-const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
+export const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 
 	request.setContextid(contextId);
@@ -1480,7 +1480,7 @@ const ObjectSetObjectType = (contextId: string, typeKey: string, callBack?: (mes
 	dispatcher.request(ObjectSetObjectType.name, request, callBack);
 };
 
-const ObjectSetSource = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+export const ObjectSetSource = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetSource.Request();
 
 	request.setContextid(contextId);
@@ -1489,7 +1489,7 @@ const ObjectSetSource = (contextId: string, sources: string[], callBack?: (messa
 	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
-const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+export const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
 	const request = new Rpc.Object.SetDetails.Request();
@@ -1500,7 +1500,7 @@ const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message
 	dispatcher.request(ObjectSetDetails.name, request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 
 	request.setFiltersList(filters.map(Mapper.To.Filter));
@@ -1513,7 +1513,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1532,7 +1532,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
 
-const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
+export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: string, filters: I.Filter[], sources: string[], collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.GroupsSubscribe.Request();
 
 	request.setSpaceid(spaceId);
@@ -1545,7 +1545,7 @@ const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKey: stri
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
 
-const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, noDeps: boolean, callBack?: (message: any) => void) => {
+export const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSubid(subId);
@@ -1557,7 +1557,7 @@ const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignore
 	dispatcher.request(ObjectSubscribeIds.name, request, callBack);
 };
 
-const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
+export const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchUnsubscribe.Request();
 
 	request.setSubidsList(subIds);
@@ -1565,7 +1565,7 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 	dispatcher.request(ObjectSearchUnsubscribe.name, request, callBack);
 };
 
-const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Add.Request();
 
 	request.setContextid(contextId);
@@ -1574,7 +1574,7 @@ const ObjectRelationAdd = (contextId: string, relationKeys: string[], callBack?:
 	dispatcher.request(ObjectRelationAdd.name, request, callBack);
 };
 
-const ObjectRelationDelete = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+export const ObjectRelationDelete = (contextId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.Delete.Request();
 
 	request.setContextid(contextId);
@@ -1583,7 +1583,7 @@ const ObjectRelationDelete = (contextId: string, relationKeys: string[], callBac
 	dispatcher.request(ObjectRelationDelete.name, request, callBack);
 };
 
-const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+export const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.AddFeatured.Request();
 
 	request.setContextid(contextId);
@@ -1592,7 +1592,7 @@ const ObjectRelationAddFeatured = (contextId: string, keys: string[], callBack?:
 	dispatcher.request(ObjectRelationAddFeatured.name, request, callBack);
 };
 
-const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+export const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectRelation.RemoveFeatured.Request();
 
 	request.setContextid(contextId);
@@ -1601,7 +1601,7 @@ const ObjectRelationRemoveFeatured = (contextId: string, keys: string[], callBac
 	dispatcher.request(ObjectRelationRemoveFeatured.name, request, callBack);
 };
 
-const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
+export const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetLayout.Request();
 
 	request.setContextid(contextId);
@@ -1610,7 +1610,7 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request(ObjectSetLayout.name, request, callBack);
 };
 
-const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
+export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
 	request.setContextid(contextId);
@@ -1619,7 +1619,7 @@ const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
+export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 
 	request.setSpaceid(spaceId);
@@ -1631,7 +1631,7 @@ const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: stri
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
 
-const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+export const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 
 	request.setContextid(contextId);
@@ -1640,7 +1640,7 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request(ObjectToSet.name, request, callBack);
 };
 
-const ObjectToCollection = (contextId: string, callBack?: (message: any) => void) => {
+export const ObjectToCollection = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToCollection.Request();
 
 	request.setContextid(contextId);
@@ -1648,7 +1648,7 @@ const ObjectToCollection = (contextId: string, callBack?: (message: any) => void
 	dispatcher.request(ObjectToCollection.name, request, callBack);
 };
 
-const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
+export const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToBookmark.Request();
 
 	request.setContextid(contextId);
@@ -1657,7 +1657,7 @@ const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: a
 	dispatcher.request(ObjectToBookmark.name, request, callBack);
 };
 
-const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
+export const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Duplicate.Request();
 
 	request.setContextid(id);
@@ -1665,7 +1665,7 @@ const ObjectDuplicate = (id: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectDuplicate.name, request, callBack);
 };
 
-const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
+export const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ApplyTemplate.Request();
 
 	request.setContextid(contextId);
@@ -1674,7 +1674,7 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request(ObjectApplyTemplate.name, request, callBack);
 };
 
-const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+export const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ShareByLink.Request();
 
 	request.setObjectid(objectId);
@@ -1682,7 +1682,7 @@ const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) 
 	dispatcher.request(ObjectShareByLink.name, request, callBack);
 };
 
-const ObjectCollectionAdd = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+export const ObjectCollectionAdd = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectCollection.Add.Request();
 
 	request.setContextid(contextId);
@@ -1691,7 +1691,7 @@ const ObjectCollectionAdd = (contextId: string, objectIds: string[], callBack?: 
 	dispatcher.request(ObjectCollectionAdd.name, request, callBack);
 };
 
-const ObjectCollectionRemove = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+export const ObjectCollectionRemove = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectCollection.Remove.Request();
 
 	request.setContextid(contextId);
@@ -1700,7 +1700,7 @@ const ObjectCollectionRemove = (contextId: string, objectIds: string[], callBack
 	dispatcher.request(ObjectCollectionRemove.name, request, callBack);
 };
 
-const ObjectCollectionSort = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+export const ObjectCollectionSort = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectCollection.Sort.Request();
 
 	request.setContextid(contextId);
@@ -1711,7 +1711,7 @@ const ObjectCollectionSort = (contextId: string, objectIds: string[], callBack?:
 
 // ---------------------- OBJECT LIST ---------------------- //
 
-const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
+export const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListDuplicate.Request();
 
 	request.setObjectidsList(ids);
@@ -1719,7 +1719,7 @@ const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) =
 	dispatcher.request(ObjectListDuplicate.name, request, callBack);
 };
 
-const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
+export const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListDelete.Request();
 
 	request.setObjectidsList(ids);
@@ -1727,7 +1727,7 @@ const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectListDelete.name, request, callBack);
 };
 
-const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
+export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetIsArchived.Request();
 
 	request.setObjectidsList(ids);
@@ -1736,7 +1736,7 @@ const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsArchived.name, request, callBack);
 };
 
-const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
+export const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetIsFavorite.Request();
 
 	request.setObjectidsList(ids);
@@ -1745,7 +1745,7 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
+export const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListSetObjectType.Request();
 
 	request.setObjectidsList(ids);
@@ -1754,7 +1754,7 @@ const ObjectListSetObjectType = (ids: string[], typeKey: string, callBack?: (mes
 	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
 };
 
-const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
+export const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, isJson: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
 	request.setSpaceid(spaceId);
@@ -1772,7 +1772,7 @@ const ObjectListExport = (spaceId: string, path: string, objectIds: string[], fo
 
 // ---------------------- TEMPLATE ---------------------- //
 
-const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) => void) => {
+export const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Template.CreateFromObject.Request();
 
 	request.setContextid(contextId);
@@ -1780,7 +1780,7 @@ const TemplateCreateFromObject = (contextId: string, callBack?: (message: any) =
 	dispatcher.request(TemplateCreateFromObject.name, request, callBack);
 };
 
-const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
+export const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Template.ExportAll.Request();
 
 	request.setPath(path);
@@ -1790,7 +1790,7 @@ const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {
 
 // ---------------------- UNSPLASH ---------------------- //
 
-const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
+export const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Unsplash.Search.Request();
 
 	request.setQuery(query);
@@ -1799,7 +1799,7 @@ const UnsplashSearch = (query: string, limit: number, callBack?: (message: any) 
 	dispatcher.request(UnsplashSearch.name, request, callBack);
 };
 
-const UnsplashDownload = (spaceId: string, id: string, callBack?: (message: any) => void) => {
+export const UnsplashDownload = (spaceId: string, id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Unsplash.Download.Request();
 
 	request.setSpaceid(spaceId);
@@ -1810,7 +1810,7 @@ const UnsplashDownload = (spaceId: string, id: string, callBack?: (message: any)
 
 // ---------------------- DEBUG ---------------------- //
 
-const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
+export const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Tree.Request();
 
 	request.setTreeid(objectId);
@@ -1819,7 +1819,7 @@ const DebugTree = (objectId: string, path: string, callBack?: (message: any) => 
 	dispatcher.request(DebugTree.name, request, callBack);
 };
 
-const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+export const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.ExportLocalstore.Request();
 
 	request.setPath(path);
@@ -1828,7 +1828,7 @@ const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message:
 	dispatcher.request(DebugExportLocalstore.name, request, callBack);
 };
 
-const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) => {
+export const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.SpaceSummary.Request();
 
 	request.setSpaceid(spaceId);
@@ -1836,7 +1836,7 @@ const DebugSpaceSummary = (spaceId: string, callBack?: (message: any) => void) =
 	dispatcher.request(DebugSpaceSummary.name, request, callBack);
 };
 
-const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) => {
+export const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.StackGoroutines.Request();
 
 	request.setPath(path);
@@ -1846,7 +1846,7 @@ const DebugStackGoroutines = (path: string, callBack?: (message: any) => void) =
 
 // ---------------------- NOTIFICATION ---------------------- //
 
-const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
+export const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Notification.List.Request();
 
 	request.setIncluderead(includeRead);
@@ -1855,229 +1855,11 @@ const NotificationList = (includeRead: boolean, limit: number, callBack?: (messa
 	dispatcher.request(NotificationList.name, request, callBack);
 };
 
-const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
+export const NotificationReply = (ids: string[], action: I.NotificationAction, callBack?: (message: any) => void) => {
 	const request = new Rpc.Notification.Reply.Request();
 
 	request.setIdsList(ids);
 	request.setActiontype(action as number);
 
 	dispatcher.request(NotificationReply.name, request, callBack);
-};
-
-export {
-	MetricsSetParameters,
-	LinkPreview,
-	ProcessCancel,
-	DownloadManifest,
-
-	DebugTree,
-	DebugExportLocalstore,
-	DebugSpaceSummary,
-	DebugStackGoroutines,
-
-	AppGetVersion,
-	AppShutdown,
-
-	WalletCreate,
-	WalletRecover,
-	WalletConvert,
-	WalletCreateSession,
-	WalletCloseSession,
-
-	WorkspaceCreate,
-	WorkspaceOpen,
-	WorkspaceObjectAdd,
-	WorkspaceObjectListRemove,
-	WorkspaceSetInfo,
-
-	SpaceDelete,
-
-	AccountCreate,
-	AccountRecover,
-	AccountRecoverFromLegacyExport,
-	AccountSelect,
-	AccountStop,
-	AccountDelete,
-	AccountRevertDeletion,
-	AccountMove,
-
-	AccountLocalLinkNewChallenge,
-	AccountLocalLinkSolveChallenge,
-
-	FileUpload,
-	FileDownload,
-	FileDrop,
-	FileListOffload,
-	FileNodeUsage,
-
-	NavigationGetObjectInfoWithLinks,
-
-	BlockSetCarriage,
-	BlockMerge,
-	BlockSplit,
-	BlockUpload,
-	BlockCopy,
-	BlockCut,
-	BlockPaste,
-	BlockCreate,
-	BlockSetFields,
-	BlockPreview,
-
-	BlockListMoveToExistingObject,
-	BlockListConvertToObjects,
-	BlockListDuplicate,
-	BlockListSetBackgroundColor,
-	BlockListTurnInto,
-	BlockListSetFields,
-	BlockListSetAlign,
-	BlockListSetVerticalAlign,
-	BlockListDelete,
-
-	BlockTextSetText,
-	BlockTextSetChecked,
-	BlockTextSetIcon,
-
-	BlockTextListSetStyle,
-	BlockTextListSetMark,
-	BlockTextListSetColor,
-	BlockTextListClearStyle,
-	BlockTextListClearContent,
-
-	BlockBookmarkFetch,
-	BlockBookmarkCreateAndFetch,
-
-	BlockFileCreateAndUpload,
-	BlockFileListSetStyle,
-
-	BlockLinkCreateWithObject,
-	BlockLinkListSetAppearance,
-
-	BlockDivListSetStyle,
-
-	BlockLatexSetText,
-
-	BlockRelationSetKey,
-
-	BlockTableCreate,
-	BlockTableExpand,
-	BlockTableSort,
-
-	BlockTableColumnCreate,
-	BlockTableColumnDelete,
-	BlockTableColumnMove,
-	BlockTableColumnDuplicate,
-	BlockTableColumnListFill,
-
-	BlockTableRowCreate,
-	BlockTableRowDuplicate,
-	BlockTableRowListFill,
-	BlockTableRowListClean,
-	BlockTableRowSetHeader,
-
-	BlockDataviewCreateFromExistingObject,
-
-	BlockDataviewViewCreate,
-	BlockDataviewViewUpdate,
-	BlockDataviewViewDelete,
-	BlockDataviewViewSetActive,
-	BlockDataviewViewSetPosition,
-
-	BlockDataviewFilterAdd,
-	BlockDataviewFilterReplace,
-	BlockDataviewFilterRemove,
-	BlockDataviewFilterSort,
-
-	BlockDataviewSortAdd,
-	BlockDataviewSortReplace,
-	BlockDataviewSortRemove,
-	BlockDataviewSortSort,
-
-	BlockDataviewViewRelationReplace,
-	BlockDataviewViewRelationRemove,
-	BlockDataviewViewRelationSort,
-
-	BlockDataviewGroupOrderUpdate,
-	BlockDataviewObjectOrderUpdate,
-
-	BlockDataviewRelationAdd,
-	BlockDataviewRelationDelete,
-
-	BlockCreateWidget,
-	BlockWidgetSetTargetId,
-	BlockWidgetSetLayout,
-	BlockWidgetSetLimit,
-	BlockWidgetSetViewId,
-
-	HistoryGetVersions,
-	HistoryShowVersion,
-	HistorySetVersion,
-
-	ObjectTypeRelationAdd,
-	ObjectTypeRelationRemove,
-
-	ObjectRelationAdd,
-	ObjectRelationDelete,
-
-	ObjectOpen,
-	ObjectShow,
-	ObjectClose,
-	ObjectUndo,
-	ObjectRedo,
-	ObjectGraph,
-	ObjectRelationAddFeatured,
-	ObjectRelationRemoveFeatured,
-	ObjectShareByLink,
-	ObjectSearch,
-	ObjectSearchSubscribe,
-	ObjectSubscribeIds,
-	ObjectSearchUnsubscribe,
-	ObjectGroupsSubscribe,
-	ObjectDuplicate,
-	ObjectApplyTemplate,
-	ObjectBookmarkFetch,
-
-	ObjectImport,
-	ObjectImportNotionValidateToken,
-	ObjectImportUseCase,
-	ObjectImportExperience,
-
-	ObjectCreate,
-	ObjectCreateSet,
-	ObjectCreateBookmark,
-	ObjectCreateFromUrl,
-	ObjectCreateObjectType,
-	ObjectCreateRelation,
-	ObjectCreateRelationOption,
-
-	RelationListRemoveOption,
-
-	ObjectToSet,
-	ObjectToCollection,
-	ObjectToBookmark,
-
-	ObjectSetDetails,
-	ObjectSetObjectType,
-	ObjectSetLayout,
-	ObjectSetIsFavorite,
-	ObjectSetSource,
-
-	ObjectCollectionAdd,
-	ObjectCollectionRemove,
-	ObjectCollectionSort,
-
-	ObjectListDuplicate,
-	ObjectListDelete,
-	ObjectListSetIsArchived,
-	ObjectListSetIsFavorite,
-	ObjectListSetObjectType,
-	ObjectListExport,
-
-	TemplateCreateFromObject,
-	TemplateExportAll,
-
-	UnsplashSearch,
-	UnsplashDownload,
-
-	NotificationList,
-	NotificationReply,
 };

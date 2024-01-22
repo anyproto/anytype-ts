@@ -196,23 +196,24 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(subId, it, []));
-
-		if (valueMapper) {
-			value = value.map(valueMapper);
-		};
-
 		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (!config.debug.ho) {
 			value = value.filter(it => !it.isHidden);
 		};
 
+		if (valueMapper) {
+			value = value.map(valueMapper);
+		};
+
 		if (!value.length) {
 			value.push({ isEmpty: true });
 		};
 
-		value.push({ isDiv: true });
-		value.push({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
+		value = value.concat([
+			{ isDiv: true },
+			{ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) },
+		]);
 		return value;
 	};
 

@@ -597,7 +597,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
-				let text = this.text;
 				let allowScript = false;
 
 				if (UtilEmbed.allowPresentation(processor)) {
@@ -664,7 +663,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, sanitizeParam);
+						data.html = this.sanitize(text, allowScript);
 					};
 
 					iw.postMessage(data, '*');
@@ -700,7 +699,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
@@ -781,7 +780,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
 					try {
-						value.html(res.renderSVGElement(this.text));
+						value.html(res.renderSVGElement(text));
 					} catch (e) {
 						console.error(e);
 						error.text(e.toString()).show();
@@ -948,6 +947,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	onResizeInit () {
 		console.log('onResizeInit');
+	};
+
+	sanitize (text: string, allowScript: boolean): string {
+		const param: any = { 
+			ADD_TAGS: [ 'iframe' ],
+			ADD_ATTR: [
+				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+			],
+		};
+
+		if (allowScript) {
+			param.FORCE_BODY = true;
+			param.ADD_TAGS.push('script');
+		};
+
+		return DOMPurify.sanitize(text, param);
 	};
 
 	resize () {
