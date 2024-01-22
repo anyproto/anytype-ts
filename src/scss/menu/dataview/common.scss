@@ -13,14 +13,12 @@
 	{
 		.item {
 			.icon.plus { margin-right: 4px; }
-			.icon.dnd { margin-right: 2px; }
 		}
 
 		.item.empty { padding: 11px 16px; height: auto; line-height: 22px; border-radius: 8px; @include text-overflow-nw; display: block; }
 		.item.empty:hover::before { opacity: 0; }
 
 		.filter { padding-top: 12px; }
-
 		.label { color: var(--color-control-active); @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
     }
 
@@ -36,14 +34,4 @@
 			}
 		}
     }
-
-	.menu.menuDataviewObjectValues,
-	.menu.menuDataviewObjectList,
-	.menu.menuDataviewOptionList {
-		.titleWrapper,
-		.item,
-		.sectionName,
-		.separator .inner { padding-left: 16px; padding-right: 16px; }
-		.filter { padding-left: 15px; padding-right: 15px; }
-	}
 }
