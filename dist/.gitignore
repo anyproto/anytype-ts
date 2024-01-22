@@ -26,3 +26,5 @@ latest-linux.yml
 nmh.log
 [0-9]*.js
 [0-9]*.js.map
+extension.crx
+extension.pem
