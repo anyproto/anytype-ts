@@ -68,7 +68,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
 					<div className="section set">
-						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
+						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralObjectType'))}</div>
 						<div className="content">
 							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
 						</div>

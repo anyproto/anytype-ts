@@ -597,7 +597,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
-				let text = this.text;
 				let allowScript = false;
 
 				if (UtilEmbed.allowPresentation(processor)) {
@@ -628,6 +627,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
+					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -637,22 +637,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						this.refType?.setValue(type);
 					};
 
-					if (block.isEmbedTelegram()) {
-						const m = text.match(/post="([^"]+)"/);
-
-						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
-					};
-
-					if (block.isEmbedGithubGist()) {
-						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (block.isEmbedGithubGist()) {
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					};
+
+					if (block.isEmbedTelegram()) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
 					if (allowScript) {
@@ -663,7 +663,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, sanitizeParam);
+						data.html = this.sanitize(text, allowScript);
 					};
 
 					iw.postMessage(data, '*');
@@ -699,7 +699,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
@@ -780,7 +780,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
 					try {
-						value.html(res.renderSVGElement(this.text));
+						value.html(res.renderSVGElement(text));
 					} catch (e) {
 						console.error(e);
 						error.text(e.toString()).show();
@@ -959,6 +959,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	onResizeInit () {
 		console.log('onResizeInit');
+	};
+
+	sanitize (text: string, allowScript: boolean): string {
+		const param: any = { 
+			ADD_TAGS: [ 'iframe' ],
+			ADD_ATTR: [
+				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+			],
+		};
+
+		if (allowScript) {
+			param.FORCE_BODY = true;
+			param.ADD_TAGS.push('script');
+		};
+
+		return DOMPurify.sanitize(text, param);
 	};
 
 	resize () {

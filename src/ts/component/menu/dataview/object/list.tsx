@@ -8,20 +8,22 @@ import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
+const LIMIT_TYPE = 2;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
+const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
 const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -45,7 +47,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	
 	render () {
 		const { param } = this.props;
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
@@ -67,7 +69,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						<div className="inner" />
 					</div>
 				);
-			} else if (item.id == 'add') {
+			}  else
+			if (item.isSection) {
+				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+			} else
+			if (item.id == 'add') {
 				content = (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
@@ -104,21 +110,23 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		return (
 			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
-					<Filter 
+					<Filter
+						className="outlined"
+						icon="search"
 						ref={ref => this.refFilter = ref} 
-						placeholderFocus={placeholderFocus} 
+						placeholderFocus={placeholderFocus}
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : ''}
+				{isLoading ? <Loader /> : ''}
 
-				{!items.length && !loading ? (
+				{!items.length && !isLoading ? (
 					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
-				{this.cache && items.length && !loading ? (
+				{this.cache && items.length && !isLoading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -231,43 +239,31 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { canAdd } = data;
-		const value = Relation.getArrayValue(data.value);
-		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+	load (clear: boolean, callBack?: (message: any) => void) {
+		const { isLoading } = this.state;
 
-		if (data.filter && canAdd) {
-			if (ret.length) {
-				ret.push({ isDiv: true });
-			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+		if (isLoading) {
+			return;
 		};
 
-		return ret;
-	};
-	
-	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
+		const types = this.getTypes();
+
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
-			const map = types.map(id => dbStore.getTypeById(id)?.uniqueKey).filter(it => it);
-			if (map.length) {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: map });
-			};
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		UtilData.search({
@@ -278,7 +274,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -296,11 +292,60 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			}));
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
 		});
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { canAdd } = data;
+		const value = Relation.getArrayValue(data.value);
+		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const typeNames = this.getTypeNames();
+
+		if (typeNames) {
+			ret.unshift({ isSection: true, name: typeNames });
+		};
+
+		if (data.filter && canAdd) {
+			if (ret.length || typeNames) {
+				ret.push({ isDiv: true });
+			};
+			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+		};
+
+		return ret;
+	};
+
+	getTypes () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return (data.types || []).map(id => dbStore.getTypeById(id)).filter(it => it);
+	};
+
+	getTypeNames (): string {
+		const types = this.getTypes();
+
+		if (!types || !types.length) {
+			return '';
+		};
+
+		const names = types.map(it => it.name);
+		const l = names.length;
+
+		if (l > LIMIT_TYPE) {
+			const more = l - LIMIT_TYPE;
+
+			names.splice(LIMIT_TYPE, more);
+			names.push(`+${more}`);
+		};
+
+		return `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -372,6 +417,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		let h = HEIGHT_ITEM;
 		if (item.isBig) h = HEIGHT_ITEM_BIG;
 		if (item.isSection) h = HEIGHT_SECTION;
+		if (item.isEmpty) h = HEIGHT_EMPTY;
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
@@ -379,13 +425,21 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
-		const { noFilter, canAdd } = data;
+		const { noFilter, canAdd, filter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 
-		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		let offset = 16;
 
-		height = Math.max(canAdd ? 44 : 180, height);
+		if (!noFilter) {
+			offset += 42;
+		};
+		if (!items.length) {
+			offset += HEIGHT_EMPTY;
+		};
+
+		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
+		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
 		obj.css({ height });
 		position();

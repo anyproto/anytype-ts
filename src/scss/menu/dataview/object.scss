@@ -7,11 +7,11 @@
 		.content { padding: 0px; transition: none; }
 		
 		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.wrap.withFilter { padding-top: 8px; }
+		.wrap.withFilter { padding-top: 12px; }
 		.wrap.withFilter {
-			.items { height: calc(100% - 44px); }
-			.emptySearch { height: calc(100% - 44px); }
-			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
+			.items { height: calc(100% - 30px); }
+			.emptySearch { height: calc(100% - 30px); }
+			.loaderWrapper { top: 30px; height: calc(100% - 30px); }
 		}
 
 		.items { height: 100%; }
@@ -33,18 +33,27 @@
 
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
+		.titleWrapper { padding-bottom: 0px; }
 		.content { padding: 0px; }
 
-		.item { padding: 4px 16px 4px 10px; }
+		.item:not(.add) { padding: 4px 16px 4px 12px; }
 		.item {
+			.icon.dnd { margin: 0px; }
+
 			.name { @include text-overflow-nw; }
 			.clickable { width: calc(100% - 24px) !important; }
 
 			.icon.delete { 
-				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
-				opacity: 0; z-index: 1; transition: none;
+				width: 24px; height: 24px; background-size: 20px; right: 10px; border-radius: 4px; opacity: 0; z-index: 1; transition: none; position: static; 
+				margin: 0px;
 			}
 			.icon.delete:hover { background-color: var(--color-shape-highlight-medium); }
+		}
+		.item.withCaption { gap: 0 2px; }
+		.item.withCaption {
+			.clickable {
+				.name { width: calc(100% - 16px); }
+			}
 		}
 		.item.hover, .item:hover {
 			.clickable { width: calc(100% - 44px) !important; }

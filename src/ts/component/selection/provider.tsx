@@ -22,6 +22,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	range: any = null;
 	nodes: any[] = [];
 	top = 0;
+	startTop = 0;
 	containerOffset = null;
 	frame = 0;
 
@@ -59,7 +60,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this._isMounted = true;
 		this.unbind();
 
-		UtilCommon.getScrollContainer(isPopup).on('scroll.selection', (e: any) => { this.onScroll(e); });
+		UtilCommon.getScrollContainer(isPopup).on('scroll.selection', e => this.onScroll(e));
 	};
 	
 	componentWillUnmount () {
@@ -121,7 +122,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { focused } = focus.state;
 		const win = $(window);
-		const nodes = this.getPageContainer().find('.selectable');
 		const container = UtilCommon.getScrollContainer(isPopup);
 		const selectionRect = $('#selection-rect');
 
@@ -131,7 +131,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.y = e.pageY;
 		this.moved = false;
 		this.focused = focused;
-		this.top = container.scrollTop();
+		this.top = this.startTop = container.scrollTop();
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
 		this.setIsSelecting(true);
@@ -144,18 +144,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.y -= this.containerOffset.top - this.top;
 		};
 
-		nodes.each((i: number, item: any) => {
-			item = $(item);
-
-			const node = {
-				id: item.attr('data-id'),
-				type: item.attr('data-type'),
-				obj: item,
-			};
-
-			this.nodes.push(node);
-			this.cacheRect(node);
-		});
+		this.initNodes();
 
 		if (e.shiftKey) {
 			const target = $(e.target).closest('.selectable');
@@ -174,6 +163,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		win.on(`mousemove.selection`, (e: any) => { this.onMouseMove(e); });
 		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
+
+	initNodes () {
+		const nodes = this.getPageContainer().find('.selectable');
+
+		nodes.each((i: number, item: any) => {
+			item = $(item);
+
+			const node = {
+				id: item.attr('data-id'),
+				type: item.attr('data-type'),
+				obj: item,
+			};
+
+			this.nodes.push(node);
+			this.cacheRect(node);
+		});
+	};
 	
 	onMouseMove (e: any) {
 		if (!this._isMounted) {
@@ -185,13 +191,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
 		const rect = this.getRect(this.x, this.y, e.pageX, e.pageY);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 		
+		const isPopup = keyboard.isPopup();
 		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
@@ -211,12 +217,18 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const x = keyboard.mouse.page.x;
 		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
 		const rect = this.getRect(this.x, this.y, x, y);
+		const { wh } = UtilCommon.getWindowDimensions();
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 
-		this.nodes.forEach(it => this.cacheRect(it));
+		if (Math.abs(top - this.startTop) >= wh / 2) {
+			this.initNodes();
+			this.startTop = top;
+		} else {
+			this.nodes.forEach(it => this.cacheRect(it));
+		};
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(x, y);

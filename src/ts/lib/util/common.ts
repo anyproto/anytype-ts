@@ -823,8 +823,16 @@ class UtilCommon {
 		const head = $('head');
 		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
 
-		head.find(`#${id}`).remove();
+		head.find(`style#${id}`).remove();
 		head.append(element);
+	};
+
+	addScript (id: string, src: string) {
+		const body = $('body');
+		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
+
+		body.find(`script#${id}`).remove();
+		body.append(element);
 	};
 
 	uint8ToString (u8a: Uint8Array): string {
