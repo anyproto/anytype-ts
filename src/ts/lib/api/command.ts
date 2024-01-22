@@ -225,7 +225,7 @@ export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, i
 	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
 };
 
-const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) => void) => {
+export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.LocalLink.NewChallenge.Request();
 
 	request.setAppname(name);
@@ -233,7 +233,7 @@ const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) =>
 	dispatcher.request(AccountLocalLinkNewChallenge.name, request, callBack);
 };
 
-const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
+export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.LocalLink.SolveChallenge.Request();
 
 	request.setChallengeid(id);
@@ -378,7 +378,7 @@ export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId:
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
 };
 
-const BlockPreview = (html: string, callBack?: (message: any) => void) => {
+export const BlockPreview = (html: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Preview.Request();
 
 	request.setHtml(html);
