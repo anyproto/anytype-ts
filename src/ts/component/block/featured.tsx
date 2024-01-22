@@ -720,6 +720,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onClose: () => {
 					menuStore.closeAll();
 				},
+
+				subIds: [ 'dataviewObjectList' ],
 				data: {
 					subId: rootId,
 					value,
