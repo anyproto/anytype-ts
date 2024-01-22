@@ -22,7 +22,6 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { mode, path } = this.config;
 		const { interfaceLang, config } = commonStore;
 		const { userDataPath } = config;
-		const userPath = window.Electron.userPath;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
