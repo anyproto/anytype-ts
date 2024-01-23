@@ -269,6 +269,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					name: translate('popupSettingsVoidTitle'), children: [
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+						{ id: 'membership', name: translate('popupSettingsMembershipTitle') },
 					]
 				}
 			];
