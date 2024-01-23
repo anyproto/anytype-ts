@@ -437,6 +437,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
@@ -460,6 +462,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptOk'),
