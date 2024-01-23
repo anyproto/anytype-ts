@@ -534,10 +534,11 @@ class UtilCommon {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
+				bgColor: 'green',
 				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
 				textConfirm: translate('confirmUpdateConfirm'),
-				canCancel: false,
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
 					if (onConfirm) {

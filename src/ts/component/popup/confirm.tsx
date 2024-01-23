@@ -28,10 +28,15 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const textCancel = data.textCancel || translate('commonCancel');
 		const colorConfirm = data.colorConfirm || 'black';
 		const colorCancel = data.colorCancel || 'blank';
+		const bgColor = data.bgColor || '';
 		
 		return (
 			<React.Fragment>
-				{icon ? <Icon className={icon} /> : ''}
+				{icon ? (
+					<div className={[ 'iconWrapper', bgColor ].join(' ')}>
+						<Icon className={icon} />
+					</div>
+				) : ''}
 				<Title text={title} />
 				<Label text={text} />
 
