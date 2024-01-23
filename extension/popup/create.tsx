@@ -417,7 +417,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.isCreating = true;
 		this.setState({ isLoading: true, error: '' });
 
-		const details = Object.assign({ name: this.refName?.getValue() }, this.details);
+		const details = Object.assign({ name: this.refName?.getValue(), origin: I.ObjectOrigin.Webclipper }, this.details);
 		const type = details.type;
 
 		delete(details.type);

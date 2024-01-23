@@ -144,6 +144,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				value: object ? [ object.id ] : [],
 				canAdd: true,
 				filters,
+				details: { origin: I.ObjectOrigin.Webclipper },
 				dataMapper: item => ({ ...item, iconSize: 16 }),
 				onSelect: (item) => {
 					this.setState({ object: item });
