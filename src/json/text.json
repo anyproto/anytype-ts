@@ -759,6 +759,11 @@
 	"popupConfirmUpdateErrorTitle": "Oops!",
 	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
 
+	"popupAboutTitle": "Anytype",
+	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
+	"popupAboutVersion": "Version: %s",
+	"popupAboutCopyright": "Made by Any — a Swiss association",
+
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",
 	"popupExportIncludeFiles": "Include files",

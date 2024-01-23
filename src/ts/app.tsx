@@ -491,8 +491,9 @@ class App extends React.Component<object, State> {
 				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
-				textCancel: translate('popupConfirmUpdateDoneOk'),
-				canConfirm: false,
+				textConfirm: translate('popupConfirmUpdateDoneOk'),
+				colorConfirm: 'blank',
+				canCancel: false,
 			},
 		});
 	};

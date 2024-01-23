@@ -636,10 +636,10 @@ class Keyboard {
 				data: {
 					title: translate('menuHelpTech'),
 					text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
-					textCancel: translate('commonCopy'),
-					canConfirm: false,
-					canCancel: true,
-					onCancel: () => {
+					textConfirm: translate('commonCopy'),
+					colorConfirm: 'blank',
+					canCancel: false,
+					onConfirm: () => {
 						UtilCommon.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
 					},
 				}
