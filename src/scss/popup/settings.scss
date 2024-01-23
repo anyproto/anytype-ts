@@ -641,6 +641,14 @@
 
 			.actionItems { margin: 32px 0px 24px 0px; }
 		}
+
+		.side.right.tabPaymentIndex { display: flex; flex-direction: column; }
+		.side.right.tabPaymentIndex {
+			.items { display: flex; flex-direction: column; justify-content: space-evenly; gap: 16px; height: 100%; }
+			.items {
+				.item { background: red; height: 100%; }
+			}
+		}
 	}
 
 	.popupSettings.isSpace {

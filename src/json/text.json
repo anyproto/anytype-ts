@@ -719,7 +719,8 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
-	"popupSettingsMembershipTitle": "Membership",
+	"popupSettingsPaymentTitle": "Membership",
+	"popupSettingsPaymentIndexText": "Global name for your identity, increased sync volume, expanded sharing options, and other benefits for out paid plans. See details on Anytype.io",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
