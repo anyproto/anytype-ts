@@ -722,6 +722,14 @@
 	"popupSettingsPaymentTitle": "Membership",
 	"popupSettingsPaymentIndexText": "Global name for your identity, increased sync volume, expanded sharing options, and other benefits for out paid plans. See details on Anytype.io",
 
+	"popupSettingsPaymentItemTitle1": "Friend",
+	"popupSettingsPaymentItemTitle2": "Supporter",
+	"popupSettingsPaymentItemTitle3": "Funding Patron",
+
+	"popupSettingsPaymentItemText1": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
+	"popupSettingsPaymentItemText2": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
+	"popupSettingsPaymentItemText3": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 

@@ -33,6 +33,7 @@ import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
 
 import PagePaymentIndex from './page/settings/payment/index';
+import PagePaymentItem from './page/settings/payment/item';
 
 interface State {
 	loading: boolean;
@@ -68,6 +69,7 @@ const Components: any = {
 	spaceShare:			 PageSpaceShare,
 
 	paymentIndex:		 PagePaymentIndex, 
+	paymentItem:		 PagePaymentItem,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
@@ -304,14 +306,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		this.setState({ loading: v });
 	};
 
-	onPage (id: string) {
+	onPage (id: string, additional?: any) {
+		additional = additional || {};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
 
 		this.prevPage = page;
 
-		popupStore.updateData(this.props.id, { page: id });
+		popupStore.updateData(this.props.id, { page: id, ...additional });
 		analytics.event('settings', { params: { id } });
 	};
 

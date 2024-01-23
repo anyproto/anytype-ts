@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentIndex extends React.Component<I.PopupSettings> {
 
 	render () {
+		const { onPage } = this.props;
 
 		return (
 			<React.Fragment>
@@ -13,7 +14,7 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 				<Label className="description" text={translate('popupSettingsPaymentIndexText')} />
 
 				<div className="items">
-					<div className="item" />
+					<div className="item" onClick={() => onPage('paymentItem', { itemId: 1 })} />
 					<div className="item" />
 					<div className="item" />
 				</div>
