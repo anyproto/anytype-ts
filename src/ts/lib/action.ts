@@ -268,7 +268,7 @@ class Action {
 		
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				title = translate('libActionUninstallTypeTitle');
+				title = UtilCommon.sprintf(translate('libActionUninstallTypeTitle'), object.name);
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
 
@@ -277,7 +277,7 @@ class Action {
 			};
 
 			case I.ObjectLayout.Relation: {
-				title = translate('libActionUninstallRelationTitle');
+				title = UtilCommon.sprintf(translate('libActionUninstallRelationTitle'), object.name);
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
 
