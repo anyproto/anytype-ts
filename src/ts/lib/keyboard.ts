@@ -632,14 +632,14 @@ class Keyboard {
 			];
 
 			popupStore.open('confirm', {
-				className: 'isWide isLeft',
+				className: 'isWide techInfo',
 				data: {
-					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
-					textConfirm: translate('commonCopy'),
-					textCancel: translate('commonClose'),
-					canConfirm: true,
+					title: translate('menuHelpTech'),
+					text: data.map(it => `<dl><dt>${it[0]}:</dt><dd>${it[1]}</dd></dl>`).join(''),
+					textCancel: translate('commonCopy'),
+					canConfirm: false,
 					canCancel: true,
-					onConfirm: () => {
+					onCancel: () => {
 						UtilCommon.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
 					},
 				}
