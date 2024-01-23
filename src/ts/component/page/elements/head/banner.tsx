@@ -128,8 +128,8 @@ class HeaderBanner extends React.Component<Props> {
 				typeId: type.id,
 				templateId,
 				previewSize: I.PreviewSize.Medium,
-				onSetDefault: () => {
-					UtilObject.setDefaultTemplateId(type.id, templateId);
+				onSetDefault: item => {
+					UtilObject.setDefaultTemplateId(type.id, item.id);
 				},
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);

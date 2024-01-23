@@ -113,6 +113,8 @@ class UtilMenu {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
+		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
+
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 

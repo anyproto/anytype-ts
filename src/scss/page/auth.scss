@@ -122,15 +122,6 @@ html.bodyAuthDeleted {
 
 	.error { color: var(--color-error) !important; margin: 0.3em 0px; }
 	.withError { background: var(--color-error-background) !important; }
-
-	.loaderWrapper {
-		@keyframes dots-white {
-			0% { background-color: var(--color-bg-primary) !important; }
-			32% { background-color: var(--color-bg-primary) !important; }
-			100% { background-color: rgba(0,0,0,0); }
-		}
-		.dots .dot { animation-name: dots-white; }
-    }
 }
 
 .pageIndexIndex, .pageAuthSelect {
