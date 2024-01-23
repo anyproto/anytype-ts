@@ -1830,3 +1830,51 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
+
+// ---------------------- NAME SERVICE ---------------------- //
+
+export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveName.Request();
+
+	request.setFullname(name);
+
+	dispatcher.request(NameServiceResolveName.name, request, callBack);
+};
+
+export const NameServiceResolveAnyId = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveAnyID.Request();
+
+	request.setAnyid(id);
+
+	dispatcher.request(NameServiceResolveAnyId.name, request, callBack);
+};
+
+export const NameServiceResolveSpaceId = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveSpaceID.Request();
+
+	request.setSpaceid(id);
+
+	dispatcher.request(NameServiceResolveSpaceId.name, request, callBack);
+};
+
+export const NameServiceUserAccount = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(NameServiceUserAccount.name, request, callBack);
+};
+
+// ---------------------- PAYMENTS ---------------------- //
+
+export const PaymentsSubscriptionGetStatus = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(PaymentsSubscriptionGetStatus.name, request, callBack);
+};
+
+export const PaymentsSubscriptionGetPaymentURL = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(PaymentsSubscriptionGetPaymentURL.name, request, callBack);
+};
+
+export const PaymentsSubscriptionGetPortalLinkURL = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(PaymentsSubscriptionGetPortalLinkURL.name, request, callBack);
+};
