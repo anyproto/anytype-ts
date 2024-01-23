@@ -796,8 +796,7 @@ const getFont = () => {
 };
 
 const getNodeMap = () => {
-	nodeMap = new Map(nodes.map(d => [ d.id, d ]));
-	return nodeMap;
+	return new Map(nodes.map(d => [ d.id, d ]));
 };
 
 const getCenter = (x, y) => {
