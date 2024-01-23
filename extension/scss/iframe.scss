@@ -1,17 +1,22 @@
 #anytypeWebclipper-iframe {
 	@import "~scss/_vars";
 
-	.head { 
-		display: flex; flex-direction: row; align-items: center; height: 43px; border-bottom: 1px solid var(--color-shape-secondary); 
-		padding: 0px 16px; position: fixed; left: 0px; top: 0px; width: 100%; background: #fff; z-index: 9;
-	}
-	.head {
-		.side { display: flex; flex-direction: row; align-items: center; width: 50%; gap: 0px 14px; }
-		.side.right { justify-content: flex-end; }
+	.page.pageCreate { display: flex; flex-direction: column; }
+	.page.pageCreate {
+		.head { display: flex; flex-direction: row; align-items: center; padding: 8px; }
+		.head {
+			.side { display: flex; flex-direction: row; align-items: center; width: 50%; gap: 0px 14px; }
+			.side.right { justify-content: flex-end; }
 
-		.button.simple { @include text-common; font-weight: 500; cursor: pointer; height: 32px; line-height: 32px; }
-		.select { cursor: pointer; }
-	}
+			.button.simple { @include text-common; font-weight: 500; cursor: pointer; height: 32px; line-height: 32px; }
+			.select { cursor: pointer; height: 32px; line-height: 32px; border: 0px; padding: 8px 20px 8px 8px; }
+			.select {
+				.item {
+					.name { line-height: 16px; }
+				}
+			}
+		}
 
-	.blocks { padding: 96px 48px 48px 0px; }
+		.blocks { padding: 20px 48px 48px 0px; height: 100%; overflow: auto; }
+	}
 }

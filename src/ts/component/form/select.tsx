@@ -100,7 +100,7 @@ class Select extends React.Component<Props, State> {
 				{current ? (
 					<React.Fragment>
 						{current.map((item: any, i: number) => (
-							<MenuItemVertical key={i} {...item} iconSize={item.iconSize ? 20 : undefined} />
+							<MenuItemVertical key={i} {...item} />
 						))}
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>

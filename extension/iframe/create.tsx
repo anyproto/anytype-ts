@@ -37,12 +37,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const { isLoading, error, object } = this.state;
 		const { html } = extensionStore;
 		const { space } = commonStore;
-		const childrenIds = blockStore.getChildrenIds(ROOT_ID, ROOT_ID);
 		const children = blockStore.getChildren(ROOT_ID, ROOT_ID);
-		const length = children.length;
 
 		return (
-			<div ref={ref => this.node = ref} className="page pageIndex">
+			<div ref={ref => this.node = ref} className="page pageCreate">
 				{isLoading ? <Loader type="loader" /> : ''}
 
 				<div className="head">
@@ -60,13 +58,15 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						/>
 
 						<div id="select" className="select" onMouseDown={this.onSelect}>
-							<div className="name">{object ? object.name : translate('commonSelectObject')}</div>
+							<div className="item">
+								<div className="name">{object ? object.name : translate('commonSelectObject')}</div>
+							</div>
 							<Icon className="arrow light" />
 						</div>
 					</div>
 					<div className="side right">
-						<Button text="Save" color="orange" className="c32" onClick={this.onSave} />
-						<Button text="Cancel" color="simple" className="c32" onClick={this.onClose} />
+						<Button text="Cancel" color="blank" className="c32" onClick={this.onClose} />
+						<Button text="Save" color="pink" className="c32" onClick={this.onSave} />
 					</div>
 				</div>
 
@@ -88,7 +88,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount(): void {
-		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it })).filter(it => it);
+		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 })).filter(it => it);
 
 		if (this.refSpace && spaces.length) {
 			const space = commonStore.space || spaces[0].targetSpaceId;
@@ -120,15 +120,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			const structure: any[] = [];
 			const blocks = message.blocks.map(it => new M.Block(it));
 
-			/*
-			blocks.unshift(new M.Block({
-				id: ROOT_ID,
-				type: I.BlockType.Page,
-				childrenIds: message.blocks.map(it => it.id),
-				content: {},
-			}));
-			*/
-
 			blocks.forEach((block: any) => {
 				structure.push({ id: block.id, childrenIds: block.childrenIds });
 			});
@@ -153,6 +144,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				value: object ? [ object.id ] : [],
 				canAdd: true,
 				filters,
+				dataMapper: item => ({ ...item, iconSize: 16 }),
 				onSelect: (item) => {
 					this.setState({ object: item });
 				},

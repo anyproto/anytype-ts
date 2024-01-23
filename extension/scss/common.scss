@@ -69,5 +69,7 @@ html.anytypeWebclipper-popup {
 		}
 	}
 
+	.button, .select, .cellContent { cursor: pointer; }
+
 	.tagItem { @include text-small; }
 }
