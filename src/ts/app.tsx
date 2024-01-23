@@ -487,10 +487,12 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'updated',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
-				textConfirm: translate('popupConfirmUpdateDoneOk'),
-				canCancel: false,
+				textCancel: translate('popupConfirmUpdateDoneOk'),
+				canConfirm: false,
 			},
 		});
 	};
