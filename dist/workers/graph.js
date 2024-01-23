@@ -15,6 +15,7 @@ const util = new Util();
 // CONSTANTS
 
 const transformThreshold = 1.5;
+const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
 const ObjectLayout = {
@@ -406,7 +407,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	// Arrow heads
 
-	if ((arrowStart || arrowEnd) && (transform.k >= transformThreshold / 2)) {
+	if ((arrowStart || arrowEnd) && (transform.k >= transformThresholdHalf)) {
 		let move = arrowHeight;
 		if (showName) {
 			move = arrowHeight * 2 + tw / 2 + offset;
@@ -472,7 +473,7 @@ drawNode = (d) => {
 		lineWidth = getLineWidth() * 3;
 	};
 
-	if (settings.icon && img) {
+	if (settings.icon && img && (transform.k >= transformThresholdHalf)) {
 		ctx.save();
 
 		if (lineWidth) {
@@ -783,7 +784,11 @@ const getNodeByCoords = (x, y) => {
 };
 
 const getRadius = (d) => {
-	return d.radius / transform.k * (settings.icon && images[d.src] ? 2 : 1);
+	let k = 1;
+	if (settings.icon && images[d.src] && (transform.k >= transformThresholdHalf)) {
+		k = 2;
+	};
+	return d.radius / transform.k * k;
 };
 
 const getFont = () => {
