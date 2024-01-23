@@ -846,7 +846,6 @@ class UtilData {
 
 	graphFilters () {
 		const { space, techSpace } = commonStore;
-
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
