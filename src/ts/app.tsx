@@ -505,6 +505,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'error',
+				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: translate('commonRetry'),

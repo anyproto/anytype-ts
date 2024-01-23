@@ -22,7 +22,7 @@
 		.icon { width: 72px; height: 72px; }
 		.icon.update { background-image: url('~img/icon/popup/confirm/update.svg'); }
 		.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
-		.icon.error { background-image: url('~img/icon/popup/confirm/error.svg'); }
+		.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
 		.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
 		.icon.feedback { width: 68px; background-image: url('~img/icon/popup/confirm/feedback.svg'); }
 	}
