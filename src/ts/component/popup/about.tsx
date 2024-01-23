@@ -1,16 +1,9 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button } from 'Component';
-import { I, keyboard, translate, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
-
-	refButtons: any = null;
-	n = 0;
-
-	constructor (props: I.Popup) {
-		super(props);
-	};
 
 	render() {
 		return (
