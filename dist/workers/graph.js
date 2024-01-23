@@ -15,6 +15,7 @@ const util = new Util();
 // CONSTANTS
 
 const transformThreshold = 1.5;
+const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
 const ObjectLayout = {
@@ -67,6 +68,7 @@ let settings = {};
 let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
+let nodeMap = new Map();
 let hoverAlpha = 0.3;
 let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
@@ -252,6 +254,8 @@ updateForces = () => {
 	});
 
 	simulation.alpha(1).restart();
+
+	nodeMap = getNodeMap();
 	redraw();
 };
 
@@ -402,26 +406,30 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	let move = arrowHeight;
-	if (showName) {
-		move = arrowHeight * 2 + tw / 2 + offset;
-	} else 
-	if (arrowStart && arrowEnd) {
-		move = arrowHeight * 2;
+
+	if ((arrowStart || arrowEnd) && (transform.k >= transformThresholdHalf)) {
+		let move = arrowHeight;
+		if (showName) {
+			move = arrowHeight * 2 + tw / 2 + offset;
+		} else 
+		if (arrowStart && arrowEnd) {
+			move = arrowHeight * 2;
+		};
+
+		if (arrowStart) {
+			const sax1 = mx - move * cos1;
+			const say1 = my - move * sin1;
+
+			util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
+		};
+
+		if (arrowEnd) {
+			const sax2 = mx - move * cos2;
+			const say2 = my - move * sin2;
+
+			util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
+		};
 	};
-
-	const sax1 = mx - move * cos1;
-	const say1 = my - move * sin1;
-	const sax2 = mx - move * cos2;
-	const say2 = my - move * sin2;
-
-	if (arrowStart) {
-		util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
-    };
-
-    if (arrowEnd) {
-		util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
-    };
 };
 
 drawNode = (d) => {
@@ -465,7 +473,7 @@ drawNode = (d) => {
 		lineWidth = getLineWidth() * 3;
 	};
 
-	if (settings.icon && img) {
+	if (settings.icon && img && (transform.k >= transformThresholdHalf)) {
 		ctx.save();
 
 		if (lineWidth) {
@@ -556,7 +564,7 @@ onDragMove = ({ subjectId, x, y }) => {
 		return;
 	};
 
-	const d = nodes.find(it => it.id == subjectId);
+	const d = getNodeById(subjectId);
 	if (!d) {
 		return;
 	};
@@ -665,7 +673,7 @@ onAddNode = ({ target, sourceId }) => {
 	let y = 0;
 
 	if (sourceId) {
-		const source = nodes.find(it => it.id == sourceId);
+		const source = getNodeById(sourceId);
 		if (!source) {
 			return;
 		};
@@ -768,7 +776,7 @@ const isLayoutBookmark = (d) => {
 };
 
 const getNodeById = (id) => {
-	return nodes.find(d => d.id == id);
+	return nodeMap.get(id) || nodes.find(d => d.id == id);
 };
 
 const getNodeByCoords = (x, y) => {
@@ -776,7 +784,11 @@ const getNodeByCoords = (x, y) => {
 };
 
 const getRadius = (d) => {
-	return d.radius / transform.k * (settings.icon && images[d.src] ? 2 : 1);
+	let k = 1;
+	if (settings.icon && images[d.src] && (transform.k >= transformThresholdHalf)) {
+		k = 2;
+	};
+	return d.radius / transform.k * k;
 };
 
 const getFont = () => {

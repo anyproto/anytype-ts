@@ -647,6 +647,11 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
 		C.ObjectUndo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
@@ -661,6 +666,11 @@ class Keyboard {
 	};
 
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
 		C.ObjectRedo(rootId, (message: any) => {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);

@@ -221,12 +221,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.id)}
+								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
 							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
-										<Label text={space.id} />
+										<Label text={space.targetSpaceId} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />
