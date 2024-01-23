@@ -449,8 +449,6 @@ class UtilData {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
 
-		console.log(JSON.stringify(items.map(it => ({ name: it.name, lastUsedDate: it.lastUsedDate })), null, 2));
-
 		if (limit) {
 			items = items.slice(0, limit);
 		};
@@ -581,6 +579,12 @@ class UtilData {
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
 		return 0;
+	};
+
+	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
+		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
+		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
