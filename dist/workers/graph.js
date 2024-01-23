@@ -253,6 +253,8 @@ updateForces = () => {
 	});
 
 	simulation.alpha(1).restart();
+
+	nodeMap = getNodeMap();
 	redraw();
 };
 
@@ -557,7 +559,7 @@ onDragMove = ({ subjectId, x, y }) => {
 		return;
 	};
 
-	const d = nodes.find(it => it.id == subjectId);
+	const d = getNodeById(subjectId);
 	if (!d) {
 		return;
 	};
@@ -666,7 +668,7 @@ onAddNode = ({ target, sourceId }) => {
 	let y = 0;
 
 	if (sourceId) {
-		const source = nodes.find(it => it.id == sourceId);
+		const source = getNodeById(sourceId);
 		if (!source) {
 			return;
 		};
@@ -769,7 +771,7 @@ const isLayoutBookmark = (d) => {
 };
 
 const getNodeById = (id) => {
-	return nodeMap.get(id);
+	return nodeMap.get(id) || nodes.find(d => d.id == id);
 };
 
 const getNodeByCoords = (x, y) => {
