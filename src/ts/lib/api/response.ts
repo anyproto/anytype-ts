@@ -427,3 +427,56 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
 	};
 };
+
+export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
+	return {
+		available: response.getAvailable(),
+		ownerScwEthAddress: response.getOwnerscwethaddress(),
+		ownerEtherAddress: response.getOwnerethaddress(),
+		ownerAnyAddress: response.getOwneranyaddress(),
+		spaceId: response.getSpaceid(),
+		nameExpires: response.getNameexpires(),
+	};
+};
+
+export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyID.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceID.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.Get.Response) => {
+	return {
+		anyNameAttached: response.getAnynameattached(),
+		namesCountLeft: response.getNamescountleft(),
+		operationsCountLeft: response.getOperationscountleft(),
+	};
+};
+
+export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscription.GetStatus.Response) => {
+	return {
+		tier: response.getTier(),
+		status: response.getStatus(),
+		dateStarted: response.getDatestarted(),
+		dateEnds: response.getDateends(),
+		isAutoRenew: response.getIsautorenew(),
+		nextTier: response.getNexttier(),
+		nextTierEnds: response.getNexttierends(),
+		paymentMethod: response.getPaymentmethod(),
+		requestedAnyName: response.getRequestedanyname(),
+	};
+};
+
+export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscription.GetPaymentURL.Response) => {
+	return {
+		paymentUrl: response.getPaymenturl(),
+	};
+};

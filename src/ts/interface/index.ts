@@ -74,6 +74,7 @@ import { ContentRelation } from './block/relation';
 import { EmbedProcessor, ContentEmbed } from './block/embed';
 import { BlockComponentTable, ContentTableRow } from './block/table';
 import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
+import { SubscriptionTier, SubscriptionStatus, PaymentMethod } from './payment';
 
 export {
 	Account,
@@ -234,4 +235,8 @@ export {
 	WidgetTreeDetails,
 	WidgetComponent,
 	ContentWidget,
+
+	SubscriptionTier, 
+	SubscriptionStatus, 
+	PaymentMethod,
 };

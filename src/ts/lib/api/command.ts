@@ -1857,9 +1857,9 @@ export const NameServiceResolveSpaceId = (id: string, callBack?: (message: any) 
 	dispatcher.request(NameServiceResolveSpaceId.name, request, callBack);
 };
 
-export const NameServiceUserAccount = (callBack?: (message: any) => void) => {
+export const NameServiceUserAccountGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
-	dispatcher.request(NameServiceUserAccount.name, request, callBack);
+	dispatcher.request(NameServiceUserAccountGet.name, request, callBack);
 };
 
 // ---------------------- PAYMENTS ---------------------- //
@@ -1869,9 +1869,14 @@ export const PaymentsSubscriptionGetStatus = (callBack?: (message: any) => void)
 	dispatcher.request(PaymentsSubscriptionGetStatus.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetPaymentURL = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(PaymentsSubscriptionGetPaymentURL.name, request, callBack);
+export const PaymentsSubscriptionGetPaymentUrl = (tier: I.SubscriptionTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Payments.Subscription.GetPaymentURL.Request();
+
+	request.setRequestedtier(tier as number);
+	request.setPaymentmethod(method as number);
+	request.setRequestedanyname(name);
+
+	dispatcher.request(PaymentsSubscriptionGetPaymentUrl.name, request, callBack);
 };
 
 export const PaymentsSubscriptionGetPortalLinkURL = (callBack?: (message: any) => void) => {
