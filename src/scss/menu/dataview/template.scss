@@ -43,7 +43,7 @@
     }
     .menu.menuDataviewTemplateList.fromBanner { background-color: transparent; box-shadow: none; width: auto; }
     .menu.menuDataviewTemplateList.fromBanner {
-		.content { overflow: auto; padding: 0px; max-height: 500px; }
+		.content { overflow: auto; padding: 16px; max-height: 500px; }
         .content {
             .items { justify-content: space-around; align-content: flex-start; }
             .items {
