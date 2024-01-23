@@ -1,6 +1,6 @@
 (() => {
 
-	const extensionId = 'jkmhmgghdjjbafmkgjmplhemjjnkligf';
+	const extensionId = 'dgeefmooohoaoneepgngooocgkfpjccm';
 	const body = document.querySelector('body');
 	const container = document.createElement('div');
 	const dimmer = document.createElement('div');
