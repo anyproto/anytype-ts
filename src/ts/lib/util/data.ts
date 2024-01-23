@@ -22,6 +22,14 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const SYSTEM_DATE_RELATION_KEYS = [
+	'lastModifiedDate', 
+	'lastOpenedDate', 
+	'createdDate',
+	'addedDate',
+	'lastUsedDate',
+];
+
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
@@ -441,6 +449,8 @@ class UtilData {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
 
+		console.log(JSON.stringify(items.map(it => ({ name: it.name, lastUsedDate: it.lastUsedDate })), null, 2));
+
 		if (limit) {
 			items = items.slice(0, limit);
 		};
@@ -806,9 +816,7 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
-			it.includeTime = true;
-		};
+		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
 		return it;
 	};
 
