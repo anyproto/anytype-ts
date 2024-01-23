@@ -405,26 +405,30 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	let move = arrowHeight;
-	if (showName) {
-		move = arrowHeight * 2 + tw / 2 + offset;
-	} else 
-	if (arrowStart && arrowEnd) {
-		move = arrowHeight * 2;
+
+	if ((arrowStart || arrowEnd) && (transform.k >= transformThreshold / 2)) {
+		let move = arrowHeight;
+		if (showName) {
+			move = arrowHeight * 2 + tw / 2 + offset;
+		} else 
+		if (arrowStart && arrowEnd) {
+			move = arrowHeight * 2;
+		};
+
+		if (arrowStart) {
+			const sax1 = mx - move * cos1;
+			const say1 = my - move * sin1;
+
+			util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
+		};
+
+		if (arrowEnd) {
+			const sax2 = mx - move * cos2;
+			const say2 = my - move * sin2;
+
+			util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
+		};
 	};
-
-	const sax1 = mx - move * cos1;
-	const say1 = my - move * sin1;
-	const sax2 = mx - move * cos2;
-	const say2 = my - move * sin2;
-
-	if (arrowStart) {
-		util.arrowHead(sax1, say1, a1, arrowWidth, arrowHeight, colorArrow);
-    };
-
-    if (arrowEnd) {
-		util.arrowHead(sax2, say2, a2, arrowWidth, arrowHeight, colorArrow);
-    };
 };
 
 drawNode = (d) => {
