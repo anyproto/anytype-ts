@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag } from 'Component';
 import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore } from 'Store';
+import { detailStore, popupStore } from 'Store';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
 
@@ -149,7 +149,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div className="buttons">
-					<Button className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
+					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
 			</React.Fragment>
 		);
@@ -218,6 +218,20 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		window.setTimeout(() => {
 			$('#refreshInviteLink').removeClass('loading');
 		}, 2000);
+	};
+
+	onStopSharing () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmStopSharingSpaceTitle'),
+				text: translate('popupConfirmStopSharingSpaceText'),
+				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					// stop sharing logic goes here
+				},
+			},
+		});
 	};
 
 	resize () {

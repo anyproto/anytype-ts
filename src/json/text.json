@@ -705,6 +705,10 @@
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 
+	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
+	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
+	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
+
 	"popupSettingsSpaceMemberTypeReader": "Reader",
 	"popupSettingsSpaceMemberTypeEditor": "Editor",
 	"popupSettingsSpaceMemberTypeAdmin": "Admin",
@@ -758,6 +762,11 @@
 	"popupConfirmUpdateDoneOk": "Great!",
 	"popupConfirmUpdateErrorTitle": "Oops!",
 	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+	"popupAboutTitle": "Anytype",
+	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
+	"popupAboutVersion": "Version: %s",
+	"popupAboutCopyright": "Made by Any — a Swiss association",
 
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",
@@ -1574,9 +1583,9 @@
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
 
-	"libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",
+	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
 	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
-	"libActionUninstallRelationTitle": "Are you sure you want to remove this Relation?",
+	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
 	"utilLoadMoreText": "Show %s more %s",

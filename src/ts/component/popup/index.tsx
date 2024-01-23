@@ -21,6 +21,7 @@ import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
 import PopupUsecase from './usecase';
+import PopupAbout from './about';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -58,6 +59,7 @@ class Popup extends React.Component<I.Popup> {
 			phrase:					 PopupPhrase,
 			objectManager:			 PopupObjectManager,
 			usecase:				 PopupUsecase,
+			about:					 PopupAbout,
 		};
 		
 		const popupId = this.getId();

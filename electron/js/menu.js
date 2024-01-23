@@ -26,7 +26,7 @@ class MenuManager {
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: Util.translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
+					{ label: Util.translate('electronMenuAbout'), click: () => Util.send(this.win, 'popup', 'about', {}, true) },
 
 					Separator,
 
