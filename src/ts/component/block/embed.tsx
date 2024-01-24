@@ -627,6 +627,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
+					// Fix Bilibili schemeless urls
+					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
+						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+
+						console.log(text);
+					};
+
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
