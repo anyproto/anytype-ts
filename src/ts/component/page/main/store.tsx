@@ -33,7 +33,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
-	tab: I.StoreTab = I.StoreTab.Type;
+	tab: I.StoreTab = null;
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
@@ -273,7 +273,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false, true);
+		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
 	};
 
 	componentDidUpdate () {
@@ -319,10 +319,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return h;
 	};
 
-	onTab (id: any, isInner: boolean, isMount: boolean = false) {
+	onTab (id: any, isInner: boolean) {
 		const { isPopup } = this.props;
 
-		if (!isMount && this.tab == id) {
+		if (this.tab == id) {
 			return;
 		};
 
