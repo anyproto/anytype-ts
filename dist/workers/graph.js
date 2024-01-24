@@ -75,6 +75,7 @@ let timeoutHover = 0;
 let rootId = '';
 let root = null;
 let paused = false;
+let isOver = '';
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -353,8 +354,8 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
-	const isOver = d.source.isOver || d.target.isOver;
-	const showName = isOver && d.name && settings.label;
+	const io = (isOver == d.source.id) || (isOver == d.target.id);
+	const showName = io && d.name && settings.label;
 	const lineWidth = getLineWidth();
 
 	let colorLink = data.colors.link;
@@ -365,7 +366,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = hoverAlpha;
 	};
 
-	if (isOver) {
+	if (io) {
 		colorLink = colorArrow = colorText = data.colors.highlight;
 		ctx.globalAlpha = 1;
 	};
@@ -437,6 +438,7 @@ drawNode = (d) => {
 	const img = images[d.src];
 	const diameter = radius * 2;
 	const isSelected = selected.includes(d.id);
+	const io = isOver == d.id;
 	
 	let colorNode = data.colors.node;
 	let colorText = data.colors.text;
@@ -449,9 +451,7 @@ drawNode = (d) => {
 		const connections = edgeMap.get(d.id);
 		if (connections && connections.length) {
 			for (let i = 0; i < connections.length; i++) {
-				const c = getNodeById(connections[i]);
-
-				if (c.isOver) {
+				if (isOver == connections[i]) {
 					ctx.globalAlpha = 1;
 					break;
 				};
@@ -459,7 +459,7 @@ drawNode = (d) => {
 		};
 	};
 
-	if (d.isOver || (root && (d.id == root.id))) {
+	if (io || (root && (d.id == root.id))) {
 		colorNode = colorText = colorLine = data.colors.highlight;
 		lineWidth = getLineWidth() * 3;
 		ctx.globalAlpha = 1;
@@ -469,7 +469,7 @@ drawNode = (d) => {
 		colorNode = colorText = colorLine = data.colors.selected;
 	};
 
-	if (d.isOver || isSelected) {
+	if (io || isSelected) {
 		lineWidth = getLineWidth() * 3;
 	};
 
@@ -619,24 +619,16 @@ onSetSelected = ({ ids }) => {
 };
 
 onMouseMove = ({ x, y }) => {
-	const active = nodes.find(d => d.isOver);
 	const d = getNodeByCoords(x, y);
 
-	if (active) {
-		active.isOver = false;
-	};
-
-	if (d) {
-		d.isOver = true;
-	} else {
-		isHovering = false;
-	};
+	isOver = d ? d.id : '';
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
 	clearTimeout(timeoutHover);
 
 	if (!d) {
+		isHovering = false;
 		return;
 	};
 
@@ -651,19 +643,17 @@ onMouseMove = ({ x, y }) => {
 };
 
 onContextMenu = ({ x, y }) => {
-	const active = nodes.find(d => d.isOver);
-	if (active) {
-		active.isOver = false;
+	const d = getNodeByCoords(x, y);
+
+	isOver = d ? d.id : '';
+
+	if (d) {
+		send('onContextMenu', { node: d, x, y });
+	} else {
+		send('onContextSpaceClick', { x, y });
 	};
 
-	const d = getNodeByCoords(x, y);
-	if (!d) {
-		send('onContextSpaceClick', { x, y });
-	} else {
-		send('onContextMenu', { node: d, x, y });
-		d.isOver = true;
-		redraw();
-	};
+	redraw();
 };
 
 onAddNode = ({ target, sourceId }) => {
