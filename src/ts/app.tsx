@@ -233,6 +233,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			popupStore.open('settings', { data: { page: 'spacesList' }});
+		}, 1000);
 	};
 
 	init () {

@@ -9,7 +9,7 @@
 		.buttons { display: flex; flex-direction: row-reverse; gap: 0px 8px; }
 		.buttons {
 			.button { width: 100%; }
-			.button.blank:not(:hover) { background-color: var(--color-bg-primary); }
+			.button.blank:not(:hover):not(.hover) { background-color: var(--color-bg-primary); }
 		}
 		.iconObject { margin-bottom: 12px; }
 

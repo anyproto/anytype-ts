@@ -630,6 +630,11 @@
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
 	"popupSettingsSpacesListTitle": "Spaces",
+	"popupSettingsSpacesListSpace": "Space",
+	"popupSettingsSpacesListAccess": "Access",
+	"popupSettingsSpacesListSize": "Size",
+	"popupSettingsSpacesListNetwork": "Network",
+	"popupSettingsSpacesListDevice": "Device",
 
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
