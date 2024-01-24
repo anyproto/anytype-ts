@@ -629,6 +629,8 @@
 	"popupSettingsPinSelectRepeat": "Repeat Pin Code",
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
+	"popupSettingsSpacesListTitle": "Spaces",
+
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
