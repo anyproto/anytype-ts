@@ -113,7 +113,7 @@
 		"isDeleted", "isArchived", "isFavorite", "identityProfileLink"
 	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
-	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "createdDate" ],
+	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "creator", "createdDate" ],
 
 	"pageCoverRelationKey": "pageCover",
 
