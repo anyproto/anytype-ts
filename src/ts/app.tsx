@@ -233,10 +233,6 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-
-		window.setTimeout(() => {
-			popupStore.open('spaceJoinRequest', {});
-		},1000);
 	};
 
 	init () {
