@@ -254,7 +254,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
-		container.on(`scroll.${block.id}`, () => this.onScroll());
+		container.off(`scroll.${block.id}`);
 	};
 
 	onScroll () {
@@ -262,17 +262,25 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { isPopup } = this.props;
-		const container = UtilCommon.getScrollContainer(isPopup);
-		const node = $(this.node);
-		const ch = container.height();
-		const st = container.scrollTop();
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const top = rect.top - (isPopup ? container.offset().top : 0);
+		const { block, isPopup } = this.props;
+		const { processor } = block.content;
 
-		if (top <= st + ch) {
-			this.setShowing(true);
+		if (UtilEmbed.allowAutoRender(processor)) {
+			return;
 		};
+
+		window.setTimeout(() => {
+			const container = UtilCommon.getScrollContainer(isPopup);
+			const node = $(this.node);
+			const ch = container.height();
+			const st = container.scrollTop();
+			const rect = node.get(0).getBoundingClientRect() as DOMRect;
+			const top = rect.top - (isPopup ? container.offset().top : 0);
+
+			if (top <= st + ch) {
+				this.setShowing(true);
+			};
+		}, 50);
 	};
 
 	getContainerId () {
@@ -993,10 +1001,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			const node = $(this.node);
 			const value = node.find('#value');
 
-			console.log(value.width());
-
 			this.setState({ width: value.width() });
 		};
+
+		this.onScroll();
 	};
 
 });
