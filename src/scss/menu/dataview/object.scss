@@ -11,7 +11,7 @@
 		.wrap.withFilter {
 			.items { height: calc(100% - 30px); }
 			.emptySearch { height: calc(100% - 30px); }
-			.loaderWrapper { top: 30px; height: calc(100% - 30px); }
+			.loaderWrapper { position: relative; }
 		}
 
 		.items { height: 100%; }
