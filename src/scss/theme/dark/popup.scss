@@ -127,4 +127,11 @@
 	.popup.popupAbout {
 		.iconWrapper { background: none; }
 	}
+
+	/* PopupSpaceJoinRequest */
+
+	.popup.popupSpaceJoinRequest {
+		.iconWrapper { background: none; }
+		.icon { background-image: url('#{$themePath}/icon/popup/space/invite.svg'); }
+	}
 }

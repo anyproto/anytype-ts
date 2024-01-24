@@ -22,6 +22,7 @@ import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
 import PopupUsecase from './usecase';
 import PopupAbout from './about';
+import PopupSpaceJoinRequest from './space/joinRequest';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -60,6 +61,7 @@ class Popup extends React.Component<I.Popup> {
 			objectManager:			 PopupObjectManager,
 			usecase:				 PopupUsecase,
 			about:					 PopupAbout,
+			spaceJoinRequest:		 PopupSpaceJoinRequest,
 		};
 		
 		const popupId = this.getId();

@@ -13,6 +13,7 @@ const SHOW_DIMMER = [
 	'pin',
 	'preview',
 	'about',
+	'spaceJoinRequest'
 ];
 
 class PopupStore {
