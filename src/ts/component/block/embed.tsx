@@ -32,6 +32,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	_isMounted = false;
 	text = '';
 	timeoutChange = 0;
+	timeoutScroll = 0;
 	node = null;
 	refEditable = null;
 	refType = null;
@@ -187,6 +188,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
+		window.clearTimeout(this.timeoutScroll);
 	};
 
 	init () {
@@ -258,10 +260,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onScroll () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 
@@ -269,7 +267,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		window.setTimeout(() => {
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			const container = UtilCommon.getScrollContainer(isPopup);
 			const node = $(this.node);
 			const ch = container.height();
