@@ -345,7 +345,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onView (id: View, isInner: boolean, isChangeTab: boolean = false) {
-		if (!isChangeTab && this.view == id) {
+		if (!isChangeTab && (this.view == id)) {
 			return;
 		};
 
