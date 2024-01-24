@@ -174,12 +174,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 		this.init();
-		this.onScroll();
 	};
 
 	componentDidUpdate () {
 		this.init();
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -198,10 +196,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setValue(this.text);
 		this.setContent(this.text);
 		this.rebind();
+		this.onScroll();
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
@@ -239,7 +238,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		});
 
 		if (!UtilEmbed.allowAutoRender(processor)) {
-			win.on(`scroll.${block.id}`, () => this.onScroll());
+			const container = UtilCommon.getScrollContainer(isPopup);
+			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
@@ -249,10 +249,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		const { block } = this.props;
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
+		const { block, isPopup } = this.props;
+		const container = UtilCommon.getScrollContainer(isPopup);
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+		container.on(`scroll.${block.id}`, () => this.onScroll());
 	};
 
 	onScroll () {
@@ -260,14 +262,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
+		const { isPopup } = this.props;
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const node = $(this.node);
-		const win = $(window);
-		const { wh } = UtilCommon.getWindowDimensions();
-		const st = win.scrollTop();
-		const { top } = node.offset();
-		const bot = top + node.height();
+		const ch = container.height();
+		const st = container.scrollTop();
+		const nh = node.height();
+		const { top } = node.position();
 
-		if ((bot > st) && (top < st + wh)) {
+		if ((top <= st + ch) && (top + nh <= st)) {
 			this.setShowing(true);
 		};
 	};
@@ -630,8 +633,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// Fix Bilibili schemeless urls
 					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
 						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
-
-						console.log(text);
 					};
 
 					// If content is Kroki code pack the code into SVG url
