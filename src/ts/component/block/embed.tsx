@@ -889,7 +889,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(`.block.blockEmbed`).addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
 		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
@@ -941,7 +941,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(`.block.blockEmbed`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, width: w } },
