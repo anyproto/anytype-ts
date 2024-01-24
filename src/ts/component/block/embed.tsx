@@ -267,10 +267,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const ch = container.height();
 		const st = container.scrollTop();
-		const nh = node.height();
-		const { top } = node.position();
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const top = rect.top - (isPopup ? container.offset().top : 0);
 
-		if ((top <= st + ch) && (top + nh <= st)) {
+		if (top <= st + ch) {
 			this.setShowing(true);
 		};
 	};
