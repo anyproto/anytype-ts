@@ -325,10 +325,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
-					options: this.getLayoutOptions(),
+					options: this.getLayoutOptions().map(it => ({ ...it, id: String(it.id) })),
 					value: this.layout,
 					onSelect: (e, option) => {
-						this.layout = option.id;
+						this.layout = Number(option.id);
 						this.checkState();
 						this.forceUpdate();
 						
