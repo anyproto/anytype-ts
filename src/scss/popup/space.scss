@@ -25,7 +25,7 @@
         .note { @include text-small; color: var(--color-text-secondary); }
     }
 
-    .popup.popupInviteConfirm {
+    .popup.popupRequestConfirm {
         .innerWrap { width: 424px; padding: 32px; text-align: center; }
 
         .iconWrapper { margin-bottom: 12px; display: flex; justify-content: center; }

@@ -741,9 +741,9 @@
 	"popupInviteRequestConfirmTitle": "Request sent",
 	"popupInviteRequestConfirmText": "You will receive a notification when the space owner will approve your request.",
 
-	"popupInviteConfirmTitle": "%s requested to join Investors space",
-	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
-	"popupInviteConfirmButtonReject": "Reject",
+	"popupRequestConfirmTitle": "%s requested to join Investors space",
+	"popupRequestConfirmButtonConfirmEditor": "Grant edit access",
+	"popupRequestConfirmButtonReject": "Reject",
 
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",

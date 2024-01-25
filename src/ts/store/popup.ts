@@ -14,7 +14,7 @@ const SHOW_DIMMER = [
 	'preview',
 	'about',
 	'inviteRequest',
-	'inviteConfirm'
+	'requestConfirm'
 ];
 
 class PopupStore {

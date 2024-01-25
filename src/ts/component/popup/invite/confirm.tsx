@@ -7,7 +7,7 @@ interface State {
 	error: string;
 };
 
-const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Component<I.Popup, State> {
+const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Component<I.Popup, State> {
 
 	state = {
 		error: '',
@@ -33,11 +33,11 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), identityName)} />
+				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName)} />
 
 				<div className="buttons">
-					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
-					<Button onClick={this.onConfirm} text={translate('popupInviteConfirmButtonConfirmEditor')} className="c36" />
+					<Button onClick={this.onReject} text={translate('popupRequestConfirmButtonReject')} className="c36" color="red" />
+					<Button onClick={this.onConfirm} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
 				</div>
 
 				<Error text={error} />
@@ -83,4 +83,4 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 });
 
-export default PopupInviteConfirm;
+export default PopupRequestConfirm;
