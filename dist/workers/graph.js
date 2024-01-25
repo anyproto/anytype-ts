@@ -196,23 +196,17 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		edges = edges.filter(d => d.type != EdgeType.Link);
-		updateOrphans();
-
 		nodes = nodes.filter(d => !d.linkCnt);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
-		edges = edges.filter(d => d.type != EdgeType.Relation);
-		updateOrphans();
-
 		nodes = nodes.filter(d => !d.relationCnt);
 	};
 
 	// Filte local only edges
 	if (settings.local) {
-		edges = edges.filter(d => (d.source == rootId) || (d.target == rootId));
+		edges = getEdgesByNodeId(rootId);
 
 		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 		nodes = nodes.filter(d => nodeIds.includes(d.id));
@@ -220,8 +214,6 @@ updateForces = () => {
 
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
-
-	//updateOrphans();
 
 	// Filter orphans
 	if (!settings.orphan) {
@@ -293,11 +285,12 @@ updateTheme = ({ theme }) => {
 
 updateOrphans = () => {
 	nodes = nodes.map(d => {
-		const edgeList = edges.filter(it => (it.source == d.id) || (it.target == d.id));
+		const edges = getEdgesByNodeId(d.id);
 		
-		d.isOrphan = !edgeList.length;
-		d.linkCnt = edgeList.filter(it => it.type == EdgeType.Link).length;
-		d.relationCnt = edgeList.filter(it => it.type == EdgeType.Relation).length;
+		d.isOrphan = !edges.length;
+		d.linkCnt = edges.filter(it => it.type == EdgeType.Link).length;
+		d.relationCnt = edges.filter(it => it.type == EdgeType.Relation).length;
+
 		return d;
 	});
 };
@@ -771,6 +764,10 @@ const getNodeById = (id) => {
 
 const getNodeByCoords = (x, y) => {
 	return simulation.find(transform.invertX(x), transform.invertY(y), 10 / transform.k);
+};
+
+const getEdgesByNodeId = (id) => {
+	return edges.filter(d => (d.source == id) || (d.target == id));
 };
 
 const getRadius = (d) => {

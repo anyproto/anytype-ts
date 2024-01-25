@@ -33,32 +33,32 @@ export enum BlockType {
 };
 
 export enum BlockPosition {
-	None	 = 0,
-	Top		 = 1,
-	Bottom	 = 2,
-	Left	 = 3,
-	Right	 = 4,
-	Inner	 = 5,
-	Replace	 = 6,
-	InnerFirst = 7,
+	None		 = 0,
+	Top			 = 1,
+	Bottom		 = 2,
+	Left		 = 3,
+	Right		 = 4,
+	Inner		 = 5,
+	Replace		 = 6,
+	InnerFirst	 = 7,
 };
 
 export enum BlockSplitMode {
-	Bottom = 0,
-	Top = 1,
-	Inner = 2,
+	Bottom		 = 0,
+	Top			 = 1,
+	Inner		 = 2,
 };
 
 export enum BlockHAlign {
-	Left	 = 0,
-	Center	 = 1,
-	Right	 = 2,
+	Left		 = 0,
+	Center		 = 1,
+	Right		 = 2,
 };
 
 export enum BlockVAlign {
-	Top		 = 0,
-	Middle	 = 1,
-	Bottom	 = 2,
+	Top			 = 0,
+	Middle		 = 1,
+	Bottom		 = 2,
 };
 
 export interface BlockComponent {
