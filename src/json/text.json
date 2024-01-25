@@ -742,6 +742,7 @@
 	"popupInviteRequestConfirmText": "You will receive a notification when the space owner will approve your request.",
 
 	"popupRequestConfirmTitle": "%s requested to join %s",
+	"popupRequestConfirmButtonConfirmReader": "Grant read access",
 	"popupRequestConfirmButtonConfirmEditor": "Grant edit access",
 	"popupRequestConfirmButtonReject": "Reject",
 

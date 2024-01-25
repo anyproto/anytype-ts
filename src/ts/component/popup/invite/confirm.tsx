@@ -37,8 +37,11 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName, space.name)} />
 
 				<div className="buttons">
+					<div className="sides">
+						<Button onClick={() => this.onConfirm('reader')} text={translate('popupRequestConfirmButtonConfirmReader')} className="c36" />
+						<Button onClick={() => this.onConfirm('editor')} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
+					</div>
 					<Button onClick={this.onReject} text={translate('popupRequestConfirmButtonReject')} className="c36" color="red" />
-					<Button onClick={this.onConfirm} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
 				</div>
 
 				<Error text={error} />
@@ -46,7 +49,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		);
 	};
 
-	onConfirm () {
+	onConfirm (role) {
 		const { param } = this.props;
 		const { data } = param;
 		const { payload } = data;
