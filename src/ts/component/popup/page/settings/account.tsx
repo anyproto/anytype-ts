@@ -32,7 +32,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
-		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
 	render () {
@@ -93,40 +92,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 			</div>
 		);
-	};
-
-	onLocationMove () {
-		const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localStoragePath = String(info.localStoragePath || '');
-
-		if (!localStoragePath) {
-			return;
-		};
-
-		const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
-		const options = { 
-			defaultPath: accountPath,
-			properties: [ 'openDirectory' ],
-		};
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
-			setLoading(true);
-			C.AccountMove(files[0], (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-				} else {
-					UtilRouter.go('/auth/setup/init', {}); 
-				};
-				setLoading(false);
-			});
-		});
 	};
 
 	onMenu () {

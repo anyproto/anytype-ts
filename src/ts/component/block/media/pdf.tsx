@@ -224,7 +224,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { content } = block;
 		const { hash } = content;
 		
-		C.FileDownload(hash, window.Electron.tmpPath, (message: any) => {
+		C.FileDownload(hash, window.Electron.tmpPath(), (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
-import { I, UtilMenu, UtilCommon, translate, Action, analytics, Renderer } from 'Lib';
+import { I, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -16,12 +16,14 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.onSave = this.onSave.bind(this);
 		this.onPathClick = this.onPathClick.bind(this);
 		this.onChangeStorage = this.onChangeStorage.bind(this);
+		this.onTooltipShow = this.onTooltipShow.bind(this);
+		this.onTooltipHide = this.onTooltipHide.bind(this);
 	};
 
 	render () {
 		const { mode, path } = this.config;
+		const userPath = window.Electron.userPath();
 		const { interfaceLang, config } = commonStore;
-		const { userDataPath } = config;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
@@ -75,7 +77,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						</div>
 
 						{mode == I.NetworkMode.Custom ? (
-							<div className="item">
+							<div className="item" onMouseEnter={e => this.onTooltipShow(e, path)} onMouseLeave={this.onTooltipHide}>
 								<div onClick={() => this.onPathClick(path)}>
 									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 									{path ? <Label className="small" text={UtilCommon.shorten(path, 32)} /> : ''}
@@ -85,10 +87,10 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						) : ''}
 
 						{config.experimental ? (
-							<div className="item">
-								<div onClick={() => this.onPathClick(userDataPath)}>
+							<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
+								<div onClick={() => this.onPathClick(userPath)}>
 									<Label text={translate('popupSettingsOnboardingStoragePath')} />
-									<Label className="small" text={UtilCommon.shorten(userDataPath, 32)} />
+									<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
 								</div>
 								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
 							</div>
@@ -140,7 +142,17 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	onChangeStorage () {
 		Action.openDir({}, (paths: string[]) => {
 			Renderer.send('setUserDataPath', paths[0]);
+			commonStore.dataPathSet(paths[0]);
+			this.forceUpdate();
 		});
+	};
+
+	onTooltipShow (e: any, text: string) {
+		Preview.tooltipShow({ text, element: $(e.currentTarget) });
+	};
+
+	onTooltipHide () {
+		Preview.tooltipHide();
 	};
 
 });

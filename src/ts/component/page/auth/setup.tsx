@@ -92,7 +92,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const { account, accountPath } = authStore;
+		const { account } = authStore;
 
 		switch (match?.params?.id) {
 			case 'init': {
@@ -101,7 +101,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			case 'select': {
-				this.select(account.id, accountPath, true);
+				this.select(account.id, true);
 				break;
 			};
 
@@ -117,14 +117,15 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { accountPath, phrase } = authStore;
+		const { phrase } = authStore;
+		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
 		if (!phrase) {
 			return;
 		};
 
-		C.WalletRecover(accountPath, phrase, (message: any) => {
+		C.WalletRecover(dataPath, phrase, (message: any) => {
 			if (this.setError(message.error)) {
 				return;
 			};
@@ -136,7 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 				if (accountId) {
 					authStore.phraseSet(phrase);
-					this.select(accountId, accountPath, false);
+					this.select(accountId, false);
 				} else {
 					UtilRouter.go('/auth/account-select', { replace: true });
 				};
@@ -144,12 +145,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		});
 	};
 
-	select (accountId: string, accountPath: string, animate: boolean) {
+	select (accountId: string, animate: boolean) {
 		const { networkConfig } = authStore;
+		const { dataPath } = commonStore;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
-		C.AccountSelect(accountId, accountPath, mode, path, (message: any) => {
+		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};

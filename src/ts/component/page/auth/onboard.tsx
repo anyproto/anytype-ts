@@ -34,7 +34,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.onNext = this.onNext.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onAccountPath = this.onAccountPath.bind(this);
 		this.onShowPhrase = this.onShowPhrase.bind(this);
 	};
 
@@ -263,16 +262,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	accountCreate (callBack?: () => void) {
 		this.refNext.setLoading(true);
 
-		const { name, accountPath, networkConfig } = authStore;
+		const { name, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
 
-		C.WalletCreate(accountPath, (message) => {
+		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 				return;
 			};
 
-			authStore.phraseSet(message.mnemonic);
+			const phrase = message.mnemonic;
+
+			authStore.phraseSet(phrase);
 
 			UtilData.createSession((message) => {
 				if (message.error.code) {
@@ -280,9 +282,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					return;
 				};
 
-				const { accountPath, phrase } = authStore;
-
-				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate(name, '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						this.setError(message.error.description);
 						return;
@@ -323,16 +323,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
-	};
-
-	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath () {
-		menuStore.open('accountPath', {
-			element: '#accountPath',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			offsetY: -20,
-		});
 	};
 
 	setError (error: string) {

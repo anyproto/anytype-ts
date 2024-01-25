@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { authStore, commonStore, popupStore } from 'Store';
+import { commonStore, popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -15,7 +15,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         super(props);
 
         this.onOffload = this.onOffload.bind(this);
-        this.onLocationMove = this.onLocationMove.bind(this);
     };
 
     render () {
@@ -85,40 +84,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                     });
                 },
             }
-        });
-    };
-
-    onLocationMove () {
-        const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localStoragePath = String(info.localStoragePath || '');
-
-		if (!localStoragePath) {
-			return;
-		};
-
-        const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
-        const options = {
-            defaultPath: accountPath,
-            properties: [ 'openDirectory' ],
-        };
-
-        window.Electron.showOpenDialog(options).then((result: any) => {
-            const files = result.filePaths;
-            if ((files == undefined) || !files.length) {
-                return;
-            };
-
-            setLoading(true);
-            C.AccountMove(files[0], (message: any) => {
-                if (message.error.code) {
-                    this.setState({ error: message.error.description });
-                } else {
-                    UtilRouter.go('/auth/setup/init', {});
-                };
-                setLoading(false);
-            });
         });
     };
 
