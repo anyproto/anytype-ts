@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Title, Icon, Label, Button, Error } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { popupStore } from 'Store';
+import { popupStore, authStore } from 'Store';
 
 interface State {
 	error: string;
@@ -69,8 +69,13 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { cid, key } = data;
+		const { account } = authStore;
 
-		C.SpaceJoin('', this.invite.spaceId, cid, key, (message: any) => {
+		if (!account) {
+			return;
+		};
+
+		C.SpaceJoin(account.info.networkId, this.invite.spaceId, cid, key, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
