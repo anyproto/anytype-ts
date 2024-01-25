@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { Title, Label, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
+import { Title, Button, Error, IconObject } from 'Component';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { popupStore, authStore } from 'Store';
-import { SpaceRequestApprove } from 'Lib/api/command';
 
 interface State {
 	error: string;
