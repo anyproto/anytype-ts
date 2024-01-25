@@ -149,7 +149,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	h1(`A Winter Wonderland of Fresh Features ☃️`),
+	h1(`Release 0.37.0 - A Winter Wonderland of Fresh Features ☃️`),
 	text(`Happy festive season, Anytypers! We’re excited to be bidding 2023 farewell with another huge release that addresses some long standing community requests, gives you greater control over your data management, and unlocks the possibility to share your pre-created templates and use cases with other Anytypers. Let’s jump in!`),
 
 	h2(`💎 Highlights of this Release:`),

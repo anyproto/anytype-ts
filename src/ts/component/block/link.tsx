@@ -88,6 +88,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			let archive = null;
 			let icon = null;
 			let div = null;
+			let onCardClick = null;
+			let onNameClick = null;
 
 			if (canDescription) {
 				if (description == I.LinkDescription.Added) {
@@ -108,6 +110,9 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div className="inner" />
 					</div>
 				);
+				onNameClick = this.onClick;
+			} else {
+				onCardClick = this.onClick;
 			};
 
 			if (withIcon) {
@@ -132,10 +137,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')}>
+				<div className={cnc.join(' ')} onClick={onCardClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
-							<div className="relationItem cardName" onClick={this.onClick}>
+							<div className="relationItem cardName" onClick={onNameClick}>
 								{icon}
 								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
 								{archive}
@@ -358,7 +363,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const icon = node.find('.iconObject');
 			const rect = (node.get(0) as Element).getBoundingClientRect();
 			const mw = getWrapperWidth();
-			const name = node.find('.cardName');
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');

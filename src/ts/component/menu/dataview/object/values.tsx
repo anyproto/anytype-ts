@@ -192,10 +192,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, valueMapper, nameAdd } = data;
+		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
+		value = value.map(it => detailStore.get(rootId, it, []));
 		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (!config.debug.ho) {
