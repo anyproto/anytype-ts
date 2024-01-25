@@ -30,7 +30,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
-					<IconObject object={{ name: identityName, icon: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
+					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
 				</div>
 
 				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), identityName)} />
