@@ -644,6 +644,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// Fix Bilibili schemeless urls
 					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
 						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
 					};
 
 					// If content is Kroki code pack the code into SVG url
