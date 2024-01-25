@@ -50,6 +50,7 @@ class CommonStore {
 	public autoSidebarValue = null;
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
+	public fullscreenObjectValue = null;
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -91,6 +92,7 @@ class CommonStore {
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
+			fullscreenObjectValue: observable,
 			spaceId: observable,
 			techSpaceId: observable,
             config: computed,
@@ -171,6 +173,10 @@ class CommonStore {
 
 	get isSidebarFixed(): boolean {
 		return this.boolGet('isSidebarFixed');
+	};
+
+	get fullscreenObject(): boolean {
+		return this.boolGet('fullscreenObject');
 	};
 
 	get theme(): string {
@@ -320,6 +326,10 @@ class CommonStore {
 
 	showRelativeDatesSet (v: boolean) {
 		this.boolSet('showRelativeDates', v);
+	};
+
+	fullscreenObjectSet (v: boolean) {
+		this.boolSet('fullscreenObject', v);
 	};
 
 	fullscreenSet (v: boolean) {
