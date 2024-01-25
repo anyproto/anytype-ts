@@ -59,6 +59,7 @@ class Notification implements I.Notification {
 			};
 
 			case I.NotificationType.Join: {
+				this.title = '';
 				this.text = UtilCommon.sprintf(this.text, identityName, space.name);
 				break;
 			};
