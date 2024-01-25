@@ -46,7 +46,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			this.setState({ error: translate('pageMainInviteError') });
 		} else {
 			UtilObject.openHome('route');
-			window.setTimeout(() => popupStore.open('spaceJoinRequest', { data }), Constant.delay.popup);
+			window.setTimeout(() => popupStore.open('inviteRequest', { data }), Constant.delay.popup);
 		};
 		this.resize();
 	};

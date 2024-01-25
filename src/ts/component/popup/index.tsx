@@ -22,12 +22,12 @@ import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
 import PopupUsecase from './usecase';
 import PopupAbout from './about';
-import PopupSpaceJoinRequest from './space/joinRequest';
+import PopupInviteRequest from './invite/request';
 
 class Popup extends React.Component<I.Popup> {
 
 	_isMounted = false;
-	node: any = null;
+	node = null;
 	isAnimating = false;
 
 	constructor (props: I.Popup) {
@@ -61,7 +61,7 @@ class Popup extends React.Component<I.Popup> {
 			objectManager:			 PopupObjectManager,
 			usecase:				 PopupUsecase,
 			about:					 PopupAbout,
-			spaceJoinRequest:		 PopupSpaceJoinRequest,
+			inviteRequest:			 PopupInviteRequest,
 		};
 		
 		const popupId = this.getId();

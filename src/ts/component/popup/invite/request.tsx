@@ -8,7 +8,7 @@ interface State {
 	error: string;
 };
 
-const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React.Component<I.Popup, State> {
+const PopupInviteRequest = observer(class PopupInviteRequest extends React.Component<I.Popup, State> {
 
 	state = {
 		error: '',
@@ -30,19 +30,19 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSpaceJoinRequestTitle')} />
+				<Title text={translate('popupInviteRequestTitle')} />
 				
 				<div className="iconWrapper">
 					<Icon />
 				</div>
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupSpaceJoinRequestText'), this.invite.spaceName, this.invite.creatorName)} />
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), this.invite.spaceName, this.invite.creatorName)} />
 
 				<div className="buttons">
-					<Button onClick={this.onRequest} text={translate('popupSpaceJoinRequestRequestToJoin')} className="c36" />
+					<Button onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
 				</div>
 
-				<div className="note">{translate('popupSpaceJoinRequestNote')}</div>
+				<div className="note">{translate('popupInviteRequestNote')}</div>
 
 				<Error text={error} />
 			</React.Fragment>
@@ -83,8 +83,8 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 
 			popupStore.open('confirm', {
 				data: {
-					title: translate('popupSpaceJoinRequestConfirmTitle'),
-					text: translate('popupSpaceJoinRequestConfirmText'),
+					title: translate('popupInviteRequestConfirmTitle'),
+					text: translate('popupInviteRequestConfirmText'),
 					textConfirm: translate('commonDone'),
 					canCancel: false,
 				},
@@ -94,4 +94,4 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 
 });
 
-export default PopupSpaceJoinRequest;
+export default PopupInviteRequest;
