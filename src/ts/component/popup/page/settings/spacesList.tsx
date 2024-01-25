@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon } from 'Lib';
-import { authStore, commonStore, dbStore, popupStore } from 'Store';
+import { Title, Label, IconObject, ObjectName, Button, Icon } from 'Component';
+import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon, UtilObject } from 'Lib';
+import { blockStore, authStore, commonStore, dbStore, detailStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
 
@@ -12,24 +13,40 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	render () {
 		const spaces = dbStore.getSpaces();
+		const { account } = authStore;
 
 		const Row = (space) => {
 			console.log('SPACE: ', space)
+			const isOwner = space.creator == '_id_' + account.id;
+			const creator = detailStore.get(Constant.subId.space, space.creator);
+			const access = isOwner ? 'Owner' : 'View';
+
 			return (
 				<tr>
-					<td>
+					<td className="columnSpace">
 						<div className="spaceNameWrapper">
-							<IconObject object={space} />
+							<IconObject object={space} size={40} />
 							<div className="spaceName">
 								<ObjectName object={space} />
+
+								{isOwner ? (
+									<div className="creatorNameWrapper">
+										<IconObject object={creator} size={16} />
+										<ObjectName object={creator} />
+									</div>
+								) : ''}
 							</div>
 						</div>
 					</td>
+					<td>{access}</td>
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>
+					<td className="columnMore">
+						<div className="itemMore">
+							<Icon className="more" />
+						</div>
+					</td>
 				</tr>
 			);
 		};
@@ -42,12 +59,12 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<table>
 						<thead>
 							<tr>
-								<th>{translate('popupSettingsSpacesListSpace')}</th>
+								<th className="columnSpace">{translate('popupSettingsSpacesListSpace')}</th>
 								<th>{translate('popupSettingsSpacesListAccess')}</th>
 								<th>{translate('popupSettingsSpacesListSize')}</th>
 								<th>{translate('popupSettingsSpacesListNetwork')}</th>
 								<th>{translate('popupSettingsSpacesListDevice')}</th>
-								<th> </th>
+								<th className="columnMore"> </th>
 							</tr>
 						</thead>
 						<tbody>
