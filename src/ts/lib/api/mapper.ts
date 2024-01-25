@@ -45,6 +45,7 @@ export const Mapper = {
 		if (v == V.IMPORT)			 t = 'import';
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
+		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
 		return t;
 	},
 
@@ -512,6 +513,16 @@ export const Mapper = {
 					payload = Object.assign(payload, {
 						errorCode: field.getErrorcode(),
 						exportType: field.getExporttype(),
+					});
+					break;
+				};
+
+				case 'requestToJoin': {
+					payload = Object.assign(payload, {
+						spaceId: field.getSpaceid(),
+						identity: field.getIdentity(),
+						identityName: field.getIdentityname(),
+						identityIcon: field.getIdentityicon(),
 					});
 					break;
 				};

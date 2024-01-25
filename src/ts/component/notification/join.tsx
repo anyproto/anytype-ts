@@ -1,26 +1,20 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { I, translate } from 'Lib';
+import { I, UtilCommon, UtilObject, translate } from 'Lib';
 import { commonStore } from 'Store';
 
-const NotificationGallery = observer(class NotificationGallery extends React.Component<I.NotificationComponent, {}> {
+const NotificationJoin = observer(class NotificationJoin extends React.Component<I.NotificationComponent, {}> {
 
 	render () {
 		const { item, onButton } = this.props;
-		const { payload, title, text } = item;
-		const { errorCode, spaceId } = payload;
-
-		let buttons = [];
-		if (!errorCode && (spaceId != commonStore.space)) {
-			buttons = buttons.concat([
-				{ id: 'space', text: translate('notificationButtonSpace') }
-			]);
-		};
+		const { text } = item;
+		const buttons = [
+			{ id: 'request', text: translate('notificationButtonRequest') }
+		];
 
 		return (
 			<React.Fragment>
-				<Title text={title} />
 				<Label text={text} />
 
 				<div className="buttons">
@@ -34,4 +28,4 @@ const NotificationGallery = observer(class NotificationGallery extends React.Com
 	
 });
 
-export default NotificationGallery;
+export default NotificationJoin;

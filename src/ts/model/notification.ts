@@ -31,19 +31,13 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, spaceId } = this.payload;
+		const { importType, errorCode, name, spaceId, identityName } = this.payload;
 		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 		const lang = errorCode ? 'error' : 'success';
+		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 
-		this.title = translate(UtilCommon.toCamelCase(`notification-${this.type}-${lang}-title`));
-		this.text = translate(UtilCommon.toCamelCase(`notification-${this.type}-${lang}-text`));
-
-		if ((this.type == I.NotificationType.Import)) {
-			if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
-				this.title = translate('notificationNotionErrorNoObjectsTitle');
-				this.text = translate('notificationNotionErrorNoObjectsText');
-			};
-		};
+		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
+		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
@@ -63,6 +57,12 @@ class Notification implements I.Notification {
 				};
 				break;
 			};
+
+			case I.NotificationType.Join: {
+				this.text = UtilCommon.sprintf(this.text, identityName, space.name);
+				break;
+			};
+
 		};
 	};
 
