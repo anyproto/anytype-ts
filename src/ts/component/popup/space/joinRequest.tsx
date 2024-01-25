@@ -77,9 +77,9 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 
 			popupStore.open('confirm', {
 				data: {
-					title: '',
-					text: '',
-					textConfirm: translate('commonOk'),
+					title: translate('popupSpaceJoinRequestConfirmTitle'),
+					text: translate('popupSpaceJoinRequestConfirmText'),
+					textConfirm: translate('commonDone'),
 					canCancel: false,
 				},
 			});

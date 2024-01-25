@@ -738,6 +738,9 @@
 	"popupSpaceJoinRequestRequestToJoin": "Request to join",
 	"popupSpaceJoinRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
 
+	"popupSpaceJoinRequestConfirmTitle": "Request sent",
+	"popupSpaceJoinRequestConfirmText": "You will receive a notification when the space owner will approve your request.",
+
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
 	"networkMode1Title": "Local-only",
