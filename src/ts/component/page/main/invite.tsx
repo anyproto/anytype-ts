@@ -42,8 +42,6 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		const data = this.getSearch();
 
-		data.key = decodeURIComponent(data.key);
-
 		if (!data.cid || !data.key) {
 			this.setState({ error: translate('pageMainInviteError') });
 		} else {

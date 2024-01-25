@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, Textarea, Error } from 'Component';
+import { Title, Icon, Label, Button, Error } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { popupStore } from 'Store';
@@ -10,7 +10,6 @@ interface State {
 
 const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React.Component<I.Popup, State> {
 
-	refMessage = null;
 	state = {
 		error: '',
 	};
@@ -37,9 +36,7 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 					<Icon />
 				</div>
 
-
 				<Label className="invitation" text={UtilCommon.sprintf(translate('popupSpaceJoinRequestText'), this.invite.spaceName, this.invite.creatorName)} />
-				<Textarea ref={ref => this.refMessage = ref} placeholder={translate('popupSpaceJoinRequestMessagePlaceholder')} />
 
 				<div className="buttons">
 					<Button onClick={this.onRequest} text={translate('popupSpaceJoinRequestRequestToJoin')} className="c36" />
@@ -69,7 +66,11 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 	};
 
 	onRequest () {
-		C.SpaceJoin(this.invite.spaceId, (message: any) => {
+		const { param } = this.props;
+		const { data } = param;
+		const { cid, key } = data;
+
+		C.SpaceJoin('', this.invite.spaceId, cid, key, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;

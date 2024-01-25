@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag } from 'Component';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
 import { I, C, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, popupStore, commonStore } from 'Store';
@@ -40,6 +40,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	render () {
+		const { error } = this.state;
+
 		const memberOptions = this.getMemberOptions();
 		const length = this.team.length;
 
@@ -170,6 +172,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div className="buttons">
 					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
+
+				<Error text={error} />
 			</div>
 		);
 	};
@@ -221,7 +225,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getLink () {
-		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${encodeURIComponent(this.key)}`
+		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${this.key}`
 	};
 
 	onCopy () {

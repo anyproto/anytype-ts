@@ -1850,10 +1850,13 @@ export const SpaceInviteView = (cid: string, key: string, callBack?: (message: a
 	dispatcher.request(SpaceInviteView.name, request, callBack);
 };
 
-export const SpaceJoin = (spaceId: string, callBack?: (message: any) => void) => {
+export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.Join.Request();
 
+	request.setNetworkid(networkId);
 	request.setSpaceid(spaceId);
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
 
 	dispatcher.request(SpaceJoin.name, request, callBack);
 };
