@@ -30,17 +30,18 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 	render() {
 		const { error } = this.state;
-		const { name, icon, message } = this.request;
+		const { param } = this.props;
+		const { data } = param;
+		const { payload } = data;
+		const { identityName, identityIcon } = payload;
 
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
-					<IconObject object={{ name, icon, layout: I.ObjectLayout.Human }} size={48} />
+					<IconObject object={{ name: identityName, icon: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), name)} />
-
-				{message ? <Label className="invitation" text={message} /> : ''}
+				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), identityName)} />
 
 				<div className="buttons">
 					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
@@ -53,14 +54,16 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onConfirm () {
-		const space = UtilObject.getSpaceview();
-		const { identity } = this.request;
+		const { param } = this.props;
+		const { data } = param;
+		const { payload } = data;
+		const { spaceId, identity } = payload;
 
-		if (!space || !space.spaceId || !identity) {
+		if (spaceId || !identity) {
 			return;
 		};
 
-		C.SpaceRequestApprove(space.spaceId, identity, (message: any) => {
+		C.SpaceRequestApprove(spaceId, identity, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
@@ -69,14 +72,16 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onReject () {
-		const space = UtilObject.getSpaceview();
-		const { identity } = this.request;
+		const { param } = this.props;
+		const { data } = param;
+		const { payload } = data;
+		const { spaceId, identity } = payload;
 
-		if (!space || !space.spaceId || !identity) {
+		if (spaceId || !identity) {
 			return;
 		};
 
-		C.SpaceRequestDecline(space.spaceId, identity, (message: any) => {
+		C.SpaceRequestDecline(spaceId, identity, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
