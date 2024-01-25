@@ -846,6 +846,21 @@ class UtilCommon {
 		return c.join('');
 	};
 
+	enumKey (e: any, v: any) {
+		let k = '';
+		for (const key in e) {
+			if (v === e[key]) {
+				k = key;
+				break;
+			};
+		};
+		return k;
+	};
+
+	stripTags (s: string): string {
+		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
 };
 
 export default new UtilCommon();

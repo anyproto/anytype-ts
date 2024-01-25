@@ -9,6 +9,7 @@ import Constant from 'json/constant.json';
 import NotificationImport from './import';
 import NotificationExport from './export';
 import NotificationGallery from './gallery';
+import NotificationJoin from './join';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
 
@@ -41,6 +42,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Gallery: {
 				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
+				break;
+			};
+
+			case I.NotificationType.Join: {
+				content = <NotificationJoin {...this.props} onButton={this.onButton} />;
 				break;
 			};
 		};
@@ -83,6 +89,10 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case 'space': {
 				UtilRouter.switchSpace(payload.spaceId);
 				break;
+			};
+
+			case 'request': {
+
 			};
 		};
 

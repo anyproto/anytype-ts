@@ -100,7 +100,7 @@ class Popup extends React.Component<I.Popup> {
 						/>
 					</div>
 				</div>
-				<Dimmer onClick={this.close} />
+				<Dimmer onClick={() => this.close()} />
 			</div>
 		);
 	};
@@ -197,7 +197,7 @@ class Popup extends React.Component<I.Popup> {
 		});
 	};
 
-	close () {
+	close (callBack?: () => void) {
 		const { id, param } = this.props;
 		const { preventMenuClose } = param;
 
@@ -207,7 +207,8 @@ class Popup extends React.Component<I.Popup> {
 		if (!preventMenuClose) {
 			menuStore.closeAll();
 		};
-		popupStore.close(id);
+
+		popupStore.close(id, callBack);
 	};
 
 	storageGet () {

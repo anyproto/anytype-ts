@@ -66,7 +66,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 	};
 
 	onRequest () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { cid, key } = data;
 		const { account } = authStore;
@@ -81,13 +81,15 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 				return;
 			};
 
-			popupStore.open('confirm', {
-				data: {
-					title: translate('popupInviteRequestConfirmTitle'),
-					text: translate('popupInviteRequestConfirmText'),
-					textConfirm: translate('commonDone'),
-					canCancel: false,
-				},
+			close(() => {
+				popupStore.open('confirm', {
+					data: {
+						title: translate('popupInviteRequestConfirmTitle'),
+						text: translate('popupInviteRequestConfirmText'),
+						textConfirm: translate('commonDone'),
+						canCancel: false,
+					},
+				});
 			});
 		});
 	};
