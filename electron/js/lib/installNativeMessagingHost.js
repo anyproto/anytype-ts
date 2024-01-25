@@ -17,7 +17,7 @@ const { fixPathForAsarUnpack, is } = require('electron-util');
 
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
-const EXTENSION_ID = 'dgeefmooohoaoneepgngooocgkfpjccm';
+const EXTENSION_ID = 'jkmhmgghdjjbafmkgjmplhemjjnkligf';
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 

@@ -236,7 +236,9 @@ class Dispatcher {
 						lang: commonStore.interfaceLang,
 					}, '*'), false);
 
-					window.setTimeout(() => win.close(), 3000);
+					window.setTimeout(() => {
+						try { win.close(); } catch (e) { /**/ };
+					}, 3000);
 					break;
 				};
 
