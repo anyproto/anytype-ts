@@ -98,7 +98,7 @@ class Popup extends React.Component<I.Popup> {
 						/>
 					</div>
 				</div>
-				<Dimmer onClick={this.close} />
+				<Dimmer onClick={() => this.close()} />
 			</div>
 		);
 	};
