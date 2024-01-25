@@ -647,6 +647,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					if (block.isEmbedBilibili() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
+
+						// Bilibili automatically plays videos by default.
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, (match, p1) => `${p1}&autoplay=0"`);
+						};
 					};
 
 					if (block.isEmbedGithubGist()) {
