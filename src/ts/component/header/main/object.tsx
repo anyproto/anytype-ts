@@ -41,6 +41,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 		let banner = null;
 
+		console.log(object);
+
 		if (object.isArchived) {
 			banner = I.BannerType.IsArchived;
 		} else
@@ -71,6 +73,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		} else {
 			center = <HeaderBanner type={banner} object={object} isPopup={isPopup} {...bannerProps} />;
 		};
+
+		console.log(banner);
 
 		return (
 			<React.Fragment>
