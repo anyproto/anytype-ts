@@ -143,9 +143,6 @@ class PopupStore {
 		window.setTimeout(() => {
 			this.popupList = filtered;
 
-			console.log(callBack);
-			console.trace();
-			
 			if (callBack) {
 				callBack();
 			};
