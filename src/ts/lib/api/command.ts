@@ -1881,10 +1881,10 @@ export const SpaceRequestApprove = (spaceId: string, identity: string, callBack?
 };
 
 export const SpaceRequestDecline = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.RequestApprove.Request();
+	const request = new Rpc.Space.RequestDecline.Request();
 
 	request.setSpaceid(spaceId);
 	request.setIdentity(identity);
 
-	dispatcher.request(SpaceRequestApprove.name, request, callBack);
+	dispatcher.request(SpaceRequestDecline.name, request, callBack);
 };

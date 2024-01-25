@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilRouter } from 'Lib';
-import { notificationStore } from 'Store';
+import { notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import NotificationImport from './import';
@@ -92,7 +92,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'request': {
-
+				popupStore.open('requestConfirm', { data: { payload }});
 			};
 		};
 
