@@ -63,6 +63,11 @@ class UtilObject {
 		return account ? `_id_${account.id}` : '';
 	};
 
+	getParticipantId (id: string) {
+		const [ first, prefix, spaceId, accountId ] = String(id || '').split('_');
+		return accountId;
+	};
+
 	getProfile () {
 		const id = this.getIdentityId();
 		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
