@@ -14,12 +14,6 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	state = {
 		error: '',
 	};
-	request = {
-		identity: '',
-		name: 'User Name',
-		icon: '',
-		message: 'Hi Zhanna. It’s Merk, you sent me the link. Have a great day.',
-	};
 
 	constructor (props: I.Popup) {
 		super(props);
