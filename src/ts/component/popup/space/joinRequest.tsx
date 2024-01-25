@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, Textarea, ObjectName, IconObject, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
+import { Title, Icon, Label, Button, Textarea, Error } from 'Component';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { authStore, dbStore, detailStore } from 'Store';
+import { popupStore } from 'Store';
 
 interface State {
 	error: string;
@@ -14,8 +14,11 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 	state = {
 		error: '',
 	};
-	spaceName = '';
-	creatorName = '';
+	invite = {
+		spaceName: '',
+		creatorName: '',
+		spaceId: '',
+	};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -35,7 +38,7 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 				</div>
 
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupSpaceJoinRequestText'), this.spaceName, this.creatorName)} />
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupSpaceJoinRequestText'), this.invite.spaceName, this.invite.creatorName)} />
 				<Textarea ref={ref => this.refMessage = ref} placeholder={translate('popupSpaceJoinRequestMessagePlaceholder')} />
 
 				<div className="buttons">
@@ -60,14 +63,29 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 				return;
 			};
 
-			this.spaceName = message.spaceName;
-			this.creatorName = message.creatorName;
+			this.invite = message;
 			this.forceUpdate();
 		});
 	};
 
 	onRequest () {
+		C.SpaceJoin(this.invite.spaceId, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			popupStore.open('confirm', {
+				data: {
+					title: '',
+					text: '',
+					textConfirm: translate('commonOk'),
+					canCancel: false,
+				},
+			});
+		});
 	};
+
 });
 
 export default PopupSpaceJoinRequest;
