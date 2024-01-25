@@ -741,7 +741,7 @@
 	"popupInviteRequestConfirmTitle": "Request sent",
 	"popupInviteRequestConfirmText": "You will receive a notification when the space owner will approve your request.",
 
-	"popupRequestConfirmTitle": "%s requested to join Investors space",
+	"popupRequestConfirmTitle": "%s requested to join %s",
 	"popupRequestConfirmButtonConfirmEditor": "Grant edit access",
 	"popupRequestConfirmButtonReject": "Reject",
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -25,7 +25,8 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { payload } = data;
-		const { identityName, identityIcon } = payload;
+		const { identityName, identityIcon, spaceId } = payload;
+		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
 
 		return (
 			<React.Fragment>
@@ -33,7 +34,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName)} />
+				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName, space.name)} />
 
 				<div className="buttons">
 					<Button onClick={this.onReject} text={translate('popupRequestConfirmButtonReject')} className="c36" color="red" />
