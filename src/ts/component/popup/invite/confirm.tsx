@@ -52,7 +52,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		const { payload } = data;
 		const { spaceId, identity } = payload;
 
-		if (spaceId || !identity) {
+		if (!spaceId || !identity) {
 			return;
 		};
 
@@ -70,7 +70,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		const { payload } = data;
 		const { spaceId, identity } = payload;
 
-		if (spaceId || !identity) {
+		if (!spaceId || !identity) {
 			return;
 		};
 
