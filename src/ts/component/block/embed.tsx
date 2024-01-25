@@ -644,6 +644,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// Fix Bilibili schemeless urls
 					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
 						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
 					};
 
 					// If content is Kroki code pack the code into SVG url
@@ -662,15 +666,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
-					};
-
-					if (block.isEmbedBilibili() && text.match(/<(iframe|script)/)) {
-						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
-
-						// Bilibili automatically plays videos by default.
-						if (!/autoplay=/.test(text)) {
-							text = text.replace(/(src="[^"]+)"/, (match, p1) => `${p1}&autoplay=0"`);
-						};
 					};
 
 					if (block.isEmbedGithubGist()) {
