@@ -196,6 +196,7 @@ export interface Block {
 	isEmbedTelegram?(): boolean;
 	isEmbedGithubGist?(): boolean;
 	isEmbedSketchfab?(): boolean;
+	isEmbedBilibili?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

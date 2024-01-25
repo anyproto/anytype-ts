@@ -168,12 +168,6 @@ class UtilEmbed {
 			};
 
 			case I.EmbedProcessor.Bilibili: {
-				const iframeUrl = url.match(/src="([^"]+)"/);
-				if (iframeUrl) {
-					url = iframeUrl[1];
-					return;
-				};
-
 				let pathname = '';
 				let searchParam: any = null;
 
