@@ -390,6 +390,10 @@ class Block implements I.Block {
 	isEmbedSketchfab (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
 	};
+
+	isEmbedBilibili (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
@@ -473,9 +477,6 @@ class Block implements I.Block {
 
 	getTargetObjectId () {
 		switch (this.type) {
-			case I.BlockType.File: {
-				return this.content.hash;
-			};
 			case I.BlockType.Link: {
 				return this.content.targetBlockId;
 			};

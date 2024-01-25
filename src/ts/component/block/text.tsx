@@ -496,7 +496,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						object={object} 
 						canEdit={!isArchived} 
 						onSelect={icon => this.onMentionSelect(object.id, icon)} 
-						onUpload={hash => this.onMentionUpload(object.id, hash)} 
+						onUpload={objectId => this.onMentionUpload(object.id, objectId)} 
 						onCheckbox={() => this.onMentionCheckbox(object.id, !done)}
 					/>
 				);
@@ -1438,10 +1438,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
 	};
 
-	onUploadIcon (hash: string) {
+	onUploadIcon (objectId: string) {
 		const { rootId, block } = this.props;
 
-		C.BlockTextSetIcon(rootId, block.id, '', hash);
+		C.BlockTextSetIcon(rootId, block.id, '', objectId);
 	};
 	
 	placeholderCheck () {
@@ -1462,21 +1462,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 
-	onMentionSelect (objectId: string, icon: string) {
+	onMentionSelect (id: string, icon: string) {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-			UtilObject.setIcon(objectId, icon, '');
+			UtilObject.setIcon(id, icon, '');
 		});
 	};
 
-	onMentionUpload (objectId: string, hash: string) {
+	onMentionUpload (id: string, objectId: string) {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-			UtilObject.setIcon(objectId, '', hash);
+			UtilObject.setIcon(id, '', objectId);
 		});
 	};
 

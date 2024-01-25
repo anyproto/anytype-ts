@@ -722,7 +722,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					menuStore.closeAll();
 				},
 				data: {
-					subId: rootId,
+					rootId,
 					value,
 					filters,
 					types: relation.objectTypes,

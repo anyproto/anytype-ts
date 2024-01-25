@@ -98,7 +98,7 @@ class WindowManager {
 			param.trafficLightPosition = { x: 20, y: 18 };
 		} else
 		if (is.windows) {
-			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
+			param.icon = path.join(Util.imagePath(), 'icons', '256x256.ico');
 		} else
 		if (is.linux) {
 			param.icon = image;

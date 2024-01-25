@@ -425,7 +425,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
-		const { noFilter, canAdd, filter } = data;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 

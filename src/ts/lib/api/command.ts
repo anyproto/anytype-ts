@@ -248,10 +248,10 @@ export const FileUpload = (spaceId: string, url: string, path: string, type: I.F
 	dispatcher.request(FileUpload.name, request, callBack);
 };
 
-export const FileDownload = (hash: string, path: string, callBack?: (message: any) => void) => {
+export const FileDownload = (objectId: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.File.Download.Request();
 
-	request.setHash(hash);
+	request.setObjectid(objectId);
 	request.setPath(path);
 
 	dispatcher.request(FileDownload.name, request, callBack);

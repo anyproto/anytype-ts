@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.37.17-beta",
+	"version": "0.37.18-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -309,6 +309,10 @@
 				"to": "node_modules/electron-window-state"
 			},
 			{
+				"from": "node_modules/escape-goat",
+				"to": "node_modules/escape-goat"
+			},
+			{
 				"from": "node_modules/ext-list",
 				"to": "node_modules/ext-list"
 			},
@@ -524,7 +528,7 @@
 		"win": {
 			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
-			"icon": "electron/img/icons/256x256.png",
+			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
 					"provider": "spaces",
