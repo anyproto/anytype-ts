@@ -100,6 +100,8 @@ html.themeDark {
 
     .loaderWrapper {
 		@keyframes dots-dark {
+			0% { background-color: #171717; }
+			32% { background-color: #171717; }
 			100% { background-color: #fff; }
 		}
 
@@ -144,6 +146,10 @@ html.themeDark {
     .filter {
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
 		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
+    }
+    .filter.outlined {
+        .icon.clear { background-image: url('#{$themePath}/icon/filter/clear0.svg') !important; }
+        .icon.clear:hover { background-image: url('#{$themePath}/icon/filter/clear1.svg') !important; }
     }
 
     .textarea { background: none; }

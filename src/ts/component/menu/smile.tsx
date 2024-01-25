@@ -140,7 +140,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						<Filter 
 							ref={ref => this.refFilter = ref}
 							value={filter}
-							className={!noHead ? 'withHead' : ''} 
+							className={[ 'outlined', (!noHead ? 'withHead' : '') ].join(' ')}
 							onChange={e => this.onKeyUp(e, false)} 
 							focusOnMount={true}
 						/>

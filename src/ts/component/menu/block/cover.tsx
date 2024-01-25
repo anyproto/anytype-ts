@@ -80,6 +80,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			filterElement = (
 				<Filter 
 					ref={ref => this.refFilter = ref}
+					className="outlined"
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>

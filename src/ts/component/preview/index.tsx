@@ -43,7 +43,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			case I.PreviewType.Link: {
 				head = (
 					<div className="head">
-						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewCopy')}</div>
+						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('commonCopyLink')}</div>
 						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div>
 						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
 					</div>

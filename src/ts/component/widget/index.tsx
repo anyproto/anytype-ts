@@ -317,7 +317,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (isSetOrCollection) {
-			const rootId = this.ref?.getRootId();
+			const rootId = this.getRootId();
 			if (!rootId) {
 				return;
 			};
@@ -637,26 +637,34 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
 
-		let allowed = true;
-
 		if (isRecent || !layoutWithPlus) {
-			allowed = false;
+			return false;
 		};
 
-		if (UtilObject.isSetLayout(object.layout) && this.ref) {
-			const rootId = this.ref?.getRootId();
+		if (UtilObject.isSetLayout(object.layout)) {
+			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
 
 			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
-				allowed = false;
+				return false;
 			};
 		} else
 		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-			allowed = false;
+			return false;
 		};
 
-		return allowed;
+		return true;
+	};
+
+	getRootId = (): string => {
+		const child = this.getTargetBlock();
+		if (!child) {
+			return '';
+		};
+
+		const { targetBlockId } = child.content;
+		return [ targetBlockId, 'widget', child.id ].join('-');
 	};
 
 	getLimit ({ limit, layout }): number {

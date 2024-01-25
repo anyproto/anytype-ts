@@ -21,7 +21,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	range: any = null;
 	ref = null;
 	value: any = null;
-	isComposition = true;
+	isComposition = false;
 
 	constructor (props: I.Cell) {
 		super(props);

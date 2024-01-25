@@ -82,7 +82,6 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 			{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
 			{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
-			{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
 			{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
 			{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
@@ -91,12 +90,13 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
+			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
-				{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
 
@@ -112,6 +112,8 @@ class UtilMenu {
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
+
+		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
 		let i = 0;
 		for (const type of items) {

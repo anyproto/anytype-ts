@@ -13,6 +13,7 @@ DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
 DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
 DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
+DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -192,6 +193,26 @@ class UtilEmbed {
 				if (bvid) {
 					url = `https://player.bilibili.com/player.html?bvid=${bvid}&p=${p}&t=${t}&high_quality=1&autoplay=0`;
 				};
+				break;
+			};
+
+			case I.EmbedProcessor.Sketchfab: {
+				const a = url.split('/');
+				if (!a.length) {
+					break;
+				};
+
+				const name = String(a[a.length - 1] || '').split('-');
+				if (!name.length) {
+					break;
+				};
+
+				const id = name[name.length - 1];
+				if (!id) {
+					break;
+				};
+
+				url = `https://sketchfab.com/models/${id}/embed`;
 				break;
 			};
 

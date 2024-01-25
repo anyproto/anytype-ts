@@ -75,7 +75,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				ref={node => this.node = node}
 			>
 				<Filter 
-					ref={ref => this.refFilter = ref} 
+					ref={ref => this.refFilter = ref}
+					className="outlined"
 					placeholderFocus={translate('menuBlockActionsFilterActions')}
 					value={filter}
 					onFocus={this.onFilterFocus} 
