@@ -641,13 +641,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
-					// Fix Bilibili schemeless urls
-					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
-						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
-					};
+					// Fix Bilibili schemeless urls and autoplay
+					if (block.isEmbedBilibili()) {
+						if (text.match(/src="\/\/player[^"]+"/)) {
+							text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+						};
 
-					if (block.isEmbedBilibili() && !/autoplay=/.test(text)) {
-						text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
 					};
 
 					// If content is Kroki code pack the code into SVG url
