@@ -1830,3 +1830,58 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
+
+// ---------------------- SPACE ---------------------- //
+
+export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteGenerate.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
+};
+
+export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteView.Request();
+
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
+
+	dispatcher.request(SpaceInviteView.name, request, callBack);
+};
+
+export const SpaceJoin = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.Join.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceJoin.name, request, callBack);
+};
+
+export const SpaceJoinCancel = (spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.JoinCancel.Request();
+
+	request.setSpaceid(spaceId);
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
+
+	dispatcher.request(SpaceJoinCancel.name, request, callBack);
+};
+
+export const SpaceRequestApprove = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.RequestApprove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentity(identity);
+
+	dispatcher.request(SpaceRequestApprove.name, request, callBack);
+};
+
+export const SpaceRequestDecline = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.RequestApprove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentity(identity);
+
+	dispatcher.request(SpaceRequestApprove.name, request, callBack);
+};

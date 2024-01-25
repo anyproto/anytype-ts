@@ -9,6 +9,7 @@ import Head from '../head';
 
 const HEIGHT = 64;
 const LIMIT = 3;
+const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
 
@@ -27,48 +28,57 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
+		this.onInviteCopy = this.onInviteCopy.bind(this);
+		this.onStopSharing = this.onStopSharing.bind(this);
 	};
 
 	render () {
-		const memberOptions = [
-			{ id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
-			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
-			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
-			{ id: '', name: '', isDiv: true },
-			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
-		];
-
+		const memberOptions = this.getMemberOptions();
 		const length = this.team.length;
 
-		const Member = (item: any) => (
-			<div id={'item-' + item.id} className="row" style={item.style} >
-				<div className="side left">
-					<IconObject size={48} object={item} />
-					<ObjectName object={item} />
-					{item.isRequested ? <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} /> : ''}
+		const Member = (item: any) => {
+			let tag = null;
+			let button = null;
+
+			if (item.isRequested) {
+				tag = <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} />;
+				button = (
+					<Button
+						className="c36"
+						color="blank"
+						text={translate('popupSettingsSpaceShareMembersViewRequest')}
+					/>
+				);
+			} else 
+			if (item.isOwner) {
+				button = <span className="owner">owner</span>;
+			} else {
+				button = (
+					<Select
+						id={`item-${item.id}-select`}
+						value="reader"
+						options={memberOptions}
+						arrowClassName="light"
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+						onChange={(v: any) => {
+						}}
+					/>
+				);
+			};
+		
+			return (
+				<div id={`item-${item.id}`} className="row" style={item.style} >
+					<div className="side left">
+						<IconObject size={48} object={item} />
+						<ObjectName object={item} />
+						{tag}
+					</div>
+					<div className="side right">
+						{button}
+					</div>
 				</div>
-				<div className="side right">
-					{item.isRequested ? (
-						<Button
-							className="c36"
-							color="blank"
-							text={translate('popupSettingsSpaceShareMembersViewRequest')}
-						/>
-						) : ( item.isOwner ? <span className="owner">owner</span> : (
-							<Select
-								id="memberType"
-								value={'reader'}
-								options={memberOptions}
-								arrowClassName="light"
-								menuParam={{ horizontal: I.MenuDirection.Right }}
-								onChange={(v: any) => {
-								}}
-							/>
-						)
-					)}
-				</div>
-			</div>
-		);
+			);
+		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = this.team[param.index];
@@ -87,7 +97,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		return (
-			<React.Fragment>
+			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
 				<div className="titleWrapper">
@@ -109,10 +119,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<Icon id="refreshInviteLink" className="refresh" onClick={this.onInviteRefresh} />
 					</div>
 
-					<div className="invitesLimit">{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), this.membersLimit, UtilCommon.plural(this.membersLimit, translate('pluralMember')))}</div>
+					<div className="invitesLimit">
+						{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
+					</div>
 				</div>
 
-				<div ref={node => this.node = node} className="section sectionMembers">
+				<div className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
 
 					{this.cache ? (
@@ -151,7 +163,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div className="buttons">
 					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -196,18 +208,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			};
 
 			this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-
-			this.team[0].isRequested = true;
-			this.team[1].isEditor = true;
-			this.team[2].isOwner = true;
-
 			this.forceUpdate();
 		});
-
 	};
 
 	onInviteCopy () {
-		UtilCommon.clipboardCopy({ text: this.inviteLink });
+		UtilCommon.copyToast(translate('commonLink'), this.inviteLink);
 	};
 
 	onInviteRefresh () {
@@ -234,6 +240,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
+	getMemberOptions () {
+		return [
+			{ id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
+			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
+			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
+			{ id: '', name: '', isDiv: true },
+			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
+		];
+	};
+	
 	resize () {
 		const { position } = this.props;
 		const node = $(this.node);

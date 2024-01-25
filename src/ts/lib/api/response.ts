@@ -427,3 +427,17 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
 	};
 };
+
+export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteFileKey: response.getInvitefilekey(),
+	};
+};
+
+export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
+	return {
+		spaceName: response.getSpacename(),
+		creatorName: response.getCreatorname(),
+	};
+};
