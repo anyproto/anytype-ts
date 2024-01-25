@@ -644,7 +644,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// Fix Bilibili schemeless urls
 					if (block.isEmbedBilibili() && text.match(/src="\/\/player[^"]+"/)) {
 						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
-
 					};
 
 					if (block.isEmbedBilibili() && !/autoplay=/.test(text)) {
