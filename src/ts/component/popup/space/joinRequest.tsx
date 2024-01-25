@@ -1,12 +1,21 @@
 import * as React from 'react';
-import { Title, Icon, Label, Button, Textarea, ObjectName, IconObject } from 'Component';
-import { I, translate, UtilCommon, UtilObject } from 'Lib';
+import { Title, Icon, Label, Button, Textarea, ObjectName, IconObject, Error } from 'Component';
+import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 import { authStore, dbStore, detailStore } from 'Store';
 
-const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React.Component<I.Popup> {
+interface State {
+	error: string;
+};
 
-	message: string = '';
+const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React.Component<I.Popup, State> {
+
+	refMessage = null;
+	state = {
+		error: '',
+	};
+	spaceName = '';
+	creatorName = '';
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -15,42 +24,49 @@ const PopupSpaceJoinRequest = observer(class PopupSpaceJoinRequest extends React
 	};
 
 	render() {
-		const space = UtilObject.getSpaceview();
-		const owner = { name: 'Owner Name', layout: I.ObjectLayout.Human }; // mock, to be replaced with space owner
-
-		const Profile = (item: any) => {
-			return (
-				<div className="profileItem">
-					<IconObject object={item} size={16} />
-					<ObjectName object={item} />
-				</div>
-			);
-		};
+		const { error } = this.state;
 
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSpaceJoinRequestTitle')} />
-				<div className="iconWrapper"><Icon /></div>
-				<div className="invitation">
-					{translate('popupSpaceJoinRequestTextPart1')}
-					<Profile {...space} />
-					{translate('popupSpaceJoinRequestTextPart2')}
-					<Profile {...owner} />
-					{translate('popupSpaceJoinRequestTextPart3')}
+				
+				<div className="iconWrapper">
+					<Icon />
 				</div>
 
-				<Textarea onKeyUp={(e, v) => this.message = v} placeholder={translate('popupSpaceJoinRequestMessagePlaceholder')} />
+
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupSpaceJoinRequestText'), this.spaceName, this.creatorName)} />
+				<Textarea ref={ref => this.refMessage = ref} placeholder={translate('popupSpaceJoinRequestMessagePlaceholder')} />
 
 				<div className="buttons">
 					<Button onClick={this.onRequest} text={translate('popupSpaceJoinRequestRequestToJoin')} className="c36" />
 				</div>
+
 				<div className="note">{translate('popupSpaceJoinRequestNote')}</div>
+
+				<Error text={error} />
 			</React.Fragment>
 		);
 	};
 
+	componentDidMount (): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { cid, key } = data;
+
+		C.SpaceInviteView(cid, key, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			this.spaceName = message.spaceName;
+			this.creatorName = message.creatorName;
+			this.forceUpdate();
+		});
+	};
+
 	onRequest () {
-		console.log('MESSAGE: ', this.message)
 	};
 });
 

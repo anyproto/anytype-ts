@@ -1,34 +1,41 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag } from 'Component';
-import { I, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, popupStore } from 'Store';
+import { detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
+import Constant from 'json/constant.json';
+
+interface State {
+	error: string;
+};
 
 const HEIGHT = 64;
 const LIMIT = 3;
 const MEMBER_LIMIT = 10;
 
-const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings> {
+const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
-	inviteLink: string = 'https://anytype.io/ibafyreifibafyreiffhfg6rxuerttufhfg6rxuerttu';
-	membersLimit: number = 7;
-
+	cid = '';
+	key = '';
 	node: any = null;
 	team: any[] = [];
 	cache: any = null;
 	top = 0;
-	filter = '';
-	refFilter: any = null;
+	refInput = null;
 	refList: any = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
-		this.onInviteCopy = this.onInviteCopy.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onGenerate = this.onGenerate.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 	};
 
@@ -114,9 +121,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
 					<div className="inviteLinkWrapper">
-						<Input readonly={true} value={this.inviteLink} />
-						<Button onClick={this.onInviteCopy} className="c40" color="black" text={translate('commonCopyLink')} />
-						<Icon id="refreshInviteLink" className="refresh" onClick={this.onInviteRefresh} />
+						<Input ref={ref => this.refInput = ref} readonly={true} />
+						<Button onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
+						<Icon id="generate" className="refresh" onClick={() => this.onGenerate(false)} />
 					</div>
 
 					<div className="invitesLimit">
@@ -169,6 +176,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	componentDidMount() {
 		this.load();
+		this.onGenerate(true);
 	};
 
 	componentDidUpdate() {
@@ -212,18 +220,41 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	onInviteCopy () {
-		UtilCommon.copyToast(translate('commonLink'), this.inviteLink);
+	getLink () {
+		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${encodeURIComponent(this.key)}`
 	};
 
-	onInviteRefresh () {
-		$('#refreshInviteLink').addClass('loading');
+	onCopy () {
+		UtilCommon.copyToast(translate('commonLink'), this.getLink());
+	};
 
-		// refresh logic goes here
+	onGenerate (auto: boolean) {
+		const { space } = commonStore;
+		const node = $(this.node);
+		const button = node.find('#generate');
 
-		window.setTimeout(() => {
-			$('#refreshInviteLink').removeClass('loading');
-		}, 2000);
+		if (!auto) {
+			button.addClass('loading');
+		};
+
+		C.SpaceInviteGenerate(space, (message: any) => {
+			if (!auto) {
+				button.removeClass('loading');
+			};
+
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+				return;
+			};
+
+			this.cid = message.inviteCid;
+			this.key = message.inviteKey;
+			this.refInput.setValue(this.getLink());
+
+			if (!auto) {
+				this.onCopy();
+			};
+		});
 	};
 
 	onStopSharing () {

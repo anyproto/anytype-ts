@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import { I, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -24,7 +24,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
-					<Title text={translate('pageMainImportTitle')} />
+					<Title text={translate('pageMainInviteTitle')} />
 					<Loader />
 
 					<Error text={error} />
@@ -40,17 +40,16 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		const search = this.getSearch();
+		const data = this.getSearch();
 
-		C.DownloadManifest(search.source, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			} else {
-				UtilObject.openHome('route');
-				window.setTimeout(() => popupStore.open('usecase', { data: { object: message.info } }), Constant.delay.popup);
-			};
-		});
+		data.key = decodeURIComponent(data.key);
 
+		if (!data.cid || !data.key) {
+			this.setState({ error: translate('pageMainInviteError') });
+		} else {
+			UtilObject.openHome('route');
+			window.setTimeout(() => popupStore.open('spaceJoinRequest', { data }), Constant.delay.popup);
+		};
 		this.resize();
 	};
 

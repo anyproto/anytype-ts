@@ -380,6 +380,11 @@
 	"pageMainBlockEmpty": "Block not found",
 	"pageMainRelationObjectsCreated": "%s created",
 
+	"pageMainImportTitle": "Downloading manifest",
+
+	"pageMainInviteTitle": "Downloading invite",
+	"pageMainInviteError": "Incorrect invite data",
+
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
 	"editorControlLayout": "Layout",
@@ -728,9 +733,7 @@
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 
 	"popupSpaceJoinRequestTitle": "Join a space",
-	"popupSpaceJoinRequestTextPart1": "You’ve been invited to join ",
-	"popupSpaceJoinRequestTextPart2": " space, created by ",
-	"popupSpaceJoinRequestTextPart3": ". Send a request so space owner can let you in.",
+	"popupSpaceJoinRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupSpaceJoinRequestMessagePlaceholder": "Leave a private comment for a space owner",
 	"popupSpaceJoinRequestRequestToJoin": "Request to join",
 	"popupSpaceJoinRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
@@ -1457,6 +1460,7 @@
 
 	"spaceType0": "Private Space",
 	"spaceType1": "Personal Space",
+	"spaceType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",

@@ -431,7 +431,7 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),
-		inviteFileKey: response.getInvitefilekey(),
+		inviteKey: response.getInvitefilekey(),
 	};
 };
 

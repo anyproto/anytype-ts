@@ -38,6 +38,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
+		const canShare = space.spaceType == I.SpaceType.Private;
 
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -45,6 +46,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let bytesUsed = 0;
 		let extend = null;
 		let createdDate = null;
+		let button = null;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -58,6 +60,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		if (isRed) {
 			usageCn.push('red');
 			extend = <Label text={translate(`popupSettingsSpaceIndexRemoteStorageExtend`)} onClick={this.onExtend} className="extend" />;
+		};
+
+		if (canShare) {
+			button = <Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />;
 		};
 
 		// old accounts don't have space creation date
@@ -76,7 +82,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		return (
 			<React.Fragment>
-
 				<div className="spaceHeader">
 					<div className="sides">
 						<div className="side left">
@@ -114,7 +119,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							</div>
 						</div>
 						<div className="side right">
-							<Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />
+							{button}
 						</div>
 					</div>
 				</div>
