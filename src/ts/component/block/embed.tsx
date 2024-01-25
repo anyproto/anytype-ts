@@ -646,6 +646,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
 					};
 
+					if (block.isEmbedBilibili() && !/autoplay=/.test(text)) {
+						text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+					};
+
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
