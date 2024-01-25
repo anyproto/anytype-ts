@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.37.16-beta",
+	"version": "0.37.18-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -535,7 +535,7 @@
 		"win": {
 			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
-			"icon": "electron/img/icons/256x256.png",
+			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
 					"provider": "spaces",

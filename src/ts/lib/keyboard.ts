@@ -309,8 +309,10 @@ class Keyboard {
 			return;
 		};
 
+		const { fullscreenObject } = commonStore;
+
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			UtilObject.openAuto({ id: message.targetId });
+			fullscreenObject ? UtilObject.openAuto({ id: message.targetId }) : UtilObject.openPopup({ id: message.targetId });
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};

@@ -22,6 +22,14 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const SYSTEM_DATE_RELATION_KEYS = [
+	'lastModifiedDate', 
+	'lastOpenedDate', 
+	'createdDate',
+	'addedDate',
+	'lastUsedDate',
+];
+
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
@@ -576,6 +584,12 @@ class UtilData {
 		return 0;
 	};
 
+	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
+		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
+		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -809,9 +823,7 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
-			it.includeTime = true;
-		};
+		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
 		return it;
 	};
 
@@ -837,7 +849,6 @@ class UtilData {
 
 	graphFilters () {
 		const { space, techSpace } = commonStore;
-
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },

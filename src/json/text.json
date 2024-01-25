@@ -598,6 +598,7 @@
 	"popupSettingsAppearancePersonalisation": "Personalisation",
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
 	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
+	"popupSettingsAppearancePersonalisationFullscreen": "Open objects in fullscreen",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",

@@ -19,7 +19,7 @@
 
 		"qr": {
 			"foreground": "#000",
-			"bg": "#bfbfbf"
+			"bg": "#fff"
 		},
 
 		"icon": {
@@ -59,8 +59,8 @@
 		},
 
 		"qr": {
-			"foreground": "#d4d4d4",
-			"bg": "#505050"
+			"foreground": "#000",
+			"bg": "#fff"
 		},
 
 		"icon": {
