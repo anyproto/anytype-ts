@@ -64,7 +64,7 @@
 			.iconObject.isTask { background: none; }
 
 			.name { @include text-overflow-nw; }
-			.descr { @include text-small; @include text-overflow-nw; }
+			.descr { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {

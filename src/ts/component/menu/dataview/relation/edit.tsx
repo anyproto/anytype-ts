@@ -423,7 +423,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId } = data;
 
 		if (this.isReadonly()) {
 			return;
@@ -442,7 +442,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			width: getSize().width,
 			data: {
 				rootId,
-				blockId,
 				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 

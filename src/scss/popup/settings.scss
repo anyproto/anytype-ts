@@ -46,7 +46,7 @@
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
 
 				.item { display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; border-radius: 8px; transition: $transitionAllCommon; }
-				.item:hover, .item.active { background: var(--color-shape-primary); }
+				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon { width: 22px; height: 22px; flex-shrink: 0; }
 					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }

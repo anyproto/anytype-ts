@@ -84,6 +84,11 @@
 				.bg::before { box-shadow: 0px 0px; }
 			}
 		}
+
+		.side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
+			.item:hover { border-color: var(--color-shape-primary); }
+		}
     }
     
     /* PopupHelp */
