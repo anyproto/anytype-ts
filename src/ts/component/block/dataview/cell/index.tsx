@@ -40,7 +40,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord, canCellEdit } = this.props;
+		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
@@ -49,7 +49,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
-		const canEdit = canCellEdit(relation.relationKey, recordId);
+		const canEdit = this.canCellEdit();
 
 		const cn = [ 
 			'cellContent', 
@@ -149,7 +149,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, canCellEdit, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
@@ -161,7 +161,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const value = record[relation.relationKey] || '';
 
-		if (!canCellEdit(relation.relationKey, recordId)) {
+		if (!this.canCellEdit()) {
 			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
@@ -482,6 +482,25 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 	getRelation () {
 		return dbStore.getRelationByKey(this.props.relationKey);
+	};
+
+	canCellEdit (): boolean {
+		const { readonly, getRecord, recordId } = this.props;
+
+		if (readonly) {
+			return false;
+		};
+
+		const relation = this.getRelation();
+		const record = getRecord(recordId);
+
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
+			return false;
+		};
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+			return false;
+		};
+		return true;
 	};
 
 });

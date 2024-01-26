@@ -834,11 +834,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	canCellEdit (relationKey: string, recordId: string): boolean {
-		const { readonly,  } = this.props;
+		const { readonly } = this.props;
+
+		if (readonly) {
+			return false;
+		};
+
 		const relation = dbStore.getRelationByKey(relationKey);
 		const record = this.getRecord(recordId);
 
-		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
