@@ -19,7 +19,6 @@ export interface AccountInfo {
 	deviceId: string;
 	localStoragePath: string;
 	accountSpaceId: string;
-	techSpaceId: string;
 	spaceViewId: string;
 	widgetsId: string;
 	analyticsId: string;
