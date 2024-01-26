@@ -105,7 +105,6 @@ export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;
 	readonly: boolean;
-	bodyContainer?: string;
 	pageContainer?: string;
 	dataset?: I.Dataset;
 	isPopup?: boolean;
@@ -145,6 +144,7 @@ export interface ViewComponent {
 	onSourceTypeSelect?(element: any): void;
 	onViewSettings?(): void;
 	getSearchIds?(): string[];
+	canCellEdit?(relationKey: string, recordId: string): boolean;
 };
 
 export interface ViewEmpty {
@@ -176,10 +176,10 @@ export interface View {
 	defaultTypeId?: string;
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
-	isGrid?: () => boolean;
-	isList?: () => boolean;
-	isGallery?: () => boolean;
-	isBoard?: () => boolean;
+	isGrid?(): boolean;
+	isList?(): boolean;
+	isGallery?(): boolean;
+	isBoard?(): boolean;
 };
 
 export interface Cell {
@@ -195,7 +195,6 @@ export interface Cell {
 	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
-	bodyContainer?: string;
 	pageContainer?: string;
 	isInline?: boolean;
 	iconSize?: number;
@@ -213,9 +212,10 @@ export interface Cell {
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
-	cellPosition?: (cellId: string) => void;
-	elementMapper?: (relation: any, item: any) => any;
+	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
+	cellPosition?(cellId: string): void;
+	elementMapper?(relation: any, item: any): any;
+	canCellEdit?(relationKey: string, recordId: string): boolean;
 };
 
 export interface BoardGroup {

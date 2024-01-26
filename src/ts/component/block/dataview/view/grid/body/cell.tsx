@@ -18,6 +18,7 @@ interface Props {
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
+	canCellEdit?(relationKey: string, recordId: string): boolean;
 };
 
 const BodyCell = observer(class BodyCell extends React.Component<Props> {
@@ -31,7 +32,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
+		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
@@ -40,6 +41,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(recordId);
+		const canEdit = canCellEdit(relation.relationKey, recordId);
 
 		if (relation.relationKey == 'name') {
 			cn.push('isName');
@@ -54,7 +56,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relation.relationKey == 'name') && (record.layout != I.ObjectLayout.Note)) {
+		if ((relation.relationKey == 'name') && (record.layout != I.ObjectLayout.Note) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 

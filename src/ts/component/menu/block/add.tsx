@@ -88,7 +88,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								bodyContainer={UtilCommon.getBodyContainer('menuBlockAdd')}
 								pageContainer={UtilCommon.getCellContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
