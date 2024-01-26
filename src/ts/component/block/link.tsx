@@ -125,7 +125,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						canEdit={!readonly && !isArchived} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox} 
+						onCheckbox={this.onCheckbox}
+						noClick={true}
 					/>
 				);
 			};
