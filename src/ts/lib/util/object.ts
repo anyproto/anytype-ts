@@ -73,6 +73,18 @@ class UtilObject {
 		return object._empty_ ? null : object;
 	};
 
+	getParticipant () {
+		const { space } = commonStore;
+		const { account } = authStore;
+
+		if (!account) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.profile, this.getParticipantId(space, account.id));
+		return object._empty_ ? null : object;
+	};
+
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
