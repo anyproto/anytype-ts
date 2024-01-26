@@ -2242,8 +2242,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return true;
 		};
 
-		const participant = UtilObject.getParticipant();
-		if (participant.permissions != I.ParticipantPermissions.Writer) {
+		if (!UtilObject.canParticipantWrite()) {
 			return true;
 		};
 

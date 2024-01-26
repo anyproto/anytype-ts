@@ -85,6 +85,11 @@ class UtilObject {
 		return object._empty_ ? null : object;
 	};
 
+	canParticipantWrite (): boolean {
+		const participant = this.getParticipant();
+		return participant ? (participant.permissions == I.ParticipantPermissions.Writer) : false;
+	};
+
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
