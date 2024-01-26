@@ -145,10 +145,12 @@ class UtilObject {
 
 		let { id, spaceId } = object;
 
+		/*
 		if (identityProfileLink) {
 			id = identityProfileLink;
 			spaceId = accountSpaceId;
 		};
+		*/
 
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
