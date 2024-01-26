@@ -364,6 +364,16 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
+			},
+			{
+				subId: Constant.subId.participant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 			}
 		];
 
@@ -391,6 +401,10 @@ class UtilData {
 
 	typeRelationKeys () {
 		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
+	};
+
+	participantRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys)
 	};
 
 	createSession (callBack?: (message: any) => void) {
