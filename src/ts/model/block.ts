@@ -171,6 +171,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Human);
 	};
 
+	isObjectParticipant (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
+	};
+
 	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};

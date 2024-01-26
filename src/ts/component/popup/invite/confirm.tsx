@@ -31,7 +31,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
-					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Human }} size={48} />
+					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Participant }} size={48} />
 				</div>
 
 				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName, space.name)} />

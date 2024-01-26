@@ -100,7 +100,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
+		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
 	};
 	
 	onIconPage () {

@@ -133,6 +133,7 @@ export interface Block {
 	isPage?(): boolean;
 	isObjectPage?(): boolean;
 	isObjectHuman?(): boolean;
+	isObjectParticipant?(): boolean;
 	isObjectTask?(): boolean;
 	isObjectNote?(): boolean;
 	isObjectSet?(): boolean;

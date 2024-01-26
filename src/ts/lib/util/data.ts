@@ -512,6 +512,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Participant:
 			case I.ObjectLayout.Relation:
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Image: {
