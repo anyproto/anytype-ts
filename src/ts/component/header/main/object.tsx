@@ -39,7 +39,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const bannerProps: any = {};
 
 		let center = null;
-		let banner = null;
+		let banner = I.BannerType.None;
 
 		if (object.isArchived) {
 			banner = I.BannerType.IsArchived;
@@ -52,7 +52,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			bannerProps.count = templatesCnt + 1;
 		};
 
-		if (!banner) {
+		if (banner == I.BannerType.None) {
 			center = (
 				<div
 					id="path"

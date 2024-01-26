@@ -232,9 +232,10 @@ export enum StoreTab {
 };
 
 export enum BannerType {
-	IsArchived		 = 0,
-	IsTemplate		 = 1,
-	TemplateSelect	 = 2,
+	None			 = 0,
+	IsArchived		 = 1,
+	IsTemplate		 = 2,
+	TemplateSelect	 = 3,
 };
 
 export enum ObjectManagerItemInfo {
