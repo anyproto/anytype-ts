@@ -64,8 +64,8 @@ class UtilObject {
 	};
 
 	getParticipantId (id: string) {
-		const [ first, prefix, spaceId, accountId ] = String(id || '').split('_');
-		return accountId;
+		const a = String(id || '').split('_');
+		return a.length ? a[a.length - 1] : '';
 	};
 
 	getProfile () {
