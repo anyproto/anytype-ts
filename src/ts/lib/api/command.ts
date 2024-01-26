@@ -1842,7 +1842,7 @@ export const NameServiceResolveName = (name: string, callBack?: (message: any) =
 };
 
 export const NameServiceResolveAnyId = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveAnyID.Request();
+	const request = new Rpc.NameService.ResolveAnyId.Request();
 
 	request.setAnyid(id);
 
@@ -1850,7 +1850,7 @@ export const NameServiceResolveAnyId = (id: string, callBack?: (message: any) =>
 };
 
 export const NameServiceResolveSpaceId = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveSpaceID.Request();
+	const request = new Rpc.NameService.ResolveSpaceId.Request();
 
 	request.setSpaceid(id);
 
@@ -1870,7 +1870,7 @@ export const PaymentsSubscriptionGetStatus = (callBack?: (message: any) => void)
 };
 
 export const PaymentsSubscriptionGetPaymentUrl = (tier: I.SubscriptionTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Payments.Subscription.GetPaymentURL.Request();
+	const request = new Rpc.Payments.Subscription.GetPaymentUrl.Request();
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);

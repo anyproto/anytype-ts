@@ -439,14 +439,14 @@ export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Res
 	};
 };
 
-export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyID.Response) => {
+export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyId.Response) => {
 	return {
 		found: response.getFound(),
 		fullName: response.getFullname(),
 	};
 };
 
-export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceID.Response) => {
+export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceId.Response) => {
 	return {
 		found: response.getFound(),
 		fullName: response.getFullname(),
@@ -475,7 +475,7 @@ export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscriptio
 	};
 };
 
-export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscription.GetPaymentURL.Response) => {
+export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscription.GetPaymentUrl.Response) => {
 	return {
 		paymentUrl: response.getPaymenturl(),
 	};
