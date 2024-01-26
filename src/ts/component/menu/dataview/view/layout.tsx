@@ -22,9 +22,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
+		const isReadonly = this.isReadonly();
 		const { type } = this.param;
 		const sections = this.getSections();
 		const layouts = UtilMenu.getViews().map((it: any) => {
@@ -33,19 +31,30 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			return it;
 		});
 
-		const Layout = (item: any) => (
-			<div 
-				className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')}
-				onClick={(e: any) => { this.onClick(e, item); }}
-				onMouseEnter={this.menuClose}
-			>
-				<Icon className={item.icon} />
-				<Label text={item.name} />
-			</div>
-		);
+		const Layout = (item: any) => {
+			const cn = [ 'layout' ];
+
+			if (type == item.id) {
+				cn.push('active');
+			};
+			if (isReadonly) {
+				cn.push('isReadonly');
+			};
+
+			return (
+				<div 
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={this.menuClose}
+				>
+					<Icon className={item.icon} />
+					<Label text={item.name} />
+				</div>
+			);
+		};
 
 		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
+			<div id={`section-${item.id}`} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => (
@@ -53,7 +62,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 							key={i} 
 							{...action} 
 							icon={action.icon}
-							readonly={readonly}
+							readonly={isReadonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
@@ -283,11 +292,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
 		const view = data.view.get();
 
-		if (!item.arrow || !allowedView) {
+		if (!item.arrow || isReadonly) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
 			return;
 		};
@@ -406,6 +415,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		obj.css({ height: 'auto' });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

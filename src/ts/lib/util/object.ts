@@ -87,7 +87,7 @@ class UtilObject {
 
 	canParticipantWrite (): boolean {
 		const participant = this.getParticipant();
-		return participant ? (participant.permissions == I.ParticipantPermissions.Writer) : false;
+		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : false;
 	};
 
 	getGraph () {

@@ -33,16 +33,16 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { getView } = data;
 		const view = getView();
 		
 		if (!view) {
 			return null;
 		};
 
+		const isReadonly = this.isReadonly();
 		const items = this.getItems();
 		const sortCnt = items.length;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: translate('commonAscending') },
@@ -60,11 +60,11 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			return (
 				<div 
 					id={'item-' + item.id} 
-					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}
+					className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
 					onMouseEnter={(e: any) => { this.onOver(e, item); }}
 					style={item.style}
 				>
-					{allowedView ? <Handle /> : ''}
+					{!isReadonly ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
 						<Select 
@@ -82,7 +82,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							onChange={(v: string) => { this.onChange(item.id, 'type', v); }} 
 						/>
 					</div>
-					{allowedView ? (
+					{!isReadonly ? (
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
 							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
@@ -164,7 +164,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					helperClass="isDragging"
 					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
-				{allowedView ? (
+				{!isReadonly ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 
@@ -359,17 +359,23 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 
 	resize () {
-		const { getId, position, param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
+		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const offset = allowedView ? 62 : 16;
+		const offset = !this.isReadonly() ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

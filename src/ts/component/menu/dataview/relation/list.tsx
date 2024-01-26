@@ -32,11 +32,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly, rootId, blockId } = data;
+		const { getId } = this.props;
+		const isReadonly = this.isReadonly();
 		const items = this.getItems();
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		items.map((it: any) => {
 			const { format, name } = it.relation;
@@ -47,14 +45,13 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const canHide = allowedView && (item.relationKey != 'name');
-			const canEdit = !readonly && allowedView;
+			const canHide = !isReadonly && (item.relationKey != 'name');
 			const cn = [ 'item' ];
 			
 			if (item.relation.isHidden) {
 				cn.push('isHidden');
 			};
-			if (!canEdit) {
+			if (!isReadonly) {
 				cn.push('isReadonly');
 			};
 
@@ -65,7 +62,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 					style={item.style}
 				>
-					{allowedView ? <Handle /> : ''}
+					{!isReadonly ? <Handle /> : ''}
 					<span className="clickable" onClick={e => this.onClick(e, item)}>
 						<Icon className={'relation ' + Relation.className(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
@@ -145,7 +142,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 
-				{!readonly && allowedView ? (
+				{!isReadonly ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 
@@ -348,10 +345,20 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+		const offset = !this.isReadonly() ? 62 : 16;
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });
