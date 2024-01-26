@@ -359,10 +359,13 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 62;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const offset = allowedView ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
