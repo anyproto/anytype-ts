@@ -38,8 +38,8 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 
 				<div className="buttons">
 					<div className="sides">
-						<Button onClick={() => this.onConfirm('reader')} text={translate('popupRequestConfirmButtonConfirmReader')} className="c36" />
-						<Button onClick={() => this.onConfirm('editor')} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={translate('popupRequestConfirmButtonConfirmReader')} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
 					</div>
 					<Button onClick={this.onReject} text={translate('popupRequestConfirmButtonReject')} className="c36" color="red" />
 				</div>
@@ -49,8 +49,8 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		);
 	};
 
-	onConfirm (role) {
-		const { param } = this.props;
+	onConfirm (permissions: I.ParticipantPermissions) {
+		const { param, close } = this.props;
 		const { data } = param;
 		const { payload } = data;
 		const { spaceId, identity } = payload;
@@ -64,11 +64,13 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			close();
 		});
 	};
 
 	onReject () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { payload } = data;
 		const { spaceId, identity } = payload;
@@ -82,6 +84,8 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			close();
 		});
 	};
 
