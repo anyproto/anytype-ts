@@ -218,6 +218,11 @@ class DetailStore {
 				object = this.mapFile(object);
 				break;
 			};
+
+			case I.ObjectLayout.Participant: {
+				object = this.mapParticipant(object);
+				break;
+			};
 		};
 
 		return object;
@@ -309,6 +314,16 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		return object;
+	};
+
+	private mapParticipant (object) {
+		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+
+		delete(object.participantPermissions);
+		delete(object.participantStatus);
+
 		return object;
 	};
 

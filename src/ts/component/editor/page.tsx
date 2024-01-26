@@ -2238,7 +2238,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
-		return object.isArchived || object.isDeleted;
+		if (object.isArchived || object.isDeleted) {
+			return true;
+		};
+
+		const participant = UtilObject.getParticipant();
+		if (participant.permissions != I.ParticipantPermissions.Writer) {
+			return true;
+		};
+
+		return false;
 	};
 
 	setLoading (v: boolean): void {

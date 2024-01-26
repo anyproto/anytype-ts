@@ -81,7 +81,7 @@ class UtilObject {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.profile, this.getParticipantId(space, account.id));
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(space, account.id));
 		return object._empty_ ? null : object;
 	};
 
