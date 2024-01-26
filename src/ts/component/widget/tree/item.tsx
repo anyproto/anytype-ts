@@ -41,9 +41,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
+		const hasMore = UtilObject.canParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;
+		let more = null;
 
 		/*
 		if (layout == I.ObjectLayout.Collection) {
@@ -61,9 +63,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		};
 
 		if (arrow) {
-			arrow = (
-				<div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>
-			);
+			arrow = <div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>;
+		};
+
+		if (hasMore) {
+			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
 		};
 
 		let inner = (
@@ -90,7 +94,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
+					{more}
 				</div>
 			</div>
 		);

@@ -42,18 +42,25 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
+		const hasMore = UtilObject.canParticipantWrite();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 
 		let descr = null;
+		let more = null;
+
 		if (!isCompact) {
 			if (object.layout == I.ObjectLayout.Bookmark) {
 				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;
 			};
+		};
+
+		if (hasMore) {
+			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
 		};
 		
 		let inner = (
@@ -80,7 +87,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
+					{more}
 				</div>
 			</div>
 		);
