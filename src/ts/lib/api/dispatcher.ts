@@ -208,11 +208,6 @@ class Dispatcher {
 					break;	
 				};
 
-				case 'accountDetails': {
-					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.struct(data.getDetails()) }, false);
-					break;
-				};
-
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));

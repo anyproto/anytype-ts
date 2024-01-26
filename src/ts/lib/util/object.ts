@@ -58,19 +58,19 @@ class UtilObject {
 		return home;
 	};
 
-	getIdentityId () {
-		const { account } = authStore;
-		return account ? `_id_${account.id}` : '';
+	getParticipantId (spaceId: string, accountId: string) {
+		spaceId = String(spaceId || '').replace('.', '_');
+		return `_participant_${spaceId}_${accountId}`;
 	};
 
-	getParticipantId (id: string) {
+	getAccountFromParticipantId (id: string) {
 		const a = String(id || '').split('_');
 		return a.length ? a[a.length - 1] : '';
 	};
 
 	getProfile () {
-		const id = this.getIdentityId();
-		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
+		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
+		return object._empty_ ? null : object;
 	};
 
 	getGraph () {
