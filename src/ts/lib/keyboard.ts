@@ -250,7 +250,7 @@ class Keyboard {
 				this.pageCreate({}, 'Shortcut');
 			});
 
-			this.shortcut(`ctrl+alt+n`, e, () => {
+			this.shortcut(`${cmd}+alt+n`, e, () => {
 				e.preventDefault();
 				this.onQuickCapture();
 			});
