@@ -40,6 +40,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
 		const hasMore = UtilObject.canParticipantWrite();
 
@@ -81,7 +82,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
-						canEdit={!isReadonly && !isArchived} 
+						canEdit={!isReadonly && !isArchived && allowedDetails} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
 						onCheckbox={this.onCheckbox}

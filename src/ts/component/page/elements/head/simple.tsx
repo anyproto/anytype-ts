@@ -38,16 +38,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const placeholder = {
-			title: UtilObject.defaultName(type),
-			description: translate('placeholderBlockDescription'),
-		};
-
+		const canWrite = UtilObject.canParticipantWrite();
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
 		const isRelation = UtilObject.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+		const placeholder = {
+			title: UtilObject.defaultName(type),
+			description: translate('placeholderBlockDescription'),
+		};
 
 		const Editor = (item: any) => (
 			<Editable
@@ -108,6 +108,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+		};
+
+		if (!canWrite) {
+			button = null;
 		};
 
 		return (

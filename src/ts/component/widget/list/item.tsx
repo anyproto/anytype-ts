@@ -39,6 +39,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
+		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
@@ -71,7 +72,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					object={object} 
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
-					canEdit={!isReadonly && !isArchived} 
+					canEdit={!isReadonly && !isArchived && allowedDetails} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					onCheckbox={this.onCheckbox} 

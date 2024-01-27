@@ -334,7 +334,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId) {
+		if (previewId || !UtilObject.canParticipantWrite()) {
 			return;
 		};
 

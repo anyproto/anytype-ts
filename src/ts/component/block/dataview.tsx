@@ -1279,10 +1279,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSelectEnd () {
-		const { dataset, isInline } = this.props;
+		const { dataset, isInline, readonly } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection || isInline) {
+		if (!selection || isInline || readonly) {
 			return;
 		};
 
