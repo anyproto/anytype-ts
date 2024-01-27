@@ -311,6 +311,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
+			noEdit: true,
 			passThrough: true,
 		});
 	};
