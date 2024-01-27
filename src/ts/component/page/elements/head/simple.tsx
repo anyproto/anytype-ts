@@ -52,7 +52,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const Editor = (item: any) => (
 			<Editable
 				ref={ref => this.refEditable[item.id] = ref}
-				id={'editor-' + item.id}
+				id={`editor-${item.id}`}
 				placeholder={placeholder[item.id]}
 				readonly={!allowDetails}
 				classNameWrap={item.className}
@@ -84,6 +84,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					block={blockFeatured} 
 					className="small" 
 					isSelectionDisabled={true}
+					readonly={!allowDetails}
 				/>
 			);
 		};
