@@ -150,11 +150,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	save (withName?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, readonly } = data;
+		const { rootId, blockId, onSave } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const view = data.view.get();
 
-		if (readonly || !block || !view) {
+		if (!block || !view || this.isReadonly()) {
 			return;
 		};
 	
@@ -369,10 +369,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect, readonly, isInline, getTarget } = data;
+		const { onSelect, isInline, getTarget } = data;
 		const object = getTarget();
 
-		if (readonly || item.arrow) {
+		if (this.isReadonly() || item.arrow) {
 			return;
 		};
 
