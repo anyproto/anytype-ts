@@ -268,7 +268,7 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Relation },
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
-			...it, 
+			...it,
 			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
 			name: translate('layout' + it.id),
 		}));
