@@ -903,7 +903,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const items = this.ref.getItems();
-		if (item && item.id) {
+		if (item && (undefined !== item.id)) {
 			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 
