@@ -13,7 +13,6 @@ interface State {
 };
 
 const HEIGHT = 64;
-const LIMIT = 3;
 const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
@@ -41,7 +40,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error } = this.state;
-
 		const memberOptions = this.getMemberOptions();
 		const length = this.team.length;
 

@@ -19,8 +19,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 		const Row = (space) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const isOwner = UtilObject.isSpaceOwner(space.creator);
-			const participant = UtilObject.getParticipant(space.targetSpaceId);
+			const isOwner = creator.permissions == I.ParticipantPermissions.Owner;
 
 			return (
 				<tr>
@@ -39,7 +38,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							</div>
 						</div>
 					</td>
-					<td>{translate(`popupSettingsSpacesAccess${participant.permissions}`)}</td>
+					<td>{translate(`popupSettingsSpacesAccess${creator.permissions}`)}</td>
 					<td>{translate(`popupSettingsSpacesNetwork${space.spaceType}`)}</td>
 					<td>{translate(`popupSettingsSpacesDevice${space.spaceLocalStatus}`)}</td>
 

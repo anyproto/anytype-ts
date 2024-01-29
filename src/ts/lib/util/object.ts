@@ -72,8 +72,8 @@ class UtilObject {
 		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
-	getParticipant (spaceId?: string) {
-		const space = spaceId || commonStore.space;
+	getParticipant () {
+		const { space } = commonStore;
 		const { account } = authStore;
 
 		if (!account) {
