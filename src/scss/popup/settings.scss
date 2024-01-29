@@ -43,13 +43,13 @@
 					> .name { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; padding: 0px 8px; }
 				}
 
-				.items { display: flex; flex-direction: column; gap: 2px 0px; }
+				.items { display: flex; flex-direction: column; }
 
-				.item { display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; border-radius: 8px; transition: $transitionAllCommon; }
+				.item { display: flex; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
 				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
-					.icon { width: 22px; height: 22px; flex-shrink: 0; }
-					.icon.logout { background-image: url('~img/icon/popup/settings/logout.svg'); }
+					.icon { width: 24px; height: 24px; flex-shrink: 0; }
+					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
