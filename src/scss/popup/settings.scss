@@ -387,12 +387,10 @@
 					}
 				}
 
-				.iconWrap { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-				.iconWrap {
-					.icon { width: 24px; height: 24px; }
-					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+				.itemMore { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+				.itemMore {
+					.icon { width: 24px; height: 24px; background-image: url('~img/icon/menu/action/more0.svg'); }
 				}
-				.iconWrap:hover, .iconWrap.active { background-color: var(--color-shape-highlight-medium); }
 			}
 		}
 

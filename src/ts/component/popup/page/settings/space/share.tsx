@@ -279,7 +279,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
 		};
-		
+
 		position();
 	};
 });

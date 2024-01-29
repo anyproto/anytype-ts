@@ -3,15 +3,13 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, UtilObject, translate } from 'Lib';
-import { authStore, dbStore, detailStore, menuStore } from 'Store';
+import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
 
 	constructor (props) {
 		super(props);
-
-		this.isOwner = this.isOwner.bind(this);
 	};
 
 	render () {
@@ -78,13 +76,13 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onSpaceMore (e: React.MouseEvent, space) {
-		const { spaceType } = space;
-		const element = $(e.currentTarget);
+		const { spaceType, creator } = space;
+		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
 			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
 		];
 
-		if (UtilObject.isSpaceOwner(space.creator)) {
+		if (UtilObject.isSpaceOwner(creator)) {
 			if (spaceType == I.SpaceType.Shared) {
 				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
 			};
@@ -118,16 +116,6 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				}
 			}
 		});
-	};
-
-	isOwner (space: any) {
-		const { account } = authStore;
-		const { info } = account;
-		const { profileObjectId } = info;
-		const creator = detailStore.get(Constant.subId.space, space.creator);
-		const { identityProfileLink } = creator;
-
-		return identityProfileLink == profileObjectId;
 	};
 
 });
