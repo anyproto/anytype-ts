@@ -16,10 +16,15 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	render () {
 		const spaces = dbStore.getSpaces();
+		const { account } = authStore;
 
 		const Row = (space) => {
+			console.log('SPACE: ', space)
 			const { spaceType, spaceLocalStatus } = space;
 			const creator = detailStore.get(Constant.subId.space, space.creator);
+			const participantId = UtilObject.getParticipantId(space.spaceId, account.id);
+			const part = detailStore.get(Constant.subId.participant, participantId);
+			console.log('PART: ', part)
 			const isOwner = UtilObject.isSpaceOwner(space.creator);
 			const participant = UtilObject.getParticipant();
 			const access = translate(`popupSettingsSpacesAccess${participant.permissions}`);
