@@ -69,8 +69,7 @@ class UtilObject {
 	};
 
 	getProfile () {
-		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
-		return object._empty_ ? null : object;
+		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 	getParticipant () {
