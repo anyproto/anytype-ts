@@ -1,10 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, translate } from 'Lib';
-import { authStore, commonStore, dbStore, detailStore, popupStore, menuStore } from 'Store';
+import { I, UtilObject, translate } from 'Lib';
+import { authStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-import $ from 'jquery';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
 
@@ -20,8 +20,9 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const Row = (space) => {
 			const { spaceType, spaceLocalStatus } = space;
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const isOwner = this.isOwner(space);
-			const access = isOwner ? translate('popupSettingsSpacesAccess2') : translate('popupSettingsSpacesAccess1');
+			const isOwner = UtilObject.isSpaceOwner(space.creator);
+			const participant = UtilObject.getParticipant();
+			const access = translate(`popupSettingsSpacesAccess${participant.permissions}`);
 
 			return (
 				<tr>
@@ -56,7 +57,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			<React.Fragment>
 				<Title text={translate('popupSettingsSpacesListTitle')} />
 
-				<div className="spacesList">
+				<div className="items">
 					<table>
 						<thead>
 							<tr>
@@ -85,7 +86,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
 		];
 
-		if (this.isOwner(space)) {
+		if (UtilObject.isSpaceOwner(space.creator)) {
 			if (spaceType == I.SpaceType.Shared) {
 				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
 			};
@@ -99,7 +100,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			data: {
-				options: options,
+				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'offload':

@@ -31,8 +31,7 @@ import PageSpaceIndex from './page/settings/space/index';
 import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
-
-import PageSpacesList from './page/settings/spacesList';
+import PageSpaceList from './page/settings/space/list';
 
 interface State {
 	loading: boolean;
@@ -66,8 +65,7 @@ const Components: any = {
 	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
-
-	spacesList:			 PageSpacesList,
+	spaceList:			 PageSpaceList,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
@@ -271,7 +269,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				},
 				{ 
 					name: translate('popupSettingsVoidTitle'), children: [
-						{ id: 'spacesList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
+						{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					]
