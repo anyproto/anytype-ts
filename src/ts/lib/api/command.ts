@@ -1876,7 +1876,7 @@ export const SpaceRequestApprove = (spaceId: string, identity: string, permissio
 
 	request.setSpaceid(spaceId);
 	request.setIdentity(identity);
-	request.setPermissions(permissions);
+	request.setPermissions(permissions as number);
 
 	dispatcher.request(SpaceRequestApprove.name, request, callBack);
 };
