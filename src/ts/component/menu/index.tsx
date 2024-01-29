@@ -298,7 +298,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getSize={this.getSize}
 							getPosition={this.getPosition}
 							position={this.position} 
-							close={this.close} 
+							close={() => this.close()}
 						/>
 					</div>
 				</div>
