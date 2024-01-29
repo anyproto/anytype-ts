@@ -18,11 +18,9 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const spaces = dbStore.getSpaces();
 
 		const Row = (space) => {
-			const { spaceType, spaceLocalStatus } = space;
 			const creator = detailStore.get(Constant.subId.space, space.creator);
 			const isOwner = UtilObject.isSpaceOwner(space.creator);
-			const participant = UtilObject.getParticipant();
-			const access = translate(`popupSettingsSpacesAccess${participant.permissions}`);
+			const participant = UtilObject.getParticipant(space.targetSpaceId);
 
 			return (
 				<tr>
@@ -41,11 +39,12 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							</div>
 						</div>
 					</td>
-					<td>{access}</td>
-					<td>{translate(`popupSettingsSpacesNetwork${spaceType}`)}</td>
-					<td>{translate(`popupSettingsSpacesDevice${spaceLocalStatus}`)}</td>
+					<td>{translate(`popupSettingsSpacesAccess${participant.permissions}`)}</td>
+					<td>{translate(`popupSettingsSpacesNetwork${space.spaceType}`)}</td>
+					<td>{translate(`popupSettingsSpacesDevice${space.spaceLocalStatus}`)}</td>
+
 					<td className="columnMore">
-						<div onClick={(e) => this.onSpaceMore(e, space)} className="itemMore">
+						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
 							<Icon className="more" />
 						</div>
 					</td>
@@ -99,6 +98,8 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onOpen: () => element.addClass('active'),
+			onClose: () => element.removeClass('active'),
 			data: {
 				options,
 				onSelect: (e: any, item: any) => {

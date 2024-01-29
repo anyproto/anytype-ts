@@ -374,6 +374,7 @@ class UtilData {
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
+				ignoreWorkspace: true,
 			}
 		];
 
