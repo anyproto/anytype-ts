@@ -208,11 +208,6 @@ class Dispatcher {
 					break;	
 				};
 
-				case 'accountDetails': {
-					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.struct(data.getDetails()) }, false);
-					break;
-				};
-
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
@@ -481,12 +476,12 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasName()) {
-						block.content.name = data.getName().getValue();
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
 					};
 
-					if (data.hasHash()) {
-						block.content.hash = data.getHash().getValue();
+					if (data.hasName()) {
+						block.content.name = data.getName().getValue();
 					};
 
 					if (data.hasMime()) {
@@ -956,7 +951,9 @@ class Dispatcher {
 					notificationStore.add(item);
 
 					if ((windowId == 1) && !window.Electron.isFocused()) {
-						new window.Notification(item.title, { body: item.text }).onclick = () => { 
+						new window.Notification(UtilCommon.stripTags(item.title), { 
+							body: UtilCommon.stripTags(item.text) 
+						}).onclick = () => { 
 							window.Electron.focus();
 						};
 					};

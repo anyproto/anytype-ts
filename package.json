@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.37.18-beta",
+	"version": "0.38.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -307,6 +307,10 @@
 			{
 				"from": "node_modules/electron-window-state",
 				"to": "node_modules/electron-window-state"
+			},
+			{
+				"from": "node_modules/escape-goat",
+				"to": "node_modules/escape-goat"
 			},
 			{
 				"from": "node_modules/ext-list",

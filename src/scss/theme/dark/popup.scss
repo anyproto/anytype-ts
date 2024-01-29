@@ -132,4 +132,11 @@
 	.popup.popupAbout {
 		.iconWrapper { background: none; }
 	}
+
+	/* PopupInviteRequest */
+
+	.popup.popupInviteRequest {
+		.iconWrapper { background: none; }
+		.icon { background-image: url('#{$themePath}/icon/popup/space/invite.svg'); }
+	}
 }

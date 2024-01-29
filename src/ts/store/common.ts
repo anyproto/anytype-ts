@@ -45,7 +45,6 @@ class CommonStore {
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
-	public techSpaceId = '';
 	public notionToken = '';
 	public autoSidebarValue = null;
 	public isSidebarFixedValue = null;
@@ -94,7 +93,6 @@ class CommonStore {
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			spaceId: observable,
-			techSpaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -104,7 +102,6 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			space: computed,
-			techSpace: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -117,7 +114,6 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
-			techSpaceSet: action,
 			spaceStorageSet: action,
 		});
 
@@ -191,10 +187,6 @@ class CommonStore {
 		return String(this.spaceId || '');
 	};
 
-	get techSpace(): string {
-		return String(this.techSpaceId || '');
-	};
-
 	get graph(): Graph {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
@@ -216,17 +208,12 @@ class CommonStore {
 		this.gatewayUrl = v;
 	};
 
-    fileUrl (hash: string) {
-		hash = String(hash || '');
-
-		return this.gateway + '/file/' + hash;
+    fileUrl (id: string) {
+		return [ this.gateway, 'file', String(id || '') ].join('/');
 	};
 
-    imageUrl (hash: string, width: number) {
-		hash = String(hash || '');
-		width = Number(width) || 0;
-
-		return `${this.gateway}/image/${hash}?width=${width}`;
+    imageUrl (id: string, width: number) {
+		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
     progressSet (v: I.Progress) {
@@ -292,9 +279,6 @@ class CommonStore {
 		this.spaceId = String(id || '');
 	};
 
-	techSpaceSet (id: string) {
-		this.techSpaceId = String(id || '');
-	};
 
 	previewClear () {
 		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };

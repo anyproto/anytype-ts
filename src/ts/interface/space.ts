@@ -12,4 +12,20 @@ export enum SpaceStatus {
 export enum SpaceType {
 	Private	 = 0,
 	Personal = 1,
+	Shared	 = 2,
+};
+
+export enum ParticipantPermissions {
+    Reader			 = 0,
+    Writer			 = 1,
+    Owner			 = 2,
+    NoPermissions	 = 3,
+}
+
+export enum ParticipantStatus {
+    Joining	 = 0,
+    Active	 = 1,
+    Removed	 = 2,
+    Declined = 3,
+    Removing = 4,
 };

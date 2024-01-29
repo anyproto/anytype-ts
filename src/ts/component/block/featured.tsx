@@ -197,7 +197,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								getRecord={() => object}
 								recordId={object.id}
 								viewType={I.ViewType.Grid}
-								bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}
 								readonly={!canEdit}

@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore, dbStore, detailStore } from 'Store';
+import { menuStore, dbStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const TIMEOUT = 1000;
@@ -51,6 +51,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return null;
 		};
 
+		const isReadonly = this.isReadonly();
 		const subId = dbStore.getSubId(rootId, blockId);
 		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
@@ -99,7 +100,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				Item = (element: any) => {
 					return (
 						<div 
-							id={'item-tag-' + element.id} 
+							id={`item-tag-${element.id}`} 
 							className="item" 
 							onMouseEnter={() => {
 								menuStore.close('select'); 
@@ -124,10 +125,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				value = (
 					<React.Fragment>
-						<ItemAdd onClick={this.onTag} />
-						{list.map((element: any) => (
-							<Item key={element.id} {...element} />
-						))}
+						{!isReadonly ? <ItemAdd onClick={this.onTag} /> : ''}
+						{list.map(element => <Item key={element.id} {...element} />)}
 					</React.Fragment>
 				);
 				break;
@@ -139,9 +138,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 					return (
 						<div 
-							id={`item-${element.id}`} 
+							id={`item-object-${element.id}`} 
 							className="item withCaption"
-							onMouseEnter={() => setHover({ id: element.id })}
+							onMouseEnter={() => setHover({ id: `object-${element.id}` })}
 						>
 							<div className="clickable" onClick={e => this.onObject(e, item)}>
 								<IconObject object={element} />
@@ -162,10 +161,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				value = (
 					<React.Fragment>
-						<ItemAdd onClick={e => this.onObject(e, item)} />
-						{list.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
+						{!isReadonly ? <ItemAdd onClick={e => this.onObject(e, item)} /> : ''}
+						{list.map((item: any, i: number) => <Item key={i} {...item} />)}
 					</React.Fragment>
 				);
 				break;
@@ -182,6 +179,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						value={item.value ? '1' : '0'}
 						onChange={v => this.onChange('value', Boolean(Number(v)), true)} 
 						menuParam={selectParam}
+						readonly={isReadonly}
 					/>
 				);
 				wrapValue = true;
@@ -200,6 +198,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								onFocus={this.onFocusText}
 								onKeyUp={(e: any, v: string) => this.onChange('value', v, true)} 
 								onSelect={this.onSelect}
+								readonly={isReadonly}
 							/>
 							<Icon className="clear" onClick={this.onClear} />
 						</React.Fragment>
@@ -216,6 +215,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								maskOptions={{ mask: '99.99.9999 99:99:99' }}
 								onFocus={this.onFocusDate}
 								onSelect={this.onSelect}
+								readonly={isReadonly}
 							/>
 							<Icon className="clear" onClick={this.onClear} />
 						</React.Fragment>
@@ -236,6 +236,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							onFocus={this.onFocusText}
 							onKeyUp={(e: any, v: string) => this.onChange('value', v, true)} 
 							onSelect={this.onSelect}
+							readonly={isReadonly}
 						/>
 						<Icon className="clear" onClick={this.onClear} />
 					</React.Fragment>
@@ -256,6 +257,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					value={item.value}
 					onChange={v => this.onChange('value', Number(v), true)} 
 					menuParam={selectParam}
+					readonly={isReadonly}
 				/>
 			);
 			wrapValue = true;
@@ -281,7 +283,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			<div ref={ref => this.node = ref}>
 				<div className="section">
 					{items.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} onMouseEnter={e => this.onOver(e, item)} />
+						<MenuItemVertical key={i} {...item} onMouseEnter={e => this.onOver(e, item)} readonly={isReadonly} />
 					))}
 				</div>
 
@@ -416,6 +418,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { getView, itemId } = data;
 		const view = getView();
 		const filter = view.getFilter(itemId);
+		const isReadonly = this.isReadonly();
+
+		if (isReadonly) {
+			return;
+		};
 
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
@@ -719,6 +726,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 	onSelectClose () {
 		this.props.setHover();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 
 });

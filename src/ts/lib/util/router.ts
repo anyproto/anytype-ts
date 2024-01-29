@@ -61,7 +61,7 @@ class UtilRouter {
 
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space, techSpace } = commonStore;
+		const { space } = commonStore;
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
 		if (!timeout) {
@@ -71,7 +71,7 @@ class UtilRouter {
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && ![ Constant.storeSpaceId, space, techSpace ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};

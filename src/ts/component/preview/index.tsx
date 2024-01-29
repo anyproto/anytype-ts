@@ -33,7 +33,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	
 	render () {
 		const { preview } = commonStore;
-		const { type, target, noUnlink, object } = preview;
+		const { type, target, object, noUnlink, noEdit } = preview;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
@@ -44,7 +44,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				head = (
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('commonCopyLink')}</div>
-						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div>
+						{!noEdit ? <div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div> : ''}
 						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
 					</div>
 				);

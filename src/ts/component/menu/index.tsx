@@ -662,12 +662,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		});
 	};
 
-	close () {
+	close (callBack?: () => void) {
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
 		};
 
-		menuStore.close(this.props.id);
+		menuStore.close(this.props.id, callBack);
 	};
 
 	onDimmerClick () {
@@ -903,7 +903,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const items = this.ref.getItems();
-		if (item && item.id) {
+		if (item && (undefined !== item.id)) {
 			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 

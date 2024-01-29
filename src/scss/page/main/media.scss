@@ -21,13 +21,13 @@
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }
 	.blocks.vertical {
 		.side { width: 50%; }
-		.side.left { margin-right: 32px; min-width: 400px; }
+		.side.left { margin-right: 32px; min-width: 400px; background: var(--color-shape-highlight-medium); }
 
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia {
-			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
+			.mediaImage { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
 		}
-		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: var(--color-shape-highlight-medium); }
+		.iconObject { width: 100%; height: 100%; border-radius: 6px; }
 	}
 
 	.blocks {
@@ -41,7 +41,7 @@
 		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
 		.descr:empty { display: none; }
 
-		.block.blockMedia { padding: 0px; border-radius: 6px; background: var(--color-shape-highlight-medium); }
+		.block.blockMedia { padding: 0px; border-radius: 6px; }
 		.block.blockMedia {
 			.wrap { position: static; overflow: visible; width: 100%; height: 100%; }
 			.selectable, .dropTarget { height: 100%; }

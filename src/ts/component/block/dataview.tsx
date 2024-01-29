@@ -89,6 +89,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
+		this.canCellEdit = this.canCellEdit.bind(this);
 	};
 
 	render () {
@@ -178,6 +179,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			},
 			getSearchIds: this.getSearchIds,
+			canCellEdit: this.canCellEdit,
 		};
 
 		if (loading) {
@@ -197,7 +199,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
-						bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
@@ -832,6 +833,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
+	canCellEdit (relationKey: string, recordId: string): boolean {
+		const { readonly } = this.props;
+
+		if (readonly) {
+			return false;
+		};
+
+		const relation = dbStore.getRelationByKey(relationKey);
+		const record = this.getRecord(recordId);
+
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
+			return false;
+		};
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+			return false;
+		};
+		return true;
+	};
+
 	onCellClick (e: any, relationKey: string, recordId: string) {
 		if (e.button) {
 			return;
@@ -1259,10 +1279,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSelectEnd () {
-		const { dataset, isInline } = this.props;
+		const { dataset, isInline, readonly } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection || isInline) {
+		if (!selection || isInline || readonly) {
 			return;
 		};
 

@@ -171,6 +171,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Human);
 	};
 
+	isObjectParticipant (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
+	};
+
 	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
@@ -477,9 +481,6 @@ class Block implements I.Block {
 
 	getTargetObjectId () {
 		switch (this.type) {
-			case I.BlockType.File: {
-				return this.content.hash;
-			};
 			case I.BlockType.Link: {
 				return this.content.targetBlockId;
 			};

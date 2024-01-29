@@ -8,7 +8,7 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 	render() {
 		return (
 			<React.Fragment>
-				<div className="iconWrapper yellow">
+				<div className="iconWrapper">
 					<Icon />
 				</div>
 				<Title text={translate('popupAboutTitle')} />

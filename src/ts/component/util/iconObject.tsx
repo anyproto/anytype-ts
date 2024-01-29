@@ -32,7 +32,7 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	getObject?(): any;
 	onSelect?(id: string): void;
-	onUpload?(hash: string): void;
+	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -180,7 +180,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -188,7 +188,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human: 
+			case I.ObjectLayout.Participant: {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -213,7 +214,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -227,7 +228,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -413,10 +414,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 						onSelect(icon);
 					};
 				},
-
-				onUpload: (hash: string) => {
+				onUpload: (objectId: string) => {
 					if (onUpload) {
-						onUpload(hash);
+						onUpload(objectId);
 					};
 				}
 			},
@@ -442,7 +442,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = 28;
 		};
 
-		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
+		if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout) && (size >= 40)) {
 			s = size;
 		};
 

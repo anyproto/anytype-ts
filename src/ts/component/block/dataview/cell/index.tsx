@@ -49,7 +49,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
-		const canEdit = this.canEdit();
+		const canEdit = this.canCellEdit();
 
 		const cn = [ 
 			'cellContent', 
@@ -149,7 +149,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
@@ -161,7 +161,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const value = record[relation.relationKey] || '';
 
-		if (!this.canEdit()) {
+		if (!this.canCellEdit()) {
 			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
@@ -484,12 +484,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		return dbStore.getRelationByKey(this.props.relationKey);
 	};
 
-	canEdit () {
+	canCellEdit (): boolean {
 		const { readonly, getRecord, recordId } = this.props;
+
+		if (readonly) {
+			return false;
+		};
+
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
 
-		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
@@ -497,7 +502,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 		return true;
 	};
-	
+
 });
 
 export default Cell;

@@ -41,7 +41,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	render () {
 		const { isEditing } = this.state;
 		const { showRelativeDates } = commonStore;
-		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit } = this.props;
 		const record = getRecord(recordId);
 		
 		if (!record || !relation) {
@@ -154,11 +154,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					content = <div className="name">{name}</div>;
 				} else {
 					if (isName && (record.layout == I.ObjectLayout.Note)) {
-						content = (
-							<span className="emptyText">
-								{translate('commonEmpty')}
-							</span>
-						);
+						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
 						content = (
 							<div className="empty">
@@ -208,7 +204,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						onUpload={this.onIconUpload}
 						onCheckbox={this.onCheckbox}
 						size={iconSize} 
-						canEdit={!record.isReadonly} 
+						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
 						noClick={true}
@@ -445,8 +441,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(this.props.recordId, icon, '');
 	};
 
-	onIconUpload (hash: string) {
-		UtilObject.setIcon(this.props.recordId, '', hash);
+	onIconUpload (objectId: string) {
+		UtilObject.setIcon(this.props.recordId, '', objectId);
 	};
 
 	onCheckbox () {

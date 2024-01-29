@@ -79,7 +79,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
 	};
 };
 
@@ -398,7 +398,7 @@ export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
 
 export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
 	};
 };
 
@@ -425,5 +425,20 @@ export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
 export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	return {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+	};
+};
+
+export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteKey: response.getInvitefilekey(),
+	};
+};
+
+export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
+	return {
+		spaceName: response.getSpacename(),
+		creatorName: response.getCreatorname(),
+		spaceId: response.getSpaceid(),
 	};
 };

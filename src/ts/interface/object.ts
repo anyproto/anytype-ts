@@ -18,6 +18,7 @@ export enum ObjectLayout {
 	Video		 = 16,
 	Date		 = 17,
 	SpaceView	 = 18,
+	Participant	 = 19,
 	
 	Database	 = 20,
 

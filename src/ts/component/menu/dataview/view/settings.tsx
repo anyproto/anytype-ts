@@ -26,10 +26,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
 		const { type, name } = this.param;
+		const isReadonly = this.isReadonly();
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -41,7 +39,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 							key={i} 
 							{...action} 
 							icon={action.icon}
-							readonly={readonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
@@ -59,7 +56,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						ref={ref => this.refName = ref}
 						value={name}
 						label={translate('menuDataviewViewName')}
-						readonly={readonly}
+						readonly={isReadonly}
 						placeholder={Dataview.defaultViewName(type)}
 						maxLength={32}
 						onKeyUp={this.onKeyUp}
@@ -225,13 +222,12 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { rootId, blockId } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
-
+		const isReadonly = this.isReadonly();
 		const isBoard = type == I.ViewType.Board;
-		const isCalendar = type == I.ViewType.Calendar;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -261,7 +257,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
 
-		if (id && !readonly) {
+		if (id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
@@ -399,6 +395,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		obj.css({ height: 'auto' });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

@@ -39,21 +39,29 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
+		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
+		const hasMore = UtilObject.canParticipantWrite();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 
 		let descr = null;
+		let more = null;
+
 		if (!isCompact) {
 			if (object.layout == I.ObjectLayout.Bookmark) {
 				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;
 			};
+		};
+
+		if (hasMore) {
+			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
 		};
 		
 		let inner = (
@@ -64,7 +72,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					object={object} 
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
-					canEdit={!isReadonly && !isArchived} 
+					canEdit={!isReadonly && !isArchived && allowedDetails} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					onCheckbox={this.onCheckbox} 
@@ -80,7 +88,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
+					{more}
 				</div>
 			</div>
 		);
@@ -189,10 +197,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		UtilObject.setIcon(id, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.id, '', objectId);
 	};
 
 	onCheckbox () {

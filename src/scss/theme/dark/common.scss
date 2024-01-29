@@ -159,8 +159,6 @@ html.themeDark {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
-	.input.isReadonly { background: rgba(255,255,255,0.1); }
-
     .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 
     .listPreviewObject {

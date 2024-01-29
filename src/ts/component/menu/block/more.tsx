@@ -96,7 +96,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { config } = commonStore;
 
 		if (!block) {
 			return [];
@@ -110,7 +109,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
-		const createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let archive = null;
 		let remove = null;
@@ -126,6 +125,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
@@ -163,17 +163,18 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		// Restrictions
 
-		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedArchive = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectCollection();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedFav = !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
-		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLink = config.experimental;
-		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
-		const allowedReload = object.source && block.isObjectBookmark();
-		const allowedInstall = !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedTemplate = !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
+		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLinkTo = canWrite;
+		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedReload = canWrite && object.source && block.isObjectBookmark();
+		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
+		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedWidget = canWrite;
 		const hasShortMenu = (
 			block.isObjectType() || 
 			block.isObjectRelation() || 
@@ -184,7 +185,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;
-		if (!allowedLink)		 pageLink = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedReload)		 pageReload = null;
 		if (!allowedSearch)		 search = null;
@@ -193,6 +193,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (allowedUninstall)	 archive = null;
+		if (!allowedWidget)		 createWidget = null;
+		if (!allowedLinkTo)		 linkTo = null;
 
 		let sections = [];
 		if (hasShortMenu) {

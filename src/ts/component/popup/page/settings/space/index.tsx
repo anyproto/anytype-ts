@@ -31,20 +31,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { config } = commonStore;
 		const { localUsage, bytesLimit } = commonStore.spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-
+		const canShare = (space.spaceType != I.SpaceType.Personal) && (UtilObject.getAccountFromParticipantId(space.creator) == account.id);
+		const canWrite = UtilObject.canParticipantWrite();
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
 
 		let bytesUsed = 0;
 		let extend = null;
 		let createdDate = null;
+		let button = null;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -58,6 +59,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		if (isRed) {
 			usageCn.push('red');
 			extend = <Label text={translate(`popupSettingsSpaceIndexRemoteStorageExtend`)} onClick={this.onExtend} className="extend" />;
+		};
+
+		if (canShare) {
+			button = <Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />;
 		};
 
 		// old accounts don't have space creation date
@@ -76,7 +81,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		return (
 			<React.Fragment>
-
 				<div className="spaceHeader">
 					<div className="sides">
 						<div className="side left">
@@ -114,7 +118,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							</div>
 						</div>
 						<div className="side right">
-							<Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />
+							{button}
 						</div>
 					</div>
 				</div>
@@ -135,30 +139,39 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										</div>
 									</div>
 									<div className="side right">
-										<Button onClick={() => onPage('spaceStorageManager')} text={translate('popupSettingsSpaceIndexStorageManageFiles')} color="blank" className="c28" />
+										{canWrite ? (
+											<Button 
+												onClick={() => onPage('spaceStorageManager')} 
+												text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
+												color="blank" 
+												className="c28" 
+											/>
+										) : ''}
 									</div>
 								</div>
 
 								<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
 							</div>
 
-							<div className="item">
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate('commonHomepage')} />
-										<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
-									</div>
+							{canWrite ? (
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('commonHomepage')} />
+											<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
+										</div>
 
-									<div className="side right">
-										<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
-											<div className="item">
-												<div className="name">{home ? home.name : translate('commonSelect')}</div>
+										<div className="side right">
+											<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+												<div className="item">
+													<div className="name">{home ? home.name : translate('commonSelect')}</div>
+												</div>
+												<Icon className="arrow black" />
 											</div>
-											<Icon className="arrow black" />
 										</div>
 									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="item">
 								<div className="sides">
@@ -185,17 +198,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceIndexIntegrations`)} />
 						<div className="sectionContent">
 
-							<div className="item" onClick={() => onPage('importIndex')}>
-								<div className="sides">
-									<div className="side left">
-										<Icon className="settings-import" />
-										<Title text={translate(`popupSettingsSpaceIndexImport`)} />
-									</div>
-									<div className="side right">
-										<Icon className="arrow" />
+							{canWrite ? (
+								<div className="item" onClick={() => onPage('importIndex')}>
+									<div className="sides">
+										<div className="side left">
+											<Icon className="settings-import" />
+											<Title text={translate(`popupSettingsSpaceIndexImport`)} />
+										</div>
+										<div className="side right">
+											<Icon className="arrow" />
+										</div>
 									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="item" onClick={() => onPage('exportIndex')}>
 								<div className="sides">
@@ -337,8 +352,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
 	};
 
 	onDelete () {

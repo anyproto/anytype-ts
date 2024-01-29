@@ -182,11 +182,6 @@ class DetailStore {
 			object.name = object.snippet;
 		};
 
-		if (object.id == UtilObject.getIdentityId()) {
-			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
-			object.type = type ? type.id : object.type;
-		};
-
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');
 		};
@@ -221,6 +216,11 @@ class DetailStore {
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Image: {
 				object = this.mapFile(object);
+				break;
+			};
+
+			case I.ObjectLayout.Participant: {
+				object = this.mapParticipant(object);
 				break;
 			};
 		};
@@ -314,6 +314,16 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		return object;
+	};
+
+	private mapParticipant (object) {
+		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+
+		delete(object.participantPermissions);
+		delete(object.participantStatus);
+
 		return object;
 	};
 

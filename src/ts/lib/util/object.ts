@@ -58,14 +58,36 @@ class UtilObject {
 		return home;
 	};
 
-	getIdentityId () {
-		const { account } = authStore;
-		return account ? `_id_${account.id}` : '';
+	getParticipantId (spaceId: string, accountId: string) {
+		spaceId = String(spaceId || '').replace('.', '_');
+		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getAccountFromParticipantId (id: string) {
+		const a = String(id || '').split('_');
+		return a.length ? a[a.length - 1] : '';
 	};
 
 	getProfile () {
-		const id = this.getIdentityId();
-		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
+		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
+		return object._empty_ ? null : object;
+	};
+
+	getParticipant () {
+		const { space } = commonStore;
+		const { account } = authStore;
+
+		if (!account) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(space, account.id));
+		return object._empty_ ? null : object;
+	};
+
+	canParticipantWrite (): boolean {
+		const participant = this.getParticipant();
+		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
 	getGraph () {
@@ -123,10 +145,12 @@ class UtilObject {
 
 		let { id, spaceId } = object;
 
+		/*
 		if (identityProfileLink) {
 			id = identityProfileLink;
 			spaceId = accountSpaceId;
 		};
+		*/
 
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};

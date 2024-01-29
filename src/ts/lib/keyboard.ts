@@ -123,6 +123,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
+		const canWrite = UtilObject.canParticipantWrite();
 
 		this.pressed.push(key);
 
@@ -190,11 +191,6 @@ class Keyboard {
 				this.onSpaceMenu(true);
 			});
 
-			// Lock/Unlock
-			this.shortcut(`ctrl+shift+l`, e, () => {
-				this.onToggleLock();
-			});
-
 			// Print
 			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -244,17 +240,6 @@ class Keyboard {
 				};
 			});
 
-			// Create new page
-			this.shortcut(`${cmd}+n`, e, () => {
-				e.preventDefault();
-				this.pageCreate({}, 'Shortcut');
-			});
-
-			this.shortcut(`ctrl+alt+n`, e, () => {
-				e.preventDefault();
-				this.onQuickCapture();
-			});
-
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
 				if (!popupStore.isOpen('settings')) {
@@ -286,6 +271,25 @@ class Keyboard {
 					}
 				});
 			});
+
+			if (canWrite) {
+				// Create new page
+				this.shortcut(`${cmd}+n`, e, () => {
+					e.preventDefault();
+					this.pageCreate({}, 'Shortcut');
+				});
+
+				// Quick capture menu
+				this.shortcut(`${cmd}+alt+n`, e, () => {
+					e.preventDefault();
+					this.onQuickCapture();
+				});
+
+				// Lock/Unlock
+				this.shortcut(`ctrl+shift+l`, e, () => {
+					this.onToggleLock();
+				});
+			};
 		};
 
 		this.initPinCheck();
@@ -312,12 +316,7 @@ class Keyboard {
 		const { fullscreenObject } = commonStore;
 
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			if (fullscreenObject) {
-				UtilObject.openAuto({ id: message.targetId });
-			} else {
-				UtilObject.openPopup({ id: message.targetId });
-			};
-
+			fullscreenObject ? UtilObject.openAuto({ id: message.targetId }) : UtilObject.openPopup({ id: message.targetId });
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};

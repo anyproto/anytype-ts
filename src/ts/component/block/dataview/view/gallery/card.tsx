@@ -210,7 +210,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			switch (layout) {
 				case I.ObjectLayout.Image: {
 					cn.push('coverImage');
-					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
+					mc = <img src={commonStore.imageUrl(item.id, 600)} onDragStart={e => e.preventDefault()} />;
 					break;
 				};
 

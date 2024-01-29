@@ -211,7 +211,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, extendedOptions } = data;
+		const { rootId, blockId, extendedOptions, readonly } = data;
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
@@ -237,7 +237,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			}
 		];
 
-		if (extendedOptions) {
+		if (extendedOptions && !readonly) {
 			sections.push({
 				children: [
 					canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,

@@ -167,17 +167,17 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
     };
 
     onUpload () {
+		const { accountSpaceId } = authStore;
+
 		Action.openFile(Constant.extension.cover, paths => {
 			this.setState({ loading: true });
 
-            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-                if (message.error.code) {
-                    return;
+            C.FileUpload(accountSpaceId, '', paths[0], I.FileType.Image, (message: any) => {
+                if (!message.error.code) {
+                    UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
+						this.setState({ loading: false });
+					});
                 };
-
-                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    this.setState({ loading: false });
-                });
             });
 		});
     };
