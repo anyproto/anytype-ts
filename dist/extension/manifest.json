@@ -16,10 +16,8 @@
 		"contextMenus",
 		"nativeMessaging",
 		"tabs",
-		"scripting"
-	],
-	"host_permissions": [
-		"*://*/*"
+		"scripting",
+		"activeTab"
 	],
 	"background": {
 		"service_worker": "js/background.js"
