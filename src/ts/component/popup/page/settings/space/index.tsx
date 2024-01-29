@@ -31,7 +31,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { config } = commonStore;
 		const { localUsage, bytesLimit } = commonStore.spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
@@ -39,7 +38,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const canShare = (space.spaceType != I.SpaceType.Personal) && (UtilObject.getAccountFromParticipantId(space.creator) == account.id);
-
+		const canWrite = UtilObject.canParticipantWrite();
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
 
@@ -140,30 +139,39 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										</div>
 									</div>
 									<div className="side right">
-										<Button onClick={() => onPage('spaceStorageManager')} text={translate('popupSettingsSpaceIndexStorageManageFiles')} color="blank" className="c28" />
+										{canWrite ? (
+											<Button 
+												onClick={() => onPage('spaceStorageManager')} 
+												text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
+												color="blank" 
+												className="c28" 
+											/>
+										) : ''}
 									</div>
 								</div>
 
 								<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
 							</div>
 
-							<div className="item">
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate('commonHomepage')} />
-										<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
-									</div>
+							{canWrite ? (
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('commonHomepage')} />
+											<Label text={translate('popupSettingsSpaceIndexHomepageDescription')} />
+										</div>
 
-									<div className="side right">
-										<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
-											<div className="item">
-												<div className="name">{home ? home.name : translate('commonSelect')}</div>
+										<div className="side right">
+											<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+												<div className="item">
+													<div className="name">{home ? home.name : translate('commonSelect')}</div>
+												</div>
+												<Icon className="arrow black" />
 											</div>
-											<Icon className="arrow black" />
 										</div>
 									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="item">
 								<div className="sides">
@@ -190,17 +198,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceIndexIntegrations`)} />
 						<div className="sectionContent">
 
-							<div className="item" onClick={() => onPage('importIndex')}>
-								<div className="sides">
-									<div className="side left">
-										<Icon className="settings-import" />
-										<Title text={translate(`popupSettingsSpaceIndexImport`)} />
-									</div>
-									<div className="side right">
-										<Icon className="arrow" />
+							{canWrite ? (
+								<div className="item" onClick={() => onPage('importIndex')}>
+									<div className="sides">
+										<div className="side left">
+											<Icon className="settings-import" />
+											<Title text={translate(`popupSettingsSpaceIndexImport`)} />
+										</div>
+										<div className="side right">
+											<Icon className="arrow" />
+										</div>
 									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="item" onClick={() => onPage('exportIndex')}>
 								<div className="sides">
