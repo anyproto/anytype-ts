@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, IconObject, ObjectName, Button, Icon } from 'Component';
-import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon, UtilObject } from 'Lib';
-import { blockStore, authStore, commonStore, dbStore, detailStore, popupStore } from 'Store';
+import { Title, IconObject, ObjectName, Icon } from 'Component';
+import { I, translate } from 'Lib';
+import { authStore, commonStore, dbStore, detailStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import $ from 'jquery';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
 
 	constructor (props) {
 		super(props);
+
+		this.isOwner = this.isOwner.bind(this);
 	};
 
 	render () {
 		const spaces = dbStore.getSpaces();
-		const { account } = authStore;
 
 		const Row = (space) => {
-			console.log('SPACE: ', space)
-			const isOwner = space.creator == '_id_' + account.id;
+			const { spaceType, spaceLocalStatus } = space;
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const access = isOwner ? 'Owner' : 'View';
+			const isOwner = this.isOwner(space);
+			const access = isOwner ? translate('popupSettingsSpacesAccess2') : translate('popupSettingsSpacesAccess1');
 
 			return (
 				<tr>
@@ -29,7 +31,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							<div className="spaceName">
 								<ObjectName object={space} />
 
-								{isOwner ? (
+								{!isOwner ? (
 									<div className="creatorNameWrapper">
 										<IconObject object={creator} size={16} />
 										<ObjectName object={creator} />
@@ -39,11 +41,10 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 						</div>
 					</td>
 					<td>{access}</td>
-					<td></td>
-					<td></td>
-					<td></td>
+					<td>{translate(`popupSettingsSpacesNetwork${spaceType}`)}</td>
+					<td>{translate(`popupSettingsSpacesDevice${spaceLocalStatus}`)}</td>
 					<td className="columnMore">
-						<div className="itemMore">
+						<div onClick={(e) => this.onSpaceMore(e, space)} className="itemMore">
 							<Icon className="more" />
 						</div>
 					</td>
@@ -61,7 +62,6 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							<tr>
 								<th className="columnSpace">{translate('popupSettingsSpacesListSpace')}</th>
 								<th>{translate('popupSettingsSpacesListAccess')}</th>
-								<th>{translate('popupSettingsSpacesListSize')}</th>
 								<th>{translate('popupSettingsSpacesListNetwork')}</th>
 								<th>{translate('popupSettingsSpacesListDevice')}</th>
 								<th className="columnMore"> </th>
@@ -76,6 +76,57 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	onSpaceMore (e: React.MouseEvent, space) {
+		const { spaceType } = space;
+		const element = $(e.currentTarget);
+		const options: any[] = [
+			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
+		];
+
+		if (this.isOwner(space)) {
+			if (spaceType == I.SpaceType.Shared) {
+				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
+			};
+		} else {
+			options.push({ id: 'leave', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
+		};
+
+		menuStore.open('select', {
+			element,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options: options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'offload':
+							console.log('OFFLOAD')
+							break;
+
+						case 'leave':
+							console.log('LEAVE')
+							break;
+
+						case 'deleteFromNetwork':
+							console.log('DELETE')
+							break;
+					};
+				}
+			}
+		});
+	};
+
+	isOwner (space: any) {
+		const { account } = authStore;
+		const { info } = account;
+		const { profileObjectId } = info;
+		const creator = detailStore.get(Constant.subId.space, space.creator);
+		const { identityProfileLink } = creator;
+
+		return identityProfileLink == profileObjectId;
 	};
 
 });
