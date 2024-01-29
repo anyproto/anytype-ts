@@ -37,7 +37,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const canShare = (space.spaceType != I.SpaceType.Personal) && (UtilObject.getAccountFromParticipantId(space.creator) == account.id);
+		const canShare = (space.spaceType != I.SpaceType.Personal) /* && UtilObject.isSpaceOwner(space.creator) */;
 		const canWrite = UtilObject.canParticipantWrite();
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;

@@ -396,7 +396,7 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
@@ -404,7 +404,7 @@ class UtilData {
 	};
 
 	participantRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys)
+		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
 	};
 
 	createSession (callBack?: (message: any) => void) {

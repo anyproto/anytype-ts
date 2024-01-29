@@ -4,7 +4,7 @@ import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag,
 import { I, C, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, popupStore, commonStore } from 'Store';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
+import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
 
@@ -13,7 +13,6 @@ interface State {
 };
 
 const HEIGHT = 64;
-const LIMIT = 3;
 const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
@@ -41,7 +40,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error } = this.state;
-
 		const memberOptions = this.getMemberOptions();
 		const length = this.team.length;
 
@@ -138,33 +136,27 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					{this.cache ? (
 						<div id="list" className="rows">
-							<InfiniteLoader
-								isRowLoaded={({ index }) => !!this.team[index]}
-								loadMoreRows={() => {}}
-								rowCount={length}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered, registerChild }) => {
-									return (
-										<AutoSizer className="scrollArea">
-											{({ width, height }) => (
-												<List
-													ref={ref => this.refList = ref}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													deferredMeasurmentCache={this.cache}
-													rowCount={length}
-													rowHeight={HEIGHT}
-													onRowsRendered={onRowsRendered}
-													rowRenderer={rowRenderer}
-													onScroll={this.onScroll}
-													overscanRowCount={LIMIT}
-												/>
-											)}
-										</AutoSizer>
-									);
-								}}
-							</InfiniteLoader>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+								{({ height, isScrolling, registerChild, scrollTop }) => (
+									<AutoSizer disableHeight={true} className="scrollArea">
+										{({ width }) => (
+											<List
+												ref={ref => this.refList = ref}
+												autoHeight={true}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
+												deferredMeasurmentCache={this.cache}
+												rowCount={length}
+												rowHeight={HEIGHT}
+												rowRenderer={rowRenderer}
+												onScroll={this.onScroll}
+												isScrolling={isScrolling}
+												scrollTop={scrollTop}
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</WindowScroller>
 						</div>
 					) : ''}
 				</div>
@@ -194,10 +186,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		this.resize();
-
-		if (this.refList && this.top) {
-			this.refList.scrollToPosition(this.top);
-		};
 	};
 
 	onScroll ({ scrollTop }) {
@@ -287,12 +275,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	
 	resize () {
 		const { position } = this.props;
-		const node = $(this.node);
-		const list = node.find('#list');
-		const length = this.team.length;
-		const height = Math.min(HEIGHT * LIMIT, Math.max(HEIGHT, length * HEIGHT));
 
-		list.css({ height });
+		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
+		};
+
 		position();
 	};
 });
