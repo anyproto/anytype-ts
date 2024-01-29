@@ -8,10 +8,15 @@
 	}
 
 	.block.blockEmbed { 
+		> .wrapContent { border-radius: 8px; }
+		> .wrapContent {
+			.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
+		}
+
 		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
-		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
+		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 8px; }
 		.wrap.isEditing {
-			.empty { padding-bottom: 18px; }
+			.empty { padding: 0px 0px 16px 0px; }
 			.preview { display: none; }
 			.editableWrap, .icon.source { display: block; }
 			.select { display: inline-block; }
@@ -23,6 +28,8 @@
 			.preview, .icon.source { display: none; }
 			.editableWrap { margin: 0px; }
 		}
+
+		.empty { padding: 6px 8px; }
 
 		.selectWrap { text-align: left; }
 		.selectWrap {

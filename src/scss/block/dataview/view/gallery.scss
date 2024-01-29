@@ -25,14 +25,14 @@
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
-				.selectable.isSelectionSelected::after { border-radius: 12px; }
+				.selectable.isSelectionSelected::after { border-radius: 8px; }
 
 				.selectable { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 12px 12px 0px 0px; overflow: hidden;
+					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
 				}
 
 				.cover {

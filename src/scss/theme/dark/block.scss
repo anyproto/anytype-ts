@@ -112,16 +112,23 @@
         }
     }
 
+	/* BlockEmbed */
+
+	.block.blockEmbed {
+		.empty { color: var(--color-text-secondary); }
+		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
+	}
+
     /* BlockText */
 
-    .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
-    .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
+    .block.blockText.textCallout > .wrapContent { background: var(--color-shape-highlight-medium); }
+    .block.blockText.textCode > .wrapContent { background: var(--color-shape-highlight-medium); }
 
     /* BlockBookmark */
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-        .inner { border-color: transparent; }
+        .inner { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
     }
 
 	/* BlockTable */

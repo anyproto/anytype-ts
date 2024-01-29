@@ -160,6 +160,14 @@ html.themeDark {
     }
 
     .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
+	.input-drag {
+		.fill { background: #fff; }
+		.icon { border-color: #fff; }
+	}
+
+	.dragWrap {
+		.number { color: #fff; }
+	}
 
     .listPreviewObject {
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
