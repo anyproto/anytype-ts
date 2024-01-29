@@ -63,7 +63,7 @@
 		}
 	}
 
-	.block.blockMedia > .wrapContent { border-radius: 6px; }
+	.block.blockMedia > .wrapContent { border-radius: 8px; }
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
 	.block.blockMedia.isReadonly {
@@ -90,11 +90,11 @@
 	}
 
 	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: var(--color-shape-tertiary); }
-	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
+	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 8px; overflow: hidden; }
 
-	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 	.block.blockMedia.isPdf.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
 	.block.blockMedia.isImage.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
 	.block.blockMedia.isVideo.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
-	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 6px; }
+	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; }
 }
