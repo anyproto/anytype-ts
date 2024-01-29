@@ -1871,11 +1871,12 @@ export const SpaceJoinCancel = (spaceId: string, cid: string, key: string, callB
 	dispatcher.request(SpaceJoinCancel.name, request, callBack);
 };
 
-export const SpaceRequestApprove = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
+export const SpaceRequestApprove = (spaceId: string, identity: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.RequestApprove.Request();
 
 	request.setSpaceid(spaceId);
 	request.setIdentity(identity);
+	request.setPermissions(permissions);
 
 	dispatcher.request(SpaceRequestApprove.name, request, callBack);
 };

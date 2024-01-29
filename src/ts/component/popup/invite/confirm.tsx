@@ -59,7 +59,7 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 			return;
 		};
 
-		C.SpaceRequestApprove(spaceId, identity, (message: any) => {
+		C.SpaceRequestApprove(spaceId, identity, permissions, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
