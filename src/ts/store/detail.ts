@@ -321,8 +321,6 @@ class DetailStore {
 		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
 
-		//object.permissions = I.ParticipantPermissions.Reader;
-
 		delete(object.participantPermissions);
 		delete(object.participantStatus);
 
