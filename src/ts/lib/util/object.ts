@@ -89,6 +89,11 @@ class UtilObject {
 		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
+	isSpaceOwner (participantId: string): boolean {
+		const { account } = authStore;
+		return account ? this.getAccountFromParticipantId(participantId) == account.id : false;
+	};
+
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
