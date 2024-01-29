@@ -642,23 +642,6 @@
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
-	"popupSettingsSpacesAccess0": "View",
-	"popupSettingsSpacesAccess1": "Edit",
-	"popupSettingsSpacesAccess2": "Owner",
-
-	"popupSettingsSpacesDevice0": "Unknown",
-	"popupSettingsSpacesDevice1": "Loading",
-	"popupSettingsSpacesDevice2": "Ok",
-	"popupSettingsSpacesDevice3": "Missing",
-	"popupSettingsSpacesDevice4": "Error",
-	"popupSettingsSpacesDevice5": "RemoteWaitingDeletion",
-	"popupSettingsSpacesDevice6": "RemoteDeleted",
-	"popupSettingsSpacesDevice7": "Deleted",
-
-	"popupSettingsSpacesNetwork0": "Private",
-	"popupSettingsSpacesNetwork1": "Personal",
-	"popupSettingsSpacesNetwork2": "Shared",
-
 	"popupSettingsSpacesMenuMoreOffload": "Offload from the device",
 	"popupSettingsSpacesMenuMoreLeave": "Leave and unjoin space",
 	"popupSettingsSpacesMenuMoreDeleteFromNetwork": "Delete from the network",
@@ -1701,6 +1684,20 @@
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>\"%s\"</b> space",
 
 	"notificationButtonSpace": "Go to Space",
-	"notificationButtonRequest": "View request"
+	"notificationButtonRequest": "View request",
+
+	"participantPermissions0": "Read",
+	"participantPermissions1": "Write",
+	"participantPermissions2": "Owner",
+	"participantPermissions3": "No access",
+
+	"spaceStatus0": "Unknown",
+	"spaceStatus1": "Loading",
+	"spaceStatus2": "Ok",
+	"spaceStatus3": "Missing",
+	"spaceStatus4": "Error",
+	"spaceStatus5": "RemoteWaitingDeletion",
+	"spaceStatus6": "RemoteDeleted",
+	"spaceStatus7": "Deleted"
 
 }

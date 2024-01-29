@@ -36,9 +36,9 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							</div>
 						</div>
 					</td>
-					<td>{translate(`popupSettingsSpacesAccess${creator.permissions}`)}</td>
-					<td>{translate(`popupSettingsSpacesNetwork${space.spaceType}`)}</td>
-					<td>{translate(`popupSettingsSpacesDevice${space.spaceLocalStatus}`)}</td>
+					<td>{translate(`participantPermissions${creator.permissions}`)}</td>
+					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
+					<td>{translate(`spaceStatus${space.spaceLocalStatus}`)}</td>
 
 					<td className="columnMore">
 						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
