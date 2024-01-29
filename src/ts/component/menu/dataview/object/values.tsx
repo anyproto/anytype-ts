@@ -196,14 +196,15 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(rootId, it, []));
+		
+		if (valueMapper) {
+			value = value.map(valueMapper);
+		};
+
 		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (!config.debug.ho) {
 			value = value.filter(it => !it.isHidden);
-		};
-
-		if (valueMapper) {
-			value = value.map(valueMapper);
 		};
 
 		if (!value.length) {
