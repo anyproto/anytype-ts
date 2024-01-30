@@ -2,6 +2,9 @@
 
 .pageMainStore {
 	.content { height: 100%; padding-top: 40px; }
+	.tagItem { 
+		@include text-small; background: var(--color-shape-highlight-medium); color: var(--color-text-secondary); transition: $transitionAllCommon;
+	}
 
 	.body { display: flex; flex-direction: column; }
 	.body {
@@ -13,17 +16,12 @@
 			.filter { max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid var(--color-shape-primary); border-radius: 10px; padding: 0px; text-align: center; }
 			.filter {
 				.line { display: none; }
-				.filterInputWrap { height: 100%; width: auto; }
+				.filterInputWrap { height: 100%; }
 				.inner { height: 100%; text-align: left; padding: 0px 16px; justify-content: center; }
 
-				.input { height: 100%; line-height: 48px; @include text-paragraph; }
+				.input { display: block; height: 100%; line-height: 48px; @include text-paragraph; }
 				.input:empty { display: none; }
-				.placeholder { position: static; @include text-paragraph; }
-			}
-			.filter.isFocused, .filter.active {
-				.input { display: block; }
-				.placeholder { position: absolute; }
-				.filterInputWrap { width: 100%; }
+				.placeholder { position: absolute; @include text-paragraph; }
 			}
 
 			@media (max-width: 960px) {
@@ -90,6 +88,38 @@
 			.item:hover {
 				.buttons {
 					.button, .icon { opacity: 1; }
+				}
+			}
+		}
+	}
+
+	.wrapper.usecase {
+		.body {
+			.tabs { gap: 8px; flex-wrap: wrap; }
+			.tabs {
+				.tab { padding: 0px; font-weight: 400; line-height: 18px; }
+				.tab:hover, .tab.active {
+					.tagItem { color: #d3720d !important; background: #ffEcc8 !important; }
+				}
+			}
+
+			.items {
+				.item { display: block; line-height: 1em; }
+				.item {
+					.picture { 
+						padding: 16px; border-radius: 4px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-shape-highlight-light);
+						height: 300px; margin: 0px 0px 12px 0px; 
+					}
+					.picture {
+						.inner { width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: 4px; }
+					}
+
+					.bullet { width: 4px; height: 4px; margin: 0px 6px; border-radius: 50%; background: var(--color-text-secondary); }
+
+					.info { @include text-small; display: flex; flex-direction: row; align-items: center; margin: 0px 0px 4px 0px; color: var(--color-text-secondary); }
+					.name { @include text-header2; @include clamp1; margin: 0px 0px 4px 0px; }
+					.description { @include text-small; @include clamp2; margin: 0px 0px 12px 0px; color: var(--color-text-secondary); }
+					.categories { @include text-small; gap: 8px; display: flex; flex-direction: row; align-items: center; }
 				}
 			}
 		}

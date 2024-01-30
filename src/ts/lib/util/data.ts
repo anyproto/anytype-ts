@@ -927,6 +927,15 @@ class UtilData {
 		return ret;
 	};
 
+	getUsecaseAuthor (name: string): string {
+		name = String(name || '');
+
+		let a: any = {};
+		try { a = new URL(name); } catch (e) {};
+
+		return String(a.pathname || '').replace(/^\//, '');
+	};
+
 };
 
 export default new UtilData();

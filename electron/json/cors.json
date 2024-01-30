@@ -119,7 +119,8 @@
 		"wss://*.biliapi.net",
 		"https://sketchfab.com",
 		"https://media.sketchfab.com",
-		"https://sentry.io"
+		"https://sentry.io",
+		"https://*.any.coop"
 	],
 
 	"script-src-elem": [

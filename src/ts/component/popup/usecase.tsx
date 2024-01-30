@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer, analytics } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer, analytics, UtilData } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
@@ -32,7 +32,7 @@ class PopupUsecase extends React.Component<I.Popup, State> {
 	render () {
 		const { isLoading, error } = this.state;
 		const object = this.getObject();
-		const author = this.getAuthor();
+		const author = UtilData.getUsecaseAuthor(object.author);
 		const screenshots = object.screenshots || [];
 		const categories = (object.categories || []).slice(0, 10);
 

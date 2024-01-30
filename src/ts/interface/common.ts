@@ -187,18 +187,18 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 0,
-	Delete 		= 1,
-	Pmf 		= 2,
-	Object 		= 3,
+	Register		 = 0,
+	Delete			 = 1,
+	Pmf				 = 2,
+	Object			 = 3,
 };
 
 export enum SliceOperation {
-	None	 = 0,
-	Add		 = 1,
-    Move	 = 2,
-	Remove	 = 3,
-    Replace	 = 4,
+	None			 = 0,
+	Add				 = 1,
+    Move			 = 2,
+	Remove			 = 3,
+    Replace			 = 4,
 };
 
 export interface Dataset {
@@ -221,14 +221,15 @@ export interface Dataset {
 };
 
 export enum FileSyncStatus {
-	Unknown		 = 0,
-	Synced		 = 1,
-	NotSynced	 = 2,
+	Unknown			 = 0,
+	Synced			 = 1,
+	NotSynced		 = 2,
 };
 
 export enum StoreTab {
-	Type = 'type',
-	Relation = 'relation',
+	Usecase			 = 'usecase',
+	Type			 = 'type',
+	Relation		 = 'relation',
 };
 
 export enum BannerType {
@@ -239,16 +240,16 @@ export enum BannerType {
 };
 
 export enum ObjectManagerItemInfo {
-	Description 	= 0,
-	FileSize 		= 1,
+	Description		 = 0,
+	FileSize		 = 1,
 };
 
 export enum ObjectManagerPopup {
-	Favorites 	= 0,
+	Favorites		 = 0,
 };
 
 export enum NetworkMode {
-	Default		 = 0,
-	Local		 = 1,
-	Custom		 = 2,
+	Default			 = 0,
+	Local			 = 1,
+	Custom			 = 2,
 };

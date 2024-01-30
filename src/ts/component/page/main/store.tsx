@@ -1,11 +1,13 @@
 import * as React from 'react';
 import raf from 'raf';
+import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
+import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch, Tag } from 'Component';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, Renderer } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 interface State {
 	loading: boolean;
@@ -15,10 +17,6 @@ enum View {
 	Marketplace = 'marketplace',
 	Library = 'library',
 };
-
-const cmd = keyboard.cmdSymbol();
-const alt = keyboard.altSymbol();
-
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
@@ -40,6 +38,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	midHeight = 0;
 	filter: string = '';
 	timeoutFilter = 0;
+	usecases: any[] = [];
+	categories: any[] = [];
+	category: any = null;
+	usecaseLoaded: boolean = false;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -60,12 +62,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		const { isPopup } = this.props;
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
 		const length = items.length;
 		const tabs = [
+			{ id: I.StoreTab.Usecase, name: translate('pageMainStoreExperiences') },
 			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
 			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
 		];
@@ -79,6 +84,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let iconSize = 0;
 
 		switch (this.tab) {
+			case I.StoreTab.Usecase:
+				title = translate('pageMainStoreExperiencesTitle');
+				placeholder = translate('pageMainStoreTypesPlaceholder');
+				textService = translate('pageMainStoreTypesService');
+				textInstalled = translate('pageMainStoreTypeInstalled');
+				textInstall = translate('pageMainStoreTypeInstall');
+				textEmpty = translate('pageMainStoreTypeEmpty');
+				iconSize = 18;
+				break;
+
 			case I.StoreTab.Type:
 				title = translate('pageMainStoreTypesTitle');
 				placeholder = translate('pageMainStoreTypesPlaceholder');
@@ -119,19 +134,34 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		const TabList = (item: any) => (
 			<div className="tabs">
-				{views.map((item: any, i: number) => (
-					<div 
-						key={item.id} 
-						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={(e: any) => { this.onView(item.id, true); }}
-					>
-						{item.name}
-					</div>
-				))}
+				{views.map((item: any, i: number) => {
+					const cn = [ 'tab' ];
+
+					if (item.id == this.view) {
+						cn.push('active');
+					};
+
+					let name = null;
+					if (this.tab == I.StoreTab.Usecase) {
+						name = <Tag key={i} text={item.name} />;
+					} else {
+						name = item.name;
+					};
+
+					return (
+						<div 
+							key={item.id} 
+							className={cn.join(' ')} 
+							onClick={() => this.onView(item.id, true)}
+						>
+							{name}
+						</div>
+					);
+				})}
 			</div>
 		);
 
-		const Item = (item: any) => {
+		const ItemCommon = (item: any) => {
 			const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 			const icons: any[] = [];
@@ -174,6 +204,40 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			);
 		};
 
+		const ItemUsecase = (item: any) => {
+			const screenshots = item.screenshots || [];
+			const author = UtilData.getUsecaseAuthor(item.author);
+
+			let picture = '';
+			if (screenshots.length) {
+				picture = screenshots[0];
+			};
+
+			return (
+				<div className="item">
+					<div className="picture">
+						<div className="inner" style={{ backgroundImage: `url('${picture}')` }} />
+					</div>
+
+					<div className="info">
+						{author ? <div className="author" onClick={() => Renderer.send('urlOpen', item.author)}>@{author}</div> : ''}
+						{/*
+						<div className="bullet" />
+						<div className="cnt">23K installs</div>
+						*/}
+					</div>
+
+					<div className="name">{item.title}</div>
+					<div className="description">{item.description}</div>
+					<div className="categories">
+						{(item.categories || []).map((name: string, i: number) => (
+							<Tag key={i} text={name} />
+						))}
+					</div>
+				</div>
+			);
+		};
+
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
 			const cn = [ 'row' ];
@@ -202,7 +266,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 							if (item.id == 'empty') {
 								return <EmptySearch key={i} text={textEmpty} />;
 							};
-							return <Item key={i} {...item} />;
+							if (this.tab == I.StoreTab.Usecase) {
+								return <ItemUsecase key={i} {...item} />;
+							} else {
+								return <ItemCommon key={i} {...item} />;
+							};
 						})}
 					</div>
 				</CellMeasurer>
@@ -212,7 +280,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'wrapper', this.tab, this.view ].join(' ')}
+				className={[ 'wrapper', this.tab, `view-${this.view}` ].join(' ')}
 			>
 				<Header component="mainStore" {...this.props} tabs={tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
 
@@ -308,13 +376,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
-	getRowHeight (item: any) {
+	getRowHeight (item: any): number {
+		const dh = this.tab == I.StoreTab.Usecase ? 450 : 64;
+
 		let h = 0;
 		switch (item.id) {
 			case 'mid':		 h = this.midHeight || 305; break;
 			case 'tabs':	 h = 52; break;
 			case 'empty':	 h = 190; break;
-			default:		 h = 64; break;
+			default:		 h = dh; break;
 		};
 		return h;
 	};
@@ -344,7 +414,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 	};
 
-	onView (id: View, isInner: boolean, isChangeTab: boolean = false) {
+	onView (id: any, isInner: boolean, isChangeTab: boolean = false) {
 		if (!isChangeTab && (this.view == id)) {
 			return;
 		};
@@ -356,6 +426,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 
 		Storage.set('viewStore', id);
+
+		if ((this.tab == I.StoreTab.Usecase) && this.usecaseLoaded) {
+			this.forceUpdate();
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -454,6 +528,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
+		if (this.tab == I.StoreTab.Usecase) {
+			this.loadUsecase();
+			return;
+		};
+
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
@@ -507,6 +586,37 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
+	loadUsecase () {
+		if (this.usecaseLoaded) {
+			return;
+		};
+
+		$.ajax({
+			url: Url.usecases,
+			method: 'GET',
+			success: (data) => {
+				this.usecaseLoaded = true;
+				this.usecases = [];
+				this.categories = [
+					{ id: '', name: translate('commonAll'), items: [] }
+				];
+
+				const categories = data.categories || {};
+				const usecases = data.experiences || {};
+
+				for (const name in categories) {
+					this.categories.push({ id: sha1(name), name, items: categories[name] });
+				};
+
+				for (const name in usecases) {
+					this.usecases.push(usecases[name]);
+				};
+
+				this.forceUpdate();
+			}
+		});
+	};
+
 	getTabLayout (): I.ObjectLayout {
 		let layout = null;
 
@@ -521,8 +631,20 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getItems () {
 		const identity = UtilObject.getIdentityId();
 		const { loading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 		const limit = this.getLimit();
+
+		let records: any[] = [];
+		if (this.tab == I.StoreTab.Usecase) {
+			records = this.usecases;
+
+			if (this.view) {
+				const category = this.categories.find(it => it.id == this.view);
+				records = records.filter(it => category.items.includes(it.name));
+			};
+
+		} else {
+			records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		};
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;
@@ -564,6 +686,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getViews (): any[] {
+		if (this.tab == I.StoreTab.Usecase) {
+			return this.categories;
+		};
+
 		const views: any[] = [];
 
 		switch (this.tab) {
