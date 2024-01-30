@@ -29,6 +29,7 @@
 		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 		.cellContent {
 			.more { vertical-align: top; }
+			.empty { display: block; }
 		}
 
 		.cellContent.c-object {
