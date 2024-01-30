@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, popupStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
@@ -20,7 +20,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	cid = '';
 	key = '';
 	node: any = null;
-	team: any[] = [];
 	cache: any = null;
 	top = 0;
 	refInput = null;
@@ -40,8 +39,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error } = this.state;
+		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
-		const length = this.team.length;
+		const length = members.length;
 
 		const Member = (item: any) => {
 			let tag = null;
@@ -88,7 +88,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		const rowRenderer = (param: any) => {
-			const item: any = this.team[param.index];
+			const item: any = members[param.index];
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -171,21 +171,23 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	componentDidMount() {
-		this.load();
+		this.updateCache();
 		this.onGenerate(true);
 	};
 
 	componentDidUpdate() {
-		if (!this.cache) {
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT,
-				keyMapper: i => (this.team[i] || {}).id,
-			});
-			this.forceUpdate();
-		};
-
 		this.resize();
+	};
+
+	updateCache () {
+		const members = this.getMembers();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (members[i] || {}).id,
+		});
+		this.forceUpdate();
 	};
 
 	onScroll ({ scrollTop }) {
@@ -194,22 +196,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
-	load () {
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
-		];
+	getMembers () {
+		const subId = Constant.subId.participant;
 
-		UtilData.search({
-			filters,
-			sorts: [],
-		}, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-			this.forceUpdate();
-		});
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 	};
 
 	getLink () {
