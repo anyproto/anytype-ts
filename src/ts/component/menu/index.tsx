@@ -896,13 +896,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
+
 		const refInput = this.ref.refFilter || this.ref.refName;
 		if ((this.ref.n == -1) && refInput) {
 			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
-		if (item) {
+		if (item && (undefined !== item.id)) {
 			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 
@@ -918,7 +919,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (next && (next.isDiv || next.isSection)) {
 			this.ref.n++;
-			this.setActive(items[this.ref.n], scroll);
+			if (items[this.ref.n]) {
+				this.setActive(items[this.ref.n], scroll);
+			};
 		} else {
 			this.setHover(next, scroll);
 		};

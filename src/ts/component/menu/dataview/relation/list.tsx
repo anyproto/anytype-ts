@@ -66,14 +66,14 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<span className="clickable" onClick={e => this.onClick(e, item)}>
 						<Icon className={'relation ' + Relation.className(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (
 						<Switch 
 							value={item.isVisible} 
-							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
+							onChange={(e: any, v: boolean) => this.onSwitch(e, item, v)} 
 						/>
 					) : ''}
 				</div>
@@ -298,13 +298,24 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relations = view.relations.filter(it => {
+		
+		let list = view.getRelations();
+
+		list = list.filter(it => {
+			if (!it) {
+				return false;
+			};
+
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
+			if (!relation) {
+				return false;
+			};
+
+			return !relation.isHidden || (it.relationKey == 'name');
 		});
 
-		view.relations = arrayMove(relations, oldIndex, newIndex);
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
+		list = arrayMove(list, oldIndex, newIndex);
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it.relationKey));
 
 		keyboard.disableSelection(false);
 	};

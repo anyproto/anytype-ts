@@ -33,7 +33,6 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 					<DropTarget 
 						{...this.props}
 						className="emptyToggle"
-						isTargetColumn={true} 
 						rootId={rootId} 
 						id={block.id} 
 						style={block.content.style} 

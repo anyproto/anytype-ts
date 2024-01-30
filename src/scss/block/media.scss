@@ -24,7 +24,7 @@
 
 		.pdfWrapper { 
 			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary);
-			border-radius: 0px; display: inline-flex; flex-direction: column; gap: 6px 0px;
+			border-radius: 8px; display: inline-flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {
 			.info { @include text-common; flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
@@ -63,7 +63,7 @@
 		}
 	}
 
-	.block.blockMedia > .wrapContent { border-radius: 6px; }
+	.block.blockMedia > .wrapContent { border-radius: 8px; }
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
 	.block.blockMedia.isReadonly {
@@ -90,11 +90,11 @@
 	}
 
 	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: var(--color-shape-tertiary); }
-	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
+	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 8px; overflow: hidden; }
 
-	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 	.block.blockMedia.isPdf.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
 	.block.blockMedia.isImage.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
 	.block.blockMedia.isVideo.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
-	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 6px; }
+	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; }
 }

@@ -67,10 +67,10 @@
 }
 
 .header.authIndex { height: 38px; }
-.header.authIndex {
-	.logo {
-		width: 90px; height: 13px; background: url('~img/logo/capital.svg') no-repeat; display: inline-block; vertical-align: middle;
-		background-position: center center; background-size: 100% 100%; transition: none;
+
+html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
+	.header.authIndex {
+		.icon.settings { display: none; }
 	}
 }
 

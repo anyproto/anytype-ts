@@ -244,18 +244,22 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const isLocal = filter.match(/^file:/) || UtilCommon.matchLocalPath(filter);
 		const isUrl = UtilCommon.matchUrl(filter) || UtilCommon.matchDomain(filter);
-		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
+		const items = [].concat(this.items);
+		const sections: any[] = [];
 
-		const buttons: any[] = [
-			isUrl || isLocal ? { id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal } : null,
-			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
-			items.length ? { isDiv: true } : null,
-		].filter(it => it);
+		if (isLocal || isUrl) {
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal });
+		};
 
-		const sections: any[] = [
-			{ id: I.MarkType.Link, name: '', children: buttons },
-			items.length ? { id: I.MarkType.Object, name: translate('commonObjects'), children: items } : null,
-		].filter(it => it);
+		if (items.length) {
+			sections.push({ id: I.MarkType.Object, children: items.map(it => ({ ...it, isBig: true })) });
+		};
+
+		sections.push({ 
+			id: I.MarkType.Link, name: '', children: [
+				{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
+			] 
+		});
 
 		return UtilMenu.sectionsMap(sections);
 	};
@@ -265,6 +269,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		
 		let items: any[] = [];
 		for (const section of sections) {
+			if (items.length && section.children.length) {
+				items.push({ isDiv: true });
+			};
 			if (withSections && section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};

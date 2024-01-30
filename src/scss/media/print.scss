@@ -4,23 +4,27 @@ html.printMedia {
 
 	body { margin: 0px; -webkit-print-color-adjust: exact; }
 
-	#navigationPanel { display: none !important; }
 	#selection * { user-select: text; }
-	#sidebar { display: none; }
-	.sidebarDummy { display: none; }
-	.progress { display: none; }
-	.toast { display: none !important; }
 	.overPopup { overflow: visible !important; }
 
-	#drag, #previewLink, .menu, 
+	#drag, 
+	#previewLink, 
+	.menu, 
 	.controlButtons, 
-	.header, .footer 
+	.header, 
+	.footer,
+	.notifications,
+	#navigationPanel,
+	#sidebar,
+	.sidebarDummy,
+	.progress,
+	.toast,
+	.focusable.isFocused::before
 	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }
 
 	.focusable.isFocused { background: none !important; }
-	.focusable.isFocused::before { display: none; }
 
 	.popups {
 		.popup { position: relative; }

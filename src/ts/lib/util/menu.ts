@@ -82,7 +82,6 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 			{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
 			{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
-			{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
 			{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
 			{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
@@ -91,12 +90,13 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Bilibili, name: 'Bilibili' },
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
+			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
-				{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
 		};
 
@@ -113,10 +113,12 @@ class UtilMenu {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
+		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
+
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
@@ -149,7 +151,7 @@ class UtilMenu {
 		for (const type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
 				name: type.name || UtilObject.defaultName('Page'), 
@@ -225,7 +227,7 @@ class UtilMenu {
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
+			items.push({ id: `color-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isTextColor: true });
 		};
 		return items;
 	};
@@ -235,7 +237,7 @@ class UtilMenu {
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
+			items.push({ id: `bgColor-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isBgColor: true });
 		};
 		return items;
 	};
@@ -266,9 +268,9 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Relation },
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
-			...it, 
-			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
-			name: translate('layout' + it.id),
+			...it,
+			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			name: translate(`layout${it.id}`),
 		}));
 	};
 
@@ -339,8 +341,8 @@ class UtilMenu {
 			{ id: I.RelationType.Email },
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
-			it.name = translate('relationName' + it.id);
-			it.icon = 'relation ' + Relation.className(it.id);
+			it.name = translate(`relationName${it.id}`);
+			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
 		});
 	};

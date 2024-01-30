@@ -32,6 +32,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	_isMounted = false;
 	text = '';
 	timeoutChange = 0;
+	timeoutScroll = 0;
 	node = null;
 	refEditable = null;
 	refType = null;
@@ -174,12 +175,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 		this.init();
-		this.onScroll();
 	};
 
 	componentDidUpdate () {
 		this.init();
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -189,6 +188,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
+		window.clearTimeout(this.timeoutScroll);
 	};
 
 	init () {
@@ -198,10 +198,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setValue(this.text);
 		this.setContent(this.text);
 		this.rebind();
+		this.onScroll();
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
@@ -239,7 +240,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		});
 
 		if (!UtilEmbed.allowAutoRender(processor)) {
-			win.on(`scroll.${block.id}`, () => this.onScroll());
+			const container = UtilCommon.getScrollContainer(isPopup);
+			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
@@ -249,27 +251,39 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		const { block } = this.props;
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
+		const { block, isPopup } = this.props;
+		const container = UtilCommon.getScrollContainer(isPopup);
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+		container.off(`scroll.${block.id}`);
 	};
 
 	onScroll () {
-		if (!this._isMounted) {
+		const { block, isPopup } = this.props;
+		const { processor } = block.content;
+
+		if (UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
-		const node = $(this.node);
-		const win = $(window);
-		const { wh } = UtilCommon.getWindowDimensions();
-		const st = win.scrollTop();
-		const { top } = node.offset();
-		const bot = top + node.height();
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
 
-		if ((bot > st) && (top < st + wh)) {
-			this.setShowing(true);
-		};
+			const container = UtilCommon.getScrollContainer(isPopup);
+			const node = $(this.node);
+			const ch = container.height();
+			const st = container.scrollTop();
+			const rect = node.get(0).getBoundingClientRect() as DOMRect;
+			const top = rect.top - (isPopup ? container.offset().top : 0);
+
+			if (top <= st + ch) {
+				this.setShowing(true);
+			};
+		}, 50);
 	};
 
 	getContainerId () {
@@ -597,7 +611,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
-				let text = this.text;
 				let allowScript = false;
 
 				if (UtilEmbed.allowPresentation(processor)) {
@@ -628,6 +641,18 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
+					// Fix Bilibili schemeless urls and autoplay
+					if (block.isEmbedBilibili()) {
+						if (text.match(/src="\/\/player[^"]+"/)) {
+							text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+						};
+
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
+					};
+
+					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -637,22 +662,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						this.refType?.setValue(type);
 					};
 
-					if (block.isEmbedTelegram()) {
-						const m = text.match(/post="([^"]+)"/);
-
-						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
-					};
-
-					if (block.isEmbedGithubGist()) {
-						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (block.isEmbedGithubGist()) {
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					};
+
+					if (block.isEmbedTelegram()) {
+						const m = text.match(/post="([^"]+)"/);
+
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
 					if (allowScript) {
@@ -663,7 +688,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, sanitizeParam);
+						data.html = this.sanitize(text, allowScript);
 					};
 
 					iw.postMessage(data, '*');
@@ -699,7 +724,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(text, { 
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
@@ -780,7 +805,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
 					try {
-						value.html(res.renderSVGElement(this.text));
+						value.html(res.renderSVGElement(text));
 					} catch (e) {
 						console.error(e);
 						error.text(e.toString()).show();
@@ -870,7 +895,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(`.block.blockEmbed`).addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
 		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
@@ -922,7 +947,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(`.block.blockEmbed`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, width: w } },
@@ -961,6 +986,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		console.log('onResizeInit');
 	};
 
+	sanitize (text: string, allowScript: boolean): string {
+		const param: any = { 
+			ADD_TAGS: [ 'iframe' ],
+			ADD_ATTR: [
+				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+			],
+		};
+
+		if (allowScript) {
+			param.FORCE_BODY = true;
+			param.ADD_TAGS.push('script');
+		};
+
+		return DOMPurify.sanitize(text, param);
+	};
+
 	resize () {
 		const { block } = this.props;
 		const { processor } = block.content;
@@ -969,10 +1010,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			const node = $(this.node);
 			const value = node.find('#value');
 
-			console.log(value.width());
-
 			this.setState({ width: value.width() });
 		};
+
+		this.onScroll();
 	};
 
 });

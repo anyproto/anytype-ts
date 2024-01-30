@@ -30,10 +30,7 @@ import PageExportMarkdown from './page/settings/export/markdown';
 import PageSpaceIndex from './page/settings/space/index';
 import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
-import PageSpaceInvite from './page/settings/space/invite';
-import PageSpaceTeam from './page/settings/space/team';
-import PageSpaceLeave from './page/settings/space/leave';
-import PageSpaceRemove from './page/settings/space/remove';
+import PageSpaceShare from './page/settings/space/share';
 
 interface State {
 	loading: boolean;
@@ -66,10 +63,7 @@ const Components: any = {
 	spaceIndex:			 PageSpaceIndex,
 	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
-	spaceInvite:		 PageSpaceInvite,
-	spaceTeam:		 	 PageSpaceTeam,
-	spaceLeave:		 	 PageSpaceLeave,
-	spaceRemove:		 PageSpaceRemove,
+	spaceShare:			 PageSpaceShare,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
@@ -251,9 +245,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							id: 'spaceIndex',
 							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
-								'spaceInvite', 'spaceCreate', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'spaceCreate', 'spaceStorageManager',
 								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv',
-								'exportIndex', 'exportProtobuf', 'exportMarkdown'
+								'exportIndex', 'exportProtobuf', 'exportMarkdown',
+								'spaceShare'
 							],
 							noHeader: [ 'spaceCreate' ],
 						},

@@ -275,6 +275,11 @@ class Relation {
 				value = Number(value) || I.ObjectOrigin.None;
 				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
 			};
+
+			case 'importType': {
+				return undefined === value ? null : I.ImportType[Number(value)];
+			};
+
 		};
 		return null;
 	};
