@@ -37,7 +37,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const canShare = (space.spaceType != I.SpaceType.Personal) /* && UtilObject.isSpaceOwner(space.creator) */;
+		const canShare = (space.spaceAccessType != I.SpaceType.Personal) /* && UtilObject.isSpaceOwner(space.creator) */;
 		const canWrite = UtilObject.canParticipantWrite();
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -110,8 +110,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 
 								<Label
-									className="spaceType"
-									text={translate(`spaceType${space.spaceType}`)}
+									className="spaceAccessType"
+									text={translate(`spaceAccessType${space.spaceAccessType}`)}
 									onMouseEnter={onSpaceTypeTooltip}
 									onMouseLeave={e => Preview.tooltipHide(false)}
 								/>

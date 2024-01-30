@@ -300,14 +300,12 @@ class DetailStore {
 	};
 
 	private mapSpace (object: any) {
-		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Private;
+		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
-
-		delete(object.spaceAccessibility);
 
 		return object;
 	};

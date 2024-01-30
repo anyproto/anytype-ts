@@ -203,7 +203,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} filters={filtersObject} />
+								<ListObject 
+									{...this.props} 
+									sources={[ rootId ]} 
+									subId={subIdObject} 
+									rootId={rootId} 
+									columns={columns} 
+									filters={filtersObject} 
+								/>
 							</div>
 						</div>
 					) : ''}

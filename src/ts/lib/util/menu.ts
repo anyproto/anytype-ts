@@ -118,7 +118,7 @@ class UtilMenu {
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
@@ -151,7 +151,7 @@ class UtilMenu {
 		for (const type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
 				name: type.name || UtilObject.defaultName('Page'), 
@@ -227,7 +227,7 @@ class UtilMenu {
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
+			items.push({ id: `color-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isTextColor: true });
 		};
 		return items;
 	};
@@ -237,7 +237,7 @@ class UtilMenu {
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
+			items.push({ id: `bgColor-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isBgColor: true });
 		};
 		return items;
 	};
@@ -269,8 +269,8 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
 			...it,
-			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
-			name: translate('layout' + it.id),
+			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			name: translate(`layout${it.id}`),
 		}));
 	};
 
@@ -341,8 +341,8 @@ class UtilMenu {
 			{ id: I.RelationType.Email },
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
-			it.name = translate('relationName' + it.id);
-			it.icon = 'relation ' + Relation.className(it.id);
+			it.name = translate(`relationName${it.id}`);
+			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
 		});
 	};

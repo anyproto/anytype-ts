@@ -409,8 +409,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
+		const lang = Constant.default.interfaceLang;
 
 		let name = '';
 		if (filter) {
@@ -420,7 +422,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		let items = this.items.filter(this.filterMapper);
-		if (items.length) {
+		if (items.length && !filter) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
 
@@ -434,7 +436,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		/* Settings */
+		/* Settings and pages */
 
 		if (filter) {
 			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
@@ -460,15 +462,43 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
-				{ id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle') },
-				{ id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle') },
+				{ 
+					id: 'personal', icon: 'settings-personal', name: translate('popupSettingsPersonalTitle'),
+					aliases: [ 
+						translate('commonLanguage', lang), translate('commonLanguage'),
+						translate('commonSpelling', lang), translate('commonSpelling'),
+					] 
+				},
+				{ 
+					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle'), 
+					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
+				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },
 				{ id: 'dataManagement', icon: 'settings-storage', name: translate('popupSettingsDataManagementTitle') },
 				{ id: 'phrase', icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 
+			const pageItems: any[] = [
+				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: [ cmd, alt, 'O' ], layout: I.ObjectLayout.Graph },
+				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: [ cmd, 'O' ], layout: I.ObjectLayout.Navigation },
+			];
+
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true }));
-			const filtered = itemsImport.concat(settingsItems).filter(it => it.name.match(reg));
+			const filtered = itemsImport.concat(settingsItems).concat(pageItems).filter(it => {
+				if (it.name.match(reg)) {
+					return true;
+				};
+
+				if (it.aliases && it.aliases.length) {
+					for (const alias of it.aliases) {
+						if (alias.match(reg)) {
+							return true;
+						};
+					};
+				};
+
+				return false;
+			});
 
 			if (filtered.length) {
 				filtered.sort(UtilData.sortByName);
@@ -522,18 +552,25 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.props.close();
 
 		const filter = this.getFilter();
+		const rootId = keyboard.getRootId();
 
+		// Object
 		if (item.isObject) {
 			UtilObject.openEvent(e, { ...item, id: item.id });
-			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 		} else 
+
+		// Settings item
 		if (item.isSettings) {
 			window.setTimeout(() => {
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
 			}, Constant.delay.popup);
 		} else 
+
+		// Import action
 		if (item.isImport) {
 			Action.import(item.format, Constant.extension.import[item.format]);
+
+		// Buttons
 		} else {
 			switch (item.id) {
 				case 'add': {
@@ -546,8 +583,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 					break;
 				};
+
+				case 'graph':
+				case 'navigation': {
+					UtilObject.openEvent(e, { id: rootId, layout: item.layout });
+					break;
+				};
 			};
 		};
+
+		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 	};
 
 	getRowHeight (item: any) {

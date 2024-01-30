@@ -558,7 +558,7 @@ class Action {
 
 							if (!message.error.code) {
 								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceType });
+								analytics.event('DeleteSpace', { type: deleted.spaceAccessType });
 							};
 						});
 					};

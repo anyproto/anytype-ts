@@ -251,8 +251,8 @@ export const Mapper = {
 		Block: (obj: any): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = 'get' + UtilCommon.ucFirst(type);
-			const fm = UtilCommon.toUpperCamelCase('block-' + type);
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fm = UtilCommon.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),

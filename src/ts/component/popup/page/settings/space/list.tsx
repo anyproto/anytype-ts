@@ -76,14 +76,14 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onSpaceMore (e: React.MouseEvent, space) {
-		const { spaceType, creator } = space;
+		const { spaceAccessType, creator } = space;
 		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
 			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
 		];
 
 		if (UtilObject.isSpaceOwner(creator)) {
-			if (spaceType == I.SpaceType.Shared) {
+			if (spaceAccessType == I.SpaceType.Shared) {
 				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
 			};
 		} else {

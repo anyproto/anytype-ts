@@ -116,6 +116,9 @@
 	"commonClear": "Clear",
 	"commonNewObject": "New Object",
 	"commonCopyLink": "Copy link",
+	"commonSidebar": "Sidebar",
+	"commonLanguage": "Language",
+	"commonSpelling": "Spelling",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -1477,9 +1480,9 @@
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
-	"spaceType0": "Private Space",
-	"spaceType1": "Personal Space",
-	"spaceType2": "Shared Space",
+	"spaceAccessType0": "Private Space",
+	"spaceAccessType1": "Personal Space",
+	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
