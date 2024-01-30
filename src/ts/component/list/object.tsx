@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, UtilFile, Relation, UtilObject, translate } from 'Lib';
+import { I, C, UtilData, UtilFile, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
-import { detailStore, dbStore } from 'Store';
+import { detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Column {
@@ -69,7 +69,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			};
 
 			return (
-				<tr className={cn.join(' ')}>
+				<tr className={cn.join(' ')} onContextMenu={e => this.onContext(e, item.id)}>
 					<td className="cell">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
@@ -218,6 +218,26 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			ignoreDeleted: true,
 			ignoreWorkspace: true,
 		}, callBack);
+	};
+
+	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { subId } = this.props;
+		
+		menuStore.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ id ],
+				subId,
+				allowedLink: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 });
