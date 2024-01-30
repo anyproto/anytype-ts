@@ -124,7 +124,9 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	onRemove (e: any, item: any) {
-		this.save(this.getValueIds().filter(it => it != item.id));
+		if (item) {
+			this.save(this.getValueIds().filter(it => it != item.id));
+		};
 	};
 
 	onOver (e: any, item: any) {
@@ -162,8 +164,6 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectId, blockId } = data;
-
-		console.log(JSON.stringify(value, null, 3));
 
 		C.ObjectSetSource(objectId, value, () => {
 			if (blockId) {

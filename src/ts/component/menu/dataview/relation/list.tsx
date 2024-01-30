@@ -303,10 +303,14 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 		list = list.filter(it => {
 			if (!it) {
-				return;
+				return false;
 			};
 
 			const relation = dbStore.getRelationByKey(it.relationKey);
+			if (!relation) {
+				return false;
+			};
+
 			return !relation.isHidden || (it.relationKey == 'name');
 		});
 

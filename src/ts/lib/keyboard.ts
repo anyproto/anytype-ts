@@ -250,7 +250,7 @@ class Keyboard {
 				this.pageCreate({}, 'Shortcut');
 			});
 
-			this.shortcut(`ctrl+alt+n`, e, () => {
+			this.shortcut(`${cmd}+alt+n`, e, () => {
 				e.preventDefault();
 				this.onQuickCapture();
 			});
@@ -799,6 +799,9 @@ class Keyboard {
 	};
 
 	onQuickCapture () {
+
+		console.log('onQuickCapture', menuStore.isOpen('quickCapture'));
+
 		if (menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
@@ -1069,6 +1072,11 @@ class Keyboard {
 			pressed.push('cmd');
 		};
 
+		// Cmd + Alt + N hack
+		if (which == KeyCode.dead) {
+			pressed.push('n');
+		};
+
 		for (const item of a) {
 			const keys = item.split('+').sort();
 			
@@ -1084,6 +1092,7 @@ class Keyboard {
 			pressed = [ ...new Set(pressed) ];
 
 			const check = pressed.sort().join('+');
+
 			if (check == keys.join('+')) {
 				res = check;
 			};

@@ -188,7 +188,7 @@
 	
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout {
-		> .wrapContent { border-radius: 2px; margin: 6px 0px; background-color: var(--color-shape-tertiary); }
+		> .wrapContent { border-radius: 8px; margin: 6px 0px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
 			> .selectable { position: static; }
 			> .selectable {
@@ -209,6 +209,8 @@
 			> .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
 
 			> .children { padding-right: 16px; }
+
+			.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 		}
 	}
 	.block.blockText.textCallout.last {
@@ -219,9 +221,9 @@
 
 	.block.blockText.textCode { padding: 6px 0px; }
 	.block.blockText.textCode {
-		> .wrapContent { border-radius: 2px; background-color: var(--color-shape-tertiary); }
+		> .wrapContent { border-radius: 8px; background-color: var(--color-shape-tertiary); }
 		> .wrapContent {
-			> .selectable { border-radius: 6px; }
+			> .selectable { border-radius: 8px; }
 			> .selectable {
 				> .dropTarget { padding: 24px 0px 0px 0px; }
 				> .dropTarget {
@@ -263,7 +265,7 @@
 				}
 			}
 
-			.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 2px; }
+			.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 		}
 	}
 	.block.blockText.textCode:hover > .wrapContent > .selectable > .dropTarget > .flex {

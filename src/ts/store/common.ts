@@ -224,7 +224,7 @@ class CommonStore {
     fileUrl (hash: string) {
 		hash = String(hash || '');
 
-		return this.gateway + '/file/' + hash;
+		return `${this.gateway}/file/${hash}`;
 	};
 
     imageUrl (hash: string, width: number) {
