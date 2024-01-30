@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch, Tag } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, Renderer } from 'Lib';
-import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
+import { dbStore, blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -214,7 +214,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			};
 
 			return (
-				<div className="item">
+				<div className="item" onClick={() => popupStore.open('usecase', { data: { object: item } })}>
 					<div className="picture">
 						<div className="inner" style={{ backgroundImage: `url('${picture}')` }} />
 					</div>
@@ -609,8 +609,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				};
 
 				for (const name in usecases) {
+					const item = usecases[name];
+
+					item.size = item.fileSize;
+					delete(item.fileSize);
+
 					this.usecases.push(usecases[name]);
 				};
+
+				console.log(this.usecases);
 
 				this.forceUpdate();
 			}
@@ -639,7 +646,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 			if (this.view) {
 				const category = this.categories.find(it => it.id == this.view);
-				records = records.filter(it => category.items.includes(it.name));
+				if (category) {
+					records = records.filter(it => category.items.includes(it.name));
+				};
 			};
 
 		} else {
