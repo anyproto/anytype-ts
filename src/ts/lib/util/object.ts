@@ -167,13 +167,13 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilRouter.go('/' + route, param || {});
+		UtilRouter.go(`/${route}`, param || {});
 	};
 
 	openWindow (object: any) {
 		const route = this.route(object);
 		if (route) {
-			Renderer.send('windowOpen', '/' + route);
+			Renderer.send('windowOpen', `/${route}`);
 		};
 	};
 
