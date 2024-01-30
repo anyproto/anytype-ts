@@ -142,11 +142,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 						return (
 							<td key={`cell-${column.relationKey}`} className="cell" style={{ width: `${width}%` }}>
-								{content ? (
-									<div className={cnc.join(' ')} onClick={onClick}>
-										{content}
-									</div>
-								) : ''}
+								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
 							</td>
 						);
 					})}
