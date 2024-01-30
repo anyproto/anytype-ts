@@ -899,9 +899,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		
-		let ids = selection.get(I.SelectType.Record);
-		if (!ids.length) {
-			ids = [ id ];
+		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		if (!objectIds.length) {
+			objectIds = [ id ];
 		};
 
 		menuStore.open('dataviewContext', {
@@ -912,7 +912,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onClose: () => selection.clear(),
 			data: {
 				targetId: this.getObjectId(),
-				objectIds: ids,
+				objectIds,
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),

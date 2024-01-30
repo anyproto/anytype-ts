@@ -57,7 +57,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			content = (
 				<div
 					id={`selectable-${record.id}`}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					className={[ 'selectable', `type-${I.SelectType.Record}` ].join(' ')}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>

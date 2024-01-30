@@ -17,7 +17,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	x = 0;
 	y = 0;
 	dir = 0;
-	moved = false;
 	focused = '';
 	range: any = null;
 	nodes: any[] = [];
@@ -25,12 +24,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	startTop = 0;
 	containerOffset = null;
 	frame = 0;
+	hasMoved = false;
+	isSelecting = false;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
 	idsOnStart: Map<string, string[]> = new Map();
-
-	isSelecting = false;
 	
 	constructor (props: Props) {
 		super(props);
@@ -129,7 +128,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		this.x = e.pageX;
 		this.y = e.pageY;
-		this.moved = false;
+		this.hasMoved = false;
 		this.focused = focused;
 		this.top = this.startTop = container.scrollTop();
 		this.cache.clear();
@@ -201,13 +200,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
-		this.moved = true;
+		this.hasMoved = true;
 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
 	onScroll (e: any) {
-		if (!this.isSelecting || !this.moved) {
+		if (!this.isSelecting || !this.hasMoved) {
 			return;
 		};
 
@@ -235,7 +234,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
-		this.moved = true;
+		this.hasMoved = true;
 	};
 	
 	onMouseUp (e: any) {
@@ -243,7 +242,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if (!this.moved) {
+		if (!this.hasMoved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				if (!keyboard.isSelectionClearDisabled) {
 					this.initIds();
@@ -411,10 +410,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.initIds();
 		};
 
-		this.nodes.forEach((item: any) => { 
-			this.checkEachNode(e, rect, item);
-		});
-		
+		this.nodes.forEach(item => this.checkEachNode(e, rect, item));
 		this.renderSelection();
 
 		const ids = this.get(I.SelectType.Block, false);
