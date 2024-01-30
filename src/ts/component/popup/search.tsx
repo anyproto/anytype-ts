@@ -541,6 +541,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.props.close();
 
 		const filter = this.getFilter();
+		const rootId = keyboard.getRootId();
 
 		// Object
 		if (item.isObject) {
@@ -574,7 +575,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				case 'graph':
 				case 'navigation': {
-					UtilObject.openEvent(e, { layout: item.layout });
+					UtilObject.openEvent(e, { id: rootId, layout: item.layout });
 					break;
 				};
 			};
