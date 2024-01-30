@@ -70,13 +70,12 @@ remote.initialize();
 Util.setAppPath(path.join(__dirname));
 
 function waitForLibraryAndCreateWindows () {
-	let userDataPath = ConfigManager.config.userDataPath || app.getPath('userData');
+	const currentPath = app.getPath('userData');
+	const { userDataPath } = ConfigManager.config;
 
-	if (is.development) {
-		userDataPath = path.join(userDataPath, '_dev');
+	if (userDataPath && (userDataPath != currentPath)) {
+		app.setPath('userData', userDataPath);
 	};
-
-	app.setPath('userData', userDataPath);
 
 	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 		// use the grpc server started from the outside
