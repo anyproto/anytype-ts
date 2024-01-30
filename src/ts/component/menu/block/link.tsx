@@ -244,17 +244,20 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const isLocal = filter.match(/^file:/) || UtilCommon.matchLocalPath(filter);
 		const isUrl = UtilCommon.matchUrl(filter) || UtilCommon.matchDomain(filter);
-		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
+		const items = [].concat(this.items);
+
+		if (isLocal || isUrl) {
+			items.unshift({ id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal });
+		};
 
 		const buttons: any[] = [
-			isUrl || isLocal ? { id: 'link', name: translate('menuBlockLinkSectionsLinkToWebsite'), icon: 'link', isLocal } : null,
-			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
 			items.length ? { isDiv: true } : null,
+			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
 		].filter(it => it);
 
 		const sections: any[] = [
+			items.length ? { id: I.MarkType.Object, children: items.map(it => ({ ...it, isBig: true })) } : null,
 			{ id: I.MarkType.Link, name: '', children: buttons },
-			items.length ? { id: I.MarkType.Object, name: translate('commonObjects'), children: items } : null,
 		].filter(it => it);
 
 		return UtilMenu.sectionsMap(sections);

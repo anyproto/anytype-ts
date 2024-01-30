@@ -140,6 +140,12 @@
 		.icon.active.underline { background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg'); }
     }
 
+	.menu.menuBlockLink {
+		.item.withDescription {
+			.iconMain, .iconObject:not(.isTask) { background-color: var(--color-shape-secondary); }
+		}
+	}
+
     /* BlockLinkSettings */
 
     .menu.menuBlockLinkSettings {
