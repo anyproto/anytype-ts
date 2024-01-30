@@ -405,13 +405,20 @@ class Relation {
 		const dictionary = {
 			layout: I.ObjectLayout,
 			origin: I.ObjectOrigin,
+			importType: I.ImportType,
 		};
 
 		const item = dictionary[relationKey];
 		if (item) {
 			const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
 			keys.forEach((key, index) => {
-				options.push({ id: index, name: translate(`${relationKey}${index}`) });
+				let name = '';
+				if (relationKey == 'importType') {
+					name = item[index];
+				} else {
+					name = translate(`${relationKey}${index}`);
+				};
+				options.push({ id: index, name });
 			});
 		};
 
@@ -588,12 +595,8 @@ class Relation {
 		return this.systemKeys().includes(relationKey);
 	};
 
-	dictionaryKeys () {
-		return [ 'layout', 'origin' ];
-	};
-
 	isDictionary (relationKey: string): boolean {
-		return this.dictionaryKeys().includes(relationKey);
+		return [ 'layout', 'origin', 'importType' ].includes(relationKey);
 	};
 	
 };
