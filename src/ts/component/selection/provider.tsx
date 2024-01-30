@@ -26,6 +26,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	frame = 0;
 	hasMoved = false;
 	isSelecting = false;
+	rect: any = null;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -57,6 +58,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		this._isMounted = true;
+		this.rect = $('#selection-rect');
 		this.unbind();
 
 		UtilCommon.getScrollContainer(isPopup).on('scroll.selection', e => this.onScroll(e));
@@ -122,9 +124,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { focused } = focus.state;
 		const win = $(window);
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const selectionRect = $('#selection-rect');
 
-		isPopup ? selectionRect.addClass('fromPopup') : selectionRect.removeClass('fromPopup');
+		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
 		
 		this.x = e.pageX;
 		this.y = e.pageY;
@@ -136,6 +137,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.setIsSelecting(true);
 
 		keyboard.disablePreview(true);
+		UtilCommon.clearSelection();
 
 		if (isPopup && container.length) {
 			this.containerOffset = container.offset();
@@ -317,7 +319,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const el = $('#selection-rect');
 		const range = UtilCommon.getSelectionRange();
 		const isPopup = keyboard.isPopup();
 
@@ -330,11 +331,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		const rect = this.getRect(x1, y1, x, y);
-
 		if (range) {
-			el.hide();
+			this.rect.hide();
 		} else {
-			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+			this.rect.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 		};
 	};
 	
@@ -459,7 +459,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	hide () {
-		$('#selection-rect').hide();
+		this.rect.hide();
 		this.unbindMouse();
 	};
 	
