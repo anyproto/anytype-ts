@@ -4,6 +4,8 @@
 	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid var(--color-shape-secondary); table-layout: fixed; border-top: 1px solid var(--color-shape-secondary); }
 	table {
 		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
+		.row.isSelectionSelected::after { display: none; }
+		.row.isSelectionSelected { background-color: var(--color-system-selection); }
 
 		.cellHead { 
 			text-align: left; color: var(--color-text-secondary); padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
@@ -25,10 +27,12 @@
 		.cell { 
 			padding: 14px; border-bottom: 1px solid var(--color-shape-secondary); vertical-align: top; position: relative; word-break: break-word; 
 		}
+		.cell.isName { width: 30%; }
 
 		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 		.cellContent {
 			.more { vertical-align: top; }
+			.empty { display: block; }
 		}
 
 		.cellContent.c-object {
