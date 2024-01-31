@@ -203,18 +203,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
-			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
-				analytics.event('SelectUsecase', { type: usecase });
-
-				if (onCreate) {
-					onCreate(message.objectId);
-				};
-
-				close();
-			} else {
+			if (message.error.code) {
 				this.setState({ error: message.error.description });
+				return;
 			};
+
+			if (onCreate) {
+				onCreate(message.objectId);
+			};
+
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
+			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};
 

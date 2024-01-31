@@ -118,6 +118,7 @@
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
 	"commonNewObject": "New Object",
+	"commonSelectObject": "Select object",
 	"commonCopyLink": "Copy link",
 	"commonSidebar": "Sidebar",
 	"commonLanguage": "Language",

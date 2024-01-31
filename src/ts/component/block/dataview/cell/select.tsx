@@ -39,6 +39,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const { relation, getRecord, recordId, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(recordId);
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const isSelect = relation.format == I.RelationType.Select;
 		const cn = [ 'wrap' ];
 
@@ -49,7 +50,6 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		let value = this.getItems();
 		let content = null;
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
 
 		if (elementMapper) {
@@ -385,8 +385,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const length = value.length;
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
 		};
 
 		if (onChange) {

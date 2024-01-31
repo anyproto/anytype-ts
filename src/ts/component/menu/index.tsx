@@ -448,6 +448,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const borderTop = Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+		const borderBottom = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -471,7 +473,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-			const minY = UtilCommon.sizeHeader();
 
 			let ew = 0;
 			let eh = 0;
@@ -514,7 +515,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy - height + offsetY;
 					
 					// Switch
-					if (!noFlipY && (y <= BORDER)) {
+					if (!noFlipY && (y <= borderTop)) {
 						y = oy + eh - offsetY;
 					};
 					break;
@@ -527,7 +528,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy + eh + offsetY;
 
 					// Switch
-					if (!noFlipY && (y >= wh - height - 80)) {
+					if (!noFlipY && (y >= wh - height - borderBottom)) {
 						y = oy - height - offsetY;
 					};
 					break;
@@ -567,8 +568,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 
-			y = Math.max(minY, y);
-			y = Math.min(wh - height - 80, y);
+			y = Math.max(borderTop, y);
+			y = Math.min(wh - height - borderBottom, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
