@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, Action } from 'Lib';
+import { I, UtilCommon, translate, Action, UtilMenu } from 'Lib';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Head from '../head';
@@ -54,14 +54,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	getItems () {
-		return [
-			{ id: 'notion', name: 'Notion', format: I.ImportType.Notion },
-			{ id: 'markdown', name: 'Markdown', format: I.ImportType.Markdown },
-			{ id: 'html', name: 'HTML', format: I.ImportType.Html },
-			{ id: 'text', name: 'TXT', format: I.ImportType.Text },
-			{ id: 'protobuf', name: 'Any-Block', format: I.ImportType.Protobuf },
-			{ id: 'csv', name: 'CSV', format: I.ImportType.Csv },
-		];
+		return UtilMenu.getImportFormats();
 	};
 
 });
