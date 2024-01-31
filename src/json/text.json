@@ -339,8 +339,9 @@
 
 	"pageMainStoreTypes": "Types",
 	"pageMainStoreRelations": "Relations",
-	"pageMainStoreExperiences": "Experiences",
-	"pageMainStoreExperiencesTitle": "ANY Experience Gallery",
+	"pageMainStoreUsecases": "Experiences",
+	"pageMainStoreUsecasesTitle": "ANY Experience Gallery",
+	"pageMainStoreUsecasesEmpty": "<b>Experience list is empty</b>",
 	"pageMainStoreTypesTitle": "Types are like categories<br/>that help you group and manage<br/>your Objects.",
 	"pageMainStoreTypesPlaceholder": "Search or create a new Type...",
 	"pageMainStoreTypesService": "Service Type",

@@ -79,12 +79,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Usecase:
-				title = translate('pageMainStoreExperiencesTitle');
+				title = translate('pageMainStoreUsecasesTitle');
 				placeholder = translate('pageMainStoreTypesPlaceholder');
 				textService = translate('pageMainStoreTypesService');
 				textInstalled = translate('pageMainStoreTypeInstalled');
 				textInstall = translate('pageMainStoreTypeInstall');
-				textEmpty = translate('pageMainStoreTypeEmpty');
+				textEmpty = translate('pageMainStoreUsecasesEmpty');
 				iconSize = 18;
 				break;
 
@@ -390,6 +390,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return;
 		};
 
+		this.midHeight = 0;
 		this.tab = id;
 		this.onView(Storage.get('viewStore') || View.Library, isInner, true);
 
@@ -406,6 +407,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				Onboarding.start(key, false);
 			};
 		};
+
+		this.resize();
 	};
 
 	onView (id: any, isInner: boolean, isChangeTab: boolean = false) {
@@ -698,7 +701,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		];
 
 		if (config.experimental) {
-			tabs.unshift({ id: I.StoreTab.Usecase, name: translate('pageMainStoreExperiences') });
+			tabs.unshift({ id: I.StoreTab.Usecase, name: translate('pageMainStoreUsecases') });
 		};
 		return tabs;
 	};
@@ -787,6 +790,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const height = items.reduce((res, current) => res += this.getRowHeight(current), 0);
 
 		grid.css({ height });
+
+		console.log(midHeight, limit, this.midHeight, this.limit);
 
 		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
