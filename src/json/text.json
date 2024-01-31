@@ -729,9 +729,11 @@
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
 	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
 
-	"popupSettingsSpaceMemberTypeReader": "Reader",
-	"popupSettingsSpaceMemberTypeEditor": "Editor",
-	"popupSettingsSpaceMemberTypeAdmin": "Admin",
+	"popupConfirmMemberRemoveTitle": "Remove member",
+	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
+
+	"popupConfirmMemberChangeTitle": "Are you sure?",
+	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
 	"popupSettingsSpaceLeave": "Leave %s?",
 	"popupSettingsSpaceLeaveTitle": "Leave space",

@@ -1889,3 +1889,21 @@ export const SpaceRequestDecline = (spaceId: string, identity: string, callBack?
 
 	dispatcher.request(SpaceRequestDecline.name, request, callBack);
 };
+
+export const SpaceParticipantPermissionsChange = (spaceId: string, changes: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.ParticipantPermissionsChange.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChangesList(changes.map(Mapper.To.ParticipantPermissionChange));
+
+	dispatcher.request(SpaceParticipantPermissionsChange.name, request, callBack);
+};
+
+export const SpaceParticipantRemove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.ParticipantRemove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentitiesList(identities);
+
+	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};

@@ -857,6 +857,15 @@ export const Mapper = {
 			return item;
 		},
 
+		ParticipantPermissionChange: (obj: any) => {
+			const item = new Model.ParticipantPermissionChange();
+
+			item.setIdentity(obj.identity);
+			item.setPerms(obj.permissions);
+
+			return item;
+		},
+
 	}
 
 };

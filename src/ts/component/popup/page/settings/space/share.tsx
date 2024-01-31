@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -35,15 +35,21 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onCopy = this.onCopy.bind(this);
 		this.onGenerate = this.onGenerate.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
+		this.onChangePermissions = this.onChangePermissions.bind(this);
 	};
 
 	render () {
 		const { error } = this.state;
+		const participant = UtilObject.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 
 		const Member = (item: any) => {
+			//const isOwner = (item.id == participant.id) && (participant.permissions == I.ParticipantPermissions.Owner);
+
+			const isOwner = false;
+
 			let tag = null;
 			let button = null;
 
@@ -57,18 +63,17 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (item.isOwner) {
-				button = <span className="owner">owner</span>;
+			if (isOwner) {
+				button = <span className="owner">{translate(`participantPermissions${I.ParticipantPermissions.Owner}`)}</span>;
 			} else {
 				button = (
 					<Select
 						id={`item-${item.id}-select`}
-						value="reader"
+						value={item.permissions}
 						options={memberOptions}
 						arrowClassName="light"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
-						onChange={(v: any) => {
-						}}
+						onChange={v => this.onChangePermissions(item, v)}
 					/>
 				);
 			};
@@ -254,13 +259,62 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getMemberOptions () {
-		return [
-			{ id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
-			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
-			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
+		let items: any[] = ([
+			{ id: I.ParticipantPermissions.Reader },
+			{ id: I.ParticipantPermissions.Writer },
+		] as any[]).map(it => {
+			it.name = translate(`participantPermissions${it.id}`);
+			return it;
+		});
+
+		return items.concat([
 			{ id: '', name: '', isDiv: true },
 			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
-		];
+		]);
+	};
+
+	onChangePermissions (item: any, v: any) {
+		const { space } = commonStore;
+
+		let title = '';
+		let text = '';
+		let button = '';
+		let onConfirm = null;
+
+		switch (v) {
+			case 'remove': {
+				title = translate('popupConfirmMemberRemoveTitle');
+				text = UtilCommon.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
+				button = translate('commonRemove');
+
+				onConfirm = () => {
+					C.SpaceParticipantRemove(space, [ item.identity ]);
+				};
+				break;
+			};
+
+			default: {
+				v = Number(v) || I.ParticipantPermissions.Reader;
+
+				title = translate('popupConfirmMemberChangeTitle');
+				text = UtilCommon.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
+
+				onConfirm = () => {
+					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+				};
+				break;
+			};
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title,
+				text,
+				textConfirm: button,
+				colorConfirm: 'red',
+				onConfirm,
+			},
+		});
 	};
 	
 	resize () {
