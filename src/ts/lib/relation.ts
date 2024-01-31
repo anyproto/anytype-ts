@@ -1,6 +1,9 @@
-import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
+
+const DICTIONARY = [ 'layout', 'origin', 'importType' ];
+const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 
 class Relation {
 
@@ -277,7 +280,8 @@ class Relation {
 			};
 
 			case 'importType': {
-				return undefined === value ? null : I.ImportType[Number(value)];
+				const names = UtilMenu.getImportNames();
+				return undefined === value ? null : names[Number(value)];
 			};
 
 		};
@@ -401,7 +405,7 @@ class Relation {
 	};
 
 	public getDictionaryOptions (relationKey: string) {
-		const options = [];
+		const names = UtilMenu.getImportNames();
 		const dictionary = {
 			layout: I.ObjectLayout,
 			origin: I.ObjectOrigin,
@@ -409,18 +413,26 @@ class Relation {
 		};
 
 		const item = dictionary[relationKey];
-		if (item) {
-			const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
-			keys.forEach((key, index) => {
-				let name = '';
-				if (relationKey == 'importType') {
-					name = item[index];
-				} else {
-					name = translate(`${relationKey}${index}`);
-				};
-				options.push({ id: index, name });
-			});
+
+		if (!item) {
+			return [];
 		};
+
+		const options = [];
+		const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
+
+		keys.forEach((key, index) => {
+			let name = '';
+			if (relationKey == 'importType') {
+				name = names[index];
+			} else {
+				name = translate(`${relationKey}${index}`);
+			};
+
+			if (name) {
+				options.push({ id: index, name });
+			};
+		});
 
 		return options;
 	};
@@ -587,8 +599,7 @@ class Relation {
 	};
 
 	systemKeysWithoutUser () {
-		const skipKeys = [ 'tag', 'description' ];
-		return this.systemKeys().filter(it => !skipKeys.includes(it));
+		return this.systemKeys().filter(it => !SKIP_SYSTEM_KEYS.includes(it));
 	};
 
 	isSystem (relationKey: string): boolean {
@@ -596,7 +607,7 @@ class Relation {
 	};
 
 	isDictionary (relationKey: string): boolean {
-		return [ 'layout', 'origin', 'importType' ].includes(relationKey);
+		return DICTIONARY.includes(relationKey);
 	};
 	
 };
