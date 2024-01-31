@@ -77,7 +77,7 @@
 
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px !important; border-right-width: 0px; }
+			.side.left { width: calc(100% - 28%); border-radius: 8px 0px 0px 8px !important; border-right-width: 0px; }
 			.side.right { width: 28%; display: block; border: 1px solid var(--color-shape-secondary); border-left: 0px; }
 		}
 
@@ -85,11 +85,11 @@
 		.linkCard.isVertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid var(--color-shape-secondary); border-bottom: 0px; }
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 8px 8px 0px 0px !important; border: 1px solid var(--color-shape-secondary); border-bottom: 0px; }
 		}
 
 		.linkCard.withCover.isVertical {
-			.side.left { border-radius: 0px 0px 12px 12px !important; }
+			.side.left { border-radius: 0px 0px 8px 8px !important; }
 		}
 
 		.linkCard.withCover.isVertical.text { padding-top: 0px; }
@@ -138,10 +138,10 @@
 
 	.block.blockLink.card { padding: 6px 0px; }
 	.block.blockLink.card {
-		.linkCard { box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); border-radius: 12px; }
+		.linkCard { box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); border-radius: 8px; }
 		.linkCard {
-			.side.left { padding: 16px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; flex-direction: column; justify-content: center; }
-			.side.right { border-radius: 0px 12px 12px 0px; }
+			.side.left { padding: 16px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; flex-direction: column; justify-content: center; }
+			.side.right { border-radius: 0px 8px 8px 0px; }
 
 			.sides.withBgColor {
 				.side { border: 0px; }
@@ -172,5 +172,5 @@
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
 	.block.blockLink.text > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
-	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 12px; left: 0px; width: 100%; }
+	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; left: 0px; width: 100%; }
 }

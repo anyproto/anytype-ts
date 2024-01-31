@@ -23,8 +23,7 @@ class HeaderAuthIndex extends React.Component {
 	};
 
 	onSettings () {
-		popupStore.open('settingsOnboarding', { 
-		});
+		popupStore.open('settingsOnboarding', {});
 	};
 	
 };

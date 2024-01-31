@@ -70,7 +70,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					<div className="section set">
 						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralObjectType'))}</div>
 						<div className="content">
-							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
+							<ListObject 
+								{...this.props}
+								subId={subIdType} 
+								rootId={rootId} 
+								columns={[]} 
+								filters={filtersType} 
+							/>
 						</div>
 					</div>
 
@@ -78,7 +84,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.sprintf(translate('pageMainRelationObjectsCreated'), UtilCommon.plural(totalObject, translate('pluralObject')))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
+								<ListObject 
+									{...this.props} 
+									sources={[ rootId ]} 
+									subId={subIdObject} 
+									rootId={rootId} 
+									columns={columnsObject} 
+									filters={filtersObject} 
+								/>
 							</div>
 						</div>
 					) : ''}
