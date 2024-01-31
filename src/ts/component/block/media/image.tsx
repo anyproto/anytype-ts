@@ -31,11 +31,11 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { width } = block.fields || {};
-		const { state, hash } = block.content;
-		
-		let element = null;
+		const { state, targetObjectId } = block.content;
 		const css: any = {};
 		
+		let element = null;
+
 		if (width) {
 			css.width = (width * 100) + '%';
 		};
@@ -68,7 +68,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 					<div id="wrap" className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={commonStore.imageUrl(hash, Constant.size.image)} 
+							src={commonStore.imageUrl(targetObjectId, Constant.size.image)} 
 							onDragStart={(e: any) => { e.preventDefault(); }} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
@@ -224,8 +224,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	
 	onClick (e: any) {
 		const { block } = this.props;
-		const { hash } = block.content;
-		const src = commonStore.imageUrl(hash, Constant.size.image);
+		const { targetObjectId } = block.content;
+		const src = commonStore.imageUrl(targetObjectId, Constant.size.image);
+
 		if (!keyboard.withCommand(e)) {
 			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
 		};

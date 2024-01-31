@@ -32,8 +32,8 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<I.Blo
 		UtilObject.setIcon(this.props.rootId, icon, '');
 	};
 
-	onUpload (hash: string) {
-		UtilObject.setIcon(this.props.rootId, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.rootId, '', objectId);
 	};
 	
 });

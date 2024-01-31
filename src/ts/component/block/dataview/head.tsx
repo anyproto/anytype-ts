@@ -357,12 +357,12 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 	};
 
-	onIconUpload (hash: string) {
+	onIconUpload (objectId: string) {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
 
 		if (targetObjectId) {
-			UtilObject.setIcon(targetObjectId, '', hash);
+			UtilObject.setIcon(targetObjectId, '', objectId);
 		};
 	};
 

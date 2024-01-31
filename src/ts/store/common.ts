@@ -216,17 +216,12 @@ class CommonStore {
 		this.gatewayUrl = v;
 	};
 
-    fileUrl (hash: string) {
-		hash = String(hash || '');
-
-		return `${this.gateway}/file/${hash}`;
+    fileUrl (id: string) {
+		return [ this.gateway, 'file', String(id || '') ].join('/');
 	};
 
-    imageUrl (hash: string, width: number) {
-		hash = String(hash || '');
-		width = Number(width) || 0;
-
-		return `${this.gateway}/image/${hash}?width=${width}`;
+    imageUrl (id: string, width: number) {
+		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
     progressSet (v: I.Progress) {
