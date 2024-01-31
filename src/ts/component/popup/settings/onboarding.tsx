@@ -135,8 +135,12 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.props.close();
 	};
 
-	onPathClick (path: string) {
-		Renderer.send('pathOpen', window.Electron.dirname(path));
+	onPathClick () {
+		const { path } = this.config;
+
+		if (path) {
+			Renderer.send('pathOpen', UtilCommon.getElectron().dirname(path));
+		};
 	};
 
 	onChangeStorage () {

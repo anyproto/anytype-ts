@@ -263,7 +263,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.File: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],
@@ -276,7 +276,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Select: 
 			case I.RelationType.MultiSelect: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -295,7 +295,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					
 			case I.RelationType.Object: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -324,7 +324,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
-					width: width,
+					width,
 					height: height,
 				});
 

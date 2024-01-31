@@ -126,7 +126,8 @@ class CommonStore {
     };
 
     get config(): any {
-		return window.Anytype?.Config || { ...this.configObj, debug: this.configObj.debug || {} };
+		const config = window.AnytypeGlobalConfig || this.configObj || {};
+		return { ...config, debug: config.debug || {} };
 	};
 
     get progress(): I.Progress {

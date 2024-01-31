@@ -21,6 +21,7 @@ export interface WidgetComponent {
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: (content: ContentWidget) => number;
 	sortFavorite?: (records: string[]) => string[];
+	addGroupLabels?: (records: any[], widgetId: string) => any[];
 };
 
 export interface WidgetTreeItem {
@@ -29,12 +30,14 @@ export interface WidgetTreeItem {
 	parentId: string; // the id of the parent node
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
+	isSection?: boolean;
 };
 
 export interface WidgetTreeDetails { 
 	id: string; 
 	type: string; 
 	links: string[];
+	isSection?: boolean;
 };
 
 export interface ContentWidget {

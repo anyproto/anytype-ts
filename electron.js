@@ -7,6 +7,7 @@ const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
 // Fix notifications app name
@@ -129,6 +130,8 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 
+	installNativeMessagingHost();
+
 	ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e, id, cmd, args) => {
 		const Api = require('./electron/js/api.js');
@@ -167,18 +170,18 @@ app.on('second-instance', (event, argv) => {
 		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
 	};
 
-	if (mainWindow) {
-		if (deeplinkingUrl) {
-			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
-		};
-
-		if (mainWindow.isMinimized()) {
-			mainWindow.restore();
-		};
-
-		mainWindow.show();
-		mainWindow.focus();
+	if (!mainWindow || !deeplinkingUrl) {
+		return;
 	};
+
+	Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	mainWindow.show();
+	mainWindow.focus();
 });
 
 app.on('before-quit', (e) => {

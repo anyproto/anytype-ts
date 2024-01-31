@@ -187,7 +187,7 @@ class Action {
 			];
 		};
 		
-		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
@@ -205,7 +205,7 @@ class Action {
 			properties: [ 'openDirectory' ],
 		});
 
-		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
 				return;
 			};
@@ -420,7 +420,7 @@ class Action {
 
 		analytics.event('ClickImport', { type });
 
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
+		UtilCommon.getElectron().showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;

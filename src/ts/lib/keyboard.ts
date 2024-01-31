@@ -456,8 +456,8 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = window.Electron.logPath();
-		const tmpPath = window.Electron.tmpPath();
+		const logPath = UtilCommon.getElectron().logPath();
+		const tmpPath = UtilCommon.getElectron().tmpPath();
 
 		switch (cmd) {
 			case 'search': {
@@ -556,8 +556,7 @@ class Keyboard {
 			case 'debugSpace': {
 				C.DebugSpaceSummary(commonStore.space, (message: any) => {
 					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-
+						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 						Renderer.send('pathOpen', tmpPath);
 					};
 				});
@@ -604,8 +603,8 @@ class Keyboard {
 		C.AppGetVersion((message: any) => {
 			let url = Url.contact;
 
-			url = url.replace(/\%25os\%25/g, window.Electron.version.os);
-			url = url.replace(/\%25version\%25/g, window.Electron.version.app);
+			url = url.replace(/\%25os\%25/g, UtilCommon.getElectron().version.os);
+			url = url.replace(/\%25version\%25/g, UtilCommon.getElectron().version.app);
 			url = url.replace(/\%25build\%25/g, message.details);
 			url = url.replace(/\%25middleware\%25/g, message.version);
 			url = url.replace(/\%25accountId\%25/g, account.id);
@@ -624,8 +623,8 @@ class Keyboard {
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
-				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
+				[ translate('libKeyboardOSVersion'), UtilCommon.getElectron().version.os ],
+				[ translate('libKeyboardAppVersion'), UtilCommon.getElectron().version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
 				[ translate('libKeyboardLibraryVersion'), message.version ],
 				[ translate('libKeyboardAccountID'), account.id ],

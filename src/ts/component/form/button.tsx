@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
 
