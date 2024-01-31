@@ -313,6 +313,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
 		const length = items.length;
+		const cmd = keyboard.cmdKey();
 
 		keyboard.disableMouse(true);
 
@@ -338,7 +339,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		});
 
 		if (!isExpanded) {
-			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
+			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed: string) => {
 				e.preventDefault();
 
 				const n = Number(pressed) || 0;
@@ -348,6 +349,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				ret = true;
 			});
 		};
+
+		keyboard.shortcut(`${cmd}+v`, e, () => {
+			e.preventDefault();
+
+			console.log('PASTE', navigator.clipboard.readText().then(text => console.log(text)));
+
+			ret = true;
+		});
 
 		if (!ret) {
 			onKeyDown(e);
