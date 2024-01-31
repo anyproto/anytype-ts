@@ -411,7 +411,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		let items = this.items.filter(this.filterMapper);
-		if (items.length && !filter) {
+		if (items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
 
@@ -557,7 +557,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		// Import action
 		if (item.isImport) {
-			Action.import(item.format, Constant.extension.import[item.format]);
+			Action.import(item.format, Constant.fileExtension.import[item.format]);
 
 		// Buttons
 		} else {

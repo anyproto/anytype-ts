@@ -40,7 +40,6 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 		});
-
 		win.route = '';
 	};
 

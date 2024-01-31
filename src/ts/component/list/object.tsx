@@ -40,6 +40,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const length = columns.length;
+		const width = 70 / length;
 
 		let pager = null;
 		if (total && items.length) {
@@ -76,7 +78,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					onContextMenu={e => this.onContext(e, item.id)}
 					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
 				>
-					<td className="cell">
+					<td className="cell isName">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
 								<IconObject object={item} />
@@ -139,12 +141,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						};
 
 						return (
-							<td key={`cell-${column.relationKey}`} className="cell">
-								{content ? (
-									<div className={cnc.join(' ')} onClick={onClick}>
-										{content}
-									</div>
-								) : ''}
+							<td key={`cell-${column.relationKey}`} className="cell" style={{ width: `${width}%` }}>
+								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
 							</td>
 						);
 					})}
