@@ -62,18 +62,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		const { isPopup } = this.props;
-		const cmd = keyboard.cmdSymbol();
-		const alt = keyboard.altSymbol();
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
 		const length = items.length;
-		const tabs = [
-			{ id: I.StoreTab.Usecase, name: translate('pageMainStoreExperiences') },
-			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
-			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
-		];
+		const tabs = this.getTabs();
 
 		let title = '';
 		let placeholder = '';
@@ -692,6 +686,21 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		ret = ret.filter(it => it.children.length > 0);
 		return ret;
+	};
+
+	getTabs () {
+		const { config } = commonStore;
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
+		const tabs: any[] = [
+			{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+			{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
+		];
+
+		if (config.experimental) {
+			tabs.unshift({ id: I.StoreTab.Usecase, name: translate('pageMainStoreExperiences') });
+		};
+		return tabs;
 	};
 
 	getViews (): any[] {
