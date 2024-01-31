@@ -50,7 +50,7 @@
 		"notification": 200
 	},
 	
-	"extension": {
+	"fileExtension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],

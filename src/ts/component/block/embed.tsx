@@ -708,7 +708,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: this.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
+						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -968,18 +968,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	fixAsarPath (path: string): string {
-		const origin = location.origin;
-		
-		let href = location.href;
-		if (origin == 'file://') {
-			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			href = href.replace('/index.html', '/');
-			path = href + path.replace(/^\.\//, '');
-		};
-		return path;
 	};
 
 	onResizeInit () {

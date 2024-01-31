@@ -100,7 +100,7 @@ class Select extends React.Component<Props, State> {
 				{current ? (
 					<React.Fragment>
 						{current.map((item: any, i: number) => (
-							<MenuItemVertical key={i} {...item} iconSize={item.iconSize ? 20 : undefined} />
+							<MenuItemVertical key={i} {...item} />
 						))}
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>
@@ -136,6 +136,7 @@ class Select extends React.Component<Props, State> {
 		for (const option of this.props.options) {
 			options.push(option);
 		};
+
 		return options;
 	};
 
@@ -189,14 +190,14 @@ class Select extends React.Component<Props, State> {
 			element,
 			noFlipX: true,
 			onOpen: () => {
-				window.setTimeout(() => $(element).addClass('active'));
+				window.setTimeout(() => $(element).addClass('isFocused'));
 
 				if (onOpen) {
 					onOpen();
 				};
 			},
 			onClose: () => { 
-				window.setTimeout(() => $(element).removeClass('active'));
+				window.setTimeout(() => $(element).removeClass('isFocused'));
 
 				if (onClose) {
 					onClose();
