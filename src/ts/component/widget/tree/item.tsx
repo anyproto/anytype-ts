@@ -56,7 +56,9 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 					id={treeKey}
 					className={cn.join(' ')}
 				>
-					<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+					<div className="inner">
+						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+					</div>
 				</div>
 			);
 		};

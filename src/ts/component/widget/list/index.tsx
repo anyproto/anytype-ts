@@ -49,9 +49,8 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const { total } = dbStore.getMeta(subId, '');
 		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
-		const records = this.getRecords();
 		const items = this.getItems();
-		const length = records.length;
+		const length = items.length;
 
 		if (!this.cache) {
 			return null;
@@ -73,9 +72,10 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 					fixedWidth
 				>
 					<WidgetListItem 
-						{...this.props} 
+						{...this.props}
+						{...items[index]}
 						subId={subId} 
-						id={records[index]} 
+						id={items[index].id}
 						style={style} 
 						index={index}
 					/>
@@ -98,7 +98,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={length}
-										rowHeight={this.getRowHeight()}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
@@ -128,8 +128,8 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		} else {
 			content = (
 				<React.Fragment>
-					{records.map((id: string) => (
-						<WidgetListItem key={`widget-${block.id}-${id}`} {...this.props} subId={subId} id={id} />
+					{items.map((item: any) => (
+						<WidgetListItem key={`widget-${block.id}-${item.id}`} {...this.props} {...item} subId={subId} id={item.id} />
 					))}
 				</React.Fragment>
 			);
@@ -235,12 +235,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	initCache () {
 		if (!this.cache) {
-			const records = this.getRecords();
+			const items = this.getItems();
 
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
-				defaultHeight: this.getRowHeight(),
-				keyMapper: i => records[i],
+				defaultHeight: i => this.getRowHeight(items[i]),
+				keyMapper: i => items[i],
 			});
 		};
 	};
@@ -397,7 +397,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	resize () {
 		const { parent, isPreview } = this.props;
-		const length = this.getRecords().length;
+		const length = this.getItems().length;
 
 		raf(() => {
 			const node = $(this.node);
@@ -408,7 +408,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			const viewItem = viewSelect.find('.viewItem');
 			const offset = isPreview ? 20 : 8;
 
-			let height = this.getRowHeight() * length + offset;
+			let height = this.getTotalHeight() + offset;
 			if (isPreview) {
 				let maxHeight = $('#listWidget').height() - head.outerHeight(true);
 				if (viewSelect.length) {
@@ -434,7 +434,22 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		});
 	};
 
-	getRowHeight () {
+	getTotalHeight () {
+		const items = this.getItems();
+
+		let height = 0;
+
+		items.forEach((item) => {
+			height += this.getRowHeight(item);
+		});
+
+		return height;
+	};
+
+	getRowHeight (item: any) {
+		if (item && item.isSection) {
+			return HEIGHT_COMPACT;
+		};
 		return this.props.isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
 	};
 

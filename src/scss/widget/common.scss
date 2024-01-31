@@ -59,10 +59,11 @@
 	> .dropTarget.targetTop.isOver::before { top: 0px; }
 	> .dropTarget.targetBot.isOver::before { bottom: 0px; }
 
-	.item.isSection { display: flex; align-items: center; padding: 0px 14px; }
 	.item.isSection {
+		.inner { display: flex; align-items: center; }
 		.label { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; }
 	}
+	.item.isSection::before { display: none !important; }
 }
 
 .widget.active {
