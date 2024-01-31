@@ -6,7 +6,7 @@ class Renderer {
 		args = args || [];
 
 		const cmd = args[0];
-		const winId = Number(window.Electron.currentWindow().windowId) || 0;
+		const winId = Number(UtilCommon.getElectron().currentWindow().windowId) || 0;
 
 		args.shift();
 		args = args.map((it: any) => {
@@ -16,18 +16,18 @@ class Renderer {
 			return it;
 		});
 
-		window.Electron.Api(winId, cmd, UtilCommon.objectCopy(args));
+		UtilCommon.getElectron().Api(winId, cmd, UtilCommon.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {
 		this.remove(event);
-		window.Electron.on(event, (...args: any[]) => {
+		UtilCommon.getElectron().on(event, (...args: any[]) => {
 			callBack.apply(this, args);
 		});
 	};
 
 	remove (event: string) {
-		window.Electron.removeAllListeners(event);
+		UtilCommon.getElectron().removeAllListeners(event);
 	};
 
 };

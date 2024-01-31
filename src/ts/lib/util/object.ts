@@ -416,7 +416,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [ I.ObjectLayout.Bookmark ].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

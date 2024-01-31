@@ -50,7 +50,7 @@
 		"notification": 200
 	},
 	
-	"extension": {
+	"fileExtension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
@@ -97,7 +97,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink", "lastModifiedDate", "lastOpenedDate"
 	],
 
 	"relationRelationKeys": [

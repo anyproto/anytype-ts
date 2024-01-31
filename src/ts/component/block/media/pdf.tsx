@@ -72,7 +72,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 							block={block} 
 							icon="pdf" 
 							textFile={translate('blockPdfUpload')}
-							accept={Constant.extension.pdf} 
+							accept={Constant.fileExtension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -213,7 +213,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onOpen (e: any) {
-		C.FileDownload(this.props.block.content.targetObjectId, window.Electron.tmpPath, (message: any) => {
+		C.FileDownload(this.props.block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
