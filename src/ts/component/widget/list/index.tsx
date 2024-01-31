@@ -50,6 +50,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { total } = dbStore.getMeta(subId, '');
 		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
 		const records = this.getRecords();
+		const items = this.getItems();
 		const length = records.length;
 
 		if (!this.cache) {
@@ -375,6 +376,23 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const ret = Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
 
 		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+	};
+
+	getItems () {
+		const { block, addGroupLabels, isPreview } = this.props;
+		const rootId = this.getRootId();
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
+		const { targetBlockId } = block.content;
+		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+
+		let items = this.getRecords().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
+
+		if (isPreview && isRecent) {
+			// add group labels
+			items = addGroupLabels(items, targetBlockId);
+		};
+
+		return items;
 	};
 
 	resize () {
