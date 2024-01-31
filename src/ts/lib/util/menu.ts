@@ -574,6 +574,33 @@ class UtilMenu {
 		return ret;
 	};
 
+	getImportNames () {
+		const r = {};
+		r[I.ImportType.Notion] = 'Notion';
+		r[I.ImportType.Markdown] = 'Markdown';
+		r[I.ImportType.Html] = 'HTML';
+		r[I.ImportType.Text] = 'TXT';
+		r[I.ImportType.Protobuf] = 'Any-Block';
+		r[I.ImportType.Csv] = 'CSV';
+		return r;
+	};
+
+	getImportFormats () {
+		const names = this.getImportNames();
+
+		return ([
+			{ id: 'notion', format: I.ImportType.Notion },
+			{ id: 'markdown', format: I.ImportType.Markdown },
+			{ id: 'html', format: I.ImportType.Html },
+			{ id: 'text', format: I.ImportType.Text },
+			{ id: 'protobuf', format: I.ImportType.Protobuf },
+			{ id: 'csv', format: I.ImportType.Csv },
+		] as any).map(it => {
+			it.name = names[it.format];
+			return it;
+		});
+	};
+
 };
 
 export default new UtilMenu();
