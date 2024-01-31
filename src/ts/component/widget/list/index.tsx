@@ -240,7 +240,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: i => this.getRowHeight(items[i]),
-				keyMapper: i => items[i],
+				keyMapper: i => items[i].id,
 			});
 		};
 	};
