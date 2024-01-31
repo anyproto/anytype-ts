@@ -97,7 +97,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink", "lastModifiedDate", "lastOpenedDate"
 	],
 
 	"relationRelationKeys": [

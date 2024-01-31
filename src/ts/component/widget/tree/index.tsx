@@ -195,10 +195,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	loadTree (): I.WidgetTreeItem[] {
-		const { block, isCollection, sortFavorite } = this.props;
+		const { block, isCollection, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
 		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
+		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		this.branches = [];
 
@@ -215,6 +216,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
+		};
+
+		if (isPreview && isRecent) {
+			// add group labels
+			children = addGroupLabels(children, targetBlockId);
 		};
 
 		return this.loadTreeRecursive(object.id, object.id, [], children, 1);
@@ -248,6 +254,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				numChildren,
 				parentId,
 				rootId,
+				isSection: childNode.isSection,
 			};
 			treeNodeList.push(node);
 
@@ -272,7 +279,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	// return the child nodes details for the given subId
-	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
+	 getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
 		const subId = this.getSubId(nodeId);
 
 		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));
