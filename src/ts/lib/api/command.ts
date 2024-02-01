@@ -1879,7 +1879,7 @@ export const PaymentsSubscriptionGetPaymentUrl = (tier: I.SubscriptionTier, meth
 	dispatcher.request(PaymentsSubscriptionGetPaymentUrl.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetPortalLinkURL = (callBack?: (message: any) => void) => {
+export const PaymentsSubscriptionGetPortalLinkUrl = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
-	dispatcher.request(PaymentsSubscriptionGetPortalLinkURL.name, request, callBack);
+	dispatcher.request(PaymentsSubscriptionGetPortalLinkUrl.name, request, callBack);
 };
