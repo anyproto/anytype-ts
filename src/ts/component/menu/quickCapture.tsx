@@ -520,20 +520,31 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	onPaste () {
-		console.log('PASTE', );
+		const type = dbStore.getTypeById(commonStore.type);
 
-		navigator.clipboard.readText().then(text => {
-			if (!text) {
-				return;
-			};
+		navigator.clipboard.read().then(items => {
+			items.forEach(async item =>  {
+				const textBlob = await item.getType('text/plain');
+				const htmlBlob = await item.getType('text/html');
+				const text = await textBlob.text();
+				const html = await htmlBlob.text();
 
-			UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [], (message: any) => {
-				if (!message.error.code) {
-					C.BlockPaste (message.objectId, '', { from: 0, to: 0 }, [], false, { html: text }, () => {
-					});
+				if (!text && !html) {
+					return;
 				};
-			});
 
+				C.ObjectCreate({}, [], '', type?.uniqueKey, commonStore.space, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					const object = message.details;
+
+					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, () => {
+						UtilObject.openAuto(object);
+					});
+				});
+			});
 		});
 	};
 
