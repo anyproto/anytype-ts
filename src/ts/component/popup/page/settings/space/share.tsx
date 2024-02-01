@@ -326,6 +326,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				name: item.name,
 				icon: item.iconImage,
 				spaceId: commonStore.space,
+				identity: item.identity,
 			}
 		});
 	};

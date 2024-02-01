@@ -56,8 +56,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	onConfirm (permissions: I.ParticipantPermissions) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { payload } = data;
-		const { spaceId, identity } = payload;
+		const { spaceId, identity } = data;
 
 		if (!spaceId || !identity) {
 			return;
@@ -76,8 +75,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	onReject () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { payload } = data;
-		const { spaceId, identity } = payload;
+		const { spaceId, identity } = data;
 
 		if (!spaceId || !identity) {
 			return;
