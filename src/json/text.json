@@ -1695,6 +1695,12 @@
 	"notificationButtonSpace": "Go to Space",
 	"notificationButtonRequest": "View request",
 
+	"participantStatus0": "Joining",
+	"participantStatus1": "Active",
+	"participantStatus2": "Removed",
+	"participantStatus3": "Declined",
+	"participantStatus4": "Removing",
+
 	"participantPermissions0": "Read",
 	"participantPermissions1": "Write",
 	"participantPermissions2": "Owner",

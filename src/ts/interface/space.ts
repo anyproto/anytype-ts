@@ -23,9 +23,9 @@ export enum ParticipantPermissions {
 };
 
 export enum ParticipantStatus {
-    Joining			 = 0,
-    Active			 = 1,
-    Removed			 = 2,
-    Declined		 = 3,
-    Removing		 = 4,
+	Joining			 = 0,
+	Active			 = 1,
+	Removed			 = 2,
+	Declined		 = 3,
+	Removing		 = 4,
 };

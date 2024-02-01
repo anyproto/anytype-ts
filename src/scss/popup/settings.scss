@@ -479,7 +479,7 @@
 						.button.blank:not(.disabled):hover,
 						.button.blank:not(.disabled).hover { border-color: var(--color-shape-primary); background: var(--color-shape-highlight-medium); }
 
-						.select, .owner { @include text-common; }
+						.select, .label { @include text-common; }
 						.select { border: 0px solid; padding-right: 19px; }
 						.select {
 							.icon.arrow { right: -4px !important; }
