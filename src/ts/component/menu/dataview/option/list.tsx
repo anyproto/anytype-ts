@@ -364,6 +364,16 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			items = items.filter(filterMapper);
 		};
 
+		items.sort((c1, c2) => {
+			const isSelected1 = value.includes(c1.id);
+			const isSelected2 = value.includes(c2.id);
+
+			if (isSelected1 && !isSelected2) return -1;
+			if (!isSelected1 && isSelected2) return 1;
+
+			return 0;
+		});
+
 		if (data.filter) {
 			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 			
