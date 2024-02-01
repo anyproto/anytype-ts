@@ -258,7 +258,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return;
 		};
 
-		C.FileDownload(block.content.targetObjectId,  window.Electron.tmpPath, (message: any) => {
+		C.FileDownload(block.content.targetObjectId,  UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};

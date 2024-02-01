@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/browser';
+import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
@@ -34,7 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-		this.listenEvents();
 
 		console.log('[Dispatcher].init Server address: ', address);
 	};
@@ -89,6 +89,7 @@ class Dispatcher {
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
 		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
+		if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'accountLinkChallenge';
 
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
@@ -155,7 +156,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const currentWindow = window.Electron.currentWindow();
+		const electron = UtilCommon.getElectron();
+		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		
 		if (traceId) {
@@ -216,6 +218,27 @@ class Dispatcher {
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+					break;
+				};
+
+				case 'accountLinkChallenge': {
+					if (electron.currentWindow().windowId !== 1) {
+						break;
+					};
+
+					const info = data.getClientinfo();
+					const challenge = data.getChallenge();
+					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
+
+					win.addEventListener('load', () => win.postMessage({ 
+						challenge,
+						theme: commonStore.getThemeClass(),
+						lang: commonStore.interfaceLang,
+					}, '*'), false);
+
+					window.setTimeout(() => {
+						try { win.close(); } catch (e) { /**/ };
+					}, 3000);
 					break;
 				};
 
@@ -943,10 +966,8 @@ class Dispatcher {
 
 					notificationStore.add(item);
 
-					if ((windowId == 1) && !window.Electron.isFocused()) {
-						new window.Notification(item.title, { body: item.text }).onclick = () => { 
-							window.Electron.focus();
-						};
+					if ((windowId == 1) && !currentWindow.isFocused()) {
+						new window.Notification(item.title, { body: item.text }).onclick = () => currentWindow.focus();
 					};
 					break;
 				};
@@ -1138,13 +1159,12 @@ class Dispatcher {
 		const { config } = commonStore;
 		const debug = config.debug.mw;
 		const ct = UtilCommon.toCamelCase(type);
+		const t0 = performance.now();
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
-
-		const t0 = performance.now();
 
 		let t1 = 0;
 		let t2 = 0;

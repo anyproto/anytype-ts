@@ -3,7 +3,6 @@ import { Frame, Error, Header, Footer } from 'Component';
 import { I, C, UtilCommon, UtilRouter, UtilData, Renderer } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Errors from 'json/error.json';
 
 interface State {
 	error: string;

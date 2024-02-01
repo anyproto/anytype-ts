@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Icon } from 'Component';
+import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
 import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
 import { authStore, detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -48,7 +48,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		return (
 			<div className="sections">
 				<div className="section top">
-					{error ? <div className="message">{error}</div> : ''}
+					<Error text={error} />
 
 					<div className="iconWrapper">
 						{loading ? <Loader /> : ''}
@@ -111,7 +111,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 			properties: [ 'openDirectory' ],
 		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
+		UtilCommon.getElectron().showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
@@ -167,7 +167,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
     };
 
     onUpload () {
-		Action.openFile(Constant.extension.cover, paths => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
 			this.setState({ loading: true });
 
             C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {

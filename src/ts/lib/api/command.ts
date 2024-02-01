@@ -79,10 +79,15 @@ export const WalletConvert = (mnemonic: string, entropy: string, callBack?: (mes
 	dispatcher.request(WalletConvert.name, request, callBack);
 };
 
-export const WalletCreateSession = (mnemonic: string, callBack?: (message: any) => void) => {
+export const WalletCreateSession = (mnemonic: string, appKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Wallet.CreateSession.Request();
 
-	request.setMnemonic(mnemonic);
+	if (mnemonic) {
+		request.setMnemonic(mnemonic);
+	} else 
+	if (appKey) {
+		request.setAppkey(appKey);
+	};
 
 	dispatcher.request(WalletCreateSession.name, request, callBack);
 };
@@ -220,6 +225,23 @@ export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, i
 	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
 };
 
+export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.NewChallenge.Request();
+
+	request.setAppname(name);
+
+	dispatcher.request(AccountLocalLinkNewChallenge.name, request, callBack);
+};
+
+export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.LocalLink.SolveChallenge.Request();
+
+	request.setChallengeid(id);
+	request.setAnswer(answer);
+
+	dispatcher.request(AccountLocalLinkSolveChallenge.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -354,6 +376,14 @@ export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId:
 	request.setViewid(viewId);
 
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
+};
+
+export const BlockPreview = (html: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Preview.Request();
+
+	request.setHtml(html);
+
+	dispatcher.request(BlockPreview.name, request, callBack);
 };
 
 // ---------------------- BLOCK TEXT ---------------------- //
@@ -1210,6 +1240,17 @@ export const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
+export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateFromUrl.Request();
+
+	request.setDetails(Encode.struct(details));
+	request.setSpaceid(spaceId);
+	request.setObjecttypeuniquekey(typeKey);
+	request.setUrl(url);
+
+	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
+};
+
 export const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateObjectType.Request();
 
@@ -1737,14 +1778,6 @@ export const TemplateCreateFromObject = (contextId: string, callBack?: (message:
 	request.setContextid(contextId);
 
 	dispatcher.request(TemplateCreateFromObject.name, request, callBack);
-};
-
-export const TemplateClone = (contextId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Template.Clone.Request();
-
-	request.setContextid(contextId);
-
-	dispatcher.request(TemplateClone.name, request, callBack);
 };
 
 export const TemplateExportAll = (path: string, callBack?: (message: any) => void) => {

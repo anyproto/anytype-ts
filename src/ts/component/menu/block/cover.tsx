@@ -269,7 +269,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { data } = param;
 		const { onUpload, onUploadStart } = data;
 
-		Action.openFile(Constant.extension.cover, paths => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
 			close();
 
 			if (onUploadStart) {
