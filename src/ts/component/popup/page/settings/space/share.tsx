@@ -66,7 +66,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				);
 			} else 
 			if (isDeclined || isRemoved) {
-				button = <Label className="textColor textColor-red" text={translate(`participantStatus${item.status}`)} />;
+				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
 			if (isOwner) {
 				button = <Label text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
