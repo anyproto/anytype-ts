@@ -28,7 +28,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
+		const object = detailStore.get(rootId, targetObjectId, [ 'name' ], true);
 		
 		let element = null;
 		

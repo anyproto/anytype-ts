@@ -1475,12 +1475,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onMentionUpload (id: string, objectId: string) {
+	onMentionUpload (targetId: string, objectId: string) {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-			UtilObject.setIcon(id, '', objectId);
+			UtilObject.setIcon(targetId, '', objectId);
 		});
 	};
 

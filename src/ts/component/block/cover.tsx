@@ -519,6 +519,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 				this.loaded = false;
 				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
+			
+			this.loaded = false;
+			UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
 	};
 	

@@ -503,18 +503,6 @@ class Dispatcher {
 						block.content.targetObjectId = data.getTargetobjectid().getValue();
 					};
 
-					if (data.hasName()) {
-						block.content.name = data.getName().getValue();
-					};
-
-					if (data.hasMime()) {
-						block.content.mime = data.getMime().getValue();
-					};
-
-					if (data.hasSize()) {
-						block.content.size = data.getSize().getValue();
-					};
-
 					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
 					};

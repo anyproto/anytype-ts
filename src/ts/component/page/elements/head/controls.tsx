@@ -236,9 +236,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onUpload (type: I.CoverType, objectId: string) {
-		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => {
-			this.setState({ loading: false });
-		});
+		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
 	};
 
 });

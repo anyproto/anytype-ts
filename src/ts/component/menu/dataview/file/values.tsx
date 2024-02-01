@@ -194,11 +194,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = Relation.getArrayValue(data.value);
-		value.push(objectId);
-		value = UtilCommon.arrayUnique(value);
-
-		this.save(value);
+		this.save(Relation.getArrayValue(data.value).concat([ objectId ]));
 	};	
 
 	save (value: string[]) {
@@ -206,7 +202,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value, () => {
+		onChange(UtilCommon.arrayUnique(value), () => {
 			menuStore.updateData(id, { value });
 		});
 	};

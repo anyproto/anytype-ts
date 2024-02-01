@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'Component';
-import { I, UtilCommon, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
+import { I, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 

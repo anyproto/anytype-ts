@@ -60,7 +60,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		if (this.height) {
 			css.minHeight = this.height;
 		};
-		
+
 		switch (state) {
 			default:
 			case I.FileState.Error:
@@ -213,7 +213,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onOpen (e: any) {
-		C.FileDownload(this.props.block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
+		C.FileDownload(this.props.block.getTargetObjectId(), UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -234,7 +234,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.Image });
+			UtilObject.openPopup({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Image });
 		};
 	};
 

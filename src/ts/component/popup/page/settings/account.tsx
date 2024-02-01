@@ -174,7 +174,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
             C.FileUpload(accountSpaceId, '', paths[0], I.FileType.Image, (message: any) => {
                 if (!message.error.code) {
-                    UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
+					UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
 						this.setState({ loading: false });
 					});
                 };
