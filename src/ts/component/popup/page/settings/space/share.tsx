@@ -46,14 +46,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const length = members.length;
 
 		const Member = (item: any) => {
-			//const isOwner = (item.id == participant.id) && (participant.permissions == I.ParticipantPermissions.Owner);
-
-			const isOwner = false;
+			const isOwner = (item.id == participant.id) && (participant.permissions == I.ParticipantPermissions.Owner);
 
 			let tag = null;
 			let button = null;
-
-			console.log(item);
 
 			if (item.status == I.ParticipantStatus.Joining) {
 				tag = <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} />;
@@ -206,8 +202,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	getMembers () {
 		const subId = Constant.subId.participant;
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		records.sort((c1, c2) => {
+			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
+			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+
+			if (isOwner1 && !isOwner2) return -1;
+			if (!isOwner1 && isOwner2) return 1;
+
+			return 0;
+		});
+
+		return records;
 	};
 
 	getLink () {
