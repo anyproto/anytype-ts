@@ -353,8 +353,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		keyboard.shortcut(`${cmd}+v`, e, () => {
 			e.preventDefault();
 
-			console.log('PASTE', navigator.clipboard.readText().then(text => console.log(text)));
-
+			this.onPaste();
 			ret = true;
 		});
 
@@ -518,6 +517,24 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		keyboard.disableSelection(false);
 		$('body').removeClass('grab');
+	};
+
+	onPaste () {
+		console.log('PASTE', );
+
+		navigator.clipboard.readText().then(text => {
+			if (!text) {
+				return;
+			};
+
+			UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [], (message: any) => {
+				if (!message.error.code) {
+					C.BlockPaste (message.objectId, '', { from: 0, to: 0 }, [], false, { html: text }, () => {
+					});
+				};
+			});
+
+		});
 	};
 
 	beforePosition () {
