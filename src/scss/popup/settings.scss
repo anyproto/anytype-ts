@@ -446,13 +446,18 @@
 				.label { margin-bottom: 8px; }
 				.label { @include text-paragraph; }
 
-				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; }
+				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; gap: 0px 8px; }
 				.inviteLinkWrapper {
 					.input { width: 100%; line-height: 40px; height: 40px; border-radius: 8px; padding: 0px 10px; border: 1px solid var(--color-shape-secondary); background: none; }
 					.input.isReadonly { color: var(--color-text-secondary); }
-					.button { flex-shrink: 0; margin: 0px 12px 0px 8px; }
-					.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/refresh.svg'); }
-					.icon.loading { transform: translateZ(0); animation: rotate 0.8s infinite linear; }
+					.button { flex-shrink: 0; }
+
+					.icon.refresh { 
+						flex-shrink: 0; width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/refresh.svg'); 
+						border-radius: 4px;
+					}
+					.icon.refresh:hover { background-color: var(--color-shape-highlight-medium); }
+					.icon.refresh.loading { transform: translateZ(0); animation: rotate 0.8s infinite linear; }
 				}
 			}
 
