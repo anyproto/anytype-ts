@@ -428,7 +428,7 @@
 				.title { margin-bottom: 0px; }
 				.info { 
 					display: flex; align-items: center; @include text-common; color: var(--color-text-secondary); padding: 0px 8px; border-radius: 4px;
-					gap: 0px 6px; flex-direction: row;
+					gap: 0px 6px; flex-direction: row; margin-right: -8px;
 				}
 				.info {
 					.icon { width: 14px; height: 14px; background-image: url('~img/icon/info.svg'); }
