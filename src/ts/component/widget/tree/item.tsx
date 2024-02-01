@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { DropTarget, Icon, IconObject, ObjectName } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate } from 'Lib';
+import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
+import { I, keyboard, Storage, UtilObject, translate, UtilCommon } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -11,6 +11,7 @@ interface Props extends I.WidgetTreeItem {
 	treeKey: string;
 	style?;
 	isEditing?: boolean;
+	isSection?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
 	setActive?(id: string): void;
@@ -31,7 +32,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick } = this.props;
+		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick, isSection } = this.props;
 		const subKey = this.getSubKey();
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
@@ -44,6 +45,23 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 		let arrow = null;
 		let onArrowClick = null;
+
+		if (isSection) {
+			cn.push('isSection');
+
+			return (
+				<div
+					ref={node => this.node = node}
+					style={style}
+					id={treeKey}
+					className={cn.join(' ')}
+				>
+					<div className="inner">
+						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+					</div>
+				</div>
+			);
+		};
 
 		/*
 		if (layout == I.ObjectLayout.Collection) {

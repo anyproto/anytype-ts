@@ -90,8 +90,8 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (const k in Constant.extension) {
-			const el = Constant.extension[k];
+		for (const k in Constant.fileExtension) {
+			const el = Constant.fileExtension[k];
 			if (!UtilCommon.hasProperty(el, 'length')) {
 				continue;
 			};

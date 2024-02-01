@@ -139,7 +139,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIconUser () {
 		const { rootId } = this.props;
 
-		Action.openFile(Constant.extension.cover, paths => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (message.hash) {
 					UtilObject.setIcon(rootId, '', message.hash);
