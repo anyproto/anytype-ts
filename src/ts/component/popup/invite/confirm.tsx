@@ -7,7 +7,7 @@ interface State {
 	error: string;
 };
 
-const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Component<I.Popup, State> {
+const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Component<I.Popup, State> {
 
 	state = {
 		error: '',
@@ -24,24 +24,28 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 		const { error } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { payload } = data;
-		const { identityName, identityIcon, spaceId } = payload;
+		const { name, icon, spaceId } = data;
 		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
+
+		if (!space) {
+			return null;
+		};
 
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
-					<IconObject object={{ name: identityName, iconImage: identityIcon, layout: I.ObjectLayout.Participant }} size={48} />
+					<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupRequestConfirmTitle'), identityName, space.name)} />
+				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), name, space.name)} />
 
 				<div className="buttons">
 					<div className="sides">
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={translate('popupRequestConfirmButtonConfirmReader')} className="c36" />
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={translate('popupRequestConfirmButtonConfirmEditor')} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={translate('popupInviteConfirmButtonConfirmReader')} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={translate('popupInviteConfirmButtonConfirmEditor')} className="c36" />
 					</div>
-					<Button onClick={this.onReject} text={translate('popupRequestConfirmButtonReject')} className="c36" color="red" />
+
+					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
 				</div>
 
 				<Error text={error} />
@@ -91,4 +95,4 @@ const PopupRequestConfirm = observer(class PopupRequestConfirm extends React.Com
 
 });
 
-export default PopupRequestConfirm;
+export default PopupInviteConfirm;

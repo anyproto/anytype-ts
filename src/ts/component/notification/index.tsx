@@ -92,7 +92,13 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'request': {
-				popupStore.open('requestConfirm', { data: { payload }});
+				popupStore.open('inviteConfirm', { 
+					data: {
+						name: payload.identityName,
+						icon: payload.identityIcon,
+						spaceId: payload.spaceId,
+					}
+				});
 			};
 		};
 

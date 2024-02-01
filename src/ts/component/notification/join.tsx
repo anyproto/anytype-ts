@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button } from 'Component';
-import { I, UtilCommon, UtilObject, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { Label, Button } from 'Component';
+import { I, translate } from 'Lib';
 
 const NotificationJoin = observer(class NotificationJoin extends React.Component<I.NotificationComponent, {}> {
 
@@ -10,6 +9,7 @@ const NotificationJoin = observer(class NotificationJoin extends React.Component
 		const { item, onButton } = this.props;
 		const { text } = item;
 		const buttons = [
+			{ id: 'space', text: translate('notificationButtonSpace') },
 			{ id: 'request', text: translate('notificationButtonRequest') }
 		];
 

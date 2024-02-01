@@ -53,13 +53,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			let tag = null;
 			let button = null;
 
-			if (item.isRequested) {
+			console.log(item);
+
+			if (item.status == I.ParticipantStatus.Joining) {
 				tag = <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} />;
 				button = (
 					<Button
 						className="c36"
 						color="blank"
 						text={translate('popupSettingsSpaceShareMembersViewRequest')}
+						onClick={() => this.onViewRequest(item)}
 					/>
 				);
 			} else 
@@ -314,6 +317,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				colorConfirm: 'red',
 				onConfirm,
 			},
+		});
+	};
+
+	onViewRequest (item: any) {
+		popupStore.open('inviteConfirm', { 
+			data: {
+				name: item.name,
+				icon: item.iconImage,
+				spaceId: commonStore.space,
+			}
 		});
 	};
 	

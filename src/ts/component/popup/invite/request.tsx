@@ -84,8 +84,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 			close(() => {
 				popupStore.open('confirm', {
 					data: {
-						title: translate('popupInviteRequestConfirmTitle'),
-						text: translate('popupInviteRequestConfirmText'),
+						title: translate('popupInviteInviteConfirmTitle'),
+						text: translate('popupInviteInviteConfirmText'),
 						textConfirm: translate('commonDone'),
 						canCancel: false,
 					},

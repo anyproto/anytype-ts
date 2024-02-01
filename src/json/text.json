@@ -758,13 +758,13 @@
 	"popupInviteRequestRequestToJoin": "Request to join",
 	"popupInviteRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
 
-	"popupInviteRequestConfirmTitle": "Request sent",
-	"popupInviteRequestConfirmText": "You will receive a notification when the space owner will approve your request.",
+	"popupInviteInviteConfirmTitle": "Request sent",
+	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
 
-	"popupRequestConfirmTitle": "%s requested to join %s",
-	"popupRequestConfirmButtonConfirmReader": "Grant read access",
-	"popupRequestConfirmButtonConfirmEditor": "Grant edit access",
-	"popupRequestConfirmButtonReject": "Reject",
+	"popupInviteConfirmTitle": "%s requested to join %s",
+	"popupInviteConfirmButtonConfirmReader": "Grant read access",
+	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
+	"popupInviteConfirmButtonReject": "Reject",
 
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
