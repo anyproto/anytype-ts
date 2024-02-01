@@ -32,7 +32,7 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	getObject?(): any;
 	onSelect?(id: string): void;
-	onUpload?(hash: string): void;
+	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -180,7 +180,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -213,7 +213,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -227,7 +227,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -414,9 +414,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					};
 				},
 
-				onUpload: (hash: string) => {
+				onUpload: (objectId: string) => {
 					if (onUpload) {
-						onUpload(hash);
+						onUpload(objectId);
 					};
 				}
 			},

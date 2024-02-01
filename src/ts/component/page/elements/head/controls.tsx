@@ -127,8 +127,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -141,8 +141,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-				if (message.hash) {
-					UtilObject.setIcon(rootId, '', message.hash);
+				if (message.objectId) {
+					UtilObject.setIcon(rootId, '', message.objectId);
 				};
 			});
 		});
@@ -226,7 +226,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				this.onUpload(I.CoverType.Upload, message.hash);
+				this.onUpload(I.CoverType.Upload, message.objectId);
 			};
 		});
 	};
@@ -235,10 +235,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.setState({ loading: true });
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
+	onUpload (type: I.CoverType, objectId: string) {
 		const { rootId } = this.props;
 
-		UtilObject.setCover(rootId, type, hash, 0, -0.25, 0, () => {
+		UtilObject.setCover(rootId, type, objectId, 0, -0.25, 0, () => {
 			this.setState({ loading: false });
 		});
 	};

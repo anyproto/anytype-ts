@@ -184,9 +184,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		UtilObject.setIcon(rootId, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { rootId } = this.props;
-		UtilObject.setIcon(rootId, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.rootId, '', objectId);
 	};
 
 	onKeyDown (e: any, item: any) {

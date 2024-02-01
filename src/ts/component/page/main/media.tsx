@@ -253,9 +253,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const rootId = this.getRootId();
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
-		const { content } = block;
 
-		C.FileDownload(content.hash, UtilCommon.getElectron().tmpPath, (message: any) => {
+		if (!block) {
+			return;
+		};
+
+		C.FileDownload(block.content.targetObjectId,  UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};

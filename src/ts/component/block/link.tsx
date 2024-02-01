@@ -277,10 +277,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		UtilObject.setIcon(block.content.targetBlockId, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { block } = this.props;
-
-		UtilObject.setIcon(block.content.targetBlockId, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.block.content.targetBlockId, '', objectId);
 	};
 
 	onCheckbox () {

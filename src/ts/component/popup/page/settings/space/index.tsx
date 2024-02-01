@@ -339,8 +339,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
 	};
 
 	onDelete () {

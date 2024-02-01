@@ -180,9 +180,10 @@ class UtilMenu {
 
 	// Action menu
 	getActions (param: any) {
-		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
+		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-		const items: any[] = [
+
+		let items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
@@ -198,30 +199,28 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
-			//items.push({ id: 'rename', icon: 'rename', name: translate('libMenuRename') });
-			//items.push({ id: 'replace', icon: 'replace', name: translate('libMenuReplace') });
+			items = items.concat([
+				{ id: 'download', icon: 'download', name: translate('commonDownload') },
+				{ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') },
+				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
+				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
+			]);
 		};
 
-		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
+		if (hasDataview) {
+			const isCollection = Dataview.isCollection(rootId, blockId);
+			const sourceName = isCollection ? translate('commonLCCollection') : translate('commonLCSet');
+
+			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+		};
+
+		if (hasFile || hasBookmark || hasDataview) {
+			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
 	};
 
-	getDataviewActions (rootId: string, blockId: string) {
-		const isCollection = Dataview.isCollection(rootId, blockId);
-		const sourceName = isCollection ? 'collection' : 'set';
-
-		return [
-			{ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true },
-			{ id: 'openDataviewObject', icon: 'expand', name: UtilCommon.sprintf(translate('libMenuOpenSource'), sourceName) },
-			//{ id: 'openDataviewFullscreen', icon: 'expand', name: translate('libMenuOpenFullscreen') }
-		].map(it => ({ ...it, isAction: true }));
-	};
-	
 	getTextColors () {
 		const items: any[] = [
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }

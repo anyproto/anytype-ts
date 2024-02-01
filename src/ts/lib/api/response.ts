@@ -92,7 +92,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
 	};
 };
 
@@ -418,7 +418,7 @@ export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
 
 export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
 	};
 };
 

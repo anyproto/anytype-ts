@@ -8,7 +8,7 @@ interface Props {
 	id?: string;
 	icon?: string;
 	iconClass?: string;
-	hash?: string;
+	objectId?: string;
 	size?: number;
 	asImage?: boolean;
 	className?: string;
@@ -17,7 +17,7 @@ interface Props {
 	offsetY?: number;
 	menuId?: string;
 	onSelect?(id: string): void;
-	onUpload?(hash: string): void;
+	onUpload?(objectId: string): void;
 }
 
 const IconSrc = {
@@ -34,7 +34,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 	};
 	
 	render () {
-		const { id, size, icon, hash, asImage, className, canEdit, menuId, iconClass } = this.props;
+		const { id, size, icon, objectId, asImage, className, canEdit, menuId, iconClass } = this.props;
 		const cn = [ 'iconEmoji' ];
 		const css = { lineHeight: size + 'px' };
 
@@ -59,8 +59,8 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 				};
 			};
 		} else 
-		if (hash) {
-			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
+		if (objectId) {
+			element = <img src={commonStore.imageUrl(objectId, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;

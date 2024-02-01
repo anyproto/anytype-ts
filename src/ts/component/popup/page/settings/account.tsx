@@ -171,13 +171,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 			this.setState({ loading: true });
 
             C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-                if (message.error.code) {
-                    return;
+                if (!message.error.code) {
+					UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
+						this.setState({ loading: false });
+					});
                 };
-
-                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    this.setState({ loading: false });
-                });
             });
 		});
     };
