@@ -4,11 +4,9 @@ import Constant from 'json/constant.json';
 
 const Tags = {};
 for (const i in I.MarkType) {
-	if (isNaN(Number(i))) {
-		continue;
+	if (!isNaN(Number(i))) {
+		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
 	};
-
-	Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
 };
 
 const Patterns = {
@@ -71,14 +69,16 @@ class Mark {
 			{ key: '*', type: I.MarkType.Italic },
 			{ key: '_', type: I.MarkType.Italic },
 			{ key: '~~', type: I.MarkType.Strike },
+			{ key: '$', type: I.MarkType.Latex },
 		];
 
 		for (const item of Markdown) {
 			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
 			const k = UtilCommon.regexEscape(item.key);
+
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
+				reg: new RegExp('([^\\*_\\$]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
 			});
 		};
 	};
@@ -356,14 +356,14 @@ class Mark {
 
 		// Render mentions
 		for (const mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if ([ I.MarkType.Mention, I.MarkType.Latex ].includes(mark.type)) {
 				render(mark);
 			};
 		};
 
 		// Render everything except mentions
 		for (const mark of parts) {
-			if (mark.type != I.MarkType.Mention) {
+			if (![ I.MarkType.Mention, I.MarkType.Latex ].includes(mark.type)) {
 				render(mark);
 			};
 		};
@@ -387,6 +387,11 @@ class Mark {
 		obj.find(this.getTag(I.MarkType.Mention)).removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('name').html());
+		});
+
+		obj.find(this.getTag(I.MarkType.Latex)).each((i: number, item: any) => {
+			item = $(item);
+			item.html(item.attr('data-text'));
 		});
 
 		obj.find('font').each((i: number, item: any) => {
@@ -490,7 +495,7 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /[`\*_~\[]{1}/.test(html);
+		const test = /[`\*_~\$\[]{1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {
@@ -628,6 +633,7 @@ class Mark {
 
 			case I.MarkType.Mention:
 			case I.MarkType.Emoji:
+			case I.MarkType.Latex:
 				attr = 'contenteditable="false"';
 				break;
 				
