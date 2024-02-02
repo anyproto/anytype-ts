@@ -64,8 +64,15 @@ html.printMedia {
 			.icon.dnd { display: none; }
 		}
 
+		.block.blockEmbed {
+			.icon.source, 
+			.icon.resize { display: none; }
+		}
+
 		.block.blockMedia {
-			.icon.play { display: none; }
+			.icon.play, 
+			.icon.download, 
+			.icon.resize { display: none; }
 		}
 
 		.block.blockText {
