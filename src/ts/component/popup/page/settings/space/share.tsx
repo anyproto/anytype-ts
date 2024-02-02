@@ -235,29 +235,42 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { space } = commonStore;
 		const node = $(this.node);
 		const button = node.find('#generate');
+		const onConfirm = () => {
+			C.SpaceInviteGenerate(space, (message: any) => {
+				if (!auto) {
+					button.removeClass('loading');
+				};
+
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
+
+				this.cid = message.inviteCid;
+				this.key = message.inviteKey;
+				this.refInput.setValue(this.getLink());
+
+				if (!auto) {
+					this.onCopy();
+				};
+			});
+		};
 
 		if (!auto) {
 			button.addClass('loading');
+
+			popupStore.open('confirm', {
+				data: {
+					title: translate('popupConfirmRevokeLinkTitle'),
+					text: translate('popupConfirmRevokeLinkText'),
+					textConfirm: translate('popupConfirmRevokeLinkConfirm'),
+					colorConfirm: 'red',
+					onConfirm,
+				},
+			});
+		} else {
+			onConfirm();
 		};
-
-		C.SpaceInviteGenerate(space, (message: any) => {
-			if (!auto) {
-				button.removeClass('loading');
-			};
-
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-				return;
-			};
-
-			this.cid = message.inviteCid;
-			this.key = message.inviteKey;
-			this.refInput.setValue(this.getLink());
-
-			if (!auto) {
-				this.onCopy();
-			};
-		});
 	};
 
 	onStopSharing () {

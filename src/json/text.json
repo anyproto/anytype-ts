@@ -739,6 +739,10 @@
 	"popupConfirmMemberChangeTitle": "Are you sure?",
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
+	"popupConfirmRevokeLinkTitle": "Revoke sharing link",
+	"popupConfirmRevokeLinkText": "A new link will be generated and the previous link will be deactivated.",
+	"popupConfirmRevokeLinkConfirm": "Revoke link",
+
 	"popupSettingsSpaceLeave": "Leave %s?",
 	"popupSettingsSpaceLeaveTitle": "Leave space",
 	"popupSettingsSpaceLeaveText": "You will no longer see the space and all files inside.<br \/>You could be back again via the invite link.",
