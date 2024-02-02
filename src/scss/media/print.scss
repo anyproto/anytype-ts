@@ -2,7 +2,7 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; }
+	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; }
 
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
