@@ -55,6 +55,9 @@ html.printMedia {
 	}
 
 	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; border-radius: 0px; }
+	.block.blockCover {
+		.elements { display: none; }
+	}
 
 	.blocks { width: 100%; }
 	.blocks {
