@@ -34,7 +34,7 @@ export default [
 	bullet(`Facebook posts`),
 	bullet(`Telegram messages`),
 	bullet(`Figma public documents`),
-	bullet(`Open street maps`),
+	bullet(`OpenStreetMap`),
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
