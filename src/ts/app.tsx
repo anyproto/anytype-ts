@@ -55,7 +55,6 @@ interface State {
 
 declare global {
 	interface Window {
-		isExtension: boolean;
 		$: any;
 		Electron: any;
 		Anytype: any;

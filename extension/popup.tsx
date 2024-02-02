@@ -47,7 +47,6 @@ const rootStore = {
 
 declare global {
 	interface Window {
-		isExtension: boolean;
 		Electron: any;
 		$: any;
 		Anytype: any;
