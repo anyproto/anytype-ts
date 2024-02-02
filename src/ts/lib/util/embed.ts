@@ -232,44 +232,6 @@ class UtilEmbed {
 		return pm[2] + ((tm && tm[2].length) ? `?start=${tm[2]}` : '');
 	};
 
-	getEnvironmentContent (processor: I.EmbedProcessor): { html: string; libs: string[]} {
-		const libs = [];
-
-		let html = '';
-		switch (processor) {
-			case I.EmbedProcessor.Chart: {
-				html = `<canvas id="chart"></canvas>`;
-				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Twitter: {
-				libs.push('https://platform.twitter.com/widgets.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Reddit: {
-				libs.push('https://embed.reddit.com/widgets.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Instagram: {
-				libs.push('https://www.instagram.com/embed.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Codepen: {
-				libs.push('https://cpwebassets.codepen.io/assets/embed/ei.js');
-				break;
-			};
-		};
-
-		return { 
-			html, 
-			libs, 
-		};
-	};
-
 	getLang (processor: I.EmbedProcessor) {
 		switch (processor) {
 			default: return 'html';
