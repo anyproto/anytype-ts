@@ -274,6 +274,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onStopSharing () {
+		const { space } = commonStore;
+		const { onPage } = this.props;
+
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmStopSharingSpaceTitle'),
@@ -281,7 +284,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					// stop sharing logic goes here
+					C.SpaceInviteRevoke(space);
+					onPage('spaceIndex');
 				},
 			},
 		});

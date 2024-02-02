@@ -1883,6 +1883,14 @@ export const SpaceInviteView = (cid: string, key: string, callBack?: (message: a
 	dispatcher.request(SpaceInviteView.name, request, callBack);
 };
 
+export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteRevoke.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
+};
+
 export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.Join.Request();
 
