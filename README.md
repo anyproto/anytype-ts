@@ -1,6 +1,19 @@
 # Anytype
 Official Anytype client for MacOS, Linux, and Windows.
 
+Anytype is a personal knowledge base, a digital brain that allows you to quickly capture, describe, and connect information. You can use Anytype to create books, tasks, notes, ideas, documents, tools and organize them any way you want.
+
+## Links
+
+* 🌐 [Website](https://anytype.io)
+* 📝 [Blog](https://blog.anytype.io)
+* 📑 [Documentation](https://doc.anytype.io)
+* 💼 [Technical information](https://tech.anytype.io)
+* 👋 [Community forum](https://community.anytype.io)
+* 💾 [Downloads](https://download.anytype.io)
+* ▶️ [Google Play](https://play.google.com/store/apps/details?id=io.anytype.app)
+* 🍏 [App Store](https://apps.apple.com/us/app/anytype-private-notes/id6449487029)
+
 ## Building the source
 
 ### Dependencies
