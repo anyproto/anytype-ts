@@ -458,6 +458,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					keys: UtilData.typeRelationKeys(),
+					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);
 
