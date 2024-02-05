@@ -170,7 +170,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		Action.openFile(Constant.fileExtension.cover, paths => {
 			this.setState({ loading: true });
 
-            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
                 if (!message.error.code) {
 					UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
 						this.setState({ loading: false });
