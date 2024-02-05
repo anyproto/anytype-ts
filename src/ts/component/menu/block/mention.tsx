@@ -283,7 +283,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || UtilObject.defaultName('Page'));
+			name = String(name || translate('defaultNamePage'));
 			name = UtilCommon.shorten(name, 30);
 
 			const to = from + name.length;

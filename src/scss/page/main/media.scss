@@ -18,16 +18,18 @@
 		.block.blockMedia { max-height: unset; }
 	}
 
-	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }
+	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; gap: 0px 32px; }
 	.blocks.vertical {
-		.side { width: 50%; }
-		.side.left { margin-right: 32px; min-width: 400px; }
+		> .side { width: 50%; }
+		> .side.left { min-width: 400px; }
+		> .side.left {
+			.iconObject { width: 100%; height: 100%; border-radius: 6px; background: var(--color-shape-highlight-medium); }
+		}
 
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia {
 			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
 		}
-		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: var(--color-shape-highlight-medium); }
 	}
 
 	.blocks {

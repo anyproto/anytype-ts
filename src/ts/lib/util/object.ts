@@ -289,10 +289,6 @@ class UtilObject {
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(`defaultName${key}`);
-	};
-
 	name (object: any) {
 		const { isDeleted, layout, snippet } = object;
 
@@ -303,7 +299,7 @@ class UtilObject {
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('Page');
+			name = object.name || translate('defaultNamePage');
 		};
 
 		return name;

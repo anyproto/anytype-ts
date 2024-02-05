@@ -41,7 +41,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const profile = UtilObject.getProfile();
 	
 		let name = profile.name;
-		if (name == UtilObject.defaultName('Page')) {
+		if (name == translate('defaultNamePage')) {
 			name = '';
 		};
 

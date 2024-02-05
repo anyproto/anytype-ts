@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore, commonStore, dbStore } from 'Store';
+import { menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -43,6 +43,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
+		const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
 		if (className) {
 			cn.push(className);
@@ -69,7 +70,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					ref={ref => this.ref = ref}
 					id="value"
 					readonly={readonly || !isEditing}
-					placeholder={UtilObject.defaultName(isCollection ? 'Collection' : 'Set')}
+					placeholder={placeholder}
 					onFocus={this.onFocus}
 					onMouseDown={this.onTitle}
 					onBlur={this.onBlur}
@@ -301,7 +302,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const object = getTarget();
 
 		let name = String(object.name || '');
-		if ((name == UtilObject.defaultName('Page')) || (name == UtilObject.defaultName('Set'))) {
+		if ([ 
+			translate('defaultNamePage'), 
+			translate('defaultNameSet'), 
+			translate('defaultNameCollection'),
+		].includes(name)) {
 			name = '';
 		};
 
@@ -337,7 +342,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			return;
 		};
 
-		if ((value == UtilObject.defaultName('Page')) || (value == UtilObject.defaultName('Set'))) {
+		if ([ 
+			translate('defaultNamePage'), 
+			translate('defaultNameSet'), 
+			translate('defaultNameCollection'),
+		].includes(value)) {
 			value = '';
 		};
 

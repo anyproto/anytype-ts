@@ -362,6 +362,14 @@
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
+	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
+
+	"pageMainArchiveEmpty": "Your Bin is empty",
+	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainMediaNotFound": "File not found",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
@@ -380,12 +388,6 @@
 
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
-
-	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
-
-	"pageMainArchiveEmpty": "Your Bin is empty",
-	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
