@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 const SKIP = [ 
 	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
 	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
-];
+].map(tag => tag.toLowerCase());
 
 class MenuSearchText extends React.Component<I.Menu> {
 	
