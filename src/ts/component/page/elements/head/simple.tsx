@@ -144,10 +144,21 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.setValue();
+		this.init();
 	};
 
 	componentDidUpdate () {
+		this.init();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+
+		focus.clear(true);
+		window.clearTimeout(this.timeout);
+	};
+
+	init () {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
@@ -159,13 +170,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		focus.clear(true);
-		window.clearTimeout(this.timeout);
 	};
 
 	onFocus (e: any, item: any) {
