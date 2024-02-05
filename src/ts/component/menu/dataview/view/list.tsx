@@ -202,7 +202,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
-			...it, name: it.name || UtilObject.defaultName('Page'),
+			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
 		items.unshift({ id: 'label', name: translate('menuDataviewViewListViews'), isSection: true });

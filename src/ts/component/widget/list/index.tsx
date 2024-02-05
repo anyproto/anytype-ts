@@ -45,7 +45,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || UtilObject.defaultName('Page') }));
+		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const { total } = dbStore.getMeta(subId, '');
 		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
@@ -98,7 +98,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
+										rowHeight={({ index }) => this.getRowHeight(items[index], index)}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
@@ -239,7 +239,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
-				defaultHeight: i => this.getRowHeight(items[i]),
+				defaultHeight: i => this.getRowHeight(items[i], i),
 				keyMapper: i => items[i],
 			});
 		};
@@ -439,16 +439,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let height = 0;
 
-		items.forEach((item) => {
-			height += this.getRowHeight(item);
+		items.forEach((item, index) => {
+			height += this.getRowHeight(item, index);
 		});
 
 		return height;
 	};
 
-	getRowHeight (item: any) {
+	getRowHeight (item: any, index: number) {
 		if (item && item.isSection) {
-			return HEIGHT_COMPACT;
+			return index ? HEIGHT_COMPACT + 12 : HEIGHT_COMPACT;
 		};
 		return this.props.isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
 	};

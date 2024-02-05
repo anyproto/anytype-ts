@@ -220,7 +220,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (record.layout == I.ObjectLayout.Note) {
 					value = record.snippet;
 				} else {
-					value = value || UtilObject.defaultName('Page');
+					value = value || translate('defaultNamePage');
 				};
 			};
 		};
@@ -266,7 +266,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			let value = this.value;
 
 			if (relation.relationKey == 'name') {
-				if (value == UtilObject.defaultName('Page')) {
+				if (value == translate('defaultNamePage')) {
 					value = '';
 				};
 			} else
@@ -445,8 +445,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(this.props.recordId, icon, '');
 	};
 
-	onIconUpload (hash: string) {
-		UtilObject.setIcon(this.props.recordId, '', hash);
+	onIconUpload (objectId: string) {
+		UtilObject.setIcon(this.props.recordId, '', objectId);
 	};
 
 	onCheckbox () {

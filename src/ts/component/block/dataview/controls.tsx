@@ -99,7 +99,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 					onClick={() => this.onViewSet(item)} 
 					onContextMenu={e => this.onViewContext(e, `#views #${elementId}`, item)}
 				>
-					{item.name || UtilObject.defaultName('Page')}
+					{item.name || translate('defaultNamePage')}
 				</div>
 			);
 		});

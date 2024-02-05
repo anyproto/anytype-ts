@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 import Theme from 'json/theme.json';
@@ -32,7 +32,7 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	getObject?(): any;
 	onSelect?(id: string): void;
-	onUpload?(hash: string): void;
+	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -180,7 +180,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -213,7 +213,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -227,7 +227,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -414,9 +414,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					};
 				},
 
-				onUpload: (hash: string) => {
+				onUpload: (objectId: string) => {
 					if (onUpload) {
-						onUpload(hash);
+						onUpload(objectId);
 					};
 				}
 			},
@@ -541,7 +541,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || UtilObject.defaultName('Page'));
+		let name = String(object.name || translate('defaultNamePage'));
 		name = UtilSmile.strip(name);
 		name = name.trim().substring(0, 1).toUpperCase();
 

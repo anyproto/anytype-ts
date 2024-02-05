@@ -15,6 +15,7 @@
 	.block.blockLayout:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
 		> .wrapContent {
 			> .children {
+				> .block.first { padding-top: 0px !important; }
 				> .block.first {
 					.colResize {
 						.inner { top: 0px; height: calc(100% + 15px); }

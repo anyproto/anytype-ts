@@ -73,7 +73,7 @@ class UtilSmile {
 
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
-		const prefix = UtilCommon.getGlobalConfig().emojiPrefix || './img/emoji/';
+		const prefix = UtilCommon.getGlobalConfig().emojiUrl || './img/emoji/';
 		const item = this.data.emojis[id];
 
 		if (!item) {

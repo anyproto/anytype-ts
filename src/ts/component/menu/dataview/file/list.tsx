@@ -235,7 +235,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			};
 
 			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || UtilObject.defaultName('Page'));
+				it.name = String(it.name || translate('defaultNamePage'));
 				return it;
 			}));
 

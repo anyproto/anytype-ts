@@ -177,6 +177,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
 		
 		focus.clear(true);
 		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
@@ -205,8 +209,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -218,9 +222,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
-					UtilObject.setIcon(rootId, '', message.hash);
+					UtilObject.setIcon(rootId, '', message.objectId);
 				};
 			});
 		});
@@ -302,14 +306,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.setLoading(true);
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
+	onUpload (type: I.CoverType, objectId: string) {
 		const { rootId } = this.props;
 
 		this.coords.x = 0;
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		UtilObject.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});
@@ -511,7 +515,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		preventCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			preventCommonDrop(false);
 			
@@ -520,7 +524,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			};
 			
 			this.loaded = false;
-			UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
+			UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
 	};
 	

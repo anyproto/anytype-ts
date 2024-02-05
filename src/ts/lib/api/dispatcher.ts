@@ -228,7 +228,7 @@ class Dispatcher {
 
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
-					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
+					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=424,height=232,menubar=no,resizable=no,scrollbars=no,location=no,toolbar=no,frame=no');
 
 					win.addEventListener('load', () => win.postMessage({ 
 						challenge,
@@ -238,7 +238,7 @@ class Dispatcher {
 
 					window.setTimeout(() => {
 						try { win.close(); } catch (e) { /**/ };
-					}, 3000);
+					}, 5000);
 					break;
 				};
 
@@ -504,20 +504,8 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasName()) {
-						block.content.name = data.getName().getValue();
-					};
-
-					if (data.hasHash()) {
-						block.content.hash = data.getHash().getValue();
-					};
-
-					if (data.hasMime()) {
-						block.content.mime = data.getMime().getValue();
-					};
-
-					if (data.hasSize()) {
-						block.content.size = data.getSize().getValue();
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
 					};
 
 					if (data.hasType()) {

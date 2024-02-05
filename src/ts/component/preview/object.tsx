@@ -55,8 +55,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
-		const author = detailStore.get(contextId, object.creator, []);
-		const type = detailStore.get(contextId, object.type, []);
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
@@ -105,7 +103,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 		const Block = (item: any) => {
 			const { content, fields } = item;
-			const { text, style, checked } = content;
+			const { text, style, checked, targetObjectId } = content;
 			const childBlocks = blockStore.getChildren(contextId, item.id);
 			const length = childBlocks.length;
 			const cn = [ 'element', UtilData.blockClass(item), item.className ];
@@ -238,7 +236,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />;
+							inner = <img className="media" src={commonStore.imageUrl(targetObjectId, Constant.size.image)} style={css} />;
 							break;
 						};
 

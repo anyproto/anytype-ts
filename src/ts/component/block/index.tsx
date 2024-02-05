@@ -79,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');

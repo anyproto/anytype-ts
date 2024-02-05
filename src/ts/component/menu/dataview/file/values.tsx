@@ -182,23 +182,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	
 	onUpload (e: any) {
 		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
-					this.add(message.hash);
+					this.add(message.objectId);
 				};
 			});
 		});
 	};
 
-	add (hash: string) {
+	add (objectId: string) {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = Relation.getArrayValue(data.value);
-		value.push(hash);
-		value = UtilCommon.arrayUnique(value);
-
-		this.save(value);
+		this.save(Relation.getArrayValue(data.value).concat([ objectId ]));
 	};	
 
 	save (value: string[]) {
@@ -206,7 +202,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value, () => {
+		onChange(UtilCommon.arrayUnique(value), () => {
 			menuStore.updateData(id, { value });
 		});
 	};

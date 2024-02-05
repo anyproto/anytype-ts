@@ -125,7 +125,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
-					<HeadSimple ref={ref => this.refHead = ref} type="Type" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => this.refHead = ref} placeholder={translate('defaultNameType')} rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (
 						<div className="section template">
