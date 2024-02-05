@@ -216,6 +216,16 @@ class UtilEmbed {
 				break;
 			};
 
+			case I.EmbedProcessor.GithubGist: {
+				const a = url.split('#');
+				if (!a.length) {
+					break;
+				};
+
+				url = a[0];
+				break;
+			};
+
 		};
 
 		return url;
