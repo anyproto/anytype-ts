@@ -105,7 +105,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			list.push({ 
 				depth, 
 				id: block.id,
-				text: String(block.content.text || UtilObject.defaultName('Page')),
+				text: String(block.content.text || translate('defaultNamePage')),
 			});
 		});
 		return list;
