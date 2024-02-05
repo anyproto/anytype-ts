@@ -148,13 +148,16 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		this.load(true);
 		this.rebind();
 
-		this.intervalClipboard = window.setInterval(async () => {
+		const check = async () => {
 			const items = await this.getClipboardData();
 			if (this.clipboardItems !== items) {
 				this.clipboardItems = items;
 				this.forceUpdate();
 			};
-		}, 1000);
+		};
+
+		check();
+		this.intervalClipboard = window.setInterval(check, 1000);
 	};
 
 	componentDidUpdate () {
