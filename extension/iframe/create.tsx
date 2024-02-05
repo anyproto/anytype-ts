@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Button, Block, Loader, Icon, Select } from 'Component';
+import { Button, Block, Loader, Icon, Select, IconObject } from 'Component';
 import { I, C, M, translate, UtilObject, UtilData } from 'Lib';
 import { blockStore, extensionStore, menuStore, dbStore, commonStore } from 'Store';
 
@@ -37,7 +37,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const { isLoading, error, object } = this.state;
 		const { html } = extensionStore;
 		const { space } = commonStore;
-		const children = blockStore.getChildren(ROOT_ID, ROOT_ID);
+		const children = blockStore.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
 
 		return (
 			<div ref={ref => this.node = ref} className="page pageCreate">
@@ -59,6 +59,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 						<div id="select" className="select" onMouseDown={this.onSelect}>
 							<div className="item">
+								{object ? <IconObject object={object} iconSize={16} /> : ''}
 								<div className="name">{object ? object.name : translate('commonSelectObject')}</div>
 							</div>
 							<Icon className="arrow light" />
