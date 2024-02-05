@@ -38,6 +38,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -127,7 +128,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 											key={item.id} 
 											rootId={rootId} 
 											block={item} 
-											readonly={true} 
+											readonly={!allowed} 
 											isSelectionDisabled={true} 
 										/>
 									))}
