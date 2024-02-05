@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, translate, UtilObject, focus, Action } from 'Lib';
-import { detailStore, menuStore, blockStore } from 'Store';
+import { detailStore, menuStore, blockStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuContext extends React.Component<I.Menu> {
@@ -90,6 +90,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
+		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
 		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
@@ -152,6 +153,7 @@ class MenuContext extends React.Component<I.Menu> {
 			linkTo = null;
 			unlink = null;
 			changeType = null;
+			exportObject = null;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -165,7 +167,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedOpen)		 open = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo ] },
+			{ children: [ createWidget, open, fav, linkTo, exportObject ] },
 			{ children: [ changeType, pageCopy, unlink, archive ] },
 		];
 
@@ -359,6 +361,10 @@ class MenuContext extends React.Component<I.Menu> {
 				break;
 			};
 
+			case 'export': {
+				popupStore.open('export', { data: { objectIds } });
+				break;
+			};
 		};
 		
 		close();

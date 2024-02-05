@@ -16,16 +16,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	};
 
 	render() {
-		const { config } = commonStore;
-		const formats = [
-			{ id: I.ExportType.Markdown, name: 'Markdown' },
-			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
-			{ id: I.ExportType.Pdf, name: 'PDF' },
-		];
-
-		if (config.experimental) {
-			formats.push({ id: I.ExportType.Html, name: 'HTML' });
-		};
+		const formats = this.getFormats();
 
 		const pageSize = [
 			{ id: 'A3', name: 'A3'},
@@ -171,6 +162,20 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		};
 	};
 
+	getFormats () {
+		const { param } = this.props;
+		const { data } = param;
+		const { allowHtml } = data;
+		const { config } = commonStore;
+
+		return [
+			{ id: I.ExportType.Markdown, name: 'Markdown' },
+			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
+			allowHtml ? { id: I.ExportType.Pdf, name: 'PDF' } : null,
+			allowHtml && config.experimental ? { id: I.ExportType.Html, name: 'HTML' } : null,
+		].filter(it => it);
+	};
+
 	save () {
 		this.props.storageSet(this.data);
 	};
@@ -178,7 +183,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	onConfirm (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { objectIds } = data;
 		const { format } = this.data;
 		const route = 'MenuObject';
 
@@ -186,7 +191,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		switch (format) {
 			default:
-				Action.export([ rootId ], format, { ...this.data, route });
+				Action.export(objectIds, format, { ...this.data, route });
 				break;
 
 			case I.ExportType.Html:
