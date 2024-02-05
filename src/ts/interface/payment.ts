@@ -1,8 +1,13 @@
 export enum SubscriptionTier {
-	Unknown			 = 0,
-	Friend			 = 1,
-	Supporter1Year	 = 2,
-	Patron1Year		 = 3,
+	Unknown	= 0,
+	Explorer = 1,
+
+	// these are for testing only, won't require real payment
+	Builder1WeekTEST = 2,
+	CoCreator1WeekTEST = 3,
+
+	Builder1Year = 4,
+	CoCreator1Year = 5,
 };
             
 export enum SubscriptionStatus {
