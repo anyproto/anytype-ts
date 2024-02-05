@@ -13,6 +13,12 @@ interface State {
 
 const LIMIT_PINNED = 5;
 
+enum SystemIds {
+	Add = 'add',
+	Search = 'search',
+	Clipboard = 'clipboard',
+};
+
 class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	n = 0;
@@ -22,7 +28,9 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	filter = '';
 	refFilter: any = null;
 	timeoutFilter = 0;
+	intervalClipboard = 0;
 	items: any[] = [];
+	clipboardItems: any[] = [];
 	offset = 0;
 	state = {
 		isExpanded: false,
@@ -88,13 +96,13 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				cn.push('isDefault');
 			};
 
-			if ([ 'search', 'add' ].includes(item.itemId)) {
+			if ([ SystemIds.Search, SystemIds.Add, SystemIds.Clipboard ].includes(item.itemId)) {
 				icon = <Icon className={item.itemId} />;
 			} else {
 				icon = <IconObject object={item} />;
 			};
 
-			if (item.itemId != 'search') {
+			if (![ SystemIds.Search, SystemIds.Clipboard ].includes(item.itemId)) {
 				name = <ObjectName object={item} />;
 			};
 
@@ -103,7 +111,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
-					onContextMenu={e => this.onContextMneu(e, item)}
+					onContextMenu={e => this.onContextMenu(e, item)}
 					onMouseEnter={e => this.onOver(e, item)}
 					onMouseLeave={e => this.onOut(e, item)}
 				>
@@ -139,6 +147,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		this._isMounted = true;
 		this.load(true);
 		this.rebind();
+
+		this.intervalClipboard = window.setInterval(async () => {
+			const items = await this.getClipboardData();
+			if (this.clipboardItems !== items) {
+				this.clipboardItems = items;
+				this.forceUpdate();
+			};
+		}, 1000);
 	};
 
 	componentDidUpdate () {
@@ -159,6 +175,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearInterval(this.intervalClipboard);
 	};
 
 	rebind () {
@@ -236,7 +254,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 			if (this.filter) {
 				objects.push({ 
-					id: 'add', 
+					id: SystemIds.Add, 
 					name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 				});
 			};
@@ -273,12 +291,22 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 
 			items.unshift({ 
-				id: 'search', 
+				id: SystemIds.Search, 
 				icon: 'search', 
 				name: '', 
 				tooltip: translate('menuQuickCaptureTooltipSearch'),
 				caption: '0',
 			});
+
+			if (this.clipboardItems && this.clipboardItems.length) {
+				items.push({ 
+					id: SystemIds.Clipboard, 
+					icon: 'clipboard', 
+					name: '', 
+					tooltip: translate('menuQuickCaptureTooltipSearch'),
+					caption: '0',
+				});
+			};
 
 			sections.push({ id: 'collapsed', children: items });
 		};
@@ -363,7 +391,12 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	onClick (e: any, item: any) {
-		if (item.itemId == 'search') {
+		if (item.itemId == SystemIds.Clipboard) {
+			this.onPaste();
+			return;
+		};
+
+		if (item.itemId == SystemIds.Search) {
 			this.onExpand();
 			return;
 		};
@@ -384,7 +417,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 		};
 
-		if (item.itemId == 'add') {
+		if (item.itemId == SystemIds.Add) {
 			C.ObjectCreateObjectType({ name: this.filter }, [], commonStore.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
@@ -402,7 +435,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		close();
 	};
 
-	onContextMneu (e: any, item: any) {
+	onContextMenu (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -410,7 +443,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if ([ 'add', 'search' ].includes(item.itemId)) {
+		if ([ SystemIds.Add, SystemIds.Search, SystemIds.Clipboard ].includes(item.itemId)) {
 			return;
 		};
 
@@ -470,7 +503,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 							};
 							break;
 						};
-
 					};
 				}
 			}
@@ -519,20 +551,41 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		$('body').removeClass('grab');
 	};
 
-	onPaste () {
+	async onPaste () {
 		const type = dbStore.getTypeById(commonStore.type);
+		const data = await this.getClipboardData();
 
-		navigator.clipboard.read().then(items => {
-			items.forEach(async item =>  {
+		data.forEach(async item =>  {
+			let text = '';
+			let html = '';
+
+			if (item.types.includes('text/plain')) {
 				const textBlob = await item.getType('text/plain');
-				const htmlBlob = await item.getType('text/html');
-				const text = await textBlob.text();
-				const html = await htmlBlob.text();
 
-				if (!text && !html) {
-					return;
+				if (textBlob) {
+					text = await textBlob.text();
 				};
+			};
 
+			if (item.types.includes('text/html')) {
+				const htmlBlob = await item.getType('text/html');
+
+				if (htmlBlob) {
+					html = await htmlBlob.text();
+				};
+			};
+
+			if (!text && !html) {
+				return;
+			};
+
+			const url = UtilCommon.matchUrl(text);
+
+			if (url) {
+				C.ObjectCreateBookmark({ source: url }, commonStore.space, (message: any) => {
+					UtilObject.openAuto(message.details);
+				});
+			} else {
 				C.ObjectCreate({}, [], '', type?.uniqueKey, commonStore.space, (message: any) => {
 					if (message.error.code) {
 						return;
@@ -544,8 +597,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						UtilObject.openAuto(object);
 					});
 				});
-			});
+			};
 		});
+	};
+
+	async getClipboardData () {
+		let ret = [];
+		try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+		return ret;
 	};
 
 	beforePosition () {
