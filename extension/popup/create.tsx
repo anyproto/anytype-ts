@@ -150,7 +150,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 						</div>
 					</div>
 
-					<div className="buttons">
+					<div className="buttonsWrapper">
 						<Button color="pink" className="c32" text="Save" type="input" subType="submit" onClick={this.onSubmit} />
 					</div>
 

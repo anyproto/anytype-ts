@@ -70,6 +70,15 @@ html.anytypeWebclipper-popup {
 	}
 
 	.button, .select, .cellContent { cursor: pointer; }
-
 	.tagItem { @include text-small; }
+
+	.filter.outlined {
+		.inner { border-radius: 1px; border: 1px solid var(--color-shape-secondary); box-shadow: unset; height: 32px; }
+	}
+
+	.filter.outlined.isFocused { border: unset !important; box-shadow: unset !important; }
+	.filter.outlined.isFocused {
+		.inner { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice) !important; }
+		.input { border: unset !important; box-shadow: unset !important; }
+	}
 }
