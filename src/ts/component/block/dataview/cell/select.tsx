@@ -91,7 +91,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										color={item.color}
 										canEdit={!isSelect} 
 										className={Relation.selectClassName(relation.format)}
-										onRemove={() =>  this.onValueRemove(item.id)}
+										onRemove={() => this.onValueRemove(item.id)}
 									/>
 								</span>
 							))}

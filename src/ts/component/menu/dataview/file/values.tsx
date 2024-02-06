@@ -45,7 +45,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() =>  position()} />
+			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
 		);
 
         const Item = SortableElement((item: any) => {

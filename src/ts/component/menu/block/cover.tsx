@@ -136,7 +136,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() =>  this.setTab(item.id)}
+							onClick={() => this.setTab(item.id)}
 						>
 							{item.name}
 						</div>

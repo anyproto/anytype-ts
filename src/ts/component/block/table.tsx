@@ -264,7 +264,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-				raf(() =>  this.onOptionsOpen(type, rowId, columnId, cellId)); 
+				raf(() => this.onOptionsOpen(type, rowId, columnId, cellId)); 
 			},
 			onClose: () => {
 				menuStore.closeAll(Constant.menuIds.table);
@@ -432,7 +432,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: this.optionsHAlign(),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() =>  C.BlockListSetAlign(rootId, blockIds, el.id));
+									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
 									menuContext.close();
 								}
 							});
@@ -446,7 +446,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: this.optionsVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() =>  C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
+									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
 									menuContext.close();
 								}
 							});
@@ -457,7 +457,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() =>  C.BlockTextListSetColor(rootId, blockIds, id));
+									fill(() => C.BlockTextListSetColor(rootId, blockIds, id));
 									menuContext.close();
 								}
 							});
@@ -468,7 +468,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() =>  C.BlockListSetBackgroundColor(rootId, blockIds, id));
+									fill(() => C.BlockListSetBackgroundColor(rootId, blockIds, id));
 									menuContext.close();
 								}
 							});

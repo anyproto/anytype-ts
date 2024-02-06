@@ -144,7 +144,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
-						onUpdate={() =>  onCellUpdate(cellId)}
+						onUpdate={() => onCellUpdate(cellId)}
 						onFocus={e =>  onCellFocus(e, row.id, column.id, cellId)}
 						onBlur={e =>  onCellBlur(e, row.id, column.id, cellId)}
 						getWrapperWidth={() => Constant.size.editor} 

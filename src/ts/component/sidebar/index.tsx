@@ -234,7 +234,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
-		window.setTimeout(() =>  this.movedX = false, 15);
+		window.setTimeout(() => this.movedX = false, 15);
 	};
 
 	onHandleClick () {

@@ -153,7 +153,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							className="item add" 
 							onClick={this.onAdd} 
 							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() =>  this.props.setHover()}
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>

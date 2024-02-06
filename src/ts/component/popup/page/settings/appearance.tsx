@@ -27,7 +27,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 						<div
 							key={i}
 							className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
-							onClick={() =>  this.onTheme(item.id)}
+							onClick={() => this.onTheme(item.id)}
 						>
 							<div className="bg">
 								<Icon />

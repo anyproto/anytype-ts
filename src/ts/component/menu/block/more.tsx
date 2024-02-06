@@ -508,7 +508,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageUninstall': {
-				Action.uninstall(object, false, () =>  onBack());
+				Action.uninstall(object, false, () => onBack());
 				break;
 			};
 

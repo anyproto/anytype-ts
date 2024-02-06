@@ -125,7 +125,7 @@ const Row = observer(class Row extends React.Component<Props> {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
-			2: () =>  onContext(e, record.id)
+			2: () => onContext(e, record.id)
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];

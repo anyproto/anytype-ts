@@ -182,7 +182,7 @@ class Api {
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
 		Util.send(win, 'shutdownStart');
 
-		Server.stop(signal).then(() =>  this.shutdown(win, relaunch));
+		Server.stop(signal).then(() => this.shutdown(win, relaunch));
 	};
 
 	setInterfaceLang (win, lang) {

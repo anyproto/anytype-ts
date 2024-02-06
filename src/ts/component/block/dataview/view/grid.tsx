@@ -168,7 +168,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const node = $(this.node);
 
 		this.unbind();
-		node.find('#scroll').on('scroll', () =>  this.onScroll());
+		node.find('#scroll').on('scroll', () => this.onScroll());
 	};
 
 	unbind () {
@@ -296,7 +296,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			width: this.checkWidth(e.pageX - this.ox),
 		});
 
-		window.setTimeout(() =>  keyboard.setResize(false), 50);
+		window.setTimeout(() => keyboard.setResize(false), 50);
 	};
 
 	checkWidth (width: number): number {
@@ -319,7 +319,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () =>  menuStore.closeAll(Constant.menuIds.cellAdd)
+				onAdd: () => menuStore.closeAll(Constant.menuIds.cellAdd)
 			}
 		});
 	};

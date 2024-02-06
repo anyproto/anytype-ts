@@ -657,7 +657,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
-				menuStore.closeAll(null, () =>  menuStore.open('blockRelationView', param));
+				menuStore.closeAll(null, () => menuStore.open('blockRelationView', param));
 				break;
 			};
 		};

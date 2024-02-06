@@ -207,7 +207,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			keyMapper: i => (items[i] || {}).id,
 		});
 		
-		$(`#${getId()}`).off('mouseleave').on('mouseleave', () =>  window.clearTimeout(this.timeout));
+		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => window.clearTimeout(this.timeout));
 	};
 	
 	componentDidUpdate () {

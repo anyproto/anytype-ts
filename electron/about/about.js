@@ -29,7 +29,7 @@ $(() => {
 		copyIcon.addClass('active');
 
 		clearTimeout(timeout);
-		setTimeout(() =>  copyIcon.removeClass('active'), 2000);
+		setTimeout(() => copyIcon.removeClass('active'), 2000);
 	});
 
 	$.ajax({

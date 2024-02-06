@@ -116,7 +116,7 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAllForced(null, () =>  menuStore.open(id, menuParam));
+		menuStore.closeAllForced(null, () => menuStore.open(id, menuParam));
 	};
 
 	getContainer () {

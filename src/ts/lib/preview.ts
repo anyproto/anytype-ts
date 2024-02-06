@@ -120,7 +120,7 @@ class Preview {
 			node.css({ left: x, top: y }).addClass('show');
 
 			window.clearTimeout(this.timeout.delay);
-			this.timeout.delay = window.setTimeout(() =>  this.delayTooltip = delay, 500);
+			this.timeout.delay = window.setTimeout(() => this.delayTooltip = delay, 500);
 			this.delayTooltip = 100;
 		}, this.delayTooltip);
 	};
@@ -232,7 +232,7 @@ class Preview {
 	toastShow (param: I.Toast) {
 		const setTimeout = () => {
 			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() =>  this.toastHide(false), Constant.delay.toast);
+			this.timeout.toast = window.setTimeout(() => this.toastHide(false), Constant.delay.toast);
 		};
 
 		commonStore.toastSet(param);
@@ -241,8 +241,8 @@ class Preview {
 
 		setTimeout();
 		obj.off('mouseenter.toast mouseleave.toast');
-		obj.on('mouseenter.toast', () =>  window.clearTimeout(this.timeout.toast));
-		obj.on('mouseleave.toast', () =>  setTimeout());
+		obj.on('mouseenter.toast', () => window.clearTimeout(this.timeout.toast));
+		obj.on('mouseleave.toast', () => setTimeout());
 	};
 
 	/**

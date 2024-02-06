@@ -114,7 +114,7 @@ function createWindow () {
 
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () =>  mainWindow.hide());
+			mainWindow.once('leave-full-screen', () => mainWindow.hide());
 		} else {
 			mainWindow.hide();
 		};

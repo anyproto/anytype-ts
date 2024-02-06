@@ -1429,7 +1429,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onMouseUp () {
 		window.clearTimeout(this.timeoutClick);
-		this.timeoutClick = window.setTimeout(() =>  this.clicks = 0, 300);
+		this.timeoutClick = window.setTimeout(() => this.clicks = 0, 300);
 	};
 
 	onSelectIcon (icon: string) {

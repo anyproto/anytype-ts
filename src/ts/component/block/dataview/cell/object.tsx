@@ -171,7 +171,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 
 			if (v) {
-				window.setTimeout(() =>  this.focus(), 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	};

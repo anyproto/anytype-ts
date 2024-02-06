@@ -256,7 +256,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 
-						window.setTimeout(() =>  focus.apply(), 15);
+						window.setTimeout(() => focus.apply(), 15);
 					}
 				});
 

@@ -46,9 +46,9 @@ class MediaVideo extends React.Component<Props> {
         const node = $(this.node);
         const video = node.find('video');
 
-        video.on('play', () =>  this.onPlay());
-        video.on('pause', () =>  this.onPause());
-        video.on('ended', () =>  this.onEnded());
+        video.on('play', () => this.onPlay());
+        video.on('pause', () => this.onPause());
+        video.on('ended', () => this.onEnded());
     };
 
     unbind () {

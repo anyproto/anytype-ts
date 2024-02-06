@@ -422,8 +422,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			subIds: Constant.menuIds.widget,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Right,
-			onOpen: () =>  node.addClass('active'),
-			onClose: () =>  node.removeClass('active'),
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				...block.content,
 				target: object,

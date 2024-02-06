@@ -186,7 +186,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		$(`#${this.props.getId()}`).on('click', () =>  menuStore.close('dataviewOptionEdit'));
+		$(`#${this.props.getId()}`).on('click', () => menuStore.close('dataviewOptionEdit'));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
@@ -316,7 +316,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			this.onFilterChange('');
 			this.onValueAdd(message.objectId);
 
-			window.setTimeout(() =>  this.resize(), 50);
+			window.setTimeout(() => this.resize(), 50);
 		});
 	};
 	

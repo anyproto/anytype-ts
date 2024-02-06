@@ -628,7 +628,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				e.preventDefault();
-				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () =>  focus.clear(true));
+				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => focus.clear(true));
 			});
 
 			for (const item of styleParam) {
@@ -1329,7 +1329,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
-			window.setTimeout(() =>  this.focus(block.id, range.from, range.to, false), 50);
+			window.setTimeout(() => this.focus(block.id, range.from, range.to, false), 50);
 
 			if (next && next.isTextToggle()) {
 				blockStore.toggle(rootId, next.id, true);
@@ -1880,7 +1880,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
 			if (param.type == I.BlockType.Text) {
-				window.setTimeout(() =>  this.focus(message.blockId, 0, 0, false), 15);
+				window.setTimeout(() => this.focus(message.blockId, 0, 0, false), 15);
 			};
 
 			if (callBack) {

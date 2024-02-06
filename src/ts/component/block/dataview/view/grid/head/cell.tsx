@@ -88,8 +88,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				onOpen: () =>  obj.addClass('active'),
-				onClose: () =>  obj.removeClass('active'),
+				onOpen: () => obj.addClass('active'),
+				onClose: () => obj.removeClass('active'),
 				data: {
 					loadData,
 					getView,
