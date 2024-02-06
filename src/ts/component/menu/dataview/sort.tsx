@@ -61,7 +61,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 				<div 
 					id={'item-' + item.id} 
 					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					onMouseEnter={e =>  this.onOver(e, item)}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
@@ -71,7 +71,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							id={[ 'filter', 'relation', item.id ].join('-')} 
 							options={relationOptions} 
 							value={item.relationKey} 
-							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+							onChange={v => this.onChange(item.id, 'relationKey', v)} 
 						/>
 
 						<Select 
@@ -79,13 +79,13 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							className="grey" 
 							options={typeOptions} 
 							value={item.type} 
-							onChange={(v: string) => { this.onChange(item.id, 'type', v); }} 
+							onChange={v => this.onChange(item.id, 'type', v)} 
 						/>
 					</div>
 					{allowedView ? (
 						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
-							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+							<Icon className="more" onClick={e =>  this.onClick(e, item)} />
+							<Icon className="delete" onClick={e =>  this.onRemove(e, item)} />
 						</div>
 					) : ''}
 				</div>
@@ -172,7 +172,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							className="item add" 
 							onClick={this.onAdd}
 							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSortNewSort')}</div>
@@ -213,7 +213,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

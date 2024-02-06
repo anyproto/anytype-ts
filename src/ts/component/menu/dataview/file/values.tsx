@@ -45,7 +45,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => { position(); }} />
+			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
 		);
 
         const Item = SortableElement((item: any) => {
@@ -70,11 +70,11 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={(e: any) => { UtilObject.openPopup(item); }}>
+					<div className="clickable" onClick={e =>  UtilObject.openPopup(item)}>
 						{content}
 					</div>
 					<div className="buttons">
-						<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
+						<Icon className="more" onClick={e =>  this.onMore(e, item)} />
 					</div>
 				</div>
 			);

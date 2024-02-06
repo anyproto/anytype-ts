@@ -43,7 +43,7 @@
 		return true;
 	});
 
-	window.addEventListener('message', (e) => {
+	window.addEventListener('message', e => {
 		if (e.origin != `chrome-extension://${extensionId}`) {
 			return;
 		};

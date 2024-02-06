@@ -100,9 +100,9 @@ class MediaAudio extends React.Component<Props> {
         this.audioNode = el.get(0) as HTMLAudioElement;
 
         if (el.length) {
-            el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
-            el.on('play', () => { this.onPlay(); });
-            el.on('ended pause', () => { this.onPause(); });
+            el.on('canplay timeupdate', () => this.onTimeUpdate());
+            el.on('play', () => this.onPlay());
+            el.on('ended pause', () => this.onPause());
         };
     };
 

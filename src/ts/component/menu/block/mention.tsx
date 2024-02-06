@@ -72,8 +72,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						object={item.id == 'add' ? undefined : item}
 						icon={item.icon}
 						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e =>  this.onOver(e, item)} 
+						onClick={e =>  this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 						className={cn.join(' ')}
@@ -162,7 +162,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

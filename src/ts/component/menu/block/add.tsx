@@ -50,8 +50,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div 
 						id="item-relation-add" 
 						className="item add" 
-						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={e =>  this.onClick(e, item)} 
+						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -136,8 +136,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						{...item} 
 						className={cn.join(' ')}
 						withDescription={item.isBlock} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
+						onClick={e =>  this.onClick(e, item)} 
 						style={param.style}
 					/>
 				);
@@ -207,7 +207,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			keyMapper: i => (items[i] || {}).id,
 		});
 		
-		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
+		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => window.clearTimeout(this.timeout));
 	};
 	
 	componentDidUpdate () {
@@ -257,7 +257,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
