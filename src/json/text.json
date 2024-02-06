@@ -1276,6 +1276,7 @@
 	"menuQuickCaptureGroups": "Lists",
 	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
 	"menuQuickCaptureOpenType": "Open type",
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",

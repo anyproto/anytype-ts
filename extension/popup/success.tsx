@@ -29,7 +29,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(object.name, 64))}</div>
 				<div className="label">{object.description}</div>
 
-				<div className="buttons">
+				<div className="buttonsWrapper">
 					<Button color="blank" className="c32" text="Open in app" onClick={this.onOpen} />
 				</div>
 			</div>

@@ -141,7 +141,7 @@ initFonts = () => {
 	const fontFace = new FontFace(name, `url("../font/inter/regular.woff2") format("woff2")`);
 
 	self.fonts.add(fontFace);
-	fontFace.load().then(() => { fontFamily = name; });
+	fontFace.load().then(() => fontFamily = name);
 };
 
 image = ({ src, bitmap }) => {
