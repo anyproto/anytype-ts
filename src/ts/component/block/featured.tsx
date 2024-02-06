@@ -621,6 +621,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 			};
 
+			case I.RelationType.File: {
+				this.onCellFile(e, relationKey);
+				break;
+			};
+
 			case I.RelationType.Checkbox: {
 				const object = detailStore.get(rootId, rootId, [ relationKey ]);
 				const details = [
@@ -814,6 +819,45 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						C.ObjectSetDetails(rootId, details);
 					}
 				},
+			});
+		});
+	};
+
+	onCellFile (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = object[relationKey] || [];
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewFileValues', {
+				element: `#${elementId}`,
+				horizontal: I.MenuDirection.Left,
+				offsetY: 4,
+				noFlipX: true,
+				title: relation.name,
+				subIds: [ 'dataviewFileList' ],
+				onClose: () => {
+					menuStore.closeAll();
+				},
+				data: {
+					rootId,
+					value,
+					relation: observable.box(relation),
+					subId: rootId,
+					onChange: (v: any, callBack?: () => void) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+
+						if (callBack) {
+							callBack();
+						};
+					}
+				}
 			});
 		});
 	};
