@@ -158,8 +158,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => { node.addClass('active'); },
-			onClose: () => { node.removeClass('active'); },
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				route: 'Widget',
 				objectIds: [ id ],

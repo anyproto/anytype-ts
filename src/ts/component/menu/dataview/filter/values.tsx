@@ -75,7 +75,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let value = null;
 		let Item = null;
 		let list = [];
-		let onSubmit = (e: any) => { this.onSubmit(e); };
+		let onSubmit = e => this.onSubmit(e);
 
 		const ItemAdd = (item: any) => (
 			<div 
@@ -115,7 +115,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								/>
 							</div>
 							<div className="buttons">
-								<Icon className="delete" onClick={(e: any) => { this.onDelete(e, element); }} />
+								<Icon className="delete" onClick={e => this.onDelete(e, element)} />
 							</div>
 						</div>
 					);

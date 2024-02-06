@@ -77,7 +77,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							id={Relation.cellId(PREFIX, 'type', object.id)}
 							className="cellContent type"
 							onClick={this.onType}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+							onMouseEnter={e => this.onMouseEnter(e, 'type')}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{typeName}
@@ -127,7 +127,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							id={Relation.cellId(PREFIX, 'setOf', object.id)}
 							className="cellContent setOf"
 							onClick={this.onSource}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf', 'Query'); }}
+							onMouseEnter={e => this.onMouseEnter(e, 'setOf', 'Query')}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{setOfString.length ? (
@@ -457,6 +457,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					keys: UtilData.typeRelationKeys(),
+					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);
 
@@ -655,7 +656,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
-				menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+				menuStore.closeAll(null, () => menuStore.open('blockRelationView', param));
 				break;
 			};
 		};

@@ -220,7 +220,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => { analytics.event('FeatureRelation'); });
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation'));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -229,7 +229,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => { analytics.event('UnfeatureRelation'); });
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation'));
 		};
 	};
 

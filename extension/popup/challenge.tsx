@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Button, Input, Error } from 'Component';
+import { Title, Error, Pin } from 'Component';
 import { I, C, Storage, UtilRouter } from 'Lib';
 import { extensionStore } from 'Store';
 import Util from '../lib/util';
@@ -19,28 +19,31 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onSubmit = this.onSubmit.bind(this);
+		this.onSuccess = this.onSuccess.bind(this);
+		this.onError = this.onError.bind(this);
 	};
 
 	render () {
 		const { error } = this.state;
 
 		return (
-			<form className="page pageChallenge" onSubmit={this.onSubmit}>
-				<Input ref={ref => this.ref = ref} placeholder="Challenge" />
+			<div className="page pageChallenge">
+				<Title text="Please enter the numbers from the app" />
 
-				<div className="buttons">
-					<Button type="input" color="pink" className="c32" text="Authorize" />
-				</div>
+				<Pin 
+					ref={ref => this.ref = ref}
+					pinLength={4}
+					focusOnMount={true}
+					onSuccess={this.onSuccess} 
+					onError={this.onError} 
+				/>
 
 				<Error text={error} />
-			</form>
+			</div>
 		);
 	};
 
-	onSubmit (e: any) {
-		e.preventDefault();
-
+	onSuccess () {
 		C.AccountLocalLinkSolveChallenge(extensionStore.challengeId, this.ref?.getValue().trim(), (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
@@ -50,6 +53,9 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 			Storage.set('appKey', message.appKey);
 			Util.authorize(message.appKey, () => UtilRouter.go('/create', {}));
 		});
+	};
+
+	onError () {
 	};
 
 });

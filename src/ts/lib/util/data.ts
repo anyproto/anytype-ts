@@ -347,7 +347,6 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
-					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -676,12 +675,12 @@ class UtilData {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		let details = [];
 		const mapper = (it: any) => { 
-			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			keys.forEach(k => it[k] = it[k] || '');
 			return { id: it[idField], details: it }; 
 		};
 
+		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 

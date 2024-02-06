@@ -116,7 +116,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => { UtilObject.openRoute(object); });
+		popupStore.closeAll(null, () => UtilObject.openRoute(object));
 	};
 	
 	onMore () {

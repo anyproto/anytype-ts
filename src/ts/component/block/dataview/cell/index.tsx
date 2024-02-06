@@ -427,7 +427,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => menuStore.closeAll(Constant.menuIds.cell));
 				};
 			} else 
 			if (closeIfOpen) {

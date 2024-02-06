@@ -40,9 +40,9 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 							{...action} 
 							icon={action.icon}
 							checkbox={(type == action.id) && (item.id == 'type')}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
-							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
-							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={e => this.onMouseEnter(e, action)}
+							onMouseLeave={e => this.onMouseLeave(e, action)}
+							onClick={e => this.onClick(e, action)} 
 						/>
 					))}
 				</div>

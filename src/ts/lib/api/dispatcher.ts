@@ -223,7 +223,7 @@ class Dispatcher {
 
 					const info = data.getClientinfo();
 					const challenge = data.getChallenge();
-					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=320,height=320');
+					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=424,height=232,menubar=no,resizable=no,scrollbars=no,location=no,toolbar=no,frame=no');
 
 					win.addEventListener('load', () => win.postMessage({ 
 						challenge,
@@ -233,7 +233,7 @@ class Dispatcher {
 
 					window.setTimeout(() => {
 						try { win.close(); } catch (e) { /**/ };
-					}, 3000);
+					}, 5000);
 					break;
 				};
 

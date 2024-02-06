@@ -216,7 +216,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (record.layout == I.ObjectLayout.Note) {
 					value = record.snippet;
 				} else {
-					value = value || UtilObject.defaultName('Page');
+					value = value || translate('defaultNamePage');
 				};
 			};
 		};
@@ -262,7 +262,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			let value = this.value;
 
 			if (relation.relationKey == 'name') {
-				if (value == UtilObject.defaultName('Page')) {
+				if (value == translate('defaultNamePage')) {
 					value = '';
 				};
 			} else

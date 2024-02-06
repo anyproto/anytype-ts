@@ -226,7 +226,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -455,7 +455,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				close();
 			} else {
 				UtilObject.create('', '', { name: filter, type: commonStore.type, ...details }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
+					UtilObject.getById(message.targetId, object => process(object, true));
 					close();
 				});
 			};

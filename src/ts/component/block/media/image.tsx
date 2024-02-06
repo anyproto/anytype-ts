@@ -74,7 +74,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 							onError={this.onError} 
 						/>
 						<Icon className="download" onClick={this.onDownload} />
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -158,8 +158,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 
 		keyboard.disableSelection(true);		
 		node.addClass('isResizing');
-		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
-		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
+		win.on('mousemove.media', e => this.onResize(e, checkMax));
+		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
 	};
 	
 	onResize (e: any, checkMax: boolean) {

@@ -236,7 +236,7 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
@@ -317,10 +317,6 @@ class UtilObject {
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(`defaultName${key}`);
-	};
-
 	name (object: any) {
 		const { isDeleted, layout, snippet } = object;
 
@@ -331,7 +327,7 @@ class UtilObject {
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('Page');
+			name = object.name || translate('defaultNamePage');
 		};
 
 		return name;

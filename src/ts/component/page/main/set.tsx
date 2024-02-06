@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, UtilRouter } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, UtilRouter, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -57,6 +57,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const isCollection = object.layout == I.ObjectLayout.Collection;
 			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
 			content = (
 				<React.Fragment>
@@ -64,7 +65,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 					<div className="blocks wrapper">
 						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-						<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
+						<HeadSimple ref={ref => this.refHead = ref} placeholder={placeholder} rootId={rootId} />
 
 						{children.map((block: I.Block, i: number) => (
 							<Block

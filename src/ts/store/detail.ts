@@ -229,7 +229,7 @@ class DetailStore {
 	};
 
 	private mapCommon (object: any) {
-		object.name = Relation.getStringValue(object.name) || UtilObject.defaultName('Page');
+		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;

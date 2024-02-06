@@ -98,6 +98,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
 		
 		focus.clear(true);
 		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
@@ -140,7 +144,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId } = this.props;
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (message.objectId) {
 					UtilObject.setIcon(rootId, '', message.objectId);
 				};
@@ -221,7 +225,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		preventCommonDrop(true);
 		this.onUploadStart();
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

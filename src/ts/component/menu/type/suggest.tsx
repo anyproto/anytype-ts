@@ -60,8 +60,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,8 +84,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)}
 					/>
 				);
 			};
@@ -193,7 +193,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -450,7 +450,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (item.isInstalled || noInstall) {
 				cb(item);
 			} else {
-				Action.install(item, true, (message: any) => { cb(message.details); });
+				Action.install(item, true, message => cb(message.details));
 			};
 		};
 	};

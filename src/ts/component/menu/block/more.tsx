@@ -38,8 +38,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 								key={i} 
 								{...action} 
 								icon={action.icon || action.id}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
+								onMouseEnter={e => this.onMouseEnter(e, action)} 
+								onClick={e => this.onClick(e, action)} 
 							/>
 						);
 					})}
@@ -83,7 +83,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -447,7 +447,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { rootId } });
+				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
 				break;
 			};
 				
@@ -510,7 +510,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageUninstall': {
-				Action.uninstall(object, false, () => { onBack(); });
+				Action.uninstall(object, false, () => onBack());
 				break;
 			};
 

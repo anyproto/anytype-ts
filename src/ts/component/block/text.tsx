@@ -93,7 +93,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		switch (style) {
 			case I.TextStyle.Title: {
-				placeholder = UtilObject.defaultName('Page');
+				placeholder = translate('defaultNamePage');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -203,7 +203,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
-					onDragStart={(e: any) => { e.preventDefault(); }}
+					onDragStart={e => e.preventDefault()}
 				/>
 			</div>
 		);
@@ -1433,7 +1433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onMouseUp () {
 		window.clearTimeout(this.timeoutClick);
-		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
+		this.timeoutClick = window.setTimeout(() => this.clicks = 0, 300);
 	};
 
 	onSelectIcon (icon: string) {

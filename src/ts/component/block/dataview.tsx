@@ -486,7 +486,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const item = detailStore.get(subId, recordId, keys);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
-		if (item.name == UtilObject.defaultName('Page')) {
+		if (item.name == translate('defaultNamePage')) {
 			item.name = '';
 		};
 		if (layout == I.ObjectLayout.Note) {
@@ -981,7 +981,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
+					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
 				if (isNew) {
@@ -1221,7 +1221,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					block.content.objectOrder.push(it);
 				};
 
-				window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
+				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
 			});
 
 			if (callBack) {

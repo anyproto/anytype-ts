@@ -92,8 +92,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						object={object}
 						icon={item.icon}
 						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
 						withDescription={item.isBig}
 						description={type ? type.name : undefined}
 						style={param.style}
@@ -206,7 +206,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

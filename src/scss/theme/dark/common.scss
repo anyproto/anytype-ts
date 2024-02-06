@@ -161,12 +161,12 @@ html.themeDark {
 
     .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 	.input-drag {
-		.fill { background: #fff; }
-		.icon { border-color: #fff; }
+		.fill { background: var(--color-text-primary); }
+		.icon { border-color: var(--color-text-secondary); }
 	}
 
 	.dragWrap {
-		.number { color: #fff; }
+		.number { color: var(--color-text-primary); }
 	}
 
     .listPreviewObject {

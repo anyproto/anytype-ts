@@ -66,7 +66,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref}
 								value=""
 								onKeyDown={this.onKeyDown}
-								placeholder={UtilObject.defaultName('Page')}
+								placeholder={translate('defaultNamePage')}
 							/>
 						</div>
 
@@ -136,7 +136,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
+		if ([
+			translate('defaultNameSpace'), 
+			translate('defaultNamePage'),
+		].includes(v)) {
 			v = '';
 		};
 		return v;

@@ -177,6 +177,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
 		
 		focus.clear(true);
 		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
@@ -218,7 +222,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setIcon(rootId, '', message.objectId);
 				};
@@ -407,8 +411,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
+		win.on('mousemove.cover', e => this.onDragMove(e));
+		win.on('mouseup.cover', e => this.onDragEnd(e));
 	};
 	
 	onDragMove (e: any) {
@@ -511,7 +515,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		preventCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			preventCommonDrop(false);
 			

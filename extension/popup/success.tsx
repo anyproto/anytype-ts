@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
 import { I, UtilCommon, UtilObject } from 'Lib';
-import { extensionStore } from 'Store';
+import { extensionStore, detailStore } from 'Store';
 import Url from 'json/url.json';
 
 interface State {
@@ -18,20 +18,18 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
-		const object = extensionStore.createdObject;
+		const object = detailStore.mapper(extensionStore.createdObject);
 
 		if (!object) {
 			return null;
 		};
 
-		const name = object.name || UtilObject.defaultName('Page');
-
 		return (
 			<div className="page pageSuccess">
-				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(name, 64))}</div>
+				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(object.name, 64))}</div>
 				<div className="label">{object.description}</div>
 
-				<div className="buttons">
+				<div className="buttonsWrapper">
 					<Button color="blank" className="c32" text="Open in app" onClick={this.onOpen} />
 				</div>
 			</div>

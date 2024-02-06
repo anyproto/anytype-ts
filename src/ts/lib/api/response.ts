@@ -93,6 +93,7 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
 		objectId: response.getObjectid(),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 

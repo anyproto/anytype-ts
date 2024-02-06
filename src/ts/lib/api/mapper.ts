@@ -581,6 +581,10 @@ export const Mapper = {
 			return item;
 		},
 
+		BlockFeatured: () => {
+			return new Model.Block.Content.FeaturedRelations();
+		},
+
 		BlockLayout: (obj: any) => {
 			const content = new Model.Block.Content.Layout();
 			
@@ -611,6 +615,7 @@ export const Mapper = {
 			content.setType(obj.type);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
+			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
 		},

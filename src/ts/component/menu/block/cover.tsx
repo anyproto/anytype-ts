@@ -56,7 +56,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const sections = this.getSections();
 
 		const Item = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
+			<div className="item" onClick={e => this.onSelect(e, item)}>
 				<Cover preview={true} {...item} />
 				{item.artist ? <div className="name">{item.artist}</div> : ''}
 			</div>
@@ -136,7 +136,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() => { this.setTab(item.id); }}
+							onClick={() => this.setTab(item.id)}
 						>
 							{item.name}
 						</div>
@@ -276,7 +276,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -387,7 +387,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		preventCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
 			preventCommonDrop(false);
 			
@@ -417,7 +417,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};

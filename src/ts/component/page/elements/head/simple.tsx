@@ -7,7 +7,7 @@ import Constant from 'json/constant.json';
 
 interface Props {
 	rootId: string;
-	type: string;
+	placeholder?: string;
 	onCreate?: () => void;
 };
 
@@ -22,6 +22,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	refEditable: any = {};
 	node: any = null;
 	timeout = 0;
+	public static defaultProps = {
+		placeholder: '',
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -33,19 +36,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, type, onCreate } = this.props;
+		const { rootId, onCreate } = this.props;
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = UtilObject.canParticipantWrite();
+
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
 		const isRelation = UtilObject.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const placeholder = {
-			title: UtilObject.defaultName(type),
+			title: this.props.placeholder,
 			description: translate('placeholderBlockDescription'),
 		};
 
@@ -58,11 +62,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
-				onFocus={(e: any) => { this.onFocus(e, item); }}
-				onBlur={(e: any) => { this.onBlur(e, item); }}
-				onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-				onKeyUp={() => { this.onKeyUp(); }}
-				onSelect={(e: any) => { this.onSelectText(e, item); }}
+				onFocus={e => this.onFocus(e, item)}
+				onBlur={e => this.onBlur(e, item)}
+				onKeyDown={e => this.onKeyDown(e, item)}
+				onKeyUp={() => this.onKeyUp()}
+				onSelect={e => this.onSelectText(e, item)}
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
@@ -146,24 +150,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.init();
 	};
 
 	componentDidUpdate () {
-		const { focused } = focus.state;
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
-
-		this.setValue();
-
-		for (const item of EDITORS) {
-			this.placeholderCheck(item.blockId);
-		};
-
-		if (!focused && !object._empty_ && (object.name == UtilObject.defaultName('Page'))) {
-			focus.set('title', { from: 0, to: 0 });
-		};
-
-		window.setTimeout(() => { focus.apply(); }, 10);
+		this.init();
 	};
 
 	componentWillUnmount () {
@@ -171,6 +162,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
+	};
+
+	init () {
+		const { focused } = focus.state;
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
+
+		this.setValue();
+
+		if (!focused && !object._empty_ && (object.name == translate('defaultNamePage'))) {
+			focus.set('title', { from: 0, to: 0 });
+		};
+
+		window.setTimeout(() => focus.apply(), 10);
 	};
 
 	onFocus (e: any, item: any) {
@@ -240,11 +245,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == UtilObject.defaultName('Page')) {
+			if (text == translate('defaultNamePage')) {
 				text = '';
 			};
 
 			this.refEditable[item.blockId].setValue(text);
+			this.placeholderCheck(item.blockId);
 		};
 	};
 
