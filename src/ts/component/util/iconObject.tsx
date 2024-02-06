@@ -90,12 +90,7 @@ const FontSize = {
 	128: 72,
 };
 
-const File = {};
 const Relation: any = { small: {}, big: {} };
-
-for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf', 'presentation', 'table' ]) {
-	File[key] = require(`img/icon/file/${key}.svg`).default;
-};
 
 for (const i in I.RelationType) {
 	const it = Number(i);
@@ -251,7 +246,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+					icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -266,7 +261,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -546,6 +541,22 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		name = name.trim().substring(0, 1).toUpperCase();
 
 		return name;
+	};
+
+	iconFile (): string {
+		const type = UtilFile.icon(this.getObject());
+		const tc = commonStore.getThemeClass();
+
+		switch (tc) {
+			default:
+			case 'light': {
+				return require(`img/icon/file/${type}.svg`).default;
+			};
+
+			case 'dark': {
+				return require(`img/theme/dark/icon/file/${type}.svg`).default;
+			};
+		};
 	};
 
 });

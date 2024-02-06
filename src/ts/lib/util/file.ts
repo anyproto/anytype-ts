@@ -1,5 +1,6 @@
 import loadImage from 'blueimp-load-image';
 import { UtilCommon, Relation } from 'Lib';
+import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const SIZE_UNIT = 1024;
@@ -106,6 +107,16 @@ class UtilFile {
 		};
 
 		return icon;
+	};
+
+	iconPath (object: any) {
+		const tp = commonStore.getThemePath();
+		return `img/${tp}icon/file/${this.icon(object)}.svg`;
+	};
+
+	iconImage (object: any): string {
+		const tp = commonStore.getThemePath();
+		return require(`img/${tp}icon/file/${this.icon(object)}.svg`).default;
 	};
 
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {

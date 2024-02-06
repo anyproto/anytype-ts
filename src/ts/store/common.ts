@@ -392,6 +392,17 @@ class CommonStore {
 		$(window).trigger('updateTheme');
 	};
 
+	getThemePath () {
+		const tc = this.getThemeClass();
+
+		let tp = '';
+		if (tc == 'dark') {
+			tp = 'theme/dark/';
+		};
+
+		return tp;
+	};
+
 	nativeThemeSet (isDark: boolean) {
 		this.nativeThemeIsDark = isDark;
 	};
