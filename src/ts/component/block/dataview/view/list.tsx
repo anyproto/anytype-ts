@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { dbStore } from 'Store';
+import { dbStore, detailStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
 import Row from './list/row';
@@ -24,7 +24,8 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
-		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const subId = dbStore.getSubId(rootId, block.id);
+		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
@@ -45,7 +46,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							{...this.props}
 							style={{height: HEIGHT}}
 							readonly={!isAllowedObject}
-							recordId={id}
+							record={detailStore.get(subId, id)}
 						/>
 					))}
 				</div>
@@ -77,7 +78,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 													<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
 														<Row
 															{...this.props}
-															recordId={records[index]}
+															record={detailStore.get(subId, records[index])}
 														/>
 													</div>
 												)}
