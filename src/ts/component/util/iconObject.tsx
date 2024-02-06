@@ -543,22 +543,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return name;
 	};
 
-	iconFile (): string {
-		const type = UtilFile.icon(this.getObject());
-		const tc = commonStore.getThemeClass();
-
-		switch (tc) {
-			default:
-			case 'light': {
-				return require(`img/icon/file/${type}.svg`).default;
-			};
-
-			case 'dark': {
-				return require(`img/theme/dark/icon/file/${type}.svg`).default;
-			};
-		};
-	};
-
 });
 
 export default IconObject;
