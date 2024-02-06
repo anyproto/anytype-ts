@@ -312,7 +312,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getCoverObject (id: string): any {
-		const { rootId, block, getView, record } = this.props;
+		const { rootId, block, getView, getKeys } = this.props;
 		const view = getView();
 
 		if (!view.coverRelationKey) {
@@ -320,6 +320,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		};
 
 		const subId = dbStore.getSubId(rootId, block.id);
+		const record = detailStore.get(subId, id, getKeys(view.id));
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
 		const fileLayouts = UtilObject.getFileLayouts();
 
