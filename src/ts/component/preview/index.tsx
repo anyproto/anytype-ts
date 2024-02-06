@@ -142,7 +142,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		menuStore.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => { Preview.previewHide(true); },
+			onOpen: () =>  Preview.previewHide(true),
 			data: {
 				filter: mark ? mark.param : '',
 				type: mark ? mark.type : null,

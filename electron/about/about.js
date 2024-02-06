@@ -16,7 +16,7 @@ $(() => {
 	versionButton.on('click', e => {
 		e.preventDefault();
 
-		var handler = (e) => {
+		var handler = e => {
 			e.preventDefault();
 			e.clipboardData.setData('text/plain', versionText);
 			
@@ -29,7 +29,7 @@ $(() => {
 		copyIcon.addClass('active');
 
 		clearTimeout(timeout);
-		setTimeout(() => { copyIcon.removeClass('active'); }, 2000);
+		setTimeout(() =>  copyIcon.removeClass('active'), 2000);
 	});
 
 	$.ajax({

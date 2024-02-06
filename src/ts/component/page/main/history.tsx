@@ -322,7 +322,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			children.css({ overflow: 'hidden', height: height });
 
 			window.setTimeout(() => { children.css({ height: 0 }); }, 15);
-			window.setTimeout(() => { children.hide(); }, 215);
+			window.setTimeout(() =>  children.hide(), 215);
 		} else {
 			item.addClass('expanded');
 			children.show();

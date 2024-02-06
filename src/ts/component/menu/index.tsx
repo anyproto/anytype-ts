@@ -252,7 +252,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e =>  this.onTab(item.id)}>
 				{item.name}
 			</div>
 		);
@@ -605,7 +605,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { this.poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() =>  this.poly.hide(), 500);
 			};
 
 			// Arrow positioning
@@ -708,7 +708,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (refInput) {
 			if (refInput.isFocused && (this.ref.n < 0)) {
-				keyboard.shortcut('arrowleft, arrowright', e, () => { ret = true; });
+				keyboard.shortcut('arrowleft, arrowright', e, () =>  ret = true);
 
 				keyboard.shortcut('arrowdown', e, () => {
 					refInput.blur();

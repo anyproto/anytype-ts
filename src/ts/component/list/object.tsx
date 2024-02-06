@@ -50,7 +50,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					offset={offset} 
 					limit={LIMIT} 
 					total={total} 
-					onChange={(page: number) => { this.getData(page); }} 
+					onChange={page => this.getData(page)} 
 				/>
 			);
 		};

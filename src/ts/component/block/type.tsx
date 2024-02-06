@@ -32,8 +32,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onClick={(e: any) => { this.onClick(e, item); }} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+					onClick={e =>  this.onClick(e, item)} 
+					onMouseEnter={e =>  this.onOver(e, item)} 
 					onMouseLeave={this.onOut}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
@@ -186,7 +186,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		menuStore.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
-			onOpen: () => { obj.addClass('active'); },
+			onOpen: () =>  obj.addClass('active'),
 			onClose: () => { 
 				obj.removeClass('active'); 
 				focus.apply();

@@ -151,7 +151,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			onOpen: onCoverOpen,
 			onClose: () => {
 				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => { onCoverClose(); }, Constant.delay.menu);
+				this.timeout = window.setTimeout(() =>  onCoverClose(), Constant.delay.menu);
 			},
 			data: {
 				options: options,

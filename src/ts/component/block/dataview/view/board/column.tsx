@@ -247,7 +247,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		menuStore.open('dataviewGroupEdit', {
 			element: `#column-${id}-head`,
 			horizontal: I.MenuDirection.Center,
-			onClose: () => { node.removeClass('active'); },
+			onClose: () =>  node.removeClass('active'),
 			data: {
 				rootId,
 				blockId: block.id,

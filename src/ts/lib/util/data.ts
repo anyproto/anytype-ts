@@ -661,12 +661,12 @@ class UtilData {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		let details = [];
 		const mapper = (it: any) => { 
-			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			keys.forEach(k => it[k] = it[k] || '');
 			return { id: it[idField], details: it }; 
 		};
 
+		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 

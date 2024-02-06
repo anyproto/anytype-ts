@@ -48,7 +48,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				>
 					<div className="cellContent">
 						<Handle name={name} format={format} readonly={readonly} />
-						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }} />
+						<div className="resize" onMouseDown={e =>  onResizeStart(e, relationKey)} />
 					</div>
 				</div>
 			);
@@ -88,8 +88,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				onOpen: () => { obj.addClass('active'); },
-				onClose: () => { obj.removeClass('active'); },
+				onOpen: () =>  obj.addClass('active'),
+				onClose: () =>  obj.removeClass('active'),
 				data: {
 					loadData,
 					getView,

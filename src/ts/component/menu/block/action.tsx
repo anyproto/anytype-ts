@@ -61,8 +61,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
+								onMouseEnter={e =>  this.onMouseEnter(e, action)} 
+								onClick={e =>  this.onClick(e, action)} 
 							/>
 						);
 					})}
@@ -99,7 +99,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = true;
 		this.rebind();
 
-		menu.off('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
+		menu.off('mouseleave').on('mouseleave', () =>  menuStore.clearTimeout());
 	};
 
 	componentDidUpdate () {
@@ -513,7 +513,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					canAdd: true,
-					onSelect: () => { close(); }
+					onSelect: () =>  close()
 				});
 				break;
 			};

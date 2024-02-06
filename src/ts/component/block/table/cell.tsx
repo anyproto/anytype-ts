@@ -49,8 +49,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				case I.BlockType.TableColumn:
 					cn.push('handleColumn canDrag');
 
-					onDragStart = (e: any) => { onDragStartColumn(e, column.id); };
-					onClick = (e: any) => { onHandleColumn(e, item.type, row.id, column.id, cellId); };
+					onDragStart = e =>  onDragStartColumn(e, column.id);
+					onClick = e =>  onHandleColumn(e, item.type, row.id, column.id, cellId);
 					break;
 
 				case I.BlockType.TableRow:
@@ -58,9 +58,9 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					canDrag = !isHeader;
 
 					if (canDrag) {
-						onDragStart = (e: any) => { onDragStartRow(e, row.id); };
+						onDragStart = e =>  onDragStartRow(e, row.id);
 					};
-					onClick = (e: any) => { onHandleRow(e, item.type, row.id, column.id, cellId); };
+					onClick = e =>  onHandleRow(e, item.type, row.id, column.id, cellId);
 					break;
 			};
 
@@ -72,8 +72,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				<div 
 					className={cn.join(' ')}
 					draggable={canDrag}
-					onMouseEnter={(e: any) => { onEnterHandle(e, item.type, row.id, column.id); }}
-					onMouseLeave={(e: any) => { onLeaveHandle(e); }}
+					onMouseEnter={e =>  onEnterHandle(e, item.type, row.id, column.id)}
+					onMouseLeave={e =>  onLeaveHandle(e)}
 					onClick={onClick}
 					onDragStart={onDragStart}
 					onContextMenu={onClick}
@@ -144,24 +144,24 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
-						onUpdate={() => { onCellUpdate(cellId); }}
-						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}
-						onBlur={(e: any) => { onCellBlur(e, row.id, column.id, cellId); }}
+						onUpdate={() =>  onCellUpdate(cellId)}
+						onFocus={e =>  onCellFocus(e, row.id, column.id, cellId)}
+						onBlur={e =>  onCellBlur(e, row.id, column.id, cellId)}
 						getWrapperWidth={() => Constant.size.editor} 
 					/>
 				) : (
 					<EmptyBlock />
 				)}
 
-				{!readonly ? <div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} /> : ''}
-				<Icon className="menu" inner={inner} onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
+				{!readonly ? <div className="resize" onMouseDown={e =>  onResizeStart(e, column.id)} /> : ''}
+				<Icon className="menu" inner={inner} onClick={e =>  onOptions(e, I.BlockType.Text, row.id, column.id, cellId)} />
 			</div>
 		);
 	};
 
 	onMouseDown (e: any) {
 		keyboard.disableSelection(true);
-		$(window).off('mousedown.table-cell').on('mousedown.table-cell', (e: any) => { keyboard.disableSelection(false); });
+		$(window).off('mousedown.table-cell').on('mousedown.table-cell', e =>  keyboard.disableSelection(false));
 	};
 
 });

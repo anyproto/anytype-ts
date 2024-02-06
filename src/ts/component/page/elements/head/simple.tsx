@@ -61,11 +61,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
-				onFocus={(e: any) => { this.onFocus(e, item); }}
-				onBlur={(e: any) => { this.onBlur(e, item); }}
-				onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-				onKeyUp={() => { this.onKeyUp(); }}
-				onSelect={(e: any) => { this.onSelectText(e, item); }}
+				onFocus={e =>  this.onFocus(e, item)}
+				onBlur={e =>  this.onBlur(e, item)}
+				onKeyDown={e =>  this.onKeyDown(e, item)}
+				onKeyUp={() =>  this.onKeyUp()}
+				onSelect={e =>  this.onSelectText(e, item)}
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
@@ -169,7 +169,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
-		window.setTimeout(() => { focus.apply(); }, 10);
+		window.setTimeout(() =>  focus.apply(), 10);
 	};
 
 	onFocus (e: any, item: any) {

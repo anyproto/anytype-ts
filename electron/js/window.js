@@ -53,7 +53,7 @@ class WindowManager {
 			win = null;
 		});
 
-		win.once('ready-to-show', () => { win.show(); });
+		win.once('ready-to-show', () =>  win.show());
 		win.on('focus', () => { 
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win); 

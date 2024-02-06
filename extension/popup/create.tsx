@@ -334,9 +334,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			horizontal: I.MenuDirection.Center,
 			commonFilter: true,
 			onOpen: () => {
-				window.setTimeout(() => { $(element).addClass('isFocused'); });
+				window.setTimeout(() =>  $(element).addClass('isFocused'));
 			},
-			onClose: () => { $(element).removeClass('isFocused'); },
+			onClose: () =>  $(element).removeClass('isFocused'),
 			data: {
 				canAdd: true,
 				filter: '',

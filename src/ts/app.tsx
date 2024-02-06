@@ -424,7 +424,7 @@ class App extends React.Component<object, State> {
 			popupStore.closeAll();
 		};
 
-		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
+		window.setTimeout(() =>  popupStore.open(id, param), Constant.delay.popup);
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {

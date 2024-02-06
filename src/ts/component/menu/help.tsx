@@ -33,8 +33,8 @@ class MenuHelp extends React.Component<I.Menu> {
 							<MenuItemVertical
 								key={i}
 								{...item}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-								onClick={(e: any) => { this.onClick(e, item); }}
+								onMouseEnter={e =>  this.onMouseEnter(e, item)}
+								onClick={e =>  this.onClick(e, item)}
 							/>
 						);
 					};
