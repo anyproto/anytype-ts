@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
-import { dbStore, menuStore, blockStore } from 'Store';
+import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
@@ -31,9 +31,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, getKeys, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
+		const subId = dbStore.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
@@ -55,7 +56,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
 							readonly={!isAllowedObject}
-							recordId={id}
+							record={detailStore.get(subId, records[index], getKeys(view.id))}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
 						/>
@@ -89,7 +90,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 														key={'grid-row-' + view.id + index} 
 														{...this.props} 
 														readonly={!isAllowedObject}
-														recordId={records[index]}
+														record={detailStore.get(subId, records[index], getKeys(view.id))}
 														style={{ ...style, top: style.top + 2 }}
 														cellPosition={this.cellPosition}
 														getColumnWidths={this.getColumnWidths}

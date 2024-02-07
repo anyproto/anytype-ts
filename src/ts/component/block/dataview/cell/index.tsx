@@ -40,17 +40,15 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord } = this.props;
+		const { elementId, relationKey, record, onClick, idPrefix } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const canEdit = this.canCellEdit();
-
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
@@ -135,9 +133,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	checkValue (): boolean {
-		const { recordId, getRecord } = this.props;
+		const { record } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (relation.relationKey == 'name') {
 			return true;
@@ -149,16 +146,15 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record) {
 			return;
 		};
 
 		const { config } = commonStore;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const value = record[relation.relationKey] || '';
 
 		if (!this.canCellEdit()) {
@@ -441,7 +437,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	onChange (value: any, callBack?: (message: any) => void) {
-		const { onCellChange, recordId } = this.props;
+		const { onCellChange, record } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation) {
@@ -450,14 +446,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		value = Relation.formatValue(relation, value, true);
 		if (onCellChange) {
-			onCellChange(recordId, relation.relationKey, value, callBack);
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 
 	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, recordId, withName } = this.props;
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, record, withName } = this.props;
 		const relation = this.getRelation();
-		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, recordId)}`);
+		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -485,14 +481,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	canCellEdit (): boolean {
-		const { readonly, getRecord, recordId } = this.props;
+		const { readonly, record } = this.props;
 
 		if (readonly) {
 			return false;
 		};
 
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;

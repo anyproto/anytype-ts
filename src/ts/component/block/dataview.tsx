@@ -157,7 +157,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getView: this.getView,
 			getTarget: this.getTarget,
 			getSources: this.getSources,
-			getRecord: this.getRecord,
 			getRecords: this.getRecords,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
@@ -475,7 +474,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
 
-	getRecord (recordId: string) {
+	getRecord (id: string) {
 		const view = this.getView();
 		if (!view) {
 			return {};
@@ -483,7 +482,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const keys = this.getKeys(view.id);
 		const subId = this.getSubId();
-		const item = detailStore.get(subId, recordId, keys);
+		const item = detailStore.get(subId, id, keys);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
 		if (item.name == translate('defaultNamePage')) {

@@ -112,10 +112,10 @@ export interface ViewComponent {
 	isCollection?: boolean;
 	className?: string;
 	refCells?: any;
+	record?: any;
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
-	getRecord(id: string): any;
 	getCoverObject?(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
@@ -190,7 +190,6 @@ export interface Cell {
 	idPrefix?: string;
 	relation?: any;
 	relationKey?: string;
-	recordId: string;
 	viewType: I.ViewType;
 	readonly?: boolean;
 	canOpen?: boolean;
@@ -206,8 +205,8 @@ export interface Cell {
 	shortUrl?: boolean;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
+	record?: any;
 	getView?(): View;
-	getRecord(id: string): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;

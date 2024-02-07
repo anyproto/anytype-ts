@@ -20,7 +20,7 @@ class UtilGraph {
 			};
 
 			case I.ObjectLayout.File: {
-				src = `img/icon/file/${UtilFile.icon(d)}.svg`;
+				src = UtilFile.iconPath(d);
 				break;
 			};
 
@@ -28,7 +28,7 @@ class UtilGraph {
 				if (d.id) {
 					src = commonStore.imageUrl(d.id, 100);
 				} else {
-					src = `img/icon/file/${UtilFile.icon(d)}.svg`;
+					src = UtilFile.iconPath(d);
 				};
 				break;
 			};

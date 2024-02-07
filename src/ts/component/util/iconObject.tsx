@@ -90,12 +90,7 @@ const FontSize = {
 	128: 72,
 };
 
-const File = {};
 const Relation: any = { small: {}, big: {} };
-
-for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf', 'presentation', 'table' ]) {
-	File[key] = require(`img/icon/file/${key}.svg`).default;
-};
 
 for (const i in I.RelationType) {
 	const it = Number(i);
@@ -252,7 +247,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+					icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -267,7 +262,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
 				break;
 			};
 

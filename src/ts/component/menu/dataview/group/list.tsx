@@ -73,8 +73,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							block={block}
 							relationKey={view.groupRelationKey} 
 							viewType={I.ViewType.Board}
-							getRecord={() => head}
-							recordId=""
+							record={head}
 							readonly={true} 
 							arrayLimit={4}
 							withName={true}
