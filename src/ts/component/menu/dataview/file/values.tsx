@@ -95,11 +95,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				ref={node => this.node = node}
 				className="items"
 			>
-				<div className="section">
-					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
-					<MenuItemVertical id="upload" icon="upload" name={translate('commonUpload')} onClick={this.onUpload} />
-				</div>
-
 				{value.length ? (
 					<div className="section">
 						<List 
@@ -116,6 +111,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						/>
 					</div>
 				) : ''}
+
+				<div className="section">
+					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
+				</div>
 			</div>
 		);
 	};
@@ -171,6 +170,13 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
+
+					if (callBack) {
+						callBack();
+					};
+				},
+				onUpload: (id: string, callBack?: () => void) => {
+					this.add(id);
 
 					if (callBack) {
 						callBack();
