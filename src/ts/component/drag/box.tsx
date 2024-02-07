@@ -102,8 +102,8 @@ class DragBox extends React.Component<Props> {
 		element.addClass('isDragging');
 
 		win.off('mousemove.dragbox mouseup.dragbox');
-		win.on('mousemove.dragbox', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.dragbox', (e: any) => { this.onDragEnd(e); });
+		win.on('mousemove.dragbox', e => this.onDragMove(e));
+		win.on('mouseup.dragbox', e => this.onDragEnd(e));
 	};
 
 	onDragMove (e: any) {

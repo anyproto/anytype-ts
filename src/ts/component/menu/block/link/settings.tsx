@@ -28,8 +28,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 						<MenuItemVertical 
 							key={i}
 							{...action}
-							onClick={(e: any) => { this.onClick(e, action); }}
-							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+							onClick={e => this.onClick(e, action)}
+							onMouseEnter={e => this.onOver(e, action)} 
 						/>
 					))}
 				</div>
@@ -60,7 +60,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

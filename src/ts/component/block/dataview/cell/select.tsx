@@ -36,9 +36,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	render () {
-		const { relation, getRecord, recordId, elementMapper, arrayLimit } = this.props;
+		const { relation, record, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
-		const record = getRecord(recordId);
 		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const isSelect = relation.format == I.RelationType.Select;
 		const cn = [ 'wrap' ];
@@ -91,7 +90,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										color={item.color}
 										canEdit={!isSelect} 
 										className={Relation.selectClassName(relation.format)}
-										onRemove={() => { this.onValueRemove(item.id); }}
+										onRemove={() => this.onValueRemove(item.id)}
 									/>
 								</span>
 							))}
@@ -344,11 +343,14 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, recordId } = this.props;
-		const record = getRecord(recordId);
+		const { relation, record } = this.props;
+
+		if (!relation || !record) {
+			return [];
+		};
 
 		let items = record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
-		items.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
+		items = items.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 
 		return items;
 	};

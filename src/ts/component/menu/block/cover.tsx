@@ -56,7 +56,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const sections = this.getSections();
 
 		const Item = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.onSelect(e, item); }}>
+			<div className="item" onClick={e => this.onSelect(e, item)}>
 				<Cover preview={true} {...item} />
 				{item.artist ? <div className="name">{item.artist}</div> : ''}
 			</div>
@@ -136,7 +136,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						<div 
 							key={item.id} 
 							className={[ 'btn', (item.id == this.tab ? 'active' : '') ].join(' ')}
-							onClick={() => { this.setTab(item.id); }}
+							onClick={() => this.setTab(item.id)}
 						>
 							{item.name}
 						</div>
@@ -276,13 +276,13 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
 				if (onUpload) {
-					onUpload(I.CoverType.Upload, message.hash);
+					onUpload(I.CoverType.Upload, message.objectId);
 				};
 
 				analytics.event('SetCover', { type: I.CoverType.Upload });
@@ -307,7 +307,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 			C.UnsplashDownload(commonStore.space, item.id, (message: any) => {
 				if (!message.error.code) {
-					onUpload(item.type, message.hash);
+					onUpload(item.type, message.objectId);
 				};
 			});
 
@@ -387,12 +387,12 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		preventCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
+				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 		
 			close();
@@ -417,9 +417,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
-					UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
+					UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};
 
 				this.setState({ isLoading: false });

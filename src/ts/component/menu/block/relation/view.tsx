@@ -82,7 +82,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		);
 
 		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={e => this.onAdd(e)}>
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
@@ -111,7 +111,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.off('scroll').on('scroll', (e: any) => { this.onScroll(); });
+		scrollWrap.off('scroll').on('scroll', e => this.onScroll());
 
 		this.selectionPrevent(true);
 	};
@@ -219,7 +219,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => { analytics.event('FeatureRelation'); });
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation'));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -228,7 +228,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => { analytics.event('UnfeatureRelation'); });
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation'));
 		};
 	};
 

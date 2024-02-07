@@ -41,7 +41,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const profile = UtilObject.getProfile();
 	
 		let name = profile.name;
-		if (name == UtilObject.defaultName('Page')) {
+		if (name == translate('defaultNamePage')) {
 			name = '';
 		};
 
@@ -170,14 +170,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		Action.openFile(Constant.fileExtension.cover, paths => {
 			this.setState({ loading: true });
 
-            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-                if (message.error.code) {
-                    return;
+            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+                if (!message.error.code) {
+					UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
+						this.setState({ loading: false });
+					});
                 };
-
-                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    this.setState({ loading: false });
-                });
             });
 		});
     };

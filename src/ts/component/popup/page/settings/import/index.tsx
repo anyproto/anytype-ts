@@ -17,7 +17,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		const Item = (item: any) => {
 			return (
-				<div className={[ 'item', item.id ].join(' ')} onClick={() => { this.onClick(item.id); }} >
+				<div className={[ 'item', item.id ].join(' ')} onClick={() => this.onClick(item.id)} >
 					<Icon className={`import-${item.id}`} />
 					<div className="name">{item.name}</div>
 				</div>

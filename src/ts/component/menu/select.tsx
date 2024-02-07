@@ -191,7 +191,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { setActive(active, true); }, 15);
+			window.setTimeout(() => setActive(active, true), 15);
 		};
 
 		this.resize();

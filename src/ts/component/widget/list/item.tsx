@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
+import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { I, UtilCommon, UtilObject, keyboard, analytics, translate } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -17,6 +17,7 @@ type Props = {
 	isEditing?: boolean;
 	isCompact?: boolean;
 	isPreview?: boolean;
+	isSection?: boolean;
 };
 
 const WidgetListItem = observer(class WidgetListItem extends React.Component<Props> {
@@ -35,13 +36,27 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	render () {
-		const { subId, id, block, style, isCompact, isEditing, index, isPreview } = this.props;
+		const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
+
+		if (isSection) {
+			return (
+				<div
+					ref={node => this.node = node}
+					style={style}
+					className={[ 'item', 'isSection' ].join(' ')}
+				>
+					<div className="inner">
+						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+					</div>
+				</div>
+			);
+		};
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -163,8 +178,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => { node.addClass('active'); },
-			onClose: () => { node.removeClass('active'); },
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				route: 'Widget',
 				objectIds: [ id ],
@@ -189,10 +204,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		UtilObject.setIcon(id, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.id, '', objectId);
 	};
 
 	onCheckbox () {

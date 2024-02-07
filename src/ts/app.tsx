@@ -305,6 +305,7 @@ class App extends React.Component<object, State> {
 	onInit (e: any, data: any) {
 		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked, css } = data;
 		const win = $(window);
+		const body = $('body');
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
@@ -333,13 +334,18 @@ class App extends React.Component<object, State> {
 			UtilCommon.injectCss('anytype-custom-css', css);
 		};
 
+		body.addClass('over');
+
 		const cb = () => {
 			window.setTimeout(() => {
 				anim.addClass('to');
 
 				window.setTimeout(() => {
 					loader.css({ opacity: 0 });
-					window.setTimeout(() => { loader.remove(); }, 500);
+					window.setTimeout(() => { 
+						loader.remove(); 
+						body.removeClass('over');
+					}, 500);
 				}, 750);
 			}, 2000);
 		};
@@ -418,7 +424,7 @@ class App extends React.Component<object, State> {
 			popupStore.closeAll();
 		};
 
-		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open(id, param), Constant.delay.popup);
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {

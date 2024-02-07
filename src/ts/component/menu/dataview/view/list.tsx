@@ -46,16 +46,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onClick={(e: any) => { this.onClick(e, item); }}
-				onMouseEnter={(e: any) => { this.onOver(e, item); }}
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onOver(e, item)}
 				style={item.style}
 			>
 				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={(e: any) => { loadData(item.id, 0); }}>
+				<div className="clickable" onClick={e => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={(e: any) => { this.onViewContext(e, item); }} />
+					<Icon className="more" onClick={e => this.onViewContext(e, item)} />
 				</div>
 			</div>
 		));
@@ -146,7 +146,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							className="item add" 
 							onClick={this.onAdd}
 							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewViewListAddView')}</div>
@@ -189,7 +189,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -202,7 +202,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
-			...it, name: it.name || UtilObject.defaultName('Page'),
+			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
 		items.unshift({ id: 'label', name: translate('menuDataviewViewListViews'), isSection: true });

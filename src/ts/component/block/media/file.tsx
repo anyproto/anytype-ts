@@ -22,15 +22,10 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state, style } = content;
-		
-		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
-		if (object._empty_) {
-			object = UtilCommon.objectCopy(content);
-			object.sizeInBytes = object.size;
-		};
-
+		const { state, style, targetObjectId } = content;
+		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
 		const { name, sizeInBytes } = object;
+
 		let element = null;
 
 		switch (state) {
@@ -119,13 +114,9 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	};
 	
 	onOpen (e: any) {
-		if (e.button) {
-			return;
+		if (!e.button) {
+			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
 		};
-
-		const { block } = this.props;
-		
-		UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 	};
 	
 });

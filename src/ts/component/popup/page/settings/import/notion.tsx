@@ -37,7 +37,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 					<div className="errorWrapper">
 						<Input 
 							focusOnMount
-							ref={(ref: any) => { this.ref = ref; }} 
+							ref={ref => this.ref = ref}
 							type="password"
 							placeholder={translate('popupSettingsImportNotionTokenPlaceholder')}
 						/>
@@ -50,7 +50,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 
 				<div className="helpWrapper flex">
 					<Title text={translate('popupSettingsImportNotionHowTo')} />
-					<div className="btn" onClick={() => { onPage('importNotionHelp'); }}>
+					<div className="btn" onClick={() => onPage('importNotionHelp')}>
 						<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
 					</div>
 				</div>

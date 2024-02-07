@@ -134,8 +134,8 @@ class BlockStore {
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const map = this.getMap(rootId);
+		const element = this.getMapElement(rootId, blockId);
 
-		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
 		} else {

@@ -5,7 +5,6 @@ import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
 import Extension from 'json/extension.json';
-import Url from 'json/url.json';
 
 import './scss/common.scss';
 
@@ -13,7 +12,13 @@ window.Electron = {
 	currentWindow: () => ({ windowId: 1 }),
 	Api: () => {},
 };
-window.AnytypeGlobalConfig = { emojiPrefix: Url.emojiPrefix, menuBorderTop: 16, menuBorderBottom: 16, debug: { mw: true } };
+
+window.AnytypeGlobalConfig = { 
+	emojiUrl: Extension.clipper.emojiUrl, 
+	menuBorderTop: 16, 
+	menuBorderBottom: 16, 
+	debug: { mw: true },
+};
 
 let rootId = '';
 let component: any = null;

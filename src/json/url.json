@@ -16,5 +16,5 @@
 	"extendStorage": "mailto:storage@anytype.io?subject=Get%20more%20storage%2C%20account%20%25accountId%25&body=Hi%2C%20Anytype%20team.%20I%20am%20reaching%20out%20to%20request%20an%20increase%20in%20my%20file%20storage%20capacity%20as%20I%20have%20run%20out%20of%20storage.%20My%20current%20limit%20is%20%25storageLimit%25.%20My%20account%20id%20is%20%25accountId%25.%20Cheers%2C%20%25spaceName%25",
 	"gallery": "https://gallery.any.coop",
 	"usecases": "https://tools.gallery.any.coop/index.json",
-	"emojiPrefix": "https://anytype-static.fra1.cdn.digitaloceanspaces.com/emojies/"
+	"cdn": "https://anytype-static.fra1.cdn.digitaloceanspaces.com"
 }

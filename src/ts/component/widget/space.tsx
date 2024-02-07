@@ -47,8 +47,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
 	};
 
 });
