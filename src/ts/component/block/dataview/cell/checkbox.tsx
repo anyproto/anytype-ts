@@ -12,8 +12,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 	};
 
 	render () {
-		const { recordId, getRecord, withLabel, withName, relation } = this.props;
-		const record = getRecord(recordId);
+		const { withLabel, withName, relation, record } = this.props;
 		
 		if (!record) {
 			return null;
@@ -43,8 +42,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 	};
 
 	getValue () {
-		const { relation, getRecord, recordId } = this.props;
-		const record = getRecord(recordId);
+		const { relation, record } = this.props;
 
 		return Boolean(record[relation.relationKey]);
 	};
