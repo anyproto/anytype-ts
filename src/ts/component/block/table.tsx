@@ -839,8 +839,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		body.addClass('colResize');
 		win.off('mousemove.table mouseup.table');
-		win.on('mousemove.table', throttle(e =>  this.onResizeMove(e, id), 40));
-		win.on('mouseup.table', e =>  this.onResizeEnd(e, id));
+		win.on('mousemove.table', throttle(e => 	this.onResizeMove(e, id), 40));
+		win.on('mouseup.table', e => 	this.onResizeEnd(e, id));
 
 		keyboard.setResize(true);
 	};
@@ -921,11 +921,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
-		$(document).off('dragover').on('dragover', e =>  e.preventDefault());
+		$(document).off('dragover').on('dragover', e => 	e.preventDefault());
 		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), 0);
 
-		win.on('drag.tableColumn', throttle(e =>  this.onDragMoveColumn(e, id), 40));
-		win.on('dragend.tableColumn', e =>  this.onDragEndColumn(e, id));
+		win.on('drag.tableColumn', throttle(e => 	this.onDragMoveColumn(e, id), 40));
+		win.on('dragend.tableColumn', e => 	this.onDragEndColumn(e, id));
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
@@ -1013,11 +1013,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		layer.append(table);
 		table.append(clone);
 		
-		$(document).off('dragover').on('dragover', e =>  e.preventDefault());
+		$(document).off('dragover').on('dragover', e => 	e.preventDefault());
 		e.dataTransfer.setDragImage(layer.get(0), 0, table.outerHeight());
 
-		win.on('drag.tableRow', throttle(e =>  this.onDragMoveRow(e, id), 40));
-		win.on('dragend.tableRow', e =>  this.onDragEndRow(e, id));
+		win.on('drag.tableRow', throttle(e => 	this.onDragMoveRow(e, id), 40));
+		win.on('dragend.tableRow', e => 	this.onDragEndRow(e, id));
 
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');

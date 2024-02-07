@@ -61,7 +61,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 				<div 
 					id={'item-' + item.id} 
 					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}
-					onMouseEnter={e =>  this.onOver(e, item)}
+					onMouseEnter={e => 	this.onOver(e, item)}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
@@ -84,8 +84,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					</div>
 					{allowedView ? (
 						<div className="buttons">
-							<Icon className="more" onClick={e =>  this.onClick(e, item)} />
-							<Icon className="delete" onClick={e =>  this.onRemove(e, item)} />
+							<Icon className="more" onClick={e => 	this.onClick(e, item)} />
+							<Icon className="delete" onClick={e => 	this.onRemove(e, item)} />
 						</div>
 					) : ''}
 				</div>
@@ -213,7 +213,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

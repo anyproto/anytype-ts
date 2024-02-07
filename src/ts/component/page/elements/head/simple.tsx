@@ -61,11 +61,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
-				onFocus={e =>  this.onFocus(e, item)}
-				onBlur={e =>  this.onBlur(e, item)}
-				onKeyDown={e =>  this.onKeyDown(e, item)}
+				onFocus={e => 	this.onFocus(e, item)}
+				onBlur={e => 	this.onBlur(e, item)}
+				onKeyDown={e => 	this.onKeyDown(e, item)}
 				onKeyUp={() => this.onKeyUp()}
-				onSelect={e =>  this.onSelectText(e, item)}
+				onSelect={e => 	this.onSelectText(e, item)}
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);

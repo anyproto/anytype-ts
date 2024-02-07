@@ -77,7 +77,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							id={Relation.cellId(PREFIX, 'type', object.id)}
 							className="cellContent type"
 							onClick={this.onType}
-							onMouseEnter={e =>  this.onMouseEnter(e, 'type')}
+							onMouseEnter={e => 	this.onMouseEnter(e, 'type')}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{typeName}
@@ -127,7 +127,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							id={Relation.cellId(PREFIX, 'setOf', object.id)}
 							className="cellContent setOf"
 							onClick={this.onSource}
-							onMouseEnter={e =>  this.onMouseEnter(e, 'setOf', 'Query')}
+							onMouseEnter={e => 	this.onMouseEnter(e, 'setOf', 'Query')}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{setOfString.length ? (

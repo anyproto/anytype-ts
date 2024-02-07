@@ -252,7 +252,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e =>  this.onTab(item.id)}>
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => 	this.onTab(item.id)}>
 				{item.name}
 			</div>
 		);

@@ -36,7 +36,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const Layout = (item: any) => (
 			<div 
 				className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')}
-				onClick={e =>  this.onClick(e, item)}
+				onClick={e => 	this.onClick(e, item)}
 				onMouseEnter={this.menuClose}
 			>
 				<Icon className={item.icon} />
@@ -55,9 +55,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 							icon={action.icon}
 							readonly={readonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
-							onMouseEnter={e =>  this.onMouseEnter(e, action)}
-							onMouseLeave={e =>  this.onMouseLeave(e, action)}
-							onClick={e =>  this.onClick(e, action)} 
+							onMouseEnter={e => 	this.onMouseEnter(e, action)}
+							onMouseLeave={e => 	this.onMouseLeave(e, action)}
+							onClick={e => 	this.onClick(e, action)} 
 						/>
 					))}
 				</div>

@@ -82,7 +82,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		);
 
 		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={e =>  this.onAdd(e)}>
+			<div id="item-add" className="item add" onClick={e => 	this.onAdd(e)}>
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
@@ -111,7 +111,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.off('scroll').on('scroll', e =>  this.onScroll());
+		scrollWrap.off('scroll').on('scroll', e => 	this.onScroll());
 
 		this.selectionPrevent(true);
 	};

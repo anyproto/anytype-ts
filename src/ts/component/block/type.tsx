@@ -32,8 +32,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onClick={e =>  this.onClick(e, item)} 
-					onMouseEnter={e =>  this.onOver(e, item)} 
+					onClick={e => 	this.onClick(e, item)} 
+					onMouseEnter={e => 	this.onOver(e, item)} 
 					onMouseLeave={this.onOut}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}

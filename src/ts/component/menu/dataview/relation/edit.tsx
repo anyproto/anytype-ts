@@ -149,7 +149,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							<MenuItemVertical 
 								key={c}
 								{...action}
-								onClick={e =>  this.onClick(e, action)} 
+								onClick={e => 	this.onClick(e, action)} 
 								onMouseEnter={this.menuClose} 
 							/>
 						))}
