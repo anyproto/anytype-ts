@@ -8,7 +8,7 @@
 
 */
 
-const { existsSync, mkdir, writeFile } = require('fs');
+const fs = require('fs');
 const { userInfo, homedir } = require('os');
 const { app } = require('electron');
 const path = require('path');
@@ -69,14 +69,10 @@ const installToMacOS = (manifest) => {
 	const dirs = getDarwinDirectory();
 
 	for (const [ key, value ] of Object.entries(dirs)) {
-		if (existsSync(value)) {
-			const p = path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME);
-			
-			writeManifest(p, manifest).catch(e => {
-				console.log(`Error writing manifest for ${key}. ${e}`);
-			});
+		if (fs.existsSync(value)) {
+			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
 		} else {
-			console.log(`Warning: ${key} not found skipping.`);
+			console.log(`Manifest skipped: ${key}`);
 		};
 	};
 };
@@ -160,18 +156,25 @@ const getDarwinDirectory = () => {
 	/* eslint-enable no-useless-escape */
 };
 
-const writeManifest = async (dst, data) => {
-	if (!existsSync(path.dirname(dst))) {
-		await mkdir(path.dirname(dst));
+const writeManifest = (dst, data) => {
+	try {
+		if (!fs.existsSync(path.dirname(dst))) {
+			fs.mkdirSync(path.dirname(dst));
+		};
+
+		fs.writeFileSync(dst, JSON.stringify(data, null, 2), {}, (err) => {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log(`Manifest written: ${dst}`);
+			};
+		});
+
+		console.log(`Manifest written: ${dst}`);
+	} catch(err) {
+		console.error(err);
 	};
 
-	await writeFile(dst, JSON.stringify(data, null, 2), (err) => {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log(`Manifest written: ${dst}`);
-		};
-	});
 };
 
 module.exports = { installNativeMessagingHost };

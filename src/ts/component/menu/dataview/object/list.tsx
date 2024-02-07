@@ -75,7 +75,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			} else
 			if (item.id == 'add') {
 				content = (
-					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div id="item-add" className="item add" onMouseEnter={e =>  this.onOver(e, item)} onClick={e =>  this.onClick(e, item)} style={param.style}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -86,8 +86,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						id={item.id}
 						object={item}
 						name={name}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e =>  this.onOver(e, item)} 
+						onClick={e =>  this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
@@ -287,7 +287,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || UtilObject.defaultName('Page'));
+				it.name = String(it.name || translate('defaultNamePage'));
 				return it;
 			}));
 

@@ -45,7 +45,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
                 <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-                <Button className="c36" onClick={() => { onPage('delete'); }} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+                <Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
             </React.Fragment>
         );
     };

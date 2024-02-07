@@ -123,7 +123,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					<div 
 						key={item.id} 
 						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={(e: any) => { this.onView(item.id, true); }}
+						onClick={e =>  this.onView(item.id, true)}
 					>
 						{item.name}
 					</div>
@@ -150,14 +150,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					if (sources.includes(item.id)) {
 						icons.push({ className: 'check', tooltip: textInstalled });
 					} else {
-						icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+						icons.push({ className: 'plus', tooltip: textInstall, onClick: e =>  this.onInstall(e, item) });
 					};
 					break;
 			};
 			
 			return (
 				<div className={cn.join(' ')}>
-					<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div className="flex" onClick={e =>  this.onClick(e, item)}>
 						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>

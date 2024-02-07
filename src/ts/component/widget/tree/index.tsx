@@ -102,7 +102,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 									height={height}
 									deferredMeasurmentCache={this.cache}
 									rowCount={nodes.length}
-									rowHeight={HEIGHT}
+									rowHeight={({ index }) => this.getRowHeight(nodes[index], index)}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={LIMIT}
@@ -187,7 +187,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: i => this.getRowHeight(nodes[i], i),
 			keyMapper: i => (nodes[i] || {}).id,
 		});
 
@@ -383,12 +383,31 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		analytics.event('OpenSidebarObject');
 	};
 
+	getTotalHeight () {
+		const nodes = this.loadTree();
+
+		let height = 0;
+
+		nodes.forEach((node, index) => {
+			height += this.getRowHeight(node, index);
+		});
+
+		return height;
+	};
+
+	getRowHeight (node: any, index: number) {
+		if (node && node.isSection) {
+			return index ? HEIGHT + 12 : HEIGHT;
+		};
+		return HEIGHT;
+	};
+
 	resize () {
 		const { parent, isPreview } = this.props;
 		const nodes = this.loadTree();
 		const node = $(this.node);
 		const length = nodes.length;
-		const css: any = { height: HEIGHT * length + 8, paddingBottom: '' };
+		const css: any = { height: this.getTotalHeight() + 8, paddingBottom: '' };
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);

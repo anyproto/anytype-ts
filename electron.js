@@ -105,7 +105,7 @@ nativeTheme.on('updated', () => {
 function createWindow () {
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
-	mainWindow.on('close', (e) => {
+	mainWindow.on('close', e => {
 		Util.log('info', 'closeMain: ' + app.isQuiting);
 
 		if (app.isQuiting) {
@@ -116,7 +116,7 @@ function createWindow () {
 
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () => { mainWindow.hide(); });
+			mainWindow.once('leave-full-screen', () => mainWindow.hide());
 		} else {
 			mainWindow.hide();
 		};
@@ -184,7 +184,7 @@ app.on('second-instance', (event, argv) => {
 	mainWindow.focus();
 });
 
-app.on('before-quit', (e) => {
+app.on('before-quit', e => {
 	Util.log('info', 'before-quit');
 
 	if (app.isQuiting) {

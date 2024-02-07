@@ -798,9 +798,6 @@ class Keyboard {
 	};
 
 	onQuickCapture () {
-
-		console.log('onQuickCapture', menuStore.isOpen('quickCapture'));
-
 		if (menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
@@ -875,10 +872,6 @@ class Keyboard {
 
 	getMatch () {
 		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
-	};
-
-	ctrlByPlatform (e: any) {
-		return UtilCommon.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	isMain () {

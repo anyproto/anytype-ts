@@ -490,7 +490,7 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /[`\*_~\[]{1}/.test(html);
+		const test = /((^|\s)_|[`\*~\[]){1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {

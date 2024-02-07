@@ -178,8 +178,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => { node.addClass('active'); },
-			onClose: () => { node.removeClass('active'); },
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				route: 'Widget',
 				objectIds: [ id ],
@@ -204,10 +204,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		UtilObject.setIcon(id, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.id, '', objectId);
 	};
 
 	onCheckbox () {

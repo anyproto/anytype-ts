@@ -93,7 +93,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		switch (style) {
 			case I.TextStyle.Title: {
-				placeholder = UtilObject.defaultName('Page');
+				placeholder = translate('defaultNamePage');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -203,7 +203,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
-					onDragStart={(e: any) => { e.preventDefault(); }}
+					onDragStart={e =>  e.preventDefault()}
 				/>
 			</div>
 		);
@@ -496,7 +496,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						object={object} 
 						canEdit={!isArchived} 
 						onSelect={icon => this.onMentionSelect(object.id, icon)} 
-						onUpload={hash => this.onMentionUpload(object.id, hash)} 
+						onUpload={objectId => this.onMentionUpload(object.id, objectId)} 
 						onCheckbox={() => this.onMentionCheckbox(object.id, !done)}
 					/>
 				);
@@ -1429,7 +1429,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onMouseUp () {
 		window.clearTimeout(this.timeoutClick);
-		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
+		this.timeoutClick = window.setTimeout(() => this.clicks = 0, 300);
 	};
 
 	onSelectIcon (icon: string) {
@@ -1438,10 +1438,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		C.BlockTextSetIcon(rootId, block.id, icon, '');
 	};
 
-	onUploadIcon (hash: string) {
+	onUploadIcon (objectId: string) {
 		const { rootId, block } = this.props;
 
-		C.BlockTextSetIcon(rootId, block.id, '', hash);
+		C.BlockTextSetIcon(rootId, block.id, '', objectId);
 	};
 	
 	placeholderCheck () {
@@ -1471,12 +1471,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onMentionUpload (objectId: string, hash: string) {
+	onMentionUpload (targetId: string, objectId: string) {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-			UtilObject.setIcon(objectId, '', hash);
+			UtilObject.setIcon(targetId, '', objectId);
 		});
 	};
 

@@ -168,7 +168,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const tooltipPhrase = node.find('#tooltipPhrase');
 
 		this.unbind();
-		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
+		$(window).on('keydown.onboarding', e => this.onKeyDown(e));
 
 		tooltipPhrase.off('click').on('click', () => this.onPhraseTooltip());
 	};

@@ -7,7 +7,6 @@ import { Cell } from 'Component';
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
-	recordId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
@@ -17,7 +16,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, recordId, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -29,13 +28,13 @@ const Card = observer(class Card extends React.Component<Props> {
 		let content = (
 			<div className="cardContent">
 				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 					return (
 						<Cell
 							elementId={id}
 							key={'board-cell-' + view.id + relation.relationKey}
 							{...this.props}
-							getRecord={() => record}
+							record={record}
 							subId={subId}
 							ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 							relationKey={relation.relationKey}
@@ -105,7 +104,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
-			2: () => { onContext(e, record.id); }
+			2: () => onContext(e, record.id)
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
@@ -119,7 +118,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId } = this.props;
+		const { onCellClick, record } = this.props;
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
@@ -129,7 +128,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCellClick(e, relation.relationKey, recordId);
+		onCellClick(e, relation.relationKey, record.id);
 	};
 
 	resize () {

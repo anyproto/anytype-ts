@@ -631,7 +631,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					const data: any = { 
-						...UtilEmbed.getEnvironmentContent(processor), 
 						allowIframeResize, 
 						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
 						useRootHeight: UtilEmbed.useRootHeight(processor),

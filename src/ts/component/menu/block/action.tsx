@@ -61,8 +61,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
+								onMouseEnter={e =>  this.onMouseEnter(e, action)} 
+								onClick={e =>  this.onClick(e, action)} 
 							/>
 						);
 					})}
@@ -99,7 +99,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = true;
 		this.rebind();
 
-		menu.off('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
+		menu.off('mouseleave').on('mouseleave', () => menuStore.clearTimeout());
 	};
 
 	componentDidUpdate () {
@@ -199,7 +199,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
-			const dataview = { id: 'dataview', icon: '', name: translate('menuBlockActionsSectionsDataview'), children: UtilMenu.getDataviewActions(rootId, blockId) };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -252,7 +251,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasTurnObject)	 sections.push(turnPage);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
-			if (hasDataview)	 sections.push(dataview);
 
 			if (hasAlign) {
 				sections.push({ 
@@ -264,7 +262,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasAction) {
 				sections.push({ 
 					...action, 
-					children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasBookmark }),
+					children: UtilMenu.getActions({ rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview }),
 				});
 			};
 
@@ -313,17 +311,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			const section1: any = { 
-				children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
+				children: UtilMenu.getActions({ rootId, blockId, hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
 
 			const section2: any = { 
 				children: [
 					// { id: 'comment', icon: 'comment', name: translate('commonComment') },
 				]
-			};
-
-			if (hasDataview) {
-				section2.children = section2.children.concat(UtilMenu.getDataviewActions(rootId, blockId));
 			};
 
 			if (hasLink) {
@@ -519,7 +513,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					canAdd: true,
-					onSelect: () => { close(); }
+					onSelect: () => close()
 				});
 				break;
 			};
@@ -658,6 +652,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const ids = UtilData.selectionGet(blockId, false, false, data);
+		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {
 			case 'download': {
@@ -665,17 +660,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
-			case 'openBookmarkAsObject': {
-				UtilObject.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+			case 'openAsObject': {
+				UtilObject.openPopup(detailStore.get(rootId, targetObjectId));
 
-				analytics.event('OpenAsObject', { type: block.type });
-				break;
-			};
+				const event: any = { type: block.type };
+				if (block.isFile()) {
+					event.params = { fileType: block.content.type };
+				};
 
-			case 'openFileAsObject': {
-				UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
-
-				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
+				analytics.event('OpenAsObject', event);
 				break;
 			};
 
@@ -685,11 +678,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
-			case 'openDataviewObject': {
-				UtilObject.openPopup(detailStore.get(rootId, block.content.targetObjectId));
-				break;
-			};
-					
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;

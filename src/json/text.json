@@ -362,6 +362,14 @@
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
+	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
+
+	"pageMainArchiveEmpty": "Your Bin is empty",
+	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainMediaNotFound": "File not found",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
@@ -379,12 +387,6 @@
 
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
-
-	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
-
-	"pageMainArchiveEmpty": "Your Bin is empty",
-	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
@@ -1273,6 +1275,7 @@
 	"menuQuickCaptureGroups": "Lists",
 	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
 	"menuQuickCaptureOpenType": "Open type",
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
@@ -1645,5 +1648,8 @@
 	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
-	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"
+	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+
+	"challengeTitle": "Please enter the following numbers in the extension"
+
 }
