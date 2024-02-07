@@ -394,13 +394,7 @@ class CommonStore {
 
 	getThemePath () {
 		const tc = this.getThemeClass();
-
-		let tp = '';
-		if (tc == 'dark') {
-			tp = 'theme/dark/';
-		};
-
-		return tp;
+		return tc ? `theme/${tc}/` : '';
 	};
 
 	nativeThemeSet (isDark: boolean) {
