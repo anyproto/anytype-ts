@@ -279,7 +279,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	// return the child nodes details for the given subId
-	 getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
+	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
 		const subId = this.getSubId(nodeId);
 
 		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));

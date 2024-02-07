@@ -69,7 +69,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						<div className="inner" />
 					</div>
 				);
-			}  else
+			} else
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else

@@ -161,7 +161,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 
 	onMouseDown (e: any) {
 		keyboard.disableSelection(true);
-		$(window).off('mousedown.table-cell').on('mousedown.table-cell', e => keyboard.disableSelection(false));
+		$(window).off('mousedown.table-cell').on('mousedown.table-cell', () => keyboard.disableSelection(false));
 	};
 
 });

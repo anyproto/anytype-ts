@@ -46,7 +46,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { id, fields, content } = block;
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
-		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
+		const object = detailStore.get(rootId, targetObjectId, []);
 		const width = Number(fields) || 0;
 		const css: any = {};
 
@@ -102,7 +102,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				element = (
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{object.name}</span>
+							<span className="name">{UtilFile.name(object)}</span>
 							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 						</div>
 

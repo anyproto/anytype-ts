@@ -108,7 +108,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.unbind();
 
 		const node = $(this.node);
-		node.find('#scroll').on('scroll', e => this.onScrollView());
+		node.find('#scroll').on('scroll', () => this.onScrollView());
 	};
 
 	unbind () {

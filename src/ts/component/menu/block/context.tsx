@@ -60,7 +60,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			<div className="flex">
 				{canTurn ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip={translate('menuBlockContextSwitchStyle')} tooltipY={I.MenuDirection.Top} className={[ styleIcon, 'blockStyle' ].join(' ')} onMouseDown={e => this.onMark(e, 'style')} />
+						<Icon 
+							id={`button-${blockId}-style`} 
+							arrow={true} 
+							tooltip={translate('menuBlockContextSwitchStyle')} 
+							tooltipY={I.MenuDirection.Top} 
+							className={[ styleIcon, 'blockStyle' ].join(' ')} 
+							onMouseDown={e => this.onMark(e, 'style')} 
+						/>
 					</div>
 				) : ''}
 				

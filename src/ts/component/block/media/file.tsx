@@ -23,7 +23,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, style, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'sizeInBytes' ]);
+		const object = detailStore.get(rootId, targetObjectId, []);
 
 		let element = null;
 		switch (state) {
@@ -53,7 +53,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 				element = (
 					<div className="flex" onMouseDown={this.onOpen}>
 						<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
-						<span className="name">{object.name}</span>
+						<span className="name">{UtilFile.name(object)}</span>
 						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 					</div>
 				);

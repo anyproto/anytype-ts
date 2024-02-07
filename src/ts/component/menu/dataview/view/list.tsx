@@ -51,7 +51,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				style={item.style}
 			>
 				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={e => loadData(item.id, 0)}>
+				<div className="clickable" onClick={() => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">

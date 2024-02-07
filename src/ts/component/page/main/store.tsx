@@ -123,7 +123,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					<div 
 						key={item.id} 
 						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={e => this.onView(item.id, true)}
+						onClick={() => this.onView(item.id, true)}
 					>
 						{item.name}
 					</div>
