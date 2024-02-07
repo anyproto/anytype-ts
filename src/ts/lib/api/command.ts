@@ -31,6 +31,12 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
+export const DownloadGalleryIndex = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+
+	dispatcher.request(DownloadGalleryIndex.name, request, callBack);
+};
+
 export const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.DownloadManifest.Request();
 

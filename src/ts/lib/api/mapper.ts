@@ -528,6 +528,22 @@ export const Mapper = {
 			};
 		},
 
+		Manifest: (obj: Model.ManifestInfo) => {
+			return {
+				id: obj.getId(),
+				schema: obj.getSchema(),
+				name: obj.getName(),
+				author: obj.getAuthor(),
+				license: obj.getLicense(),
+				title: obj.getTitle(),
+				description: obj.getDescription(),
+				downloadLink: obj.getDownloadlink(),
+				size: obj.getFilesize(),
+				screenshots: obj.getScreenshotsList() || [],
+				categories: obj.getCategoriesList() || [],
+			};
+		},
+
     },
 
 	//------------------------------------------------------------

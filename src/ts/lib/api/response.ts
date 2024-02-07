@@ -423,23 +423,21 @@ export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	};
 };
 
-export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
-	const info = response.getInfo();
-
+export const DownloadGalleryIndex = (response: Rpc.DownloadGalleryIndex.Response) => {
 	return {
-		info: {
-			id: info.getId(),
-			schema: info.getSchema(),
-			name: info.getName(),
-			author: info.getAuthor(),
-			license: info.getLicense(),
-			title: info.getTitle(),
-			description: info.getDescription(),
-			downloadLink: info.getDownloadlink(),
-			size: info.getFilesize(),
-			screenshots: info.getScreenshotsList() || [],
-			categories: info.getCategoriesList() || [],
-		},
+		categories: (response.getCategoriesList() || []).map((it: Rpc.DownloadGalleryIndex.Response.Category) => {
+			return {
+				name: it.getName(),
+				list: it.getExperiencesList() || [],
+			};
+		}),
+		list: (response.getExperiencesList() || []).map(Mapper.From.Manifest),
+	};
+};
+
+export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
+	return {
+		info: Mapper.From.Manifest(response.getInfo()),
 	};
 };
 
