@@ -110,7 +110,7 @@
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId", "lastUsedDate" ],
 	"graphRelationKeys":	 [ 
 		"id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", 
-		"isDeleted", "isArchived", "isFavorite", "identityProfileLink"
+		"isDeleted", "isArchived", "isFavorite", "identityProfileLink", "restrictions"
 	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
 	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessType", "targetSpaceId", "creator", "createdDate" ],
