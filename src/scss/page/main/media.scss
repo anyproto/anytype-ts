@@ -21,9 +21,14 @@
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; gap: 0px 32px; }
 	.blocks.vertical {
 		> .side { width: 50%; }
-		> .side.left { min-width: 400px; }
-		> .side.left {
-			.iconObject { width: 100%; height: 100%; border-radius: 6px; background: var(--color-shape-highlight-medium); }
+		> .side.left { 
+			min-width: 400px; 
+		}
+		> .side.left { 
+			.inner { 
+				background: var(--color-shape-highlight-medium); display: flex; flex-direction: row; align-items: center; justify-content: center;
+				border-radius: 6px;
+			}
 		}
 
 		.block.blockMedia { max-height: 100%; }

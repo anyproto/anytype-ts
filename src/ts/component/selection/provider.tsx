@@ -161,8 +161,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, e =>  this.onMouseMove(e));
-		win.on(`blur.selection mouseup.selection`, e =>  this.onMouseUp(e));
+		win.on(`mousemove.selection`, e => 	this.onMouseMove(e));
+		win.on(`blur.selection mouseup.selection`, e => 	this.onMouseUp(e));
 	};
 
 	initNodes () {

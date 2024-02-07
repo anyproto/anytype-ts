@@ -70,11 +70,11 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={e =>  UtilObject.openPopup(item)}>
+					<div className="clickable" onClick={e => 	UtilObject.openPopup(item)}>
 						{content}
 					</div>
 					<div className="buttons">
-						<Icon className="more" onClick={e =>  this.onMore(e, item)} />
+						<Icon className="more" onClick={e => 	this.onMore(e, item)} />
 					</div>
 				</div>
 			);

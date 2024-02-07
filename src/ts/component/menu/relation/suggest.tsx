@@ -60,8 +60,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
-						onClick={e =>  this.onClick(e, item)} 
+						onMouseEnter={e => 	this.onMouseEnter(e, item)} 
+						onClick={e => 	this.onClick(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,8 +84,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
-						onClick={e =>  this.onClick(e, item)}
+						onMouseEnter={e => 	this.onMouseEnter(e, item)} 
+						onClick={e => 	this.onClick(e, item)}
 					/>
 				);
 			};
