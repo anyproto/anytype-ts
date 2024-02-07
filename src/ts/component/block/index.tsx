@@ -568,8 +568,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
-		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
+		win.on('mousemove.block', e =>  this.onResize(e, index, offset));
+		win.on('mouseup.block', e =>  this.onResizeEnd(e, index, offset));
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};

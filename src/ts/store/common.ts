@@ -385,11 +385,16 @@ class CommonStore {
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
-		if (c == 'dark') {
+		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
 
 		$(window).trigger('updateTheme');
+	};
+
+	getThemePath () {
+		const c = this.getThemeClass();
+		return c ? `theme/${c}/` : '';
 	};
 
 	nativeThemeSet (isDark: boolean) {

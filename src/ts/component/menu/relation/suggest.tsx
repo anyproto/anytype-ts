@@ -60,8 +60,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
+						onClick={e =>  this.onClick(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,8 +84,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
+						onClick={e =>  this.onClick(e, item)}
 					/>
 				);
 			};
@@ -451,7 +451,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
 				};
 			} else {
-				Action.install(item, true, (message: any) => { cb(message.details); });
+				Action.install(item, true, message => cb(message.details));
 			};
 		};
 	};

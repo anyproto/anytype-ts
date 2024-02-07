@@ -68,9 +68,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 						index={param.index} 
 						style={param.style} 
 						readonly={!allowedView}
-						onOver={(e: any) => { this.onOver(e, item); }}
-						onClick={(e: any) => { this.onClick(e, item); }}
-						onRemove={(e: any) => { this.onRemove(e, item); }}
+						onOver={e =>  this.onOver(e, item)}
+						onClick={e =>  this.onClick(e, item)}
+						onRemove={e =>  this.onRemove(e, item)}
 					/>
 				</CellMeasurer>
 			);
@@ -139,7 +139,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 							className="item add" 
 							onClick={this.onAdd}
 							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewFilterNewFilter')}</div>
@@ -182,10 +182,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.off('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+		obj.off('click').on('click', () => menuStore.closeAll(Constant.menuIds.cell));
 
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -286,7 +286,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { oldIndex, newIndex } = result;
 		
 		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
-		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { loadData(view.id, 0); });
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => loadData(view.id, 0));
 
 		keyboard.disableSelection(false);
 

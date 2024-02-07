@@ -148,9 +148,15 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	init () {
 		const { storageGet } = this.props;
 		const options = storageGet();
+		const formats = this.getFormats();
+
+		let format = Number(options.format);
+		if (!formats.map(it => it.id).includes(format)) {
+			format = formats[0].id;
+		};
 
 		this.data = {
-			format:		 Number(options.format) || I.ExportType.Markdown,
+			format,
 			zip:		 Boolean(options.zip),
 			nested:		 Boolean(options.nested),
 			files:		 Boolean(options.files),

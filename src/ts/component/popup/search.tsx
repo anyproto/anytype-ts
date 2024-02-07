@@ -250,7 +250,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		
 		const win = $(window);
 		win.on('keydown.search', e => this.onKeyDown(e));
-		win.on('resize.search', (e: any) => { this.resize(); });
+		win.on('resize.search', e =>  this.resize());
 	};
 
 	unbind () {
@@ -569,7 +569,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				case 'relation': {
 					$('#button-header-relation').trigger('click');
-					window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
+					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), Constant.delay.menu * 2);
 					break;
 				};
 

@@ -509,7 +509,7 @@ class Action {
 			it.childrenIds = element.childrenIds;
 			return it;
 		});
-		
+
 		C[cmd](rootId, blocks, range, (message: any) => {
 			UtilCommon.clipboardCopy({
 				text: message.textSlot,
