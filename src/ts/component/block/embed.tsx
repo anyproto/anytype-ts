@@ -969,10 +969,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		return Math.min(1, Math.max(0, w / rect.width));
 	};
 
-	onResizeInit () {
-		console.log('onResizeInit');
-	};
-
 	sanitize (text: string, allowScript: boolean): string {
 		const param: any = { 
 			ADD_TAGS: [ 'iframe' ],

@@ -484,10 +484,10 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
 		};
 

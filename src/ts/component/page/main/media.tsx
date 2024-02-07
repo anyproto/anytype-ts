@@ -115,7 +115,13 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 							<div className="side right">
 								<div className="head">
-									<HeadSimple ref={ref => this.refHead = ref} placeholder={translate('defaultNamePage')} rootId={rootId} />
+									<HeadSimple 
+										{...this.props} 
+										ref={ref => this.refHead = ref} 
+										placeholder={translate('defaultNamePage')} 
+										rootId={rootId} 
+										isContextMenuDisabled={true}
+									/>
 
 									<div className="buttons">
 										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
@@ -132,6 +138,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 											block={item} 
 											readonly={!allowed} 
 											isSelectionDisabled={true} 
+											isContextMenuDisabled={true}
 										/>
 									))}
 								</div>

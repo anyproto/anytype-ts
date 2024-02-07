@@ -65,7 +65,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 					<div className="blocks wrapper">
 						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-						<HeadSimple ref={ref => this.refHead = ref} placeholder={placeholder} rootId={rootId} />
+						<HeadSimple 
+							{...this.props} 
+							ref={ref => this.refHead = ref} 
+							placeholder={placeholder} rootId={rootId} 
+						/>
 
 						{children.map((block: I.Block, i: number) => (
 							<Block
