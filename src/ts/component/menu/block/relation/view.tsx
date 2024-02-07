@@ -50,7 +50,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const Section = (section: any) => (
-			<div id={'section-' + section.id} className="section">
+			<div id={`section-${section.id}`} className="section">
 				<div className="name">
 					{section.name}
 				</div>
@@ -291,14 +291,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, rootId } = data;
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, '');
+		const id = Relation.cellId(PREFIX, relationKey, rootId);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {

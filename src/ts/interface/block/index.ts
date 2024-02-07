@@ -71,6 +71,7 @@ export interface BlockComponent {
 	isInsideTable?: boolean;
 	isInsidePreview?: boolean;
 	isSelectionDisabled?: boolean;
+	isContextMenuDisabled?: boolean;
 	index?: any;
 	className?: string;
 	setLoading?(v: boolean): void;

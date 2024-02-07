@@ -484,10 +484,10 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
 		};
 
@@ -509,7 +509,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	menuOpen (param?: Partial<I.MenuParam>) {
 		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
-		const { selection } = dataset || {};
+		const { selection } = dataset;
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -519,7 +519,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			subIds: Constant.menuIds.action,
 			onClose: () => {
-				selection.clear();
+				if (selection) {
+					selection.clear();
+				};
 				focus.apply();
 			},
 			data: {

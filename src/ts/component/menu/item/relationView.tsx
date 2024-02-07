@@ -50,7 +50,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
-		const cellId = Relation.cellId(PREFIX, relationKey, '');
+		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
 		const value = object[relationKey];
 
 		const cn = [ 'item', 'sides' ];

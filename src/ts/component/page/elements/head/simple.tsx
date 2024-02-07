@@ -8,6 +8,7 @@ import Constant from 'json/constant.json';
 interface Props {
 	rootId: string;
 	placeholder?: string;
+	isContextMenuDisabled?: boolean;
 	onCreate?: () => void;
 };
 
@@ -36,7 +37,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled } = this.props;
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -89,6 +90,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					className="small" 
 					isSelectionDisabled={true}
 					readonly={!allowDetails}
+					isContextMenuDisabled={isContextMenuDisabled}
 				/>
 			);
 		};
