@@ -168,6 +168,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 
+		console.log(cellId, cell);
+
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
 			width = Math.max(width, maxWidth);

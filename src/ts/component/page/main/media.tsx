@@ -108,7 +108,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{content}
+								<div id="inner" className="inner">
+									{content}
+								</div>
 							</div>
 
 							<div className="side right">
@@ -282,11 +284,13 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
+		const inner = node.find('.side.left #inner');
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const wh = container.height() - 60;
+		const wh = container.height() - 140;
 
 		if (blocks.hasClass('vertical')) {
 			blocks.css({ minHeight: wh });
+			inner.css({ minHeight: wh });
 		};
 
 		if (empty.length) {
