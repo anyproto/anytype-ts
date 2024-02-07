@@ -146,7 +146,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, record, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || !record) {
