@@ -834,6 +834,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			menuStore.open('dataviewFileValues', {
 				element: `#${elementId}`,
 				horizontal: I.MenuDirection.Left,
+				width: 280,
 				offsetY: 4,
 				noFlipX: true,
 				title: relation.name,
