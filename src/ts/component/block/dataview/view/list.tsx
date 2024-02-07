@@ -21,7 +21,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, getKeys, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -75,10 +75,10 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 												rowHeight={HEIGHT}
 												onRowsRendered={onRowsRendered}
 												rowRenderer={({ key, index, style }) => (
-													<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
+													<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
 														<Row
 															{...this.props}
-															record={detailStore.get(subId, records[index])}
+															record={detailStore.get(subId, records[index], getKeys(view.id))}
 														/>
 													</div>
 												)}
