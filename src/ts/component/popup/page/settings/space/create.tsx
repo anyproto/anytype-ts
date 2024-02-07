@@ -66,7 +66,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref}
 								value=""
 								onKeyDown={this.onKeyDown}
-								placeholder={UtilObject.defaultName('Page')}
+								placeholder={translate('defaultNamePage')}
 							/>
 						</div>
 
@@ -136,7 +136,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
+		if ([
+			translate('defaultNameSpace'), 
+			translate('defaultNamePage'),
+		].includes(v)) {
 			v = '';
 		};
 		return v;
@@ -203,18 +206,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
-			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
-				analytics.event('SelectUsecase', { type: usecase });
-
-				if (onCreate) {
-					onCreate(message.objectId);
-				};
-
-				close();
-			} else {
+			if (message.error.code) {
 				this.setState({ error: message.error.description });
+				return;
 			};
+
+			if (onCreate) {
+				onCreate(message.objectId);
+			};
+
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
+			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};
 

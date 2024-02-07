@@ -390,6 +390,10 @@ class Block implements I.Block {
 	isEmbedSketchfab (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
 	};
+
+	isEmbedBilibili (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
@@ -471,18 +475,19 @@ class Block implements I.Block {
 		return l;
 	};
 
-	getTargetObjectId () {
+	getTargetObjectId (): string {
+		let ret = '';
+
 		switch (this.type) {
-			case I.BlockType.File: {
-				return this.content.hash;
-			};
 			case I.BlockType.Link: {
-				return this.content.targetBlockId;
+				ret = this.content.targetBlockId;
 			};
 			default: {
-				return this.content.targetObjectId;
+				ret = this.content.targetObjectId;
 			};
 		};
+
+		return String(ret || '');
 	};
 
 };

@@ -98,6 +98,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
 		
 		focus.clear(true);
 		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
@@ -127,8 +131,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -139,10 +143,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIconUser () {
 		const { rootId } = this.props;
 
-		Action.openFile(Constant.extension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-				if (message.hash) {
-					UtilObject.setIcon(rootId, '', message.hash);
+		Action.openFile(Constant.fileExtension.cover, paths => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+				if (message.objectId) {
+					UtilObject.setIcon(rootId, '', message.objectId);
 				};
 			});
 		});
@@ -221,12 +225,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		preventCommonDrop(true);
 		this.onUploadStart();
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				this.onUpload(I.CoverType.Upload, message.hash);
+				this.onUpload(I.CoverType.Upload, message.objectId);
 			};
 		});
 	};
@@ -235,10 +239,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.setState({ loading: true });
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
+	onUpload (type: I.CoverType, objectId: string) {
 		const { rootId } = this.props;
 
-		UtilObject.setCover(rootId, type, hash, 0, -0.25, 0, () => {
+		UtilObject.setCover(rootId, type, objectId, 0, -0.25, 0, () => {
 			this.setState({ loading: false });
 		});
 	};

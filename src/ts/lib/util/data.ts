@@ -22,6 +22,14 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const SYSTEM_DATE_RELATION_KEYS = [
+	'lastModifiedDate', 
+	'lastOpenedDate', 
+	'createdDate',
+	'addedDate',
+	'lastUsedDate',
+];
+
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
@@ -339,7 +347,6 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
-					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -386,9 +393,12 @@ class UtilData {
 	};
 
 	createSession (callBack?: (message: any) => void) {
-		C.WalletCreateSession(authStore.phrase, (message: any) => {
-			authStore.tokenSet(message.token);
-			dispatcher.listenEvents();
+		C.WalletCreateSession(authStore.phrase, authStore.appKey, (message: any) => {
+			if (!message.error.code) {
+				authStore.tokenSet(message.token);
+				authStore.appTokenSet(message.appToken);
+				dispatcher.listenEvents();
+			};
 
 			if (callBack) {
 				callBack(message);
@@ -573,6 +583,12 @@ class UtilData {
 		return 0;
 	};
 
+	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
+		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
+		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -644,12 +660,12 @@ class UtilData {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		let details = [];
 		const mapper = (it: any) => { 
-			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			keys.forEach(k => it[k] = it[k] || '');
 			return { id: it[idField], details: it }; 
 		};
 
+		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 
@@ -806,9 +822,7 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
-			it.includeTime = true;
-		};
+		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
 		return it;
 	};
 
@@ -834,7 +848,6 @@ class UtilData {
 
 	graphFilters () {
 		const { space, techSpace } = commonStore;
-
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },

@@ -40,15 +40,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord } = this.props;
+		const { elementId, relationKey, record, onClick, idPrefix } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const canEdit = this.canEdit();
 
 		const cn = [ 
@@ -135,9 +134,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	checkValue (): boolean {
-		const { recordId, getRecord } = this.props;
+		const { record } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (relation.relationKey == 'name') {
 			return true;
@@ -149,16 +147,15 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, record, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record) {
 			return;
 		};
 
 		const { config } = commonStore;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const value = record[relation.relationKey] || '';
 
 		if (!this.canEdit()) {
@@ -263,7 +260,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.File: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],
@@ -276,7 +273,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Select: 
 			case I.RelationType.MultiSelect: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -295,7 +292,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					
 			case I.RelationType.Object: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -324,7 +321,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
-					width: width,
+					width,
 					height: height,
 				});
 
@@ -427,7 +424,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => menuStore.closeAll(Constant.menuIds.cell));
 				};
 			} else 
 			if (closeIfOpen) {
@@ -441,7 +438,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	onChange (value: any, callBack?: (message: any) => void) {
-		const { onCellChange, recordId } = this.props;
+		const { onCellChange, record } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation) {
@@ -450,14 +447,14 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		value = Relation.formatValue(relation, value, true);
 		if (onCellChange) {
-			onCellChange(recordId, relation.relationKey, value, callBack);
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 
 	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, recordId, withName } = this.props;
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, record, withName } = this.props;
 		const relation = this.getRelation();
-		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, recordId)}`);
+		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -485,9 +482,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	canEdit () {
-		const { readonly, getRecord, recordId } = this.props;
+		const { readonly, record } = this.props;
 		const relation = this.getRelation();
-		const record = getRecord(recordId);
 
 		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;

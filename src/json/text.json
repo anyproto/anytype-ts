@@ -40,6 +40,9 @@
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
 	"commonYesterday": "Yesterday",
+	"commonLastWeek": "Previous 7 days",
+	"commonLastMonth": "Previous 30 days",
+	"commonOlder": "Older",
 	"commonPhrase": "Recovery Phrase",
 	"commonCopy": "Copy",
 	"commonOpen": "Open",
@@ -115,7 +118,11 @@
 	"commonSetName": "Set of %s",
 	"commonClear": "Clear",
 	"commonNewObject": "New Object",
+	"commonSelectObject": "Select object",
 	"commonCopyLink": "Copy link",
+	"commonSidebar": "Sidebar",
+	"commonLanguage": "Language",
+	"commonSpelling": "Spelling",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -355,6 +362,14 @@
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
 
+	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
+
+	"pageMainArchiveEmpty": "Your Bin is empty",
+	"pageMainBlockEmpty": "Block not found",
+	"pageMainRelationObjectsCreated": "%s created",
+
+	"pageMainMediaNotFound": "File not found",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
@@ -373,12 +388,6 @@
 
 	"pageHeadSimpleCreateSet": "Create Set",
 	"pageHeadSimpleInstall": "Install",
-
-	"pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
-
-	"pageMainArchiveEmpty": "Your Bin is empty",
-	"pageMainBlockEmpty": "Block not found",
-	"pageMainRelationObjectsCreated": "%s created",
 
 	"editorControlIcon": "Icon",
 	"editorControlCover": "Cover",
@@ -597,6 +606,7 @@
 	"popupSettingsAppearancePersonalisation": "Personalisation",
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
 	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
+	"popupSettingsAppearancePersonalisationFullscreen": "Open objects in fullscreen",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
@@ -1277,6 +1287,7 @@
 	"menuQuickCaptureGroups": "Lists",
 	"menuQuickCapturePinned": "Pinned",
 	"menuQuickCaptureTooltipSearch": "Search types",
+	"menuQuickCaptureTooltipClipboard": "Create object from clipboard",
 	"menuQuickCaptureOpenType": "Open type",
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
@@ -1649,5 +1660,8 @@
 	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
-	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration"
+	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+
+	"challengeTitle": "Please enter the following numbers in the extension"
+
 }

@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 const SKIP = [ 
 	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
 	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
-];
+].map(tag => tag.toLowerCase());
 
 class MenuSearchText extends React.Component<I.Menu> {
 	
@@ -49,9 +49,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 				<div className="buttons">
 
 					<div id="switcher" className="switcher">
-						<Icon className="arrow left" onClick={() => { this.onArrow(-1); }} />
+						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
 						<div id="cnt" className="cnt" />
-						<Icon className="arrow right" onClick={() => { this.onArrow(1); }} />
+						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
 					</div>
 
 					<div className="line" />

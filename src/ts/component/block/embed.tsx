@@ -32,6 +32,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	_isMounted = false;
 	text = '';
 	timeoutChange = 0;
+	timeoutScroll = 0;
 	node = null;
 	refEditable = null;
 	refType = null;
@@ -174,12 +175,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 		this.init();
-		this.onScroll();
 	};
 
 	componentDidUpdate () {
 		this.init();
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -189,6 +188,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
+		window.clearTimeout(this.timeoutScroll);
 	};
 
 	init () {
@@ -198,10 +198,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setValue(this.text);
 		this.setContent(this.text);
 		this.rebind();
+		this.onScroll();
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
@@ -239,7 +240,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		});
 
 		if (!UtilEmbed.allowAutoRender(processor)) {
-			win.on(`scroll.${block.id}`, () => this.onScroll());
+			const container = UtilCommon.getScrollContainer(isPopup);
+			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
@@ -249,27 +251,39 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		const { block } = this.props;
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
+		const { block, isPopup } = this.props;
+		const container = UtilCommon.getScrollContainer(isPopup);
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+		container.off(`scroll.${block.id}`);
 	};
 
 	onScroll () {
-		if (!this._isMounted) {
+		const { block, isPopup } = this.props;
+		const { processor } = block.content;
+
+		if (UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
-		const node = $(this.node);
-		const win = $(window);
-		const { wh } = UtilCommon.getWindowDimensions();
-		const st = win.scrollTop();
-		const { top } = node.offset();
-		const bot = top + node.height();
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
 
-		if ((bot > st) && (top < st + wh)) {
-			this.setShowing(true);
-		};
+			const container = UtilCommon.getScrollContainer(isPopup);
+			const node = $(this.node);
+			const ch = container.height();
+			const st = container.scrollTop();
+			const rect = node.get(0).getBoundingClientRect() as DOMRect;
+			const top = rect.top - (isPopup ? container.offset().top : 0);
+
+			if (top <= st + ch) {
+				this.setShowing(true);
+			};
+		}, 50);
 	};
 
 	getContainerId () {
@@ -617,7 +631,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					const data: any = { 
-						...UtilEmbed.getEnvironmentContent(processor), 
 						allowIframeResize, 
 						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
 						useRootHeight: UtilEmbed.useRootHeight(processor),
@@ -625,6 +638,17 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						processor,
 						className: UtilData.blockEmbedClass(processor),
 						blockId: block.id,
+					};
+
+					// Fix Bilibili schemeless urls and autoplay
+					if (block.isEmbedBilibili()) {
+						if (text.match(/src="\/\/player[^"]+"/)) {
+							text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+						};
+
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
 					};
 
 					// If content is Kroki code pack the code into SVG url
@@ -683,7 +707,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: this.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
+						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -870,7 +894,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(`.block.blockEmbed`).addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
 		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
@@ -922,7 +946,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(`.block.blockEmbed`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, width: w } },
@@ -943,18 +967,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	fixAsarPath (path: string): string {
-		const origin = location.origin;
-		
-		let href = location.href;
-		if (origin == 'file://') {
-			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			href = href.replace('/index.html', '/');
-			path = href + path.replace(/^\.\//, '');
-		};
-		return path;
 	};
 
 	onResizeInit () {
@@ -985,10 +997,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			const node = $(this.node);
 			const value = node.find('#value');
 
-			console.log(value.width());
-
 			this.setState({ width: value.width() });
 		};
+
+		this.onScroll();
 	};
 
 });

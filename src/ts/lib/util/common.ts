@@ -10,6 +10,14 @@ const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
 
+	getElectron () {
+		return window.Electron || {};
+	};
+
+	getGlobalConfig () {
+		return window.AnytypeGlobalConfig || {};
+	};
+
 	sprintf (...args: any[]) {
 		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		const a = args;
@@ -494,7 +502,7 @@ class UtilCommon {
 	};
 
 	getPlatform () {
-		return Constant.platforms[window.Electron.platform];
+		return Constant.platforms[this.getElectron().platform];
 	};
 
 	isPlatformMac () {
@@ -739,7 +747,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
+						path: this.getElectron().fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
@@ -817,6 +825,17 @@ class UtilCommon {
 			],
 			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
+	};
+
+	fixAsarPath (path: string): string {
+		const Electron = this.getElectron();
+
+		let href = Electron.dirname(location.href);
+		if (Electron.isPackaged) {
+			href = href.replace('/app.asar/', '/app.asar.unpacked/');
+			path = href + path.replace(/^\.\//, '/');
+		};
+		return path;
 	};
 
 	injectCss (id: string, css: string) {

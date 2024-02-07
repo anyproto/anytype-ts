@@ -50,6 +50,7 @@ class CommonStore {
 	public autoSidebarValue = null;
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
+	public fullscreenObjectValue = null;
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -91,6 +92,7 @@ class CommonStore {
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
+			fullscreenObjectValue: observable,
 			spaceId: observable,
 			techSpaceId: observable,
             config: computed,
@@ -123,7 +125,8 @@ class CommonStore {
     };
 
     get config(): any {
-		return window.Anytype?.Config || { ...this.configObj, debug: this.configObj.debug || {} };
+		const config = window.AnytypeGlobalConfig || this.configObj || {};
+		return { ...config, debug: config.debug || {} };
 	};
 
     get progress(): I.Progress {
@@ -173,6 +176,10 @@ class CommonStore {
 		return this.boolGet('isSidebarFixed');
 	};
 
+	get fullscreenObject(): boolean {
+		return this.boolGet('fullscreenObject');
+	};
+
 	get theme(): string {
 		return String(this.themeId || '');
 	};
@@ -210,17 +217,12 @@ class CommonStore {
 		this.gatewayUrl = v;
 	};
 
-    fileUrl (hash: string) {
-		hash = String(hash || '');
-
-		return this.gateway + '/file/' + hash;
+    fileUrl (id: string) {
+		return [ this.gateway, 'file', String(id || '') ].join('/');
 	};
 
-    imageUrl (hash: string, width: number) {
-		hash = String(hash || '');
-		width = Number(width) || 0;
-
-		return `${this.gateway}/image/${hash}?width=${width}`;
+    imageUrl (id: string, width: number) {
+		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
     progressSet (v: I.Progress) {
@@ -322,6 +324,10 @@ class CommonStore {
 		this.boolSet('showRelativeDates', v);
 	};
 
+	fullscreenObjectSet (v: boolean) {
+		this.boolSet('fullscreenObject', v);
+	};
+
 	fullscreenSet (v: boolean) {
 		const body = $('body');
 		
@@ -379,11 +385,16 @@ class CommonStore {
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
-		if (c == 'dark') {
+		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
 
 		$(window).trigger('updateTheme');
+	};
+
+	getThemePath () {
+		const c = this.getThemeClass();
+		return c ? `theme/${c}/` : '';
 	};
 
 	nativeThemeSet (isDark: boolean) {

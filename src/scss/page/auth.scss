@@ -3,21 +3,23 @@
 html.bodyIndex, html.bodyAuth {
 	--color-bg-primary: #060606 !important;
 
-	--color-text-primary: #d4d4d4;
+	--color-text-primary: #d4d4d4 !important;
 	--color-text-secondary: #8d8d8d !important;
-	--color-text-tertiary: #505050;
+	--color-text-tertiary: #505050 !important;
 
-	--color-shape-tertiary: #2b2b2b;
+	--color-shape-tertiary: #2b2b2b !important;
 
-	--color-button-stroke: #252525;
+	--color-button-stroke: #252525 !important;
 	--color-button-black-hover: rgba(37, 37, 37, 0.8);
 	--color-button-blank-hover: rgba(23, 23, 23, 0.8);
 
-	--color-input-opaque: #17171799;
-	--color-popup: #141414;
+	--color-input-opaque: #17171799 !important;
+	--color-popup: #141414 !important;
 
-	--color-error: #8a351a;
-	--color-error-background: #240e07;
+	--color-error: #8a351a !important;
+	--color-error-background: #240e07 !important;
+
+	--color-control-accent: #d4d4d4 !important;
 
 	--shadow: 0px 0px 0px 1px var(--color-button-stroke) !important;
 
@@ -122,15 +124,6 @@ html.bodyAuthDeleted {
 
 	.error { color: var(--color-error) !important; margin: 0.3em 0px; }
 	.withError { background: var(--color-error-background) !important; }
-
-	.loaderWrapper {
-		@keyframes dots-white {
-			0% { background-color: var(--color-bg-primary) !important; }
-			32% { background-color: var(--color-bg-primary) !important; }
-			100% { background-color: rgba(0,0,0,0); }
-		}
-		.dots .dot { animation-name: dots-white; }
-    }
 }
 
 .pageIndexIndex, .pageAuthSelect {

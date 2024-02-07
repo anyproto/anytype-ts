@@ -3,8 +3,8 @@
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": false,
-        "module": "ES2020",
-        "target": "es6",
+        "module": "esnext",
+        "target": "es2017",
         "jsx": "react",
         "resolveJsonModule": true,
         "moduleResolution": "Node",
@@ -64,6 +64,5 @@
     "exclude": [ 
 		"node_modules/**/*", 
 		"dist/**/*", 
-		"extensions/**/*"
 	]
 }

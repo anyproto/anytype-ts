@@ -46,15 +46,15 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				<div 
 					id={'item-' + item.id} 
 					className={cn.join(' ')} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					onMouseEnter={e =>  this.onOver(e, item)}
 					style={item.style}
 				>
 					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<span className="clickable" onClick={e =>  this.onClick(e, item)}>
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					<Icon className="delete" onClick={e =>  this.onRemove(e, item)} />
 				</div>
 			);
 		});
@@ -63,8 +63,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			<div 
 				id="item-add" 
 				className="item add" 
-				onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-				onClick={(e: any) => { this.onClick(e, item); }}
+				onMouseEnter={e =>  this.onOver(e, item)} 
+				onClick={e =>  this.onClick(e, item)}
 				style={item.style}
 			>
 				<Icon className="plus" />
@@ -192,18 +192,19 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, valueMapper, nameAdd } = data;
+		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
+		value = value.map(it => detailStore.get(rootId, it, []));
+		
+		if (valueMapper) {
+			value = value.map(valueMapper);
+		};
+
 		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (!config.debug.ho) {
 			value = value.filter(it => !it.isHidden);
-		};
-
-		if (valueMapper) {
-			value = value.map(valueMapper);
 		};
 
 		if (!value.length) {

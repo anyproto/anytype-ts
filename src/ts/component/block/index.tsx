@@ -79,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
@@ -568,8 +568,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
-		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
+		win.on('mousemove.block', e =>  this.onResize(e, index, offset));
+		win.on('mouseup.block', e =>  this.onResizeEnd(e, index, offset));
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};

@@ -27,8 +27,6 @@ body { margin: 0px; color: #252525; font-family: Helvetica, Arial, sans-serif; f
 }
 .version .copy.active { background-image: url('../img/check.svg'); }
 
-.buttons { margin-bottom: 1em; text-align: center; }
-.buttons button { margin-top: 1em; width: 100px; height: 24px; }
 .link { color: #80a0c2; }
 .bug-report-link { position: absolute; right: 0.5em; bottom: 0.5em; }
 
@@ -36,13 +34,14 @@ body { margin: 0px; color: #252525; font-family: Helvetica, Arial, sans-serif; f
 .bug-report-link,
 .buttons button { -webkit-app-region: no-drag; }
 
+.buttons { margin-bottom: 1em; text-align: center; }
 .buttons button {
     display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none;
 	height: 30px; line-height: 30px; padding: 0px 16px; border-radius: 4px; transition: background 0.2s ease-in-out;
     font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
-    background: #ffb522; color: #fff;
+    background: #ffb522; color: #fff; margin-top: 1em; width: 100px;
 }
-.buttons button:hover { background: #f1981a; }
+.buttons button:hover { background: #f09c0e; }
 
 html.dark body { color: #a09f92; }
 html.dark .title { color: #dfddd3; }

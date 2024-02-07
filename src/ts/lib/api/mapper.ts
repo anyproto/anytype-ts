@@ -189,12 +189,9 @@ export const Mapper = {
 
 		BlockFile: (obj: any) => {
 			return {
-				hash: obj.getHash(),
-				name: obj.getName(),
-				type: obj.getType(),
+				targetObjectId: obj.getTargetobjectid(),
 				style: obj.getStyle(),
-				mime: obj.getMime(),
-				size: obj.getSize(),
+				type: obj.getType(),
 				addedAt: obj.getAddedat(),
 				state: obj.getState(),
 			};
@@ -254,8 +251,8 @@ export const Mapper = {
 		Block: (obj: any): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = 'get' + UtilCommon.ucFirst(type);
-			const fm = UtilCommon.toUpperCamelCase('block-' + type);
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fm = UtilCommon.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -574,6 +571,10 @@ export const Mapper = {
 			return item;
 		},
 
+		BlockFeatured: () => {
+			return new Model.Block.Content.FeaturedRelations();
+		},
+
 		BlockLayout: (obj: any) => {
 			const content = new Model.Block.Content.Layout();
 			
@@ -600,13 +601,10 @@ export const Mapper = {
 		BlockFile: (obj: any) => {
 			const content = new Model.Block.Content.File();
 	
-			content.setHash(obj.hash);
-			content.setName(obj.name);
 			content.setType(obj.type);
-			content.setMime(obj.mime);
-			content.setSize(obj.size);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
+			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
 		},

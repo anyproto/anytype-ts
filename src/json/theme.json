@@ -19,13 +19,13 @@
 
 		"qr": {
 			"foreground": "#000",
-			"bg": "#f2f2f2"
+			"bg": "#fff"
 		},
 
 		"icon": {
-			"text": "#b6b6b6",
+			"text": "#fff",
 			"bg": {
-				"grey": "#f2f2f2",
+				"grey": "#bfbfbf",
 				"black": "#252525",
 				"brown": "#b6b6b6",
 				"orange": "#ffb522",
@@ -59,14 +59,14 @@
 		},
 
 		"qr": {
-			"foreground": "#d4d4d4",
-			"bg": "#252525"
+			"foreground": "#000",
+			"bg": "#fff"
 		},
 
 		"icon": {
-			"text": "#dfddd3",
+			"text": "#fff",
 			"bg": {
-				"grey": "#484843",
+				"grey": "#505050",
 				"black": "#252525",
 				"brown": "#b6b6b6",
 				"orange": "#ffb522",

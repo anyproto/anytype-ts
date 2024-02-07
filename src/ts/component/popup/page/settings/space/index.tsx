@@ -100,7 +100,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										ref={ref => this.refName = ref}
 										value={this.checkName(space.name)}
 										onKeyUp={this.onName}
-										placeholder={UtilObject.defaultName('Page')}
+										placeholder={translate('defaultNamePage')}
 									/>
 
 								</div>
@@ -221,12 +221,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.id)}
+								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
 							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
-										<Label text={space.id} />
+										<Label text={space.targetSpaceId} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />
@@ -339,8 +339,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
 	};
 
 	onDelete () {
@@ -352,7 +352,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
+		if ([ 
+			translate('defaultNameSpace'), 
+			translate('defaultNamePage'),
+		].includes(v)) {
 			v = '';
 		};
 		return v;

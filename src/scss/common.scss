@@ -44,7 +44,7 @@ input, textarea, select { font-family: 'Inter'; }
 	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
 	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
-	.version { @include text-small; color: #fff; transition-delay: 0.25s; }
+	.version { @include text-small; color: var(--color-text-inversion); transition-delay: 0.25s; }
 }
 
 #globalFade { 
@@ -193,3 +193,6 @@ search.active { background: orange !important; }
 	.icon.resize { display: none; }
 	.icon.download { display: none; }
 }
+
+@import "scss/debug.scss";
+@import "scss/font.scss";

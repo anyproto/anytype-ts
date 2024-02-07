@@ -56,7 +56,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
                 <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-                <Button className="c36" onClick={() => { onPage('delete'); }} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
+                <Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
 
             </React.Fragment>
         );
@@ -115,7 +115,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
             properties: [ 'openDirectory' ],
         };
 
-        window.Electron.showOpenDialog(options).then((result: any) => {
+        UtilCommon.getElectron().showOpenDialog(options).then((result: any) => {
             const files = result.filePaths;
             if ((files == undefined) || !files.length) {
                 return;

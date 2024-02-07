@@ -167,13 +167,13 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilRouter.go('/' + route, param || {});
+		UtilRouter.go(`/${route}`, param || {});
 	};
 
 	openWindow (object: any) {
 		const route = this.route(object);
 		if (route) {
-			Renderer.send('windowOpen', '/' + route);
+			Renderer.send('windowOpen', `/${route}`);
 		};
 	};
 
@@ -208,7 +208,7 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
@@ -289,10 +289,6 @@ class UtilObject {
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(`defaultName${key}`);
-	};
-
 	name (object: any) {
 		const { isDeleted, layout, snippet } = object;
 
@@ -303,7 +299,7 @@ class UtilObject {
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('Page');
+			name = object.name || translate('defaultNamePage');
 		};
 
 		return name;
@@ -388,7 +384,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [ I.ObjectLayout.Bookmark ].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {

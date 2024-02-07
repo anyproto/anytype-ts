@@ -81,7 +81,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Miro, name: 'Miro' },
 			{ id: I.EmbedProcessor.Figma, name: 'Figma' },
 			{ id: I.EmbedProcessor.Twitter, name: 'X (Twitter)' },
-			{ id: I.EmbedProcessor.OpenStreetMap, name: 'Open Street Map' },
+			{ id: I.EmbedProcessor.OpenStreetMap, name: 'OpenStreetMap' },
 			{ id: I.EmbedProcessor.Facebook, name: 'Facebook' },
 			{ id: I.EmbedProcessor.Instagram, name: 'Instagram' },
 			{ id: I.EmbedProcessor.Telegram, name: 'Telegram' },
@@ -113,14 +113,16 @@ class UtilMenu {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
 		];
 
+		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
+
 		let i = 0;
 		for (const type of items) {
 			ret.push({ 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || UtilObject.defaultName('Page'), 
+				name: type.name || translate('defaultNamePage'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -149,10 +151,10 @@ class UtilMenu {
 		for (const type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
-				id: 'object' + i++, 
+				id: `object${i++}`, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || UtilObject.defaultName('Page'), 
+				name: type.name || translate('defaultNamePage'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -178,9 +180,10 @@ class UtilMenu {
 
 	// Action menu
 	getActions (param: any) {
-		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
+		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-		const items: any[] = [
+
+		let items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
@@ -196,36 +199,34 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
-			//items.push({ id: 'rename', icon: 'rename', name: translate('libMenuRename') });
-			//items.push({ id: 'replace', icon: 'replace', name: translate('libMenuReplace') });
+			items = items.concat([
+				{ id: 'download', icon: 'download', name: translate('commonDownload') },
+				{ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') },
+				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
+				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
+			]);
 		};
 
-		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
+		if (hasDataview) {
+			const isCollection = Dataview.isCollection(rootId, blockId);
+			const sourceName = isCollection ? translate('commonLCCollection') : translate('commonLCSet');
+
+			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+		};
+
+		if (hasFile || hasBookmark || hasDataview) {
+			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
 	};
 
-	getDataviewActions (rootId: string, blockId: string) {
-		const isCollection = Dataview.isCollection(rootId, blockId);
-		const sourceName = isCollection ? 'collection' : 'set';
-
-		return [
-			{ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true },
-			{ id: 'openDataviewObject', icon: 'expand', name: UtilCommon.sprintf(translate('libMenuOpenSource'), sourceName) },
-			//{ id: 'openDataviewFullscreen', icon: 'expand', name: translate('libMenuOpenFullscreen') }
-		].map(it => ({ ...it, isAction: true }));
-	};
-	
 	getTextColors () {
 		const items: any[] = [
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
+			items.push({ id: `color-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isTextColor: true });
 		};
 		return items;
 	};
@@ -235,7 +236,7 @@ class UtilMenu {
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
 		for (const color of Constant.textColor) {
-			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
+			items.push({ id: `bgColor-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isBgColor: true });
 		};
 		return items;
 	};
@@ -266,9 +267,9 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Relation },
 			{ id: I.ObjectLayout.Note },
 		].map(it => ({ 
-			...it, 
-			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
-			name: translate('layout' + it.id),
+			...it,
+			icon: `layout c-${I.ObjectLayout[it.id].toLowerCase()}`,
+			name: translate(`layout${it.id}`),
 		}));
 	};
 
@@ -339,8 +340,8 @@ class UtilMenu {
 			{ id: I.RelationType.Email },
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
-			it.name = translate('relationName' + it.id);
-			it.icon = 'relation ' + Relation.className(it.id);
+			it.name = translate(`relationName${it.id}`);
+			it.icon = `relation ${Relation.className(it.id)}`;
 			return it;
 		});
 	};
@@ -570,6 +571,33 @@ class UtilMenu {
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;
+	};
+
+	getImportNames () {
+		const r = {};
+		r[I.ImportType.Notion] = 'Notion';
+		r[I.ImportType.Markdown] = 'Markdown';
+		r[I.ImportType.Html] = 'HTML';
+		r[I.ImportType.Text] = 'TXT';
+		r[I.ImportType.Protobuf] = 'Any-Block';
+		r[I.ImportType.Csv] = 'CSV';
+		return r;
+	};
+
+	getImportFormats () {
+		const names = this.getImportNames();
+
+		return ([
+			{ id: 'notion', format: I.ImportType.Notion },
+			{ id: 'markdown', format: I.ImportType.Markdown },
+			{ id: 'html', format: I.ImportType.Html },
+			{ id: 'text', format: I.ImportType.Text },
+			{ id: 'protobuf', format: I.ImportType.Protobuf },
+			{ id: 'csv', format: I.ImportType.Csv },
+		] as any).map(it => {
+			it.name = names[it.format];
+			return it;
+		});
 	};
 
 };

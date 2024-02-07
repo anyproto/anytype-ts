@@ -41,8 +41,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	render () {
 		const { isEditing } = this.state;
 		const { showRelativeDates } = commonStore;
-		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
-		const record = getRecord(recordId);
+		const { relation, getView, record, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
 		
 		if (!record || !relation) {
 			return null;
@@ -220,7 +219,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (record.layout == I.ObjectLayout.Note) {
 					value = record.snippet;
 				} else {
-					value = value || UtilObject.defaultName('Page');
+					value = value || translate('defaultNamePage');
 				};
 			};
 		};
@@ -234,8 +233,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
+		const { relation, record } = this.props;
 
 		this._isMounted = true;
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -243,9 +241,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, recordId, viewType, cellPosition, getView, getRecord } = this.props;
+		const { id, relation, viewType, record, cellPosition, getView } = this.props;
 		const cell = $(`#${id}`);
-		const record = getRecord(recordId);
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
@@ -259,14 +256,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		if (viewType != I.ViewType.Grid) {
-			card = $(`#record-${recordId}`);
+			card = $(`#record-${record.id}`);
 		};
 
 		if (isEditing) {
 			let value = this.value;
 
 			if (relation.relationKey == 'name') {
-				if (value == UtilObject.defaultName('Page')) {
+				if (value == translate('defaultNamePage')) {
 					value = '';
 				};
 			} else
@@ -398,8 +395,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, onChange, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
+		const { relation, record, onChange } = this.props;
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -442,18 +438,17 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onIconSelect (icon: string) {
-		UtilObject.setIcon(this.props.recordId, icon, '');
+		UtilObject.setIcon(this.props.record.id, icon, '');
 	};
 
-	onIconUpload (hash: string) {
-		UtilObject.setIcon(this.props.recordId, '', hash);
+	onIconUpload (objectId: string) {
+		UtilObject.setIcon(this.props.record.id, '', objectId);
 	};
 
 	onCheckbox () {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
+		const { record } = this.props;
 
-		UtilObject.setDone(recordId, !record.done, () => {
+		UtilObject.setDone(record.id, !record.done, () => {
 			if (this._isMounted) {
 				this.forceUpdate();
 			};

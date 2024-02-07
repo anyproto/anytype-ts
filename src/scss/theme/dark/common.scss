@@ -100,6 +100,8 @@ html.themeDark {
 
     .loaderWrapper {
 		@keyframes dots-dark {
+			0% { background-color: #171717; }
+			32% { background-color: #171717; }
 			100% { background-color: #fff; }
 		}
 
@@ -158,8 +160,15 @@ html.themeDark {
     }
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
-
     .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
+	.input-drag {
+		.fill { background: var(--color-text-primary); }
+		.icon { border-color: var(--color-text-secondary); }
+	}
+
+	.dragWrap {
+		.number { color: var(--color-text-primary); }
+	}
 
     .listPreviewObject {
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }

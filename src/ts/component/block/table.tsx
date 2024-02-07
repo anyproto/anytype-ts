@@ -264,7 +264,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			component: 'select',
 			onOpen: (context: any) => {
 				menuContext = context;
-				raf(() => { this.onOptionsOpen(type, rowId, columnId, cellId); }); 
+				raf(() => this.onOptionsOpen(type, rowId, columnId, cellId)); 
 			},
 			onClose: () => {
 				menuStore.closeAll(Constant.menuIds.table);
@@ -362,7 +362,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
-						onOpen: (context: any) => { menuSubContext = context; },
+						onOpen: context => menuSubContext = context,
 						data: {
 							rootId, 
 							rebind: menuContext.ref.rebind,
@@ -432,7 +432,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: this.optionsHAlign(),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => { C.BlockListSetAlign(rootId, blockIds, el.id); });
+									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
 									menuContext.close();
 								}
 							});
@@ -446,7 +446,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 								options: this.optionsVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
-									fill(() => { C.BlockListSetVerticalAlign(rootId, blockIds, el.id); });
+									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
 									menuContext.close();
 								}
 							});
@@ -457,7 +457,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'blockColor';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => { C.BlockTextListSetColor(rootId, blockIds, id); });
+									fill(() => C.BlockTextListSetColor(rootId, blockIds, id));
 									menuContext.close();
 								}
 							});
@@ -468,7 +468,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'blockBackground';
 							menuParam.data = Object.assign(menuParam.data, {
 								onChange: (id: string) => {
-									fill(() => { C.BlockListSetBackgroundColor(rootId, blockIds, id); });
+									fill(() => C.BlockListSetBackgroundColor(rootId, blockIds, id));
 									menuContext.close();
 								}
 							});
@@ -839,8 +839,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		body.addClass('colResize');
 		win.off('mousemove.table mouseup.table');
-		win.on('mousemove.table', throttle((e: any) => { this.onResizeMove(e, id); }, 40));
-		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, id); });
+		win.on('mousemove.table', throttle(e =>  this.onResizeMove(e, id), 40));
+		win.on('mouseup.table', e =>  this.onResizeEnd(e, id));
 
 		keyboard.setResize(true);
 	};
@@ -921,11 +921,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		table.css({ width: widths[idx], zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		node.append(table);
 
-		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		$(document).off('dragover').on('dragover', e =>  e.preventDefault());
 		e.dataTransfer.setDragImage(table.get(0), table.outerWidth(), 0);
 
-		win.on('drag.tableColumn', throttle((e: any) => { this.onDragMoveColumn(e, id); }, 40));
-		win.on('dragend.tableColumn', (e: any) => { this.onDragEndColumn(e, id); });
+		win.on('drag.tableColumn', throttle(e =>  this.onDragMoveColumn(e, id), 40));
+		win.on('dragend.tableColumn', e =>  this.onDragEndColumn(e, id));
 
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
@@ -1013,11 +1013,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		layer.append(table);
 		table.append(clone);
 		
-		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		$(document).off('dragover').on('dragover', e =>  e.preventDefault());
 		e.dataTransfer.setDragImage(layer.get(0), 0, table.outerHeight());
 
-		win.on('drag.tableRow', throttle((e: any) => { this.onDragMoveRow(e, id); }, 40));
-		win.on('dragend.tableRow', (e: any) => { this.onDragEndRow(e, id); });
+		win.on('drag.tableRow', throttle(e =>  this.onDragMoveRow(e, id), 40));
+		win.on('dragend.tableRow', e =>  this.onDragEndRow(e, id));
 
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');

@@ -186,7 +186,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		$(`#${this.props.getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		$(`#${this.props.getId()}`).on('click', () => menuStore.close('dataviewOptionEdit'));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
@@ -316,7 +316,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			this.onFilterChange('');
 			this.onValueAdd(message.objectId);
 
-			window.setTimeout(() => { this.resize(); }, 50);
+			window.setTimeout(() => this.resize(), 50);
 		});
 	};
 	
@@ -364,6 +364,16 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			items = items.filter(filterMapper);
 		};
 
+		items.sort((c1, c2) => {
+			const isSelected1 = value.includes(c1.id);
+			const isSelected2 = value.includes(c2.id);
+
+			if (isSelected1 && !isSelected2) return -1;
+			if (!isSelected1 && isSelected2) return 1;
+
+			return 0;
+		});
+
 		if (data.filter) {
 			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 			
@@ -383,14 +393,14 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 	resize () {
 		const { getId, position, param } = this.props;
-		const { data, title } = param;
-		const { noFilter } = data;
+		const { data } = param;
+		const { noFilter, maxHeight } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16 + (noFilter ? 0 : 38);
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT + offset, Math.min(maxHeight || 360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

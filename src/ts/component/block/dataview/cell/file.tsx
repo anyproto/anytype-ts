@@ -22,8 +22,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 	};
 
 	render () {
-		const { subId, relation, recordId, getRecord, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
-		const record = getRecord(recordId);
+		const { subId, relation, record, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		
 		if (!record) {
 			return null;
@@ -48,7 +47,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 		};
 
 		const Item = (item: any) => (
-			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div className="element" onClick={e =>  this.onClick(e, item)}>
 				<div className="flex">
 					<IconObject object={item} size={iconSize} />
 					<div className="name">{UtilFile.name(item)}</div>

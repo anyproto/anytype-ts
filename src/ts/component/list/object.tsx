@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, UtilFile, Relation, UtilObject, translate } from 'Lib';
+import { I, C, UtilData, UtilFile, Relation, UtilObject, translate, keyboard, UtilCommon } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
-import { detailStore, dbStore } from 'Store';
+import { detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Column {
@@ -20,6 +20,7 @@ interface Props {
 	columns: Column[];
 	sources?: string[];
 	filters?: I.Filter[];
+	dataset?: any;
 };
 
 const PREFIX = 'listObject';
@@ -39,6 +40,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
+		const length = columns.length;
+		const width = 70 / length;
 
 		let pager = null;
 		if (total && items.length) {
@@ -47,13 +50,13 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					offset={offset} 
 					limit={LIMIT} 
 					total={total} 
-					onChange={(page: number) => { this.getData(page); }} 
+					onChange={page => this.getData(page)} 
 				/>
 			);
 		};
 
 		const Row = (item: any) => {
-			const cn = [ 'row' ];
+			const cn = [ 'row', 'selectable', `type-${I.SelectType.Record}` ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
 				cn.push('isDone');
@@ -69,8 +72,13 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			};
 
 			return (
-				<tr className={cn.join(' ')}>
-					<td className="cell">
+				<tr 
+					id={`selectable-${item.id}`} 
+					className={cn.join(' ')} 
+					onContextMenu={e => this.onContext(e, item.id)}
+					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
+				>
+					<td className="cell isName">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
 								<IconObject object={item} />
@@ -117,8 +125,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 										subId={subId}
 										block={null}
 										relationKey={column.relationKey}
-										getRecord={() => item}
-										recordId={item.id}
+										record={item}
 										viewType={I.ViewType.Grid}
 										idPrefix={PREFIX}
 										iconSize={20}
@@ -133,12 +140,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						};
 
 						return (
-							<td key={`cell-${column.relationKey}`} className="cell">
-								{content ? (
-									<div className={cnc.join(' ')} onClick={onClick}>
-										{content}
-									</div>
-								) : ''}
+							<td key={`cell-${column.relationKey}`} className="cell" style={{ width: `${width}%` }}>
+								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
 							</td>
 						);
 					})}
@@ -218,6 +221,33 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			ignoreDeleted: true,
 			ignoreWorkspace: true,
 		}, callBack);
+	};
+
+	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { subId } = this.props;
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		if (!objectIds.length) {
+			objectIds = [ id ];
+		};
+		
+		menuStore.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds,
+				subId,
+				allowedLink: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 });

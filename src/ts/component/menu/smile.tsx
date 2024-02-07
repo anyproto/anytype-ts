@@ -601,10 +601,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		close();
 
-		Action.openFile(Constant.extension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
+		Action.openFile(Constant.fileExtension.cover, paths => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code && onUpload) {
-					onUpload(message.hash);
+					onUpload(message.objectId);
 				};
 			});
 		});
@@ -840,13 +840,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		zone.removeClass('isDraggingOver');
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
 			
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				onUpload(message.hash);
+				onUpload(message.objectId);
 			};
 		
 			close();

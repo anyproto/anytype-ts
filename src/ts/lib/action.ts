@@ -78,13 +78,13 @@ class Action {
 		};
 
 		const { content } = block;
-		const { type, hash } = content;
+		const { type, targetObjectId } = content;
 
-		if (!hash) {
+		if (!targetObjectId) {
 			return;
 		};
 		
-		const url = block.isFileImage() ? commonStore.imageUrl(hash, 1000000) : commonStore.fileUrl(hash);
+		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
 
 		Renderer.send('download', url);
 		analytics.event('DownloadMedia', { type, route });
@@ -187,7 +187,7 @@ class Action {
 			];
 		};
 		
-		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
@@ -205,7 +205,7 @@ class Action {
 			properties: [ 'openDirectory' ],
 		});
 
-		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
 				return;
 			};
@@ -419,7 +419,7 @@ class Action {
 
 		analytics.event('ClickImport', { type });
 
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
+		UtilCommon.getElectron().showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
@@ -509,7 +509,7 @@ class Action {
 			it.childrenIds = element.childrenIds;
 			return it;
 		});
-		
+
 		C[cmd](rootId, blocks, range, (message: any) => {
 			UtilCommon.clipboardCopy({
 				text: message.textSlot,

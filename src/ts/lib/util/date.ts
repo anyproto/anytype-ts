@@ -106,7 +106,7 @@ class UtilDate {
 			},
 			// Month
 			F: () => {
-				return translate('month' + f.n());
+				return translate(`month${f.n()}`);
 			},
 			m: () => {
 				return pad(f.n(), 2);
