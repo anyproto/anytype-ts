@@ -423,9 +423,9 @@ export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	};
 };
 
-export const DownloadGalleryIndex = (response: Rpc.DownloadGalleryIndex.Response) => {
+export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Response) => {
 	return {
-		categories: (response.getCategoriesList() || []).map((it: Rpc.DownloadGalleryIndex.Response.Category) => {
+		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
 			return {
 				name: it.getName(),
 				list: it.getExperiencesList() || [],
@@ -435,7 +435,7 @@ export const DownloadGalleryIndex = (response: Rpc.DownloadGalleryIndex.Response
 	};
 };
 
-export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
+export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.Response) => {
 	return {
 		info: Mapper.From.Manifest(response.getInfo()),
 	};

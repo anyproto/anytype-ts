@@ -77,7 +77,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase> {
 	};
 
 	componentDidMount (): void {
-		C.DownloadGalleryIndex((message: any) => {
+		C.GalleryDownloadIndex((message: any) => {
 			this.categories = message.categories;
 			this.list = message.list;
 			this.forceUpdate();
