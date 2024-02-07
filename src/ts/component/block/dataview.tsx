@@ -156,7 +156,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getView: this.getView,
 			getTarget: this.getTarget,
 			getSources: this.getSources,
-			getRecord: this.getRecord,
 			getRecords: this.getRecords,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
