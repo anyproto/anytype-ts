@@ -70,7 +70,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={e =>  UtilObject.openPopup(item)}>
+					<div className="clickable" onClick={e =>  UtilObject.openPopup(item)} onContextMenu={e =>  this.onMore(e, item)}>
 						{content}
 					</div>
 					<div className="buttons">
@@ -223,7 +223,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 		element.addClass('active');
 		menuStore.open('select', { 
-			element: element.find('.icon.more'),
+			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
 			onClose: () => {
@@ -232,12 +232,18 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			data: {
 				value: '',
 				options: [
+					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
 					{ id: 'download', icon: 'download', name: translate('commonDownload') },
+					{ isDiv: true },
 					{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
 				],
 				onSelect: (event: any, el: any) => {
 
 					switch (el.id) {
+						case 'open': {
+							UtilObject.openPopup(item);
+							break;
+						};
 						case 'download': {
 							let url = '';
 							switch (item.layout) {
