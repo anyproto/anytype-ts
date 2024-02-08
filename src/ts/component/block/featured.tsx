@@ -614,7 +614,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'dataviewObjectValues';
 				menuParam.subIds = [ 'dataviewObjectList' ];
 				menuData = {
-					rootId,
 					value: Relation.getArrayValue(object[relationKey]),
 					filters: []
 				};
@@ -647,8 +646,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'dataviewOptionList';
 				menuParam.className = 'featuredRelation';
 				menuData = {
-					rootId,
-					blockId: block.id,
 					value: Relation.getArrayValue(object[relationKey]),
 					canAdd: true,
 					maxCount: relation.maxCount,
@@ -664,7 +661,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					subIds: [ 'dataviewFileList' ],
 				};
 				menuData = {
-					rootId,
 					value: object[relationKey] || [],
 					subId: rootId,
 				};
@@ -751,6 +747,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuStore.closeAll();
 			},
 			data: {
+				rootId,
+				blockId: block.id,
 				relation: observable.box(relation),
 				onChange: (v: any, callBack?: () => void) => {
 					const details = [
