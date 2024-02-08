@@ -81,4 +81,6 @@ html.anytypeWebclipper-popup {
 		.inner { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice) !important; }
 		.input { border: unset !important; box-shadow: unset !important; }
 	}
+
+	.passThrough { pointer-events: all; }
 }

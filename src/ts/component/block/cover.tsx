@@ -411,8 +411,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', e =>  this.onDragMove(e));
-		win.on('mouseup.cover', e =>  this.onDragEnd(e));
+		win.on('mousemove.cover', e => 	this.onDragMove(e));
+		win.on('mouseup.cover', e => 	this.onDragEnd(e));
 	};
 	
 	onDragMove (e: any) {

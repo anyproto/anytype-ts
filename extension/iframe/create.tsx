@@ -88,7 +88,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 })).filter(it => it);
 
 		if (this.refSpace && spaces.length) {
@@ -105,7 +105,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	initBlocks () {
-		const { html } = extensionStore;
+		const { html, tabUrl } = extensionStore;
 
 		if (!html || (html == this.html)) {
 			return;
@@ -113,7 +113,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		this.html = html;
 
-		C.BlockPreview(html, (message: any) => {
+		C.BlockPreview(html, tabUrl, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -167,13 +167,14 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSave () {
+		const { html, tabUrl } = extensionStore;
 		const { object } = this.state;
 
 		if (!object) {
 			return;
 		};
 
-		C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html: this.html }, () => {
+		C.BlockPaste(object.id, '', { from: 0, to: 0 }, [], false, { html }, tabUrl, () => {
 			this.onClose();
 		});
 	};

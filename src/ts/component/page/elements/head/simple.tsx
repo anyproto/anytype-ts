@@ -8,6 +8,7 @@ import Constant from 'json/constant.json';
 interface Props {
 	rootId: string;
 	placeholder?: string;
+	isContextMenuDisabled?: boolean;
 	onCreate?: () => void;
 };
 
@@ -36,7 +37,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled } = this.props;
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
@@ -61,11 +62,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
-				onFocus={e =>  this.onFocus(e, item)}
-				onBlur={e =>  this.onBlur(e, item)}
-				onKeyDown={e =>  this.onKeyDown(e, item)}
+				onFocus={e => 	this.onFocus(e, item)}
+				onBlur={e => 	this.onBlur(e, item)}
+				onKeyDown={e => 	this.onKeyDown(e, item)}
 				onKeyUp={() => this.onKeyUp()}
-				onSelect={e =>  this.onSelectText(e, item)}
+				onSelect={e => 	this.onSelectText(e, item)}
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
@@ -87,6 +88,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					block={blockFeatured} 
 					className="small" 
 					isSelectionDisabled={true}
+					isContextMenuDisabled={isContextMenuDisabled}
 				/>
 			);
 		};

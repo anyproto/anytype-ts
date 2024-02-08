@@ -35,7 +35,7 @@ import {
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
-import { PopupParam, Popup, PopupSettings } from './popup';
+import { PopupParam, Popup, PopupSettings, PopupUsecase } from './popup';
 import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
@@ -133,6 +133,7 @@ export {
 	PopupParam,
 	Popup,
 	PopupSettings,
+	PopupUsecase,
 
 	Preview,
 	PreviewLink,

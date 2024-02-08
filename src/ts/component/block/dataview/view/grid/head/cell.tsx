@@ -48,7 +48,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				>
 					<div className="cellContent">
 						<Handle name={name} format={format} readonly={readonly} />
-						<div className="resize" onMouseDown={e =>  onResizeStart(e, relationKey)} />
+						<div className="resize" onMouseDown={e => 	onResizeStart(e, relationKey)} />
 					</div>
 				</div>
 			);

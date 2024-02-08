@@ -203,7 +203,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
-					onDragStart={e =>  e.preventDefault()}
+					onDragStart={e => 	e.preventDefault()}
 				/>
 			</div>
 		);

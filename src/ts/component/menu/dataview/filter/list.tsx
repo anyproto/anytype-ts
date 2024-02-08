@@ -68,9 +68,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 						index={param.index} 
 						style={param.style} 
 						readonly={!allowedView}
-						onOver={e =>  this.onOver(e, item)}
-						onClick={e =>  this.onClick(e, item)}
-						onRemove={e =>  this.onRemove(e, item)}
+						onOver={e => 	this.onOver(e, item)}
+						onClick={e => 	this.onClick(e, item)}
+						onRemove={e => 	this.onRemove(e, item)}
 					/>
 				</CellMeasurer>
 			);
@@ -185,7 +185,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		obj.off('click').on('click', () => menuStore.closeAll(Constant.menuIds.cell));
 
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

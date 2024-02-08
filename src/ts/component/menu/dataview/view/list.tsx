@@ -46,16 +46,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onClick={e =>  this.onClick(e, item)}
-				onMouseEnter={e =>  this.onOver(e, item)}
+				onClick={e => 	this.onClick(e, item)}
+				onMouseEnter={e => 	this.onOver(e, item)}
 				style={item.style}
 			>
 				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={e =>  loadData(item.id, 0)}>
+				<div className="clickable" onClick={e => 	loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={e =>  this.onViewContext(e, item)} />
+					<Icon className="more" onClick={e => 	this.onViewContext(e, item)} />
 				</div>
 			</div>
 		));
@@ -189,7 +189,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

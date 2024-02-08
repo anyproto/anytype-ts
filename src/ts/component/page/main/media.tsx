@@ -108,12 +108,20 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{content}
+								<div id="inner" className="inner">
+									{content}
+								</div>
 							</div>
 
 							<div className="side right">
 								<div className="head">
-									<HeadSimple ref={ref => this.refHead = ref} placeholder={translate('defaultNamePage')} rootId={rootId} />
+									<HeadSimple 
+										{...this.props} 
+										ref={ref => this.refHead = ref} 
+										placeholder={translate('defaultNamePage')} 
+										rootId={rootId} 
+										isContextMenuDisabled={true}
+									/>
 
 									<div className="buttons">
 										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
@@ -130,6 +138,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 											block={item} 
 											readonly={!allowed} 
 											isSelectionDisabled={true} 
+											isContextMenuDisabled={true}
 										/>
 									))}
 								</div>
@@ -257,7 +266,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return;
 		};
 
-		C.FileDownload(block.content.targetObjectId,  UtilCommon.getElectron().tmpPath, (message: any) => {
+		C.FileDownload(block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -282,11 +291,13 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
+		const inner = node.find('.side.left #inner');
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const wh = container.height() - 60;
+		const wh = container.height() - 140;
 
 		if (blocks.hasClass('vertical')) {
 			blocks.css({ minHeight: wh });
+			inner.css({ minHeight: wh });
 		};
 
 		if (empty.length) {
