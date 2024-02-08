@@ -596,7 +596,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 					const object = message.details;
 
-					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, () => {
+					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
 						UtilObject.openAuto(object);
 					});
 				});

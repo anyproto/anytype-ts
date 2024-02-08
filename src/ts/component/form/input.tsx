@@ -165,8 +165,10 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		this.isFocused = true;
-		keyboard.setFocus(true);
 		this.addClass('isFocused');
+
+		keyboard.setFocus(true);
+		keyboard.disableSelection(true);
 	};
 	
 	onBlur (e: any) {
@@ -175,8 +177,10 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		this.isFocused = false;
-		keyboard.setFocus(false);
 		this.removeClass('isFocused');
+
+		keyboard.setFocus(false);
+		keyboard.disableSelection(false);
 	};
 	
 	onPaste (e: any) {

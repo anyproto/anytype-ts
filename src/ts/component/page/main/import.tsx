@@ -42,7 +42,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		const search = this.getSearch();
 
-		C.DownloadManifest(search.source, (message: any) => {
+		C.GalleryDownloadManifest(search.source, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {

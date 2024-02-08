@@ -27,3 +27,7 @@ export interface PopupSettings extends Popup {
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
 };
+
+export interface PopupUsecase extends Popup {
+	onPage(page: string, data: any): void;
+};

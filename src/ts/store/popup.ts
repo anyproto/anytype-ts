@@ -50,6 +50,14 @@ class PopupStore {
 
 		param.data = param.data || {};
 
+		// Auto-confirm in extension
+		if (window.isExtension && (id == 'confirm')) {
+			if (param.data.onConfirm) {
+				param.data.onConfirm();
+			};
+			return;
+		};
+
 		if (!param.preventMenuClose) {
 			menuStore.closeAll();
 		};

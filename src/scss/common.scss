@@ -75,7 +75,7 @@ html.platformWindows, html.platformLinux {
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }
 .flex { display: flex; }
 .nw { white-space: nowrap; }
-.through { pointer-events: none; }
+.passThrough { pointer-events: none; }
 .rel { position: relative; }
 .disabled { opacity: 0.5; cursor: default !important; }
 .dis { cursor: default !important; }

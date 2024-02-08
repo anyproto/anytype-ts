@@ -112,8 +112,10 @@
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
-		.screenWrap {
-			.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
+		.page.pageItem {
+			.screenWrap {
+				.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
+			}
 		}
 	}
 

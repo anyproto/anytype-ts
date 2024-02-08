@@ -170,7 +170,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		// String items drop
 		if (items && items.length) {
 			UtilCommon.getDataTransferString(items, (html: string) => {
-				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
+				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html }, '');
 			});
 
 			this.clearState();

@@ -137,7 +137,7 @@ class MenuManager {
 				label: Util.translate('electronMenuHelp'),
 				submenu: [
 					{
-						label: Util.translate('electronMenuReleaseNotes') + ` (${app.getVersion()})`,
+						label: `${Util.translate('electronMenuReleaseNotes')} (${app.getVersion()})`,
 						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
@@ -224,6 +224,13 @@ class MenuManager {
 						Api.setConfig(this.win, { experimental: !config.experimental });
 						this.win.reload();
 					}
+				},
+
+				Separator,
+
+				{
+					label: 'Experience gallery',
+					click: () => Util.send(this.win, 'popup', 'usecase', {})
 				},
 
 				Separator,

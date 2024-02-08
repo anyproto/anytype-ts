@@ -248,7 +248,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (passThrough) {
-			cd.push('through');
+			cd.push('passThrough');
 		};
 
 		const Tab = (item: any) => (

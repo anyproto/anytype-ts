@@ -134,17 +134,15 @@
 	};
 
 	sendToActiveTab = async (msg) => {
-		const tab = await getActiveTab();
-
-		console.log('[sendToActiveTab]', tab, msg);
-
-		await sendToTab(tab, msg);
+		await sendToTab(await getActiveTab(), msg);
 	};
 
 	sendToTab = async (tab, msg) => {
 		if (!tab) {
 			return;
 		};
+
+		msg.url = tab.url;
 
 		const response = await chrome.tabs.sendMessage(tab.id, msg);
 
