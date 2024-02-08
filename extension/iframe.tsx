@@ -118,6 +118,7 @@ class Iframe extends React.Component {
 					break;
 
 				case 'clickMenu': {
+					extensionStore.setTabUrl(msg.url);
 					extensionStore.setHtml(msg.html);
 
 					sendResponse({});
