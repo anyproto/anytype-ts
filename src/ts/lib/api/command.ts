@@ -379,10 +379,11 @@ export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId:
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
 };
 
-export const BlockPreview = (html: string, callBack?: (message: any) => void) => {
+export const BlockPreview = (html: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Preview.Request();
 
 	request.setHtml(html);
+	request.setUrl(url);
 
 	dispatcher.request(BlockPreview.name, request, callBack);
 };
@@ -517,7 +518,7 @@ export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRang
 	dispatcher.request(BlockCut.name, request, callBack);
 };
 
-export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
+export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, url: string, callBack?: (message: any) => void) => {
 	data = UtilCommon.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
@@ -531,6 +532,7 @@ export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRa
 	request.setHtmlslot(data.html);
 	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
 	request.setFileslotList((data.files || []).map(Mapper.To.PasteFile));
+	request.setUrl(url);
 
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
