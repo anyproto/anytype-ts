@@ -73,6 +73,10 @@
 		.cellContent.c-checkbox {
 			.icon { margin: 0px 5px 0px 0px; }
 		}
+
+		.cellContent.c-longText {
+			.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }
+		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 

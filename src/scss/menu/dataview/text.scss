@@ -19,6 +19,15 @@
 	.menu.menuDataviewText.show {
 		#input { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 	}
+
+	.menu.menuDataviewText.featuredText { box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: var(--color-bg-primary); }
+	.menu.menuDataviewText.featuredText {
+		.titleWrapper { padding-bottom: 0px; }
+		.content { padding: 8px 14px; }
+
+		#input,
+		#placeholder { padding: 0; box-shadow: none; }
+	}
 }
 
 html.platformWindows {

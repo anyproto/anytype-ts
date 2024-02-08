@@ -625,6 +625,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 			};
 
+			case I.RelationType.Number:
+			case I.RelationType.LongText: {
+				this.onCellText(e, relationKey);
+				break;
+			};
+
 			case I.RelationType.Checkbox: {
 				const object = detailStore.get(rootId, rootId, [ relationKey ]);
 				const details = [
@@ -839,6 +845,46 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				noFlipX: true,
 				title: relation.name,
 				subIds: [ 'dataviewFileList' ],
+				onClose: () => {
+					menuStore.closeAll();
+				},
+				data: {
+					rootId,
+					value,
+					relation: observable.box(relation),
+					subId: rootId,
+					onChange: (v: any, callBack?: () => void) => {
+						const details = [
+							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+						];
+						C.ObjectSetDetails(rootId, details);
+
+						if (callBack) {
+							callBack();
+						};
+					}
+				}
+			});
+		});
+	};
+
+	onCellText (e: React.MouseEvent, relationKey: string) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const value = object[relationKey] || '';
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open('dataviewText', {
+				element: `#${elementId}`,
+				className: 'featuredText',
+				horizontal: I.MenuDirection.Left,
+				width: 288,
+				offsetY: 4,
+				noFlipX: true,
+				title: relation.name,
 				onClose: () => {
 					menuStore.closeAll();
 				},
