@@ -596,38 +596,91 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const { isPopup, rootId, readonly } = this.props;
+		const { isPopup, rootId, block, readonly } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (readonly || relation.isReadonlyValue) {
 			return;
 		};
 
+		let menuId: string = '';
+		let menuParam: any = {};
+		let menuData: any = {};
+
 		switch (relation.format) {
 			case I.RelationType.Object: {
-				this.onCellObject(e, relationKey);
+				menuId = 'dataviewObjectValues';
+				menuParam.subIds = [ 'dataviewObjectList' ];
+				menuData = {
+					rootId,
+					value: Relation.getArrayValue(object[relationKey]),
+					filters: []
+				};
+
 				break;
 			};
 
 			case I.RelationType.Date: {
-				this.onCellDate(e, relationKey);
+				let value = null;
+				let isEmpty = false;
+
+				if (object[relationKey]) {
+					value = Number(object[relationKey]);
+				} else {
+					value = Number(UtilDate.now());
+					isEmpty = true;
+				};
+
+				menuId = 'dataviewCalendar';
+				menuData = {
+					value,
+					isEmpty
+				};
+
 				break;
 			};
 
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
-				this.onCellSelect(e, relationKey);
+				menuId = 'dataviewOptionList';
+				menuParam.className = 'featuredRelation';
+				menuData = {
+					rootId,
+					blockId: block.id,
+					value: Relation.getArrayValue(object[relationKey]),
+					canAdd: true,
+					maxCount: relation.maxCount,
+				};
+
 				break;
 			};
 
 			case I.RelationType.File: {
-				this.onCellFile(e, relationKey);
+				menuId = 'dataviewFileValues';
+				menuParam = {
+					width: 280,
+					subIds: [ 'dataviewFileList' ],
+				};
+				menuData = {
+					rootId,
+					value: object[relationKey] || [],
+					subId: rootId,
+				};
+
 				break;
 			};
 
 			case I.RelationType.Number:
 			case I.RelationType.LongText: {
-				this.onCellText(e, relationKey);
+				menuId = 'dataviewText';
+				menuParam = {
+					className: 'featuredText',
+					width: 288,
+				};
+				menuData.value = object[relationKey] || '';
+
 				break;
 			};
 
@@ -671,6 +724,53 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 			};
 		};
+
+		if (menuId) {
+			this.onCellMenu(relationKey, menuId, menuParam, menuData);
+		};
+	};
+
+	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const relation = dbStore.getRelationByKey(relationKey);
+		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+
+		if (!relation) {
+			return;
+		};
+
+		let menuParam = {
+			element: `#${elementId}`,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
+			noFlipX: true,
+			title: relation.name,
+			onClose: () => {
+				menuStore.closeAll();
+			},
+			data: {
+				relation: observable.box(relation),
+				onChange: (v: any, callBack?: () => void) => {
+					const details = [
+						{ key: relationKey, value: Relation.formatValue(relation, v, true) },
+					];
+					C.ObjectSetDetails(rootId, details);
+
+					if (callBack) {
+						callBack();
+					};
+				}
+			}
+		};
+
+		menuParam = Object.assign(menuParam, param);
+		menuParam.data = Object.assign(menuParam.data, data);
+
+		menuStore.closeAll(Constant.menuIds.cell, () => {
+			menuStore.open(menuId, menuParam);
+		});
 	};
 
 	onLinks (e: React.MouseEvent, relationKey: string) {
@@ -706,202 +806,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					forceLetter: true,
 					onSelect: (e: any, item: any) => {
 						UtilObject.openAuto(item);
-					}
-				}
-			});
-		});
-	};
-
-	onCellObject (e: React.MouseEvent, relationKey: string) {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
-		const value = Relation.getArrayValue(object[relationKey]);
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-		const filters = [];
-
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open('dataviewObjectValues', {
-				element: `#${elementId}`,
-				horizontal: I.MenuDirection.Left,
-				offsetY: 4,
-				noFlipX: true,
-				title: relation.name,
-				subIds: [ 'dataviewObjectList' ],
-				onClose: () => {
-					menuStore.closeAll();
-				},
-				data: {
-					rootId,
-					value,
-					filters,
-					types: relation.objectTypes,
-					relation: observable.box(relation),
-					onChange: (v: any, callBack?: () => void) => {
-						const details = [
-							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-						];
-						C.ObjectSetDetails(rootId, details);
-
-						if (callBack) {
-							callBack();
-						};
-					}
-				}
-			});
-		});
-	};
-
-	onCellDate (e: React.MouseEvent, relationKey: string) {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-
-		let value = null;
-		let isEmpty = false;
-
-		if (object[relationKey]) {
-			value = Number(object[relationKey]);
-		} else {
-			value = Number(UtilDate.now());
-			isEmpty = true;
-		};
-
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open('dataviewCalendar', {
-				element: `#${elementId}`,
-				horizontal: I.MenuDirection.Left,
-				offsetY: 4,
-				noFlipX: true,
-				title: relation.name,
-				data: {
-					value,
-					isEmpty,
-					onChange: (v: number) => {
-						const details = [
-							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-						];
-						C.ObjectSetDetails(rootId, details);
-					}
-				}
-			});
-		});
-	};
-
-	onCellSelect (e: React.MouseEvent, relationKey: string) {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
-		const value = Relation.getArrayValue(object[relationKey]);
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open('dataviewOptionList', {
-				element: `#${elementId}`,
-				className: 'featuredRelation',
-				horizontal: I.MenuDirection.Left,
-				noFlipY: true,
-				offsetY: 4,
-				title: relation.name,
-				onClose: () => {
-					menuStore.closeAll();
-				},
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-					value,
-					relation: observable.box(relation),
-					maxCount: relation.maxCount,
-					canAdd: true,
-					onChange: (v) => {
-						const details = [
-							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-						];
-						C.ObjectSetDetails(rootId, details);
-					}
-				},
-			});
-		});
-	};
-
-	onCellFile (e: React.MouseEvent, relationKey: string) {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
-		const value = object[relationKey] || [];
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open('dataviewFileValues', {
-				element: `#${elementId}`,
-				horizontal: I.MenuDirection.Left,
-				width: 280,
-				offsetY: 4,
-				noFlipX: true,
-				title: relation.name,
-				subIds: [ 'dataviewFileList' ],
-				onClose: () => {
-					menuStore.closeAll();
-				},
-				data: {
-					rootId,
-					value,
-					relation: observable.box(relation),
-					subId: rootId,
-					onChange: (v: any, callBack?: () => void) => {
-						const details = [
-							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-						];
-						C.ObjectSetDetails(rootId, details);
-
-						if (callBack) {
-							callBack();
-						};
-					}
-				}
-			});
-		});
-	};
-
-	onCellText (e: React.MouseEvent, relationKey: string) {
-		const { rootId, block } = this.props;
-		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
-		const value = object[relationKey] || '';
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open('dataviewText', {
-				element: `#${elementId}`,
-				className: 'featuredText',
-				horizontal: I.MenuDirection.Left,
-				width: 288,
-				offsetY: 4,
-				noFlipX: true,
-				title: relation.name,
-				onClose: () => {
-					menuStore.closeAll();
-				},
-				data: {
-					rootId,
-					value,
-					relation: observable.box(relation),
-					subId: rootId,
-					onChange: (v: any, callBack?: () => void) => {
-						const details = [
-							{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-						];
-						C.ObjectSetDetails(rootId, details);
-
-						if (callBack) {
-							callBack();
-						};
 					}
 				}
 			});
