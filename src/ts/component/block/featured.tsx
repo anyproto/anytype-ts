@@ -644,7 +644,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			case I.RelationType.Select:
 			case I.RelationType.MultiSelect: {
 				menuId = 'dataviewOptionList';
-				menuParam.className = 'featuredRelation';
 				menuData = {
 					value: Relation.getArrayValue(object[relationKey]),
 					canAdd: true,
@@ -671,10 +670,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			case I.RelationType.Number:
 			case I.RelationType.LongText: {
 				menuId = 'dataviewText';
-				menuParam = {
-					className: 'featuredText',
-					width: 288,
-				};
+				menuParam.width = 288;
 				menuData.value = object[relationKey] || '';
 
 				break;
@@ -739,6 +735,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let menuParam = {
 			element: `#${elementId}`,
+			className: 'fromFeatured',
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipX: true,

@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewText:not(.featuredText) { box-shadow: 0px 0px; background: transparent; }
-	.menu.menuDataviewText:not(.featuredText) {
+	.menu.menuDataviewText:not(.fromFeatured) { box-shadow: 0px 0px; background: transparent; }
+	.menu.menuDataviewText:not(.fromFeatured) {
 		.content { overflow: visible !important; max-height: none; height: 100%; transition: $transitionAllCommon; padding: 0px; }
 		.editableWrap { height: 100%; }
 
@@ -12,15 +12,15 @@
 		}
 		#placeholder { padding: 13px 14px; }
 	}
-	.menu.menuDataviewText.fromBlock:not(.featuredText) {
+	.menu.menuDataviewText.fromBlock {
 		#input { padding: 5px 8px; }
 		#placeholder { padding: 5px 8px; }
 	}
-	.menu.menuDataviewText.show:not(.featuredText) {
+	.menu.menuDataviewText.show:not(.fromFeatured) {
 		#input { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 	}
 
-	.menu.menuDataviewText.featuredText {
+	.menu.menuDataviewText.fromFeatured {
 		.content { padding: 8px 14px; }
 	}
 }
