@@ -67,9 +67,12 @@ class Dispatcher {
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
 
-			let t = 1000;
+			let t = 3;
 			if (this.reconnects == 20) {
-				t = 5000;
+				t = 5;
+			};
+			if (this.reconnects == 40) {
+				t = 60;
 				this.reconnects = 0;
 			};
 
@@ -77,7 +80,7 @@ class Dispatcher {
 			this.timeoutStream = window.setTimeout(() => { 
 				this.listenEvents(); 
 				this.reconnects++;
-			}, t);
+			}, t * 1000);
 		});
 	};
 

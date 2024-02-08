@@ -62,7 +62,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				<div 
 					id={'item-' + item.relationKey} 
 					className={cn.join(' ')} 
-					onMouseEnter={e =>  this.onMouseEnter(e, item)}
+					onMouseEnter={e => 	this.onMouseEnter(e, item)}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}

@@ -3,7 +3,6 @@
 .blocks {
 	.block.blockFeatured { 
 		@include text-common; line-height: 28px; color: var(--color-text-secondary); padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
-		margin-top: -3px;
 	}
 	.block.blockFeatured {
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
@@ -58,6 +57,7 @@
 			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 			.name { display: none; }
 			.empty { padding: 0px 4px; }
+			.more { margin-top: 2px; }
 		}
 
 		.cellContent.c-object, .cellContent.c-file {
@@ -71,6 +71,10 @@
 		.cellContent.c-checkbox { padding: 5px 3px; }
 		.cellContent.c-checkbox {
 			.icon { margin: 0px 5px 0px 0px; }
+		}
+
+		.cellContent.c-longText {
+			.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }
 		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }

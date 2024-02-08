@@ -1,16 +1,40 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
+import { C, UtilCommon, UtilRouter } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
 import Extension from 'json/extension.json';
+import * as Store from 'Store';
 
 import './scss/common.scss';
 
+declare global {
+	interface Window {
+		isExtension: boolean;
+		Electron: any;
+		$: any;
+		Anytype: any;
+		isWebVersion: boolean;
+		AnytypeGlobalConfig: any;
+	}
+};
+
+window.$ = $;
+window.isExtension = true;
 window.Electron = {
 	currentWindow: () => ({ windowId: 1 }),
 	Api: () => {},
+};
+
+window.Anytype = {
+	Store,
+	Lib: {
+		C,
+		UtilCommon,
+		UtilRouter, 
+	},
 };
 
 window.AnytypeGlobalConfig = { 
@@ -31,6 +55,8 @@ if (Util.isIframe()) {
 	rootId = `${Extension.clipper.prefix}-iframe`;
 	component = <Iframe />;
 };
+
+console.log(window.Anytype);
 
 if (!rootId) {
 	console.error('[Entry] rootId is not defined');

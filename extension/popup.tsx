@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as hs from 'history';
-import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { dispatcher, C, UtilCommon, UtilRouter } from 'Lib'; 
+import { UtilRouter } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
 
@@ -43,27 +42,6 @@ const rootStore = {
 	menuStore,
 	popupStore,
 	extensionStore,
-};
-
-declare global {
-	interface Window {
-		Electron: any;
-		$: any;
-		Anytype: any;
-		isWebVersion: boolean;
-		AnytypeGlobalConfig: any;
-	}
-};
-
-window.$ = $;
-window.Anytype = {
-	Store: rootStore,
-	Lib: {
-		C,
-		UtilCommon,
-		dispatcher,
-		Storage,
-	},
 };
 
 class RoutePage extends React.Component<RouteComponentProps> {

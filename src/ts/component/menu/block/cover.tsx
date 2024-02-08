@@ -56,7 +56,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const sections = this.getSections();
 
 		const Item = (item: any) => (
-			<div className="item" onClick={e =>  this.onSelect(e, item)}>
+			<div className="item" onClick={e => 	this.onSelect(e, item)}>
 				<Cover preview={true} {...item} />
 				{item.artist ? <div className="name">{item.artist}</div> : ''}
 			</div>

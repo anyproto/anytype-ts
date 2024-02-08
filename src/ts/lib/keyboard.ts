@@ -423,10 +423,6 @@ class Keyboard {
 				if ((route.page == 'main') && !account) {
 					return false;
 				};
-
-				if ((route.page == 'main') && (route.action == 'usecase')) {
-					return false;
-				};
 			};
 		};
 

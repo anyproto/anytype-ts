@@ -29,8 +29,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								onClick={e =>  this.onClick(e, action)}
-								onMouseEnter={e =>  this.onMouseEnter(e, action)}
+								onClick={e => 	this.onClick(e, action)}
+								onMouseEnter={e => 	this.onMouseEnter(e, action)}
 							/>
 						);
 					})}
@@ -73,7 +73,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

@@ -61,7 +61,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				key={id} 
 				id={id} 
 				className={cn.join(' ')} 
-				onClick={e =>  onCellClick(e, relation.relationKey, record.id)} 
+				onClick={e => 	onCellClick(e, relation.relationKey, record.id)} 
 			>
 				<Cell 
 					ref={ref => { 

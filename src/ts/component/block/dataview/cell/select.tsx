@@ -350,7 +350,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		};
 
 		let items = record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
-		items.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
+		items = items.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 
 		return items;
 	};

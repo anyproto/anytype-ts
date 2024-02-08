@@ -233,7 +233,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if (isShowing && navigator.onLine) {
+			if ((isShowing || UtilEmbed.allowAutoRender(processor)) && navigator.onLine) {
 				node.find('#receiver').remove('');
 				this.setContent(this.text);
 			};
@@ -967,10 +967,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-
-	onResizeInit () {
-		console.log('onResizeInit');
 	};
 
 	sanitize (text: string, allowScript: boolean): string {

@@ -41,12 +41,12 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		const search = this.getSearch();
 
-		C.DownloadManifest(search.source, (message: any) => {
+		C.GalleryDownloadManifest(search.source, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
 				UtilObject.openHome('route');
-				popupStore.open('usecase', { data: { object: message.info } });
+				popupStore.open('usecase', { data: { page: 'item', object: message.info } });
 			};
 		});
 	};

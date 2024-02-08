@@ -137,7 +137,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.setIsSelecting(true);
 
 		keyboard.disablePreview(true);
-		UtilCommon.clearSelection();
 
 		if (isPopup && container.length) {
 			this.containerOffset = container.offset();
@@ -161,8 +160,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, e =>  this.onMouseMove(e));
-		win.on(`blur.selection mouseup.selection`, e =>  this.onMouseUp(e));
+		win.on(`mousemove.selection`, e => 	this.onMouseMove(e));
+		win.on(`blur.selection mouseup.selection`, e => 	this.onMouseUp(e));
 	};
 
 	initNodes () {
@@ -199,6 +198,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		const isPopup = keyboard.isPopup();
+
 		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
