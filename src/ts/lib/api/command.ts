@@ -31,12 +31,20 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
-export const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.DownloadManifest.Request();
+// ---------------------- GALLERY ---------------------- //
+
+export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+
+	dispatcher.request(GalleryDownloadIndex.name, request, callBack);
+};
+
+export const GalleryDownloadManifest = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Gallery.DownloadManifest.Request();
 
 	request.setUrl(url);
 
-	dispatcher.request(DownloadManifest.name, request, callBack);
+	dispatcher.request(GalleryDownloadManifest.name, request, callBack);
 };
 
 // ---------------------- APP ---------------------- //
