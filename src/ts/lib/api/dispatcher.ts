@@ -151,6 +151,7 @@ class Dispatcher {
 
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
+		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
 
 		return t;
 	};
@@ -977,6 +978,24 @@ class Dispatcher {
 
 				case 'notificationUpdate': {
 					notificationStore.update(Mapper.From.Notification(data.getNotification()));
+					break;
+				};
+
+				case 'payloadBroadcast': {
+					console.log(electron.currentWindow().windowId);
+
+					if (electron.currentWindow().windowId !== 1) {
+						break;
+					};
+
+					const payload = JSON.parse(data.getPayload());
+
+					switch (payload.type) {
+						case 'openObject': {
+							UtilObject.openAuto(payload.object);
+							break;
+						};
+					};
 					break;
 				};
 
