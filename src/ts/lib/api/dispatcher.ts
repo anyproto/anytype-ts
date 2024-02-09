@@ -982,8 +982,6 @@ class Dispatcher {
 				};
 
 				case 'payloadBroadcast': {
-					console.log(electron.currentWindow().windowId);
-
 					if (electron.currentWindow().windowId !== 1) {
 						break;
 					};
