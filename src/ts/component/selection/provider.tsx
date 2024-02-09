@@ -322,6 +322,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.childrenIds.clear();
 		this.focused = '';
 		this.range = null;
+		this.containerOffset = null;
+		this.isPopup = false;
+		this.rootId = '';
 		this.nodes = [];
 	};
 
