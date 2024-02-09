@@ -87,16 +87,20 @@ class UtilObject {
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
+		if (this.isFileLayout(v)) {
+			return 'media';
+		};
+
+		if (this.isSetLayout(v)) {
+			return 'set';
+		};
+
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
 			case I.ObjectLayout.Date:
-			case I.ObjectLayout.Set:
-			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:		 r = 'media'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;

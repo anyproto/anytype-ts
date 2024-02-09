@@ -219,6 +219,8 @@ class DetailStore {
 			};
 
 			case I.ObjectLayout.File:
+			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Image: {
 				object = this.mapFile(object);
 				break;

@@ -221,12 +221,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },

@@ -239,6 +239,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Bookmark: {
+				if (iconImage) {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				};
+				break;
+			};
+
 			case I.ObjectLayout.Image: {
 				if (id) {
 					cn.push('withImage');
@@ -251,14 +259,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Bookmark: {
-				if (iconImage) {
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Audio:
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
