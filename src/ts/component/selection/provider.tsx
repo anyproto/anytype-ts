@@ -43,7 +43,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	render () {
+		const { list } = popupStore;
 		const children = this.injectProps(this.props.children);
+		const length = list.length;
+
 		return (
 			<div 
 				id="selection" 
@@ -57,18 +60,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	componentDidMount () {
-		const isPopup = keyboard.isPopup();
-
 		this._isMounted = true;
 		this.rect = $('#selection-rect');
-		this.unbind();
+		this.rebind();
+	};
 
-		UtilCommon.getScrollContainer(isPopup).on('scroll.selection', e => this.onScroll(e));
+	componentDidUpdate (): void {
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		UtilCommon.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => this.onScroll(e));
 	};
 
 	unbind () {
@@ -84,7 +92,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		(UtilCommon.getScrollContainer(isPopup)).off('scroll.selection');
+		UtilCommon.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
 	scrollToElement (id: string, dir: number) {
@@ -214,12 +222,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
+		const container = UtilCommon.getScrollContainer(this.isPopup);
+		const top = container.scrollTop();
 		const d = top > this.top ? 1 : -1;
 		const x = keyboard.mouse.page.x;
-		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
+		const y = keyboard.mouse.page.y + (!this.isPopup ? Math.abs(top - this.top) * d : 0);
 		const rect = this.getRect(this.x, this.y, x, y);
-		const { wh } = UtilCommon.getWindowDimensions();
+		const wh = container.height();
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
