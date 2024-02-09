@@ -44,6 +44,8 @@ class Dispatcher {
 			return;
 		};
 
+		window.clearTimeout(this.timeoutStream);
+
 		const request = new Commands.StreamRequest();
 		request.setToken(authStore.token);
 
@@ -60,28 +62,31 @@ class Dispatcher {
 		this.stream.on('status', (status) => {
 			if (status.code) {
 				console.error('[Dispatcher.stream] Restarting', status);
-				this.listenEvents();
+				this.reconnect();
 			};
 		});
 
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
-
-			let t = 3;
-			if (this.reconnects == 20) {
-				t = 5;
-			};
-			if (this.reconnects == 40) {
-				t = 60;
-				this.reconnects = 0;
-			};
-
-			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { 
-				this.listenEvents(); 
-				this.reconnects++;
-			}, t * 1000);
+			this.reconnect();
 		});
+	};
+
+	reconnect () {
+		let t = 3;
+		if (this.reconnects == 20) {
+			t = 5;
+		};
+		if (this.reconnects == 40) {
+			t = 60;
+			this.reconnects = 0;
+		};
+
+		window.clearTimeout(this.timeoutStream);
+		this.timeoutStream = window.setTimeout(() => { 
+			this.listenEvents(); 
+			this.reconnects++;
+		}, t * 1000);
 	};
 
 	eventType (v: number): string {
