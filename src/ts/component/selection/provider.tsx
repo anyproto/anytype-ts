@@ -26,6 +26,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	frame = 0;
 	hasMoved = false;
 	isSelecting = false;
+	isPopup = false;
+	rootId = '';
 	rect: any = null;
 
 	cache: Map<string, any> = new Map();
@@ -127,6 +129,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
 		
+		this.rootId = keyboard.getRootId();
+		this.isPopup = isPopup;
 		this.x = e.pageX;
 		this.y = e.pageY;
 		this.hasMoved = false;
@@ -197,9 +201,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		const isPopup = keyboard.isPopup();
-
-		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		this.top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
 		this.hasMoved = true;
@@ -212,8 +214,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
-		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		const top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 		const d = top > this.top ? 1 : -1;
 		const x = keyboard.mouse.page.x;
 		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
@@ -271,9 +272,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const type = target.attr('data-type');
 				
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
-					const rootId = keyboard.getRootId();
 					const first = ids.length ? ids[0] : this.focused;
-					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+					const tree = blockStore.getTree(this.rootId, blockStore.getBlocks(this.rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex(it => it.id == first);
 					const idxEnd = list.findIndex(it => it.id == id);
@@ -320,12 +320,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		const range = UtilCommon.getSelectionRange();
-		const isPopup = keyboard.isPopup();
 
 		let x1 = this.x;
 		let y1 = this.y;
 
-		if (isPopup && this.containerOffset) {
+		if (this.containerOffset) {
 			x1 = x1 + this.containerOffset.left;
 			y1 = y1 + this.containerOffset.top - this.top;
 		};
@@ -507,14 +506,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getChildrenIds (id: string, ids: string[]) {
-		const rootId = keyboard.getRootId();
-		const block = blockStore.getLeaf(rootId, id);
+		const block = blockStore.getLeaf(this.rootId, id);
 		
 		if (!block || block.isTable()) {
 			return;
 		};
 		
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = blockStore.getChildrenIds(this.rootId, id);
 		if (!childrenIds.length) {
 			return;
 		};
@@ -534,8 +532,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const rootId = keyboard.getRootId();
-
 		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
 		for (const i in I.SelectType) {
@@ -548,7 +544,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				if (type == I.SelectType.Block) {
 					$(`#block-${id}`).addClass('isSelectionSelected');
 
-					const childrenIds = blockStore.getChildrenIds(rootId, id);
+					const childrenIds = blockStore.getChildrenIds(this.rootId, id);
 					childrenIds.forEach((childId: string) => {
 						$(`#block-${childId}`).addClass('isSelectionSelected');
 					});
@@ -558,10 +554,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	recalcCoords (x: number, y: number): { x: number, y: number } {
-		const isPopup = keyboard.isPopup();
-
-		if (isPopup && this.containerOffset) {
-			const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		if (this.containerOffset) {
+			const top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;
