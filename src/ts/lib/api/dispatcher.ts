@@ -44,6 +44,8 @@ class Dispatcher {
 			return;
 		};
 
+		window.clearTimeout(this.timeoutStream);
+
 		const request = new Commands.StreamRequest();
 		request.setToken(authStore.token);
 
@@ -60,25 +62,31 @@ class Dispatcher {
 		this.stream.on('status', (status) => {
 			if (status.code) {
 				console.error('[Dispatcher.stream] Restarting', status);
-				this.listenEvents();
+				this.reconnect();
 			};
 		});
 
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
-
-			let t = 1000;
-			if (this.reconnects == 20) {
-				t = 5000;
-				this.reconnects = 0;
-			};
-
-			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { 
-				this.listenEvents(); 
-				this.reconnects++;
-			}, t);
+			this.reconnect();
 		});
+	};
+
+	reconnect () {
+		let t = 3;
+		if (this.reconnects == 20) {
+			t = 5;
+		};
+		if (this.reconnects == 40) {
+			t = 60;
+			this.reconnects = 0;
+		};
+
+		window.clearTimeout(this.timeoutStream);
+		this.timeoutStream = window.setTimeout(() => { 
+			this.listenEvents(); 
+			this.reconnects++;
+		}, t * 1000);
 	};
 
 	eventType (v: number): string {
@@ -148,6 +156,7 @@ class Dispatcher {
 
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
+		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
 
 		return t;
 	};
@@ -974,6 +983,22 @@ class Dispatcher {
 
 				case 'notificationUpdate': {
 					notificationStore.update(Mapper.From.Notification(data.getNotification()));
+					break;
+				};
+
+				case 'payloadBroadcast': {
+					if (electron.currentWindow().windowId !== 1) {
+						break;
+					};
+
+					const payload = JSON.parse(data.getPayload());
+
+					switch (payload.type) {
+						case 'openObject': {
+							UtilObject.openAuto(payload.object);
+							break;
+						};
+					};
 					break;
 				};
 

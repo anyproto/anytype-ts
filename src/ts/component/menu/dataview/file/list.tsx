@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
-import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -12,6 +12,7 @@ interface State {
 };
 
 const HEIGHT = 28;
+const HEIGHT_DIV = 16;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT_HEIGHT = 20;
 
@@ -36,6 +37,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onChange = this.onChange.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
@@ -49,6 +52,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			
 			if (!item) {
 				return null;
 			};
@@ -56,10 +60,17 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			const type = dbStore.getTypeById(item.type);
 
 			let content = null;
-			if (item.id == 'add') {
+			if (item.isDiv) {
 				content = (
-					<div id="item-add" className="item add" onMouseEnter={e =>  this.onOver(e, item)} onClick={e =>  this.onClick(e, item)} style={param.style}>
-						<Icon className="plus" />
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else
+			if (item.id == 'upload') {
+				content = (
+					<div id="item-upload" className="item upload" onMouseEnter={e => this.onOver(e, item)} onClick={this.onUpload} style={param.style}>
+						<Icon className="upload" />
 						<div className="name">{item.name}</div>
 					</div>
 				);
@@ -69,8 +80,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						id={item.id}
 						object={item}
 						name={UtilFile.name(item)}
-						onMouseEnter={e =>  this.onOver(e, item)} 
-						onClick={e =>  this.onClick(e, item)}
+						onMouseEnter={e => 	this.onOver(e, item)} 
+						onClick={e => 	this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
@@ -118,7 +129,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={LIMIT_HEIGHT}
@@ -149,16 +160,14 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { filter } = data;
 
 		if (filter != this.filter) {
-			this.n = -1;
-			this.offset = 0;
 			this.filter = filter;
-			this.load(true);
+			this.reload();
 			return;
 		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -176,7 +185,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -195,16 +204,28 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+		let items = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+
+		items = items.concat([
+			{ isDiv: true },
+			{ id: 'upload', name: translate('commonUpload') },
+		]);
+
+		return items;
+	};
+
+	reload () {
+		this.n = -1;
+		this.offset = 0;
+		this.load(true);
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -265,9 +286,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, position } = this.props;
-		const { data } = param;
-		const { onChange, maxCount } = data;
+		const { close } = this.props;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -277,8 +296,27 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			return;
 		};
 
+		this.onChange(item.id);
+	};
+
+	onUpload () {
+		Action.openFile([], paths => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+				if (!message.error.code) {
+					this.onChange(message.objectId);
+					this.reload();
+				};
+			});
+		});
+	};
+
+	onChange (id) {
+		const { param, position } = this.props;
+		const { data } = param;
+		const { onChange, maxCount } = data;
+
 		let value = Relation.getArrayValue(data.value);
-		value.push(item.id);
+		value.push(id);
 		value = UtilCommon.arrayUnique(value);
 
 		if (maxCount) {
@@ -292,11 +330,20 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		});
 	};
 
+	getRowHeight (item: any) {
+		if (item.isDiv) {
+			return HEIGHT_DIV;
+		};
+		return HEIGHT;
+	};
+
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+		const offset = 58;
+		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
+		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight));
 
 		obj.css({ height: height });
 		position();

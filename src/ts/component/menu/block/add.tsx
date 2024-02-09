@@ -50,8 +50,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div 
 						id="item-relation-add" 
 						className="item add" 
-						onClick={e =>  this.onClick(e, item)} 
-						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
+						onClick={e => 	this.onClick(e, item)} 
+						onMouseEnter={e => 	this.onMouseEnter(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -83,8 +83,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								subId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => detailStore.get(rootId, rootId, [ item.relationKey ])}
-								recordId={rootId}
+								record={detailStore.get(rootId, rootId, [ item.relationKey ])}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
@@ -136,8 +135,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						{...item} 
 						className={cn.join(' ')}
 						withDescription={item.isBlock} 
-						onMouseEnter={e =>  this.onMouseEnter(e, item)} 
-						onClick={e =>  this.onClick(e, item)} 
+						onMouseEnter={e => 	this.onMouseEnter(e, item)} 
+						onClick={e => 	this.onClick(e, item)} 
 						style={param.style}
 					/>
 				);
@@ -257,7 +256,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e =>  this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

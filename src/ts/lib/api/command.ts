@@ -31,24 +31,28 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request(LinkPreview.name, request, callBack);
 };
 
-export const DownloadManifest = (url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.DownloadManifest.Request();
+// ---------------------- GALLERY ---------------------- //
+
+export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
+	dispatcher.request(GalleryDownloadIndex.name, new Commands.Empty(), callBack);
+};
+
+export const GalleryDownloadManifest = (url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Gallery.DownloadManifest.Request();
 
 	request.setUrl(url);
 
-	dispatcher.request(DownloadManifest.name, request, callBack);
+	dispatcher.request(GalleryDownloadManifest.name, request, callBack);
 };
 
 // ---------------------- APP ---------------------- //
 
 export const AppShutdown = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(AppShutdown.name, request, callBack);
+	dispatcher.request(AppShutdown.name, new Commands.Empty(), callBack);
 };
 
 export const AppGetVersion = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(AppGetVersion.name, request, callBack);
+	dispatcher.request(AppGetVersion.name, new Commands.Empty(), callBack);
 };
 
 // ---------------------- WALLET ---------------------- //
@@ -196,15 +200,11 @@ export const AccountStop = (removeData: boolean, callBack?: (message: any) => vo
 };
 
 export const AccountDelete = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(AccountDelete.name, request, callBack);
+	dispatcher.request(AccountDelete.name, new Commands.Empty(), callBack);
 };
 
 export const AccountRevertDeletion = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(AccountRevertDeletion.name, request, callBack);
+	dispatcher.request(AccountRevertDeletion.name, new Commands.Empty(), callBack);
 };
 
 export const AccountMove = (path: string, callBack?: (message: any) => void) => {
@@ -291,9 +291,7 @@ export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (m
 
 
 export const FileNodeUsage = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(FileNodeUsage.name, request, callBack);
+	dispatcher.request(FileNodeUsage.name, new Commands.Empty(), callBack);
 };
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -379,10 +377,11 @@ export const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId:
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
 };
 
-export const BlockPreview = (html: string, callBack?: (message: any) => void) => {
+export const BlockPreview = (html: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Preview.Request();
 
 	request.setHtml(html);
+	request.setUrl(url);
 
 	dispatcher.request(BlockPreview.name, request, callBack);
 };
@@ -517,7 +516,7 @@ export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRang
 	dispatcher.request(BlockCut.name, request, callBack);
 };
 
-export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
+export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, url: string, callBack?: (message: any) => void) => {
 	data = UtilCommon.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
@@ -531,6 +530,7 @@ export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRa
 	request.setHtmlslot(data.html);
 	request.setAnyslotList((data.anytype || []).map(Mapper.To.Block));
 	request.setFileslotList((data.files || []).map(Mapper.To.PasteFile));
+	request.setUrl(url);
 
 	dispatcher.request(BlockPaste.name, request, callBack);
 };
@@ -1863,4 +1863,14 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	request.setActiontype(action as number);
 
 	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
+// ---------------------- EXTENSION ---------------------- //
+
+export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Broadcast.PayloadEvent.Request();
+
+	request.setPayload(JSON.stringify(payload, null, 3));
+
+	dispatcher.request(BroadcastPayloadEvent.name, request, callBack);
 };

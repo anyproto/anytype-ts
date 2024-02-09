@@ -262,6 +262,8 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Task },
 			{ id: I.ObjectLayout.Set },
 			{ id: I.ObjectLayout.File },
+			{ id: I.ObjectLayout.Audio },
+			{ id: I.ObjectLayout.Video },
 			{ id: I.ObjectLayout.Image },
 			{ id: I.ObjectLayout.Type },
 			{ id: I.ObjectLayout.Relation },

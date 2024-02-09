@@ -6,7 +6,6 @@ import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
-	recordId: string;
 	style?: any;
 };
 
@@ -16,12 +15,11 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
+		const { rootId, block, record, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(recordId);
 		const cn = [ 'row' ];
 
 		// Subscriptions
@@ -35,7 +33,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		let content = (
 			<React.Fragment>
 				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 					return (
 						<Cell
 							key={'list-cell-' + relation.relationKey}
@@ -77,7 +75,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
-						onDragStart={e => onDragRecordStart(e, recordId)}
+						onDragStart={e => onDragRecordStart(e, record.id)}
 						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
@@ -118,9 +116,8 @@ const Row = observer(class Row extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { onContext, dataset, getRecord, recordId } = this.props;
+		const { onContext, dataset, record } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(recordId);
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
@@ -139,7 +136,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId } = this.props;
+		const { onCellClick, record } = this.props;
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
@@ -149,7 +146,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCellClick(e, relation.relationKey, recordId);
+		onCellClick(e, relation.relationKey, record.id);
 	};
 
 	resize () {

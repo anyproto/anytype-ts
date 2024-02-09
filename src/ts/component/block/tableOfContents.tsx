@@ -24,7 +24,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			return (
 				<div 
 					className="item" 
-					onClick={e =>  this.onClick(e, item.id)}
+					onClick={e => 	this.onClick(e, item.id)}
 					style={{ paddingLeft: item.depth * 24 }}
 				>
 					<span>{item.text}</span>

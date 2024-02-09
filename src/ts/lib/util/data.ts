@@ -114,7 +114,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = UtilCommon.toCamelCase('is-' + I.ObjectLayout[layout]); break;
+			default: c = UtilCommon.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -514,12 +514,14 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
-			case I.ObjectLayout.Relation:
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
+			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
 			};
+		};
+
+		if (UtilObject.isFileLayout(object.layout)) {
+			ret.withIcon = true;
 		};
 
 		if (checkType) {

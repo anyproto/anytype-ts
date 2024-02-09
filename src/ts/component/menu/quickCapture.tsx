@@ -558,7 +558,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = dbStore.getTypeById(commonStore.type);
 		const data = await this.getClipboardData();
 
-		data.forEach(async item =>  {
+		data.forEach(async item => 	{
 			let text = '';
 			let html = '';
 
@@ -596,7 +596,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 					const object = message.details;
 
-					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, () => {
+					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
 						UtilObject.openAuto(object);
 					});
 				});
