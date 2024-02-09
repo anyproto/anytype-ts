@@ -59,13 +59,11 @@ Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) t
 ### Install middleware library and protobuf bindings
 Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases).
 
-**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to build middleware from source as well.
+**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to [build middleware from source](https://github.com/anyproto/anytype-heart/blob/main/docs/Build.md) as well.
 
 ```shell
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu
 ```
-	
-Or compile from the source code. Follow instructions at [`anytype-heart`](https://github.com/anyproto/anytype-heart#how-to-build).
 
 After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` into the `dist` Folder.
 
