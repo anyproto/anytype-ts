@@ -29,6 +29,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	isPopup = false;
 	rootId = '';
 	rect: any = null;
+	childrenIds: Map<string, string[]> = new Map();
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -318,6 +319,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.hide();
 		this.setIsSelecting(false);
 		this.cache.clear();
+		this.childrenIds.clear();
 		this.focused = '';
 		this.range = null;
 		this.nodes = [];
@@ -515,21 +517,26 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getChildrenIds (id: string, ids: string[]) {
-		const block = blockStore.getLeaf(this.rootId, id);
-		
-		if (!block || block.isTable()) {
-			return;
-		};
-		
-		const childrenIds = blockStore.getChildrenIds(this.rootId, id);
-		if (!childrenIds.length) {
+		const cache = this.childrenIds.get(id);
+		if (cache) {
+			ids = ids.concat(cache);
 			return;
 		};
 
-		for (const childId of childrenIds) {
-			ids.push(childId);
-			this.getChildrenIds(childId, ids);
+		const block = blockStore.getLeaf(this.rootId, id);
+
+		let childrenIds = [];
+
+		if (block && !block.isTable()) {
+			childrenIds = blockStore.getChildrenIds(this.rootId, id);
+
+			for (const childId of childrenIds) {
+				ids.push(childId);
+				this.getChildrenIds(childId, ids);
+			};
 		};
+
+		this.childrenIds.set(id, [ ...childrenIds ]);
 	};
 
 	getPageContainer () {
