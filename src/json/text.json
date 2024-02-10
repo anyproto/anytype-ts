@@ -997,6 +997,7 @@
 	"popupUsecaseSpaceCreate": "Create new space",
 	"popupUsecaseListTitle": "ANY Experiences gallery",
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
+	"popupUsecaseListCategoryEmpty": "No Experiences found in the <b>%s</b> category",
 
 	"popupRelationValueRemoveTitle": "Are you sure?",
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",

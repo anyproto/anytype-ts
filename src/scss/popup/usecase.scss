@@ -11,7 +11,14 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 			.innerWrap { width: calc(100% - 64px); left: 16px; margin-left: 0px !important; }
 		}
 
-		.page.pageList { height: 100%; }
+		.emptySearch {
+			color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--color-shape-secondary);
+			border-top: 1px solid var(--color-shape-secondary); text-align: center; padding: 16px 0px; height: 300px; margin: 56px 0px 0px 0px;
+		}
+		.emptySearch {
+			b { display: inline; }
+			.inner { width: 300px; }
+		}
 
 		.page.pageList {
 			.mid { padding: 56px 56px 0px 56px; text-align: center; }

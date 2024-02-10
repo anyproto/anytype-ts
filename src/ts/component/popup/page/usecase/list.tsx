@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Loader, Title, Label } from 'Component';
-import { I, C, translate } from 'Lib';
+import { Loader, Title, Label, EmptySearch } from 'Component';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 import { commonStore } from 'Store';
 
@@ -42,6 +42,11 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		if (isLoading) {
 			return <Loader id="loader" />;
+		};
+
+		let textEmpty = '';
+		if (this.category) {
+			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListCategoryEmpty'), this.category.name);
 		};
 
 		const Category = (item: any) => (
@@ -98,26 +103,30 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				</div>
 
 				<div className="items">
-					<WindowScroller scrollElement={$('#popupUsecase-innerWrap').get(0)}>
-						{({ height, isScrolling, registerChild, scrollTop }) => (
-							<AutoSizer disableHeight={true} className="scrollArea" onResize={this.onResize}>
-								{({ width }) => (
-									<List
-										ref={ref => this.refList = ref}
-										autoHeight={true}
-										height={Number(height) || 0}
-										width={Number(width) || 0}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={param => this.cache.rowHeight(param)}
-										rowRenderer={rowRenderer}
-										isScrolling={isScrolling}
-										scrollTop={scrollTop}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</WindowScroller>
+					{!items.length ? (
+						<EmptySearch text={textEmpty} />
+					) : (
+						<WindowScroller scrollElement={$('#popupUsecase-innerWrap').get(0)}>
+							{({ height, isScrolling, registerChild, scrollTop }) => (
+								<AutoSizer disableHeight={true} className="scrollArea" onResize={this.onResize}>
+									{({ width }) => (
+										<List
+											ref={ref => this.refList = ref}
+											autoHeight={true}
+											height={Number(height) || 0}
+											width={Number(width) || 0}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={param => this.cache.rowHeight(param)}
+											rowRenderer={rowRenderer}
+											isScrolling={isScrolling}
+											scrollTop={scrollTop}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</WindowScroller>
+					)}
 				</div>
 			</div>
 		);
