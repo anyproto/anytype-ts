@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, Renderer } from 'Lib';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
@@ -19,6 +19,8 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 		super(props);
 
 		this.onPage = this.onPage.bind(this);
+		this.getAuthor = this.getAuthor.bind(this);
+		this.onAuthor = this.onAuthor.bind(this);
 	};
 	
 	render () {
@@ -34,6 +36,8 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 					ref={ref => this.ref = ref}
 					{...this.props} 
 					onPage={this.onPage} 
+					getAuthor={this.getAuthor}
+					onAuthor={this.onAuthor}
 				/>
 			);
 		};
@@ -59,6 +63,23 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 	onPage (page: string, data?: any): void {
 		data = data || {};
 		this.props.param.data = Object.assign(this.props.param.data, { ...data, page });
+	};
+
+	getAuthor (author: string): string {
+		if (!author) {
+			return '';
+		};
+
+		let a: any = {};
+		try { a = new URL(author); } catch (e) {};
+
+		return String(a.pathname || '').replace(/^\//, '');
+	};
+
+	onAuthor (author: string): void {
+		if (author) {
+			Renderer.send('urlOpen', author);
+		};
 	};
 
 });

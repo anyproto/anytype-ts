@@ -12,6 +12,7 @@ const SHOW_DIMMER = [
 	'migration',
 	'pin',
 	'preview',
+	'usecase',
 ];
 
 class PopupStore {

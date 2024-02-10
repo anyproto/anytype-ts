@@ -25,14 +25,14 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		super(props);
 
 		this.onMenu = this.onMenu.bind(this);
-		this.onAuthor = this.onAuthor.bind(this);
 		this.onSwiper = this.onSwiper.bind(this);
 	};
 	
 	render () {
+		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, error } = this.state;
 		const object = this.getObject();
-		const author = this.getAuthor();
+		const author = getAuthor(object.author);
 		const screenshots = object.screenshots || [];
 		const categories = (object.categories || []).slice(0, 10);
 
@@ -43,7 +43,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				<div className="titleWrap">
 					<div className="side left">
 						<Title text={object.title} />
-						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={this.onAuthor} />
+						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
 					</div>
 					<div className="side right">
 						<Button ref={ref => this.refButton = ref} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
@@ -169,32 +169,11 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		return list;
 	};
 
-	onAuthor () {
-		const object = this.getObject();
-
-		if (object.author) {
-			Renderer.send('urlOpen', object.author);
-		};
-	};
-
 	getObject (): any {
 		const { param } = this.props;
 		const { data } = param;
 
 		return data.object || {};
-	};
-
-	getAuthor (): string {
-		const object = this.getObject();
-
-		if (!object.author) {
-			return '';
-		};
-
-		let a: any = {};
-		try { a = new URL(object.author); } catch (e) {};
-
-		return String(a.pathname || '').replace(/^\//, '');
 	};
 
 };
