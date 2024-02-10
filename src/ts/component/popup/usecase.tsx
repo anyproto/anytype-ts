@@ -61,8 +61,13 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 	};
 
 	onPage (page: string, data?: any): void {
+		const { param, getId } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+
 		data = data || {};
-		this.props.param.data = Object.assign(this.props.param.data, { ...data, page });
+		param.data = Object.assign(param.data, { ...data, page });
+
+		obj.scrollTop(0);
 	};
 
 	getAuthor (author: string): string {

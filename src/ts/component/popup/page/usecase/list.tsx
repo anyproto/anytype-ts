@@ -2,21 +2,22 @@ import * as React from 'react';
 import { Loader, Title, Label } from 'Component';
 import { I, C, translate } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
+import { commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
 };
 
 const HEIGHT = 450;
+const LIMIT = 2;
 
 class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	node = null;
 	refList = null;
-	list: any = [];
-	categories: any = [];
 	cache: any = {};
-	columnCount = 0;
+	timeout = 0;
+	category = null;
 	state = {
 		isLoading: false
 	};
@@ -28,21 +29,23 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			defaultHeight: HEIGHT,
 			fixedWidth: true,
 		});
+
+		this.onResize = this.onResize.bind(this);
+		this.onCategory = this.onCategory.bind(this);
 	};
 	
 	render () {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading } = this.state;
 		const items = this.getItems();
+		const { gallery } = commonStore;
 
 		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
 		const Category = (item: any) => (
-			<div className="item">
-				{item.name}
-			</div>
+			<div className="item" onClick={() => this.onCategory(item)}>{item.name}</div>
 		);
 
 		const Item = (item: any) => {
@@ -83,7 +86,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			<div ref={ref => this.node = ref} className="wrap">
 				<div className="categories">
 					<div className="inner">
-						{this.categories.map((item: any, i: number) => (
+						{gallery.categories.map((item: any, i: number) => (
 							<Category key={i} {...item} />
 						))}
 					</div>
@@ -97,7 +100,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				<div className="items">
 					<WindowScroller scrollElement={$('#popupUsecase-innerWrap').get(0)}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
-							<AutoSizer disableHeight={true} className="scrollArea">
+							<AutoSizer disableHeight={true} className="scrollArea" onResize={this.onResize}>
 								{({ width }) => (
 									<List
 										ref={ref => this.refList = ref}
@@ -121,11 +124,17 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	componentDidMount (): void {
+		if (commonStore.gallery.list.length) {
+			return;
+		};
+
 		this.setState({ isLoading: true });
 
 		C.GalleryDownloadIndex((message: any) => {
-			this.categories = message.categories || [];
-			this.list = message.list || [];
+			commonStore.gallery = {
+				categories: message.categories || [],
+				list: message.list || [],
+			};
 			
 			this.setState({ isLoading: false });
 		});
@@ -134,6 +143,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	componentDidUpdate (): void {
 		this.reset();
 		this.props.position();	
+	};
+
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeout);
 	};
 
 	reset () {
@@ -148,28 +161,43 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.props.onPage('item', { object: item });
 	};
 
+	onCategory (item: any) {
+		this.category = item;
+		this.forceUpdate();
+	};
+
 	getItems () {
 		const ret: any[] = [];
+		
+		let items = commonStore.gallery.list || [];
+		if (this.category) {
+			items = items.filter(it => this.category.list.includes(it.name));
+		};
 
 		let n = 0;
 		let row = { children: [] };
 
-		for (const item of this.list) {
+		for (const item of items) {
 			row.children.push(item);
 
 			n++;
-			if (n == 2) {
+			if (n == LIMIT) {
 				ret.push(row);
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
-		if (row.children.length < this.columnCount) {
+		if (row.children.length < LIMIT) {
 			ret.push(row);
 		};
 
 		return ret.filter(it => it.children.length > 0);
+	};
+
+	onResize ({ width }) {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 10);
 	};
 
 };

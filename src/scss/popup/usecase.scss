@@ -1,5 +1,7 @@
 @import "~scss/_vars";
 
+$shadow: 0px 2px 20px rgba(0,0,0,0.2);
+
 .popups {
 	.popup.popupUsecase {
 		.content { height: 100%; }
@@ -22,8 +24,9 @@
 				.inner { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; }
 				.item { 
 					white-space: nowrap; padding: 0px 7px; @include text-common; border: 1px solid var(--color-control-accent); border-radius: 12px; 
-					background: #fff;
+					background: var(--color-bg-primary); transition: $transitionAllCommon;
 				}
+				.item:hover { background: var(--color-shape-highlight-medium); }				
 			}
 
 			.items { padding: 0px 56px; }
@@ -37,7 +40,7 @@
 				.item {
 					.picture { 
 						aspect-ratio: 68/45; background-size: cover; background-repeat: no-repeat; background-position: center; border-radius: 8px;
-						margin: 0px 0px 12px 0px; box-shadow: 0px 2px 20px rgba(0,0,0,0.2);
+						margin: 0px 0px 12px 0px; box-shadow: $shadow;
 					}
 					.name { @include text-header2; @include clamp1; margin: 0px 0px 2px 0px; font-weight: 500; }
 					.descr { @include text-common; @include clamp2; margin: 0px 0px 12px 0px; }
@@ -46,10 +49,25 @@
 			}
 		}
 
-		.page.pageItem { padding: 32px 56px; }
+		.page.pageItem { padding: 0px 56px 32px 56px; }
 		.page.pageItem {
+			.head { 
+				width: 100%; margin: 0px 0px 20px 0px; padding: 22px 0px 0px 0px; background: var(--color-bg-primary); position: sticky; 
+				left: 0px; top: 0px; z-index: 1; 
+			}
+			.head {
+				.inner { display: flex; flex-direction: row; align-items: center; background: var(--color-bg-primary); }
+				.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
+				
+				.element { 
+					color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
+					border-radius: 6px; margin-left: -6px;
+				}
+				.element:hover { background: var(--color-shape-highlight-medium); }
+			}
+
 			.titleWrap { 
-				margin: 0px 0px 40px 0px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; gap: 0px 16px;
+				margin: 0px 0px 22px 0px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; gap: 0px 16px;
 			}
 			.titleWrap {
 				.side.left { flex-grow: 1; display: flex; flex-direction: column; gap: 8px 0px; }
@@ -65,12 +83,8 @@
 			}
 			.screenWrap {
 				.swiper { height: 100%; overflow: visible; }
-				.swiper-slide { display: flex; align-items: center; justify-content: center; }
-
-				.screen { 
-					width: 100%; box-shadow: 0px 2px 28px 0px rgba(0, 0, 0, 0.20); background-size: contain;
-					background-position: center; background-repeat: no-repeat; border-radius: 6px; background-color: var(--color-bg-primary);
-				}
+				.swiper-slide { display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; box-shadow: $shadow; }
+				.screen { width: 100%; height: 100%; object-fit: cover; }
 
 				.icon.arrow { 
 					position: absolute; width: 44px; height: 44px; top: 50%; margin-top: -22px; background-color: var(--color-bg-primary); z-index: 1; 
@@ -78,8 +92,8 @@
 					transition: $transitionAllCommon; border: 1px solid var(--color-shape-primary);
 				}
 				.icon.arrow.hide { opacity: 0; }
-				.icon.arrow.left { left: 24px; transform: rotateZ(180deg); }
-				.icon.arrow.right { right: 24px; }
+				.icon.arrow.left { left: 16px; transform: rotateZ(180deg); }
+				.icon.arrow.right { right: 16px; }
 			}
 
 			.footerWrap { display: flex; flex-direction: row; align-items: flex-start; justify-content: stretch; }

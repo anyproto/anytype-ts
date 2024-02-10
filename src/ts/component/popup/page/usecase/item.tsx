@@ -29,7 +29,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 	
 	render () {
-		const { getAuthor, onAuthor } = this.props;
+		const { getAuthor, onAuthor, onPage } = this.props;
 		const { isLoading, error } = this.state;
 		const object = this.getObject();
 		const author = getAuthor(object.author);
@@ -39,6 +39,15 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		return (
 			<div ref={ref => this.node = ref}>
 				{isLoading ? <Loader id="loader" /> : ''}
+
+				<div className="head">
+					<div className="inner">
+						<div className="element" onClick={() => onPage('', {})}>
+							<Icon className="back" />
+							{translate('commonBack')}
+						</div>
+					</div>
+				</div>
 
 				<div className="titleWrap">
 					<div className="side left">
@@ -55,7 +64,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				<div className="screenWrap">
 					<Swiper 
 						spaceBetween={20} 
-						slidesPerView={1}
+						slidesPerView={1.5}
 						onSlideChange={() => this.checkArrows()}
 						onSwiper={swiper => this.onSwiper(swiper)}
 					>
