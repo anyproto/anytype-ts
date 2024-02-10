@@ -43,12 +43,16 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const { isLoading } = this.state;
 		const items = this.getItems();
 		const { gallery } = commonStore;
+		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
 		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
 		let textEmpty = '';
+		if (filter) {
+			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
+		} else
 		if (this.category) {
 			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), this.category.name);
 		};
