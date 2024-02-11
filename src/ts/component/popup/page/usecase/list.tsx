@@ -187,11 +187,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			success: (data: any) => {
 				commonStore.gallery = {
 					categories: (data.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
-					list: (data.experiences || []).map(it => ({ 
-						...it,
-						title: translate(UtilCommon.toCamelCase(`usecaseName-${it.name}`)),
-						description: translate(UtilCommon.toCamelCase(`usecaseDescription-${it.name}`)),
-					})),
+					list: data.experiences || [],
 				};
 
 				success();
@@ -244,7 +240,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		
 		let items = commonStore.gallery.list || [];
 		if (this.category) {
-			items = items.filter(it => this.category.list.includes(it.name));
+			items = items.filter(it => this.category.experiences.includes(it.name));
 		};
 
 		if (filter) {
