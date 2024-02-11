@@ -44,7 +44,7 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 					background: var(--color-bg-primary); transition: $transitionAllCommon; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 8px;
 					margin: 0px 8px 0px 0px; vertical-align: top;;
 				}
-				.item:hover { background: var(--color-shape-highlight-medium); }
+				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item:last-child { margin: 0px; }
 
 				.div { width: 1px; height: 28px; background: var(--color-control-active); display: inline-block; vertical-align: top; margin: 0px 8px 0px 0px; }
