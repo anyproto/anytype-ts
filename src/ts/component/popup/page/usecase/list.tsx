@@ -6,6 +6,7 @@ import { commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
+	category: any;
 };
 
 const HEIGHT = 450;
@@ -19,10 +20,11 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	cache: any = {};
 	timeoutResize = 0;
 	timeoutFilter = 0;
-	category = null;
-	categoryPages = 0;
+	pages = 0;
+	page = 0;
 	state = {
-		isLoading: false
+		isLoading: false,
+		category: null,
 	};
 
 	constructor (props: I.PopupUsecase) {
@@ -41,7 +43,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	
 	render () {
 		const { getAuthor, onAuthor } = this.props;
-		const { isLoading } = this.state;
+		const { isLoading, category } = this.state;
 		const items = this.getItems();
 		const { gallery } = commonStore;
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
@@ -54,12 +56,18 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		if (filter) {
 			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
 		} else
-		if (this.category) {
-			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), this.category.name);
+		if (category) {
+			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
 		};
 
 		const Category = (item: any) => (
-			<div className="item" onClick={() => this.onCategory(item)}>{item.name}</div>
+			<div 
+				className="item" 
+				onClick={() => this.onCategory(item)}
+			>
+				{item.icon ? <Icon className={item.icon} /> : ''}
+				{item.name}
+			</div>
 		);
 
 		const Item = (item: any) => {
@@ -101,15 +109,18 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 				<div id="categories" className="categories">
 					<div id="inner" className="inner">
 						{gallery.categories.map((item: any, i: number) => (
-							<Category key={i} {...item} />
+							<React.Fragment key={i}>
+								<Category {...item} />
+								{item.id == 'made-by-any' ? <div className="div" /> : ''}
+							</React.Fragment>
 						))}
 					</div>
 
-					<div className="gradient left" />
-					<div className="gradient right" />
+					<div id="gradientLeft" className="gradient left" />
+					<div id="gradientRight" className="gradient right" />
 
-					<Icon className="arrow left" />
-					<Icon className="arrow right" />
+					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
+					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 
 				<div className="mid">
@@ -204,8 +215,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	componentDidUpdate (): void {
 		this.reset();
+		this.checkPage();
 		this.props.position();
-		this.calcCategoryPages();
 	};
 
 	componentWillUnmount(): void {
@@ -226,8 +237,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	onCategory (item: any) {
-		this.category = item;
-		this.forceUpdate();
+		this.setState({ category: item });
 	};
 
 	onFilterChange (v: string) {
@@ -240,12 +250,13 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	getItems () {
+		const { category } = this.state;
 		const ret: any[] = [];
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		
 		let items = commonStore.gallery.list || [];
-		if (this.category) {
-			items = items.filter(it => this.category.experiences.includes(it.name));
+		if (category) {
+			items = items.filter(it => category.experiences.includes(it.name));
 		};
 
 		if (filter) {
@@ -283,18 +294,57 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		return translate(UtilCommon.toCamelCase(`usecaseCategory-${id}`));
 	};
 
-	calcCategoryPages () {
+	calcPages () {
+		const { categories } = commonStore.gallery;
 		const node = $(this.node);
 		const width = node.width();
 		const items = node.find('#categories .item');
 
 		let iw = 0;
-
 		items.each((i, item) => {
-			iw += $(item).outerWidth(true) + 8;
+			iw += $(item).outerWidth(true);
 		});
+		iw += 8 * categories.length + 1;
 
-		this.categoryPages = Math.ceil(iw / width);
+		this.pages = Number(Math.ceil(iw / width)) || 1;
+	};
+
+	checkPage () {
+		const node = $(this.node);
+		const gradientLeft = node.find('#gradientLeft');
+		const gradientRight = node.find('#gradientRight');
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+
+		this.calcPages();
+		this.page = Math.max(0, this.page);
+		this.page = Math.min(this.page, this.pages - 1);
+
+		if (!this.page) {
+			gradientLeft.hide();
+			arrowLeft.hide();
+		} else {
+			gradientLeft.show();
+			arrowLeft.show();
+		};
+
+		if (this.page == this.pages - 1) {
+			gradientRight.hide();
+			arrowRight.hide();
+		} else {
+			gradientRight.show();
+			arrowRight.show();
+		};
+	};
+
+	onArrow (dir: number) {
+		const node = $(this.node);
+		const inner = node.find('#categories #inner');
+
+		this.page += dir;
+		this.checkPage();
+
+		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
 	};
 
 };

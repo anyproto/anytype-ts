@@ -38,12 +38,22 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 				position: sticky; top: 0px; left: 0px; z-index: 1;
 			}
 			.categories {
-				.inner { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; }
+				.inner { transform: translate3d(0px,0px,0px); transition: 0.3s transform $easeInQuint; white-space: nowrap; }
 				.item { 
-					white-space: nowrap; padding: 0px 7px; @include text-common; border: 1px solid var(--color-control-accent); border-radius: 12px; 
-					background: var(--color-bg-primary); transition: $transitionAllCommon;
+					white-space: nowrap; padding: 2px 12px; @include text-common; border: 1px solid var(--color-control-accent); border-radius: 14px; 
+					background: var(--color-bg-primary); transition: $transitionAllCommon; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 8px;
+					margin: 0px 8px 0px 0px; vertical-align: top;;
 				}
 				.item:hover { background: var(--color-shape-highlight-medium); }
+				.item:last-child { margin: 0px; }
+
+				.div { width: 1px; height: 28px; background: var(--color-control-active); display: inline-block; vertical-align: top; margin: 0px 8px 0px 0px; }
+
+				.item {
+					.icon { width: 16px; height: 16px; background-size: contain; }
+					.icon.heart { background-image: url('~img/icon/popup/usecase/heart.svg'); }
+					.icon.any { background-image: url('~img/icon/popup/usecase/any.svg'); }
+				}
 
 				.gradient { position: absolute; top: 0px; z-index: 1; width: 26%; height: 100%; pointer-events: none; transition: $transitionAllCommon; }
 				.gradient.left { left: 0px; background: linear-gradient(to left, rgba(79, 79, 79, 0) 0%, var(--color-shape-highlight-light-solid) 100%); }
