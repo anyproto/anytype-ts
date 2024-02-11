@@ -1653,4 +1653,19 @@
 
 	"challengeTitle": "Please enter the following numbers in the extension"
 
+	"dashboard": "Dashboard",
+	"work": "Work",
+	"education": "Education",
+	"personal-growth": "Personal Growth",
+	"project-tracking": "Project tracking",
+	"collection": "Collection",
+	"health-fitness": "Health & Fitness",
+	"finance": "Finance",
+	"food-nutrition": "Food & Nutrition",
+	"travel": "Travel",
+	"hobbies": "Hobbies",
+	"home": "Home",
+	"other": "Other",
+	"featured": "Featured",
+	"made-by-any": "Made by Any"
 }
