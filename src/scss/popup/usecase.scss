@@ -35,7 +35,7 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 
 			.categories { 
 				padding: 18px 24px; background: var(--color-shape-highlight-light-solid); border-bottom: 1px solid var(--color-shape-secondary); 
-				position: sticky; top: 0px; left: 0px; z-index: 1; position: relative;
+				position: sticky; top: 0px; left: 0px; z-index: 1;
 			}
 			.categories {
 				.inner { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; }

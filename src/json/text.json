@@ -337,6 +337,22 @@
 	"usecase6Title": "Empty",
 	"usecase6Label": "Just a blank canvas",
 
+	"usecaseCategoryDashboard": "Dashboard",
+	"usecaseCategoryWork": "Work",
+	"usecaseCategoryEducation": "Education",
+	"usecaseCategoryPersonalGrowth": "Personal Growth",
+	"usecaseCategoryProjectTracking": "Project tracking",
+	"usecaseCategoryCollection": "Collection",
+	"usecaseCategoryHealthFitness": "Health & Fitness",
+	"usecaseCategoryFinance": "Finance",
+	"usecaseCategoryFoodNutrition": "Food & Nutrition",
+	"usecaseCategoryTravel": "Travel",
+	"usecaseCategoryHobbies": "Hobbies",
+	"usecaseCategoryHome": "Home",
+	"usecaseCategoryOther": "Other",
+	"usecaseCategoryFeatured": "Featured",
+	"usecaseCategoryMadeByAny": "Made by Any",
+
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
 	"pageMainNavigationItemEmptyTitle": "Object can not be shown",

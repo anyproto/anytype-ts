@@ -162,6 +162,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		this.setState({ isLoading: true });
 
+		/*
 		C.GalleryDownloadIndex((message: any) => {
 			commonStore.gallery = {
 				categories: message.categories || [],
@@ -169,6 +170,35 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			};
 			
 			this.setState({ isLoading: false });
+		});
+		*/
+
+		this.tmpLoad(() => {
+			this.setState({ isLoading: false });
+		}, () => {
+			this.setState({ isLoading: false });
+		});
+	};
+
+	tmpLoad (success: () => void, error: () => void): void {
+		$.ajax({
+			url: 'https://tools.gallery.any.coop/app-index.json',
+			dataType: 'json',
+			success: (data: any) => {
+				commonStore.gallery = {
+					categories: (data.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
+					list: (data.experiences || []).map(it => ({ 
+						...it,
+						title: translate(UtilCommon.toCamelCase(`usecaseName-${it.name}`)),
+						description: translate(UtilCommon.toCamelCase(`usecaseDescription-${it.name}`)),
+					})),
+				};
+
+				success();
+			},
+			error: () => {
+				error();
+			}
 		});
 	};
 
@@ -246,6 +276,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	onResize ({ width }) {
 		window.clearTimeout(this.timeoutResize);
 		this.timeoutResize = window.setTimeout(() => this.forceUpdate(), 10);
+	};
+
+	categoryName (id: string) {
+		return translate(UtilCommon.toCamelCase(`usecaseCategory-${id}`));
 	};
 
 };
