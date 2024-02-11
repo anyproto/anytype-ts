@@ -20,6 +20,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	timeoutResize = 0;
 	timeoutFilter = 0;
 	category = null;
+	categoryPages = 0;
 	state = {
 		isLoading: false
 	};
@@ -97,8 +98,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		return (
 			<div ref={ref => this.node = ref} className="wrap">
-				<div className="categories">
-					<div className="inner">
+				<div id="categories" className="categories">
+					<div id="inner" className="inner">
 						{gallery.categories.map((item: any, i: number) => (
 							<Category key={i} {...item} />
 						))}
@@ -187,7 +188,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			success: (data: any) => {
 				commonStore.gallery = {
 					categories: (data.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
-					list: data.experiences || [],
+					list: (data.experiences || []).map(it => ({ 
+						...it, 
+						size: it.fileSize,
+					})),
 				};
 
 				success();
@@ -200,7 +204,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	componentDidUpdate (): void {
 		this.reset();
-		this.props.position();	
+		this.props.position();
+		this.calcCategoryPages();
 	};
 
 	componentWillUnmount(): void {
@@ -276,6 +281,20 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 	categoryName (id: string) {
 		return translate(UtilCommon.toCamelCase(`usecaseCategory-${id}`));
+	};
+
+	calcCategoryPages () {
+		const node = $(this.node);
+		const width = node.width();
+		const items = node.find('#categories .item');
+
+		let iw = 0;
+
+		items.each((i, item) => {
+			iw += $(item).outerWidth(true) + 8;
+		});
+
+		this.categoryPages = Math.ceil(iw / width);
 	};
 
 };
