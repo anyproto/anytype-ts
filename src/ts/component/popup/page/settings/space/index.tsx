@@ -31,13 +31,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { localUsage, bytesLimit } = commonStore.spaceStorage;
+		const { config, spaceStorage } = commonStore;
+		const { localUsage, bytesLimit } = spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const canShare = (space.spaceAccessType != I.SpaceType.Personal) /* && UtilObject.isSpaceOwner(space.creator) */;
+		const canShare = config.experimental && (space.spaceAccessType != I.SpaceType.Personal) && UtilObject.isSpaceOwner(space.creator);
 		const canWrite = UtilObject.canParticipantWrite();
 		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
