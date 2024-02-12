@@ -319,7 +319,7 @@ class MenuManager {
 
 			(is.windows || is.linux) ? { 
 				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setConfig(this.win, { hideMenuBar: !config.hideMenuBar });
+					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
 					this.initTray();
 				} 
 			} : null,

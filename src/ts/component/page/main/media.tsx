@@ -52,8 +52,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const file = blocks.find(it => it.isFile());
 		const relations = blocks.filter(it => it.isRelation());
 
-		console.log('LAYOUT', object.layout);
-
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
 		const isAudio = file?.isFileAudio();
