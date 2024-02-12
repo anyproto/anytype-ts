@@ -56,8 +56,6 @@ if (Util.isIframe()) {
 	component = <Iframe />;
 };
 
-console.log(window.Anytype);
-
 if (!rootId) {
 	console.error('[Entry] rootId is not defined');
 } else {
