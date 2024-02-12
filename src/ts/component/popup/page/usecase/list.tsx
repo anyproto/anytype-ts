@@ -174,42 +174,13 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		this.setState({ isLoading: true });
 
-		/*
 		C.GalleryDownloadIndex((message: any) => {
 			commonStore.gallery = {
-				categories: message.categories || [],
+				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
 				list: message.list || [],
 			};
 			
 			this.setState({ isLoading: false });
-		});
-		*/
-
-		this.tmpLoad(() => {
-			this.setState({ isLoading: false });
-		}, () => {
-			this.setState({ isLoading: false });
-		});
-	};
-
-	tmpLoad (success: () => void, error: () => void): void {
-		$.ajax({
-			url: 'https://tools.gallery.any.coop/app-index.json',
-			dataType: 'json',
-			success: (data: any) => {
-				commonStore.gallery = {
-					categories: (data.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
-					list: (data.experiences || []).map(it => ({ 
-						...it, 
-						size: it.fileSize,
-					})),
-				};
-
-				success();
-			},
-			error: () => {
-				error();
-			}
 		});
 	};
 
@@ -256,7 +227,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		
 		let items = commonStore.gallery.list || [];
 		if (category) {
-			items = items.filter(it => category.experiences.includes(it.name));
+			items = items.filter(it => category.list.includes(it.name));
 		};
 
 		if (filter) {
