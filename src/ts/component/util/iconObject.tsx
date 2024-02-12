@@ -183,7 +183,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human: 
+			case I.ObjectLayout.Participant: {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -411,7 +412,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 						onSelect(icon);
 					};
 				},
-
 				onUpload: (objectId: string) => {
 					if (onUpload) {
 						onUpload(objectId);
@@ -440,7 +440,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = 28;
 		};
 
-		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
+		if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout) && (size >= 40)) {
 			s = size;
 		};
 

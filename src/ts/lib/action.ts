@@ -268,7 +268,7 @@ class Action {
 		
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				title = translate('libActionUninstallTypeTitle');
+				title = UtilCommon.sprintf(translate('libActionUninstallTypeTitle'), object.name);
 				text = translate('libActionUninstallTypeText');
 				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
 
@@ -277,7 +277,7 @@ class Action {
 			};
 
 			case I.ObjectLayout.Relation: {
-				title = translate('libActionUninstallRelationTitle');
+				title = UtilCommon.sprintf(translate('libActionUninstallRelationTitle'), object.name);
 				text = translate('libActionUninstallRelationText');
 				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
 
@@ -547,7 +547,6 @@ class Action {
 				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
 				text: translate('spaceDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
-				colorConfirm: 'red',
 				onConfirm: () => {
 					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
 
@@ -559,7 +558,7 @@ class Action {
 
 							if (!message.error.code) {
 								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceType });
+								analytics.event('DeleteSpace', { type: deleted.spaceAccessType });
 							};
 						});
 					};

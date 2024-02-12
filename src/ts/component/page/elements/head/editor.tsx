@@ -37,7 +37,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
-		if (root.isObjectHuman()) {
+		if (root.isObjectHuman() || root.isObjectParticipant()) {
 			icon.type = I.BlockType.IconUser;
 		};
 

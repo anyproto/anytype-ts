@@ -28,7 +28,7 @@
 
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia {
-			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
+			.mediaImage { width: auto; height: auto; max-width: 100%; display: inline-block; object-fit: contain; }
 		}
 	}
 

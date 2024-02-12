@@ -203,7 +203,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
-					onDragStart={e => 	e.preventDefault()}
+					onDragStart={e => e.preventDefault()}
 				/>
 			</div>
 		);
@@ -312,7 +312,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const node = $(this.node);
 		const items = node.find(Mark.getTag(I.MarkType.Link));
 
@@ -364,6 +364,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				marks: this.marks,
 				onChange: this.setMarks,
+				noUnlink: readonly,
+				noEdit: readonly,
 			});
 
 			element.off('click.link').on('click.link', e => {
@@ -382,7 +384,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		const node = $(this.node);
 		const items = node.find(Mark.getTag(I.MarkType.Object));
 
@@ -448,6 +450,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				marks: this.marks,
 				onChange: this.setMarks,
+				noUnlink: readonly,
+				noEdit: readonly,
 			});
 		});
 	};
@@ -1462,12 +1466,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 
-	onMentionSelect (objectId: string, icon: string) {
+	onMentionSelect (id: string, icon: string) {
 		const { rootId, block } = this.props;
 		const value = this.getValue();
 
 		UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-			UtilObject.setIcon(objectId, icon, '');
+			UtilObject.setIcon(id, icon, '');
 		});
 	};
 

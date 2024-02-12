@@ -104,7 +104,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		};
 		
 		focus.clear(true);
-		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
+		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
 	};
 	
 	onIconPage () {
@@ -240,11 +240,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onUpload (type: I.CoverType, objectId: string) {
-		const { rootId } = this.props;
-
-		UtilObject.setCover(rootId, type, objectId, 0, -0.25, 0, () => {
-			this.setState({ loading: false });
-		});
+		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
 	};
 
 });

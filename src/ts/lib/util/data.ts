@@ -212,10 +212,8 @@ class UtilData {
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
-		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.profile(info.analyticsId, info.networkId);
-
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
@@ -288,11 +286,13 @@ class UtilData {
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
+		const { space } = commonStore;
+
 		const list = [
 			{
 				subId: Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: blockStore.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -309,7 +309,7 @@ class UtilData {
 				subId: Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
@@ -329,7 +329,7 @@ class UtilData {
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
@@ -363,6 +363,16 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
+			},
+			{
+				subId: Constant.subId.participant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 			}
 		];
 
@@ -385,11 +395,15 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
 		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
+	};
+
+	participantRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
 	};
 
 	createSession (callBack?: (message: any) => void) {
@@ -676,7 +690,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -707,7 +721,7 @@ class UtilData {
 		};
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -773,7 +787,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -793,7 +807,7 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -849,7 +863,7 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space, techSpace } = commonStore;
+		const { space } = commonStore;
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -857,7 +871,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {

@@ -36,7 +36,8 @@ class UtilGraph {
 				break;
 			};
 				
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Participant: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
 				};

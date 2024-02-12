@@ -41,7 +41,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	render () {
 		const { isEditing } = this.state;
 		const { showRelativeDates } = commonStore;
-		const { relation, getView, record, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const { record, relation, getView, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit } = this.props;
 		
 		if (!record || !relation) {
 			return null;
@@ -153,11 +153,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					content = <div className="name">{name}</div>;
 				} else {
 					if (isName && (record.layout == I.ObjectLayout.Note)) {
-						content = (
-							<span className="emptyText">
-								{translate('commonEmpty')}
-							</span>
-						);
+						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
 						content = (
 							<div className="empty">
@@ -207,7 +203,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						onUpload={this.onIconUpload}
 						onCheckbox={this.onCheckbox}
 						size={iconSize} 
-						canEdit={!record.isReadonly} 
+						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
 						noClick={true}

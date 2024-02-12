@@ -4,17 +4,38 @@
 	.popup.popupConfirm {
 		.innerWrap { width: 424px; padding: 32px; text-align: center; }
 
-		.title { @include text-header3; margin-bottom: 4px; }
-		.label { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
-		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+		.title { @include text-header3; margin-bottom: 6px; }
+		.label { margin-bottom: 26px; user-select: text !important; word-wrap: break-word; }
+		.buttons { display: flex; flex-direction: row-reverse; gap: 0px 8px; }
+		.buttons {
+			.button { width: 100%; }
+			.button.blank:not(:hover):not(.hover) { background-color: var(--color-bg-primary); }
+		}
 		.iconObject { margin-bottom: 12px; }
 
-		.icon { width: 32px; height: 32px; margin: 0px 0px 16px 0px; }
-		.icon.update { background-image: url('~img/icon/update.svg'); }
+		.iconWrapper { display: flex; width: 320px; height: 104px; border-radius: 320px; margin: -16px auto 10px; align-items: center; justify-content: space-around; }
+		.iconWrapper.green { background: radial-gradient(50% 50% at 50% 50%, #A9F496 26.04%, rgba(188, 242, 175, 0.00) 100%); }
+		.iconWrapper.red { background: radial-gradient(50% 50% at 50% 50%, #FFBCBC 26.04%, rgba(255, 230, 230, 0.00) 100%); }
+		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #FFF0C8 0%, rgba(255, 240, 200, 0.00) 100%); }
+
+		.icon { width: 72px; height: 72px; }
+		.icon.update { background-image: url('~img/icon/popup/confirm/update.svg'); }
+		.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
+		.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
+		.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
 	}
 
 	.popup.popupConfirm.isWide {
 		.innerWrap { width: 640px; }
+	}
+
+	.popup.popupConfirm.techInfo {
+		.title { margin-bottom: 9px; }
+		.label {
+			dl { display: flex; justify-content: space-between; }
+			dt { width: 120px; flex-shrink: 0; text-align: left; }
+			dd { text-align: right; color: var(--color-text-secondary); }
+		}
 	}
 
 	.popup.popupConfirm.isLeft {

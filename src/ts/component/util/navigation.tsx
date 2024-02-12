@@ -29,14 +29,15 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
+		const canWrite = UtilObject.canParticipantWrite();
 
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() },
+			canWrite ? { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() } : null, 
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
-		];
+		].filter(it => it);
 
 		return (
 			<div 

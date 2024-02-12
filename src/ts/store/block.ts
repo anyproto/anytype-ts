@@ -405,6 +405,10 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
+		if (!UtilObject.canParticipantWrite()) {
+			return false;
+		};
+
 		restrictions = restrictions || [];
 		flags = flags || [];
 

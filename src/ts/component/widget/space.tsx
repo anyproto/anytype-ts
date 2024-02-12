@@ -31,7 +31,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 				/>
 				<div className="txt">
 					<ObjectName object={space} />
-					{space && !space._empty_ ? <div className="type">{translate(`spaceType${space.spaceType}`)}</div> : ''}
+					{space && !space._empty_ ? <div className="type">{translate(`spaceAccessType${space.spaceAccessType}`)}</div> : ''}
 				</div>
 			</div>
 		);

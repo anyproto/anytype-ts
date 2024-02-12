@@ -182,11 +182,6 @@ class DetailStore {
 			object.name = object.snippet;
 		};
 
-		if (object.id == UtilObject.getIdentityId()) {
-			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
-			object.type = type ? type.id : object.type;
-		};
-
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedObject');
 		};
@@ -215,6 +210,11 @@ class DetailStore {
 
 			case I.ObjectLayout.SpaceView: {
 				object = this.mapSpace(object);
+				break;
+			};
+
+			case I.ObjectLayout.Participant: {
+				object = this.mapParticipant(object);
 				break;
 			};
 		};
@@ -298,20 +298,28 @@ class DetailStore {
 	};
 
 	private mapSpace (object: any) {
-		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Private;
+		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 
-		delete(object.spaceAccessibility);
-
 		return object;
 	};
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		return object;
+	};
+
+	private mapParticipant (object) {
+		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+
+		delete(object.participantPermissions);
+		delete(object.participantStatus);
+
 		return object;
 	};
 

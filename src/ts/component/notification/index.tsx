@@ -3,12 +3,13 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilRouter } from 'Lib';
-import { notificationStore } from 'Store';
+import { notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import NotificationImport from './import';
 import NotificationExport from './export';
 import NotificationGallery from './gallery';
+import NotificationJoin from './join';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
 
@@ -41,6 +42,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Gallery: {
 				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
+				break;
+			};
+
+			case I.NotificationType.Join: {
+				content = <NotificationJoin {...this.props} onButton={this.onButton} />;
 				break;
 			};
 		};
@@ -83,6 +89,17 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case 'space': {
 				UtilRouter.switchSpace(payload.spaceId);
 				break;
+			};
+
+			case 'request': {
+				popupStore.open('inviteConfirm', { 
+					data: {
+						name: payload.identityName,
+						icon: payload.identityIcon,
+						spaceId: payload.spaceId,
+						identity: payload.identity
+					}
+				});
 			};
 		};
 

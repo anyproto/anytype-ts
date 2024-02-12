@@ -387,6 +387,11 @@
 
 	"pageMainMediaNotFound": "File not found",
 
+	"pageMainImportTitle": "Downloading manifest",
+
+	"pageMainInviteTitle": "Downloading invite",
+	"pageMainInviteError": "Incorrect invite data",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
@@ -656,6 +661,17 @@
 	"popupSettingsPinSelectRepeat": "Repeat Pin Code",
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
+	"popupSettingsSpacesListTitle": "Spaces",
+	"popupSettingsSpacesListSpace": "Space",
+	"popupSettingsSpacesListAccess": "Access",
+	"popupSettingsSpacesListSize": "Size",
+	"popupSettingsSpacesListNetwork": "Network",
+	"popupSettingsSpacesListDevice": "Device",
+
+	"popupSettingsSpacesMenuMoreOffload": "Offload from the device",
+	"popupSettingsSpacesMenuMoreLeave": "Leave and unjoin space",
+	"popupSettingsSpacesMenuMoreDeleteFromNetwork": "Delete from the network",
+
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
@@ -732,9 +748,19 @@
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 
-	"popupSettingsSpaceMemberTypeReader": "Reader",
-	"popupSettingsSpaceMemberTypeEditor": "Editor",
-	"popupSettingsSpaceMemberTypeAdmin": "Admin",
+	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
+	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
+	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
+
+	"popupConfirmMemberRemoveTitle": "Remove member",
+	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
+
+	"popupConfirmMemberChangeTitle": "Are you sure?",
+	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
+
+	"popupConfirmRevokeLinkTitle": "Revoke sharing link",
+	"popupConfirmRevokeLinkText": "A new link will be generated and the previous link will be deactivated.",
+	"popupConfirmRevokeLinkConfirm": "Revoke link",
 
 	"popupSettingsSpaceLeave": "Leave %s?",
 	"popupSettingsSpaceLeaveTitle": "Leave space",
@@ -801,6 +827,20 @@
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
+	"popupInviteRequestTitle": "Join a space",
+	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
+	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
+	"popupInviteRequestRequestToJoin": "Request to join",
+	"popupInviteRequestNote": "Once the space owner approves your request, you'll join the space with the access rights owner determined.",
+
+	"popupInviteInviteConfirmTitle": "Request sent",
+	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
+
+	"popupInviteConfirmTitle": "%s requested to join %s",
+	"popupInviteConfirmButtonConfirmReader": "Grant read access",
+	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
+	"popupInviteConfirmButtonReject": "Reject",
+
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
 	"networkMode1Title": "Local-only",
@@ -837,6 +877,11 @@
 	"popupConfirmUpdateDoneOk": "Great!",
 	"popupConfirmUpdateErrorTitle": "Oops!",
 	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+	"popupAboutTitle": "Anytype",
+	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
+	"popupAboutVersion": "Version: %s",
+	"popupAboutCopyright": "Made by Any — a Swiss association",
 
 	"popupExportZipArchive": "Zip archive",
 	"popupExportIncludeLinkedObjects": "Include linked objects",
@@ -1469,8 +1514,9 @@
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
-	"spaceType0": "Private Space",
-	"spaceType1": "Personal Space",
+	"spaceAccessType0": "Private Space",
+	"spaceAccessType1": "Personal Space",
+	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
 	"spaceExisting": "Existing Object",
@@ -1606,9 +1652,9 @@
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
 
-	"libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",
+	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
 	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
-	"libActionUninstallRelationTitle": "Are you sure you want to remove this Relation?",
+	"libActionUninstallRelationTitle": "Do you want to remove Relation \"%s\"?",
 	"libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
 	"utilLoadMoreText": "Show %s more %s",
@@ -1664,13 +1710,38 @@
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
-	"notificationGalleryImportSuccessTitle": "\"%s\" was installed",
-	"notificationGalleryImportSuccessText": "Experience was successfully installed to the \"%s\" space. You can now open and start using it.",
-	"notificationGalleryImportErrorTitle": "Something went wrong",
-	"notificationGalleryImportErrorText": "Oops! \"%s\" wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGallerySuccessTitle": "<b>\"%s\"</b> was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the <b>\"%s\"</b> space. You can now open and start using it.",
+	"notificationGalleryErrorTitle": "Something went wrong",
+	"notificationGalleryErrorText": "Oops! <b>\"%s\"</b> wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+
+	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>\"%s\"</b> space",
+
+	"notificationButtonSpace": "Go to Space",
+	"notificationButtonRequest": "View request",
+
+	"participantStatus0": "Joining",
+	"participantStatus1": "Active",
+	"participantStatus2": "Removed",
+	"participantStatus3": "Declined",
+	"participantStatus4": "Removing",
+
+	"participantPermissions0": "Read",
+	"participantPermissions1": "Write",
+	"participantPermissions2": "Owner",
+	"participantPermissions3": "No access",
+
+	"spaceStatus0": "Unknown",
+	"spaceStatus1": "Loading",
+	"spaceStatus2": "Ok",
+	"spaceStatus3": "Missing",
+	"spaceStatus4": "Error",
+	"spaceStatus5": "RemoteWaitingDeletion",
+	"spaceStatus6": "RemoteDeleted",
+	"spaceStatus7": "Deleted",
 
 	"challengeTitle": "Please enter the following numbers in the extension"
 

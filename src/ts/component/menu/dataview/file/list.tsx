@@ -80,8 +80,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						id={item.id}
 						object={item}
 						name={UtilFile.name(item)}
-						onMouseEnter={e => 	this.onOver(e, item)} 
-						onClick={e => 	this.onClick(e, item)}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
@@ -185,7 +185,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

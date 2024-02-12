@@ -41,7 +41,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationOnboardingText3')} />
 
 						<div className="buttons">
-							<Button text={translate('commonDone')} className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 						</div>
 					</React.Fragment>
 				);
@@ -62,7 +62,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />
 
 						<div className="buttons">
-							<Button text={translate('commonDone')} className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 						</div>
 					</React.Fragment>
 				);

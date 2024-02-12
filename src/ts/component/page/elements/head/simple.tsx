@@ -42,16 +42,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const placeholder = {
-			title: this.props.placeholder,
-			description: translate('placeholderBlockDescription'),
-		};
+		const canWrite = UtilObject.canParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
 		const isRelation = UtilObject.isRelationLayout(object.layout);
 		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
+		const placeholder = {
+			title: this.props.placeholder,
+			description: translate('placeholderBlockDescription'),
+		};
 
 		const Editor = (item: any) => (
 			<Editable
@@ -62,11 +63,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				classNameWrap={item.className}
 				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
 				classNamePlaceholder={'c' + item.id}
-				onFocus={e => 	this.onFocus(e, item)}
-				onBlur={e => 	this.onBlur(e, item)}
-				onKeyDown={e => 	this.onKeyDown(e, item)}
+				onFocus={e => this.onFocus(e, item)}
+				onBlur={e => this.onBlur(e, item)}
+				onKeyDown={e => this.onKeyDown(e, item)}
 				onKeyUp={() => this.onKeyUp()}
-				onSelect={e => 	this.onSelectText(e, item)}
+				onSelect={e => this.onSelectText(e, item)}
 				onCompositionStart={this.onCompositionStart}
 			/>
 		);
@@ -88,6 +89,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					block={blockFeatured} 
 					className="small" 
 					isSelectionDisabled={true}
+					readonly={!allowDetails}
 					isContextMenuDisabled={isContextMenuDisabled}
 				/>
 			);
@@ -112,6 +114,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 				button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 			};
+		};
+
+		if (!canWrite) {
+			button = null;
 		};
 
 		return (

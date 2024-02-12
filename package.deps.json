@@ -4,7 +4,6 @@
 	"electron/json/*",
 	"electron/env.json",
 	"electron/img/*",
-	"electron/about/*",
 	"build",
 	"!dist/*",
 	"dist/index.html",

@@ -259,8 +259,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		$('body').addClass('colResize');
 		win.off('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', e => 	this.onResizeMove(e, relationKey));
-		win.on('mouseup.cell', e => 	this.onResizeEnd(e, relationKey));
+		win.on('mousemove.cell', e => this.onResizeMove(e, relationKey));
+		win.on('mouseup.cell', e => this.onResizeEnd(e, relationKey));
 
 		el.addClass('isResizing');
 		keyboard.setResize(true);
