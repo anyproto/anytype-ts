@@ -647,7 +647,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
 
-			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
+			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
 				return false;
 			};
 		} else

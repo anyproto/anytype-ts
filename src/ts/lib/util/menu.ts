@@ -265,6 +265,7 @@ class UtilMenu {
 			{ id: I.ObjectLayout.Audio },
 			{ id: I.ObjectLayout.Video },
 			{ id: I.ObjectLayout.Image },
+			{ id: I.ObjectLayout.Pdf },
 			{ id: I.ObjectLayout.Type },
 			{ id: I.ObjectLayout.Relation },
 			{ id: I.ObjectLayout.Note },

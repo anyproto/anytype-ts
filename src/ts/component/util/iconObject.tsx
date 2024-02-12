@@ -261,6 +261,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;

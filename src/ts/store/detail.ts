@@ -217,14 +217,10 @@ class DetailStore {
 				object = this.mapSpace(object);
 				break;
 			};
+		};
 
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Audio:
-			case I.ObjectLayout.Video:
-			case I.ObjectLayout.Image: {
-				object = this.mapFile(object);
-				break;
-			};
+		if (UtilObject.isFileLayout(object.layout)) {
+			object = this.mapFile(object);
 		};
 
 		return object;

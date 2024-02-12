@@ -192,7 +192,7 @@ class Block implements I.Block {
 	};
 
 	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio() || this.isObjectPdf());
 	};
 
 	isObjectFile (): boolean { 
@@ -209,6 +209,10 @@ class Block implements I.Block {
 
 	isObjectAudio (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
+	};
+
+	isObjectPdf (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Pdf);
 	};
 
 	isObjectType (): boolean { 
