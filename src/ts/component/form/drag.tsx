@@ -122,12 +122,12 @@ class Drag extends React.Component<Props> {
 	
 	move (x: number) {
 		raf(() => {
-			const { snaps } = this.props;
 			const node = $(this.node);
 			const nw = node.width();
 			const iw = this.icon.width();
 			const ib = parseInt(this.icon.css('border-width'));
 			const mw = this.maxWidth();
+			const snaps = this.props.snaps || [];
 
 			x = Math.max(0, x);
 			x = Math.min(mw, x);
