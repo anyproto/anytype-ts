@@ -30,4 +30,6 @@ export interface PopupSettings extends Popup {
 
 export interface PopupUsecase extends Popup {
 	onPage(page: string, data: any): void;
+	getAuthor(author: string): string;
+	onAuthor(author: string): void;
 };

@@ -68,12 +68,9 @@
 			> .side.right.isFull { width: 100%; }
 			> .side.right.isSubPage { padding-top: 0px; }
 			> .side.right {
-				.head { 
-					width: 100%; margin: 0px 0px 14px 0px; position: sticky; top: 0px; left: 0px; z-index: 10; 
-				}
+				.head { width: 100%; margin: 0px 0px 14px 0px; position: sticky; top: 0px; left: 0px; z-index: 10; }
 				.head {
 					.inner { display: flex; flex-direction: row; align-items: center; background: var(--color-bg-primary); padding: 22px 0px; }
-
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 

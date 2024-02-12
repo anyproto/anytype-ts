@@ -228,13 +228,6 @@ class MenuManager {
 
 				Separator,
 
-				{
-					label: 'Experience gallery',
-					click: () => Util.send(this.win, 'popup', 'usecase', {})
-				},
-
-				Separator,
-
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
 				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },
