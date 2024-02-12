@@ -203,7 +203,7 @@ class BlockStore {
 			return [];
 		};
 
-		const blocks = Array.from(map.values());
+		const blocks = Array.from(map.values()).filter(it => it);
 		return filter ? blocks.filter(it => filter(it)) : blocks;
 	};
 
@@ -427,7 +427,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = this.getBlocks(rootId, it => it.isText());
+		const blocks = this.getBlocks(rootId, it => it && it.isText());
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];

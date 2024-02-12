@@ -107,7 +107,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					rowIndex={param.index}
 				>
 					{({ measure }) => (
-						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
+						<div key={`gallery-row-${view.id + param.index}`} className="row" style={style}>
 							{item.children.map(id => row(id))}
 						</div>
 					)}

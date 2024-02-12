@@ -427,7 +427,8 @@ export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Respons
 	return {
 		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
 			return {
-				name: it.getName(),
+				id: it.getId(),
+				icon: it.getIcon(),
 				list: it.getExperiencesList() || [],
 			};
 		}),

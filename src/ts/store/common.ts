@@ -51,6 +51,10 @@ class CommonStore {
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
+	public gallery = {
+		categories: [],
+		list: [],
+	};
 
 	public previewObj: I.Preview = { 
 		type: null, 
