@@ -375,7 +375,7 @@
 				.creatorNameWrapper { display: flex; flex-wrap: nowrap; align-items: center; }
 
 				.spaceNameWrapper { gap: 0 12px; }
-				.creatorNameWrapper { gap: 0 6px; margin-left: 2px; @include text-small; color: var(--color-text-secondary); }
+				.creatorNameWrapper { gap: 0 6px; @include text-small; color: var(--color-text-secondary); }
 
 				.spaceName {
 					.name { max-width: 104px; @include text-overflow-nw; }
