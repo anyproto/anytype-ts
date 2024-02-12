@@ -54,8 +54,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			let content = null;
 
 			switch (item.layout) {
-				default:
-				case I.ObjectLayout.File: {
+				default: {
 					cn.push('isFile');
 					content = <File {...item} />;
 					break;
@@ -167,7 +166,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				noClose: true,
 				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
@@ -248,14 +247,17 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						case 'download': {
 							let url = '';
 							switch (item.layout) {
-								case I.ObjectLayout.File:
+								default: {
 									url = commonStore.fileUrl(item.id);
 									break;
+								};
 
-								case I.ObjectLayout.Image:
+								case I.ObjectLayout.Image: {
 									url = commonStore.imageUrl(item.id, Constant.size.image);
 									break;
+								};
 							};
+
 							if (url) {
 								Renderer.send('download', url);
 							};
