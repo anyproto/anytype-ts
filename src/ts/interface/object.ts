@@ -19,8 +19,7 @@ export enum ObjectLayout {
 	Date		 = 17,
 	SpaceView	 = 18,
 	Participant	 = 19,
-	
-	Database	 = 20,
+	Pdf			 = 20,
 
 	Empty		 = 100,
 	Navigation	 = 101,

@@ -21,6 +21,7 @@ class UtilGraph {
 
 			case I.ObjectLayout.Audio:
 			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				src = UtilFile.iconPath(d);
 				break;

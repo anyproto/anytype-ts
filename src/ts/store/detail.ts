@@ -213,18 +213,14 @@ class DetailStore {
 				break;
 			};
 
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Audio:
-			case I.ObjectLayout.Video:
-			case I.ObjectLayout.Image: {
-				object = this.mapFile(object);
-				break;
-			};
-
 			case I.ObjectLayout.Participant: {
 				object = this.mapParticipant(object);
 				break;
 			};
+		};
+
+		if (UtilObject.isFileLayout(object.layout)) {
+			object = this.mapFile(object);
 		};
 
 		return object;

@@ -6,11 +6,13 @@ interface Props {
 	id?: string;
 	className: string;
 	value: number;
-	snap?: number;
+	snaps?: number[];
 	onStart?(e: any, v: number): void;
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
 };
+
+const SNAP = 0.025;
 
 class Drag extends React.Component<Props> {
 
@@ -120,21 +122,25 @@ class Drag extends React.Component<Props> {
 	
 	move (x: number) {
 		raf(() => {
-			const { snap } = this.props;
 			const node = $(this.node);
 			const nw = node.width();
 			const iw = this.icon.width();
 			const ib = parseInt(this.icon.css('border-width'));
 			const mw = this.maxWidth();
+			const snaps = this.props.snaps || [];
 
 			x = Math.max(0, x);
 			x = Math.min(mw, x);
 
 			this.value = this.checkValue(x / mw);
 
-			if (snap && (this.value > snap - 0.025) && (this.value < snap + 0.025)) {
-				this.value = snap;
+			// Snap
+			for (const s of snaps) {
+				if ((this.value >= s - SNAP) && (this.value <= s + SNAP)) {
+					this.value = s;
+				};
 			};
+
 			x = this.value * mw;
 
 			const w = Math.min(nw, x + iw / 2);

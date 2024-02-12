@@ -465,7 +465,7 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				} else
-				if (UtilObject.getFileLayouts().includes(object.layout)) {
+				if (UtilObject.isFileLayout(object.layout)) {
 					name = UtilFile.name(object);
 				} else {
 					name = UtilCommon.shorten(object.name, 30);

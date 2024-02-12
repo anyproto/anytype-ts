@@ -293,10 +293,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const empty = node.find('#empty');
 		const inner = node.find('.side.left #inner');
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const wh = container.height() - 140;
+		const wh = container.height() - 182;
 
 		if (blocks.hasClass('vertical')) {
-			blocks.css({ minHeight: wh });
 			inner.css({ minHeight: wh });
 		};
 

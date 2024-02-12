@@ -440,6 +440,7 @@ class UtilObject {
 			I.ObjectLayout.Image,
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
+			I.ObjectLayout.Pdf,
 		];
 	};
 

@@ -47,7 +47,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 					<Drag 
 						ref={ref => this.refDrag = ref} 
 						value={root.fields.width}
-						snap={0.5}
+						snaps={[ 0.25, 0.5, 0.75 ]}
 						onStart={this.onScaleStart} 
 						onMove={this.onScaleMove} 
 						onEnd={this.onScaleEnd} 
