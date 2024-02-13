@@ -33,6 +33,11 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				cn.push('isActive');
 			};
 
+			let icon = null;
+			if (item.spaceAccessType == I.SpaceType.Shared) {
+				icon = 'shared';
+			};
+
 			return (
 				<div 
 					id={`item-${item.id}`}
@@ -44,6 +49,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				>
 					<div className="iconWrap">
 						<IconObject object={item} size={96} forceLetter={true} />
+						{icon ? <Icon className={icon} /> : ''}
 					</div>
 					<ObjectName object={item} />
 				</div>

@@ -30,7 +30,14 @@
 				display: flex; flex-direction: column; align-items: center; gap: 8px 0px;
 			}
 			.item {
-				.iconWrap { width: 96px; height: 96px; border-radius: 4px; overflow: hidden; background-position: center; background-repeat: no-repeat; }
+				.iconWrap { 
+					width: 96px; height: 96px; border-radius: 4px; overflow: hidden; background-position: center; background-repeat: no-repeat; 
+					position: relative;
+				}
+				.icon.shared { 
+					width: 10px; height: 10px; position: absolute; left: 6px; bottom: 6px; background-image: url('~img/icon/menu/space/shared.svg');
+				}
+
 				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; font-weight: 500; }
 			}
 
