@@ -266,6 +266,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 					colorConfirm: 'red',
 					onConfirm,
+					onCancel: () => button.removeClass('loading'),
 				},
 			});
 		} else {
