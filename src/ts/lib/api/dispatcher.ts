@@ -971,7 +971,7 @@ class Dispatcher {
 					notificationStore.add(item);
 
 					if ((windowId == 1) && !electron.isFocused()) {
-						new window.Notification(item.title, { body: item.text }).onclick = () => electron.focus();
+						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
 				};
