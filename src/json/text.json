@@ -1057,7 +1057,7 @@
 	"popupUsecaseInstall": "Install",
 	"popupUsecaseMenuLabel": "Install experience to",
 	"popupUsecaseSpaceCreate": "Create new space",
-	"popupUsecaseListTitle": "ANY Experiences gallery",
+	"popupUsecaseListTitle": "ANY Experience Gallery",
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
