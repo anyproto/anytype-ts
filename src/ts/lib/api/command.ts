@@ -1918,6 +1918,22 @@ export const PaymentsSubscriptionGetPortalLinkUrl = (callBack?: (message: any) =
 	dispatcher.request(PaymentsSubscriptionGetPortalLinkUrl.name, request, callBack);
 };
 
+export const PaymentsSubscriptionGetVerificationEmail = (email: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Payments.Subscription.GetVerificationEmail.Request();
+	
+	request.setEmail(email);
+	
+	dispatcher.request(PaymentsSubscriptionGetVerificationEmail.name, request, callBack);
+};
+
+export const PaymentsSubscriptionVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Payments.Subscription.VerifyEmailCode.Request();
+	
+	request.setCode(code);
+	
+	dispatcher.request(PaymentsSubscriptionVerifyEmailCode.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
