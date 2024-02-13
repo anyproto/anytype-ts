@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics, Action } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action } from 'Lib';
 import { commonStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -250,7 +250,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		
 		const win = $(window);
 		win.on('keydown.search', e => this.onKeyDown(e));
-		win.on('resize.search', (e: any) => { this.resize(); });
+		win.on('resize.search', e => this.resize());
 	};
 
 	unbind () {
@@ -267,8 +267,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
 		const k = keyboard.eventKey(e);
+		const filter = this.getFilter();
 
-		if ((k != Key.down) && (this.n == -1)) {
+		if ((this.n == -1) && ![ Key.down, Key.enter ].includes(k)) {
 			return;
 		};
 
@@ -279,6 +280,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
+			const reg = new RegExp(`^${Constant.protocol}:\/\/`);
+
+			if (reg.test(filter)) {
+				const route = filter.replace(reg, '');
+				if (route) {
+					UtilRouter.go(`/${route}`, {});
+				};
+				return;
+			};
+
 			const item = items[this.n];
 			if (item) {
 				this.onClick(e, item);
@@ -557,7 +568,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		// Import action
 		if (item.isImport) {
-			Action.import(item.format, Constant.extension.import[item.format]);
+			Action.import(item.format, Constant.fileExtension.import[item.format]);
 
 		// Buttons
 		} else {
@@ -569,7 +580,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				case 'relation': {
 					$('#button-header-relation').trigger('click');
-					window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
+					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), Constant.delay.menu * 2);
 					break;
 				};
 

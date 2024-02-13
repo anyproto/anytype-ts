@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, UtilCommon, Storage, Mark, translate, keyboard } from 'Lib';
+import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard } from 'Lib';
 import { detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -134,8 +134,8 @@ class BlockStore {
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		const map = this.getMap(rootId);
+		const element = this.getMapElement(rootId, blockId);
 
-		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
 		} else {
@@ -203,7 +203,7 @@ class BlockStore {
 			return [];
 		};
 
-		const blocks = Array.from(map.values());
+		const blocks = Array.from(map.values()).filter(it => it);
 		return filter ? blocks.filter(it => filter(it)) : blocks;
 	};
 
@@ -405,6 +405,10 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
+		if (!UtilObject.canParticipantWrite()) {
+			return false;
+		};
+
 		restrictions = restrictions || [];
 		flags = flags || [];
 
@@ -427,7 +431,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = this.getBlocks(rootId, it => it.isText());
+		const blocks = this.getBlocks(rootId, it => it && it.isText());
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
@@ -449,7 +453,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ 'name', 'layout', 'snippet' ], true);
+				const object = detailStore.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -457,9 +461,14 @@ class BlockStore {
 
 				const old = text.substring(from, to);
 
-				let name = UtilCommon.shorten(object.name, 30);
+				let name = '';
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
+				} else
+				if (UtilObject.isFileLayout(object.layout)) {
+					name = UtilFile.name(object);
+				} else {
+					name = UtilCommon.shorten(object.name, 30);
 				};
 
 				name = name.trim();

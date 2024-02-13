@@ -1,0 +1,66 @@
+html.anytypeWebclipper-popup { width: 268px; }
+
+#anytypeWebclipper-popup {
+	@import "~scss/_vars";
+
+	.menus {
+		.menu.vertical { width: calc(100% - 32px); left: 16px; }
+		.menu.vertical {
+			.wrap, .items, .scrollArea, .ReactVirtualized__List { border-radius: inherit; }
+		}
+
+		.menu.menuDataviewOptionEdit {
+			.section.colorPicker {
+				.items {
+					.item.color { height: 35px; width: 35px; }
+				}
+			}
+		}
+	}
+
+	.input, .select, .textarea { @include text-small; border: 1px solid var(--color-shape-secondary); width: 100%; border-radius: 1px; }
+
+	.pin {
+		.input { width: 32px; height: 40px; @include text-paragraph; border-radius: 6px; }
+	}
+
+	.input, .select { height: 32px; padding: 0px 10px; }
+	.select { display: flex; align-items: center; }
+	.textarea { padding: 10px; resize: none; height: 68px; display: block; }
+	.buttonsWrapper { display: flex; flex-direction: column; justify-content: center; gap: 8px 0px; margin: 16px 0px 0px 0px; }
+	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 10; }
+	.error { @include text-small; margin: 1em 0px 0px 0px; }
+
+	.isFocused { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice); }
+
+	.page.pageIndex, .page.pageChallenge { padding: 50px 16px; text-align: center; }
+
+	.page.pageChallenge {
+		.title { @include text-common; font-weight: 600; margin: 0px 0px 24px 0px; }
+	}
+
+	.page.pageCreate { padding: 16px; }
+	.page.pageCreate {
+		.row { margin: 0px 0px 10px 0px; }
+		.row:last-child { margin: 0px; }
+
+		.label { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; }
+
+		.box { border: 1px solid var(--color-shape-secondary); border-radius: 1px; min-height: 32px; }
+		.box {
+			.value { padding: 6px 10px 0px 10px; }
+			.value {
+				.itemWrap { margin: 0px 6px 6px 0px; }
+			}
+
+			.entryWrap { position: relative; line-height: 18px; display: inline; vertical-align: top; }
+			.cellContent { height: auto !important; position: relative; box-shadow: 0px 0px; }
+		}
+	}
+
+	.page.pageSuccess { padding: 16px; text-align: center; }
+	.page.pageSuccess {
+		.label { @include text-small; }
+		.label.bold { @include text-common; font-weight: 600; }
+	}
+}

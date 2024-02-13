@@ -171,6 +171,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Human);
 	};
 
+	isObjectParticipant (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
+	};
+
 	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
@@ -192,7 +196,7 @@ class Block implements I.Block {
 	};
 
 	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio() || this.isObjectPdf());
 	};
 
 	isObjectFile (): boolean { 
@@ -209,6 +213,10 @@ class Block implements I.Block {
 
 	isObjectAudio (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
+	};
+
+	isObjectPdf (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Pdf);
 	};
 
 	isObjectType (): boolean { 
@@ -475,18 +483,19 @@ class Block implements I.Block {
 		return l;
 	};
 
-	getTargetObjectId () {
+	getTargetObjectId (): string {
+		let ret = '';
+
 		switch (this.type) {
-			case I.BlockType.File: {
-				return this.content.hash;
-			};
 			case I.BlockType.Link: {
-				return this.content.targetBlockId;
+				ret = this.content.targetBlockId;
 			};
 			default: {
-				return this.content.targetObjectId;
+				ret = this.content.targetObjectId;
 			};
 		};
+
+		return String(ret || '');
 	};
 
 };

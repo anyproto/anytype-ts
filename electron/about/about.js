@@ -6,7 +6,7 @@ $(() => {
 	var versionText = '';
 	var timeout = 0;
 
-	document.title = 'Anytype';
+	$('html').attr({ class: param.theme });
 
 	closeButton.on('click', e => {
 		e.preventDefault();
@@ -16,7 +16,7 @@ $(() => {
 	versionButton.on('click', e => {
 		e.preventDefault();
 
-		var handler = (e) => {
+		var handler = e => {
 			e.preventDefault();
 			e.clipboardData.setData('text/plain', versionText);
 			
@@ -29,7 +29,7 @@ $(() => {
 		copyIcon.addClass('active');
 
 		clearTimeout(timeout);
-		setTimeout(() => { copyIcon.removeClass('active'); }, 2000);
+		setTimeout(() => copyIcon.removeClass('active'), 2000);
 	});
 
 	$.ajax({
@@ -45,5 +45,16 @@ $(() => {
 			$('#version').text(versionText);
 		},
 	});
+
+	function getParam () {
+		var a = location.search.replace(/^\?/, '').split('&');
+		var param = {};
+
+		a.forEach((s) => {
+			var kv = s.split('=');
+			param[kv[0]] = kv[1];
+		});
+		return param;
+	};
 
 });

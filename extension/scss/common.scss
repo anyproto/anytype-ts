@@ -1,0 +1,86 @@
+html.anytypeWebclipper-iframe, 
+html.anytypeWebclipper-popup { 
+	@import "~scss/font.scss";
+	@import "~scss/_vars";
+
+	/* Text */
+
+	--color-text-primary: #252525;
+	--color-text-secondary: #949494;
+	--color-text-tertiary: #bfbfbf;
+	--color-text-inversion: #fff;
+
+	/* Shape */
+
+	--color-shape-primary: #e3e3e3;
+	--color-shape-secondary: #ebebeb;
+	--color-shape-tertiary: #f2f2f2;
+
+	--color-shape-highlight-medium: rgba(79, 79, 79, 0.08);
+	--color-shape-highlight-light: rgba(79, 79, 79, 0.04);
+
+	/* Control */
+
+	--color-control-accent: #252525;
+	--color-control-active: #b6b6b6;
+	--color-control-inactive: #dcdcdc;
+	--color-control-bg: #fff;
+
+	/* Background */
+
+	--color-bg-primary: #fff;
+	--color-bg-loader: rgba(255,255,255,0.7);
+
+	/* System */
+
+	--color-system-accent-100: #ffb522;
+	--color-system-accent-50: #ffd15b;
+	--color-system-accent-25: #ffee94;
+	--color-system-selection: rgba(24, 163, 241, 0.15);
+	--color-system-drop-zone: rgba(255, 187, 44, 0.25);
+
+	/* Color */
+
+	--color-yellow: #ecd91b;
+	--color-orange: #ffb522;
+	--color-red: #f55522;
+	--color-pink: #e51ca0;
+	--color-purple: #ab50cc;
+	--color-blue: #3e58eb;
+	--color-ice: #2aa7ee;
+	--color-teal: #0fc8ba;
+	--color-lime: #5dd400;
+	--color-green: #57c600;
+
+	@import "~scss/common.scss";
+	@import "~scss/form/common.scss";
+	@import "~scss/component/common.scss";
+	@import "~scss/menu/common.scss";
+	@import "~scss/block/common";
+
+	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }
+	body { font-family: 'Inter'; @include text-common; }
+
+	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 10; }
+
+	.menus {
+		.menu.vertical {
+			.item { cursor: pointer; }
+		}
+	}
+
+	.button, .select, .cellContent { cursor: pointer; }
+	.tagItem { @include text-small; }
+
+	.filter.outlined {
+		.inner { border-radius: 1px; border: 1px solid var(--color-shape-secondary); box-shadow: unset; height: 32px; }
+	}
+
+	.filter.outlined.isFocused { border: unset !important; box-shadow: unset !important; }
+	.filter.outlined.isFocused {
+		.inner { border-color: var(--color-ice) !important; box-shadow: 0px 0px 0px 1px var(--color-ice) !important; }
+		.input { border: unset !important; box-shadow: unset !important; }
+	}
+
+	.passThrough { pointer-events: all; }
+}

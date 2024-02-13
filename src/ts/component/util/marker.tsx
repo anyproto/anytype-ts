@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { I, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {

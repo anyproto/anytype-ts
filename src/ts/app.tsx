@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import mermaid from 'mermaid';
 import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
@@ -28,8 +27,6 @@ import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
 import 'scss/common.scss';
-import 'scss/debug.scss';
-import 'scss/font.scss';
 import 'scss/component/common.scss';
 import 'scss/page/common.scss';
 import 'scss/block/common.scss';
@@ -58,12 +55,14 @@ interface State {
 
 declare global {
 	interface Window {
+		isExtension: boolean;
 		$: any;
 		Electron: any;
 		Anytype: any;
 
 		isWebVersion: boolean;
 		Config: any;
+		AnytypeGlobalConfig: any;
 	}
 };
 
@@ -88,7 +87,7 @@ const rootStore = {
 
 window.$ = $;
 
-if (!window.Electron.isPackaged) {
+if (!UtilCommon.getElectron().isPackaged) {
 	window.Anytype = {
 		Store: rootStore,
 		Lib: {
@@ -134,8 +133,8 @@ enableLogging({
 */
 
 Sentry.init({
-	release: window.Electron.version.app,
-	environment: window.Electron.isPackaged ? 'production' : 'development',
+	release: UtilCommon.getElectron().version.app,
+	environment: UtilCommon.getElectron().isPackaged ? 'production' : 'development',
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -206,7 +205,7 @@ class App extends React.Component<object, State> {
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
-									<div className="version anim from">{window.Electron.version.app}</div>
+									<div className="version anim from">{UtilCommon.getElectron().version.app}</div>
 								</div>
 							</div>
 						) : ''}
@@ -238,14 +237,16 @@ class App extends React.Component<object, State> {
 	init () {
 		UtilRouter.init(history);
 
-		dispatcher.init(window.Electron.getGlobal('serverAddress'));
+		dispatcher.init(UtilCommon.getElectron().getGlobal('serverAddress'));
+		dispatcher.listenEvents();
+
 		keyboard.init();
 
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
-		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
+		console.log('[Process] os version:', UtilCommon.getElectron().version.system, 'arch:', UtilCommon.getElectron().arch);
+		console.log('[App] version:', UtilCommon.getElectron().version.app, 'isPackaged', UtilCommon.getElectron().isPackaged);
 	};
 
 	initStorage () {
@@ -305,6 +306,7 @@ class App extends React.Component<object, State> {
 	onInit (e: any, data: any) {
 		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked, css } = data;
 		const win = $(window);
+		const body = $('body');
 		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
@@ -333,13 +335,18 @@ class App extends React.Component<object, State> {
 			UtilCommon.injectCss('anytype-custom-css', css);
 		};
 
+		body.addClass('over');
+
 		const cb = () => {
 			window.setTimeout(() => {
 				anim.addClass('to');
 
 				window.setTimeout(() => {
 					loader.css({ opacity: 0 });
-					window.setTimeout(() => { loader.remove(); }, 500);
+					window.setTimeout(() => { 
+						loader.remove(); 
+						body.removeClass('over');
+					}, 500);
 				}, 750);
 			}, 2000);
 		};
@@ -418,7 +425,7 @@ class App extends React.Component<object, State> {
 			popupStore.closeAll();
 		};
 
-		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open(id, param), Constant.delay.popup);
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
@@ -437,6 +444,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
@@ -460,6 +469,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptOk'),
@@ -483,9 +494,12 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'updated',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), UtilCommon.getElectron().version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
+				colorConfirm: 'blank',
 				canCancel: false,
 			},
 		});
@@ -501,6 +515,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'error',
+				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: translate('commonRetry'),

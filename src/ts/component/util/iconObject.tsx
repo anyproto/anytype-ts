@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 import Theme from 'json/theme.json';
@@ -32,7 +32,7 @@ interface Props {
 	menuParam?: Partial<I.MenuParam>;
 	getObject?(): any;
 	onSelect?(id: string): void;
-	onUpload?(hash: string): void;
+	onUpload?(objectId: string): void;
 	onClick?(e: any): void;
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
@@ -90,12 +90,7 @@ const FontSize = {
 	128: 72,
 };
 
-const File = {};
 const Relation: any = { small: {}, big: {} };
-
-for (const key of [ 'other', 'image', 'video', 'text', 'archive', 'audio', 'pdf', 'presentation', 'table' ]) {
-	File[key] = require(`img/icon/file/${key}.svg`).default;
-};
 
 for (const i in I.RelationType) {
 	const it = Number(i);
@@ -180,7 +175,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage || iconClass) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -188,7 +183,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human: 
+			case I.ObjectLayout.Participant: {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -213,7 +209,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -227,7 +223,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				if (iconEmoji || iconImage) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
 					onLetter();
@@ -244,18 +240,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Image: {
-				if (id) {
-					cn.push('withImage');
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
-				} else {
-					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
 			case I.ObjectLayout.Bookmark: {
 				if (iconImage) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
@@ -264,9 +248,24 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Image: {
+				if (id) {
+					cn.push('withImage');
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
+				} else {
+					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+					icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
+				};
+				break;
+			};
+
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -413,10 +412,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 						onSelect(icon);
 					};
 				},
-
-				onUpload: (hash: string) => {
+				onUpload: (objectId: string) => {
 					if (onUpload) {
-						onUpload(hash);
+						onUpload(objectId);
 					};
 				}
 			},
@@ -442,7 +440,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = 28;
 		};
 
-		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
+		if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout) && (size >= 40)) {
 			s = size;
 		};
 
@@ -541,7 +539,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || UtilObject.defaultName('Page'));
+		let name = String(object.name || translate('defaultNamePage'));
 		name = UtilSmile.strip(name);
 		name = name.trim().substring(0, 1).toUpperCase();
 

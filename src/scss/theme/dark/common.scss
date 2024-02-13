@@ -18,6 +18,7 @@ html.themeDark {
 
 	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
 	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
+	--color-shape-highlight-light-solid: #242424;
 
 	/* Control */
 
@@ -159,15 +160,14 @@ html.themeDark {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
-	.input.isReadonly { background: rgba(255,255,255,0.1); }
     .inputWithFile { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
 	.input-drag {
-		.fill { background: #fff; }
-		.icon { border-color: #fff; }
+		.fill { background: var(--color-text-primary); }
+		.icon { border-color: var(--color-text-secondary); }
 	}
 
 	.dragWrap {
-		.number { color: #fff; }
+		.number { color: var(--color-text-primary); }
 	}
 
     .listPreviewObject {

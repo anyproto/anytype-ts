@@ -80,7 +80,7 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		if (isIcon) {
 			cn.push('isIcon');
-			onClick = (e: MouseEvent) => { this.onClickFile(e); };
+			onClick = e => this.onClickFile(e);
 		};
 		
 		if (focused) {
@@ -260,7 +260,7 @@ class InputWithFile extends React.Component<Props, State> {
 		if (readonly) {
 			return;
 		};
-		
+
 		Action.openFile(accept, paths => {
 			if (onChangeFile) {
 				onChangeFile(e, paths[0]);	

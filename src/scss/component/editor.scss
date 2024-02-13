@@ -126,26 +126,42 @@
 
 /* Human */ 
 
-.editorWrapper.isHuman.withIcon {
+.editorWrapper.isHuman.withIcon,
+.editorWrapper.isParticipant.withIcon
+{
 	.blocks { margin-top: -94px; }
 	.editorControls { height: 164px; }
 }
 
 .editorWrapper.isHuman.withIcon,
-.editorWrapper.isHuman.withIconAndCover
+.editorWrapper.isHuman.withIconAndCover,
+.editorWrapper.isParticipant.withIcon,
+.editorWrapper.isParticipant.withIconAndCover
 {
 	.controlButtons { left: 144px !important; }
 }
 
-.editorWrapper.isHuman.withIconAndCover { padding-top: 214px; }
-.editorWrapper.isHuman.withIconAndCover {
+.editorWrapper.isHuman.withIconAndCover,
+.editorWrapper.isParticipant.withIconAndCover
+{ padding-top: 214px; }
+
+.editorWrapper.isHuman.withIconAndCover,
+.editorWrapper.isParticipant.withIconAndCover 
+{
 	.controlButtons { bottom: 26px; }
 }
 
-.editorWrapper.align1, .editorWrapper.isHuman.align1 { 
+.editorWrapper.align1, 
+.editorWrapper.isHuman.align1,
+.editorWrapper.isParticipant.align1 
+{ 
 	.controlButtons { left: 0px !important; text-align: center; }
 }
-.editorWrapper.align2, .editorWrapper.isHuman.align2 { 
+
+.editorWrapper.align2, 
+.editorWrapper.isHuman.align2,
+.editorWrapper.isParticipant.align2
+{ 
 	.controlButtons { left: 0px !important; }
 }
 

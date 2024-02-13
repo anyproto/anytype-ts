@@ -26,7 +26,7 @@ class MenuManager {
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: Util.translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
+					{ label: Util.translate('electronMenuAbout'), click: () => Util.send(this.win, 'popup', 'about', {}, true) },
 
 					Separator,
 
@@ -137,7 +137,7 @@ class MenuManager {
 				label: Util.translate('electronMenuHelp'),
 				submenu: [
 					{
-						label: Util.translate('electronMenuReleaseNotes') + ` (${app.getVersion()})`,
+						label: `${Util.translate('electronMenuReleaseNotes')} (${app.getVersion()})`,
 						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
@@ -230,7 +230,7 @@ class MenuManager {
 
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
-				{ label: 'Export localstore', click: () => { Util.send(this.win, 'commandGlobal', 'exportLocalstore'); } },
+				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },
 
 				Separator,
 
@@ -319,7 +319,7 @@ class MenuManager {
 
 			(is.windows || is.linux) ? { 
 				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setConfig(this.win, { hideMenuBar: !config.hideMenuBar });
+					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
 					this.initTray();
 				} 
 			} : null,

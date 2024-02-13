@@ -31,15 +31,14 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { width } = block.fields || {};
-		const { state, hash } = block.content;
-		
-		let element = null;
+		const { state, targetObjectId } = block.content;
 		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
 		};
 		
+		let element = null;
 		switch (state) {
 			default:
 			case I.FileState.Empty:
@@ -50,7 +49,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 							block={block} 
 							icon="image" 
 							textFile={translate('blockImageUpload')} 
-							accept={Constant.extension.image} 
+							accept={Constant.fileExtension.image} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -68,14 +67,14 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 					<div id="wrap" className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={commonStore.imageUrl(hash, Constant.size.image)} 
-							onDragStart={(e: any) => { e.preventDefault(); }} 
+							src={commonStore.imageUrl(targetObjectId, Constant.size.image)} 
+							onDragStart={e => e.preventDefault()} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
 							onError={this.onError} 
 						/>
 						<Icon className="download" onClick={this.onDownload} />
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -159,8 +158,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 
 		keyboard.disableSelection(true);		
 		node.addClass('isResizing');
-		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
-		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
+		win.on('mousemove.media', e => this.onResize(e, checkMax));
+		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
 	};
 	
 	onResize (e: any, checkMax: boolean) {
@@ -223,10 +222,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 	
 	onClick (e: any) {
-		const { block } = this.props;
-		const { hash } = block.content;
-		const src = commonStore.imageUrl(hash, Constant.size.image);
 		if (!keyboard.withCommand(e)) {
+			const src = commonStore.imageUrl(this.props.block.content.targetObjectId, Constant.size.image);
+
 			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
 		};
 	};

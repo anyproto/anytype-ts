@@ -123,7 +123,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					<div 
 						key={item.id} 
 						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={(e: any) => { this.onView(item.id, true); }}
+						onClick={() => this.onView(item.id, true)}
 					>
 						{item.name}
 					</div>
@@ -150,14 +150,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					if (sources.includes(item.id)) {
 						icons.push({ className: 'check', tooltip: textInstalled });
 					} else {
-						icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+						icons.push({ className: 'plus', tooltip: textInstall, onClick: e => this.onInstall(e, item) });
 					};
 					break;
 			};
 			
 			return (
 				<div className={cn.join(' ')}>
-					<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div className="flex" onClick={e => this.onClick(e, item)}>
 						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>
@@ -519,19 +519,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getItems () {
-		const identity = UtilObject.getIdentityId();
 		const { loading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 		const limit = this.getLimit();
-
-		records.sort((c1: any, c2: any) => {
-			const cr1 = c1.creator;
-			const cr2 = c2.creator;
-
-			if ((cr1 == identity) && (cr2 != identity)) return -1;
-			if ((cr1 != identity) && (cr2 == identity)) return 1;
-			return 0;
-		});
 
 		let ret: any[] = [
 			{ id: 'mid', className: 'block', children: [ { id: 'mid' } ] },

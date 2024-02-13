@@ -50,7 +50,7 @@
 		"notification": 200
 	},
 	
-	"extension": {
+	"fileExtension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
@@ -97,7 +97,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "spaceId", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source", "identityProfileLink", "lastModifiedDate", "lastOpenedDate"
 	],
 
 	"relationRelationKeys": [
@@ -110,10 +110,11 @@
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "uniqueKey", "defaultTemplateId", "lastUsedDate" ],
 	"graphRelationKeys":	 [ 
 		"id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", 
-		"isDeleted", "isArchived", "isFavorite", "identityProfileLink"
+		"isDeleted", "isArchived", "isFavorite", "identityProfileLink", "restrictions"
 	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
-	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "creator", "createdDate" ],
+	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessType", "targetSpaceId", "creator", "createdDate" ],
+	"participantRelationKeys": [ "identity", "participantPermissions", "participantStatus" ],
 
 	"pageCoverRelationKey": "pageCover",
 
@@ -130,7 +131,8 @@
 		"sidebar": "sidebar",
 		"graph": "graph",
 		"space": "space",
-		"files": "files"
+		"files": "files",
+		"participant": "participant"
 	},
 
 	"typeKey": {

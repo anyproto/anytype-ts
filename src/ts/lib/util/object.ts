@@ -58,14 +58,40 @@ class UtilObject {
 		return home;
 	};
 
-	getIdentityId () {
-		const { account } = authStore;
-		return account ? `_id_${account.id}` : '';
+	getParticipantId (spaceId: string, accountId: string) {
+		spaceId = String(spaceId || '').replace('.', '_');
+		return `_participant_${spaceId}_${accountId}`;
+	};
+
+	getAccountFromParticipantId (id: string) {
+		const a = String(id || '').split('_');
+		return a.length ? a[a.length - 1] : '';
 	};
 
 	getProfile () {
-		const id = this.getIdentityId();
-		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
+		return detailStore.get(Constant.subId.profile, blockStore.profile);
+	};
+
+	getParticipant () {
+		const { space } = commonStore;
+		const { account } = authStore;
+
+		if (!account) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(space, account.id));
+		return object._empty_ ? null : object;
+	};
+
+	canParticipantWrite (): boolean {
+		const participant = this.getParticipant();
+		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
+	};
+
+	isSpaceOwner (participantId: string): boolean {
+		const { account } = authStore;
+		return account ? this.getAccountFromParticipantId(participantId) == account.id : false;
 	};
 
 	getGraph () {
@@ -87,16 +113,20 @@ class UtilObject {
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
+		if (this.isFileLayout(v)) {
+			return 'media';
+		};
+
+		if (this.isSetLayout(v)) {
+			return 'set';
+		};
+
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
 			case I.ObjectLayout.Date:
-			case I.ObjectLayout.Set:
-			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:		 r = 'media'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
@@ -123,10 +153,12 @@ class UtilObject {
 
 		let { id, spaceId } = object;
 
+		/*
 		if (identityProfileLink) {
 			id = identityProfileLink;
 			spaceId = accountSpaceId;
 		};
+		*/
 
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
@@ -208,7 +240,7 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
@@ -289,10 +321,6 @@ class UtilObject {
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(`defaultName${key}`);
-	};
-
 	name (object: any) {
 		const { isDeleted, layout, snippet } = object;
 
@@ -303,7 +331,7 @@ class UtilObject {
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('Page');
+			name = object.name || translate('defaultNamePage');
 		};
 
 		return name;
@@ -388,7 +416,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [ I.ObjectLayout.Bookmark ].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -412,6 +440,7 @@ class UtilObject {
 			I.ObjectLayout.Image,
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
+			I.ObjectLayout.Pdf,
 		];
 	};
 

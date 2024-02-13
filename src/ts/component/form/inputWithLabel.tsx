@@ -81,10 +81,12 @@ class InputWithLabel extends React.Component<Props> {
 	};
 
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { onFocus, readonly } = this.props;
 
-		this.isFocused = true;
-		this.addFocusedClass();
+		if (!readonly) {
+			this.isFocused = true;
+			this.addFocusedClass();
+		};
 
 		if (onFocus) { 
 			onFocus(e);
@@ -92,10 +94,12 @@ class InputWithLabel extends React.Component<Props> {
 	};
 	
 	onBlur (e: any) {
-		const { onBlur } = this.props;
+		const { onBlur, readonly } = this.props;
 
-		this.isFocused = false;
-		this.removeFocusedClass();
+		if (!readonly) {
+			this.isFocused = false;
+			this.removeFocusedClass();
+		};
 
 		if (onBlur) {
 			onBlur(e);

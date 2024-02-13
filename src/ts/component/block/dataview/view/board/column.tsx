@@ -83,8 +83,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								block={block}
 								relationKey={view.groupRelationKey} 
 								viewType={I.ViewType.Board}
-								getRecord={() => head}
-								recordId=""
+								record={head}
 								readonly={true} 
 								arrayLimit={4}
 								withName={true}
@@ -109,7 +108,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								{...this.props}
 								id={item.id}
 								groupId={id}
-								recordId={item.id}
+								record={item}
 							/>
 						))}
 
@@ -247,7 +246,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		menuStore.open('dataviewGroupEdit', {
 			element: `#column-${id}-head`,
 			horizontal: I.MenuDirection.Center,
-			onClose: () => { node.removeClass('active'); },
+			onClose: () => node.removeClass('active'),
 			data: {
 				rootId,
 				blockId: block.id,

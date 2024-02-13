@@ -65,7 +65,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple 
+						{...this.props} 
+						ref={ref => this.refHead = ref} 
+						placeholder={translate('defaultNameRelation')} 
+						rootId={rootId} onCreate={this.onCreate} 
+					/>
 
 					<div className="section set">
 						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralObjectType'))}</div>

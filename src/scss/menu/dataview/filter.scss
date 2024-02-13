@@ -18,7 +18,7 @@
 			}
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			.select {
 				.icon.relation { display: none; }
 				.icon.arrow { display: none; }
@@ -31,7 +31,7 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt { width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
 			.txt {
 				.name { @include text-overflow-nw; width: 100%; }
 				.flex { line-height: 20px; }
@@ -41,10 +41,15 @@
 			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
+		.item.isReadonly {
+			.txt { width: calc(100% - 50px); }
+		}
 
-		.item:hover, .item.hover {
+		.item:not(.isReadonly):hover, 
+		.item:not(.isReadonly).hover 
+		{
 			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 124px); }
+			.txt { width: calc(100% - 118px); }
 		}
 
 		.item.add { display: block; }
@@ -61,7 +66,7 @@
 	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
-		.select:hover, .select.active { background: none; }
+		.select:hover, .select.isFocused { background: none; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}

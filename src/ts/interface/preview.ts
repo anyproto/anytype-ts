@@ -30,6 +30,7 @@ export interface Preview {
 	range?: I.TextRange;
 	marks?: I.Mark[];
 	noUnlink?: boolean;
+	noEdit?: boolean;
 	passThrough?: boolean;
 	noAnimation?: boolean;
 	delay?: number;

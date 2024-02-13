@@ -53,7 +53,7 @@ class WindowManager {
 			win = null;
 		});
 
-		win.once('ready-to-show', () => { win.show(); });
+		win.once('ready-to-show', () => win.show());
 		win.on('focus', () => { 
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win); 
@@ -134,32 +134,6 @@ class WindowManager {
 		if (is.development) {
 			win.toggleDevTools();
 		};
-
-		return win;
-	};
-
-	createAbout () {
-		const win = this.create({}, { 
-			width: 400, 
-			height: 400, 
-			useContentSize: true,
-			backgroundColor: Util.getBgColor(Util.getTheme()),
-		});
-
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
-		win.setMenu(null);
-
-		win.webContents.on('will-navigate', (e, url) => {
-			e.preventDefault();
-			// eslint-disable-next-line no-undef
-			shell.openExternal(url);
-		});
-
-		win.webContents.on('new-window', (e, url) => {
-			e.preventDefault();
-			// eslint-disable-next-line no-undef
-			shell.openExternal(url);
-		});
 
 		return win;
 	};

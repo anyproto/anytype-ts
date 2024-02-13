@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { DropTarget, Icon, IconObject, ObjectName } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate } from 'Lib';
+import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
+import { I, keyboard, Storage, UtilObject, translate, UtilCommon } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -11,6 +11,7 @@ interface Props extends I.WidgetTreeItem {
 	treeKey: string;
 	style?;
 	isEditing?: boolean;
+	isSection?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
 	setActive?(id: string): void;
@@ -31,7 +32,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick } = this.props;
+		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick, isSection } = this.props;
 		const subKey = this.getSubKey();
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
@@ -40,10 +41,30 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
+		const hasMore = UtilObject.canParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;
+		let more = null;
+
+		if (isSection) {
+			cn.push('isSection');
+
+			return (
+				<div
+					ref={node => this.node = node}
+					style={style}
+					id={treeKey}
+					className={cn.join(' ')}
+				>
+					<div className="inner">
+						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+					</div>
+				</div>
+			);
+		};
 
 		/*
 		if (layout == I.ObjectLayout.Collection) {
@@ -61,9 +82,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		};
 
 		if (arrow) {
-			arrow = (
-				<div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>
-			);
+			arrow = <div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>;
+		};
+
+		if (hasMore) {
+			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
 		};
 
 		let inner = (
@@ -77,7 +100,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
-						canEdit={!isReadonly && !isArchived} 
+						canEdit={!isReadonly && !isArchived && allowedDetails} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
 						onCheckbox={this.onCheckbox}
@@ -90,7 +113,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
+					{more}
 				</div>
 			</div>
 		);
@@ -135,8 +158,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const menuParam: any = {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => { node.addClass('active'); },
-			onClose: () => { node.removeClass('active'); },
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				route: 'Widget',
 				objectIds: [ id ],
@@ -177,10 +200,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		UtilObject.setIcon(id, icon, '');
 	};
 
-	onUpload (hash: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, '', hash);
+	onUpload (objectId: string) {
+		UtilObject.setIcon(this.props.id, '', objectId);
 	};
 
 	onCheckbox () {

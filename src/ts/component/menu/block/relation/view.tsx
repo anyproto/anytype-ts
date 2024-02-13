@@ -18,6 +18,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		super(props);
 
 		this.scrollTo = this.scrollTo.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -42,14 +43,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (isLocked) {
+		if (readonly) {
 			allowedBlock = false;
 			allowedRelation = false;
 			allowedValue = false;
 		};
 
 		const Section = (section: any) => (
-			<div id={'section-' + section.id} className="section">
+			<div id={`section-${section.id}`} className="section">
 				<div className="name">
 					{section.name}
 				</div>
@@ -67,9 +68,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
-								canEdit={allowedRelation && !item.isReadonlyRelation && !readonly}
-								canDrag={allowedBlock && !readonly}
-								canFav={allowedValue && !readonly}
+								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canDrag={allowedBlock}
+								canFav={allowedValue}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -82,7 +83,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		);
 
 		const ItemAdd = () => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={this.onAdd}>
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
@@ -111,9 +112,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		scrollWrap.off('scroll').on('scroll', (e: any) => { this.onScroll(); });
-
 		this.selectionPrevent(true);
+
+		scrollWrap.off('scroll').on('scroll', () => this.onScroll());
 	};
 
 	componentDidUpdate () {
@@ -219,7 +220,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => { analytics.event('FeatureRelation'); });
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation'));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -228,7 +229,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => { analytics.event('UnfeatureRelation'); });
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation'));
 		};
 	};
 
@@ -290,14 +291,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, rootId } = data;
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, '');
+		const id = Relation.cellId(PREFIX, relationKey, rootId);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {

@@ -19,9 +19,10 @@ const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
 const ObjectLayout = {
-	Human:	 1,
-	Task:	 2,
-	Bookmark: 11,
+	Human:		 1,
+	Task:		 2,
+	Bookmark:	 11,
+	Participant: 19,
 };
 
 const EdgeType = {
@@ -141,7 +142,7 @@ initFonts = () => {
 	const fontFace = new FontFace(name, `url("../font/inter/regular.woff2") format("woff2")`);
 
 	self.fonts.add(fontFace);
-	fontFace.load().then(() => { fontFamily = name; });
+	fontFace.load().then(() => fontFamily = name);
 };
 
 image = ({ src, bitmap }) => {
@@ -488,7 +489,7 @@ drawNode = (d) => {
 			x = d.x - radius;
 			y = d.y - radius;
 	
-			if (isLayoutHuman(d)) {
+			if (isLayoutHuman(d) || isLayoutParticipant(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
 				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
@@ -752,6 +753,10 @@ const checkNodeInViewport = (d) => {
 
 const isLayoutHuman = (d) => {
 	return d.layout == ObjectLayout.Human;
+};
+
+const isLayoutParticipant = (d) => {
+	return d.layout == ObjectLayout.Participant;
 };
 
 const isLayoutBookmark = (d) => {

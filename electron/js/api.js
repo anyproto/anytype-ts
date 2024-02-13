@@ -40,7 +40,6 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 		});
-
 		win.route = '';
 	};
 
@@ -91,13 +90,11 @@ class Api {
 	};
 
 	setMenuBarVisibility (win, show) {
-		const hide = !show;
-
-		ConfigManager.set({ hideMenuBar: hide }, () => {
+		ConfigManager.set({ hideMenuBar: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
 			win.setMenuBarVisibility(show);
-			win.setAutoHideMenuBar(hide);
+			win.setAutoHideMenuBar(!show);
 		});
 	};
 
@@ -183,7 +180,7 @@ class Api {
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
 		Util.send(win, 'shutdownStart');
 
-		Server.stop(signal).then(() => { this.shutdown(win, relaunch); });
+		Server.stop(signal).then(() => this.shutdown(win, relaunch));
 	};
 
 	setInterfaceLang (win, lang) {

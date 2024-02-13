@@ -174,7 +174,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || UtilObject.defaultName('Page');
+			d.name = d.name || translate('defaultNamePage');
 		};
 
 		d.name = UtilSmile.strip(d.name);
@@ -451,6 +451,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
+		if (!UtilObject.canParticipantWrite()) {
+			return;
+		};
+
 		menuStore.open('select', {
 			...param,
 			data: {

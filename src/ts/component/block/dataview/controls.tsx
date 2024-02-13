@@ -36,7 +36,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId, readonly } = this.props;
 		const target = getTarget();
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
@@ -99,7 +99,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 					onClick={() => this.onViewSet(item)} 
 					onContextMenu={e => this.onViewContext(e, `#views #${elementId}`, item)}
 				>
-					{item.name || UtilObject.defaultName('Page')}
+					{item.name || translate('defaultNamePage')}
 				</div>
 			);
 		});
@@ -107,7 +107,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const Views = SortableContainer(() => (
 			<div id="views" className="views">
 				{views.map((item: I.View, i: number) => (
-					<ViewItem key={i} {...item} index={i} />
+					<ViewItem key={i} {...item} index={i} disabled={readonly} />
 				))}
 				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>

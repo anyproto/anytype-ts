@@ -72,14 +72,12 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							subId={rootId}
 							block={block}
 							relationKey={relation.relationKey}
-							getRecord={() => detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
-							recordId={rootId}
+							record={detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 						/>
 					</div>

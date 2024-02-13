@@ -1,0 +1,38 @@
+{
+	"manifest_version": 3,
+	"name": "Anytype Web Clipper",
+	"description": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users",
+	"version": "0.0.1",
+	"icons": {
+		"16": "img/icon16x16.png",
+		"128": "img/icon128x128.png"
+	},
+	"options_page": "settings/index.html",
+	"action": {
+		"default_title": "Anytype Web Clipper",
+		"default_popup": "popup/index.html"
+	},
+	"permissions": [
+		"contextMenus",
+		"nativeMessaging",
+		"tabs",
+		"scripting",
+		"activeTab"
+	],
+	"background": {
+		"service_worker": "js/background.js"
+	},
+	"content_scripts": [
+		{
+			"js": [ "js/foreground.js" ],
+			"css": [ "css/foreground.css" ],
+			"matches": [ "<all_urls>" ]
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [ "iframe/index.html" ],
+			"matches": [ "<all_urls>" ]
+		}
+	]
+}

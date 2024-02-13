@@ -50,7 +50,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
-		const cellId = Relation.cellId(PREFIX, relationKey, '');
+		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
 		const value = object[relationKey];
 
 		const cn = [ 'item', 'sides' ];
@@ -91,13 +91,11 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						subId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => object}
-						recordId=""
+						record={object}
 						viewType={I.ViewType.Grid}
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						menuClassNameWrap={classNameWrap}
-						bodyContainer={UtilCommon.getBodyContainer('menuBlockRelationView')}
 						pageContainer={UtilCommon.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
 						onClick={e => onCellClick(e, relationKey, object.id)}
