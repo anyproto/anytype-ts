@@ -39,6 +39,31 @@
 
 		<script type="text/javascript">
 			$(() => {
+				const Processor = {
+					Latex:			 0,
+					Mermaid:		 1,
+					Chart:			 2,
+					Youtube:		 3,
+					Vimeo:			 4,
+					Soundcloud:		 5,
+					GoogleMaps:		 6,
+					Miro:			 7,
+					Figma:			 8,
+					Twitter:		 9,
+					OpenStreetMap:	 10,
+					Reddit:			 11,
+					Facebook:		 12,
+					Instagram:		 13,
+					Telegram:		 14,
+					GithubGist:		 15,
+					Codepen:		 16,
+					Bilibili:		 17,
+					Excalidraw:		 18,
+					Kroki:			 19,
+					Graphviz:		 20,
+					Sketchfab:		 21,
+				};
+
 				const win = $(window);
 				const htmlEl = $('html');
 				const head = $('head');
@@ -65,11 +90,22 @@
 						return;
 					};
 
-					const { html, js, libs, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
+					let { html, js, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
 
+					libs = oe.data.libs || [];
 					blockId = oe.data.blockId;
 					processor = oe.data.processor;
 					useRootHeight = oe.data.useRootHeight;
+
+					const envContent = getEnvironmentContent(processor);
+
+					if (envContent.html) {
+						html = envContent.html;
+					};
+
+					if (envContent.libs && envContent.libs.length) {
+						libs = libs.concat(envContent.libs);
+					};
 
 					scripts.html('');
 					htmlEl.attr({ class: '' });
@@ -90,9 +126,14 @@
 					};
 
 					// Github Gist
-					if (processor == 15) {
+					if (processor == Processor.GithubGist) {
 						loadGithubGist(html);
 					} else {
+						if ((processor == Processor.Telegram) && !html.match(/<script/)) {
+							const post = html.replace(/^https:\/\/t.me\//, '');
+							html = '<' + `script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script` + '>';
+						};
+
 						if (insertBeforeLoad) {
 							insertHtml(html);
 						};
@@ -184,6 +225,44 @@
 							resize();
 						}
 					});
+				};
+
+				function getEnvironmentContent (processor) {
+					const libs = [];
+
+					let html = '';
+					switch (processor) {
+						case Processor.Chart: {
+							html = `<canvas id="chart"></canvas>`;
+							libs.push('https://cdn.jsdelivr.net/npm/chart.js');
+							break;
+						};
+
+						case Processor.Twitter: {
+							libs.push('https://platform.twitter.com/widgets.js');
+							break;
+						};
+
+						case Processor.Reddit: {
+							libs.push('https://embed.reddit.com/widgets.js');
+							break;
+						};
+
+						case Processor.Instagram: {
+							libs.push('https://www.instagram.com/embed.js');
+							break;
+						};
+
+						case Processor.Codepen: {
+							libs.push('https://cpwebassets.codepen.io/assets/embed/ei.js');
+							break;
+						};
+					};
+
+					return { 
+						html, 
+						libs, 
+					};
 				};
 
 			});

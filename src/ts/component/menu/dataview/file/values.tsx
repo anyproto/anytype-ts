@@ -31,7 +31,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -45,16 +45,16 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => { position(); }} />
+			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
 		);
 
         const Item = SortableElement((item: any) => {
-			let content = null;
 			const cn = [ 'item' ];
 
+			let content = null;
+
 			switch (item.layout) {
-				default:
-				case I.ObjectLayout.File: {
+				default: {
 					cn.push('isFile');
 					content = <File {...item} />;
 					break;
@@ -70,11 +70,11 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={(e: any) => { UtilObject.openPopup(item); }}>
+					<div className="clickable" onClick={() => UtilObject.openPopup(item)} onContextMenu={e => this.onMore(e, item)}>
 						{content}
 					</div>
 					<div className="buttons">
-						<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
+						<Icon className="more" onClick={e => this.onMore(e, item)} />
 					</div>
 				</div>
 			);
@@ -95,11 +95,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				ref={node => this.node = node}
 				className="items"
 			>
-				<div className="section">
-					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
-					<MenuItemVertical id="upload" icon="upload" name={translate('commonUpload')} onClick={this.onUpload} />
-				</div>
-
 				{value.length ? (
 					<div className="section">
 						<List 
@@ -116,6 +111,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						/>
 					</div>
 				) : ''}
+
+				<div className="section">
+					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
+				</div>
 			</div>
 		);
 	};
@@ -167,10 +166,17 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				noClose: true,
 				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
+
+					if (callBack) {
+						callBack();
+					};
+				},
+				onUpload: (id: string, callBack?: () => void) => {
+					this.add(id);
 
 					if (callBack) {
 						callBack();
@@ -182,23 +188,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	
 	onUpload (e: any) {
 		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
-					this.add(message.hash);
+					this.add(message.objectId);
 				};
 			});
 		});
 	};
 
-	add (hash: string) {
+	add (objectId: string) {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = Relation.getArrayValue(data.value);
-		value.push(hash);
-		value = UtilCommon.arrayUnique(value);
-
-		this.save(value);
+		this.save(Relation.getArrayValue(data.value).concat([ objectId ]));
 	};	
 
 	save (value: string[]) {
@@ -206,7 +208,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value, () => {
+		onChange(UtilCommon.arrayUnique(value), () => {
 			menuStore.updateData(id, { value });
 		});
 	};
@@ -221,7 +223,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 		element.addClass('active');
 		menuStore.open('select', { 
-			element: element.find('.icon.more'),
+			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
 			onClose: () => {
@@ -230,23 +232,32 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			data: {
 				value: '',
 				options: [
+					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
 					{ id: 'download', icon: 'download', name: translate('commonDownload') },
+					{ isDiv: true },
 					{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
 				],
 				onSelect: (event: any, el: any) => {
 
 					switch (el.id) {
+						case 'open': {
+							UtilObject.openPopup(item);
+							break;
+						};
 						case 'download': {
 							let url = '';
 							switch (item.layout) {
-								case I.ObjectLayout.File:
+								default: {
 									url = commonStore.fileUrl(item.id);
 									break;
+								};
 
-								case I.ObjectLayout.Image:
+								case I.ObjectLayout.Image: {
 									url = commonStore.imageUrl(item.id, Constant.size.image);
 									break;
+								};
 							};
+
 							if (url) {
 								Renderer.send('download', url);
 							};

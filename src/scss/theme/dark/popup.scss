@@ -84,6 +84,11 @@
 				.bg::before { box-shadow: 0px 0px; }
 			}
 		}
+
+		.side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
+			.item:hover { border-color: var(--color-shape-primary); }
+		}
     }
     
     /* PopupHelp */
@@ -93,6 +98,9 @@
 			.icon.mail { background-image: url('#{$themePath}/icon/social/mail0.svg'); }
 			.icon.mail:hover { background-image: url('#{$themePath}/icon/social/mail1.svg'); }
 		}
+
+		.highlight { color: var(--color-system-accent-100); background: var(--color-shape-highlight-medium); }
+		a:hover { color: var(--color-system-accent-100); }
 	}
 
 	/* PopupMigration */
@@ -104,9 +112,33 @@
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
-		.screenWrap {
-			.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
+		.page.pageItem {
+			.screenWrap {
+				.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
+			}
 		}
 	}
 
+	/* PopupConfirm */
+
+	.popup.popupConfirm {
+		.iconWrapper { background: none; }
+		.icon.update { background-image: url('#{$themePath}/icon/popup/confirm/update.svg'); }
+		.icon.updated { background-image: url('#{$themePath}/icon/popup/confirm/updated.svg'); }
+		.icon.error { background-image: url('#{$themePath}/icon/popup/confirm/error.svg'); }
+		.icon.confirm { background-image: url('#{$themePath}/icon/popup/confirm/confirm.svg'); }
+	}
+
+	/* PopupAbout */
+
+	.popup.popupAbout {
+		.iconWrapper { background: none; }
+	}
+
+	/* PopupInviteRequest */
+
+	.popup.popupInviteRequest {
+		.iconWrapper { background: none; }
+		.icon { background-image: url('#{$themePath}/icon/popup/space/invite.svg'); }
+	}
 }

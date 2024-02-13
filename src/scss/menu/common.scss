@@ -65,7 +65,7 @@
 			.tab:last-child { margin: 0px; }
 		}
 
-		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
+		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px 0px; align-items: center; }
 		.titleWrapper {
 			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
 			.title { @include text-common; font-weight: 600; color: var(--color-text-primary); padding: 0; }
@@ -114,14 +114,14 @@
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
-			.buttons { flex-shrink: 0; margin-top: -2px; }
+			.buttons { flex-shrink: 0; }
 			.buttons {
 				.icon { position: static; margin: 0px; }
 			}
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 
-			.clickable { display: flex; flex-grow: 1; width: 100%; }
+			.clickable { display: flex; flex-grow: 1; width: 100%; align-items: center; }
 
 			.select { height: 20px; padding-top: 0px; padding-bottom: 0px; }
 			.select {

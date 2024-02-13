@@ -89,6 +89,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedDefaultType = this.isAllowedDefaultType.bind(this);
 		this.isCollection = this.isCollection.bind(this);
+		this.canCellEdit = this.canCellEdit.bind(this);
 	};
 
 	render () {
@@ -156,7 +157,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getView: this.getView,
 			getTarget: this.getTarget,
 			getSources: this.getSources,
-			getRecord: this.getRecord,
 			getRecords: this.getRecords,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
@@ -178,6 +178,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			},
 			getSearchIds: this.getSearchIds,
+			canCellEdit: this.canCellEdit,
 		};
 
 		if (loading) {
@@ -197,7 +198,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
-						bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
@@ -474,7 +474,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
 
-	getRecord (recordId: string) {
+	getRecord (id: string) {
 		const view = this.getView();
 		if (!view) {
 			return {};
@@ -482,15 +482,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const keys = this.getKeys(view.id);
 		const subId = this.getSubId();
-		const item = detailStore.get(subId, recordId, keys);
-
-		if (!item) {
-			return {};
-		};
-
+		const item = detailStore.get(subId, id, keys);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
-		if (item.name == UtilObject.defaultName('Page')) {
+		if (item.name == translate('defaultNamePage')) {
 			item.name = '';
 		};
 		if (layout == I.ObjectLayout.Note) {
@@ -837,11 +832,31 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
+	canCellEdit (relationKey: string, recordId: string): boolean {
+		const { readonly } = this.props;
+
+		if (readonly) {
+			return false;
+		};
+
+		const relation = dbStore.getRelationByKey(relationKey);
+		const record = this.getRecord(recordId);
+
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
+			return false;
+		};
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+			return false;
+		};
+		return true;
+	};
+
 	onCellClick (e: any, relationKey: string, recordId: string) {
 		if (e.button) {
 			return;
 		};
 
+		const { fullscreenObject } = commonStore;
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
@@ -861,14 +876,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
 			const ids = selection ? selection.get(I.SelectType.Record) : [];
+
 			if (keyboard.withCommand(e)) {
-				if (ids.length) {
-					return;
-				} else {
+				if (!ids.length) {
 					UtilObject.openWindow(record);
 				};
 			} else {
-				UtilObject.openPopup(record);
+				fullscreenObject ? UtilObject.openAuto(record) : UtilObject.openPopup(record);
 			};
 		} else {
 			ref.onClick(e);
@@ -904,9 +918,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		
-		let ids = selection.get(I.SelectType.Record);
-		if (!ids.length) {
-			ids = [ id ];
+		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		if (!objectIds.length) {
+			objectIds = [ id ];
 		};
 
 		menuStore.open('dataviewContext', {
@@ -917,7 +931,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onClose: () => selection.clear(),
 			data: {
 				targetId: this.getObjectId(),
-				objectIds: ids,
+				objectIds,
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
@@ -966,7 +980,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
+					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
 				if (isNew) {
@@ -986,7 +1000,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
 		};
 
-		const menuParam = Object.assign({
+		menuStore.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
 			data: {
@@ -999,9 +1013,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				addParam,
 				onSelect,
 			}
-		}, param || {});
-
-		menuStore.open('searchObject', menuParam);
+		}, param || {}));
 	};
 
 	onSourceTypeSelect (obj: any) {
@@ -1159,7 +1171,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = UtilObject.getFileAndSystemLayouts();
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
 		const sources = this.getSources();
 
 		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
@@ -1208,7 +1220,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					block.content.objectOrder.push(it);
 				};
 
-				window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
+				window.setTimeout(() => this.applyObjectOrder(it.groupId, records), 30);
 			});
 
 			if (callBack) {
@@ -1264,10 +1276,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSelectEnd () {
-		const { dataset, isInline } = this.props;
+		const { dataset, isInline, readonly } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection || isInline) {
+		if (!selection || isInline || readonly) {
 			return;
 		};
 

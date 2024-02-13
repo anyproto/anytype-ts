@@ -5,7 +5,6 @@ import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
-	recordId: string;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
@@ -15,9 +14,8 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, record, block, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
-		const record = getRecord(recordId);
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', UtilData.layoutClass('', record.layout), ];
@@ -56,8 +54,8 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		} else {
 			content = (
 				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					id={`selectable-${record.id}`}
+					className={[ 'selectable', `type-${I.SelectType.Record}` ].join(' ')}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>
@@ -73,7 +71,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
-						onDragStart={e => onDragRecordStart(e, recordId)}
+						onDragStart={e => onDragRecordStart(e, record.id)}
 						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
@@ -86,7 +84,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + recordId}
+				id={`record-${record.id}`}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

@@ -141,8 +141,8 @@
 .previewObject.align2 {
 	.heading { text-align: right; }
 }
-.previewObject.isHuman { text-align: center; }
-.previewObject.isHuman {
+.previewObject.isHuman, .previewObject.isParticipant { text-align: center; }
+.previewObject.isHuman, .previewObject.isParticipant {
 	.heading { text-align: center; }
 	.featured { margin: 0 auto; }
 	.blocks {

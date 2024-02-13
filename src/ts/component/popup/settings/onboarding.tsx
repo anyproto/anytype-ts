@@ -123,7 +123,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { path } = this.config;
 
 		if (path) {
-			Renderer.send('pathOpen', window.Electron.dirname(path));
+			Renderer.send('pathOpen', UtilCommon.getElectron().dirname(path));
 		};
 	};
 	

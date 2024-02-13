@@ -141,7 +141,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const dataTransfer = e.dataTransfer;
 		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
-		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
+		const last = blockStore.getFirstBlock(rootId, -1, it => it && it.canCreateBlock());
 
 		let position = this.position;
 		let data: any = null;
@@ -170,7 +170,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		// String items drop
 		if (items && items.length) {
 			UtilCommon.getDataTransferString(items, (html: string) => {
-				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
+				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html }, '');
 			});
 
 			this.clearState();
@@ -235,8 +235,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		keyboard.disableSelection(true);
 		Preview.hideAll();
 
-		win.on('drag.drag', (e: any) => { this.onDrag(e); });
-		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
+		win.on('drag.drag', e => this.onDrag(e));
+		win.on('dragend.drag', e => this.onDragEnd(e));
 
 		container.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));

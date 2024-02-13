@@ -79,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
@@ -484,10 +484,10 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
 		};
 
@@ -509,7 +509,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	menuOpen (param?: Partial<I.MenuParam>) {
 		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
-		const { selection } = dataset || {};
+		const { selection } = dataset;
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -519,7 +519,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			subIds: Constant.menuIds.action,
 			onClose: () => {
-				selection.clear();
+				if (selection) {
+					selection.clear();
+				};
 				focus.apply();
 			},
 			data: {
@@ -568,8 +570,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
-		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
+		win.on('mousemove.block', e => this.onResize(e, index, offset));
+		win.on('mouseup.block', e => this.onResizeEnd(e, index, offset));
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};

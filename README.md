@@ -1,6 +1,19 @@
 # Anytype
 Official Anytype client for MacOS, Linux, and Windows.
 
+Anytype is a personal knowledge base, a digital brain that allows you to quickly capture, describe, and connect information. You can use Anytype to create books, tasks, notes, ideas, documents, tools and organize them any way you want.
+
+## Links
+
+* 🌐 [Website](https://anytype.io)
+* 📝 [Blog](https://blog.anytype.io)
+* 📑 [Documentation](https://doc.anytype.io)
+* 💼 [Technical information](https://tech.anytype.io)
+* 👋 [Community forum](https://community.anytype.io)
+* 💾 [Downloads](https://download.anytype.io)
+* ▶️ [Google Play](https://play.google.com/store/apps/details?id=io.anytype.app)
+* 🍏 [App Store](https://apps.apple.com/us/app/anytype-private-notes/id6449487029)
+
 ## Building the source
 
 ### Dependencies
@@ -46,13 +59,11 @@ Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) t
 ### Install middleware library and protobuf bindings
 Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases).
 
-**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to build middleware from source as well.
+**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to [build middleware from source](https://github.com/anyproto/anytype-heart/blob/main/docs/Build.md) as well.
 
 ```shell
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu
 ```
-	
-Or compile from the source code. Follow instructions at [`anytype-heart`](https://github.com/anyproto/anytype-heart#how-to-build).
 
 After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` into the `dist` Folder.
 

@@ -32,11 +32,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { readonly, rootId, blockId } = data;
+		const { getId } = this.props;
+		const isReadonly = this.isReadonly();
 		const items = this.getItems();
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		items.map((it: any) => {
 			const { format, name } = it.relation;
@@ -47,14 +45,13 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const canHide = allowedView && (item.relationKey != 'name');
-			const canEdit = !readonly && allowedView;
+			const canHide = !isReadonly && (item.relationKey != 'name');
 			const cn = [ 'item' ];
 			
 			if (item.relation.isHidden) {
 				cn.push('isHidden');
 			};
-			if (!canEdit) {
+			if (!isReadonly) {
 				cn.push('isReadonly');
 			};
 
@@ -62,18 +59,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				<div 
 					id={'item-' + item.relationKey} 
 					className={cn.join(' ')} 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
 					style={item.style}
 				>
-					{allowedView ? <Handle /> : ''}
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					{!isReadonly ? <Handle /> : ''}
+					<span className="clickable" onClick={e => this.onClick(e, item)}>
 						<Icon className={'relation ' + Relation.className(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (
 						<Switch 
 							value={item.isVisible} 
-							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
+							onChange={(e: any, v: boolean) => this.onSwitch(e, item, v)} 
 						/>
 					) : ''}
 				</div>
@@ -145,7 +142,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 
-				{!readonly && allowedView ? (
+				{!isReadonly ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 
@@ -153,7 +150,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							className="item add" 
 							onClick={this.onAdd} 
 							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseLeave={() => this.props.setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>
@@ -298,13 +295,24 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relations = view.relations.filter(it => {
+		
+		let list = view.getRelations();
+
+		list = list.filter(it => {
+			if (!it) {
+				return false;
+			};
+
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
+			if (!relation) {
+				return false;
+			};
+
+			return !relation.isHidden || (it.relationKey == 'name');
 		});
 
-		view.relations = arrayMove(relations, oldIndex, newIndex);
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
+		list = arrayMove(list, oldIndex, newIndex);
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it.relationKey));
 
 		keyboard.disableSelection(false);
 	};
@@ -341,10 +349,20 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+		const offset = !this.isReadonly() ? 62 : 16;
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

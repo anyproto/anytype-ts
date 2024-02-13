@@ -32,8 +32,8 @@ class MenuBlockBackground extends React.Component<I.Menu> {
 							icon="color" 
 							inner={inner} 
 							checkbox={action.value == value} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+							onClick={e => this.onClick(e, action)} 
+							onMouseEnter={e => this.onOver(e, action)} 
 						/>
 					);
 				})}
@@ -47,7 +47,7 @@ class MenuBlockBackground extends React.Component<I.Menu> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

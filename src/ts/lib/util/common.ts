@@ -10,6 +10,14 @@ const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
 
+	getElectron () {
+		return window.Electron || {};
+	};
+
+	getGlobalConfig () {
+		return window.AnytypeGlobalConfig || {};
+	};
+
 	sprintf (...args: any[]) {
 		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		const a = args;
@@ -494,7 +502,7 @@ class UtilCommon {
 	};
 
 	getPlatform () {
-		return Constant.platforms[window.Electron.platform];
+		return Constant.platforms[this.getElectron().platform];
 	};
 
 	isPlatformMac () {
@@ -534,10 +542,11 @@ class UtilCommon {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
+				bgColor: 'green',
 				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
 				textConfirm: translate('confirmUpdateConfirm'),
-				canCancel: false,
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
 					if (onConfirm) {
@@ -739,7 +748,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
+						path: this.getElectron().fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
@@ -815,16 +824,35 @@ class UtilCommon {
 			ADD_ATTR: [
 				'contenteditable'
 			],
-			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
+	};
+
+	fixAsarPath (path: string): string {
+		const Electron = this.getElectron();
+
+		let href = Electron.dirname(location.href);
+		if (Electron.isPackaged) {
+			href = href.replace('/app.asar/', '/app.asar.unpacked/');
+			path = href + path.replace(/^\.\//, '/');
+		};
+		return path;
 	};
 
 	injectCss (id: string, css: string) {
 		const head = $('head');
 		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
 
-		head.find(`#${id}`).remove();
+		head.find(`style#${id}`).remove();
 		head.append(element);
+	};
+
+	addScript (id: string, src: string) {
+		const body = $('body');
+		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
+
+		body.find(`script#${id}`).remove();
+		body.append(element);
 	};
 
 	uint8ToString (u8a: Uint8Array): string {
@@ -835,6 +863,21 @@ class UtilCommon {
 			c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK)));
 		};
 		return c.join('');
+	};
+
+	enumKey (e: any, v: any) {
+		let k = '';
+		for (const key in e) {
+			if (v === e[key]) {
+				k = key;
+				break;
+			};
+		};
+		return k;
+	};
+
+	stripTags (s: string): string {
+		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
 };

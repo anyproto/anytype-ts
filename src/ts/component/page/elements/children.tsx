@@ -15,7 +15,7 @@ const Children = observer(class Children extends React.Component<I.BlockComponen
 		return (
 			<React.Fragment>
 				{children.map((block: I.Block, i: number) => (
-					<Block key={`block-${block.id}`} {...this.props} block={block} index={i} />
+					<Block key={`block-${block.id}`} {...this.props} block={block} index={i} className={i == 0 ? 'isFirst' : ''} />
 				))}
 			</React.Fragment>
 		);

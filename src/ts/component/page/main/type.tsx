@@ -125,7 +125,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
-					<HeadSimple ref={ref => this.refHead = ref} type="Type" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple 
+						{...this.props} 
+						ref={ref => this.refHead = ref} 
+						placeholder={translate('defaultNameType')} 
+						rootId={rootId} onCreate={this.onCreate} 
+					/>
 
 					{showTemplates ? (
 						<div className="section template">
@@ -203,7 +208,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columns} filters={filtersObject} />
+								<ListObject 
+									{...this.props} 
+									sources={[ rootId ]} 
+									subId={subIdObject} 
+									rootId={rootId} 
+									columns={columns} 
+									filters={filtersObject} 
+								/>
 							</div>
 						</div>
 					) : ''}

@@ -1,5 +1,5 @@
 import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
-import { SpaceStatus, SpaceType } from './space';
+import { SpaceStatus, SpaceType, ParticipantPermissions, ParticipantStatus } from './space';
 import { AnimType, AnimDirection } from './animation';
 import { 
 	Platform, 
@@ -35,7 +35,7 @@ import {
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
-import { PopupParam, Popup, PopupSettings } from './popup';
+import { PopupParam, Popup, PopupSettings, PopupUsecase } from './popup';
 import { Preview, PreviewLink, PreviewType, PreviewSize } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
@@ -84,6 +84,8 @@ export {
 
 	SpaceStatus, 
 	SpaceType,
+	ParticipantPermissions, 
+	ParticipantStatus,
 
 	AnimType, 
 	AnimDirection,
@@ -132,6 +134,7 @@ export {
 	PopupParam,
 	Popup,
 	PopupSettings,
+	PopupUsecase,
 
 	Preview,
 	PreviewLink,

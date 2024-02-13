@@ -3,10 +3,10 @@
 .menus {
 	.menu.menuDataviewFileList { width: 288px; }
 	.menu.menuDataviewFileList {
-		.content { padding-bottom: 0px; transition: none; }
+		.content { padding-top: 12px; padding-bottom: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 
-		.items { height: calc(100% - 34px); }
+		.items { height: calc(100% - 28px); }
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 26px); }
 		}
@@ -14,6 +14,7 @@
 	}
 
 	.menu.menuDataviewFileValues {
+		.titleWrapper,
 		.content { padding-bottom: 0px; }
 
 		.item { display: flex; color: var(--color-text-secondary); }

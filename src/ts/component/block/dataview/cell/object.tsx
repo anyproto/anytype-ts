@@ -40,8 +40,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { getRecord, recordId, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
-		const record = getRecord(recordId);
+		const { record, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
@@ -171,7 +170,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 
 			if (v) {
-				window.setTimeout(() => { this.focus(); }, 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	};
@@ -216,8 +215,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, recordId, subId } = this.props;
-		const record = getRecord(recordId);
+		const { relation, record, subId } = this.props;
 
 		if (!relation || !record) {
 			return [];
@@ -225,7 +223,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(id => detailStore.get(subId, id, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 
 		return value;
 	};
@@ -262,8 +260,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const length = value.length;
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
 		};
 
 		if (onChange) {

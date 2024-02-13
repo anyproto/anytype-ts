@@ -15,8 +15,8 @@ import UtilObject from './util/object';
 import UtilMenu from './util/menu';
 import UtilRouter from './util/router';
 import UtilDate from './util/date';
-import UtilEmbed from './util/embed';
 import UtilGraph from './util/graph';
+import UtilEmbed from './util/embed';
 
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
@@ -34,33 +34,7 @@ import Survey from './survey';
 import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
-import Constant from 'json/constant.json';
-
-import { commonStore } from 'Store';
-
-/**
- * 
- * @param key the key of the text as found in the json/text.json file
- * @returns a piece of display text in the language of the user
- * Defaults to the default lang set in constant.json (english)
- */
-const translate = (key: string, force?: string): string => {
-	const lang = force || commonStore.interfaceLang;
-	const defaultData = require(`json/text.json`);
-
-	let data = defaultData;
-	if (lang == Constant.default.interfaceLang) {
-		data = defaultData; 
-	} else {
-		try { 
-			data = require(`lib/json/lang/${lang}.json`);
-		} catch(e) {
-			data = defaultData; 
-		};
-	};
-
-	return data[key] || defaultData[key] || `⚠️${key}⚠️`;
-};
+import { translate } from './translate';
 
 export {
 	keyboard,

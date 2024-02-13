@@ -44,21 +44,14 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;		
+		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
+		const object = detailStore.get(rootId, targetObjectId, []);
+		const width = Number(fields) || 0;
+		const css: any = {};
 
-		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
-		if (object._empty_) {
-			object = UtilCommon.objectCopy(content);
-			object.sizeInBytes = object.size;
-		};
-
-		const { name, sizeInBytes } = object;
-
-		const { width } = fields;
 		let element = null;
 		let pager = null;
-		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
@@ -67,7 +60,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		if (this.height) {
 			css.minHeight = this.height;
 		};
-		
+
 		switch (state) {
 			default:
 			case I.FileState.Error:
@@ -79,7 +72,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 							block={block} 
 							icon="pdf" 
 							textFile={translate('blockPdfUpload')}
-							accept={Constant.extension.pdf} 
+							accept={Constant.fileExtension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -109,14 +102,14 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				element = (
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{name}</span>
-							<span className="size">{UtilFile.size(sizeInBytes)}</span>
+							<span className="name">{UtilFile.name(object)}</span>
+							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 						</div>
 
 						<MediaPdf 
 							id={`pdf-block-${id}`}
 							ref={ref => this.refMedia = ref}
-							src={commonStore.fileUrl(hash)}
+							src={commonStore.fileUrl(targetObjectId)}
 							page={page}
 							onDocumentLoad={this.onDocumentLoad}
 							onPageRender={this.onPageRender}
@@ -220,11 +213,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onOpen (e: any) {
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-		
-		C.FileDownload(hash, window.Electron.tmpPath, (message: any) => {
+		C.FileDownload(this.props.block.getTargetObjectId(), UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -244,15 +233,9 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onClick (e: any) {
-		if (keyboard.withCommand(e)) {
-			return;
+		if (!keyboard.withCommand(e)) {
+			UtilObject.openPopup({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
-
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-
-		UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.Image });
 	};
 
 	onResizeInit () {

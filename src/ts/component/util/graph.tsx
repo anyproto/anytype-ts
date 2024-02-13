@@ -174,7 +174,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || UtilObject.defaultName('Page');
+			d.name = d.name || translate('defaultNamePage');
 		};
 
 		d.name = UtilSmile.strip(d.name);
@@ -266,7 +266,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const body = $('body');
 		const node = $(this.node);
 		const { left, top } = node.offset();
-		
+		const render = this.previewId != this.subject.id;
+
+		this.previewId = this.subject.id;
+
 		let el = $('#graphPreview');
 
 		const position = () => {
@@ -277,11 +280,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			el.css({ left: x, top: y });
 		};
 
-		if (!el.length) {
+		if (!el.length || render) {
 			el = $('<div id="graphPreview" />');
-			body.append(el);
-			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
 
+			body.find('#graphPreview').remove();
+			body.append(el);
+
+			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
 			analytics.event('SelectGraphNode', { objectType: this.subject.type, layout: this.subject.layout });
 		} else {
 			position();
@@ -446,6 +451,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
+		if (!UtilObject.canParticipantWrite()) {
+			return;
+		};
+
 		menuStore.open('select', {
 			...param,
 			data: {

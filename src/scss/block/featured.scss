@@ -3,7 +3,6 @@
 .blocks {
 	.block.blockFeatured { 
 		@include text-common; line-height: 28px; color: var(--color-text-secondary); padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
-		margin-top: -3px;
 	}
 	.block.blockFeatured {
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
@@ -39,13 +38,13 @@
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
 
-			.more { vertical-align: middle; }
+			.more { vertical-align: middle; margin-top: -2px; }
 			.label { display: inline; vertical-align: middle; }
 		}
 
 		.cellContent.c-select {
-			.over { display: inline; }	
-			.tagItem { margin: 0px 6px 0px 0px; vertical-align: middle; }
+			.over { display: inline; }
+			.tagItem { margin: -2px 6px 0px 0px; vertical-align: middle; }
 			.tagItem:last-child { margin-right: 0px; }
 			.tagItem.isStatus { line-height: 16px; }
 			.more { margin: 0px; vertical-align: middle; }
@@ -58,16 +57,24 @@
 			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 			.name { display: none; }
 			.empty { padding: 0px 4px; }
+			.more { margin-top: 2px; }
 		}
 
 		.cellContent.c-object, .cellContent.c-file {
 			.element { cursor: default; }
 		}
 
+		.cellContent.c-object {
+			.iconObject { display: inline-block; vertical-align: middle; margin: -1px 6px 0px 0px !important; }
+		}
+
 		.cellContent.c-checkbox { padding: 5px 3px; }
 		.cellContent.c-checkbox {
-			.icon { margin-top: -1px; }
-			.label { padding-left: 5px; }
+			.icon { margin: 0px 5px 0px 0px; }
+		}
+
+		.cellContent.c-longText {
+			.name { display: inline-block; vertical-align: top; max-width: 220px; @include text-overflow-nw; }
 		}
 	}
 	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }

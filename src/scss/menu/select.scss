@@ -20,7 +20,7 @@
 
 	.menu.menuSelect.withFilter {
 		.content { padding: 8px 0px 0px 0px; }
-		.items { height: calc(100% - 34px); }
+		.items { height: calc(100% - 38px); }
 	}
 
 	.menu.menuSelect.skip { width: 320px; }
@@ -73,7 +73,6 @@
 
 	/* Links, Backlinks */
 	.menu.menuSelect.featuredLinks {
-		.titleWrapper { padding-bottom: 0px; }
 		.item {
 			.info { width: 100%; }
 			.iconObject { margin: 0px; background-color: var(--color-shape-highlight-medium); }

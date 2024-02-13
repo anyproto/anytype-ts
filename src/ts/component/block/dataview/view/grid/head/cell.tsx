@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
-import { menuStore, dbStore } from 'Store';
+import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import Handle from './handle';
 import Constant from 'json/constant.json';
@@ -24,7 +24,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { relationKey, index, onResizeStart } = this.props;
+		const { rootId, block, relationKey, index, onResizeStart } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 		
 		if (!relation) {
@@ -33,28 +33,30 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 		const { format, name } = relation;
 		const readonly = relation.isReadonlyValue;
+		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
 
-		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
+		if (allowedView) {
+			cn.push('canDrag');
+		};
 
-			return (
-				<div 
-					id={Relation.cellId('head', relationKey, '')} 
-					className={cn.join(' ')}
-					onClick={this.onEdit}
-					onContextMenu={this.onEdit}
-					onMouseEnter={this.onMouseEnter}
-					onMouseLeave={this.onMouseLeave}
-				>
-					<div className="cellContent">
-						<Handle name={name} format={format} readonly={readonly} />
-						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }} />
-					</div>
+		const Cell = SortableElement((item: any) => (
+			<div 
+				id={Relation.cellId('head', relationKey, '')} 
+				className={cn.join(' ')}
+				onClick={this.onEdit}
+				onContextMenu={this.onEdit}
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
+			>
+				<div className="cellContent">
+					<Handle name={name} format={format} readonly={readonly} />
+					<div className="resize" onMouseDown={e => onResizeStart(e, relationKey)} />
 				</div>
-			);
-		});
+			</div>
+		));
 
-		return <Cell index={index} />;
+		return <Cell index={index} disabled={!allowedView} />;
 	};
 
 	onMouseEnter (): void {
@@ -88,8 +90,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				onOpen: () => { obj.addClass('active'); },
-				onClose: () => { obj.removeClass('active'); },
+				onOpen: () => obj.addClass('active'),
+				onClose: () => obj.removeClass('active'),
 				data: {
 					loadData,
 					getView,

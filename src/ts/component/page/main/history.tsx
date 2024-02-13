@@ -60,7 +60,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const cn = [ 'editorWrapper', check.className ];
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
-		if (root && root.isObjectHuman()) {
+		if (root && (root.isObjectHuman() || root.isObjectParticipant)) {
 			icon.type = I.BlockType.IconUser;
 		};
 
@@ -322,7 +322,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			children.css({ overflow: 'hidden', height: height });
 
 			window.setTimeout(() => { children.css({ height: 0 }); }, 15);
-			window.setTimeout(() => { children.hide(); }, 215);
+			window.setTimeout(() => children.hide(), 215);
 		} else {
 			item.addClass('expanded');
 			children.show();

@@ -22,6 +22,14 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const SYSTEM_DATE_RELATION_KEYS = [
+	'lastModifiedDate', 
+	'lastOpenedDate', 
+	'createdDate',
+	'addedDate',
+	'lastUsedDate',
+];
+
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
@@ -106,7 +114,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = UtilCommon.toCamelCase('is-' + I.ObjectLayout[layout]); break;
+			default: c = UtilCommon.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -204,10 +212,8 @@ class UtilData {
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
-		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.profile(info.analyticsId, info.networkId);
-
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
@@ -280,11 +286,13 @@ class UtilData {
 	};
 
 	createsSubscriptions (callBack?: () => void): void {
+		const { space } = commonStore;
+
 		const list = [
 			{
 				subId: Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: blockStore.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -301,7 +309,7 @@ class UtilData {
 				subId: Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
@@ -321,7 +329,7 @@ class UtilData {
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
@@ -339,7 +347,6 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
-					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -356,6 +363,16 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
+			},
+			{
+				subId: Constant.subId.participant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 			}
 		];
 
@@ -378,17 +395,24 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
 		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
 	};
 
+	participantRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
+	};
+
 	createSession (callBack?: (message: any) => void) {
-		C.WalletCreateSession(authStore.phrase, (message: any) => {
-			authStore.tokenSet(message.token);
-			dispatcher.listenEvents();
+		C.WalletCreateSession(authStore.phrase, authStore.appKey, (message: any) => {
+			if (!message.error.code) {
+				authStore.tokenSet(message.token);
+				authStore.appTokenSet(message.appToken);
+				dispatcher.listenEvents();
+			};
 
 			if (callBack) {
 				callBack(message);
@@ -504,12 +528,14 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
-			case I.ObjectLayout.Relation:
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
+			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
 			};
+		};
+
+		if (UtilObject.isFileLayout(object.layout)) {
+			ret.withIcon = true;
 		};
 
 		if (checkType) {
@@ -571,6 +597,12 @@ class UtilData {
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
 		return 0;
+	};
+
+	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
+		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
+		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
@@ -644,12 +676,12 @@ class UtilData {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		let details = [];
 		const mapper = (it: any) => { 
-			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			keys.forEach(k => it[k] = it[k] || '');
 			return { id: it[idField], details: it }; 
 		};
 
+		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 
@@ -658,7 +690,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -689,7 +721,7 @@ class UtilData {
 		};
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -755,7 +787,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -775,7 +807,7 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -806,9 +838,7 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
-			it.includeTime = true;
-		};
+		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
 		return it;
 	};
 
@@ -833,8 +863,7 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space, techSpace } = commonStore;
-
+		const { space } = commonStore;
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
@@ -842,7 +871,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {

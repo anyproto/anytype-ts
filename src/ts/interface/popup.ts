@@ -12,7 +12,7 @@ export interface Popup {
 	id: string;
 	param: PopupParam;
 	position? (): void;
-	close? (): void;
+	close? (callBack?: () => void): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 	getId?(): string;
@@ -26,4 +26,10 @@ export interface PopupSettings extends Popup {
 	onConfirmPin: () => void;
 	onExport: (format: I.ExportType, param: any) => void;
 	onSpaceTypeTooltip: (e: any) => void;
+};
+
+export interface PopupUsecase extends Popup {
+	onPage(page: string, data: any): void;
+	getAuthor(author: string): string;
+	onAuthor(author: string): void;
 };

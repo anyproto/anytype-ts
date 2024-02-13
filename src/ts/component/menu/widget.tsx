@@ -218,7 +218,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (this.target) {
 			if (!isCollection) {
 				const setLayouts = UtilObject.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(UtilObject.getSystemLayouts()).concat(UtilObject.getFileLayouts());
+				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(this.target.layout)) {
@@ -283,7 +283,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'source': {
 				const templateType = dbStore.getTemplateType();
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 				];
 
@@ -328,7 +328,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					options: this.getLayoutOptions(),
 					value: this.layout,
 					onSelect: (e, option) => {
-						this.layout = option.id;
+						this.layout = Number(option.id);
 						this.checkState();
 						this.forceUpdate();
 						

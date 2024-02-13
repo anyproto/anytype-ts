@@ -13,6 +13,7 @@ DOMAINS[I.EmbedProcessor.Codepen] = [ 'codepen.io' ];
 DOMAINS[I.EmbedProcessor.Bilibili] = [ 'bilibili.com', 'b23.tv'];
 DOMAINS[I.EmbedProcessor.Kroki] = [ 'kroki.io' ];
 DOMAINS[I.EmbedProcessor.GithubGist] = [ 'gist.github.com' ];
+DOMAINS[I.EmbedProcessor.Sketchfab] = [ 'sketchfab.com' ];
 
 const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 
@@ -20,7 +21,7 @@ class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
 		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
-		return this[fn] ? this[fn](content) : '';
+		return this[fn] ? this[fn](content) : content;
 	};
 
 	getYoutubeHtml (content: string): string {
@@ -45,11 +46,6 @@ class UtilEmbed {
 
 	getOpenStreetMapHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
-
-	getTelegramHtml (content: string): string {
-		const post = content.replace(/^https:\/\/t.me\//, '');
-		return `<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script>`;
 	};
 
 	getGithubGistHtml (content: string): string {
@@ -195,6 +191,36 @@ class UtilEmbed {
 				break;
 			};
 
+			case I.EmbedProcessor.Sketchfab: {
+				const a = url.split('/');
+				if (!a.length) {
+					break;
+				};
+
+				const name = String(a[a.length - 1] || '').split('-');
+				if (!name.length) {
+					break;
+				};
+
+				const id = name[name.length - 1];
+				if (!id) {
+					break;
+				};
+
+				url = `https://sketchfab.com/models/${id}/embed`;
+				break;
+			};
+
+			case I.EmbedProcessor.GithubGist: {
+				const a = url.split('#');
+				if (!a.length) {
+					break;
+				};
+
+				url = a[0];
+				break;
+			};
+
 		};
 
 		return url;
@@ -209,44 +235,6 @@ class UtilEmbed {
 		}
 
 		return pm[2] + ((tm && tm[2].length) ? `?start=${tm[2]}` : '');
-	};
-
-	getEnvironmentContent (processor: I.EmbedProcessor): { html: string; libs: string[]} {
-		const libs = [];
-
-		let html = '';
-		switch (processor) {
-			case I.EmbedProcessor.Chart: {
-				html = `<canvas id="chart"></canvas>`;
-				libs.push('https://cdn.jsdelivr.net/npm/chart.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Twitter: {
-				libs.push('https://platform.twitter.com/widgets.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Reddit: {
-				libs.push('https://embed.reddit.com/widgets.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Instagram: {
-				libs.push('https://www.instagram.com/embed.js');
-				break;
-			};
-
-			case I.EmbedProcessor.Codepen: {
-				libs.push('https://cpwebassets.codepen.io/assets/embed/ei.js');
-				break;
-			};
-		};
-
-		return { 
-			html, 
-			libs, 
-		};
 	};
 
 	getLang (processor: I.EmbedProcessor) {

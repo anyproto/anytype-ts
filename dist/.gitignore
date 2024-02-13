@@ -7,6 +7,12 @@ main.js
 main.js.map
 commands.js
 bundle-back.js
+anytypeHelper*
+nativeMessagingHost*
+alpha-linux.yml
+beta-linux.yml
+builder-debug.yml
+latest-linux.yml
 *-arm64/
 *-unpacked/
 *.snap
@@ -17,3 +23,9 @@ bundle-back.js
 *.node
 *.yml
 *.yaml
+nmh.log
+[0-9]*.js
+[0-9]*.js.map
+extension.crx
+extension.pem
+extension.zip

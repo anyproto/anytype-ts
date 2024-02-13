@@ -150,21 +150,21 @@ class DetailStore {
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
-		let list = this.getDetailList(rootId, id);		
+		let list = this.getDetailList(rootId, id);
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
+		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? Constant.defaultRelationKeys : []) ] : []);
+		const object = { id };
+
 		if (withKeys) {
-			let keys = [ 'id', ...withKeys ];
-			if (!forceKeys) {
-				keys = keys.concat(Constant.defaultRelationKeys);
-			};
-			list = list.filter(it => keys.includes(it.relationKey));
+			list = list.filter(it => keys.has(it.relationKey));
 		};
 
-		const object = { id };
-		list.forEach(it => object[it.relationKey] = it.value);
+		for (let i = 0; i < list.length; i++) {
+			object[list[i].relationKey] = list[i].value;
+		};
 
 		return this.mapper(object);
 	};
@@ -180,11 +180,6 @@ class DetailStore {
 			object.iconEmoji = '';
 			object.iconImage = '';
 			object.name = object.snippet;
-		};
-
-		if (object.id == UtilObject.getIdentityId()) {
-			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
-			object.type = type ? type.id : object.type;
 		};
 
 		if (object.isDeleted) {
@@ -218,18 +213,21 @@ class DetailStore {
 				break;
 			};
 
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
-				object = this.mapFile(object);
+			case I.ObjectLayout.Participant: {
+				object = this.mapParticipant(object);
 				break;
 			};
+		};
+
+		if (UtilObject.isFileLayout(object.layout)) {
+			object = this.mapFile(object);
 		};
 
 		return object;
 	};
 
 	private mapCommon (object: any) {
-		object.name = Relation.getStringValue(object.name) || UtilObject.defaultName('Page');
+		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -300,20 +298,28 @@ class DetailStore {
 	};
 
 	private mapSpace (object: any) {
-		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Private;
+		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 
-		delete(object.spaceAccessibility);
-
 		return object;
 	};
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		return object;
+	};
+
+	private mapParticipant (object) {
+		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+
+		delete(object.participantPermissions);
+		delete(object.participantStatus);
+
 		return object;
 	};
 

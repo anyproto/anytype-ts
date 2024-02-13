@@ -126,7 +126,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const el = $('#' + UtilCommon.toCamelCase('menu-' + id));
+		const el = $(`#${UtilCommon.toCamelCase(`menu-${id}`)}`);
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -143,7 +143,7 @@ class MenuStore {
 			if (onClose) {
 				onClose();
 			};
-			
+
 			if (callBack) {
 				callBack();
 			};
@@ -230,9 +230,7 @@ class MenuStore {
 	resizeAll () {
 		const win = $(window);
 
-		this.list.forEach(it => {
-			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
-		});
+		this.list.forEach(it => win.trigger(`resize.${UtilCommon.toCamelCase(`menu-${it.id}`)}`));
 	};
 
 };

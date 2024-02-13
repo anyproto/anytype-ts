@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/browser';
+import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
@@ -34,7 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-		this.listenEvents();
 
 		console.log('[Dispatcher].init Server address: ', address);
 	};
@@ -43,6 +43,8 @@ class Dispatcher {
 		if (!authStore.token) {
 			return;
 		};
+
+		window.clearTimeout(this.timeoutStream);
 
 		const request = new Commands.StreamRequest();
 		request.setToken(authStore.token);
@@ -60,25 +62,31 @@ class Dispatcher {
 		this.stream.on('status', (status) => {
 			if (status.code) {
 				console.error('[Dispatcher.stream] Restarting', status);
-				this.listenEvents();
+				this.reconnect();
 			};
 		});
 
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
-
-			let t = 1000;
-			if (this.reconnects == 20) {
-				t = 5000;
-				this.reconnects = 0;
-			};
-
-			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { 
-				this.listenEvents(); 
-				this.reconnects++;
-			}, t);
+			this.reconnect();
 		});
+	};
+
+	reconnect () {
+		let t = 3;
+		if (this.reconnects == 20) {
+			t = 5;
+		};
+		if (this.reconnects == 40) {
+			t = 60;
+			this.reconnects = 0;
+		};
+
+		window.clearTimeout(this.timeoutStream);
+		this.timeoutStream = window.setTimeout(() => { 
+			this.listenEvents(); 
+			this.reconnects++;
+		}, t * 1000);
 	};
 
 	eventType (v: number): string {
@@ -89,6 +97,7 @@ class Dispatcher {
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
 		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
+		if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'accountLinkChallenge';
 
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
@@ -147,6 +156,7 @@ class Dispatcher {
 
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
+		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
 
 		return t;
 	};
@@ -155,7 +165,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const currentWindow = window.Electron.currentWindow();
+		const electron = UtilCommon.getElectron();
+		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		
 		if (traceId) {
@@ -208,14 +219,30 @@ class Dispatcher {
 					break;	
 				};
 
-				case 'accountDetails': {
-					detailStore.update(Constant.subId.profile, { id: UtilObject.getIdentityId(), details: Decode.struct(data.getDetails()) }, false);
-					break;
-				};
-
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+					break;
+				};
+
+				case 'accountLinkChallenge': {
+					if (windowId !== 1) {
+						break;
+					};
+
+					const info = data.getClientinfo();
+					const challenge = data.getChallenge();
+					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=424,height=232,menubar=no,resizable=no,scrollbars=no,location=no,toolbar=no,frame=no');
+
+					win.addEventListener('load', () => win.postMessage({ 
+						challenge,
+						theme: commonStore.getThemeClass(),
+						lang: commonStore.interfaceLang,
+					}, '*'), false);
+
+					window.setTimeout(() => {
+						try { win.close(); } catch (e) { /**/ };
+					}, 5000);
 					break;
 				};
 
@@ -481,20 +508,8 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasName()) {
-						block.content.name = data.getName().getValue();
-					};
-
-					if (data.hasHash()) {
-						block.content.hash = data.getHash().getValue();
-					};
-
-					if (data.hasMime()) {
-						block.content.mime = data.getMime().getValue();
-					};
-
-					if (data.hasSize()) {
-						block.content.size = data.getSize().getValue();
+					if (data.hasTargetobjectid()) {
+						block.content.targetObjectId = data.getTargetobjectid().getValue();
 					};
 
 					if (data.hasType()) {
@@ -955,16 +970,30 @@ class Dispatcher {
 
 					notificationStore.add(item);
 
-					if ((windowId == 1) && !window.Electron.isFocused()) {
-						new window.Notification(item.title, { body: item.text }).onclick = () => { 
-							window.Electron.focus();
-						};
+					if ((windowId == 1) && !electron.isFocused()) {
+						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
 				};
 
 				case 'notificationUpdate': {
 					notificationStore.update(Mapper.From.Notification(data.getNotification()));
+					break;
+				};
+
+				case 'payloadBroadcast': {
+					if (electron.currentWindow().windowId !== 1) {
+						break;
+					};
+
+					const payload = JSON.parse(data.getPayload());
+
+					switch (payload.type) {
+						case 'openObject': {
+							UtilObject.openAuto(payload.object);
+							break;
+						};
+					};
 					break;
 				};
 
@@ -1150,13 +1179,12 @@ class Dispatcher {
 		const { config } = commonStore;
 		const debug = config.debug.mw;
 		const ct = UtilCommon.toCamelCase(type);
+		const t0 = performance.now();
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
 		};
-
-		const t0 = performance.now();
 
 		let t1 = 0;
 		let t2 = 0;

@@ -166,7 +166,10 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		this.isFocused = true;
+		this.addClass('isFocused');
+
 		keyboard.setFocus(true);
+		keyboard.disableSelection(true);
 	};
 	
 	onBlur (e: any) {
@@ -175,7 +178,10 @@ class Input extends React.Component<Props, State> {
 		};
 		
 		this.isFocused = false;
+		this.removeClass('isFocused');
+
 		keyboard.setFocus(false);
+		keyboard.disableSelection(false);
 	};
 	
 	onPaste (e: any) {
@@ -220,7 +226,7 @@ class Input extends React.Component<Props, State> {
 			return;
 		};
 
-		this.state.value = String(v || '');
+		this.state.value = String(v ?? '');
 		this.setState({ value: this.state.value });
 	};
 	

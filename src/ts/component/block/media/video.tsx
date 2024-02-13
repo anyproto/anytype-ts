@@ -32,8 +32,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;
-		const { width } = fields || {};
+		const { state, targetObjectId } = content;
+		const { width } = fields;
 		const css: any = {};
 
 		if (width) {
@@ -54,7 +54,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 							block={block} 
 							icon="video" 
 							textFile={translate('blockVideoUpload')} 
-							accept={Constant.extension.video} 
+							accept={Constant.fileExtension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -71,7 +71,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				element = (
 					<div className="wrap resizable blockVideo" style={css}>
 						<MediaVideo
-							src={commonStore.fileUrl(hash)}
+							src={commonStore.fileUrl(targetObjectId)}
 							onPlay={this.onPlay}
 							onPause={this.onPause}
 						/>

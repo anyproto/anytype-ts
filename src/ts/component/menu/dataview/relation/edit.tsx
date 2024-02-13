@@ -149,7 +149,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							<MenuItemVertical 
 								key={c}
 								{...action}
-								onClick={(e: any) => { this.onClick(e, action); }} 
+								onClick={e => this.onClick(e, action)} 
 								onMouseEnter={this.menuClose} 
 							/>
 						))}
@@ -211,7 +211,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, extendedOptions } = data;
+		const { rootId, blockId, extendedOptions, readonly } = data;
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
@@ -237,7 +237,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			}
 		];
 
-		if (extendedOptions) {
+		if (extendedOptions && !readonly) {
 			sections.push({
 				children: [
 					canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
@@ -423,7 +423,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId } = data;
 
 		if (this.isReadonly()) {
 			return;
@@ -442,7 +442,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			width: getSize().width,
 			data: {
 				rootId,
-				blockId,
 				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 

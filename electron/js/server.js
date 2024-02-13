@@ -51,6 +51,7 @@ class Server {
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						const regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
+
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 						resolve(true);

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
 import { I, translate, focus, keyboard, Action } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
@@ -25,9 +25,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state, hash, name } = content;
+		const { state, targetObjectId } = content;
+		const object = detailStore.get(rootId, targetObjectId, [ 'name' ], true);
 		
 		let element = null;
 		
@@ -42,7 +43,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 							block={block} 
 							icon="audio" 
 							textFile={translate('blockAudioUpload')} 
-							accept={Constant.extension.audio} 
+							accept={Constant.fileExtension.audio} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -57,7 +58,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				const playlist = [ 
-					{ name, src: commonStore.fileUrl(hash) },
+					{ name: object.name, src: commonStore.fileUrl(targetObjectId) },
 				];
 
 				element = (
@@ -112,27 +113,21 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).off('resize');
 		};
-
-		$(this.node).off('resize');
 	};
 
 	onPlay () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass('isPlaying');
 		};
-
-		$(this.node).addClass('isPlaying');
 	};
 
 	onPause () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass('isPlaying');
 		};
-
-		$(this.node).removeClass('isPlaying');
 	};
 
 	onKeyDown (e: any) {
@@ -180,6 +175,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
 	};
+
 });
 
 export default BlockAudio;

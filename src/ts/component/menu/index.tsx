@@ -248,11 +248,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (passThrough) {
-			cd.push('through');
+			cd.push('passThrough');
 		};
 
 		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => this.onTab(item.id)}>
 				{item.name}
 			</div>
 		);
@@ -298,7 +298,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getSize={this.getSize}
 							getPosition={this.getPosition}
 							position={this.position} 
-							close={this.close} 
+							close={() => this.close()}
 						/>
 					</div>
 				</div>
@@ -448,6 +448,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const borderTop = Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+		const borderBottom = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -471,7 +473,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-			const minY = UtilCommon.sizeHeader();
 
 			let ew = 0;
 			let eh = 0;
@@ -514,7 +515,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy - height + offsetY;
 					
 					// Switch
-					if (!noFlipY && (y <= BORDER)) {
+					if (!noFlipY && (y <= borderTop)) {
 						y = oy + eh - offsetY;
 					};
 					break;
@@ -527,7 +528,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy + eh + offsetY;
 
 					// Switch
-					if (!noFlipY && (y >= wh - height - 80)) {
+					if (!noFlipY && (y >= wh - height - borderBottom)) {
 						y = oy - height - offsetY;
 					};
 					break;
@@ -567,8 +568,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 
-			y = Math.max(minY, y);
-			y = Math.min(wh - height - 80, y);
+			y = Math.max(borderTop, y);
+			y = Math.min(wh - height - borderBottom, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
@@ -604,7 +605,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { this.poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
 			};
 
 			// Arrow positioning
@@ -662,12 +663,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		});
 	};
 
-	close () {
+	close (callBack?: () => void) {
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
 		};
 
-		menuStore.close(this.props.id);
+		menuStore.close(this.props.id, callBack);
 	};
 
 	onDimmerClick () {
@@ -707,7 +708,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (refInput) {
 			if (refInput.isFocused && (this.ref.n < 0)) {
-				keyboard.shortcut('arrowleft, arrowright', e, () => { ret = true; });
+				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
 				keyboard.shortcut('arrowdown', e, () => {
 					refInput.blur();
@@ -896,13 +897,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
+
 		const refInput = this.ref.refFilter || this.ref.refName;
 		if ((this.ref.n == -1) && refInput) {
 			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
-		if (item) {
+		if (item && (undefined !== item.id)) {
 			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 
@@ -918,7 +920,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (next && (next.isDiv || next.isSection)) {
 			this.ref.n++;
-			this.setActive(items[this.ref.n], scroll);
+			if (items[this.ref.n]) {
+				this.setActive(items[this.ref.n], scroll);
+			};
 		} else {
 			this.setHover(next, scroll);
 		};

@@ -41,6 +41,7 @@
 
         .item { background: none; }
 		.item::before { background: rgba(238, 238, 238, 0); }
+
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
 			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
@@ -49,7 +50,7 @@
         .loaderWrapper { background: var(--color-bg-secondary); }
     }
 
-    /* MenuBlockAdd */
+    /* BlockAdd */
 
     .menu.menuBlockAdd {
         .item.isBig {
@@ -68,7 +69,7 @@
         }
     }
 
-    /* MenuSmile */
+    /* Smile */
 
     .menu.menuSmile {
 		.body.gallery {
@@ -86,7 +87,13 @@
 		}
     }
 
-    /* MenuBlockRelationView */
+	/* BlockRelationEdit */
+
+	.menu.menuBlockRelationEdit {
+		.item:hover { background: var(--color-shape-highlight-medium); }
+	}
+
+    /* BlockRelationView */
 
     .menu.menuBlockRelationView {
 		.item {
@@ -98,7 +105,13 @@
         }
     }
 
-	/* MenuDataviewFilterValues */
+	/* DataviewRelationEdit */
+
+	.menu.menuDataviewRelationEdit {
+		.item:hover { background: var(--color-shape-highlight-medium); }
+	}
+
+	/* DataviewFilterValues */
 
     .menu.menuDataviewFilterValues {
 		.select {
@@ -106,15 +119,13 @@
         }
     }
 
-    /* MenuThreadList */
+	/* DataviewFileValues */
 
-    .menu.menuThreadList {
-        .item {
-            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
-        }
+	.menu.menuDataviewFileValues {
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
     }
 
-    /* MenuDataviewCalendar */
+    /* DataviewCalendar */
 
     .menu.menuDataviewCalendar {
         .select {
@@ -124,7 +135,7 @@
         .day:not(.th):not(.active):hover { background: var(--color-system-drop-zone); }
     }
 
-    /* MenuBlockContext */
+    /* BlockContext */
 
     .menu.menuBlockContext {
         .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
@@ -135,7 +146,7 @@
 		.icon.active.underline { background-image: url('#{$themePath}/icon/menu/action/mark/underline1.svg'); }
     }
 
-    /* MenuBlockLinkSettings */
+    /* BlockLinkSettings */
 
     .menu.menuBlockLinkSettings {
         .section.card {
@@ -156,7 +167,7 @@
         }
     }
 
-    /* MenuOnboarding */
+    /* Onboarding */
 
 	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
 	.menu.menuOnboarding {
@@ -178,13 +189,13 @@
         }
 	}
 
-	/* MenuDataviewCreateBookmark */
+	/* DataviewCreateBookmark */
 
 	.menu.menuDataviewCreateBookmark {
 		.loaderWrapper { background: rgba(39, 39, 35, 0.9); }
 	}
 
-    /* MenuDataviewViewLayout */
+    /* DataviewViewLayout */
 
     .menu.menuDataviewViewLayout {
         .layouts {
@@ -195,19 +206,19 @@
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
 				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg'); }
             }
-
-            .layout:hover { background-color: rgba(238, 238, 238, 0.06); }
-            .layout.active {
+			.layout.active {
                 .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg'); }
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
                 .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
 				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg'); }
             }
+
+            .layout:not(.isReadonly):hover { background-color: rgba(238, 238, 238, 0.06); }
         }
     }
 
-    /* MenuDataviewTemplateList */
+    /* DataviewTemplateList */
 
     .menu.menuDataviewTemplateList {
 		.items {
@@ -224,7 +235,7 @@
 		}
     }
 
-	/* MenuSpace */
+	/* Space */
 
 	.menu.menuSpace { color: var(--color-text-primary); }
 	.menu.menuSpace { 
@@ -240,8 +251,16 @@
 		}
 	}
 
-	/* MenuQuickCapture */
+	/* QuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }
 	.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
+	/* ThreadList */
+
+    .menu.menuThreadList {
+        .item {
+            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
+        }
+    }
 }

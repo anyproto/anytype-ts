@@ -22,8 +22,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 	};
 
 	render () {
-		const { subId, relation, recordId, getRecord, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
-		const record = getRecord(recordId);
+		const { subId, relation, record, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		
 		if (!record) {
 			return null;
@@ -31,7 +30,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
@@ -48,7 +47,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 		};
 
 		const Item = (item: any) => (
-			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div className="element" onClick={e => this.onClick(e, item)}>
 				<div className="flex">
 					<IconObject object={item} size={iconSize} />
 					<div className="name">{UtilFile.name(item)}</div>

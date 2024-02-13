@@ -108,7 +108,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.unbind();
 
 		const node = $(this.node);
-		node.find('#scroll').on('scroll', (e: any) => { this.onScrollView(); });
+		node.find('#scroll').on('scroll', () => this.onScrollView());
 	};
 
 	unbind () {
@@ -267,7 +267,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		view.append(clone);
 
-		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		$(document).off('dragover').on('dragover', e => e.preventDefault());
 		$(window).off('dragend.board drag.board');
 		$('body').addClass('grab');
 
@@ -310,8 +310,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.initCacheColumn();
 		this.isDraggingColumn = true;
 
-		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, groupId); });
-		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e, groupId); });
+		win.on('drag.board', e => this.onDragMoveColumn(e, groupId));
+		win.on('dragend.board', e => this.onDragEndColumn(e, groupId));
 	};
 
 	onDragMoveColumn (e: any, groupId: any) {

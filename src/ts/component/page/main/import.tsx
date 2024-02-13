@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
 import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -23,7 +24,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
-					<Title text="Downloading manifest" />
+					<Title text={translate('pageMainImportTitle')} />
 					<Loader />
 
 					<Error text={error} />
@@ -41,18 +42,20 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		const search = this.getSearch();
 
-		C.DownloadManifest(search.source, (message: any) => {
+		C.GalleryDownloadManifest(search.source, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
 				UtilObject.openHome('route');
-				popupStore.open('usecase', { data: { object: message.info } });
+				window.setTimeout(() => popupStore.open('usecase', { data: { object: message.info } }), Constant.delay.popup);
 			};
 		});
+
+		this.resize();
 	};
 
 	componentDidUpdate (): void {
-		$(window).trigger('resize');
+		this.resize();
 	};
 
 	getSearch () {

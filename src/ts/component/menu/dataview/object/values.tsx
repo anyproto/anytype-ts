@@ -4,12 +4,14 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, UtilObject, keyboard, Relation, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
-const HEIGHT = 28;
 const LIMIT = 20;
+const HEIGHT_ITEM = 28;
+const HEIGHT_EMPTY = 96;
+const HEIGHT_DIV = 16;
 
 const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
 	
@@ -44,15 +46,15 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				<div 
 					id={'item-' + item.id} 
 					className={cn.join(' ')} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					onMouseEnter={e => this.onOver(e, item)}
 					style={item.style}
 				>
 					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<span className="clickable" onClick={e => this.onClick(e, item)}>
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 				</div>
 			);
 		});
@@ -61,8 +63,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			<div 
 				id="item-add" 
 				className="item add" 
-				onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-				onClick={(e: any) => { this.onClick(e, item); }}
+				onMouseEnter={e => this.onOver(e, item)} 
+				onClick={e => this.onClick(e, item)}
 				style={item.style}
 			>
 				<Icon className="plus" />
@@ -74,6 +76,16 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			const item: any = items[param.index];
 
 			let content = null;
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else
+			if (item.isEmpty) {
+				content = <EmptySearch style={param.style} text={translate('menuDataviewObjectValuesEmptySearch')} />;
+			} else
 			if (item.id == 'add') {
 				content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;
 			} else {
@@ -109,7 +121,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 								height={height}
 								deferredMeasurmentCache={this.cache}
 								rowCount={items.length}
-								rowHeight={HEIGHT}
+								rowHeight={({ index }) => this.getRowHeight(items[index])}
 								rowRenderer={rowRenderer}
 								onRowsRendered={onRowsRendered}
 								overscanRowCount={LIMIT}
@@ -146,7 +158,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: i => (items[i] || {}).id,
 		});
 	};
@@ -180,22 +192,29 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, valueMapper, nameAdd } = data;
+		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
-
+		value = value.map(it => detailStore.get(rootId, it, []));
+		
 		if (valueMapper) {
 			value = value.map(valueMapper);
 		};
 
-		value = value.filter(it => it && !it._empty_);
+		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (!config.debug.ho) {
 			value = value.filter(it => !it.isHidden);
 		};
 
-		value.unshift({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
+		if (!value.length) {
+			value.push({ isEmpty: true });
+		};
+
+		value = value.concat([
+			{ isDiv: true },
+			{ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) },
+		]);
 		return value;
 	};
 
@@ -220,6 +239,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
+			vertical: I.MenuDirection.Center,
+			offsetX: width,
 			width,
 			passThrough: true,
 			noAnimation: true,
@@ -227,6 +248,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			classNameWrap,
 			data: {
 				...data,
+				canAdd: true,
 				rebind: this.rebind,
 			},
 		});
@@ -265,7 +287,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const relation = data.relation.get();
 
 		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex - 1, newIndex - 1);
+		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
 
 		onChange(value, () => menuStore.updateData(id, { value }));
@@ -278,12 +300,19 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		};
 	};
 
+	getRowHeight (item: any) {
+		let h = HEIGHT_ITEM;
+		if (item.isEmpty) h = HEIGHT_EMPTY;
+		if (item.isDiv) h = HEIGHT_DIV;
+		return h;
+	};
+
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT + offset, Math.min(300, items.length * HEIGHT + offset));
+		const height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
 
 		obj.css({ height });
 		position();

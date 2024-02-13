@@ -33,6 +33,19 @@ export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFrom
 	};
 };
 
+export const AccountLocalLinkNewChallenge = (response: Rpc.Account.LocalLink.NewChallenge.Response) => {
+	return {
+		challengeId: response.getChallengeid(),
+	};
+};
+
+export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.SolveChallenge.Response) => {
+	return {
+		token: response.getSessiontoken(),
+		appKey: response.getAppkey(),
+	};
+};
+
 export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
 	return response.toObject();
 };
@@ -79,7 +92,8 @@ export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
 
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
@@ -105,6 +119,7 @@ export const WalletConvert = (response: Rpc.Wallet.Convert.Response) => {
 export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response) => {
 	return {
 		token: response.getToken(),
+		appToken: response.getApptoken(),
 	};
 };
 
@@ -129,6 +144,13 @@ export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
 };
 
 export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
+	return {
+		objectId: response.getObjectid(),
+		details: Decode.struct(response.getDetails()),
+	};
+};
+
+export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
 	return {
 		objectId: response.getObjectid(),
 		details: Decode.struct(response.getDetails()),
@@ -295,6 +317,11 @@ export const BlockListConvertToObjects = (response: Rpc.Block.ListConvertToObjec
 	};
 };
 
+export const BlockPreview = (response: Rpc.Block.Preview.Response) => {
+	return {
+		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
+	};
+};
 
 export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDataview.CreateFromExistingObject.Response) => {
 	return {
@@ -365,12 +392,6 @@ export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject
 	};
 };
 
-export const TemplateClone = (response: Rpc.Template.Clone.Response) => {
-	return {
-		id: response.getId(),
-	};
-};
-
 export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
 		objectId: response.getSpaceid(),
@@ -398,32 +419,46 @@ export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
 
 export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
 	return {
-		hash: response.getHash(),
+		objectId: response.getObjectid(),
 	};
 };
 
-export const DownloadManifest = (response: Rpc.DownloadManifest.Response) => {
-	const info = response.getInfo();
-
+export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Response) => {
 	return {
-		info: {
-			id: info.getId(),
-			schema: info.getSchema(),
-			name: info.getName(),
-			author: info.getAuthor(),
-			license: info.getLicense(),
-			title: info.getTitle(),
-			description: info.getDescription(),
-			downloadLink: info.getDownloadlink(),
-			size: info.getFilesize(),
-			screenshots: info.getScreenshotsList() || [],
-			categories: info.getCategoriesList() || [],
-		},
+		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
+			return {
+				id: it.getId(),
+				icon: it.getIcon(),
+				list: it.getExperiencesList() || [],
+			};
+		}),
+		list: (response.getExperiencesList() || []).map(Mapper.From.Manifest),
+	};
+};
+
+export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.Response) => {
+	return {
+		info: Mapper.From.Manifest(response.getInfo()),
 	};
 };
 
 export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	return {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+	};
+};
+
+export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteKey: response.getInvitefilekey(),
+	};
+};
+
+export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
+	return {
+		spaceName: response.getSpacename(),
+		creatorName: response.getCreatorname(),
+		spaceId: response.getSpaceid(),
 	};
 };

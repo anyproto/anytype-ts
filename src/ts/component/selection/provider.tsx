@@ -17,19 +17,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	x = 0;
 	y = 0;
 	dir = 0;
-	moved = false;
 	focused = '';
 	range: any = null;
 	nodes: any[] = [];
 	top = 0;
+	startTop = 0;
 	containerOffset = null;
 	frame = 0;
+	hasMoved = false;
+	isSelecting = false;
+	isPopup = false;
+	rootId = '';
+	rect: any = null;
+	childrenIds: Map<string, string[]> = new Map();
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
 	idsOnStart: Map<string, string[]> = new Map();
-
-	isSelecting = false;
 	
 	constructor (props: Props) {
 		super(props);
@@ -40,7 +44,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	render () {
+		const { list } = popupStore;
 		const children = this.injectProps(this.props.children);
+		const length = list.length;
+
 		return (
 			<div 
 				id="selection" 
@@ -54,17 +61,23 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	componentDidMount () {
-		const isPopup = keyboard.isPopup();
-
 		this._isMounted = true;
-		this.unbind();
+		this.rect = $('#selection-rect');
+		this.rebind();
+	};
 
-		UtilCommon.getScrollContainer(isPopup).on('scroll.selection', (e: any) => { this.onScroll(e); });
+	componentDidUpdate (): void {
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		UtilCommon.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => this.onScroll(e));
 	};
 
 	unbind () {
@@ -80,7 +93,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		(UtilCommon.getScrollContainer(isPopup)).off('scroll.selection');
+		UtilCommon.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
 	scrollToElement (id: string, dir: number) {
@@ -121,17 +134,17 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { focused } = focus.state;
 		const win = $(window);
-		const nodes = this.getPageContainer().find('.selectable');
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const selectionRect = $('#selection-rect');
 
-		isPopup ? selectionRect.addClass('fromPopup') : selectionRect.removeClass('fromPopup');
+		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
 		
+		this.rootId = keyboard.getRootId();
+		this.isPopup = isPopup;
 		this.x = e.pageX;
 		this.y = e.pageY;
-		this.moved = false;
+		this.hasMoved = false;
 		this.focused = focused;
-		this.top = container.scrollTop();
+		this.top = this.startTop = container.scrollTop();
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
 		this.setIsSelecting(true);
@@ -144,18 +157,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.y -= this.containerOffset.top - this.top;
 		};
 
-		nodes.each((i: number, item: any) => {
-			item = $(item);
-
-			const node = {
-				id: item.attr('data-id'),
-				type: item.attr('data-type'),
-				obj: item,
-			};
-
-			this.nodes.push(node);
-			this.cacheRect(node);
-		});
+		this.initNodes();
 
 		if (e.shiftKey) {
 			const target = $(e.target).closest('.selectable');
@@ -171,8 +173,25 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection`, (e: any) => { this.onMouseMove(e); });
-		win.on(`blur.selection mouseup.selection`, (e: any) => { this.onMouseUp(e); });
+		win.on(`mousemove.selection`, e => this.onMouseMove(e));
+		win.on(`blur.selection mouseup.selection`, e => this.onMouseUp(e));
+	};
+
+	initNodes () {
+		const nodes = this.getPageContainer().find('.selectable');
+
+		nodes.each((i: number, item: any) => {
+			item = $(item);
+
+			const node = {
+				id: item.attr('data-id'),
+				type: item.attr('data-type'),
+				obj: item,
+			};
+
+			this.nodes.push(node);
+			this.cacheRect(node);
+		});
 	};
 	
 	onMouseMove (e: any) {
@@ -185,45 +204,50 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
 		const rect = this.getRect(this.x, this.y, e.pageX, e.pageY);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 		
-		this.top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		this.top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
-		this.moved = true;
+		this.hasMoved = true;
 
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
 	onScroll (e: any) {
-		if (!this.isSelecting || !this.moved) {
+		if (!this.isSelecting || !this.hasMoved) {
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
-		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		const container = UtilCommon.getScrollContainer(this.isPopup);
+		const top = container.scrollTop();
 		const d = top > this.top ? 1 : -1;
 		const x = keyboard.mouse.page.x;
-		const y = keyboard.mouse.page.y + Math.abs(top - this.top) * d;
+		const y = keyboard.mouse.page.y + (!this.isPopup ? Math.abs(top - this.top) * d : 0);
 		const rect = this.getRect(this.x, this.y, x, y);
+		const wh = container.height();
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 
-		this.nodes.forEach(it => this.cacheRect(it));
+		if (Math.abs(top - this.startTop) >= wh / 2) {
+			this.initNodes();
+			this.startTop = top;
+		} else {
+			this.nodes.forEach(it => this.cacheRect(it));
+		};
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(x, y);
 		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
-		this.moved = true;
+		this.hasMoved = true;
 	};
 	
 	onMouseUp (e: any) {
@@ -231,7 +255,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if (!this.moved) {
+		if (!this.hasMoved) {
 			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				if (!keyboard.isSelectionClearDisabled) {
 					this.initIds();
@@ -258,9 +282,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const type = target.attr('data-type');
 				
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
-					const rootId = keyboard.getRootId();
 					const first = ids.length ? ids[0] : this.focused;
-					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+					const tree = blockStore.getTree(this.rootId, blockStore.getBlocks(this.rootId));
 					const list = blockStore.unwrapTree(tree);
 					const idxStart = list.findIndex(it => it.id == first);
 					const idxEnd = list.findIndex(it => it.id == id);
@@ -296,8 +319,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.hide();
 		this.setIsSelecting(false);
 		this.cache.clear();
+		this.childrenIds.clear();
 		this.focused = '';
 		this.range = null;
+		this.containerOffset = null;
+		this.isPopup = false;
+		this.rootId = '';
 		this.nodes = [];
 	};
 
@@ -306,24 +333,21 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const el = $('#selection-rect');
 		const range = UtilCommon.getSelectionRange();
-		const isPopup = keyboard.isPopup();
 
 		let x1 = this.x;
 		let y1 = this.y;
 
-		if (isPopup && this.containerOffset) {
+		if (this.containerOffset) {
 			x1 = x1 + this.containerOffset.left;
 			y1 = y1 + this.containerOffset.top - this.top;
 		};
 
 		const rect = this.getRect(x1, y1, x, y);
-
 		if (range) {
-			el.hide();
+			this.rect.hide();
 		} else {
-			el.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
+			this.rect.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 		};
 	};
 	
@@ -399,10 +423,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.initIds();
 		};
 
-		this.nodes.forEach((item: any) => { 
-			this.checkEachNode(e, rect, item);
-		});
-		
+		this.nodes.forEach(item => this.checkEachNode(e, rect, item));
 		this.renderSelection();
 
 		const ids = this.get(I.SelectType.Block, false);
@@ -451,7 +472,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	hide () {
-		$('#selection-rect').hide();
+		this.rect.hide();
 		this.unbindMouse();
 	};
 	
@@ -473,7 +494,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	get (type: I.SelectType, withChildren?: boolean): string[] {
-		let ids = UtilCommon.objectCopy(this.ids.get(type) || []);
+		let ids = [ ...new Set(this.ids.get(type)) ];
 
 		if (type == I.SelectType.Block) {
 			if (withChildren) {
@@ -499,22 +520,26 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getChildrenIds (id: string, ids: string[]) {
-		const rootId = keyboard.getRootId();
-		const block = blockStore.getLeaf(rootId, id);
-		
-		if (!block || block.isTable()) {
-			return;
-		};
-		
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		if (!childrenIds.length) {
+		const cache = this.childrenIds.get(id);
+		if (cache) {
+			ids = ids.concat(cache);
 			return;
 		};
 
-		for (const childId of childrenIds) {
-			ids.push(childId);
-			this.getChildrenIds(childId, ids);
+		const block = blockStore.getLeaf(this.rootId, id);
+
+		let childrenIds = [];
+
+		if (block && !block.isTable()) {
+			childrenIds = blockStore.getChildrenIds(this.rootId, id);
+
+			for (const childId of childrenIds) {
+				ids.push(childId);
+				this.getChildrenIds(childId, ids);
+			};
 		};
+
+		this.childrenIds.set(id, [ ...childrenIds ]);
 	};
 
 	getPageContainer () {
@@ -525,8 +550,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (!this._isMounted) {
 			return;
 		};
-
-		const rootId = keyboard.getRootId();
 
 		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
@@ -540,7 +563,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				if (type == I.SelectType.Block) {
 					$(`#block-${id}`).addClass('isSelectionSelected');
 
-					const childrenIds = blockStore.getChildrenIds(rootId, id);
+					const childrenIds = blockStore.getChildrenIds(this.rootId, id);
 					childrenIds.forEach((childId: string) => {
 						$(`#block-${childId}`).addClass('isSelectionSelected');
 					});
@@ -550,10 +573,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	recalcCoords (x: number, y: number): { x: number, y: number } {
-		const isPopup = keyboard.isPopup();
-
-		if (isPopup && this.containerOffset) {
-			const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
+		if (this.containerOffset) {
+			const top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;
