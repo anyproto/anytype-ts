@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -121,10 +121,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				) : ''}
 
 				{isLoading ? <Loader /> : ''}
-
-				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
 					<div className="items">
