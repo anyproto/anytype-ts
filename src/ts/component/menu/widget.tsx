@@ -218,7 +218,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (this.target) {
 			if (!isCollection) {
 				const setLayouts = UtilObject.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts());
+				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(this.target.layout)) {
