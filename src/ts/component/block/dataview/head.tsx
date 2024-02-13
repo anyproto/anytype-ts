@@ -358,21 +358,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onIconSelect (icon: string) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-
-		if (targetObjectId) {
-			UtilObject.setIcon(targetObjectId, icon, '');
-		};
+		UtilObject.setIcon(this.props.block.content.targetObjectId, icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-
-		if (targetObjectId) {
-			UtilObject.setIcon(targetObjectId, '', objectId);
-		};
+		UtilObject.setIcon(this.props.block.content.targetObjectId, '', objectId);
 	};
 
 	onFullscreen () {

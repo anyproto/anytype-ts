@@ -61,7 +61,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					ref={node => this.node = node}
 					id={'item-' + item.id} 
 					className={cn.join(' ')} 
-					onMouseEnter={e => 	this.onMouseEnter(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}

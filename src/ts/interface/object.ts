@@ -18,8 +18,8 @@ export enum ObjectLayout {
 	Video		 = 16,
 	Date		 = 17,
 	SpaceView	 = 18,
-	
-	Database	 = 20,
+	Participant	 = 19,
+	Pdf			 = 20,
 
 	Empty		 = 100,
 	Navigation	 = 101,

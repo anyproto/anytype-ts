@@ -98,8 +98,8 @@ const Progress = observer(class Progress extends React.Component {
 		keyboard.setDragging(true);
 
 		win.off('mousemove.progress mouseup.progress');
-		win.on('mousemove.progress', e => 	this.onDragMove(e));
-		win.on('mouseup.progress', e => 	this.onDragEnd(e));
+		win.on('mousemove.progress', e => this.onDragMove(e));
+		win.on('mouseup.progress', e => this.onDragEnd(e));
 	};
 
 	onDragMove (e: any) {

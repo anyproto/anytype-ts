@@ -183,7 +183,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 		
 		focus.clear(true);
-		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
+		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
 	};
 	
 	onIconPage () {
@@ -411,8 +411,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', e => 	this.onDragMove(e));
-		win.on('mouseup.cover', e => 	this.onDragEnd(e));
+		win.on('mousemove.cover', e => this.onDragMove(e));
+		win.on('mouseup.cover', e => this.onDragEnd(e));
 	};
 	
 	onDragMove (e: any) {
@@ -519,8 +519,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			this.setLoading(false);
 			preventCommonDrop(false);
 			
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				this.loaded = false;
+				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 			
 			this.loaded = false;

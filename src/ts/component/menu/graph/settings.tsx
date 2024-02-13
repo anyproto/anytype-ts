@@ -27,8 +27,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 							<MenuItemVertical 
 								key={i} 
 								{...item} 
-								onMouseEnter={e => 	this.onMouseEnter(e, item)} 
-								onClick={e => 	this.onClick(e, item)} 
+								onMouseEnter={e => this.onMouseEnter(e, item)} 
+								onClick={e => this.onClick(e, item)} 
 							/>
 						);
 					})}
@@ -60,7 +60,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	rebind () {
 		this.unbind();
 
-		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

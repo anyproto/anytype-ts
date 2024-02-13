@@ -31,6 +31,7 @@ import PageSpaceIndex from './page/settings/space/index';
 import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
+import PageSpaceList from './page/settings/space/list';
 
 import PagePaymentIndex from './page/settings/payment/index';
 import PagePaymentItem from './page/settings/payment/item';
@@ -67,6 +68,7 @@ const Components: any = {
 	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
+	spaceList:			 PageSpaceList,
 
 	paymentIndex:		 PagePaymentIndex, 
 	paymentItem:		 PagePaymentItem,
@@ -231,7 +233,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		this.unbind();
 		win.on('resize.settings', () => this.resize());
 		win.on('keydown.settings', e => this.onKeyDown(e));
-		win.on('mousedown.settings', e => 	this.onMouseDown(e));
+		win.on('mousedown.settings', e => this.onMouseDown(e));
 	};
 
 	unbind () {
@@ -273,6 +275,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				},
 				{ 
 					name: translate('popupSettingsVoidTitle'), children: [
+						{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 						{ id: 'paymentIndex', icon: 'payment', name: translate('popupSettingsPaymentTitle') },

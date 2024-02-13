@@ -1,6 +1,5 @@
 tools/
 electron/env.json
-electron/about/*
 src/json/schema
 licenses.json
 **/*.js

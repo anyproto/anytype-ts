@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'Component';
-import { I, UtilCommon, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
+import { I, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -26,7 +26,6 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const object = detailStore.get(rootId, targetObjectId, []);
 
 		let element = null;
-
 		switch (state) {
 			default:
 			case I.FileState.Error:

@@ -203,7 +203,7 @@ class BlockStore {
 			return [];
 		};
 
-		const blocks = Array.from(map.values());
+		const blocks = Array.from(map.values()).filter(it => it);
 		return filter ? blocks.filter(it => filter(it)) : blocks;
 	};
 
@@ -405,6 +405,10 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
+		if (!UtilObject.canParticipantWrite()) {
+			return false;
+		};
+
 		restrictions = restrictions || [];
 		flags = flags || [];
 
@@ -427,7 +431,7 @@ class BlockStore {
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = this.getBlocks(rootId, it => it.isText());
+		const blocks = this.getBlocks(rootId, it => it && it.isText());
 
 		for (const block of blocks) {
 			let marks = block.content.marks || [];
@@ -461,7 +465,7 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				} else
-				if (UtilObject.getFileLayouts().includes(object.layout)) {
+				if (UtilObject.isFileLayout(object.layout)) {
 					name = UtilFile.name(object);
 				} else {
 					name = UtilCommon.shorten(object.name, 30);

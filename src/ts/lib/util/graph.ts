@@ -1,4 +1,4 @@
-import { I, Relation, UtilCommon, UtilFile, UtilSmile } from 'Lib';
+import { I, Relation, UtilCommon, UtilObject, UtilFile, UtilSmile } from 'Lib';
 import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
 import Theme from 'json/theme.json';
@@ -19,6 +19,9 @@ class UtilGraph {
 				break;
 			};
 
+			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				src = UtilFile.iconPath(d);
 				break;
@@ -33,7 +36,8 @@ class UtilGraph {
 				break;
 			};
 				
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Participant: {
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 100);
 				};

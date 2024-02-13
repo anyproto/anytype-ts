@@ -1,0 +1,40 @@
+@import "~scss/_vars";
+
+.popups {
+    .popup.popupInviteRequest {
+        .innerWrap { width: 424px; padding: 28px 32px; text-align: center; }
+
+        .title { @include text-header3; margin-bottom: 20px; }
+
+        .iconWrapper {
+            display: flex; width: 320px; height: 104px; border-radius: 320px; margin: 0px auto 28px; align-items: center; justify-content: space-around;
+            background: radial-gradient(50% 50% at 50% 50%, #80D1FF 0%, rgba(187, 231, 255, 0.00) 100%);
+        }
+        .icon { width: 68px; height: 72px; background-image: url('~img/icon/popup/space/invite.svg'); }
+
+        .invitation { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
+        .invitation {
+            .profileItem { position: relative; top: 3px; display: inline-flex; align-items: center; flex-wrap: nowrap; gap: 0px 3px; }
+        }
+        .textarea { margin-bottom: 16px; height: 68px; padding: 12px; @include text-small; font-family: 'Inter'; border: 1px solid var(--color-shape-primary); border-radius: 6px; }
+
+        .buttons { margin-bottom: 16px; }
+        .buttons {
+            .button { width: 100%; }
+        }
+        .note { @include text-small; color: var(--color-text-secondary); }
+    }
+
+    .popup.popupInviteConfirm {
+        .innerWrap { width: 424px; padding: 32px; text-align: center; }
+
+        .iconWrapper { margin-bottom: 12px; display: flex; justify-content: center; }
+        .title { @include text-header3; margin-bottom: 16px; }
+        .label { text-align: left; padding: 8px 36px 8px 12px; margin-bottom: 22px; background: var(--color-shape-highlight-light); border-left: 4px solid var(--color-control-active); }
+
+        .buttons {
+            .sides { display: flex; gap: 0px 10px; margin-bottom: 12px; }
+            .button { width: 100%; }
+        }
+    }
+}

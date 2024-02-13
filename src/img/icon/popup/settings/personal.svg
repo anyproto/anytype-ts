@@ -1,9 +1,7 @@
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="22" height="22" rx="4" fill="#0FC8BA"/>
-<rect x="4.69125" y="16.3036" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 16.3036)" fill="white"/>
-<rect x="12.0484" y="17.3928" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 12.0484 17.3928)" fill="#0FC8BA" stroke="white"/>
-<rect x="4.69125" y="11.5892" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 11.5892)" fill="white"/>
-<rect x="4.69125" y="6.875" width="1.17857" height="12.5714" rx="0.589286" transform="rotate(-90 4.69125 6.875)" fill="white"/>
-<rect x="6.5484" y="12.6786" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 6.5484 12.6786)" fill="#0FC8BA" stroke="white"/>
-<rect x="12.0484" y="7.96423" width="3.35714" height="3.35714" rx="1.67857" transform="rotate(-90 12.0484 7.96423)" fill="#0FC8BA" stroke="white"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="24" height="24" rx="4" fill="#0FC8BA"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5 7.5C5 7.77614 5.22386 8 5.5 8H18.5C18.7761 8 19 7.77614 19 7.5C19 7.22386 18.7761 7 18.5 7H5.5C5.22386 7 5 7.22386 5 7.5ZM5.5 12.5C5.22386 12.5 5 12.2761 5 12C5 11.7239 5.22386 11.5 5.5 11.5H18.5C18.7761 11.5 19 11.7239 19 12C19 12.2761 18.7761 12.5 18.5 12.5H5.5ZM5.5 17C5.22386 17 5 16.7761 5 16.5C5 16.2239 5.22386 16 5.5 16H18.5C18.7761 16 19 16.2239 19 16.5C19 16.7761 18.7761 17 18.5 17H5.5Z" fill="white"/>
+<rect x="12.5" y="18.25" width="3.5" height="3.5" rx="1.75" transform="rotate(-90 12.5 18.25)" fill="#0FC8BA" stroke="white"/>
+<rect x="8" y="13.75" width="3.5" height="3.5" rx="1.75" transform="rotate(-90 8 13.75)" fill="#0FC8BA" stroke="white"/>
+<rect x="12.5" y="9.25" width="3.5" height="3.5" rx="1.75" transform="rotate(-90 12.5 9.25)" fill="#0FC8BA" stroke="white"/>
 </svg>

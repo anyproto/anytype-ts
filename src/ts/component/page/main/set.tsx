@@ -81,6 +81,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 								block={block}
 								className="noPlus"
 								isSelectionDisabled={true}
+								readonly={this.isReadonly()}
 							/>
 						))}
 					</div>
@@ -270,6 +271,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				});
 			};
 		};
+	};
+
+	isReadonly () {
+		return !UtilObject.canParticipantWrite();
 	};
 
 	resize () {

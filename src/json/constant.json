@@ -113,7 +113,8 @@
 		"isDeleted", "isArchived", "isFavorite", "identityProfileLink", "restrictions"
 	],
 	"templateRelationKeys":	 [ "templateIsBundled", "type", "targetObjectType", "internalFlags", "sourceObject" ],
-	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessibility", "targetSpaceId", "creator", "createdDate" ],
+	"spaceRelationKeys":	 [ "spaceDashboardId", "spaceAccountStatus", "spaceLocalStatus", "spaceAccessType", "targetSpaceId", "creator", "createdDate" ],
+	"participantRelationKeys": [ "identity", "participantPermissions", "participantStatus" ],
 
 	"pageCoverRelationKey": "pageCover",
 
@@ -130,7 +131,8 @@
 		"sidebar": "sidebar",
 		"graph": "graph",
 		"space": "space",
-		"files": "files"
+		"files": "files",
+		"participant": "participant"
 	},
 
 	"typeKey": {

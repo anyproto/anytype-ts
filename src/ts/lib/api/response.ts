@@ -427,7 +427,8 @@ export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Respons
 	return {
 		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
 			return {
-				name: it.getName(),
+				id: it.getId(),
+				icon: it.getIcon(),
 				list: it.getExperiencesList() || [],
 			};
 		}),
@@ -497,5 +498,20 @@ export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscriptio
 export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscription.GetPaymentUrl.Response) => {
 	return {
 		paymentUrl: response.getPaymenturl(),
+	};
+};
+
+export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteKey: response.getInvitefilekey(),
+	};
+};
+
+export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
+	return {
+		spaceName: response.getSpacename(),
+		creatorName: response.getCreatorname(),
+		spaceId: response.getSpaceid(),
 	};
 };

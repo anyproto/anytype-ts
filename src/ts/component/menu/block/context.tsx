@@ -60,7 +60,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			<div className="flex">
 				{canTurn ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip={translate('menuBlockContextSwitchStyle')} tooltipY={I.MenuDirection.Top} className={[ styleIcon, 'blockStyle' ].join(' ')} onMouseDown={e => 	this.onMark(e, 'style')} />
+						<Icon 
+							id={`button-${blockId}-style`} 
+							arrow={true} 
+							tooltip={translate('menuBlockContextSwitchStyle')} 
+							tooltipY={I.MenuDirection.Top} 
+							className={[ styleIcon, 'blockStyle' ].join(' ')} 
+							onMouseDown={e => this.onMark(e, 'style')} 
+						/>
 					</div>
 				) : ''}
 				
@@ -91,7 +98,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 											tooltip={action.name}
 											tooltipCaption={action.caption}
 											tooltipY={I.MenuDirection.Top}
-											onMouseDown={e => 	this.onMark(e, action.type)} 
+											onMouseDown={e => this.onMark(e, action.type)} 
 										/>
 									);
 								})}
@@ -106,7 +113,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								tooltip={translate('commonColor')}
 								tooltipCaption={`${cmd} + Shift + C`}
 								tooltipY={I.MenuDirection.Top}
-								onMouseDown={e => 	this.onMark(e, I.MarkType.Color)} 
+								onMouseDown={e => this.onMark(e, I.MarkType.Color)} 
 							/>
 
 							<Icon
@@ -116,7 +123,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								tooltip={translate('commonBackground')}
 								tooltipCaption={`${cmd} + Shift + H`}
 								tooltipY={I.MenuDirection.Top}
-								onMouseDown={e => 	this.onMark(e, I.MarkType.BgColor)} 
+								onMouseDown={e => this.onMark(e, I.MarkType.BgColor)} 
 							/>
 						</div>
 					</React.Fragment>
@@ -136,7 +143,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							className="more"
 							tooltip={translate('menuBlockContextMoreOptions')}
 							tooltipY={I.MenuDirection.Top}
-							onMouseDown={e => 	this.onMark(e, 'more')}
+							onMouseDown={e => this.onMark(e, 'more')}
 						/>
 					</div>
 				) : ''}

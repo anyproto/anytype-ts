@@ -143,7 +143,7 @@ class MenuStore {
 			if (onClose) {
 				onClose();
 			};
-			
+
 			if (callBack) {
 				callBack();
 			};

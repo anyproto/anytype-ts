@@ -96,7 +96,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						menuClassNameWrap={classNameWrap}
-						bodyContainer={UtilCommon.getBodyContainer('menuBlockRelationView')}
 						pageContainer={UtilCommon.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
 						onClick={e => onCellClick(e, relationKey, object.id)}

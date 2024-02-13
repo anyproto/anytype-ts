@@ -71,8 +71,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 
 						<Label
-							className="spaceType"
-							text={translate(`spaceType${I.SpaceType.Private}`)}
+							className="spaceAccessType"
+							text={translate(`spaceAccessType${I.SpaceType.Private}`)}
 							onMouseEnter={onSpaceTypeTooltip}
 							onMouseLeave={e => Preview.tooltipHide(false)}
 						/>

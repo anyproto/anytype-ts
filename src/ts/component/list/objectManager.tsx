@@ -179,9 +179,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 				textEmpty = UtilCommon.sprintf(translate('popupSearchNoObjects'), filter);
 			};
 
-            content = (
-				<EmptySearch text={textEmpty} />
-            );
+            content = <EmptySearch text={textEmpty} />;
         } else {
             content = (
                 <div className="items">

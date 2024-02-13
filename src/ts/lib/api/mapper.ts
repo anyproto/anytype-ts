@@ -45,6 +45,7 @@ export const Mapper = {
 		if (v == V.IMPORT)			 t = 'import';
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
+		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
 		return t;
 	},
 
@@ -67,7 +68,6 @@ export const Mapper = {
 				deviceId: obj.getDeviceid(),
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
-				techSpaceId: obj.getTechspaceid(),
 				spaceViewId: obj.getSpaceviewid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
@@ -190,8 +190,8 @@ export const Mapper = {
 		BlockFile: (obj: Model.Block.Content.File) => {
 			return {
 				targetObjectId: obj.getTargetobjectid(),
-				style: obj.getStyle(),
 				type: obj.getType(),
+				style: obj.getStyle(),
 				addedAt: obj.getAddedat(),
 				state: obj.getState(),
 			};
@@ -516,6 +516,16 @@ export const Mapper = {
 					break;
 				};
 
+				case 'requestToJoin': {
+					payload = Object.assign(payload, {
+						spaceId: field.getSpaceid(),
+						identity: field.getIdentity(),
+						identityName: field.getIdentityname(),
+						identityIcon: field.getIdentityicon(),
+					});
+					break;
+				};
+
 			};
 
 			return {
@@ -617,6 +627,7 @@ export const Mapper = {
 		BlockFile: (obj: any) => {
 			const content = new Model.Block.Content.File();
 	
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setType(obj.type);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
@@ -863,6 +874,15 @@ export const Mapper = {
 
 			item.setId(obj.id);
 			item.setSnapshot(obj.snapshot);
+
+			return item;
+		},
+
+		ParticipantPermissionChange: (obj: any) => {
+			const item = new Model.ParticipantPermissionChange();
+
+			item.setIdentity(obj.identity);
+			item.setPerms(obj.permissions);
 
 			return item;
 		},

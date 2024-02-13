@@ -272,9 +272,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 	
 	onSelect (icon: string) {
-		const { block } = this.props;
-
-		UtilObject.setIcon(block.content.targetBlockId, icon, '');
+		UtilObject.setIcon(this.props.block.content.targetBlockId, icon, '');
 	};
 
 	onUpload (objectId: string) {
@@ -314,6 +312,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
+			noEdit: true,
 			passThrough: true,
 		});
 	};

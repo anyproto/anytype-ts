@@ -558,7 +558,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = dbStore.getTypeById(commonStore.type);
 		const data = await this.getClipboardData();
 
-		data.forEach(async item => 	{
+		data.forEach(async item => {
 			let text = '';
 			let html = '';
 

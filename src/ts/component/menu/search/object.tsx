@@ -226,7 +226,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	

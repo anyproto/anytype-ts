@@ -39,12 +39,12 @@ export interface MenuParam {
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;
+	force?: boolean;
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
 	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
-	force?: boolean;
 };
 
 export interface Menu {
@@ -61,7 +61,7 @@ export interface Menu {
 	getSize?(): { width: number; height: number; };
 	getPosition?(): DOMRect;
 	position? (): void;
-	close? (): void;
+	close? (callBack?: () => void): void;
 };
 
 export interface MenuItem {

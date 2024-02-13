@@ -183,7 +183,6 @@
 			"dist/css/**/*",
 			"dist/js/**/*",
 			"electron/img/*",
-			"electron/about/*",
 			"electron/js/preload.js",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
@@ -202,7 +201,6 @@
 			"electron/json/*",
 			"electron/env.json",
 			"electron/img/*",
-			"electron/about/*",
 			"build",
 			"!dist/*",
 			"dist/index.html",
@@ -318,6 +316,10 @@
 			{
 				"from": "node_modules/electron-window-state",
 				"to": "node_modules/electron-window-state"
+			},
+			{
+				"from": "node_modules/escape-goat",
+				"to": "node_modules/escape-goat"
 			},
 			{
 				"from": "node_modules/ext-list",

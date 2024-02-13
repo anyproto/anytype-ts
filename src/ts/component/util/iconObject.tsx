@@ -183,7 +183,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Human: {
+			case I.ObjectLayout.Human: 
+			case I.ObjectLayout.Participant: {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -239,6 +240,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Bookmark: {
+				if (iconImage) {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				};
+				break;
+			};
+
 			case I.ObjectLayout.Image: {
 				if (id) {
 					cn.push('withImage');
@@ -251,14 +260,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Bookmark: {
-				if (iconImage) {
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				};
-				break;
-			};
-
+			case I.ObjectLayout.Video:
+			case I.ObjectLayout.Audio:
+			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
@@ -408,7 +412,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 						onSelect(icon);
 					};
 				},
-
 				onUpload: (objectId: string) => {
 					if (onUpload) {
 						onUpload(objectId);
@@ -437,7 +440,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = 28;
 		};
 
-		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
+		if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout) && (size >= 40)) {
 			s = size;
 		};
 
