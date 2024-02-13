@@ -542,10 +542,11 @@ class UtilCommon {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
+				bgColor: 'green',
 				title: translate('confirmUpdateTitle'),
 				text: translate('confirmUpdateText'),
 				textConfirm: translate('confirmUpdateConfirm'),
-				canCancel: false,
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
 					if (onConfirm) {
@@ -823,7 +824,7 @@ class UtilCommon {
 			ADD_ATTR: [
 				'contenteditable'
 			],
-			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
 
@@ -862,6 +863,21 @@ class UtilCommon {
 			c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK)));
 		};
 		return c.join('');
+	};
+
+	enumKey (e: any, v: any) {
+		let k = '';
+		for (const key in e) {
+			if (v === e[key]) {
+				k = key;
+				break;
+			};
+		};
+		return k;
+	};
+
+	stripTags (s: string): string {
+		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
 };

@@ -163,6 +163,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		if (item.id == 'remove') {
 			popupStore.open('confirm', {
 				data: {
+					icon: 'confirm',
+					bgColor: 'red',
 					title: translate('popupRelationValueRemoveTitle'),
 					text: translate('popupRelationValueRemoveText'),
 					textConfirm: translate('commonDelete'),

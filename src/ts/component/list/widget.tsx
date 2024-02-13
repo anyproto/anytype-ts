@@ -49,6 +49,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let content = null;
 
@@ -113,7 +114,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				};
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
-			} else {
+			} else 
+			if (canWrite) {
 				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onMouseDown: this.onEdit });
 			};
 
@@ -332,7 +334,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId) {
+		if (previewId || !UtilObject.canParticipantWrite()) {
 			return;
 		};
 

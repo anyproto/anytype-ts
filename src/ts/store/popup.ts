@@ -12,6 +12,10 @@ const SHOW_DIMMER = [
 	'migration',
 	'pin',
 	'preview',
+	'about',
+	'inviteRequest',
+	'inviteConfirm',
+	'usecase',
 ];
 
 class PopupStore {
@@ -148,7 +152,7 @@ class PopupStore {
 		
 		window.setTimeout(() => {
 			this.popupList = filtered;
-			
+
 			if (callBack) {
 				callBack();
 			};

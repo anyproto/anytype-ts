@@ -30,6 +30,7 @@ import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
+import PageMainInvite from './main/invite';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -57,6 +58,7 @@ const Components = {
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
+	'main/invite':			 PageMainInvite,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {

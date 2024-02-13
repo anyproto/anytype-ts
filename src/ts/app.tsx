@@ -443,6 +443,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
@@ -466,6 +468,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'update',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
 				textConfirm: translate('popupConfirmUpdatePromptOk'),
@@ -489,9 +493,12 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'updated',
+				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), UtilCommon.getElectron().version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
+				colorConfirm: 'blank',
 				canCancel: false,
 			},
 		});
@@ -507,6 +514,8 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
+				icon: 'error',
+				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: translate('commonRetry'),

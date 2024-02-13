@@ -34,12 +34,11 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		const { state, targetObjectId } = block.content;
 		const css: any = {};
 		
-		let element = null;
-
 		if (width) {
 			css.width = (width * 100) + '%';
 		};
 		
+		let element = null;
 		switch (state) {
 			default:
 			case I.FileState.Empty:
@@ -69,13 +68,13 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 						<img 
 							className="mediaImage" 
 							src={commonStore.imageUrl(targetObjectId, Constant.size.image)} 
-							onDragStart={e => 	e.preventDefault()} 
+							onDragStart={e => e.preventDefault()} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
 							onError={this.onError} 
 						/>
 						<Icon className="download" onClick={this.onDownload} />
-						<Icon className="resize" onMouseDown={e => 	this.onResizeStart(e, false)} />
+						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -159,8 +158,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 
 		keyboard.disableSelection(true);		
 		node.addClass('isResizing');
-		win.on('mousemove.media', e => 	this.onResize(e, checkMax));
-		win.on('mouseup.media', e => 	this.onResizeEnd(e, checkMax));
+		win.on('mousemove.media', e => this.onResize(e, checkMax));
+		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
 	};
 	
 	onResize (e: any, checkMax: boolean) {
@@ -223,11 +222,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 	
 	onClick (e: any) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-		const src = commonStore.imageUrl(targetObjectId, Constant.size.image);
-
 		if (!keyboard.withCommand(e)) {
+			const src = commonStore.imageUrl(this.props.block.content.targetObjectId, Constant.size.image);
+
 			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
 		};
 	};

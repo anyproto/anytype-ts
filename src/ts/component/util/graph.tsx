@@ -451,6 +451,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
+		if (!UtilObject.canParticipantWrite()) {
+			return;
+		};
+
 		menuStore.open('select', {
 			...param,
 			data: {

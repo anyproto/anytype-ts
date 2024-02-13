@@ -119,6 +119,12 @@
         }
     }
 
+	/* DataviewFileValues */
+
+	.menu.menuDataviewFileValues {
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
+    }
+
     /* DataviewCalendar */
 
     .menu.menuDataviewCalendar {
@@ -200,15 +206,15 @@
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban0.svg'); }
 				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar0.svg'); }
             }
-
-            .layout:hover { background-color: rgba(238, 238, 238, 0.06); }
-            .layout.active {
+			.layout.active {
                 .icon.view.c0 { background-image: url('#{$themePath}/icon/dataview/layout/grid1.svg'); }
                 .icon.view.c1 { background-image: url('#{$themePath}/icon/dataview/layout/list1.svg'); }
                 .icon.view.c2 { background-image: url('#{$themePath}/icon/dataview/layout/gallery1.svg'); }
                 .icon.view.c3 { background-image: url('#{$themePath}/icon/dataview/layout/kanban1.svg'); }
 				.icon.view.c4 { background-image: url('#{$themePath}/icon/dataview/layout/calendar1.svg'); }
             }
+
+            .layout:not(.isReadonly):hover { background-color: rgba(238, 238, 238, 0.06); }
         }
     }
 

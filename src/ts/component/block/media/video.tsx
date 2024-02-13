@@ -32,8 +32,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, targetObjectId, type, mime } = content;
-		const { width } = fields || {};
+		const { state, targetObjectId } = content;
+		const { width } = fields;
 		const css: any = {};
 
 		if (width) {

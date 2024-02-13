@@ -1,5 +1,5 @@
 import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
-import { SpaceStatus, SpaceType } from './space';
+import { SpaceStatus, SpaceType, ParticipantPermissions, ParticipantStatus } from './space';
 import { AnimType, AnimDirection } from './animation';
 import { 
 	Platform, 
@@ -84,6 +84,8 @@ export {
 
 	SpaceStatus, 
 	SpaceType,
+	ParticipantPermissions, 
+	ParticipantStatus,
 
 	AnimType, 
 	AnimDirection,

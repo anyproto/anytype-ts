@@ -1,0 +1,68 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="96" rx="8" fill="url(#paint0_linear_10508_4787)"/>
+<path d="M40 24V22H48V24H40Z" fill="black"/>
+<path d="M32 28V26H36V28H32Z" fill="black"/>
+<path d="M36 26V24H40V26H36Z" fill="black"/>
+<path d="M30 30V28H32V30H30Z" fill="black"/>
+<path d="M28 30H30V32H28V30Z" fill="black"/>
+<path d="M26 32H28V36H26V32Z" fill="black"/>
+<path d="M24 36H26V40H24V36Z" fill="black"/>
+<path d="M24 48H22V40H24V48Z" fill="black"/>
+<path d="M40 72V74H48V72H40Z" fill="black"/>
+<path d="M32 68V70H36V68H32Z" fill="black"/>
+<path d="M36 70V72H40V70H36Z" fill="black"/>
+<path d="M30 66V68H32V66H30Z" fill="black"/>
+<path d="M28 66H30V64H28V66Z" fill="black"/>
+<path d="M26 64H28V60H26V64Z" fill="black"/>
+<path d="M24 60H26V56H24V60Z" fill="black"/>
+<path d="M24 48H22V56H24V48Z" fill="black"/>
+<path d="M56 24V22H48V24H56Z" fill="black"/>
+<path d="M64 28V26H60V28H64Z" fill="black"/>
+<path d="M60 26V24H56V26H60Z" fill="black"/>
+<path d="M66 30V28H64V30H66Z" fill="black"/>
+<path d="M68 30H66V32H68V30Z" fill="black"/>
+<path d="M70 32H68V36H70V32Z" fill="black"/>
+<path d="M72 36H70V40H72V36Z" fill="black"/>
+<path d="M72 48H74V40H72V48Z" fill="black"/>
+<path d="M56 72V74H48V72H56Z" fill="black"/>
+<path d="M64 68V70H60V68H64Z" fill="black"/>
+<path d="M60 70V72H56V70H60Z" fill="black"/>
+<path d="M66 66V68H64V66H66Z" fill="black"/>
+<path d="M68 66H66V64H68V66Z" fill="black"/>
+<path d="M70 64H68V60H70V64Z" fill="black"/>
+<path d="M72 60H70V56H72V60Z" fill="black"/>
+<path d="M72 48H74V56H72V48Z" fill="black"/>
+<rect x="25" y="39" width="45" height="2" fill="black"/>
+<rect x="26" y="55" width="44" height="2" fill="black"/>
+<rect x="40" y="28" width="2" height="4" fill="black"/>
+<rect x="38" y="32" width="2" height="2" fill="black"/>
+<rect x="42" y="24" width="2" height="4" fill="black"/>
+<rect x="36" y="34" width="2" height="6" fill="black"/>
+<rect x="34" y="40" width="2" height="4" fill="black"/>
+<rect x="32" y="44" width="2" height="4" fill="black"/>
+<rect width="2" height="4" transform="matrix(1 0 0 -1 40 68)" fill="black"/>
+<rect width="2" height="2" transform="matrix(1 0 0 -1 38 64)" fill="black"/>
+<rect width="2" height="4" transform="matrix(1 0 0 -1 42 72)" fill="black"/>
+<rect width="2" height="6" transform="matrix(1 0 0 -1 36 62)" fill="black"/>
+<rect width="2" height="4" transform="matrix(1 0 0 -1 34 56)" fill="black"/>
+<rect width="2" height="4" transform="matrix(1 0 0 -1 32 52)" fill="black"/>
+<rect width="2" height="4" transform="matrix(-1 0 0 1 55 28)" fill="black"/>
+<rect width="2" height="2" transform="matrix(-1 0 0 1 57 32)" fill="black"/>
+<rect width="2" height="4" transform="matrix(-1 0 0 1 53 24)" fill="black"/>
+<rect width="2" height="6" transform="matrix(-1 0 0 1 59 34)" fill="black"/>
+<rect width="2" height="4" transform="matrix(-1 0 0 1 61 40)" fill="black"/>
+<rect width="2" height="4" transform="matrix(-1 0 0 1 63 44)" fill="black"/>
+<rect x="55" y="68" width="2" height="4" transform="rotate(180 55 68)" fill="black"/>
+<rect x="57" y="64" width="2" height="2" transform="rotate(180 57 64)" fill="black"/>
+<rect x="53" y="72" width="2" height="4" transform="rotate(180 53 72)" fill="black"/>
+<rect x="59" y="62" width="2" height="6" transform="rotate(180 59 62)" fill="black"/>
+<rect x="61" y="56" width="2" height="4" transform="rotate(180 61 56)" fill="black"/>
+<rect x="63" y="52" width="2" height="4" transform="rotate(180 63 52)" fill="black"/>
+<defs>
+<linearGradient id="paint0_linear_10508_4787" x1="48" y1="2.86102e-06" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+<stop offset="0.37125" stop-color="white"/>
+<stop offset="0.67875" stop-color="#FBF1CD"/>
+<stop offset="1" stop-color="#FFBEB0"/>
+</linearGradient>
+</defs>
+</svg>

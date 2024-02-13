@@ -7,10 +7,12 @@ const NotificationImport = observer(class NotificationImport extends React.Compo
 
 	render () {
 		const { item } = this.props;
+		const { title, text } = item;
+
 		return (
 			<React.Fragment>
-				<Title text={item.title} />
-				<Label text={item.text} />
+				<Title text={title} />
+				<Label text={text} />
 			</React.Fragment>
 		);
 	};

@@ -5,6 +5,7 @@ import { I, UtilCommon } from 'Lib';
 interface Props {
 	id?: string;
 	text: string;
+	color?: string;
 	className?: string;
 	dataset?: any;
 	onMouseEnter?: (e: any) => void;
@@ -18,11 +19,15 @@ class Label extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { id, text, className, dataset, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
+		const { id, text, color, className, dataset, onClick, onMouseDown, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'label' ];
 
 		if (className) {
 			cn.push(className);
+		};
+
+		if (color) {
+			cn.push(`textColor textColor-${color}`);
 		};
 
 		return (

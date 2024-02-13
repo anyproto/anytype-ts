@@ -406,6 +406,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (!UtilObject.canParticipantWrite()) {
+			return;
+		};
+
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
@@ -628,7 +632,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing) {
+		if (!object || isEditing || !UtilObject.canParticipantWrite()) {
 			return false;
 		};
 
@@ -647,7 +651,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
 
-			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
+			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
 				return false;
 			};
 		} else

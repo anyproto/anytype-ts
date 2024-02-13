@@ -34,9 +34,7 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 // ---------------------- GALLERY ---------------------- //
 
 export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(GalleryDownloadIndex.name, request, callBack);
+	dispatcher.request(GalleryDownloadIndex.name, new Commands.Empty(), callBack);
 };
 
 export const GalleryDownloadManifest = (url: string, callBack?: (message: any) => void) => {
@@ -50,13 +48,11 @@ export const GalleryDownloadManifest = (url: string, callBack?: (message: any) =
 // ---------------------- APP ---------------------- //
 
 export const AppShutdown = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(AppShutdown.name, request, callBack);
+	dispatcher.request(AppShutdown.name, new Commands.Empty(), callBack);
 };
 
 export const AppGetVersion = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(AppGetVersion.name, request, callBack);
+	dispatcher.request(AppGetVersion.name, new Commands.Empty(), callBack);
 };
 
 // ---------------------- WALLET ---------------------- //
@@ -204,15 +200,11 @@ export const AccountStop = (removeData: boolean, callBack?: (message: any) => vo
 };
 
 export const AccountDelete = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(AccountDelete.name, request, callBack);
+	dispatcher.request(AccountDelete.name, new Commands.Empty(), callBack);
 };
 
 export const AccountRevertDeletion = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(AccountRevertDeletion.name, request, callBack);
+	dispatcher.request(AccountRevertDeletion.name, new Commands.Empty(), callBack);
 };
 
 export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
@@ -291,9 +283,7 @@ export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (m
 
 
 export const FileNodeUsage = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-
-	dispatcher.request(FileNodeUsage.name, request, callBack);
+	dispatcher.request(FileNodeUsage.name, new Commands.Empty(), callBack);
 };
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -1865,4 +1855,99 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	request.setActiontype(action as number);
 
 	dispatcher.request(NotificationReply.name, request, callBack);
+};
+
+// ---------------------- SPACE ---------------------- //
+
+export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteGenerate.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteGenerate.name, request, callBack);
+};
+
+export const SpaceInviteView = (cid: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteView.Request();
+
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
+
+	dispatcher.request(SpaceInviteView.name, request, callBack);
+};
+
+export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteRevoke.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
+};
+
+export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.Join.Request();
+
+	request.setNetworkid(networkId);
+	request.setSpaceid(spaceId);
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
+
+	dispatcher.request(SpaceJoin.name, request, callBack);
+};
+
+export const SpaceJoinCancel = (spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.JoinCancel.Request();
+
+	request.setSpaceid(spaceId);
+	request.setInvitecid(cid);
+	request.setInvitefilekey(key);
+
+	dispatcher.request(SpaceJoinCancel.name, request, callBack);
+};
+
+export const SpaceRequestApprove = (spaceId: string, identity: string, permissions: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.RequestApprove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentity(identity);
+	request.setPermissions(permissions as number);
+
+	dispatcher.request(SpaceRequestApprove.name, request, callBack);
+};
+
+export const SpaceRequestDecline = (spaceId: string, identity: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.RequestDecline.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentity(identity);
+
+	dispatcher.request(SpaceRequestDecline.name, request, callBack);
+};
+
+export const SpaceParticipantPermissionsChange = (spaceId: string, changes: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.ParticipantPermissionsChange.Request();
+
+	request.setSpaceid(spaceId);
+	request.setChangesList(changes.map(Mapper.To.ParticipantPermissionChange));
+
+	dispatcher.request(SpaceParticipantPermissionsChange.name, request, callBack);
+};
+
+export const SpaceParticipantRemove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.ParticipantRemove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentitiesList(identities);
+
+	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};
+
+// ---------------------- EXTENSION ---------------------- //
+
+export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Broadcast.PayloadEvent.Request();
+
+	request.setPayload(JSON.stringify(payload, null, 3));
+
+	dispatcher.request(BroadcastPayloadEvent.name, request, callBack);
 };

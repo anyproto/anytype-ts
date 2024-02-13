@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -75,7 +75,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			} else
 			if (item.id == 'add') {
 				content = (
-					<div id="item-add" className="item add" onMouseEnter={e => 	this.onOver(e, item)} onClick={e => 	this.onClick(e, item)} style={param.style}>
+					<div id="item-add" className="item add" onMouseEnter={e => this.onOver(e, item)} onClick={e => this.onClick(e, item)} style={param.style}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -86,8 +86,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 						id={item.id}
 						object={item}
 						name={name}
-						onMouseEnter={e => 	this.onOver(e, item)} 
-						onClick={e => 	this.onClick(e, item)}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
@@ -121,10 +121,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				) : ''}
 
 				{isLoading ? <Loader /> : ''}
-
-				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
 					<div className="items">

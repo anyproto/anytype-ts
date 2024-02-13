@@ -90,13 +90,11 @@ class Api {
 	};
 
 	setMenuBarVisibility (win, show) {
-		const hide = !show;
-
-		ConfigManager.set({ hideMenuBar: hide }, () => {
+		ConfigManager.set({ hideMenuBar: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
 			win.setMenuBarVisibility(show);
-			win.setAutoHideMenuBar(hide);
+			win.setAutoHideMenuBar(!show);
 		});
 	};
 

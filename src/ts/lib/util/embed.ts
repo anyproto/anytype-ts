@@ -21,7 +21,7 @@ class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
 		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
-		return this[fn] ? this[fn](content) : '';
+		return this[fn] ? this[fn](content) : content;
 	};
 
 	getYoutubeHtml (content: string): string {
@@ -46,11 +46,6 @@ class UtilEmbed {
 
 	getOpenStreetMapHtml (content: string): string {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
-	};
-
-	getTelegramHtml (content: string): string {
-		const post = content.replace(/^https:\/\/t.me\//, '');
-		return `<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script>`;
 	};
 
 	getGithubGistHtml (content: string): string {

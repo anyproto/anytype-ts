@@ -113,27 +113,21 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).off('resize');
 		};
-
-		$(this.node).off('resize');
 	};
 
 	onPlay () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).addClass('isPlaying');
 		};
-
-		$(this.node).addClass('isPlaying');
 	};
 
 	onPause () {
-		if (!this._isMounted) {
-			return;
+		if (this._isMounted) {
+			$(this.node).removeClass('isPlaying');
 		};
-
-		$(this.node).removeClass('isPlaying');
 	};
 
 	onKeyDown (e: any) {
@@ -181,6 +175,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
 	};
+
 });
 
 export default BlockAudio;

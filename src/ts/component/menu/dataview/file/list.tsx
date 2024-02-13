@@ -2,13 +2,13 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
+import { Filter, MenuItemVertical, Icon, Loader, EmptySearch } from 'Component';
 import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const HEIGHT = 28;
@@ -19,7 +19,7 @@ const LIMIT_HEIGHT = 20;
 const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -29,6 +29,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
+	timeoutFilter = 0;
 	top = 0;
 	n = -1;
 
@@ -45,7 +46,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	
 	render () {
 		const { param } = this.props;
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
@@ -80,8 +81,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						id={item.id}
 						object={item}
 						name={UtilFile.name(item)}
-						onMouseEnter={e => 	this.onOver(e, item)} 
-						onClick={e => 	this.onClick(e, item)}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
@@ -112,7 +113,13 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					focusOnMount={true}
 				/>
 
-				{loading ? <Loader /> : (
+				{isLoading ? <Loader /> : ''}
+
+				{!items.length && !isLoading ? (
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				) : ''}
+
+				{this.cache && items.length && !isLoading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -141,7 +148,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 							)}
 						</InfiniteLoader>
 					</div>
-				)}
+				) : ''}
 			</div>
 		);
 	};
@@ -181,11 +188,13 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeoutFilter);
+		this.unbind();
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', e => 	this.props.onKeyDown(e));
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -221,19 +230,18 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
+		const { filter } = data;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		UtilData.search({
@@ -244,7 +252,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -262,7 +270,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			}));
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -277,7 +285,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 
 	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, Constant.delay.keyboard);
 	};
 
 	onOver (e: any, item: any) {

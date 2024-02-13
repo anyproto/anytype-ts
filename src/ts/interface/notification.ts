@@ -5,6 +5,7 @@ export enum NotificationType {
 	Import	 = 'import',
 	Export	 = 'export',
 	Gallery	 = 'galleryImport',
+	Join	 = 'requestToJoin',
 };
 
 export enum NotificationStatus {

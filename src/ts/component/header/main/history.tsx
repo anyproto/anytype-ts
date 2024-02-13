@@ -23,6 +23,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	render () {
 		const { version } = this.state;
+		const canWrite = UtilObject.canParticipantWrite();
 
 		return (
 			<React.Fragment>
@@ -39,7 +40,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>
-					<div className="item orange">{translate('headerHistoryRestore')}</div>
+					{canWrite ? <div className="item orange">{translate('headerHistoryRestore')}</div> : ''}
 				</div>
 			</React.Fragment>
 		);

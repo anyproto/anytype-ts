@@ -248,7 +248,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => 	this.onTab(item.id)}>
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => this.onTab(item.id)}>
 				{item.name}
 			</div>
 		);
@@ -294,7 +294,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getSize={this.getSize}
 							getPosition={this.getPosition}
 							position={this.position} 
-							close={this.close} 
+							close={() => this.close()}
 						/>
 					</div>
 				</div>
@@ -659,12 +659,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		});
 	};
 
-	close () {
+	close (callBack?: () => void) {
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
 		};
 
-		menuStore.close(this.props.id);
+		menuStore.close(this.props.id, callBack);
 	};
 
 	onDimmerClick () {

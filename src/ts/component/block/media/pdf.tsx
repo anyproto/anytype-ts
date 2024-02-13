@@ -44,10 +44,10 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, targetObjectId, type } = content;		
+		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
 		const object = detailStore.get(rootId, targetObjectId, []);
-		const { width } = fields;
+		const width = Number(fields) || 0;
 		const css: any = {};
 
 		let element = null;
@@ -234,7 +234,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			UtilObject.openPopup({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Image });
+			UtilObject.openPopup({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 

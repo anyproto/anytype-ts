@@ -78,7 +78,6 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 						/>
 					</div>
