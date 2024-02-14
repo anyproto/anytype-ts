@@ -38,9 +38,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { error, loading } = this.state;
 		const { account } = authStore;
-		const participant = UtilObject.getParticipant();
+		const profile = UtilObject.getProfile();
 	
-		let name = participant.name;
+		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
 			name = '';
 		};
@@ -54,7 +54,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						{loading ? <Loader /> : ''}
 						<IconObject
 							id="userpic"
-							object={participant}
+							object={profile}
 							size={108}
 							onClick={this.onMenu}
 						/>
@@ -73,7 +73,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 					<Input
 						ref={ref => this.refDescription = ref}
-						value={participant.description}
+						value={profile.description}
 						onKeyUp={this.onDescription}
 						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 					/>
