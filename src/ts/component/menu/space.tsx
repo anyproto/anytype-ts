@@ -23,7 +23,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	render () {
 		const { setHover } = this.props;
 		const items = this.getItems();
-		const profile = UtilObject.getProfile();
+		const participant = UtilObject.getParticipant();
 		const { spaceview } = blockStore;
 
 		const Item = (item) => {
@@ -76,8 +76,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			>
 				<div className="head" onClick={this.onSettings}>
 					<div className="side left">
-						<IconObject object={profile} size={40} />
-						<ObjectName object={profile} />
+						<IconObject object={participant} size={40} />
+						<ObjectName object={participant} />
 					</div>
 					<div className="side right">
 						<Icon className="settings" />

@@ -24,7 +24,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	render () {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const profile = UtilObject.getProfile();
+		const participant = UtilObject.getParticipant();
 		const isWin = UtilCommon.isPlatformWindows();
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
@@ -77,7 +77,7 @@ const Navigation = observer(class Navigation extends React.Component {
 						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
-						<IconObject object={profile} />
+						<IconObject object={participant} />
 					</div>
 				</div>
 			</div>

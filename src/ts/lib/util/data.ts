@@ -296,6 +296,7 @@ class UtilData {
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			},
 			{
 				subId: Constant.subId.deleted,
