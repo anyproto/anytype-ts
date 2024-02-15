@@ -773,11 +773,27 @@
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
 	"popupSettingsPaymentTitle": "Membership",
-	"popupSettingsPaymentIndexText": "Global name for your identity, increased sync volume, expanded sharing options, and other benefits for out paid plans. See details on Anytype.io",
+	"popupSettingsPaymentIndexTitle": "Let’s build together",
+	"popupSettingsPaymentIndexText": "Joining Anytype network means contributing to its story",
 
-	"popupSettingsPaymentItemTitle1": "Friend",
-	"popupSettingsPaymentItemTitle2": "Supporter",
-	"popupSettingsPaymentItemTitle3": "Funding Patron",
+	"popupSettingsPaymentIndexSlide0Title": "Co-create with us",
+	"popupSettingsPaymentIndexSlide0Text": "Stay closely connected with our team and community. Join calls with the team, influence Anytype's evolution, and have your say on features.",
+
+	"popupSettingsPaymentItemTitle1": "Explorer",
+	"popupSettingsPaymentItemDescription1": "Dive into the network and enjoy the thrill of one-on-one collaboration",
+	"popupSettingsPaymentItemTitle2": "Builder",
+	"popupSettingsPaymentItemDescription2": "Unlock the magic of multi-party collaboration and enjoy top-notch support\n\n",
+	"popupSettingsPaymentItemTitle3": "Co-creator",
+	"popupSettingsPaymentItemDescription3": "Support our adventure and unlock exclusive access and perks",
+
+	"popupSettingsPaymentItemJustEmail": "Just e-mail",
+	"popupSettingsPaymentItemPerYear": "per year",
+	"popupSettingsPaymentItemPerYears": "per %s years",
+	"popupSettingsPaymentItemLearnMore": "Learn more",
+
+	"popupSettingsPaymentIndexMembershipLevelsDetails": "Membership levels details",
+	"popupSettingsPaymentIndexPrivacyPolicy": "Privacy policy",
+	"popupSettingsPaymentIndexTermsAndConditions": "Terms and conditions",
 
 	"popupSettingsPaymentItemText1": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
 	"popupSettingsPaymentItemText2": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
