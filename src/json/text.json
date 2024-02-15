@@ -124,6 +124,7 @@
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
+	"commonEmail": "E-mail",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -798,6 +799,18 @@
 	"popupSettingsPaymentItemText1": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
 	"popupSettingsPaymentItemText2": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
 	"popupSettingsPaymentItemText3": "Your Anytype Identity has a global name in the Anytype system, you can store additional data and have more shared spaces.",
+
+	"popupSubscriptionPlanWhatsIncluded": "What’s included",
+
+	"popupSubscriptionPlanFreeTitleStep1": "Get your free membership with just your email!",
+	"popupSubscriptionPlanFreeTitleStep2": "Enter the code sent to your email",
+	"popupSubscriptionPlanFreeText": "We need your email to keep spam at bay and the fun in play!",
+	"popupSubscriptionPlanFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
+
+	"popupSubscriptionPlanPaidTitle": "Pick your unique name",
+	"popupSubscriptionPlanPaidText": "This name acts like a personal domain, making it easier for others to find you ",
+
+
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",

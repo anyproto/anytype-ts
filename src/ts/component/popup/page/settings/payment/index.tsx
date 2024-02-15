@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
+import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 
@@ -29,7 +30,7 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 		];
 
 		const SlideItem = (slide) => (
-			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
+			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
 				<div className="textWrapper">
 					<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
 					<Title text={slide.title} />
@@ -67,7 +68,7 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 						<div className="priceWrapper">
 							<span className="price">{price}</span>{period}
 						</div>
-						<Button text={translate('popupSettingsPaymentItemLearnMore')} />
+						<Button onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.idx } })} text={translate('popupSettingsPaymentItemLearnMore')} />
 					</div>
 				</div>
 			);
@@ -121,7 +122,6 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 		this.slideWidth = $(this.node).width() + 16;
 
 		$(window).on('resize.membership', () => {
-			console.log('WIDTH: ', $(this.node).width() + 16)
 			this.slideWidth = $(this.node).width() + 16;
 		});
 	};

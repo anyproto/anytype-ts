@@ -719,9 +719,9 @@
 				.tier { display: flex; flex-direction: column; justify-content: space-between; height: 296px; flex-shrink: 0; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
 				.tier {
 					.icon { width: 64px; height: 64px;  background-size: 64px 64px; margin-bottom: 10px; }
-					.icon.tier1 { background: url('~img/icon/payment/tier1.svg'); }
-					.icon.tier2 { background: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 12px; background-size: 60px 60px; }
-					.icon.tier3 { background: url('~img/icon/payment/tier3.svg'); }
+					.icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
+					.icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 12px; background-size: 60px 60px; }
+					.icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
 
 					.title { @include text-paragraph; margin-bottom: 4px; }
 					.label { @include text-small; }
