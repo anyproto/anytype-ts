@@ -168,6 +168,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.resizePage();
 		this.checkDeleted();
 		this.initNodes();
+		this.rebind();
 
 		focus.apply();
 		blockStore.updateNumbers(rootId);
