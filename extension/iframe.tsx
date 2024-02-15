@@ -85,8 +85,6 @@ class Iframe extends React.Component {
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('[Iframe]', msg, sender);
-
 			switch (msg.type) {
 				case 'initIframe':
 					const { appKey, gatewayPort, serverPort } = msg;

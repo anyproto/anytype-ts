@@ -17,8 +17,6 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 
 	getPorts (onError?: () => void): void {
 		Util.sendMessage({ type: 'checkPorts' }, response => {
-			console.log('[Iframe] checkPorts', response);
-
 			if (!response.ports || !response.ports.length) {
 				this.setState({ error: 'Automatic pairing failed, please open the app' });
 

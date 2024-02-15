@@ -49,8 +49,6 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	checkPorts (onError?: () => void): void {
 		Util.sendMessage({ type: 'getPorts' }, response => {
 			Util.sendMessage({ type: 'checkPorts' }, response => {
-				console.log('[Popup] checkPorts', response);
-
 				if (!response.ports || !response.ports.length) {
 					this.setState({ error: 'Automatic pairing failed, please open the app' });
 
@@ -116,7 +114,6 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 						this.setState({ error: 'App open failed' });
 
 						clearInterval(this.interval);
-						console.log('App open try', cnt);
 					};
 				});
 			}, 1000);

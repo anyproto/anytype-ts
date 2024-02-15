@@ -35,8 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-
-		console.log('[Dispatcher].init Server address: ', address);
 	};
 
 	listenEvents () {
