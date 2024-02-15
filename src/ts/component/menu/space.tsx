@@ -200,7 +200,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		if (items[this.n] && (items[this.n].id == 'add')) {
+		if (items[this.n] && ([ 'add', 'gallery' ].includes(items[this.n].id))) {
 			this.onArrow(dir);
 		} else {
 			this.props.setActive();
