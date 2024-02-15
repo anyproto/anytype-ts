@@ -244,7 +244,7 @@ class UtilData {
 			};
 
 			C.ObjectOpen(widgets, '', space, () => {
-				this.createsSubscriptions(() => {
+				this.createSubscriptions(() => {
 					C.NotificationList(false, Constant.limit.notification, (message: any) => {
 						if (!message.error.code) {
 							notificationStore.set(message.list);
@@ -285,7 +285,7 @@ class UtilData {
 		});
 	};
 
-	createsSubscriptions (callBack?: () => void): void {
+	createSubscriptions (callBack?: () => void): void {
 		const { space } = commonStore;
 
 		const list = [

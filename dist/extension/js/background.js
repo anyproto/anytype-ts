@@ -78,7 +78,7 @@
 				break;
 			};
 
-			case 'init': {
+			case 'initMenu': {
 				initMenu();
 				break;
 			};

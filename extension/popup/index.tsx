@@ -70,7 +70,14 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
-			Util.authorize(appKey, () => UtilRouter.go('/create', {}), () => {
+			Util.authorize(appKey, () => {
+				const { serverPort, gatewayPort } = extensionStore;
+
+				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
+				Util.sendMessage({ type: 'initMenu' }, () => {});
+
+				UtilRouter.go('/create', {});
+			}, () => {
 				Storage.delete('appKey');
 				this.login();
 			});

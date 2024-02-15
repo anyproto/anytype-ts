@@ -37,7 +37,9 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
-			Util.authorize(appKey, () => UtilRouter.go('/create', {}), () => Storage.delete('appKey'));
+			Util.authorize(appKey, () => {
+				Util.sendMessage({ type: 'initMenu' }, () => {});
+			}, () => Storage.delete('appKey'));
 		};
 	};
 

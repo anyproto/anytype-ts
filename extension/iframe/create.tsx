@@ -89,6 +89,16 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
+		UtilData.createSubscriptions(() => {
+			this.init();
+		});
+	};
+
+	componentDidUpdate (): void {
+		this.initBlocks();
+	};
+
+	init () {
 		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 })).filter(it => it);
 
 		if (this.refSpace && spaces.length) {
@@ -98,10 +108,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.refSpace?.setValue(space);
 			this.onSpaceChange(space);
 		};
-	};
-
-	componentDidUpdate (): void {
-		this.initBlocks();
 	};
 
 	initBlocks () {
@@ -158,7 +164,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		commonStore.spaceSet(id);
-		UtilData.createsSubscriptions();
+		UtilData.createSubscriptions();
 	};
 
 	getWrapperWidth () {
