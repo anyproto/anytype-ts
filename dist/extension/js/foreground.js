@@ -1,6 +1,7 @@
 (() => {
 
-	const extensionId = 'jbnammhjiplhpjfncnlejjjejghimdkf';
+	const extensionIds = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf' ];
+	const allowedOrigins = extensionIds.map(id => `chrome-extension://${id}`);
 	const body = document.querySelector('body');
 	const container = document.createElement('div');
 	const dimmer = document.createElement('div');
@@ -25,7 +26,7 @@
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		console.log('[Foreground]', msg, sender);
 
-		if (sender.id != extensionId) {
+		if (!extensionIds.includes(sender.id)) {
 			return false;
 		};
 
@@ -44,7 +45,7 @@
 	});
 
 	window.addEventListener('message', e => {
-		if (e.origin != `chrome-extension://${extensionId}`) {
+		if (!allowedOrigins.includes(e.origin)) {
 			return;
 		};
 

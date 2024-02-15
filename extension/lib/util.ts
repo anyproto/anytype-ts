@@ -7,14 +7,10 @@ const INDEX_IFRAME = '/iframe/index.html'
 
 class Util {
 
-	extensionId () {
-		return Extension.clipper.id;
-	};
-
 	isExtension () {
 		return (
 			(location.protocol == 'chrome-extension:') && 
-			(location.hostname == this.extensionId())
+			Extension.clipper.ids.includes(location.hostname)
 		);
 	};
 

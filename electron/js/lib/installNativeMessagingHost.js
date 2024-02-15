@@ -17,7 +17,7 @@ const { fixPathForAsarUnpack, is } = require('electron-util');
 
 const APP_NAME = 'com.anytype.desktop';
 const MANIFEST_FILENAME = `${APP_NAME}.json`;
-const EXTENSION_ID = 'jbnammhjiplhpjfncnlejjjejghimdkf';
+const EXTENSION_IDS = [ 'jbnammhjiplhpjfncnlejjjejghimdkf', 'jkmhmgghdjjbafmkgjmplhemjjnkligf' ];
 const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
@@ -43,7 +43,7 @@ const installNativeMessagingHost = () => {
 		name: APP_NAME,
 		description: 'Anytype desktop <-> web clipper bridge',
 		type: 'stdio',
-		allowed_origins: [ `chrome-extension://${EXTENSION_ID}/` ],
+		allowed_origins: EXTENSION_IDS.map(id => `chrome-extension://${id}/`),
 		path: getManifestPath(),
 	};
 
