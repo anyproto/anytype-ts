@@ -60,8 +60,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const cn = [ 'editorWrapper', check.className ];
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
-		console.log(object, check);
-		
 		if (root && (root.isObjectHuman() || root.isObjectParticipant)) {
 			icon.type = I.BlockType.IconUser;
 		};
