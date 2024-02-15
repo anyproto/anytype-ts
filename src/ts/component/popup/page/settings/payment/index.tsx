@@ -68,7 +68,7 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 						<div className="priceWrapper">
 							<span className="price">{price}</span>{period}
 						</div>
-						<Button onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.idx } })} text={translate('popupSettingsPaymentItemLearnMore')} />
+						<Button onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.idx } })} className="c28" text={translate('popupSettingsPaymentItemLearnMore')} />
 					</div>
 				</div>
 			);

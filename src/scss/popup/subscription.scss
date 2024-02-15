@@ -1,0 +1,86 @@
+@import "~scss/_vars";
+
+.popups {
+    .popup.popupSubscriptionPlan {
+        .innerWrap { width: 706px; }
+
+        .sides { display: flex; flex-wrap: nowrap; height: 480px; }
+        .sides {
+            .side { width: 50%; flex-shrink: 0; }
+            .side.left { padding: 32px; }
+            .side.left {
+                .icon { width: 80px; height: 80px; margin-bottom: 14px; }
+                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
+                .icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); }
+                .icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
+
+                .title { @include text-header2; margin-bottom: 8px; }
+                .label { margin-bottom: 20px; }
+                .contentList {
+                    .label { color: var(--color-text-secondary); margin-bottom: 8px; }
+                    ul { list-style-type: none; }
+                    li { position: relative; margin-bottom: 8px; padding-left: 20px; }
+                    li::before { position: absolute; content: ''; left: 0; top: 5px; width: 12px; height: 11px; }
+                }
+            }
+
+            .side.right { padding: 28px 32px; }
+            .side.right {
+                .title { @include text-paragraph; margin-bottom: 8px; }
+                .label { margin-bottom: 14px; }
+                .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 6px; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+                .inputWrapper {
+                    .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
+                    .ns { flex-shrink: 0; width: 27px; }
+                }
+
+                .check { display: flex; gap: 8px; margin-bottom: 16px; @include text-small; }
+                .check {
+                    .icon { width: 18px; height: 18px; }
+                }
+
+                .statusBar { @include text-small; height: 18px; margin-bottom: 4px; text-align: right; color: var(--color-text-secondary);  }
+                .statusBar.error { color: var(--color-red); }
+                .statusBar.ok { color: var(--color-green); }
+
+                .priceWrapper { margin-bottom: 14px; }
+                .priceWrapper {
+                    .price { @include text-header2; display: inline-block; padding-right: 6px; }
+                }
+
+                .button { width: 100%; margin-bottom: 10px; }
+            }
+        }
+
+        .sides.tier1 {
+            .side.left { background: linear-gradient(180deg, #D7FBFF 0%, #F6F6F6 23.05%); }
+            .side.left {
+                > .icon { background-image: url('~img/icon/payment/tier1.svg'); }
+                .contentList {
+                    li::before { background-image: url('~img/icon/payment/tick-tier1.svg'); }
+                }
+            }
+            .side.right {
+                .inputWrapper { margin-bottom: 20px; }
+            }
+        }
+        .sides.tier2 {
+            .side.left { background: linear-gradient(180deg, #ECEEFF 0%, #F6F6F6 23.05%); }
+            .side.left {
+                .icon { background-image: url('~img/icon/payment/tier2.svg'); }
+                .contentList {
+                    li::before { background-image: url('~img/icon/payment/tick-tier2.svg'); }
+                }
+            }
+        }
+        .sides.tier3 {
+            .side.left { background: linear-gradient(180deg, #FFEBEB 0%, #F6F6F6 23.05%); }
+            .side.left {
+                .icon { background-image: url('~img/icon/payment/tier3.svg'); }
+                .contentList {
+                    li::before { background-image: url('~img/icon/payment/tick-tier3.svg'); }
+                }
+            }
+        }
+    }
+}

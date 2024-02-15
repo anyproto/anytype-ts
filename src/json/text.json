@@ -808,9 +808,25 @@
 	"popupSubscriptionPlanFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
 
 	"popupSubscriptionPlanPaidTitle": "Pick your unique name",
-	"popupSubscriptionPlanPaidText": "This name acts like a personal domain, making it easier for others to find you ",
+	"popupSubscriptionPlanPaidText": "This name acts like a personal domain, making it easier for others to find you",
+	"popupSubscriptionPlanPaidPlaceholder": "Myself",
+	"popupSubscriptionPlanPayByCard": "Pay by Card",
+	"popupSubscriptionPlanPayByCrypto": "Pay by Crypto",
 
+	"popupSubscriptionPlanTier1Content1": "1 GB of network space",
+	"popupSubscriptionPlanTier1Content2": "10 one-to-one spaces",
+	"popupSubscriptionPlanTier1Content3": "Up to 10 shared spaces in read-only mode",
 
+	"popupSubscriptionPlanTier2Content1": "Unique name (from 7 characters)",
+	"popupSubscriptionPlanTier2Content2": "128 GB of network space",
+	"popupSubscriptionPlanTier2Content3": "10 guest collaborator seats",
+	"popupSubscriptionPlanTier2Content4": "Priority support ",
+
+	"popupSubscriptionPlanTier3Content1": "Unique name (from 5 characters)",
+	"popupSubscriptionPlanTier3Content2": "256 GB of network space",
+	"popupSubscriptionPlanTier3Content3": "25 Guest collaborator seats",
+	"popupSubscriptionPlanTier3Content4": "Chat with the team",
+	"popupSubscriptionPlanTier3Content5": "Unique collectible ",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
