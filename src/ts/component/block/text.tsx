@@ -661,6 +661,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
+			{ key: `${cmd}+shift+r` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
