@@ -4,6 +4,7 @@ import { Title, Label, Button, Icon } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
+import Url from 'json/url.json';
 
 const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentIndex extends React.Component<I.PopupSettings> {
 
@@ -18,10 +19,10 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 		const style = { left: -this.slideWidth * currentSlide };
 
 		const slides = [
-			{ title: 'popupSettingsPaymentIndexSlide0Title', text: 'popupSettingsPaymentIndexSlide0Text' },
-			{ title: 'popupSettingsPaymentIndexSlide1Title', text: 'popupSettingsPaymentIndexSlide1Text' },
-			{ title: 'popupSettingsPaymentIndexSlide2Title', text: 'popupSettingsPaymentIndexSlide2Text' },
-			{ title: 'popupSettingsPaymentIndexSlide3Title', text: 'popupSettingsPaymentIndexSlide3Text' },
+			{ title: translate('popupSettingsPaymentIndexSlide0Title'), text: translate('popupSettingsPaymentIndexSlide0Text') },
+			{ title: translate('popupSettingsPaymentIndexSlide1Title'), text: translate('popupSettingsPaymentIndexSlide1Text') },
+			{ title: translate('popupSettingsPaymentIndexSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsPaymentIndexSlide2Text'), Url.vision) },
+			{ title: translate('popupSettingsPaymentIndexSlide3Title'), text: translate('popupSettingsPaymentIndexSlide3Text') },
 		];
 		const tiers = [
 			{ idx: 1 },
@@ -31,12 +32,10 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 
 		const SlideItem = (slide) => (
 			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
-				<div className="textWrapper">
-					<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
-					<div className="text">
-						<Title text={translate(slide.title)} />
-						<Label text={translate(slide.text)} />
-					</div>
+				<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
+				<div className="text">
+					<Title text={slide.title} />
+					<Label text={slide.text} />
 				</div>
 			</div>
 		);
