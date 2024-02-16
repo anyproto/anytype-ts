@@ -8,8 +8,6 @@
 	native.postMessage({ type: 'getPorts' });
 
 	native.onMessage.addListener((msg) => {
-		console.log('[Native]', msg);
-
 		if (msg.error) {
 			console.error(msg.error);
 		};
@@ -34,7 +32,6 @@
 	});
 
 	native.onDisconnect.addListener(() => {
-		console.log('[Native] Disconnected');
 	});
 
 	chrome.runtime.onInstalled.addListener(details => {
@@ -44,8 +41,6 @@
 
 		if (details.reason == 'update') {
 			const { version } = chrome.runtime.getManifest();
-
-			console.log('Updated', details.previousVersion, version);
 		};
 
 		chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -58,8 +53,6 @@
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-		console.log('[Background]', msg.type);
-
 		const res = {};
 
 		switch (msg.type) {
@@ -78,7 +71,7 @@
 				break;
 			};
 
-			case 'init': {
+			case 'initMenu': {
 				initMenu();
 				break;
 			};
@@ -143,10 +136,7 @@
 		};
 
 		msg.url = tab.url;
-
-		const response = await chrome.tabs.sendMessage(tab.id, msg);
-
-		console.log('[sendToTab]', tab, msg, response);
+		await chrome.tabs.sendMessage(tab.id, msg);
 	};
 
 })();

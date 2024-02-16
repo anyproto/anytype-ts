@@ -59,7 +59,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		
+
 		if (root && (root.isObjectHuman() || root.isObjectParticipant)) {
 			icon.type = I.BlockType.IconUser;
 		};

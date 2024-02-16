@@ -168,6 +168,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.resizePage();
 		this.checkDeleted();
 		this.initNodes();
+		this.rebind();
 
 		focus.apply();
 		blockStore.updateNumbers(rootId);
@@ -358,10 +359,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const win = $(window);
 		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const container = UtilCommon.getScrollContainer(isPopup);
+		const isReadonly = this.isReadonly();
 
 		this.unbind();
 
-		win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+		if (!isReadonly) {
+			win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+		};
+
 		win.on('keydown.editor' + namespace, e => this.onKeyDownEditor(e));
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {

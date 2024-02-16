@@ -119,6 +119,12 @@
         }
     }
 
+	/* DataviewFileValues */
+
+	.menu.menuDataviewFileValues {
+		.item:hover::before { background: var(--color-shape-highlight-medium); }
+    }
+
     /* DataviewCalendar */
 
     .menu.menuDataviewCalendar {

@@ -244,7 +244,7 @@ class UtilData {
 			};
 
 			C.ObjectOpen(widgets, '', space, () => {
-				this.createsSubscriptions(() => {
+				this.createSubscriptions(() => {
 					C.NotificationList(false, Constant.limit.notification, (message: any) => {
 						if (!message.error.code) {
 							notificationStore.set(message.list);
@@ -285,7 +285,7 @@ class UtilData {
 		});
 	};
 
-	createsSubscriptions (callBack?: () => void): void {
+	createSubscriptions (callBack?: () => void): void {
 		const { space } = commonStore;
 
 		const list = [
@@ -296,6 +296,7 @@ class UtilData {
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			},
 			{
 				subId: Constant.subId.deleted,
@@ -511,10 +512,16 @@ class UtilData {
 		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
-		const ret: any = {
-			withCover: Boolean((coverType != I.CoverType.None) && coverId),
+		const ret = {
+			withCover: false,
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
+			className: '',
+		};
+
+		let className = [];
+		if (!object._empty_) {
+			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
+			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
 		};
 
 		switch (object.layout) {
@@ -539,28 +546,28 @@ class UtilData {
 		};
 
 		if (checkType) {
-			ret.className.push('noSystemBlocks');
+			className.push('noSystemBlocks');
 		};
 
 		if ((object.featuredRelations || []).includes('description')) {
-			ret.className.push('withDescription');
+			className.push('withDescription');
 		};
 
 		if (object.templateIsBundled) {
-			ret.className.push('isBundled');
+			className.push('isBundled');
 		};
 
 		if (ret.withIcon && ret.withCover) {
-			ret.className.push('withIconAndCover');
+			className.push('withIconAndCover');
 		} else
 		if (ret.withIcon) {
-			ret.className.push('withIcon');
+			className.push('withIcon');
 		} else
 		if (ret.withCover) {
-			ret.className.push('withCover');
+			className.push('withCover');
 		};
 
-		ret.className = ret.className.join(' ');
+		ret.className = className.join(' ');
 		return ret;
 	};
 

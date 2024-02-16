@@ -50,8 +50,17 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 				return;
 			};
 
-			Storage.set('appKey', message.appKey);
-			Util.authorize(message.appKey, () => UtilRouter.go('/create', {}));
+			const { appKey } = message;
+			const { serverPort, gatewayPort } = extensionStore;
+
+			Storage.set('appKey', appKey);
+
+			Util.authorize(appKey, () => {
+				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
+				Util.sendMessage({ type: 'initMenu' }, () => {});
+
+				UtilRouter.go('/create', {});
+			});
 		});
 	};
 

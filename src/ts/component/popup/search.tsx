@@ -58,7 +58,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				object = item;
 			} else 
 			if (item.id == 'account') {
-				object = UtilObject.getProfile();
+				object = UtilObject.getParticipant();
 			} else 
 			if (item.id == 'spaceIndex') {
 				object = UtilObject.getSpaceview();
