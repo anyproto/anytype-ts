@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 
 const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentIndex extends React.Component<I.PopupSettings> {
 
@@ -14,14 +14,14 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 	slideWidth: number = 0;
 
 	render () {
-		const { onPage } = this.props;
 		const { currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
 
 		const slides = [
-			{ title: translate('popupSettingsPaymentIndexSlide0Title'), text: translate('popupSettingsPaymentIndexSlide0Text') },
-			{ title: translate('popupSettingsPaymentIndexSlide0Title'), text: translate('popupSettingsPaymentIndexSlide0Text') },
-			{ title: translate('popupSettingsPaymentIndexSlide0Title'), text: translate('popupSettingsPaymentIndexSlide0Text') },
+			{ title: 'popupSettingsPaymentIndexSlide0Title', text: 'popupSettingsPaymentIndexSlide0Text' },
+			{ title: 'popupSettingsPaymentIndexSlide1Title', text: 'popupSettingsPaymentIndexSlide1Text' },
+			{ title: 'popupSettingsPaymentIndexSlide2Title', text: 'popupSettingsPaymentIndexSlide2Text' },
+			{ title: 'popupSettingsPaymentIndexSlide3Title', text: 'popupSettingsPaymentIndexSlide3Text' },
 		];
 		const tiers = [
 			{ idx: 1 },
@@ -33,8 +33,10 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
 				<div className="textWrapper">
 					<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
-					<Title text={slide.title} />
-					<Label text={slide.text} />
+					<div className="text">
+						<Title text={translate(slide.title)} />
+						<Label text={translate(slide.text)} />
+					</div>
 				</div>
 			</div>
 		);
