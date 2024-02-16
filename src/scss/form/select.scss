@@ -23,7 +23,7 @@
 	}
 	.item::before { display: none; }
 
-	.clickable { display: flex; }
+	.clickable { display: flex; width: 100%; }
 }
 
 .select.big { padding: 9px 26px 9px 12px; border-radius: 10px; }

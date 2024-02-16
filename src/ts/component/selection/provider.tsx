@@ -494,7 +494,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	get (type: I.SelectType, withChildren?: boolean): string[] {
-		let ids = [ ...new Set(this.ids.get(type)) ];
+		let ids = [ ...new Set(this.ids.get(type) || []) ];
 
 		if (type == I.SelectType.Block) {
 			if (withChildren) {

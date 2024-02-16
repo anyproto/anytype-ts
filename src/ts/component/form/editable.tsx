@@ -9,6 +9,7 @@ interface Props {
 	classNamePlaceholder?: string;
 	placeholder?: string;
 	readonly?: boolean;
+	spellcheck?: boolean;
 	onKeyDown?: (e: any) => void;
 	onKeyUp?: (e: any) => void;
 	onFocus?: (e: any) => void;
@@ -43,7 +44,7 @@ class Editable extends React.Component<Props> {
 
 	render () {
 		const { 
-			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, onFocus, onBlur, onSelect, onPaste, 
+			id, classNameWrap, classNameEditor, classNamePlaceholder, readonly, placeholder, spellcheck, onFocus, onBlur, onSelect, onPaste, 
 			onMouseDown, onMouseUp, onDragStart
 		} = this.props;
 		const cnw = [ 'editableWrap' ];
@@ -72,6 +73,7 @@ class Editable extends React.Component<Props> {
 					className={cne.join(' ')} 
 					contentEditable={true}
 					suppressContentEditableWarning={true}
+					spellCheck={false}
 					onMouseUp={onSelect} 
 				/>
 			);
@@ -82,6 +84,7 @@ class Editable extends React.Component<Props> {
 					className={cne.join(' ')}
 					contentEditable={true}
 					suppressContentEditableWarning={true}
+					spellCheck={spellcheck}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
 					onFocus={onFocus}
