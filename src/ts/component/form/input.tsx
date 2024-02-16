@@ -124,6 +124,7 @@ class Input extends React.Component<Props, State> {
 		if (this.isFocused) {
 			this.isFocused = false;
 			keyboard.setFocus(false);
+			keyboard.disableSelection(false);
 		};
 	};
 
