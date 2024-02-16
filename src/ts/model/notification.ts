@@ -36,6 +36,10 @@ class Notification implements I.Notification {
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 
+		if (!space) {
+			return;
+		};
+
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
 
