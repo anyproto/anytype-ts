@@ -103,10 +103,6 @@ class Block implements I.Block {
 		return this.isText() && !this.isTextTitle() && !this.isTextDescription() && !this.isTextCode();
 	};
 
-	canHaveHistory (): boolean {
-		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask() || this.isObjectNote();
-	};
-
 	canTurn (): boolean {
 		return !this.isSystem() && ((this.isText() && !this.isTextTitle() && !this.isTextDescription()) || this.isDiv() || this.isLink());
 	};
