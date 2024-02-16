@@ -132,7 +132,8 @@
 		"graph": "graph",
 		"space": "space",
 		"files": "files",
-		"participant": "participant"
+		"participant": "participant",
+		"myParticipant": "myParticipant"
 	},
 
 	"typeKey": {

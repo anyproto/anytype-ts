@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, UtilObject, translate } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { authStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
@@ -13,11 +13,13 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	render () {
+		const { account } = authStore;
 		const spaces = dbStore.getSpaces();
 
 		const Row = (space) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
 			const isOwner = creator.permissions == I.ParticipantPermissions.Owner;
+			const member = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(space.targetSpaceId, account.id));
 
 			return (
 				<tr>
@@ -36,7 +38,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							</div>
 						</div>
 					</td>
-					<td>{translate(`participantPermissions${creator.permissions}`)}</td>
+					<td>{translate(`participantPermissions${member.permissions}`)}</td>
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
 					<td>{translate(`spaceStatus${space.spaceLocalStatus}`)}</td>
 

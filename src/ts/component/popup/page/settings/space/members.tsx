@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
+import { Title, Label, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
 import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore, commonStore } from 'Store';
@@ -13,9 +13,8 @@ interface State {
 };
 
 const HEIGHT = 64;
-const MEMBER_LIMIT = 10;
 
-const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
+const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers extends React.Component<I.PopupSettings, State> {
 
 	cid = '';
 	key = '';
@@ -32,9 +31,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
-		this.onCopy = this.onCopy.bind(this);
-		this.onGenerate = this.onGenerate.bind(this);
-		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 	};
 
@@ -117,33 +113,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
-				<div className="titleWrapper">
-					<Title text={translate('popupSettingsSpaceShareTitle')} />
-
-					<div className="info">
-						<span>{translate('popupSettingsSpaceShareMoreInfo')}</span>
-						<Icon className="question" />
-					</div>
-				</div>
-
-				<div className="section sectionInvite">
-					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
-					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
-
-					<div className="inviteLinkWrapper">
-						<Input ref={ref => this.refInput = ref} readonly={true} />
-						<Button onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
-						<Icon id="generate" className="refresh" onClick={() => this.onGenerate(false)} />
-					</div>
-
-					<div className="invitesLimit">
-						{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
-					</div>
-				</div>
+				<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
 
 				<div className="section sectionMembers">
-					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
-
 					{this.cache ? (
 						<div id="list" className="rows">
 							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
@@ -171,10 +143,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					) : ''}
 				</div>
 
-				<div className="buttons">
-					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
-				</div>
-
 				<Error text={error} />
 			</div>
 		);
@@ -182,7 +150,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	componentDidMount() {
 		this.updateCache();
-		this.onGenerate(true);
 	};
 
 	componentDidUpdate() {
@@ -221,75 +188,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 
 		return records;
-	};
-
-	getLink () {
-		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${this.key}`
-	};
-
-	onCopy () {
-		UtilCommon.copyToast(translate('commonLink'), this.getLink());
-	};
-
-	onGenerate (auto: boolean) {
-		const { space } = commonStore;
-		const node = $(this.node);
-		const button = node.find('#generate');
-		const onConfirm = () => {
-			C.SpaceInviteGenerate(space, (message: any) => {
-				if (!auto) {
-					button.removeClass('loading');
-				};
-
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
-
-				this.cid = message.inviteCid;
-				this.key = message.inviteKey;
-				this.refInput.setValue(this.getLink());
-
-				if (!auto) {
-					this.onCopy();
-				};
-			});
-		};
-
-		if (!auto) {
-			button.addClass('loading');
-
-			popupStore.open('confirm', {
-				data: {
-					title: translate('popupConfirmRevokeLinkTitle'),
-					text: translate('popupConfirmRevokeLinkText'),
-					textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-					colorConfirm: 'red',
-					onConfirm,
-					onCancel: () => button.removeClass('loading'),
-				},
-			});
-		} else {
-			onConfirm();
-		};
-	};
-
-	onStopSharing () {
-		const { space } = commonStore;
-		const { onPage } = this.props;
-
-		popupStore.open('confirm', {
-			data: {
-				title: translate('popupConfirmStopSharingSpaceTitle'),
-				text: translate('popupConfirmStopSharingSpaceText'),
-				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceInviteRevoke(space);
-					onPage('spaceIndex');
-				},
-			},
-		});
 	};
 
 	getMemberOptions () {
@@ -374,4 +272,4 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 });
 
-export default PopupSettingsSpaceShare;
+export default PopupSettingsSpaceMembers;

@@ -458,6 +458,13 @@
 				}
 			}
 
+			.buttons {
+				.button { width: 100%; }
+			}
+		}
+
+		.side.right.tabSpaceShare, 
+		.side.right.tabSpaceMembers {
 			.section.sectionMembers { min-height: 236px; }
 			.section.sectionMembers {
 				.title { margin-bottom: 18px; }
@@ -485,10 +492,6 @@
 						.select.hover { background-color: var(--color-bg-primary); }
 					}
 				}
-			}
-
-			.buttons {
-				.button { width: 100%; }
 			}
 		}
 
