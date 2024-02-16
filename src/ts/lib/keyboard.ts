@@ -1,9 +1,14 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import {
+    I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar,
+    UtilObject, UtilRouter, Preview, Action, translate, ShortcutActionList,
+    ShortcutActionConstants, UserKeyboardShortcut, KeyboardShortcut
+} from 'Lib';
+import {commonStore, authStore, blockStore, detailStore, menuStore, popupStore} from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
+import {keybindStore} from 'Store/keybind';
 
 class Keyboard {
 	
@@ -127,30 +132,9 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, (pressed: string) => {
-			e.preventDefault();
-
-			if (pressed.match('.') && this.isFocused) {
-				return;
-			};
-
-			commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
-		});
-
-		// Navigation
-		if (!this.isNavigationDisabled) {
-			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
-			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
-
-			if (!UtilCommon.getSelectionRange() && isMac) {
-				this.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
-				this.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
-			};
-		};
-
-		// Close popups and menus
-		this.shortcut('escape', e, () => {
-			e.preventDefault();
+        // Close popups and menus
+        this.shortcut('escape', e, () => {
+            e.preventDefault();
 
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
@@ -179,83 +163,114 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
-		if (isMain) {
+        // Only allow shortcuts if they are not disabled
+        if (keybindStore.shortcutsDisabled) {
+            return;
+        }
 
-			// Shortcuts
-			this.shortcut('ctrl+space', e, () => {
-				popupStore.open('shortcut', { preventResize: true });
-			});
+        this.action(ShortcutActionConstants.ToggleSidebar, e, (pressed: string) => {
+            e.preventDefault();
 
-			// Spaces
-			this.shortcut('ctrl+tab', e, () => {
-				this.onSpaceMenu(true);
-			});
+            if (pressed.match('.') && this.isFocused) {
+                return;
+            }
+            ;
 
-			// Print
-			this.shortcut(`${cmd}+p`, e, () => {
-				e.preventDefault();
-				this.onPrint('Shortcut');
-			});
+            commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
+        });
 
-			// Navigation search
-			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
-					return;
-				};
+        // Navigation
+        if (!this.isNavigationDisabled) {
+            this.action(ShortcutActionConstants.HistoryBack, e, () => this.onBack())
+            this.action(ShortcutActionConstants.HistoryNext, e, () => this.onForward())
+
+            if (!UtilCommon.getSelectionRange() && isMac) {
+                this.action(ShortcutActionConstants.GoToLineStart, e, () => this.onBack())
+                this.action(ShortcutActionConstants.GoToLineEnd, e, () => this.onForward())
+            }
+            ;
+        }
+        ;
+
+
+        if (isMain) {
+            // Shortcuts
+            this.action(ShortcutActionConstants.OpenShortcuts, e, () => {
+                popupStore.open('shortcut', {preventResize: true});
+            });
+
+            // Spaces
+            this.action(ShortcutActionConstants.SwitchSpaces, e,
+                () => this.onSpaceMenu(true));
+
+            // Print
+            this.action(ShortcutActionConstants.Print, e, () => {
+                e.preventDefault();
+                this.onPrint('Shortcut');
+            });
+
+            // Navigation search
+            this.action(ShortcutActionConstants.SearchPane, e, (pressed: string) => {
+                if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
+                    return;
+                }
 
 				this.onSearchPopup('Shortcut');
 			});
 
-			this.shortcut(`${cmd}+l`, e, () => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
-					return;
-				};
+            this.action(ShortcutActionConstants.LibraryPane, e, () => {
+                if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
+                    return;
+                }
+                ;
 
 				UtilObject.openAuto({ layout: I.ObjectLayout.Store });
 			});
 
-			// Text search
-			this.shortcut(`${cmd}+f`, e, () => {
-				if (!this.isFocused) {
-					this.onSearchMenu('', 'Shortcut');
-				};
-			});
+            // Text search
+            this.action(ShortcutActionConstants.TextSearch, e, () => {
+                if (!this.isFocused) {
+                    this.onSearchMenu('', 'Shortcut');
+                };
+            });
 
-			// Navigation links
-			this.shortcut(`${cmd}+o`, e, () => {
-				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
-			});
+            // Navigation links
+            this.action(ShortcutActionConstants.NavigationPane, e, () => {
+                e.preventDefault();
+                UtilObject.openAuto({id: this.getRootId(), layout: I.ObjectLayout.Navigation});
+            });
 
-			// Graph
-			this.shortcut(`${cmd}+alt+o`, e, () => {
-				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
-			});
+            // Graph
+            this.action(ShortcutActionConstants.GraphPane, e, () => {
+                e.preventDefault();
+                UtilObject.openAuto({id: this.getRootId(), layout: I.ObjectLayout.Graph});
+            });
 
-			// Go to dashboard
-			this.shortcut('alt+h', e, () => {
-				if (authStore.account && !popupStore.isOpen('search')) {
-					UtilObject.openHome('route');
-				};
-			});
+            // Go to dashboard
+            this.action(ShortcutActionConstants.ReturnToHome, e, () => {
+                if (authStore.account && !popupStore.isOpen('search')) {
+                    UtilObject.openHome('route');
+                }
+                ;
+            });
 
-			// Settings
-			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!popupStore.isOpen('settings')) {
-					popupStore.open('settings', {});
-				};
-			});
+            // Settings
+            this.action(ShortcutActionConstants.OpenSettings, e, () => {
+                if (!popupStore.isOpen('settings')) {
+                    popupStore.open('settings', {});
+                }
+                ;
+            });
 
-			// Create relation
-			this.shortcut(`${cmd}+shift+r`, e, () => {
-				$('#button-header-relation').trigger('click');
-			});
+            // Create relation
+            this.action(ShortcutActionConstants.CreateRelation, e, () => {
+                $('#button-header-relation').trigger('click');
+            });
 
-			// Store
-			this.shortcut(`${cmd}+alt+l`, e, () => {
-				UtilObject.openRoute({ layout: I.ObjectLayout.Store });
-			});
+            // Store
+            this.action(ShortcutActionConstants.OpenStore, e, () => {
+                UtilObject.openRoute({layout: I.ObjectLayout.Store});
+            });
 
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
@@ -272,25 +287,25 @@ class Keyboard {
 				});
 			});
 
-			if (canWrite) {
-				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
-					e.preventDefault();
-					this.pageCreate({}, 'Shortcut');
-				});
+            if (canWrite) {
+                // Create new page
+                this.action(ShortcutActionConstants.CreateNewPage, e, () => {
+                    e.preventDefault();
+                    this.pageCreate({}, 'Shortcut');
+                });
 
-				// Quick capture menu
-				this.shortcut(`${cmd}+alt+n`, e, () => {
-					e.preventDefault();
-					this.onQuickCapture();
-				});
+                // Quick capture menu
+                this.action(ShortcutActionConstants.QuickCapture, e, () => {
+                    e.preventDefault();
+                    this.onQuickCapture();
+                });
 
-				// Lock/Unlock
-				this.shortcut(`ctrl+shift+l`, e, () => {
-					this.onToggleLock();
-				});
-			};
-		};
+                // Lock/Unlock
+                this.action(ShortcutActionConstants.LockUnlock, e, () => {
+                    this.onToggleLock();
+                });
+            };
+        };
 
 		this.initPinCheck();
 	};
@@ -1039,10 +1054,38 @@ class Keyboard {
 		return e && e.key ? e.key.toLowerCase() : '';
 	};
 
-	shortcut (s: string, e: any, callBack: (pressed: string) => void) {
-		if (!e || !e.key) {
-			return;
-		};
+    action(a: string, e: any, callBack: (pressed: string) => void) {
+        // TODO: For testing, move to store
+        let userShortcuts: Record<string, UserKeyboardShortcut>= {
+            openShortcuts: {
+                userSetShortcuts: ['ctrl+alt+e'],
+                disabled: false,
+            }
+        };
+
+        if (a in ShortcutActionList) {
+            const {defaultShortcuts, isFixedKeybind} = ShortcutActionList[a] as KeyboardShortcut;
+            var curShortcut = defaultShortcuts;
+
+            if (!isFixedKeybind && !!userShortcuts[a]) {
+                const {userSetShortcuts, disabled} = userShortcuts[a] as UserKeyboardShortcut;
+                if (!disabled) {
+                    curShortcut = userSetShortcuts;
+                }
+            }
+
+            if (curShortcut.length > 0) {
+                this.shortcut(curShortcut.join(', '), e, callBack);
+            } else {
+                console.log('No shortcut found for action', a);
+            }
+        }
+    }
+
+    shortcut (s: string, e: any, callBack: (pressed: string) => void) {
+        if (!e || !e.key) {
+            return;
+        };
 
 		const a = s.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
@@ -1090,10 +1133,58 @@ class Keyboard {
 			};
 		};
 
-		if (res) {
-			callBack(res);
-		};
-	};
+        if (res) {
+            callBack(res);
+        };
+    };
+
+    checkShortcut(e: any, callBack: (pressed: string) => void) {
+        if (!e || !e.key) {
+            return;
+        }
+        ;
+
+        const key = this.eventKey(e);
+        const which = e.which;
+
+        let pressed = [];
+        let nonModifierPressed = false;
+
+        if (e.shiftKey) {
+            pressed.push('shift');
+        }
+        ;
+        if (e.altKey) {
+            pressed.push('alt');
+        }
+        ;
+        if (e.ctrlKey) {
+            pressed.push('ctrl');
+        }
+        ;
+        if (e.metaKey) {
+            pressed.push('cmd');
+        }
+        ;
+
+        // Cmd + Alt + N hack
+        if (which == KeyCode.dead) {
+            pressed.push('n');
+        } else if (!nonModifierPressed && key.length === 1 && !pressed.includes(key)) {
+            pressed.push(key);
+            nonModifierPressed = true;
+        }
+        ;
+
+        pressed = [...new Set(pressed)];
+
+        const result = pressed.sort().join('+');
+        console.log('pressed', result);
+
+        if (result) {
+            callBack(result);
+        }
+    };
 
 	cmdSymbol () {
 		return UtilCommon.isPlatformMac() ? '&#8984;' : 'Ctrl';

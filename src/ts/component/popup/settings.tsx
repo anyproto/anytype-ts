@@ -17,6 +17,8 @@ import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
 
+import PageKeybindingIndex from './page/settings/keybinding/index';
+
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
@@ -50,6 +52,7 @@ const Components: any = {
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
 
+	keybinding:			 PageKeybindingIndex,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -265,6 +268,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+						{ id: 'keybinding', name: translate('popupSettingsKeybindingTitle') },
 					]
 				},
 				{ 

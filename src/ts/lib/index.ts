@@ -19,6 +19,7 @@ import UtilGraph from './util/graph';
 import UtilEmbed from './util/embed';
 
 import { keyboard, Key } from './keyboard';
+import { ShortcutActionList, ShortcutActionConstants, UserKeyboardShortcut, KeyboardShortcut} from './keyboardConstants';
 import { sidebar } from './sidebar';
 import Storage from './storage';
 import Mark from './mark';
@@ -38,6 +39,10 @@ import { translate } from './translate';
 
 export {
 	keyboard,
+	ShortcutActionList,
+	ShortcutActionConstants,
+	UserKeyboardShortcut,
+	KeyboardShortcut,
 	sidebar,
 	focus,
 	Key,

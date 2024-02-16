@@ -661,6 +661,9 @@
 	"popupSettingsPinSelectRepeat": "Repeat Pin Code",
 	"popupSettingsPinSelectError": "Pin Codes do not match, please try again",
 
+	"popupSettingsKeybindingTitle": "Keybindings",
+	"popupSettingsKeybindingOverrideButton": "Override",
+
 	"popupSettingsSpacesListTitle": "Spaces",
 	"popupSettingsSpacesListSpace": "Space",
 	"popupSettingsSpacesListAccess": "Access",
