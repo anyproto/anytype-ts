@@ -21,7 +21,10 @@
 
 		.item { padding: 5px 16px 5px 30px; transition: $transitionAllCommon; position: relative; }
 		.item {
-			.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; }
+			.author { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+			.author { 
+				.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; }
+			}
 			.date { @include text-overflow-nw; }
 			.icon.arrow { 
 				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;

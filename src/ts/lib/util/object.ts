@@ -72,7 +72,7 @@ class UtilObject {
 		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
-	getParticipant () {
+	getParticipant (id?: string) {
 		const { space } = commonStore;
 		const { account } = authStore;
 
@@ -80,7 +80,7 @@ class UtilObject {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(space, account.id));
+		const object = detailStore.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
 		return object._empty_ ? null : object;
 	};
 

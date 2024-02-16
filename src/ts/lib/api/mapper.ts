@@ -355,7 +355,6 @@ export const Mapper = {
 				id: obj.getId(),
 				previousIds: obj.getPreviousidsList() || [],
 				authorId: obj.getAuthorid(),
-				authorName: obj.getAuthorname(),
 				groupId: obj.getGroupid(),
 				time: obj.getTime(),
 			};
