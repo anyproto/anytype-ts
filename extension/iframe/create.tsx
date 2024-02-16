@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Button, Block, Loader, Icon, Select, IconObject } from 'Component';
+import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, translate, UtilObject, UtilData } from 'Lib';
 import { blockStore, extensionStore, menuStore, dbStore, commonStore } from 'Store';
 
@@ -72,6 +72,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				</div>
 
 				<div className="blocks">
+					{!children.length ? <EmptySearch text={translate('webclipperEmptySelection')} /> : ''}
+
 					{children.map((block: I.Block, i: number) => (
 						<Block 
 							key={block.id} 
