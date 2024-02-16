@@ -19,7 +19,6 @@ import UtilGraph from './util/graph';
 import UtilEmbed from './util/embed';
 
 import { keyboard, Key } from './keyboard';
-import { ShortcutActionList, ShortcutActionConstants, UserKeyboardShortcut, KeyboardShortcut} from './keyboardConstants';
 import { sidebar } from './sidebar';
 import Storage from './storage';
 import Mark from './mark';
@@ -36,6 +35,7 @@ import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
 import { translate } from './translate';
+import { ShortcutActionList, ShortcutActionConstants, UserKeyboardShortcut, KeyboardShortcut } from './keyboardConstants';
 
 export {
 	keyboard,
@@ -56,7 +56,7 @@ export {
 	translate,
 	dispatcher,
 	Mapper,
-	Encode, 
+	Encode,
 	Decode,
 	analytics,
 	history,

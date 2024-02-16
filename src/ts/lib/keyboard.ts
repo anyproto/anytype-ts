@@ -181,12 +181,12 @@ class Keyboard {
 
         // Navigation
         if (!this.isNavigationDisabled) {
-            this.action(ShortcutActionConstants.HistoryBack, e, () => this.onBack())
-            this.action(ShortcutActionConstants.HistoryNext, e, () => this.onForward())
+            this.action(ShortcutActionConstants.HistoryBack, e, () => this.onBack());
+            this.action(ShortcutActionConstants.HistoryNext, e, () => this.onForward());
 
             if (!UtilCommon.getSelectionRange() && isMac) {
-                this.action(ShortcutActionConstants.GoToLineStart, e, () => this.onBack())
-                this.action(ShortcutActionConstants.GoToLineEnd, e, () => this.onForward())
+                this.action(ShortcutActionConstants.GoToLineStart, e, () => this.onBack());
+                this.action(ShortcutActionConstants.GoToLineEnd, e, () => this.onForward());
             }
             ;
         }
@@ -1056,7 +1056,7 @@ class Keyboard {
 
     action(a: string, e: any, callBack: (pressed: string) => void) {
         // TODO: For testing, move to store
-        let userShortcuts: Record<string, UserKeyboardShortcut>= {
+        const userShortcuts: Record<string, UserKeyboardShortcut>= {
             openShortcuts: {
                 userSetShortcuts: ['ctrl+alt+e'],
                 disabled: false,
@@ -1065,7 +1065,7 @@ class Keyboard {
 
         if (a in ShortcutActionList) {
             const {defaultShortcuts, isFixedKeybind} = ShortcutActionList[a] as KeyboardShortcut;
-            var curShortcut = defaultShortcuts;
+            let curShortcut = defaultShortcuts;
 
             if (!isFixedKeybind && !!userShortcuts[a]) {
                 const {userSetShortcuts, disabled} = userShortcuts[a] as UserKeyboardShortcut;

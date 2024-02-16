@@ -24,7 +24,7 @@ const PopupShortcutPrompt = observer(class PopupShortcutPrompt extends React.Com
 	};
 
 	render() {
-		const { param  } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { placeholder, icon, value, maxLength, title, label, readonly } = data;
 
@@ -68,7 +68,7 @@ const PopupShortcutPrompt = observer(class PopupShortcutPrompt extends React.Com
 			this.refValue.setValue(shortcut);
 			console.log('refValue set', this.refValue);
 			this.setState({ shortcutText: shortcut });
-		})
+		});
 	}
 	
 	componentDidMount () {

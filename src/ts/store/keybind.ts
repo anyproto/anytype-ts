@@ -1,21 +1,18 @@
-import { makeObservable, observable, action, computed } from 'mobx';
-import {UserKeyboardShortcut} from 'Lib';
+import { makeObservable, observable, action } from 'mobx';
+import { UserKeyboardShortcut } from 'Lib';
 
 class KeybindStore {
-	public createdObject = null;
-	public challengeId = '';
-	public serverPort = '';
-	public gatewayPort = '';
-	public tabUrlValue = '';
 
 	// Used to detect new shortcuts
-	public shortcutsDisabled= false;
+	public shortcutsDisabled = false;
 	public userShortcuts: Map<string, UserKeyboardShortcut> = new Map();
 
 	constructor() {
-        makeObservable(this, {
+		makeObservable(this, {
 			shortcutsDisabled: observable,
 			userShortcuts: observable,
+			setShortcutsDisabled: action,
+			setUserShortcuts: action,
 		});
 	};
 
@@ -29,13 +26,13 @@ class KeybindStore {
 			if (existingShortcut.disabled) {
 				return;
 			}
-			this.userShortcuts.set(action, userShortcut)
+			this.userShortcuts.set(action, userShortcut);
 		} else {
-			this.userShortcuts.set(action, userShortcut)
+			this.userShortcuts.set(action, userShortcut);
 		}
 
 		for (const [key, value] of this.userShortcuts.entries()) {
-			console.log("VALUES: ", key, value.userSetShortcuts, value.disabled);
+			console.log('VALUES: ', key, value.userSetShortcuts, value.disabled);
 		}
 	}
 };
