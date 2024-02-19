@@ -493,7 +493,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
+				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.universalRoute(object) });
 				analytics.event('CopyLink', { ROUTE });
 				break;
 			};

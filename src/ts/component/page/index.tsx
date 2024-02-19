@@ -31,6 +31,7 @@ import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
+import PageMainObject from './main/object';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -59,6 +60,8 @@ const Components = {
 	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
+
+	'main/object':			 PageMainObject,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -141,11 +144,18 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getMatchParams () {
+		const { history } = this.props;
 		const match = this.getMatch();
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
 		const spaceId = String(match?.params?.spaceId || '');
+		const pathname = String(history?.location?.pathname || '');
+
+		// Universal object route
+		if (pathname.match('/object')) {
+			return { page: 'main', action: 'object', id, spaceId };
+		};
 
 		return { page, action, id, spaceId };
 	};
