@@ -157,6 +157,7 @@
 	},
 
 	"storeSpaceId": "_anytype_marketplace",
+	"anyNameSpace": ".any",
 
 	"templateId": {
 		"blank": "blank",

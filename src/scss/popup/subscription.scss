@@ -49,7 +49,7 @@
                     .icon { width: 18px; height: 18px; }
                 }
 
-                .statusBar { @include text-small; height: 18px; margin: 0px 0px 4px; text-align: right; color: var(--color-text-secondary);  }
+                .statusBar { @include text-small; height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
                 .statusBar.error { color: var(--color-red); }
                 .statusBar.ok { color: var(--color-green); }
 
@@ -71,11 +71,6 @@
             }
         }
 
-        .sides.step2 {
-            .side.right {
-                .statusBar { text-align: left; }
-            }
-        }
         .sides.tier1 {
             .side.left { background: linear-gradient(180deg, #D7FBFF 0%, #F6F6F6 23.05%); }
             .side.left {
