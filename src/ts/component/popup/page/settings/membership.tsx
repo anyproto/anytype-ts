@@ -6,7 +6,7 @@ import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
 
-const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentIndex extends React.Component<I.PopupSettings> {
+const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
 	state = {
 		currentSlide: 0
@@ -19,10 +19,10 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 		const style = { left: -this.slideWidth * currentSlide };
 
 		const slides = [
-			{ title: translate('popupSettingsPaymentIndexSlide0Title'), text: translate('popupSettingsPaymentIndexSlide0Text') },
-			{ title: translate('popupSettingsPaymentIndexSlide1Title'), text: translate('popupSettingsPaymentIndexSlide1Text') },
-			{ title: translate('popupSettingsPaymentIndexSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsPaymentIndexSlide2Text'), Url.vision) },
-			{ title: translate('popupSettingsPaymentIndexSlide3Title'), text: translate('popupSettingsPaymentIndexSlide3Text') },
+			{ title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
+			{ title: translate('popupSettingsMembershipSlide1Title'), text: translate('popupSettingsMembershipSlide1Text') },
+			{ title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
+			{ title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
 		];
 		const tiers = [
 			{ idx: 1 },
@@ -45,16 +45,16 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 			let period = '';
 
 			if (!item.price) {
-				price = translate('popupSettingsPaymentItemJustEmail');
+				price = translate('popupSettingsMembershipJustEmail');
 			} else {
 				price = `$${item.price}`;
 			};
 
 			if (item.period) {
 				if (item.period == 1) {
-					period = translate('popupSettingsPaymentItemPerYear')
+					period = translate('popupSettingsMembershipPerYear')
 				} else {
-					period = UtilCommon.sprintf(translate('popupSettingsPaymentItemPerYears'), item.period);
+					period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
 				};
 			};
 
@@ -62,14 +62,14 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 				<div className={[ 'tier', `tier${item.idx}` ].join(' ')}>
 					<div className="top">
 						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
-						<Title text={translate(`popupSettingsPaymentItemTitle${item.idx}`)} />
-						<Label text={translate(`popupSettingsPaymentItemDescription${item.idx}`)} />
+						<Title text={translate(`popupSettingsMembershipTitle${item.idx}`)} />
+						<Label text={translate(`popupSettingsMembershipDescription${item.idx}`)} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
 							<span className="price">{price}</span>{period}
 						</div>
-						<Button onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.idx } })} className="c28" text={translate('popupSettingsPaymentItemLearnMore')} />
+						<Button onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.idx } })} className="c28" text={translate('popupSettingsMembershipLearnMore')} />
 					</div>
 				</div>
 			);
@@ -77,8 +77,8 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{translate('popupSettingsPaymentIndexTitle')}</div>
-				<Label className="description" text={translate('popupSettingsPaymentIndexText')} />
+				<div className="membershipTitle">{translate('popupSettingsMembershipTitle')}</div>
+				<Label className="description" text={translate('popupSettingsMembershipText')} />
 
 				<div className="slider">
 					<div style={style} className="feed">
@@ -103,15 +103,15 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text={translate('popupSettingsPaymentIndexMembershipLevelsDetails')} />
+						<Label text={translate('popupSettingsMembershipLevelsDetails')} />
 						<Icon />
 					</div>
 					<div className="item">
-						<Label text={translate('popupSettingsPaymentIndexPrivacyPolicy')} />
+						<Label text={translate('popupSettingsMembershipPrivacyPolicy')} />
 						<Icon />
 					</div>
 					<div className="item">
-						<Label text={translate('popupSettingsPaymentIndexTermsAndConditions')} />
+						<Label text={translate('popupSettingsMembershipTermsAndConditions')} />
 						<Icon />
 					</div>
 				</div>
@@ -133,4 +133,4 @@ const PopupSettingsPagePaymentIndex = observer(class PopupSettingsPagePaymentInd
 
 });
 
-export default PopupSettingsPagePaymentIndex;
+export default PopupSettingsPageMembership;

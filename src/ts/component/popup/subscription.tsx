@@ -94,9 +94,9 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 			let period = '';
 
 			if (current.period == 1) {
-				period = translate('popupSettingsPaymentItemPerYear')
+				period = translate('popupSettingsMembershipPerYear')
 			} else {
-				period = UtilCommon.sprintf(translate('popupSettingsPaymentItemPerYears'), current.period);
+				period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), current.period);
 			};
 
 			content = (
@@ -125,8 +125,8 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 			<div className={[ 'sides', `tier${tier}`, `step${verificationStep}` ].join(' ')}>
 				<div className="side left">
 					<Icon />
-					<Title text={translate(`popupSettingsPaymentItemTitle${tier}`)} />
-					<Label text={translate(`popupSettingsPaymentItemDescription${tier}`)} />
+					<Title text={translate(`popupSettingsMembershipTitle${tier}`)} />
+					<Label text={translate(`popupSettingsMembershipDescription${tier}`)} />
 
 					<div className="contentList">
 						<Label text={translate('popupSubscriptionPlanWhatsIncluded')} />

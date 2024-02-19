@@ -33,8 +33,7 @@ import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
 import PageSpaceList from './page/settings/space/list';
 
-import PagePaymentIndex from './page/settings/payment/index';
-import PagePaymentItem from './page/settings/payment/item';
+import PageMembership from './page/settings/membership';
 
 interface State {
 	loading: boolean;
@@ -47,6 +46,7 @@ const Components: any = {
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
 	phrase:				 PagePhrase,
+	membership:			 PageMembership,
 	logout:				 PageLogout,
 
 	pinIndex:			 PagePinIndex,
@@ -69,9 +69,6 @@ const Components: any = {
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
-
-	paymentIndex:		 PagePaymentIndex, 
-	paymentItem:		 PagePaymentItem,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
@@ -278,7 +275,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-						{ id: 'paymentIndex', icon: 'payment', name: translate('popupSettingsPaymentTitle') },
+						{ id: 'membership', icon: 'membership', name: translate('popupSettingsMembership') },
 					]
 				}
 			];
