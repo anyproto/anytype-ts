@@ -113,7 +113,7 @@ func isFileGateway(port string) bool {
 	client := &http.Client{}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, "GET", "http://192.168.184.136:"+port+"/file", nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", "http://127.0.0.1:"+port+"/file", nil)
 	if err != nil {
 		return false
 	}
@@ -144,7 +144,7 @@ func isGrpcWebServer(port string) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	var data = strings.NewReader(`AAAAAAIQFA==`)
-	req, err := http.NewRequestWithContext(ctx, "POST", "http://192.168.184.136:"+port+"/anytype.ClientCommands/AppGetVersion", data)
+	req, err := http.NewRequestWithContext(ctx, "POST", "http://127.0.0.1:"+port+"/anytype.ClientCommands/AppGetVersion", data)
 	if err != nil {
 		return false
 
