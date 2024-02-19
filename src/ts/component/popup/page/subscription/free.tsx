@@ -1,9 +1,19 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
-import { observer } from 'mobx-react';
 
-const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFree extends React.Component<I.Popup> {
+interface Props {
+	tier: any;
+};
+interface State {
+	verificationStep: number;
+	countdown: number;
+	status: string;
+	statusText: string;
+};
+
+const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFree extends React.Component<Props, State> {
 
 	state = {
 		verificationStep: 1,
@@ -11,6 +21,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 		status: '',
 		statusText: '',
 	};
+
 	refCheckbox: any = null;
 	refEmail: any = null;
 	refButton: any = null;
@@ -21,7 +32,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 
 	email: string = '';
 
-	constructor (props: I.Popup) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onCheck = this.onCheck.bind(this);

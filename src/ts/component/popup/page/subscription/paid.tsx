@@ -1,13 +1,11 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
-import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
-import { PaymentMethod } from 'Interface';
 
 interface Props {
-	current: any
+	tier: any;
 };
 
 interface State {
@@ -35,14 +33,14 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 
 	render() {
 		const { status, statusText } = this.state;
-		const { current } = this.props;
+		const { tier } = this.props;
 
 		let period = '';
 
-		if (current.period == 1) {
+		if (tier.period == 1) {
 			period = translate('popupSettingsMembershipPerYear')
 		} else {
-			period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), current.period);
+			period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tier.period);
 		};
 
 		return (
@@ -58,7 +56,7 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 				<div className="priceWrapper">
-					<span className="price">{`$${current.price}`}</span>{period}
+					<span className="price">{`$${tier.price}`}</span>{period}
 				</div>
 
 				<Button ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupSubscriptionPlanPayByCard')} />
@@ -71,9 +69,15 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		this.disableButtons(true);
 	};
 
+	componentWillUnmount () {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		};
+	};
+
 	onKeyUp () {
-		const { current } = this.props;
-		const { minNameLength } = current;
+		const { tier } = this.props;
+		const { minNameLength } = tier;
 		const name = this.refName.getValue();
 		const l = name.length;
 

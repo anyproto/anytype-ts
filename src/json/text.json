@@ -824,6 +824,18 @@
 	"popupSubscriptionPlanStatusWaitASecond": "Wait a second...",
 	"popupSubscriptionPlanStatusNameAvailable": "This name is up for grabs!",
 	"popupSubscriptionPlanStatusNameNotAvailable": "Oops! This name is already taken!",
+	"popupSubscriptionPlanCurrentStatus": "Current status",
+	"popupSubscriptionPlanValidUntil": "Valid until",
+	"popupSubscriptionPlanForever": "Forever",
+	"popupSubscriptionPlanChangeEmail": "Change e-mail",
+	"popupSubscriptionPlanManagePayment": "Manage payment",
+	"popupSubscriptionPlanWriteToAnyteam": "Write to Anyteam",
+
+	"popupSubscriptionPlanPaidBy": "Paid by %s",
+	"popupSubscriptionPlanPaymentMethod0": "Card",
+	"popupSubscriptionPlanPaymentMethod1": "Crypto",
+	"popupSubscriptionPlanPaymentMethod2": "ApplePay",
+	"popupSubscriptionPlanPaymentMethod3": "GooglePay",
 
 	"popupSubscriptionPlanWhatsIncluded": "What’s included",
 

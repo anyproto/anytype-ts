@@ -232,6 +232,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			popupStore.open('subscriptionPlan', { data: { tier: 1 }})
+		}, 1000);
 	};
 
 	init () {

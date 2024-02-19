@@ -4,11 +4,16 @@ import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import PageFree from './page/subscription/free';
 import PagePaid from './page/subscription/paid';
+import PageCurrent from './page/subscription/current';
 
 const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React.Component<I.Popup> {
 
+	currentTier: any = null;
+
 	constructor (props: I.Popup) {
 		super(props);
+
+		this.onChangeEmail = this.onChangeEmail.bind(this);
 	};
 
 	render() {
@@ -21,14 +26,16 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 			2: { id: I.SubscriptionTier.Builder1WeekTEST, price: 99, period: 1, minNameLength: 7 },
 			3: { id: I.SubscriptionTier.CoCreator1WeekTEST, price: 399, period: 5, minNameLength: 5 },
 		};
-		const current = tiers[tier];
 
 		let content: any = null;
 
+		if (this.currentTier && (this.currentTier.tier == tier)) {
+			content = <PageCurrent current={this.currentTier} onChangeEmail={this.onChangeEmail} />;
+		} else
 		if (tier == 1) {
-			content = <PageFree {...this.props} />;
+			content = <PageFree tier={tiers[tier]} />;
 		} else {
-			content = <PagePaid current={current} />;
+			content = <PagePaid tier={tiers[tier]} />;
 		};
 
 		return (
@@ -51,6 +58,10 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 				<div className="side right">{content}</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.getStatus();
 	};
 
 	getTierContent (tier) {
@@ -76,6 +87,20 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 		};
 
 		return content[tier];
+	};
+
+	onChangeEmail () {
+		this.currentTier = null;
+		this.forceUpdate();
+	};
+
+	getStatus () {
+		C.PaymentsSubscriptionGetStatus((message) => {
+			if (message.tier) {
+				this.currentTier = message;
+				this.forceUpdate();
+			};
+		});
 	};
 });
 

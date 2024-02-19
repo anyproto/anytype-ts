@@ -68,6 +68,17 @@
                 .resend { font-weight: 500; color: var(--color-text-secondary); }
                 .resend.countdown { color: var(--color-text-primary); }
                 .resend:not(.countdown):hover { color: var(--color-control-active); }
+
+                .currentSubscription { text-align: center; }
+                .currentSubscription {
+                    .title { @include text-paragraph; font-weight: 700; margin-bottom: 14px; }
+                    .valid { height: 152px; padding-top: 43px; margin-bottom: 20px; border-radius: 8px; background: var(--color-shape-highlight-light-solid); }
+                    .valid {
+                        .label { @include text-small; font-weight: 500; margin-bottom: 1px; }
+                        .label.date { @include text-header2; margin-bottom: 6px; }
+                        .label.paymentMethod { color: var(--color-text-secondary); }
+                    }
+                }
             }
         }
 
