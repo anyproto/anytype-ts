@@ -59,7 +59,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 						</div>
 
 						<div className="check" onClick={this.onCheck}>
-							<Checkbox ref={ref => this.refCheckbox = ref} value={false} /> {translate('popupSubscriptionPlanFreeCheckboxText')}
+							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupSubscriptionPlanFreeCheckboxText')}
 						</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
@@ -114,6 +114,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 	};
 
 	onVerifyEmail () {
+		const subscribeToNewsletter = this.refCheckbox.getValue();
 		this.setButtonLoading(this.refButton, true);
 
 		C.PaymentsSubscriptionGetVerificationEmail(this.email, (message) => {
