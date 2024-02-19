@@ -63,8 +63,6 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			};
 		};
 
-		console.log('VALUE', value);
-
 		if (isEditing) {
 			const cni = [ 'itemWrap' ];
 

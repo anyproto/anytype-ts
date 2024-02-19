@@ -54,6 +54,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						<BodyRow 
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
+							recordId={records[index]}
 							readonly={!isAllowedObject}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}

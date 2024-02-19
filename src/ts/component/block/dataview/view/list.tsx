@@ -44,7 +44,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 						<Row
 							key={'grid-row-' + view.id + index}
 							{...this.props}
-							style={{height: HEIGHT}}
+							recordId={records[index]}
 							readonly={!isAllowedObject}
 						/>
 					))}
