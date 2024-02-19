@@ -332,6 +332,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
+		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: this.state.stage });
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
