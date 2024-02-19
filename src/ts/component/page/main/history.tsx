@@ -13,7 +13,7 @@ interface State {
 };
 
 const LIMIT = 100;
-const GROUP_OFFSET = 300;
+const GROUP_OFFSET = 3600;
 
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
@@ -396,7 +396,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			const version = versions[i];
 			const prev = versions[i - 1];
 
-			if (prev && ((prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
+			if (prev && ((prev.authorId != version.authorId) || (prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
 				groupId++;
 			};
 
