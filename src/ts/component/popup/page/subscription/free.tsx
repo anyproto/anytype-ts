@@ -166,13 +166,13 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 		};
 
 		const email = this.refEmail.getValue();
-		const re = /\S+@\S+\.\S+/;
-		const valid = !re.test(email);
+		const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/;
+		const valid = re.test(email);
 
 		if (valid) {
 			this.email = email;
 		};
-		this.refButton.setDisabled(valid);
+		this.refButton.setDisabled(!valid);
 	};
 
 	startCountdown () {

@@ -17,9 +17,9 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 		const { tier } = data;
 		const tierContent = this.getTierContent(tier);
 		const tiers = {
-			1: { idx: 1 },
-			2: { idx: 2, price: 99, period: 1, minNameLength: 7 },
-			3: { idx: 3, price: 399, period: 5, minNameLength: 5 },
+			1: { id: I.SubscriptionTier.Explorer },
+			2: { id: I.SubscriptionTier.Builder1WeekTEST, price: 99, period: 1, minNameLength: 7 },
+			3: { id: I.SubscriptionTier.CoCreator1WeekTEST, price: 399, period: 5, minNameLength: 5 },
 		};
 		const current = tiers[tier];
 

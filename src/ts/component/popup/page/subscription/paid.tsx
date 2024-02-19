@@ -4,6 +4,7 @@ import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 
 import Constant from 'json/constant.json';
+import { PaymentMethod } from 'Interface';
 
 interface Props {
 	current: any
@@ -109,6 +110,10 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		if (this.refButtonCrypto) {
 			this.refButtonCrypto.setDisabled(v);
 		};
+	};
+
+	onPay (method: I.PaymentMethod) {
+
 	};
 });
 
