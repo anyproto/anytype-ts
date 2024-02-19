@@ -194,9 +194,10 @@
 		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
 			.spaceHeader { margin-bottom: 32px; }
 			.spaceHeader {
-				.sides { display: flex; flex-wrap: nowrap; width: 100%; }
+				.sides { display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 16px; }
 				.sides {
 					.side.left { width: 100%; flex-wrap: nowrap; display: flex; align-items: center; }
+					.side.right { display: flex; flex-direction: row; gap: 0px 16px; }
 				}
 				.iconWrapper { width: 96px; }
 
