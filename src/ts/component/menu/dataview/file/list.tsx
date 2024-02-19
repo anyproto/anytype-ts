@@ -45,7 +45,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { isLoading } = this.state;
 		const { data } = param;
 		const { filter } = data;
@@ -65,14 +65,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				content = (
 					<div className="separator" style={param.style}>
 						<div className="inner" />
-					</div>
-				);
-			} else
-			if (item.id == 'upload') {
-				content = (
-					<div id="item-upload" className="item upload" onMouseEnter={e => this.onOver(e, item)} onClick={this.onUpload} style={param.style}>
-						<Icon className="upload" />
-						<div className="name">{item.name}</div>
 					</div>
 				);
 			} else {
@@ -149,6 +141,20 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						</InfiniteLoader>
 					</div>
 				) : ''}
+
+				<div className="bottom">
+					<div className="line" />
+					<div 
+						id="item-upload" 
+						className="item upload" 
+						onClick={this.onUpload} 
+						onMouseEnter={() => setHover({ id: 'upload' })} 
+						onMouseLeave={() => setHover()}
+					>
+						<Icon className="plus" />
+						<div className="name">{translate('commonUpload')}</div>
+					</div>
+				</div>
 			</div>
 		);
 	};
@@ -213,14 +219,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		let items = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
-
-		items = items.concat([
-			{ isDiv: true },
-			{ id: 'upload', name: translate('commonUpload') },
-		]);
-
-		return items;
+		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 
 	reload () {

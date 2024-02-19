@@ -32,7 +32,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { getId } = this.props;
+		const { getId, setHover } = this.props;
 		const isReadonly = this.isReadonly();
 		const items = this.getItems();
 
@@ -64,7 +64,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				>
 					{!isReadonly ? <Handle /> : ''}
 					<span className="clickable" onClick={e => this.onClick(e, item)}>
-						<Icon className={'relation ' + Relation.className(item.relation.format)} />
+						<Icon className={`relation ${Relation.className(item.relation.format)}`} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (
@@ -149,8 +149,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd} 
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => this.props.setHover()}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>
