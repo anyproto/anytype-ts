@@ -102,7 +102,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						<Section key={i} {...item} index={i} />
 					))}
 				</div>
-				{!readonly ? <ItemAdd /> : ''}
+				{!readonly && allowedRelation ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
