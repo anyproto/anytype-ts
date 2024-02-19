@@ -341,6 +341,7 @@ export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObje
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 

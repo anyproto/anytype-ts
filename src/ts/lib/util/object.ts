@@ -264,11 +264,7 @@ class UtilObject {
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (callBack) {
+			if (!message.error.code && callBack) {
 				callBack(message);
 			};
 		});

@@ -316,7 +316,7 @@ class Keyboard {
 		const { fullscreenObject } = commonStore;
 
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			fullscreenObject ? UtilObject.openAuto({ id: message.targetId }) : UtilObject.openPopup({ id: message.targetId });
+			fullscreenObject ? UtilObject.openAuto(message.details) : UtilObject.openPopup(message.details);
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};
