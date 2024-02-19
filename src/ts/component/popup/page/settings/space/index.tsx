@@ -40,8 +40,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const type = dbStore.getTypeById(commonStore.type);
 		const participant = UtilObject.getParticipant();
 		const isOwner = participant.permissions == I.ParticipantPermissions.Owner;
-		const canShare = config.experimental && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
-		const canMembers = config.experimental && (space.spaceAccessType == I.SpaceType.Shared);
+		const isAllowed = config.experimental || config.allowCollaboration;
+		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
+		const canMembers = isAllowed && (space.spaceAccessType == I.SpaceType.Shared);
 		const canWrite = UtilObject.canParticipantWrite();
 		const canDelete = (space.targetSpaceId != accountSpaceId) && isOwner;
 		const usageCn = [ 'item' ];
