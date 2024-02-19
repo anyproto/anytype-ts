@@ -14,9 +14,10 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, record, block, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, style, recordId, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
 		const widths = getColumnWidths('', 0);
+		const record = getRecord(recordId);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', UtilData.layoutClass('', record.layout), ];
 

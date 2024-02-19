@@ -125,7 +125,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 										subId={subId}
 										block={null}
 										relationKey={column.relationKey}
-										record={item}
+										getRecord={() => item}
 										viewType={I.ViewType.Grid}
 										idPrefix={PREFIX}
 										iconSize={20}

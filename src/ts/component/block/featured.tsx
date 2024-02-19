@@ -194,7 +194,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								subId={rootId}
 								block={block}
 								relationKey={relationKey}
-								record={object}
+								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}

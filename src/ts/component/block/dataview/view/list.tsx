@@ -46,7 +46,6 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							{...this.props}
 							style={{height: HEIGHT}}
 							readonly={!isAllowedObject}
-							record={detailStore.get(subId, id)}
 						/>
 					))}
 				</div>
@@ -76,9 +75,9 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 												onRowsRendered={onRowsRendered}
 												rowRenderer={({ key, index, style }) => (
 													<div className="listItem" key={`grid-row-${view.id + index}`} style={style}>
-														<Row
-															{...this.props}
-															record={detailStore.get(subId, records[index], getKeys(view.id))}
+														<Row 
+															{...this.props} 
+															recordId={records[index]}
 														/>
 													</div>
 												)}

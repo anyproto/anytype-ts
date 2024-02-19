@@ -41,7 +41,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	render () {
 		const { isEditing } = this.state;
 		const { showRelativeDates } = commonStore;
-		const { record, relation, getView, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit } = this.props;
+		const { recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, getView, getRecord } = this.props;
+		const record = getRecord(recordId);
 		
 		if (!record || !relation) {
 			return null;
@@ -229,7 +230,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, record } = this.props;
+		const { relation, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		this._isMounted = true;
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -237,7 +239,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, viewType, record, cellPosition, getView } = this.props;
+		const { id, relation, viewType, recordId, getRecord, cellPosition, getView } = this.props;
+		const record = getRecord(recordId);
 		const cell = $(`#${id}`);
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -391,7 +394,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, record, onChange } = this.props;
+		const { relation, recordId, getRecord, onChange } = this.props;
+		const record = getRecord(recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -434,15 +438,22 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onIconSelect (icon: string) {
-		UtilObject.setIcon(this.props.record.id, icon, '');
+		const { recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
+
+		UtilObject.setIcon(record.id, icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		UtilObject.setIcon(this.props.record.id, '', objectId);
+		const { recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
+
+		UtilObject.setIcon(record.id, '', objectId);
 	};
 
 	onCheckbox () {
-		const { record } = this.props;
+		const { recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		UtilObject.setDone(record.id, !record.done, () => {
 			if (this._isMounted) {

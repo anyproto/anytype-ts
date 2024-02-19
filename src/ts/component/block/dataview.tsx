@@ -153,6 +153,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isCollection,
 			isInline,
 			className: className.join(' '),
+			getRecord: this.getRecord,
 			loadData: this.loadData,
 			getView: this.getView,
 			getTarget: this.getTarget,

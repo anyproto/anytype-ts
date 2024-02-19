@@ -34,7 +34,7 @@ const Card = observer(class Card extends React.Component<Props> {
 							elementId={id}
 							key={'board-cell-' + view.id + relation.relationKey}
 							{...this.props}
-							record={record}
+							getRecord={() => record}
 							subId={subId}
 							ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 							relationKey={relation.relationKey}
@@ -118,7 +118,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, record } = this.props;
+		const { recordId, getRecord, onCellClick } = this.props;
+		const record = getRecord(recordId);
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {

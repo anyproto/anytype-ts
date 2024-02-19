@@ -6,13 +6,14 @@ import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
-	record?: any;
 	rootId?: string;
 	block?: I.Block;
 	relationKey: string;
 	readonly: boolean;
 	width: number;
 	className?: string;
+	recordId?: string;
+	getRecord?(id: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
@@ -31,17 +32,18 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, readonly, record, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
+		const { rootId, block, className, relationKey, readonly, recordId, getRecord, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
+		const record = getRecord(recordId);
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
-		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
+		const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
-		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const canEdit = canCellEdit(relation.relationKey, record.id);
+		const canEdit = canCellEdit(relationKey, record.id);
 
-		if (relation.relationKey == 'name') {
+		if (relationKey == 'name') {
 			cn.push('isName');
 		};
 
@@ -54,7 +56,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relation.relationKey == 'name') && (record.layout != I.ObjectLayout.Note) && canEdit) {
+		if ((relationKey == 'name') && (record.layout != I.ObjectLayout.Note) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 
@@ -63,7 +65,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				key={id} 
 				id={id} 
 				className={cn.join(' ')} 
-				onClick={e => onCellClick(e, relation.relationKey, record.id)} 
+				onClick={e => onCellClick(e, relationKey, record.id)} 
 			>
 				<Cell 
 					ref={ref => { 
@@ -72,7 +74,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 					}} 
 					{...this.props}
 					subId={subId}
-					relationKey={relation.relationKey}
+					relationKey={relationKey}
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
