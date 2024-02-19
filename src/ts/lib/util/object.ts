@@ -164,11 +164,7 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
-		if (!object) {
-			return '';
-		};
-
-		return `object/${object.id}/space/${object.spaceId}`;
+		return object ? `object/${object.id}/space/${object.spaceId}` : '';
 	};
 
 	openEvent (e: any, object: any, param?: any) {
