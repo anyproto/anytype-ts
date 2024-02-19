@@ -797,6 +797,10 @@
 	"popupSettingsMembershipPerYear": "per year",
 	"popupSettingsMembershipPerYears": "per %s years",
 	"popupSettingsMembershipLearnMore": "Learn more",
+	"popupSettingsMembershipCurrent": "Current",
+	"popupSettingsMembershipManage": "Manage",
+	"popupSettingsMembershipValidUntil": "Valid until %s",
+	"popupSettingsMembershipForeverFree": "Forever free",
 
 	"popupSettingsMembershipLevelsDetails": "Membership levels details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
