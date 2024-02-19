@@ -208,7 +208,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	onCategory (item: any) {
-		this.setState({ category: item });
+		this.setState({ category: (item.id == this.state.category?.id ? null : item) });
 	};
 
 	onFilterChange (v: string) {

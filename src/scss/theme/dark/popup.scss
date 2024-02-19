@@ -112,6 +112,24 @@
 	/* PopupUsecase */
 
 	.popup.popupUsecase {
+		.page.pageList {
+			.categories {
+				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
+				.item:hover, .item.active {
+					.icon.heart { background-image: url('#{$themePath}/icon/popup/usecase/heart1.svg'); }
+					.icon.any { background-image: url('#{$themePath}/icon/popup/usecase/any1.svg'); }
+				}
+
+				.item {
+					.icon.heart { background-image: url('#{$themePath}/icon/popup/usecase/heart0.svg'); }
+					.icon.any { background-image: url('#{$themePath}/icon/popup/usecase/any0.svg'); }
+				}
+
+				.icon.arrow { background-image: url('#{$themePath}/arrow/usecaseCategory0.svg'); }
+				.icon.arrow:hover { background-color: var(--color-control-accent); background-image: url('#{$themePath}/arrow/usecaseCategory1.svg'); }
+			}
+		}
+
 		.page.pageItem {
 			.screenWrap {
 				.icon.arrow { background-color: var(--color-bg-secondary); background-image: url('#{$themePath}/arrow/usecase.svg'); }
