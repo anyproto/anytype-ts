@@ -163,6 +163,10 @@ class UtilObject {
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
 	};
 
+	universalRoute (object: any): string {
+		return object ? `object/${object.id}/space/${object.spaceId}` : '';
+	};
+
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
