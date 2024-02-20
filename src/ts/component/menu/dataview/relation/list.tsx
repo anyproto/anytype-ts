@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, dbStore, blockStore, detailStore } from 'Store';
+import { menuStore, dbStore, blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT = 28;
@@ -290,6 +290,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortEnd (result: any) {
+		const { config } = commonStore;
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
@@ -308,11 +309,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				return false;
 			};
 
-			return !relation.isHidden || (it.relationKey == 'name');
+			if (!config.debug.ho && relation.isHidden && (it.relationKey != 'name')) {
+				return false;
+			};
+
+			return true;
 		});
 
 		list = arrayMove(list, oldIndex, newIndex);
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it.relationKey));
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it && it.relationKey));
 
 		keyboard.disableSelection(false);
 	};
