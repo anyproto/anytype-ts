@@ -102,7 +102,7 @@ class UtilObject {
 
 	isSpaceOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
-		return participant && (participant.permissions == I.ParticipantPermissions.Owner);
+		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
 	};
 
 	getGraph () {

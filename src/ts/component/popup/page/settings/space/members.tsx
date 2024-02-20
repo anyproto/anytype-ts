@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, IconObject, ObjectName } from 'Component';
-import { I, C, translate } from 'Lib';
+import { I, UtilObject, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -29,7 +29,11 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 
 		const Member = (item: any) => {
 			return (
-				<div id={`item-${item.id}`} className="row" style={item.style} >
+				<div 
+					id={`item-${item.id}`} 
+					className="row" style={item.style}
+					onClick={() => UtilObject.openPopup(item)}
+				>
 					<div className="col">
 						<IconObject size={42} object={item} />
 						<ObjectName object={item} />

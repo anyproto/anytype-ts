@@ -1731,8 +1731,8 @@
 	"participantStatus3": "Declined",
 	"participantStatus4": "Removing",
 
-	"participantPermissions0": "Read",
-	"participantPermissions1": "Write",
+	"participantPermissions0": "Viewer",
+	"participantPermissions1": "Editor",
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 

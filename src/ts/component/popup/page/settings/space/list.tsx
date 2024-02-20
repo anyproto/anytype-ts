@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilObject, translate } from 'Lib';
+import { I, UtilObject, UtilRouter, translate } from 'Lib';
 import { authStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -16,15 +16,18 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const { account } = authStore;
 		const spaces = dbStore.getSpaces();
 
-		const Row = (space) => {
+		const Row = (space: any) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const isOwner = creator.permissions == I.ParticipantPermissions.Owner;
 			const participant = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(space.targetSpaceId, account.id));
+			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
 
 			return (
 				<tr>
 					<td className="columnSpace">
-						<div className="spaceNameWrapper">
+						<div 
+							className="spaceNameWrapper"
+							onClick={() => UtilRouter.switchSpace(space.targetSpaceId)}
+						>
 							<IconObject object={space} size={40} />
 							<div className="spaceName">
 								<ObjectName object={space} />
