@@ -72,10 +72,10 @@
                 .currentSubscription { text-align: center; }
                 .currentSubscription {
                     .title { @include text-paragraph; font-weight: 700; margin-bottom: 14px; }
-                    .valid { height: 152px; padding-top: 43px; margin-bottom: 20px; border-radius: 8px; background: var(--color-shape-highlight-light-solid); }
+                    .valid { display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 20px; border-radius: 8px; background: var(--color-shape-highlight-light-solid); }
                     .valid {
-                        .label { @include text-small; font-weight: 500; margin-bottom: 1px; }
-                        .label.date { @include text-header2; margin-bottom: 6px; }
+                        .label { @include text-small; margin-bottom: 1px; }
+                        .label.date { @include text-header2; }
                         .label.paymentMethod { color: var(--color-text-secondary); }
                     }
                 }

@@ -21,8 +21,6 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 		const { current } = this.props;
 		const { tier, dateEnds, paymentMethod } = current;
 
-		console.log('CURRENT: ', current)
-
 		let dateText: string = '';
 		let paidText: string = '';
 		let buttonText: string = '';
@@ -31,7 +29,7 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 			dateText = translate('popupSubscriptionPlanForever');
 			buttonText = translate('popupSubscriptionPlanChangeEmail');
 		} else {
-			dateText = `${UtilDate.date('d F', dateEnds)}<br />${UtilDate.date('Y', dateEnds)}`;
+			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
 			paidText = UtilCommon.sprintf(translate('popupSubscriptionPlanPaidBy'), translate(`popupSubscriptionPlanPaymentMethod${paymentMethod}`));
 
 			if (paymentMethod == I.PaymentMethod.MethodCrypto) {
@@ -46,8 +44,10 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 				<Title text={translate('popupSubscriptionPlanCurrentStatus')} />
 
 				<div className="valid">
-					<Label text={translate('popupSubscriptionPlanValidUntil')} />
-					<Label className="date" text={dateText} />
+					<div>
+						<Label text={translate('popupSubscriptionPlanValidUntil')} />
+						<Label className="date" text={dateText} />
+					</div>
 					<Label className="paymentMethod" text={paidText} />
 				</div>
 
