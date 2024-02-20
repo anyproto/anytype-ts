@@ -5,6 +5,7 @@ import { I, C, translate, UtilCommon } from 'Lib';
 
 interface Props {
 	tier: any;
+	setSuccess: () => void;
 };
 interface State {
 	verificationStep: number;
@@ -128,6 +129,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 	};
 
 	onConfirmEmailCode () {
+		const { setSuccess } = this.props;
 		const code = this.refCode.getValue();
 
 		C.PaymentsSubscriptionVerifyEmailCode(code, (message) => {
@@ -135,8 +137,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 				this.setStatus('error', message.error.description);
 				return;
 			};
-
-			console.log('MESSAGE: ', message);
+			setSuccess();
 		});
 	};
 

@@ -2,14 +2,13 @@
 
 .popups {
     .popup.popupSubscriptionPlan {
-        .innerWrap { width: 706px; }
 
-        .sides { display: flex; flex-wrap: nowrap; height: 480px; }
+        .sides { display: flex; flex-wrap: nowrap; width: 706px; height: 480px; }
         .sides {
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
             .side.left {
-                .icon { width: 80px; height: 80px; margin-bottom: 14px; }
+                .icon { width: 80px; height: 80px; margin-bottom: 14px; background-size: 80px 80px; }
                 .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
                 .icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); }
                 .icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
@@ -82,6 +81,20 @@
             }
         }
 
+        .sides.success { width: 424px; height: 384px; }
+        .sides.success {
+            .side.left { display: none; }
+            .side.right { width: 100%; text-align: center; align-items: center; display: flex; flex-direction: column; gap: 26px 0px; padding: 30px 32px 32px; }
+            .side.right {
+                .title { @include text-header1; margin-bottom: 0; }
+                .label { @include text-paragraph; margin-bottom: 0; }
+                .icon { width: 120px; height: 120px; }
+                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
+                .icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); }
+                .icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
+                .button { margin-bottom: 0; }
+            }
+        }
         .sides.tier1 {
             .side.left { background: linear-gradient(180deg, #D7FBFF 0%, #F6F6F6 23.05%); }
             .side.left {

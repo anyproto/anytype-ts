@@ -125,6 +125,7 @@
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
 	"commonEmail": "E-mail",
+	"commonContinue": "Continue",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -853,6 +854,10 @@
 	"popupSubscriptionPlanTier3Content3": "25 Guest collaborator seats",
 	"popupSubscriptionPlanTier3Content4": "Chat with the team",
 	"popupSubscriptionPlanTier3Content5": "Unique collectible ",
+
+	"popupSubscriptionPlanSuccessTitle": "Welcome to the network, %s",
+	"popupSubscriptionPlanSuccessTextCuriosity": "Big cheers for your curiosity!",
+	"popupSubscriptionPlanSuccessTextSupport": "Big cheers for your support!",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
 import Constant from 'json/constant.json';
+import { popupStore } from 'Store';
 
 interface Props {
 	current: any;
