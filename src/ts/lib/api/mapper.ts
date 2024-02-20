@@ -46,6 +46,7 @@ export const Mapper = {
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
 		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
+
 		return t;
 	},
 

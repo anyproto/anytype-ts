@@ -28,6 +28,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { item, style } = this.props;
 		const { id, type } = item;
 
+		console.log(item);
+
 		let content = null;
 		switch (type) {
 			case I.NotificationType.Import: {

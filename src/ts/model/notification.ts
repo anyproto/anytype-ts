@@ -32,11 +32,11 @@ class Notification implements I.Notification {
 
 	fillContent () {
 		const { importType, errorCode, name, spaceId, identityName } = this.payload;
-		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
+		const space = spaceId ? UtilObject.getSpaceviewBySpaceId(spaceId) : null;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 
-		if (!space) {
+		if (spaceId && !space) {
 			return;
 		};
 
