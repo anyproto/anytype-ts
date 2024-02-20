@@ -1746,6 +1746,7 @@
 	"spaceStatus7": "Deleted",
 	"spaceStatus8": "Active",
 	"spaceStatus9": "Joining",
+	"spaceStatus10": "Removing",
 
 	"challengeTitle": "Please enter the following numbers in the extension",
 	"webclipperEmptySelection": "Selection is empty"

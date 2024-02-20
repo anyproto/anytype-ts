@@ -97,15 +97,15 @@ const PopupObjectManager = observer(class PopupObjectManager extends React.Compo
 		this.props.close();
 	};
 
-	onAfterLoad (message) {
+	onAfterLoad (message: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
 
 		switch (type) {
 			case I.ObjectManagerPopup.Favorites: {
-				if (message.records && message.records.length <= 8) {
-					this.refManager?.setSelectedRange(0, 8);
+				if (message.records && message.records.length) {
+					this.refManager?.setSelection(message.records.filter(it => it.isFavorite).map(it => it.id));
 				};
 				break;
 			};
