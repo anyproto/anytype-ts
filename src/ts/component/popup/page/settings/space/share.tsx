@@ -41,13 +41,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error } = this.state;
-		const participant = UtilObject.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 
 		const Member = (item: any) => {
-			const isOwner = (item.id == participant.id) && (participant.permissions == I.ParticipantPermissions.Owner);
+			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
 			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
 			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
 			const isRemoved = [ I.ParticipantStatus.Removed, I.ParticipantStatus.Removing ].includes(item.status);
@@ -116,7 +115,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
 
 				<div className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />

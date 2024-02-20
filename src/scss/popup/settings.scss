@@ -459,13 +459,6 @@
 				}
 			}
 
-			.buttons {
-				.button { width: 100%; }
-			}
-		}
-
-		.side.right.tabSpaceShare, 
-		.side.right.tabSpaceMembers {
 			.section.sectionMembers { min-height: 236px; }
 			.section.sectionMembers {
 				.title { margin-bottom: 18px; }
@@ -491,6 +484,26 @@
 						}
 						.select:hover,
 						.select.hover { background-color: var(--color-bg-primary); }
+					}
+				}
+			}
+
+			.buttons {
+				.button { width: 100%; }
+			}
+		}
+
+		.side.right.tabSpaceMembers {
+			.title { margin-bottom: 26px !important; }
+
+			.section.sectionMembers {
+				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px 120px; }
+				.row {
+					.col { display: flex; gap: 0px 12px; align-items: center; justify-content: center; }
+					.col:first-child { justify-content: flex-start; }
+					.col:first-child {
+						.iconObject { flex-shrink: 0; }
+						.name { @include text-common; }
 					}
 				}
 			}
@@ -564,7 +577,7 @@
 		}
 
 		.side.right.tabPersonal {
-			.title { margin-bottom: 32px; }
+			.title { margin-bottom: 32px !important; }
 		}
 
 		.side.right.tabImportIndex, 

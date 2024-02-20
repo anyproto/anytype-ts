@@ -39,7 +39,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const participant = UtilObject.getParticipant();
-		const isOwner = participant.permissions == I.ParticipantPermissions.Owner;
+		const isOwner = UtilObject.isSpaceOwner();
 		const isAllowed = config.experimental || config.allowCollaboration;
 		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
 		const canMembers = isAllowed && (space.spaceAccessType == I.SpaceType.Shared);

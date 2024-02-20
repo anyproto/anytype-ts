@@ -748,6 +748,8 @@
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 
+	"popupSettingsSpaceShareMembersTitle": "Members",
+
 	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
 	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",

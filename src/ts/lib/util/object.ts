@@ -84,14 +84,25 @@ class UtilObject {
 		return object._empty_ ? null : object;
 	};
 
+	getMyParticipant (spaceId: string) {
+		const { account } = authStore;
+
+		if (!account) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(spaceId, account.id));
+		return object._empty_ ? null : object;
+	};
+
 	canParticipantWrite (): boolean {
 		const participant = this.getParticipant();
 		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
-	isSpaceOwner (participantId: string): boolean {
-		const { account } = authStore;
-		return account ? this.getAccountFromParticipantId(participantId) == account.id : false;
+	isSpaceOwner (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || commonStore.space);
+		return participant && (participant.permissions == I.ParticipantPermissions.Owner);
 	};
 
 	getGraph () {
