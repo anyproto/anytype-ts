@@ -104,6 +104,7 @@
 .iconObject.withImage.c112:not(.isHuman):not(.isParticipant), .iconObject.withImage.c128:not(.isHuman):not(.isParticipant) { border-radius: 8px !important; }
 
 .iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
+.iconObject.isHuman.withImage, .iconObject.isParticipant.withImage { border-radius: 100% !important; background-color: unset; }
 
 .iconObject.isSpaceView { border-radius: 2px !important; }
 .iconObject.isSpaceView.c64, 
