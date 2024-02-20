@@ -176,8 +176,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = this.container.get(0).querySelectorAll('search');
+		this.items = this.container.get(0).querySelectorAll('search') || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
+
 		this.focus();
 	};
 
