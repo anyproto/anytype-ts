@@ -456,6 +456,13 @@ export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response)
 	};
 };
 
+export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteKey: response.getInvitefilekey(),
+	};
+};
+
 export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 	return {
 		spaceName: response.getSpacename(),

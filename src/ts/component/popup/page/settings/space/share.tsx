@@ -182,7 +182,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	componentDidMount() {
 		this.updateCache();
-		this.onGenerate(true);
+		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			if (message.error.code) {
+				this.onGenerate(true);
+			} else {
+				this.setLink(message.inviteCid, message.inviteKey);
+			};
+		});
 	};
 
 	componentDidUpdate() {
@@ -227,6 +233,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${this.key}`
 	};
 
+	setLink (cid: string, key: string) {
+		this.cid = cid;
+		this.key = key;
+		this.refInput.setValue(this.getLink());
+	};
+
 	onCopy () {
 		UtilCommon.copyToast(translate('commonLink'), this.getLink());
 	};
@@ -246,9 +258,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					return;
 				};
 
-				this.cid = message.inviteCid;
-				this.key = message.inviteKey;
-				this.refInput.setValue(this.getLink());
+				this.setLink(message.inviteCid, message.inviteKey);
 
 				if (!auto) {
 					this.onCopy();
