@@ -63,5 +63,9 @@
     {
 		"from": "node_modules/file-type",
 		"to": "node_modules/file-type"
+    },
+    {
+		"from": "node_modules/regedit",
+		"to": "node_modules/regedit"
     }
 ]

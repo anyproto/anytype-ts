@@ -262,6 +262,10 @@
 				"to": "node_modules/file-type"
 			},
 			{
+				"from": "node_modules/regedit",
+				"to": "node_modules/regedit"
+			},
+			{
 				"from": "node_modules/@electron",
 				"to": "node_modules/@electron"
 			},
@@ -316,10 +320,6 @@
 			{
 				"from": "node_modules/electron-window-state",
 				"to": "node_modules/electron-window-state"
-			},
-			{
-				"from": "node_modules/escape-goat",
-				"to": "node_modules/escape-goat"
 			},
 			{
 				"from": "node_modules/ext-list",
