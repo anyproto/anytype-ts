@@ -97,6 +97,10 @@ html.themeDark {
         .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
 	}
 
+	#root-loader {
+		.version { color: var(--color-text-primary); }
+	}
+
     /* Components */
 
     .loaderWrapper {
