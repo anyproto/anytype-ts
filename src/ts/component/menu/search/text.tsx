@@ -19,6 +19,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	toggled = [];
 	items: any = null;
 	container = null;
+	timeout = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -79,6 +80,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	componentWillUnmount () {
 		this.clear();
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
@@ -100,7 +102,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		this.search();
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.search(), Constant.delay.keyboard);
 	};
 
 	onArrow (dir: number) {
@@ -173,7 +176,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = document.querySelectorAll('search');
+		this.items = this.container.get(0).querySelectorAll('search');
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 		this.focus();
 	};
