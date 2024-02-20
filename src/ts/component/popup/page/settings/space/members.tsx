@@ -38,7 +38,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 						<Label text={translate(`participantStatus${item.status}`)} />
 					</div>
 					<div className="col">
-						<Label text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />
+						<Label text={translate(`participantPermissions${item.permissions}`)} />
 					</div>
 				</div>
 			);
