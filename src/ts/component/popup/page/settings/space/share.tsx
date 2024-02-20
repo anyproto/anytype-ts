@@ -24,6 +24,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	top = 0;
 	refInput = null;
 	refList: any = null;
+	refCopy: any = null;
 	state = {
 		error: '',
 	};
@@ -132,7 +133,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="inviteLinkWrapper">
 						<Input ref={ref => this.refInput = ref} readonly={true} />
-						<Button onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
+						<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
 						<Icon id="generate" className="refresh" onClick={() => this.onGenerate(false)} />
 					</div>
 
@@ -180,8 +181,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		);
 	};
 
-	componentDidMount() {
+	componentDidMount () {
 		this.updateCache();
+		this.refCopy?.setDisabled(true);
+
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
 			if (message.error.code) {
 				this.onGenerate(true);
@@ -237,6 +240,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.cid = cid;
 		this.key = key;
 		this.refInput.setValue(this.getLink());
+		this.refCopy.setDisabled(false);
 	};
 
 	onCopy () {
