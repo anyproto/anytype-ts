@@ -144,6 +144,7 @@
 		"sanitize-filename": "^1.6.3",
 		"selection-ranges": "^3.0.3",
 		"sha1": "^1.1.1",
+		"stream-slicer": "^0.0.6",
 		"swiper": "^11.0.3"
 	},
 	"build": {
@@ -267,6 +268,10 @@
 				"to": "node_modules/regedit"
 			},
 			{
+				"from": "node_modules/stream-slicer",
+				"to": "node_modules/stream-slicer"
+			},
+			{
 				"from": "node_modules/@electron",
 				"to": "node_modules/@electron"
 			},
@@ -289,6 +294,10 @@
 			{
 				"from": "node_modules/concat-map",
 				"to": "node_modules/concat-map"
+			},
+			{
+				"from": "node_modules/core-util-is",
+				"to": "node_modules/core-util-is"
 			},
 			{
 				"from": "node_modules/debug",
@@ -351,6 +360,10 @@
 				"to": "node_modules/has-flag"
 			},
 			{
+				"from": "node_modules/if-async",
+				"to": "node_modules/if-async"
+			},
+			{
 				"from": "node_modules/imurmurhash",
 				"to": "node_modules/imurmurhash"
 			},
@@ -365,6 +378,10 @@
 			{
 				"from": "node_modules/is-plain-obj",
 				"to": "node_modules/is-plain-obj"
+			},
+			{
+				"from": "node_modules/isarray",
+				"to": "node_modules/isarray"
 			},
 			{
 				"from": "node_modules/js-yaml",
@@ -443,6 +460,14 @@
 				"to": "node_modules/pupa"
 			},
 			{
+				"from": "node_modules/readable-stream",
+				"to": "node_modules/readable-stream"
+			},
+			{
+				"from": "node_modules/regedit",
+				"to": "node_modules/regedit"
+			},
+			{
 				"from": "node_modules/rimraf",
 				"to": "node_modules/rimraf"
 			},
@@ -471,8 +496,20 @@
 				"to": "node_modules/sort-keys-length"
 			},
 			{
+				"from": "node_modules/stream-slicer",
+				"to": "node_modules/stream-slicer"
+			},
+			{
+				"from": "node_modules/string_decoder",
+				"to": "node_modules/string_decoder"
+			},
+			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
+			},
+			{
+				"from": "node_modules/through2",
+				"to": "node_modules/through2"
 			},
 			{
 				"from": "node_modules/truncate-utf8-bytes",
@@ -493,6 +530,10 @@
 			{
 				"from": "node_modules/write-file-atomic",
 				"to": "node_modules/write-file-atomic"
+			},
+			{
+				"from": "node_modules/xtend",
+				"to": "node_modules/xtend"
 			},
 			{
 				"from": "node_modules/yallist",

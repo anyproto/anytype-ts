@@ -67,5 +67,9 @@
     {
 		"from": "node_modules/regedit",
 		"to": "node_modules/regedit"
+    },
+    {
+		"from": "node_modules/stream-slicer",
+		"to": "node_modules/stream-slicer"
     }
 ]
