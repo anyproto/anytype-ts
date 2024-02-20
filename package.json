@@ -194,7 +194,8 @@
 			"node_modules/with-open-file",
 			"node_modules/p-try",
 			"node_modules/p-finally",
-			"node_modules/file-type"
+			"node_modules/file-type",
+			"node_modules/regedit"
 		],
 		"extraResources": [],
 		"files": [
