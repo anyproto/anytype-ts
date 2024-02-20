@@ -197,7 +197,15 @@
 			"node_modules/file-type",
 			"node_modules/regedit"
 		],
-		"extraResources": [],
+		"extraResources": [
+			{
+				"from": "node_modules/regedit/vbs",
+				"to": "regedit/vbs",
+				"filter": [
+					"**/*"
+				]
+			}
+		],
 		"files": [
 			"electron.js",
 			"electron/js/**/*",
