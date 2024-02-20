@@ -369,21 +369,21 @@
 				td:last-child,
 				th:last-child { padding-right: 0; }
 
-				.columnSpace { width: 156px; }
-				.columnMore { width: 28px; }
-
 				.spaceNameWrapper,
 				.creatorNameWrapper { display: flex; flex-wrap: nowrap; align-items: center; }
 
-				.spaceNameWrapper { gap: 0 12px; }
-				.creatorNameWrapper { gap: 0 6px; @include text-small; color: var(--color-text-secondary); }
+				.creatorNameWrapper { gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 
-				.spaceName {
-					.name { max-width: 104px; @include text-overflow-nw; }
-					.creatorNameWrapper {
-						.name { max-width: 79px; @include text-overflow-nw; }
+				.spaceNameWrapper { width: 100%; gap: 0px 12px; }
+				.spaceNameWrapper {
+					.iconObject { flex-shrink: 0; }
+					.info { width: 100%; }
+					.info {
+						.name { @include text-overflow-nw; }
 					}
 				}
+
+				.columnMore { width: 28px; }
 
 				.iconWrap { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
 				.iconWrap {

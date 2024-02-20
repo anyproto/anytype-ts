@@ -29,7 +29,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							onClick={() => UtilRouter.switchSpace(space.targetSpaceId)}
 						>
 							<IconObject object={space} size={40} />
-							<div className="spaceName">
+							<div className="info">
 								<ObjectName object={space} />
 
 								{!isOwner ? (
