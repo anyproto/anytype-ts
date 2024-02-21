@@ -101,6 +101,15 @@ html.themeDark {
 		.version { color: var(--color-text-primary); }
 	}
 
+	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
+	.toast {
+		.inner {
+			.buttons {
+				.button { color: var(--color-text-primary); }
+			}
+		}
+	}
+
     /* Components */
 
     .loaderWrapper {
