@@ -29,6 +29,7 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onPay = this.onPay.bind(this);
 	};
 
 	render() {
@@ -59,8 +60,8 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 					<span className="price">{`$${tier.price}`}</span>{period}
 				</div>
 
-				<Button ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupSubscriptionPlanPayByCard')} />
-				<Button ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupSubscriptionPlanPayByCrypto')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCard)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupSubscriptionPlanPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCrypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupSubscriptionPlanPayByCrypto')} />
 			</React.Fragment>
 		);
 	};
@@ -117,7 +118,19 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 	};
 
 	onPay (method: I.PaymentMethod) {
+		const { tier } = this.props;
+		const name = this.refName.getValue() + Constant.anyNameSpace;
 
+		C.PaymentsSubscriptionGetPaymentUrl(tier.id, method, name, (message) => {
+			if (message.error.code) {
+				this.setState({ status: 'error', statusText: message.error.description });
+				return;
+			};
+
+			if (message.paymentUrl) {
+				UtilCommon.onUrl(message.paymentUrl);
+			};
+		});
 	};
 });
 

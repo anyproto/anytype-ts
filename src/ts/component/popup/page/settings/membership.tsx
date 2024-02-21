@@ -155,7 +155,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	componentDidMount () {
-		// this.getStatus();
+		this.getStatus();
 
 		this.slideWidth = $(this.node).width() + 16;
 		$(window).on('resize.membership', () => {
