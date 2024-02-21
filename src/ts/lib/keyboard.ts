@@ -536,6 +536,7 @@ class Keyboard {
 
 			case 'saveAsHTMLSuccess': {
 				this.printRemove();
+				popupStore.close('export');
 				break;
 			};
 
