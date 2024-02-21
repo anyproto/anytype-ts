@@ -30,6 +30,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	rootId = '';
 	rect: any = null;
 	childrenIds: Map<string, string[]> = new Map();
+	showRect = false;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -148,6 +149,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
 		this.setIsSelecting(true);
+		this.showRect = false;
 
 		keyboard.disablePreview(true);
 
@@ -183,14 +185,20 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		nodes.each((i: number, item: any) => {
 			item = $(item);
 
+			const id = item.attr('data-id');
+			if (!id) {
+				return;
+			};
+
 			const node = {
-				id: item.attr('data-id'),
+				id,
 				type: item.attr('data-type'),
 				obj: item,
 			};
 
 			this.nodes.push(node);
 			this.cacheRect(node);
+			this.getChildrenIds(id, []);
 		});
 	};
 	
@@ -303,7 +311,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		scrollOnMove.onMouseUp(e);
 
-		this.checkSelected(I.SelectType.Block);
+		const ids = this.ids.get(I.SelectType.Block);
+		
+		if (ids.length) {
+			focus.clear(true);
+			menuStore.close('blockContext');
+		};
+
 		this.clearState();
 	};
 
@@ -326,6 +340,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isPopup = false;
 		this.rootId = '';
 		this.nodes = [];
+		this.showRect = false;
 	};
 
 	drawRect (x: number, y: number) {
@@ -333,20 +348,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const range = UtilCommon.getSelectionRange();
-
-		let x1 = this.x;
-		let y1 = this.y;
-
-		if (this.containerOffset) {
-			x1 = x1 + this.containerOffset.left;
-			y1 = y1 + this.containerOffset.top - this.top;
-		};
-
-		const rect = this.getRect(x1, y1, x, y);
-		if (range) {
+		if (!this.showRect) {
 			this.rect.hide();
 		} else {
+			const x1 = this.x + (this.containerOffset ? this.containerOffset.left : 0);
+			const y1 = this.y + (this.containerOffset ? this.containerOffset.top - this.top : 0);
+			const rect = this.getRect(x1, y1, x, y);
+
 			this.rect.show().css({ transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`, width: rect.width, height: rect.height });
 		};
 	};
@@ -380,34 +388,20 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return cached;
 	};
 	
-	checkEachNode (e: any, rect: any, node: any) {
-		const { id, type } = node;
-		if (!id || !type) {
-			return;
-		};
-			
+	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]) {
 		const cached = this.cacheRect(node);
 		if (!cached || !UtilCommon.rectsCollide(rect, cached)) {
 			return;
 		};
 
-		let ids = this.get(type, false);
-
 		if (e.ctrlKey || e.metaKey) {
-			const idsOnStart = this.idsOnStart.get(type) || [];
-			if (idsOnStart.includes(id)) {
-				ids = ids.filter(it => it != id);
-			} else {
-				ids.push(id);
-			};
+			ids = (this.idsOnStart.get(type) || []).includes(node.id) ? ids.filter(it => it != node.id) : ids.concat(node.id);
 		} else
 		if (e.altKey) {
-			ids = ids.filter(it => it != id);
+			ids = ids.filter(it => it != node.id);
 		} else {
-			ids.push(id);
+			ids.push(node.id);
 		};
-
-		this.ids.set(type, UtilCommon.arrayUnique(ids));
 	};
 	
 	checkNodes (e: any) {
@@ -423,20 +417,28 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.initIds();
 		};
 
-		this.nodes.forEach(item => this.checkEachNode(e, rect, item));
+		let ids = {};
+
+		for (const i in I.SelectType) {
+			const type = I.SelectType[i];
+			
+			ids[type] = this.get(type, false);
+			this.nodes.filter(it => it.type == type).forEach(item => this.checkEachNode(e, type, rect, item, ids[type]));
+			this.ids.set(type, ids[type]);
+		};
+		
 		this.renderSelection();
 
-		const ids = this.get(I.SelectType.Block, false);
-		const length = ids.length;
+		const length = ids[I.SelectType.Block].length;
 
 		if (!length) {
 			return;
 		};
 
 		if ((length <= 1) && !(e.ctrlKey || e.metaKey)) {
-			const selected = $(`#block-${ids[0]}`);
+			const selected = $(`#block-${ids[I.SelectType.Block][0]}`);
 			const value = selected.find('#value');
-			
+
 			if (!value.length) {
 				return;
 			};
@@ -458,6 +460,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				if (!range) {
 					focus.set(this.focused, { from: this.range.start, to: this.range.end });
 					focus.apply();
+
+					this.showRect = false;
 				};
 			};
 		} else {
@@ -468,6 +472,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			keyboard.setFocus(false);
 			window.getSelection().empty();
 			window.focus();
+
+			this.showRect = true;
 		};
 	};
 
@@ -496,12 +502,21 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	get (type: I.SelectType, withChildren?: boolean): string[] {
 		let ids = [ ...new Set(this.ids.get(type) || []) ];
 
-		if (type == I.SelectType.Block) {
-			if (withChildren) {
-				ids.forEach(id => this.getChildrenIds(id, ids));
-			} else {
-				const childrenIds = [];
-				ids.forEach(id => this.getChildrenIds(id, childrenIds));
+		if (!ids.length) {
+			return [];
+		};
+
+		if (type != I.SelectType.Block) {
+			return ids;
+		};
+
+		if (withChildren) {
+			ids.forEach(id => this.getChildrenIds(id, ids));
+		} else {
+			const childrenIds = [];
+			ids.forEach(id => this.getChildrenIds(id, childrenIds));
+
+			if (childrenIds.length) {
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
 		};
@@ -509,15 +524,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return ids;
 	};
 
-	checkSelected (type: I.SelectType) {
-		const ids = this.get(type, true);
-		if (!ids.length) {
-			return;
-		};
-
-		focus.clear(true);
-		menuStore.close('blockContext');
-	};
 
 	getChildrenIds (id: string, ids: string[]) {
 		const cache = this.childrenIds.get(id);
@@ -529,7 +535,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const block = blockStore.getLeaf(this.rootId, id);
 
 		let childrenIds = [];
-
 		if (block && !block.isTable()) {
 			childrenIds = blockStore.getChildrenIds(this.rootId, id);
 

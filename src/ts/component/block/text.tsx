@@ -1334,7 +1334,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		keyboard.setFocus(true);
-		
+
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
 
