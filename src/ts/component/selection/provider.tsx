@@ -30,7 +30,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	rootId = '';
 	rect: any = null;
 	childrenIds: Map<string, string[]> = new Map();
-	showRect = false;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
@@ -149,7 +148,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
 		this.setIsSelecting(true);
-		this.showRect = false;
 
 		keyboard.disablePreview(true);
 
@@ -340,7 +338,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.isPopup = false;
 		this.rootId = '';
 		this.nodes = [];
-		this.showRect = false;
 	};
 
 	drawRect (x: number, y: number) {
@@ -348,7 +345,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if (!this.showRect) {
+		if (UtilCommon.getSelectionRange()) {
 			this.rect.hide();
 		} else {
 			const x1 = this.x + (this.containerOffset ? this.containerOffset.left : 0);
@@ -460,8 +457,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				if (!range) {
 					focus.set(this.focused, { from: this.range.start, to: this.range.end });
 					focus.apply();
-
-					this.showRect = false;
 				};
 			};
 		} else {
@@ -472,8 +467,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			keyboard.setFocus(false);
 			window.getSelection().empty();
 			window.focus();
-
-			this.showRect = true;
 		};
 	};
 
