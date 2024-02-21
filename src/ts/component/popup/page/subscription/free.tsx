@@ -115,10 +115,11 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 	};
 
 	onVerifyEmail () {
-		const subscribeToNewsletter = this.refCheckbox.getValue();
+		const isSubscribed: boolean = this.refCheckbox.getValue();
+		
 		this.setButtonLoading(this.refButton, true);
 
-		C.PaymentsSubscriptionGetVerificationEmail(this.email, (message) => {
+		C.PaymentsSubscriptionGetVerificationEmail(this.email, isSubscribed, (message) => {
 			this.setButtonLoading(this.refButton, false);
 
 			if (!message.error.code) {

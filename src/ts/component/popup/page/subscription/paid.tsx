@@ -121,7 +121,19 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		const { tier } = this.props;
 		const name = this.refName.getValue() + Constant.anyNameSpace;
 
+		let refButton;
+
+		if (method == I.PaymentMethod.MethodCard) {
+			refButton = this.refButtonCard;
+		} else {
+			refButton = this.refButtonCrypto;
+		};
+
+		refButton.setLoading(true);
+
 		C.PaymentsSubscriptionGetPaymentUrl(tier.id, method, name, (message) => {
+			refButton.setLoading(false);
+
 			if (message.error.code) {
 				this.setState({ status: 'error', statusText: message.error.description });
 				return;
