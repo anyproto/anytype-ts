@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
@@ -503,8 +503,29 @@ class Keyboard {
 				break;
 			};
 
-			case 'create': {
+			case 'createObject': {
 				this.pageCreate({}, 'MenuSystem');
+				break;
+			};
+
+			case 'createSpace': {
+				const items = dbStore.getSpaces();
+
+				if (items.length >= Constant.limit.space) {
+					break;
+				};
+
+				popupStore.open('settings', { 
+					className: 'isSpaceCreate',
+					data: { 
+						page: 'spaceCreate', 
+						isSpace: true,
+						onCreate: (id) => {
+							UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+							analytics.event('SwitchSpace');
+						},
+					}, 
+				});
 				break;
 			};
 
