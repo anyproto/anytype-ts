@@ -35,9 +35,14 @@ import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
 import { translate } from './translate';
+import { ShortcutActionList, ShortcutActionConstants, UserKeyboardShortcut, KeyboardShortcut } from './keyboardConstants';
 
 export {
 	keyboard,
+	ShortcutActionList,
+	ShortcutActionConstants,
+	UserKeyboardShortcut,
+	KeyboardShortcut,
 	sidebar,
 	focus,
 	Key,
@@ -51,7 +56,7 @@ export {
 	translate,
 	dispatcher,
 	Mapper,
-	Encode, 
+	Encode,
 	Decode,
 	analytics,
 	history,

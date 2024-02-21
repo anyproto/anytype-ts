@@ -24,6 +24,7 @@ import PopupUsecase from './usecase';
 import PopupAbout from './about';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
+import PopupShortcutPrompt from 'Component/popup/shortcutPrompt';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -51,6 +52,7 @@ class Popup extends React.Component<I.Popup> {
 			search:					 PopupSearch,
 			confirm:				 PopupConfirm,
 			prompt:					 PopupPrompt,
+			shortcutPrompt:			 PopupShortcutPrompt,
 			help:					 PopupHelp,
 			preview:				 PopupPreview,
 			shortcut:				 PopupShortcut,
