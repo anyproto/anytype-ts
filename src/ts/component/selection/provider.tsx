@@ -250,7 +250,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(x, y);
-		this.renderSelection();
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
 		this.hasMoved = true;
@@ -424,50 +423,47 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.ids.set(type, ids[type]);
 		};
 		
-		this.renderSelection();
-
 		const length = ids[I.SelectType.Block].length;
 
-		if (!length) {
-			return;
-		};
+		if (length > 0) {
+			if ((length == 1) && !(e.ctrlKey || e.metaKey)) {
+				const selected = $(`#block-${ids[I.SelectType.Block][0]}`);
+				const value = selected.find('#value');
 
-		if ((length <= 1) && !(e.ctrlKey || e.metaKey)) {
-			const selected = $(`#block-${ids[I.SelectType.Block][0]}`);
-			const value = selected.find('#value');
+				if (!value.length) {
+					return;
+				};
 
-			if (!value.length) {
-				return;
-			};
+				const el = value.get(0) as Element;
+				const range = getRange(el); 
+				
+				if (!this.range) {
+					this.focused = selected.attr('data-id');
+					this.range = range;
+				};
 
-			const el = value.get(0) as Element;
-			const range = getRange(el); 
-			
-			if (!this.range) {
-				this.focused = selected.attr('data-id');
-				this.range = range;
-			};
-
-			if (this.range) {
-				if (this.range.end) {
-					this.initIds();
-					this.renderSelection();
+				if (this.range) {
+					if (this.range.end) {
+						this.initIds();
+					};
+					
+					if (!range) {
+						focus.set(this.focused, { from: this.range.start, to: this.range.end });
+						focus.apply();
+					};
+				};
+			} else {
+				if (focused && range.to) {
+					focus.clear(false);
 				};
 				
-				if (!range) {
-					focus.set(this.focused, { from: this.range.start, to: this.range.end });
-					focus.apply();
-				};
+				keyboard.setFocus(false);
+				window.getSelection().empty();
+				window.focus();
 			};
-		} else {
-			if (focused && range.to) {
-				focus.clear(false);
-			};
-			
-			keyboard.setFocus(false);
-			window.getSelection().empty();
-			window.focus();
 		};
+
+		this.renderSelection();		
 	};
 
 	hide () {
