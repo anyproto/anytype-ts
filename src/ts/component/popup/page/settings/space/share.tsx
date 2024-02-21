@@ -243,7 +243,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onCopy () {
-		UtilCommon.copyToast(translate('commonLink'), this.getLink());
+		if (this.cid && this.key) {
+			UtilCommon.copyToast(translate('commonLink'), this.getLink());
+		};
 	};
 
 	onGenerate (auto: boolean) {
