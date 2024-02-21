@@ -41,6 +41,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							elementId={id}
 							ref={ref => onRef(ref, id)}
 							{...this.props}
+							getRecord={() => record}
 							subId={subId}
 							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}

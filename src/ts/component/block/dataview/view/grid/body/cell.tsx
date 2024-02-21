@@ -73,6 +73,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 						onRef(ref, id); 
 					}} 
 					{...this.props}
+					getRecord={() => record}
 					subId={subId}
 					relationKey={relationKey}
 					viewType={I.ViewType.Grid}

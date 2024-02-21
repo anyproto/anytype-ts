@@ -37,6 +37,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Cell
 						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
 						{...this.props}
+						getRecord={() => record}
 						width={relation.width}
 						relationKey={relation.relationKey}
 						className={`index${i}`}
