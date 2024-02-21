@@ -12,6 +12,8 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 
 	constructor (props: Props) {
 		super(props);
+
+		this.onContinue = this.onContinue.bind(this);
 	};
 
 	render() {
@@ -35,6 +37,12 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 				<Button onClick={() => popupStore.closeAll()} className="c36" color="blank" text={translate('commonContinue')} />
 			</React.Fragment>
 		);
+	};
+
+	onContinue () {
+		popupStore.closeAll([], () => {
+			popupStore.open('settings', { data: { page: 'membership' } });
+		});
 	};
 });
 
