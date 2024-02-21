@@ -857,7 +857,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { fullscreenObject } = commonStore;
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
@@ -883,7 +882,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					UtilObject.openWindow(record);
 				};
 			} else {
-				fullscreenObject ? UtilObject.openAuto(record) : UtilObject.openPopup(record);
+				UtilObject.openConfig(record);
 			};
 		} else {
 			ref.onClick(e);

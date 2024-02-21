@@ -122,7 +122,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		const { selection } = dataset || {};
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};
