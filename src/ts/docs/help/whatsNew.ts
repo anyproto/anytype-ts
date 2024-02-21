@@ -56,10 +56,10 @@ export default [
 	text(`No need to create an embed block first - you can simply paste the links in your object editor and see the option to paste as embed.`),
 
 	h3(`${hl(`Import Type`)} Relation has been Added`),
-	text(`Embed and PDF blocks can now be resized, similarly to image blocks.`),
+	text(`Objects which have been installed or imported, such as use cases or export files, will now come with relation: Import Type indicating the imported format, which can be Any-block, Markdown, or other.`),
 
 	h3(`Corner Radiuses for Selected Blocks have been Updated`),
-	text(`For better visual consistency, the corner radiuses for selected blocks have been updated.`),
+	text(`For better visual consistency, corner radiuses for blocks in the editor have been updated.`),
 
 	h3(`Graph and Flow Added to Global Search`),
 	text(`You can now use the global search menu to navigate to your Graph and Flow tabs.`),
