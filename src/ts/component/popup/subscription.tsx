@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Icon, Label } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import PageFree from './page/subscription/free';
 import PagePaid from './page/subscription/paid';
@@ -69,7 +69,12 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	};
 
 	componentDidMount () {
-		this.getStatus();
+		const subscription = Storage.get('subscription');
+
+		if (subscription.tier) {
+			this.currentTier = subscription;
+			this.forceUpdate();
+		};
 	};
 
 	getTierContent (tier) {
@@ -100,15 +105,6 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	onChangeEmail () {
 		this.currentTier = null;
 		this.forceUpdate();
-	};
-
-	getStatus () {
-		C.PaymentsSubscriptionGetStatus((message) => {
-			if (message.tier) {
-				this.currentTier = message;
-				this.forceUpdate();
-			};
-		});
 	};
 
 	setSuccess () {

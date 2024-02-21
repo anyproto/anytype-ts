@@ -45,11 +45,14 @@
 
 				.items { display: flex; flex-direction: column; }
 
-				.item { display: flex; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
+				.item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
 				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon { width: 24px; height: 24px; flex-shrink: 0; }
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+
+					.caption { position: absolute; right: 8px; top: 5px; color: var(--color-text-secondary); }
+					.caption.join { right: 7px; font-weight: 500; padding: 2px 8px; border-radius: 5px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }

@@ -952,6 +952,19 @@ class UtilData {
 		return ret;
 	};
 
+	reloadSubscriptionData (callBack?: (message: any) => void) {
+		C.PaymentsSubscriptionGetStatus((message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			Storage.set('subscription', message);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
 };
 
 export default new UtilData();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
+import { I, C, translate, UtilCommon, UtilDate, Storage } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
@@ -155,7 +155,16 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	componentDidMount () {
-		this.getStatus();
+		const subscription = Storage.get('subscription');
+
+		if (subscription.tier) {
+			this.currentTier = subscription.tier;
+			if (subscription.dateEnds) {
+				this.currentTierValid = subscription.dateEnds;
+			};
+
+			this.forceUpdate();
+		};
 
 		this.slideWidth = $(this.node).width() + 16;
 		$(window).on('resize.membership', () => {
@@ -166,23 +175,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	componentWillUnmount () {
 		$(window).off('resize.membership');
 	};
-
-	getStatus () {
-		this.setState({ loading: true });
-		C.PaymentsSubscriptionGetStatus((message) => {
-			this.setState({ loading: false });
-
-			if (message.tier) {
-				this.currentTier = message.tier;
-				if (message.dateEnds) {
-					this.currentTierValid = message.dateEnds;
-				};
-
-				this.forceUpdate();
-			};
-		});
-	};
-
 });
 
 export default PopupSettingsPageMembership;

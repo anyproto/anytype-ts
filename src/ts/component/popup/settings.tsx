@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview } from 'Lib';
+import { Loader, IconObject, Icon, Label, Button } from 'Component';
+import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview, Storage } from 'Lib';
 import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
@@ -136,6 +136,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			let icon = null;
 			let name = null;
+			let caption = null;
 
 			if (action.id == 'account') {
 				icon = <IconObject object={participant} size={36} iconSize={36} forceLetter={true} />;
@@ -147,6 +148,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				name = action.name;
 			};
 
+			if (action.id == 'membership') {
+				const subscription = Storage.get('subscription');
+
+				if (subscription.tier) {
+					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${subscription.tier}`)}</div>;
+				} else {
+					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+				};
+			};
+
 			return (
 				<div
 					id={`item-${action.id}`}
@@ -155,6 +166,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				>
 					{icon}
 					<div className="name">{name}</div>
+
+					{caption}
 				</div>
 			);
 		};
