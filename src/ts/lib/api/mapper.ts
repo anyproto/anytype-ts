@@ -440,21 +440,17 @@ export const Mapper = {
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const field = obj[`get${UtilCommon.ucFirst(type)}`]();
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
-			switch (type) {
-				case 'status':
-					value = field.getId();
-					break;
 
-				case 'tag':
-					value = field.getIdsList();
-					break;
-
-				case 'checkbox':
-					value = field.getChecked();
-					break;
+			if (field) {
+				switch (type) {
+					case 'status':	 value = field.getId(); break;
+					case 'tag':		 value = field.getIdsList(); break;
+					case 'checkbox': value = field.getChecked(); break;
+				};
 			};
 
 			return { 
@@ -487,45 +483,48 @@ export const Mapper = {
 
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const field = obj[`get${UtilCommon.ucFirst(type)}`]();
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
 
-			switch (type) {
+			if (field) {
+				switch (type) {
 
-				case 'import':
-				case 'galleryImport': {
-					payload = Object.assign(payload, {
-						processId: field.getProcessid(),
-						errorCode: field.getErrorcode(),
-						spaceId: field.getSpaceid(),
-						name: field.getName(),
-					});
+					case 'import':
+					case 'galleryImport': {
+						payload = Object.assign(payload, {
+							processId: field.getProcessid(),
+							errorCode: field.getErrorcode(),
+							spaceId: field.getSpaceid(),
+							name: field.getName(),
+						});
 
-					if (type == 'import') {
-						payload.importType = field.getImporttype();
+						if (type == 'import') {
+							payload.importType = field.getImporttype();
+						};
+						break;
 					};
-					break;
-				};
 
-				case 'export': {
-					payload = Object.assign(payload, {
-						errorCode: field.getErrorcode(),
-						exportType: field.getExporttype(),
-					});
-					break;
-				};
+					case 'export': {
+						payload = Object.assign(payload, {
+							errorCode: field.getErrorcode(),
+							exportType: field.getExporttype(),
+						});
+						break;
+					};
 
-				case 'requestToJoin': {
-					payload = Object.assign(payload, {
-						spaceId: field.getSpaceid(),
-						identity: field.getIdentity(),
-						identityName: field.getIdentityname(),
-						identityIcon: field.getIdentityicon(),
-					});
-					break;
-				};
+					case 'requestToJoin': {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							identity: field.getIdentity(),
+							identityName: field.getIdentityname(),
+							identityIcon: field.getIdentityicon(),
+						});
+						break;
+					};
 
+				};
 			};
 
 			return {
