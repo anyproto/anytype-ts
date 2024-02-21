@@ -40,7 +40,7 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 	};
 
 	onContinue () {
-		popupStore.closeAll([], () => {
+		popupStore.closeAll(null, () => {
 			popupStore.open('settings', { data: { page: 'membership' } });
 		});
 	};
