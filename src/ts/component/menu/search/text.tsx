@@ -132,6 +132,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { route } = data;
 		const value = UtilCommon.regexEscape(this.ref.getValue());
 		const node = $(this.node);
+		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
 
 		if (this.last != value) {
@@ -179,14 +180,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 		this.items = this.container.get(0).querySelectorAll('search') || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
-		this.focus();
-	};
-
-	setCnt () {
-		const node = $(this.node);
-		const cnt = node.find('#cnt');
-
 		cnt.text(`${this.n + 1}/${this.items.length}`);
+
+		this.focus();
 	};
 
 	onClear () {
@@ -252,29 +248,29 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		this.container.find('search.active').removeClass('active');
 
-		this.setCnt();
-
 		const next = $(this.items[this.n]);
 
-		if (next && next.length) {
-			next.addClass('active');
-		
-			const st = this.container.scrollTop();
-			const no = next.offset().top;
-
-			let wh = 0;
-			let y = 0;
-
-			if (isPopup) {
-				y = no - this.container.offset().top + st;
-				wh = scrollContainer.height();
-			} else {
-				y = no;
-				wh = $(window).height();
-			};
-
-			scrollContainer.scrollTop(y - wh + offset);
+		if (!next || !next.length) {
+			return;
 		};
+
+		next.addClass('active');
+		
+		const st = this.container.scrollTop();
+		const no = next.offset().top;
+
+		let wh = 0;
+		let y = 0;
+
+		if (isPopup) {
+			y = no - this.container.offset().top + st;
+			wh = scrollContainer.height();
+		} else {
+			y = no;
+			wh = $(window).height();
+		};
+
+		scrollContainer.scrollTop(y - wh + offset);
 	};
 	
 };
