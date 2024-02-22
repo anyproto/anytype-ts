@@ -151,7 +151,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		// Invite route
-		if (pathname.match('/invite')) {ret.params.page = 'main';
+		if (pathname.match('/invite')) {
 			ret.params.page = 'main';
 			ret.params.action = 'invite';
 		};
