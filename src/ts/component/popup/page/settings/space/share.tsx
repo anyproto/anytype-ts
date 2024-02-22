@@ -232,7 +232,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getLink () {
-		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${this.key}`
+		return `${Constant.protocol}://invite/?cid=${this.cid}&key=${this.key}`
 	};
 
 	setLink (cid: string, key: string) {
