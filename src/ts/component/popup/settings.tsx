@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview } from 'Lib';
-import { popupStore } from 'Store';
+import { Loader, IconObject, Icon, Label, Button } from 'Component';
+import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview, Storage } from 'Lib';
+import { commonStore, popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -33,8 +33,7 @@ import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceShare from './page/settings/space/share';
 import PageSpaceList from './page/settings/space/list';
 
-import PagePaymentIndex from './page/settings/payment/index';
-import PagePaymentItem from './page/settings/payment/item';
+import PageMembership from './page/settings/membership';
 
 interface State {
 	loading: boolean;
@@ -47,6 +46,7 @@ const Components: any = {
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
 	phrase:				 PagePhrase,
+	membership:			 PageMembership,
 	logout:				 PageLogout,
 
 	pinIndex:			 PagePinIndex,
@@ -69,9 +69,6 @@ const Components: any = {
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
-
-	paymentIndex:		 PagePaymentIndex, 
-	paymentItem:		 PagePaymentItem,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
@@ -102,7 +99,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { page } = data;
 		const { loading } = this.state;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const profile = UtilObject.getProfile();
+		const participant = UtilObject.getParticipant();
 		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
@@ -139,15 +136,26 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			let icon = null;
 			let name = null;
+			let caption = null;
 
 			if (action.id == 'account') {
-				icon = <IconObject object={profile} size={36} iconSize={36} forceLetter={true} />;
-				name = profile.name;
+				icon = <IconObject object={participant} size={36} iconSize={36} forceLetter={true} />;
+				name = participant.name;
 
 				cn.push('itemAccount');
 			} else {
 				icon = <Icon className={`settings-${action.icon || action.id}`} />;
 				name = action.name;
+			};
+
+			if (action.id == 'membership') {
+				const subscription = Storage.get('subscription') || {};
+
+				if (subscription.tier) {
+					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${subscription.tier}`)}</div>;
+				} else {
+					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
+				};
 			};
 
 			return (
@@ -158,6 +166,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				>
 					{icon}
 					<div className="name">{name}</div>
+
+					{caption}
 				</div>
 			);
 		};
@@ -244,6 +254,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { isSpace } = data;
+		const { config } = commonStore;
 
 		if (isSpace) {
 			return [
@@ -264,6 +275,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				},
 			];
 		} else {
+			const settingsVoid = [
+				{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
+				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
+				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+			];
+			if (config.experimental) {
+				settingsVoid.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembership') })
+			};
+			
 			return [
 				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 				{
@@ -274,12 +294,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					]
 				},
 				{ 
-					name: translate('popupSettingsVoidTitle'), children: [
-						{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
-						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
-						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-						{ id: 'paymentIndex', icon: 'payment', name: translate('popupSettingsPaymentTitle') },
-					]
+					name: translate('popupSettingsVoidTitle'), children: settingsVoid
 				}
 			];
 		};

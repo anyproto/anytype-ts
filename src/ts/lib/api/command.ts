@@ -1918,11 +1918,11 @@ export const PaymentsSubscriptionGetPortalLinkUrl = (callBack?: (message: any) =
 	dispatcher.request(PaymentsSubscriptionGetPortalLinkUrl.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetVerificationEmail = (email: string, isSubscribedToNewsletter: boolean, callBack?: (message: any) => void) => {
+export const PaymentsSubscriptionGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Payments.Subscription.GetVerificationEmail.Request();
 	
 	request.setEmail(email);
-	request.setSubscribetonewsletter(isSubscribedToNewsletter);
+	request.setSubscribetonewsletter(isSubscribed);
 	
 	dispatcher.request(PaymentsSubscriptionGetVerificationEmail.name, request, callBack);
 };

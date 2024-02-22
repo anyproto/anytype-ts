@@ -245,6 +245,10 @@ class App extends React.Component<object, State> {
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
+		window.setTimeout(() => {
+			UtilData.reloadSubscriptionData();
+		}, 500);
+
 		console.log('[Process] os version:', UtilCommon.getElectron().version.system, 'arch:', UtilCommon.getElectron().arch);
 		console.log('[App] version:', UtilCommon.getElectron().version.app, 'isPackaged', UtilCommon.getElectron().isPackaged);
 	};

@@ -1,0 +1,33 @@
+<svg width="320" height="104" viewBox="0 0 320 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="68" y="37" width="32" height="14" rx="7" fill="#252525"/>
+<rect x="90" y="43" width="1" height="2" fill="#FAF5E2"/>
+<rect x="87" y="43" width="1" height="2" fill="#FAF5E2"/>
+<rect x="93" y="43" width="1" height="2" fill="#FAF5E2"/>
+<rect x="68" y="53" width="32" height="14" rx="7" fill="#252525"/>
+<rect x="90" y="59" width="1" height="2" fill="#FAF5E2"/>
+<rect x="87" y="59" width="1" height="2" fill="#FAF5E2"/>
+<rect x="93" y="59" width="1" height="2" fill="#FAF5E2"/>
+<rect width="12" height="12" rx="6" transform="matrix(-1 0 0 1 232 46)" fill="black"/>
+<rect width="12" height="12" rx="6" transform="matrix(-1 0 0 1 248 37)" fill="black"/>
+<rect width="12" height="12" rx="6" transform="matrix(-1 0 0 1 248 55)" fill="black"/>
+<rect x="120.5" y="0.5" width="79" height="103" rx="11.5" stroke="black"/>
+<rect x="56.5" y="16.5" width="55" height="71" rx="9.5" stroke="black"/>
+<rect x="208.5" y="16.125" width="55" height="71" rx="9.5" stroke="black"/>
+<rect x="0.5" y="22.5" width="47" height="59" rx="7.5" stroke="black"/>
+<circle cx="20" cy="20" r="20" transform="matrix(-1 0 0 1 180.391 18)" fill="black"/>
+<path d="M164.891 30V32" stroke="#FAF5E2"/>
+<path d="M155.891 30V32" stroke="#FAF5E2"/>
+<path d="M158.741 33L152.333 42.5H160.391" stroke="#FAF5E2"/>
+<path d="M160.391 50.0002C164.359 50.0002 168.391 46.0001 168.391 42" stroke="#FAF5E2"/>
+<circle cx="155.391" cy="30" r="4.5" stroke="#FAF5E2"/>
+<circle cx="165.391" cy="30" r="4.5" stroke="#FAF5E2"/>
+<rect x="136" y="69" width="48" height="1" fill="black"/>
+<rect x="136" y="77" width="48" height="1" fill="black"/>
+<rect x="148" y="85" width="24" height="1" fill="black"/>
+<circle cx="24.0625" cy="51.8125" r="11.9375" fill="black"/>
+<rect x="272.5" y="22.125" width="47" height="59" rx="7.5" stroke="black"/>
+<circle cx="296" cy="52" r="12" fill="black"/>
+<rect x="295.5" y="46" width="1" height="12" fill="#FAF5E2"/>
+<rect x="290" y="52.5" width="1" height="12" transform="rotate(-90 290 52.5)" fill="#FAF5E2"/>
+<path d="M32 52L34 66L21 59L32 52Z" fill="black"/>
+</svg>

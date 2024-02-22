@@ -40,6 +40,7 @@
 		.item:hover, .item.active { background: var(--color-shape-tertiary); }
 	}
 
+	.editorWrapper { padding-top: 72px; }
 	.editorWrapper.withIcon { padding-top: 136px; }
 	.blockLast { height: 100px; }
 }

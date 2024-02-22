@@ -161,9 +161,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount(): void {
-		this.initSpace();
-		this.initName();
-		this.initType();
+		UtilData.createSubscriptions(() => {
+			this.initSpace();
+			this.initName();
+			this.initType();
+		});
 	};
 
 	componentDidUpdate(): void {
@@ -242,7 +244,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		commonStore.spaceSet(id);
-		UtilData.createsSubscriptions(() => this.forceUpdate());
+		UtilData.createSubscriptions(() => this.forceUpdate());
 	};
 
 	getTagsValue () {

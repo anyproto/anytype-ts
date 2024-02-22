@@ -7,14 +7,10 @@ const INDEX_IFRAME = '/iframe/index.html'
 
 class Util {
 
-	extensionId () {
-		return Extension.clipper.id;
-	};
-
 	isExtension () {
 		return (
 			(location.protocol == 'chrome-extension:') && 
-			(location.hostname == this.extensionId())
+			Extension.clipper.ids.includes(location.hostname)
 		);
 	};
 
@@ -53,8 +49,6 @@ class Util {
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
-		const { serverPort, gatewayPort } = extensionStore;
-
 		authStore.appKeySet(appKey);
 		UtilData.createSession((message: any) => {
 			if (message.error.code) {
@@ -63,9 +57,10 @@ class Util {
 				};
 				return;
 			};
-
-			this.sendMessage({ type: 'init', appKey, serverPort, gatewayPort }, () => {});
-			UtilData.createsSubscriptions(onSuccess);
+			
+			if (onSuccess) {
+				onSuccess();
+			};
 		});
 	};
 

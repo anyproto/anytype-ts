@@ -344,15 +344,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 
 	getItems (): any[] {
 		const { relation, record } = this.props;
-
-		if (!relation || !record) {
-			return [];
-		};
-
-		let items = record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
-		items = items.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
-
-		return items;
+		return relation && record ? Relation.getOptions(record[relation.relationKey]).filter(it => !it.isArchived && !it.isDeleted) : [];
 	};
 
 	getItemIds (): string[] {

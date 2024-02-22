@@ -26,6 +26,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -47,7 +48,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						ref={node => this.node = node}
 						id={id} 
 						className={cn.join(' ')} 
-						onClick={onClick}
+						onClick={this.onClick}
 						onMouseDown={onMouseDown} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
@@ -98,6 +99,17 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		Preview.tooltipHide(false);
 	};
 
+	onClick (e: any) {
+		const { onClick } = this.props;
+		const node = $(this.node);
+
+		if (node.hasClass('disabled')) {
+			return;
+		};
+
+		onClick(e);
+	};
+
 	setLoading (v: boolean) {
 		this.setState({ isLoading: v });
 	};
@@ -106,7 +118,6 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		const node = $(this.node);
 		v ? node.addClass('disabled') : node.removeClass('disabled');
 	};
-	
 };
 
 export default Button;

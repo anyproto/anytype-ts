@@ -1,0 +1,45 @@
+<svg width="320" height="112" viewBox="0 0 320 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="136" y="48" width="24" height="24" rx="7" fill="black"/>
+<path d="M142 59.998L146.998 64.998L153.949 54.0469" stroke="#EAF8E5"/>
+<circle cx="20" cy="92" r="20" fill="black"/>
+<path d="M15.5 82V84" stroke="white"/>
+<path d="M24.5 82V84" stroke="white"/>
+<path d="M20 95.5C22.7614 95.5 25 93.933 25 92C25 90.067 22.7614 88.5 20 88.5" stroke="white"/>
+<path d="M20 104C15.5817 104 12 100.418 12 96" stroke="white"/>
+<circle cx="68" cy="20" r="20" fill="black"/>
+<path d="M63.5 10V12" stroke="white"/>
+<path d="M72.5 10V12" stroke="white"/>
+<path d="M68 23.5C70.7614 23.5 72 23.5 73 23.5C73 20 71.5 16 68 13.5" stroke="white"/>
+<path d="M68 32C63.5817 32 60 28.4183 60 24" stroke="white"/>
+<path d="M48.5 92.5C48.5 86.1487 53.6487 81 60 81H148C154.351 81 159.5 86.1487 159.5 92.5C159.5 98.8513 154.351 104 148 104H60C53.6487 104 48.5 98.8513 48.5 92.5Z" stroke="black"/>
+<path d="M60.375 92.5H148.375" stroke="black"/>
+<rect x="96.5" y="0.5" width="143" height="31" rx="11.5" stroke="black"/>
+<path d="M108 12H228" stroke="black"/>
+<path d="M108 20H195" stroke="black"/>
+<rect x="48.25" y="48.5" width="79.25" height="23" rx="11.5" stroke="black"/>
+<path d="M60.375 60H116.375" stroke="black"/>
+<rect x="176.5" y="40.5" width="95" height="47" rx="11.5" stroke="black"/>
+<path d="M188 52H259" stroke="black"/>
+<path d="M188 60H248" stroke="black"/>
+<path d="M188 68H259" stroke="black"/>
+<path d="M188 76H232" stroke="black"/>
+<circle cx="20" cy="20" r="20" transform="matrix(-1 0 0 1 320 56)" fill="black"/>
+<path d="M304.5 68V70" stroke="white"/>
+<path d="M295.5 68V70" stroke="white"/>
+<path d="M298.35 71L291.943 80.5H300" stroke="white"/>
+<path d="M300 88.0002C303.969 88.0002 308 84.0001 308 80" stroke="white"/>
+<circle cx="295" cy="68" r="4.5" stroke="white"/>
+<circle cx="305" cy="68" r="4.5" stroke="white"/>
+<circle cx="261" cy="17" r="3" fill="black"/>
+<circle cx="267" cy="17" r="3" fill="black"/>
+<path d="M264 24.9997C260.344 23.2802 258.07 19.8913 258 17H264V24.9997Z" fill="black"/>
+<path d="M264 24.9997C267.656 23.2802 269.93 19.8913 270 17H264V24.9997Z" fill="black"/>
+<circle cx="247" cy="23" r="3" fill="black"/>
+<circle cx="253" cy="23" r="3" fill="black"/>
+<path d="M250 30.9997C246.344 29.2802 244.07 25.8913 244 23H250V30.9997Z" fill="black"/>
+<path d="M250 30.9997C253.656 29.2802 255.93 25.8913 256 23H250V30.9997Z" fill="black"/>
+<circle cx="281" cy="3" r="3" fill="black"/>
+<circle cx="275" cy="3" r="3" fill="black"/>
+<path d="M278 10.9997C274.344 9.28024 272.07 5.89134 272 3H278V10.9997Z" fill="black"/>
+<path d="M278 10.9997C281.656 9.28024 283.93 5.89134 284 3H278V10.9997Z" fill="black"/>
+</svg>
