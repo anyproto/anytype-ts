@@ -487,12 +487,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 	canCellEdit (): boolean {
 		const { readonly, recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
 		if (readonly) {
 			return false;
 		};
 
+		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {

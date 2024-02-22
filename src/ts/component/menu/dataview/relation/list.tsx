@@ -298,10 +298,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const view = getView();
 		const list = arrayMove(this.getItems(), oldIndex, newIndex).map(it => it && it.relationKey);
 
-		console.log(JSON.stringify(list, null, 3));
-
 		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list);
-
 		keyboard.disableSelection(false);
 	};
 

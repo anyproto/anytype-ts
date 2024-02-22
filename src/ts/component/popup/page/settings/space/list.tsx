@@ -45,7 +45,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
 					<td>{translate(`spaceStatus${space.spaceLocalStatus}`)}</td>
 
-					<td className="columnMore">
+					<td className="columnMore dn">
 						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
 							<Icon className="more" />
 						</div>

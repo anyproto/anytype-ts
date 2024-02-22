@@ -835,7 +835,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	canCellEdit (relationKey: string, recordId: string): boolean {
 		const { readonly } = this.props;
-
 		if (readonly) {
 			return false;
 		};
@@ -1171,7 +1170,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getSystemLayouts());
 		const sources = this.getSources();
 
 		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
