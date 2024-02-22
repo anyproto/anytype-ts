@@ -87,8 +87,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					<Card 
 						key={`gallery-card-${view.id + id}`}
 						{...this.props} 
-						record={detailStore.get(subId, id, getKeys(view.id))} 
-						getCoverObject={this.getCoverObject} 
+						getCoverObject={this.getCoverObject}
+						recordId={id}
 					/>
 				);
 			};

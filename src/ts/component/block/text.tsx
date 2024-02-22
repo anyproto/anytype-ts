@@ -1131,6 +1131,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const range = this.getRange();
+
 		let value = this.getValue();
 
 		menuStore.open('smile', {
@@ -1333,7 +1334,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		keyboard.setFocus(true);
-		
+
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
 
@@ -1454,7 +1455,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	placeholderCheck () {
-		if (this.refEditable) {
+		if (this.refEditable && !this.props.readonly) {
 			this.refEditable.placeholderCheck();
 		};			
 	};

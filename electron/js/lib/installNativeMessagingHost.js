@@ -12,7 +12,7 @@ const fs = require('fs');
 const { userInfo, homedir } = require('os');
 const { app } = require('electron');
 const path = require('path');
-const util = require('../util.js');
+const util = require('util');
 const { fixPathForAsarUnpack, is } = require('electron-util');
 
 const APP_NAME = 'com.anytype.desktop';

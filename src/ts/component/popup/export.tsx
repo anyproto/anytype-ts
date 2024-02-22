@@ -198,6 +198,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		switch (format) {
 			default:
 				Action.export(objectIds, format, { ...this.data, route });
+				close();
 				break;
 
 			case I.ExportType.Html:
@@ -212,7 +213,6 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		};
 		
 		this.save();
-		close();
 	};
 
 	onCancel (e: any) {

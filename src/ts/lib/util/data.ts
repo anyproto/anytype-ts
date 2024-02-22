@@ -287,8 +287,8 @@ class UtilData {
 
 	createSubscriptions (callBack?: () => void): void {
 		const { space } = commonStore;
-
-		const list = [
+		const { account } = authStore;
+		const list: any[] = [
 			{
 				subId: Constant.subId.profile,
 				filters: [
@@ -374,8 +374,25 @@ class UtilData {
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
-			}
+				ignoreDeleted: true,
+			},
 		];
+
+		if (account) {
+			list.push({
+				subId: Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+			});
+		};
 
 		let cnt = 0;
 		const cb = (item: any) => {

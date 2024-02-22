@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, dbStore, blockStore, detailStore } from 'Store';
+import { menuStore, dbStore, blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT = 28;
@@ -32,7 +32,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { getId } = this.props;
+		const { getId, setHover } = this.props;
 		const isReadonly = this.isReadonly();
 		const items = this.getItems();
 
@@ -64,7 +64,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				>
 					{!isReadonly ? <Handle /> : ''}
 					<span className="clickable" onClick={e => this.onClick(e, item)}>
-						<Icon className={'relation ' + Relation.className(item.relation.format)} />
+						<Icon className={`relation ${Relation.className(item.relation.format)}`} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (
@@ -149,8 +149,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd} 
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => this.props.setHover()}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>
@@ -290,30 +290,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortEnd (result: any) {
+		const { config } = commonStore;
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		
-		let list = view.getRelations();
+		const list = arrayMove(this.getItems(), oldIndex, newIndex).map(it => it && it.relationKey);
 
-		list = list.filter(it => {
-			if (!it) {
-				return false;
-			};
-
-			const relation = dbStore.getRelationByKey(it.relationKey);
-			if (!relation) {
-				return false;
-			};
-
-			return !relation.isHidden || (it.relationKey == 'name');
-		});
-
-		list = arrayMove(list, oldIndex, newIndex);
-		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list.map(it => it.relationKey));
-
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, list);
 		keyboard.disableSelection(false);
 	};
 

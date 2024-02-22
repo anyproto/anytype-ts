@@ -341,6 +341,7 @@ export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObje
 	return {
 		blockId: response.getBlockid(),
 		targetId: response.getTargetid(),
+		details: Decode.struct(response.getDetails()),
 	};
 };
 
@@ -502,6 +503,13 @@ export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscri
 };
 
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+	return {
+		inviteCid: response.getInvitecid(),
+		inviteKey: response.getInvitefilekey(),
+	};
+};
+
+export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),
 		inviteKey: response.getInvitefilekey(),

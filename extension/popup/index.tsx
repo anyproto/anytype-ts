@@ -58,7 +58,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					return;
 				};
 
-				Util.init(response.ports[1], response.ports[2]);
+				Util.init(response.ports[0], response.ports[1]);
 				this.login();
 			});
 		});

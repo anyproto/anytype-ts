@@ -1962,6 +1962,14 @@ export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => 
 	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
 };
 
+export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteGetCurrent.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteGetCurrent.name, request, callBack);
+};
+
 export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.Join.Request();
 

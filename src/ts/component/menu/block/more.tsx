@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, Storage } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -166,7 +166,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		const allowedArchive = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectCollection();
-		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
@@ -481,7 +481,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageCreate': {
 				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					UtilObject.openAuto({ id: message.targetId, layout: object.layout });
+					UtilObject.openAuto(message.details);
 
 					analytics.event('CreateObject', {
 						route: ROUTE,
@@ -493,7 +493,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
+				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.universalRoute(object) });
 				analytics.event('CopyLink', { ROUTE });
 				break;
 			};

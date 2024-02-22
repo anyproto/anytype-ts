@@ -24,6 +24,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	top = 0;
 	refInput = null;
 	refList: any = null;
+	refCopy: any = null;
 	state = {
 		error: '',
 	};
@@ -40,13 +41,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error } = this.state;
-		const participant = UtilObject.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 
 		const Member = (item: any) => {
-			const isOwner = (item.id == participant.id) && (participant.permissions == I.ParticipantPermissions.Owner);
+			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
 			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
 			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
 			const isRemoved = [ I.ParticipantStatus.Removed, I.ParticipantStatus.Removing ].includes(item.status);
@@ -115,7 +115,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
 
 				<div className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
@@ -132,7 +132,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="inviteLinkWrapper">
 						<Input ref={ref => this.refInput = ref} readonly={true} />
-						<Button onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
+						<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
 						<Icon id="generate" className="refresh" onClick={() => this.onGenerate(false)} />
 					</div>
 
@@ -180,9 +180,17 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		);
 	};
 
-	componentDidMount() {
+	componentDidMount () {
 		this.updateCache();
-		this.onGenerate(true);
+		this.refCopy?.setDisabled(true);
+
+		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			if (message.error.code) {
+				this.onGenerate(true);
+			} else {
+				this.setLink(message.inviteCid, message.inviteKey);
+			};
+		});
 	};
 
 	componentDidUpdate() {
@@ -224,11 +232,20 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getLink () {
-		return `${Constant.protocol}://main/invite/?cid=${this.cid}&key=${this.key}`
+		return `${Constant.protocol}://invite/?cid=${this.cid}&key=${this.key}`
+	};
+
+	setLink (cid: string, key: string) {
+		this.cid = cid;
+		this.key = key;
+		this.refInput.setValue(this.getLink());
+		this.refCopy.setDisabled(false);
 	};
 
 	onCopy () {
-		UtilCommon.copyToast(translate('commonLink'), this.getLink());
+		if (this.cid && this.key) {
+			UtilCommon.copyToast(translate('commonLink'), this.getLink());
+		};
 	};
 
 	onGenerate (auto: boolean) {
@@ -246,9 +263,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					return;
 				};
 
-				this.cid = message.inviteCid;
-				this.key = message.inviteKey;
-				this.refInput.setValue(this.getLink());
+				this.setLink(message.inviteCid, message.inviteKey);
 
 				if (!auto) {
 					this.onCopy();
@@ -371,6 +386,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		position();
 	};
+
 });
 
 export default PopupSettingsSpaceShare;

@@ -32,6 +32,7 @@ import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
+import PageMainObject from './main/object';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -61,6 +62,7 @@ const Components = {
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
 	'main/membership':		 PageMainMembership,
+	'main/object':			 PageMainObject,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -139,7 +141,23 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return (isPopup ? matchPopup : match) || { params: {} };
+		const { history } = this.props;
+		const pathname = String(history?.location?.pathname || '');
+		const ret = (isPopup ? matchPopup : match) || { params: {} };
+
+		// Universal object route
+		if (pathname.match('/object')) {
+			ret.params.page = 'main';
+			ret.params.action = 'object';
+		};
+
+		// Invite route
+		if (pathname.match('/invite')) {
+			ret.params.page = 'main';
+			ret.params.action = 'invite';
+		};
+
+		return ret;
 	};
 
 	getMatchParams () {

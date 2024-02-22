@@ -19,7 +19,65 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`2024: Fresh Beginnings`),
+	title(`Webclipper, Files as Objects and Experience Gallery Galore!`),
+	text(`Midwinter greetings, Anytypers! As we chug along towards multiplayer, we’re excited to bring you another release packed with some long-anticipated features. We hope you’ll enjoy this update and as always, look forward to hearing your feedback!`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Webclipper`),
+	video('39/1.mp4'),
+	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link('', 'this link')}.`),
+	text(`Once installed, you have two options to save content from the web:`),
+	bullet(`Click the web clipper extension icon in your toolbar to save web pages as new objects in Anytype.`),
+	bullet(`Select a text snippet, right click, and add the text to any previously-created object in your space.`),
+
+	h3(`Files as Objects`),
+	video('39/2.mp4'),
+	text(`A huge update for your Anytype files: you can now rename and add relations to your files, making it much easier to sort and manage your images, videos, PDFs, and other files. In addition, you can link files to objects by using the @ mention or Link-to commands from your object editor.`),
+
+	h3(`In-app Experience Gallery`),
+	video('39/3.mp4'),
+	text(`To make browsing and installing experiences easier, the Experience Gallery has now been added to Anytype. Open your spaces navigation tab, tap ‘Gallery’, and install the experience of your choice.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`${hl(`Export`)} Option Added to Right-click Menu for Sets/Collections`),
+	text(`For easier batch exporting, the right-click menu in sets and collections now includes the ${hl(`Export`)} option. When clicking ${hl(`Export`)}, a popup will appear asking you to define your export settings.`),
+
+	h3(`Right-click Menu added to Objects in Library`),
+	video('39/4.mp4'),
+	text(`When opening types or relations from your library, you can now multi-select the objects from the list and right-click to batch edit object type, delete, export, or add to favorites. You can also select individual objects and create widgets from them.`),
+
+	h3(`Widgets for Recently Opened / Recently Edited Objects Now Grouped by Date`),
+	video('39/5.mp4'),
+	text(`When opening your widgets for Recently Opened or Recently Edited Objects, you can now see which Objects fall under Today, Yesterday, Past 7 days, and Older.`),
+
+	h3(`Kroki, Sketchfab, and Github Gist Embeds Can be Created by Pasting Links`),
+	text(`No need to create an embed block first - you can simply paste the links in your object editor and see the option to paste as embed.`),
+
+	h3(`${hl(`Import Type`)} Relation has been Added`),
+	text(`Objects which have been installed or imported, such as use cases or export files, will now come with relation: Import Type indicating the imported format, which can be Any-block, Markdown, or other.`),
+
+	h3(`Corner Radiuses for Selected Blocks have been Updated`),
+	text(`For better visual consistency, corner radiuses for blocks in the editor have been updated.`),
+
+	h3(`Graph and Flow Added to Global Search`),
+	text(`You can now use the global search menu to navigate to your Graph and Flow tabs.`),
+
+	h3(`Czech Added to Interface Languages`),
+	text(`Thank you to everyone who’s contributed to Czech translation, we now have 20 languages available for Desktop!`),
+
+	h2(`💻 Tech:`),
+	bullet(`Electron updated to 0.28.2`),
+
+	h2(`🐛 Bug Fixes:`),
+	bullet(`Change Object Type menu no longer includes current object type. Thanks, ${link('https://community.anytype.io/t/current-object-type-should-not-be-in-the-list-when-changing-to-other-type/8063/5', 'sambouwer')}!`),
+	bullet(`Title block spacing remains consistent no matter how many blocks are in the object. Thanks, ${link('https://community.anytype.io/t/title-line-spacing-gets-squished-with-more-than-39-blocks/12850', 'SpaceLemon')}!`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.38.0 - 2024: Fresh Beginnings`),
 	text(`Refusing to succumb to the post-holiday blues, we’re kicking off the new year with a desktop-only release to address the valuable feedback we received after our latest update. This time around, we’ve also conducted an extensive cleanup to tackle longstanding bugs, ensuring a smoother experience for all users. Thanks to everyone who’s given feedback, reported bugs, and contributed to our ${link('https://github.com/anyproto', 'codebase')} and ${link('https://gallery.any.coop/', 'Experience Gallery')}!`),
 
 	h2(`💎 Highlights of this Release:`),

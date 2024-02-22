@@ -32,7 +32,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	};
 	
 	render () {
-		const { param, getId } = this.props;
+		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { loadData, rootId, blockId } = data;
 		const items = this.getItems();
@@ -145,8 +145,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd}
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => this.props.setHover()}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewViewListAddView')}</div>

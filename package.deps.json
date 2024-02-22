@@ -63,5 +63,17 @@
     {
 		"from": "node_modules/file-type",
 		"to": "node_modules/file-type"
+    },
+    {
+		"from": "node_modules/regedit",
+		"to": "node_modules/regedit"
+    },
+    {
+		"from": "node_modules/stream-slicer",
+		"to": "node_modules/stream-slicer"
+    },
+    {
+		"from": "node_modules/util",
+		"to": "node_modules/util"
     }
 ]
