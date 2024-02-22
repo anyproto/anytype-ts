@@ -760,7 +760,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (!commonFilter) {
+		if (!commonFilter && !keyboard.isFocused) {
 			shortcutClose.push('arrowleft');
 			shortcutSelect.push('arrowright');
 		};
