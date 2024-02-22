@@ -1224,7 +1224,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.placeholderHide();
 		};
 
-		focus.clear(true);
+		focus.clearRange(true);
 		keyboard.setFocus(false);
 
 		if (!this.preventSaveOnBlur) {
