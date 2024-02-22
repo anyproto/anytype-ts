@@ -15,12 +15,21 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	node: any = null;
 	slideWidth: number = 0;
-	currentTier: I.SubscriptionTier = 0;
-	currentTierValid: number = 0;
 
 	render () {
 		const { loading, currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
+		const subscription = Storage.get('subscription') || {};
+
+		let currentTier: I.SubscriptionTier = 0;
+		let currentTierValid: number = 0;
+
+		if (subscription.tier) {
+			currentTier = subscription.tier;
+			if (subscription.dateEnds) {
+				currentTierValid = subscription.dateEnds;
+			};
+		};
 
 		const slides = [
 			{ title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
@@ -45,11 +54,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 
 		const TierItem = (item: any) => {
-			if (item.id < this.currentTier) {
+			if (item.id < currentTier) {
 				return null;
 			};
 
-			const isCurrent = item.id == this.currentTier;
+			const isCurrent = item.id == currentTier;
 
 			let price = '';
 			let period = '';
@@ -71,8 +80,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 
 			if (isCurrent) {
-				if (item.period && this.currentTierValid) {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', this.currentTierValid))
+				if (item.period && currentTierValid) {
+					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', currentTierValid))
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};
@@ -105,11 +114,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{this.currentTier ? translate('popupSettingsMembership') : translate('popupSettingsMembershipTitle')}</div>
+				<div className="membershipTitle">{currentTier ? translate('popupSettingsMembership') : translate('popupSettingsMembershipTitle')}</div>
 
 				{loading ? <Loader/> : ''}
 
-				{this.currentTier ? '' : (
+				{currentTier ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
@@ -155,17 +164,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	componentDidMount () {
-		const subscription = Storage.get('subscription');
-
-		if (subscription.tier) {
-			this.currentTier = subscription.tier;
-			if (subscription.dateEnds) {
-				this.currentTierValid = subscription.dateEnds;
-			};
-
-			this.forceUpdate();
-		};
-
 		this.slideWidth = $(this.node).width() + 16;
 		$(window).on('resize.membership', () => {
 			this.slideWidth = $(this.node).width() + 16;

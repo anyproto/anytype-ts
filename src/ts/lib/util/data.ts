@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -955,6 +955,7 @@ class UtilData {
 	reloadSubscriptionData (callBack?: (message: any) => void) {
 		C.PaymentsSubscriptionGetStatus((message) => {
 			if (message.error.code) {
+				Storage.delete('subscription');
 				return;
 			};
 

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, UtilRouter } from 'Lib';
 
 interface Props {
 	tier: any;
-	setSuccess: () => void;
 };
 interface State {
 	verificationStep: number;
@@ -116,7 +115,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 
 	onVerifyEmail () {
 		const isSubscribed: boolean = this.refCheckbox.getValue();
-		
+
 		this.setButtonLoading(this.refButton, true);
 
 		C.PaymentsSubscriptionGetVerificationEmail(this.email, isSubscribed, (message) => {
@@ -130,7 +129,6 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 	};
 
 	onConfirmEmailCode () {
-		const { setSuccess } = this.props;
 		const code = this.refCode.getValue();
 
 		C.PaymentsSubscriptionVerifyEmailCode(code, (message) => {
@@ -138,7 +136,8 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 				this.setStatus('error', message.error.description);
 				return;
 			};
-			setSuccess();
+
+			UtilRouter.go('/main/membership', {});
 		});
 	};
 

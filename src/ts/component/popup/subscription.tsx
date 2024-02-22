@@ -6,7 +6,6 @@ import PageFree from './page/subscription/free';
 import PagePaid from './page/subscription/paid';
 import PageCurrent from './page/subscription/current';
 import PageSuccess from './page/subscription/success';
-import { popupStore } from 'Store';
 
 const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React.Component<I.Popup> {
 
@@ -16,7 +15,6 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 		super(props);
 
 		this.onChangeEmail = this.onChangeEmail.bind(this);
-		this.setSuccess = this.setSuccess.bind(this);
 	};
 
 	render() {
@@ -35,13 +33,13 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 
 		if (success) {
 			cn.push('success');
-			content = <PageSuccess tier={tiers[tier]} />;
+			content = <PageSuccess {...this.props} tier={tiers[tier]} />;
 		} else
 		if (this.currentTier && (this.currentTier.tier == tier)) {
 			content = <PageCurrent current={this.currentTier} onChangeEmail={this.onChangeEmail} />;
 		} else
 		if (tier == 1) {
-			content = <PageFree tier={tiers[tier]} setSuccess={this.setSuccess} />;
+			content = <PageFree tier={tiers[tier]} />;
 		} else {
 			content = <PagePaid tier={tiers[tier]} />;
 		};
@@ -69,7 +67,7 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	};
 
 	componentDidMount () {
-		const subscription = Storage.get('subscription');
+		const subscription = Storage.get('subscription') || {};
 
 		if (subscription.tier) {
 			this.currentTier = subscription;
@@ -105,12 +103,6 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	onChangeEmail () {
 		this.currentTier = null;
 		this.forceUpdate();
-	};
-
-	setSuccess () {
-		const { position } = this.props;
-		popupStore.updateData('subscriptionPlan', { success: true });
-		position();
 	};
 });
 

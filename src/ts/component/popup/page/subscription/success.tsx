@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import { popupStore } from 'Store';
 
-interface Props {
+interface Props extends I.Popup {
 	tier: any;
 };
 
@@ -34,15 +34,17 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 				<Icon className={`tier${id}`} />
 				<Label text={text} />
 
-				<Button onClick={() => popupStore.closeAll()} className="c36" color="blank" text={translate('commonContinue')} />
+				<Button onClick={this.onContinue} className="c36" color="blank" text={translate('commonContinue')} />
 			</React.Fragment>
 		);
 	};
 
+	componentDidMount () {
+
+	};
+
 	onContinue () {
-		popupStore.closeAll(null, () => {
-			popupStore.open('settings', { data: { page: 'membership' } });
-		});
+		this.props.close();
 	};
 });
 
