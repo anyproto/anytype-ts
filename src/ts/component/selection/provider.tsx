@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
@@ -29,9 +30,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	isPopup = false;
 	rootId = '';
 	rect: any = null;
-	childrenIds: Map<string, string[]> = new Map();
 
-	cache: Map<string, any> = new Map();
+	cacheNodeMap: Map<string, any> = new Map();
+	cacheChildrenMap: Map<string, string[]> = new Map();
+
 	ids: Map<string, string[]> = new Map();
 	idsOnStart: Map<string, string[]> = new Map();
 	
@@ -145,8 +147,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.hasMoved = false;
 		this.focused = focused;
 		this.top = this.startTop = container.scrollTop();
-		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
+		this.clearCache();
 		this.setIsSelecting(true);
 
 		keyboard.disablePreview(true);
@@ -195,8 +197,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			};
 
 			this.nodes.push(node);
-			this.cacheRect(node);
-			this.getChildrenIds(id, []);
+			this.cacheNode(node);
+			this.cacheChildrenIds(id);
 		});
 	};
 	
@@ -245,7 +247,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.initNodes();
 			this.startTop = top;
 		} else {
-			this.nodes.forEach(it => this.cacheRect(it));
+			this.nodes.forEach(it => this.cacheNode(it));
 		};
 
 		this.checkNodes({ ...e, pageX: x, pageY: y });
@@ -324,21 +326,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 
-	clearState () {
-		keyboard.disablePreview(false);
-		
-		this.hide();
-		this.setIsSelecting(false);
-		this.cache.clear();
-		this.childrenIds.clear();
-		this.focused = '';
-		this.range = null;
-		this.containerOffset = null;
-		this.isPopup = false;
-		this.rootId = '';
-		this.nodes = [];
-	};
-
 	drawRect (x: number, y: number) {
 		if (!this.nodes.length) {
 			return;
@@ -364,29 +351,29 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 	};
 	
-	cacheRect (node: any): { x: number; y: number; width: number; height: number; } {
+	cacheNode (node: any): { x: number; y: number; width: number; height: number; } {
 		if (!node.id) {
 			return { x: 0, y: 0, width: 0, height: 0 };
 		};
 
-		let cached = this.cache.get(node.id);
-		if (cached) {
-			return cached;
+		let cache = this.cacheNodeMap.get(node.id);
+		if (cache) {
+			return cache;
 		};
 
 		const offset = node.obj.offset();
 		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
 		const { x, y } = this.recalcCoords(offset.left, offset.top);
 
-		cached = { x, y, width: rect.width, height: rect.height };
+		cache = { x, y, width: rect.width, height: rect.height };
 
-		this.cache.set(node.id, cached);
-		return cached;
+		this.cacheNodeMap.set(node.id, cache);
+		return cache;
 	};
 	
 	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]) {
-		const cached = this.cacheRect(node);
-		if (!cached || !UtilCommon.rectsCollide(rect, cached)) {
+		const cache = this.cacheNode(node);
+		if (!cache || !UtilCommon.rectsCollide(rect, cache)) {
 			return;
 		};
 
@@ -413,8 +400,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.initIds();
 		};
 
-		let ids = {};
-
+		const ids = {};
 		for (const i in I.SelectType) {
 			const type = I.SelectType[i];
 			
@@ -482,6 +468,25 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		$(window).trigger('selectionClear');
 	};
+
+	clearState () {
+		keyboard.disablePreview(false);
+		
+		this.hide();
+		this.setIsSelecting(false);
+		this.clearCache();
+		this.focused = '';
+		this.range = null;
+		this.containerOffset = null;
+		this.isPopup = false;
+		this.rootId = '';
+		this.nodes = [];
+	};
+
+	clearCache () {
+		this.cacheNodeMap.clear();
+		this.cacheChildrenMap.clear();
+	};
 	
 	set (type: I.SelectType, ids: string[]) {
 		this.ids.set(type, UtilCommon.arrayUnique(ids || []));
@@ -513,27 +518,33 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return ids;
 	};
 
-
-	getChildrenIds (id: string, ids: string[]) {
-		const cache = this.childrenIds.get(id);
-		if (cache) {
-			ids = ids.concat(cache);
-			return;
+	cacheChildrenIds (id: string): string[] {
+		const block = blockStore.getLeaf(this.rootId, id);
+		if (!block) {
+			return [];
 		};
 
-		const block = blockStore.getLeaf(this.rootId, id);
+		let ids = [];
 
-		let childrenIds = [];
-		if (block && !block.isTable()) {
-			childrenIds = blockStore.getChildrenIds(this.rootId, id);
+		if (!block.isTable()) {
+			const childrenIds = blockStore.getChildrenIds(this.rootId, id);
 
 			for (const childId of childrenIds) {
 				ids.push(childId);
-				this.getChildrenIds(childId, ids);
+				ids = ids.concat(this.cacheChildrenIds(childId));
 			};
 		};
 
-		this.childrenIds.set(id, [ ...childrenIds ]);
+		this.cacheChildrenMap.set(id, [ ...ids ]);
+		return ids;
+	};
+
+	getChildrenIds (id: string, ids: string[]) {
+		const cache = this.cacheChildrenMap.get(id);
+		if (cache && cache.length) {
+			ids = ids.concat(cache);
+		};
+		return ids;
 	};
 
 	getPageContainer () {
@@ -545,25 +556,31 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		$('.isSelectionSelected').removeClass('isSelectionSelected');
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 
-		for (const i in I.SelectType) {
-			const type = I.SelectType[i];
-			const ids = this.get(type, true);
+		raf(() => {
+			$('.isSelectionSelected').removeClass('isSelectionSelected');
 
-			for (const id of ids) {
-				$(`#selectable-${id}`).addClass('isSelectionSelected');
+			for (const i in I.SelectType) {
+				const type = I.SelectType[i];
+				const ids = this.get(type, true);
 
-				if (type == I.SelectType.Block) {
-					$(`#block-${id}`).addClass('isSelectionSelected');
+				for (const id of ids) {
+					$(`#selectable-${id}`).addClass('isSelectionSelected');
 
-					const childrenIds = blockStore.getChildrenIds(this.rootId, id);
-					childrenIds.forEach((childId: string) => {
-						$(`#block-${childId}`).addClass('isSelectionSelected');
-					});
+					if (type == I.SelectType.Block) {
+						$(`#block-${id}`).addClass('isSelectionSelected');
+
+						const childrenIds = this.getChildrenIds(id, []);
+						if (childrenIds.length) {
+							childrenIds.forEach(childId => $(`#block-${childId}`).addClass('isSelectionSelected'));
+						};
+					};
 				};
 			};
-		};
+		});
 	};
 
 	recalcCoords (x: number, y: number): { x: number, y: number } {
