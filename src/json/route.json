@@ -3,5 +3,6 @@
 	{ "path": "/:page/:action/:id?" },
 	{ "path": "/:page/:action/:id?/block/:blockId?" },
 	{ "path": "/:page/:action/:id?/spaceId/:spaceId?" },
-	{ "path": "/object/:id/space/:spaceId" }
+	{ "path": "/object/:id/space/:spaceId" },
+	{ "path": "/invite" }
 ]

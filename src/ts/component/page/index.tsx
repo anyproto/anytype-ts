@@ -140,22 +140,31 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return (isPopup ? matchPopup : match) || { params: {} };
+		const { history } = this.props;
+		const pathname = String(history?.location?.pathname || '');
+		const ret = (isPopup ? matchPopup : match) || { params: {} };
+
+		// Universal object route
+		if (pathname.match('/object')) {
+			ret.params.page = 'main';
+			ret.params.action = 'object';
+		};
+
+		// Invite route
+		if (pathname.match('/invite')) {ret.params.page = 'main';
+			ret.params.page = 'main';
+			ret.params.action = 'invite';
+		};
+
+		return ret;
 	};
 
 	getMatchParams () {
-		const { history } = this.props;
 		const match = this.getMatch();
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
 		const spaceId = String(match?.params?.spaceId || '');
-		const pathname = String(history?.location?.pathname || '');
-
-		// Universal object route
-		if (pathname.match('/object')) {
-			return { page: 'main', action: 'object', id, spaceId };
-		};
 
 		return { page, action, id, spaceId };
 	};
