@@ -547,6 +547,7 @@ class App extends React.Component<object, State> {
 
 		keyboard.disableContextOpen(true);
 
+		const { focused, range } = focus.state;
 		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
@@ -568,7 +569,6 @@ class App extends React.Component<object, State> {
 					raf(() => {
 						switch (item.id) {
 							default: {
-								const { focused, range } = focus.state;
 								const rootId = keyboard.getRootId();
 								const block = blockStore.getLeaf(rootId, focused);
 
