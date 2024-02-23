@@ -726,16 +726,16 @@
 					.illustration.slide3 { height: 100px; background: url('~img/icon/payment/slide3.svg'); margin-top: 2px; }
 				}
 
-				.slide.slide0 { background: linear-gradient(180deg, #CFF5CE 0%, #F6F6F6 50%); }
-				.slide.slide1 { background: linear-gradient(180deg, #FEF2C6 0%, #F6F6F6 50%); }
-				.slide.slide2 { background: linear-gradient(180deg, #FFEBEB 0%, #F6F6F6 50%); }
-				.slide.slide3 { background: linear-gradient(180deg, #EBEDFE 0%, #F6F6F6 50%); }
+				.slide.slide0 { background: linear-gradient(180deg, #cff5ce 0%, #f6f6f6 50%); }
+				.slide.slide1 { background: linear-gradient(180deg, #fef2c6 0%, #f6f6f6 50%); }
+				.slide.slide2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
+				.slide.slide3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
 
-				.bullits { display: flex; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
-				.bullits {
-					.bullit { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
-					.bullit:hover { background-color: var(--color-control-active); }
-					.bullit.active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+				.bullets { display: flex; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+				.bullets {
+					.bullet { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
+					.bullet:hover { background-color: var(--color-control-active); }
+					.bullet.active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
 				}
 			}
 
@@ -760,9 +760,9 @@
 					.button { width: 100%; }
 				}
 
-				.tier.tier1 { background: linear-gradient(180deg, #D7FAFF 0%, #F3F3F3 25.64%); }
-				.tier.tier2 { background: linear-gradient(180deg, #EAECFE 0%, #F3F3F3 25.64%); }
-				.tier.tier3 { background: linear-gradient(180deg, #FFEBEB 0%, #F3F3F3 25.64%); }
+				.tier.tier1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
+				.tier.tier2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
+				.tier.tier3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
 				.tier.current {
 					.priceWrapper {
 						.price { display: none; }

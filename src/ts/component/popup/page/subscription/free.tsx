@@ -100,10 +100,10 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 
 	componentWillUnmount () {
 		if (this.interval) {
-			clearInterval(this.interval);
+			window.clearInterval(this.interval);
 		};
 		if (this.timeout) {
-			clearTimeout(this.timeout);
+			window.clearTimeout(this.timeout);
 		};
 	};
 
@@ -155,7 +155,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 		this.setState({ status, statusText: text });
 
 		if (this.timeout) {
-			clearTimeout(this.timeout);
+			window.clearTimeout(this.timeout);
 		};
 
 		this.timeout = window.setTimeout(() => {
@@ -179,8 +179,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 		};
 
 		const email = this.refEmail.getValue();
-		const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/;
-		const valid = re.test(email);
+		const valid = UtilCommon.emailCheck(email);
 
 		if (valid) {
 			this.email = email;
@@ -198,7 +197,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 			this.setState({ countdown });
 
 			if (!countdown) {
-				clearInterval(this.interval);
+				window.clearInterval(this.interval);
 				this.interval = null;
 			};
 		}, 1000);
