@@ -541,13 +541,7 @@ class Keyboard {
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, {
-					zip: true, 
-					nested: true, 
-					files: true, 
-					archived: true, 
-					route: 'MenuSystem',
-				});
+				popupStore.open('export', { data: { objectIds: [ rootId ], route: 'MenuSystem', allowHtml: true } });
 				break;
 			};
 

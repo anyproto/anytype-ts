@@ -164,7 +164,7 @@
 	"electronMenuLogs": "Show Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
-	"electronMenuSaveAs": "Save as file",
+	"electronMenuSaveAs": "Export Object",
 	"electronMenuDebugSpace": "Space",
 	"electronMenuDebugObject": "Current Object",
 	"electronMenuDebugProcess": "Process",
