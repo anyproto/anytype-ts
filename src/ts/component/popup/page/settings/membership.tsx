@@ -5,6 +5,7 @@ import { I, C, translate, UtilCommon, UtilDate, Storage } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
+import Constant from 'json/constant.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 

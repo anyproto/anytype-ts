@@ -72,7 +72,7 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 
 	componentWillUnmount () {
 		if (this.timeout) {
-			clearTimeout(this.timeout);
+			window.clearTimeout(this.timeout);
 		};
 	};
 
@@ -83,7 +83,7 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		const l = name.length;
 
 		if (this.timeout) {
-			clearTimeout(this.timeout);
+			window.clearTimeout(this.timeout);
 		};
 		this.disableButtons(true);
 

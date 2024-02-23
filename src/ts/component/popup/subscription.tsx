@@ -6,6 +6,7 @@ import PageFree from './page/subscription/free';
 import PagePaid from './page/subscription/paid';
 import PageCurrent from './page/subscription/current';
 import PageSuccess from './page/subscription/success';
+import Constant from 'json/constant.json';
 
 const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React.Component<I.Popup> {
 
@@ -22,11 +23,7 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 		const { data } = param;
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
-		const tiers = {
-			1: { id: I.SubscriptionTier.Explorer },
-			2: { id: I.SubscriptionTier.Builder1WeekTEST, price: 99, period: 1, minNameLength: 7 },
-			3: { id: I.SubscriptionTier.CoCreator1WeekTEST, price: 399, period: 5, minNameLength: 5 },
-		};
+		const tiers = UtilCommon.mapToObject(Constant.subscriptionTiers, 'id');
 		const cn = [ 'sides', `tier${tier}` ];
 
 		let content: any = null;
