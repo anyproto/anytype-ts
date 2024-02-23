@@ -72,7 +72,7 @@ class UtilObject {
 		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
-	getParticipant () {
+	getParticipant (id?: string) {
 		const { space } = commonStore;
 		const { account } = authStore;
 
@@ -80,7 +80,18 @@ class UtilObject {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(space, account.id));
+		const object = detailStore.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
+		return object._empty_ ? null : object;
+	};
+
+	getMyParticipant (spaceId: string) {
+		const { account } = authStore;
+
+		if (!account) {
+			return null;
+		};
+
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(spaceId, account.id));
 		return object._empty_ ? null : object;
 	};
 
@@ -89,9 +100,9 @@ class UtilObject {
 		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
-	isSpaceOwner (participantId: string): boolean {
-		const { account } = authStore;
-		return account ? this.getAccountFromParticipantId(participantId) == account.id : false;
+	isSpaceOwner (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || commonStore.space);
+		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
 	};
 
 	getGraph () {
@@ -161,6 +172,10 @@ class UtilObject {
 		*/
 
 		return UtilRouter.build({ page: 'main', action, id, spaceId });
+	};
+
+	universalRoute (object: any): string {
+		return object ? `object/${object.id}/space/${object.spaceId}` : '';
 	};
 
 	openEvent (e: any, object: any, param?: any) {
@@ -243,6 +258,10 @@ class UtilObject {
 		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
 	};
 
+	openConfig (object: any) {
+		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+	};
+
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
 		let typeKey = '';
 
@@ -264,11 +283,7 @@ class UtilObject {
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (callBack) {
+			if (!message.error.code && callBack) {
 				callBack(message);
 			};
 		});

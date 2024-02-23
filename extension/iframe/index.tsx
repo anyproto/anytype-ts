@@ -17,8 +17,6 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 
 	getPorts (onError?: () => void): void {
 		Util.sendMessage({ type: 'checkPorts' }, response => {
-			console.log('[Iframe] checkPorts', response);
-
 			if (!response.ports || !response.ports.length) {
 				this.setState({ error: 'Automatic pairing failed, please open the app' });
 
@@ -28,7 +26,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			Util.init(response.ports[1], response.ports[2]);
+			Util.init(response.ports[0], response.ports[1]);
 			this.login();
 		});
 	};
@@ -37,7 +35,9 @@ const Index = observer(class Index extends React.Component<I.PageComponent> {
 		const appKey = Storage.get('appKey');
 
 		if (appKey) {
-			Util.authorize(appKey, () => UtilRouter.go('/create', {}), () => Storage.delete('appKey'));
+			Util.authorize(appKey, () => {
+				Util.sendMessage({ type: 'initMenu' }, () => {});
+			}, () => Storage.delete('appKey'));
 		};
 	};
 

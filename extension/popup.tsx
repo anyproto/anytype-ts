@@ -90,8 +90,6 @@ class Popup extends React.Component {
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('[Popup]', msg, sender);
-
 			if (!Extension.clipper.ids.includes(sender.id)) {
 				return false;
 			};

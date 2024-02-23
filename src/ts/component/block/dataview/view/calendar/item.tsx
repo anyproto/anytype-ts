@@ -101,8 +101,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
-	onOpen (item: any) {
-		UtilObject.openPopup(item);
+	onOpen (record: any) {
+		UtilObject.openConfig(record);
 	};
 
 	onSelect (item: any, icon: string) {

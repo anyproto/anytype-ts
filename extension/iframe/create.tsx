@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Button, Block, Loader, Icon, Select, IconObject } from 'Component';
+import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, translate, UtilObject, UtilData } from 'Lib';
 import { blockStore, extensionStore, menuStore, dbStore, commonStore } from 'Store';
 
@@ -72,6 +72,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				</div>
 
 				<div className="blocks">
+					{!children.length ? <EmptySearch text={translate('webclipperEmptySelection')} /> : ''}
+
 					{children.map((block: I.Block, i: number) => (
 						<Block 
 							key={block.id} 
@@ -89,6 +91,16 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
+		UtilData.createSubscriptions(() => {
+			this.init();
+		});
+	};
+
+	componentDidUpdate (): void {
+		this.initBlocks();
+	};
+
+	init () {
 		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 })).filter(it => it);
 
 		if (this.refSpace && spaces.length) {
@@ -98,10 +110,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.refSpace?.setValue(space);
 			this.onSpaceChange(space);
 		};
-	};
-
-	componentDidUpdate (): void {
-		this.initBlocks();
 	};
 
 	initBlocks () {
@@ -158,7 +166,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		commonStore.spaceSet(id);
-		UtilData.createsSubscriptions();
+		UtilData.createSubscriptions();
 	};
 
 	getWrapperWidth () {

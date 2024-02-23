@@ -24,8 +24,6 @@
 	});
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-		console.log('[Foreground]', msg, sender);
-
 		if (!extensionIds.includes(sender.id)) {
 			return false;
 		};

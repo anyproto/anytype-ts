@@ -32,7 +32,7 @@ class Notification implements I.Notification {
 
 	fillContent () {
 		const { importType, errorCode, name, spaceId, identityName } = this.payload;
-		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
+		const space = spaceId ? UtilObject.getSpaceviewBySpaceId(spaceId) : null;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 
@@ -53,14 +53,14 @@ class Notification implements I.Notification {
 					this.text = UtilCommon.sprintf(this.text, name);
 				} else {
 					this.title = UtilCommon.sprintf(this.title, name);
-					this.text = UtilCommon.sprintf(this.text, space.name);
+					this.text = UtilCommon.sprintf(this.text, space?.name);
 				};
 				break;
 			};
 
 			case I.NotificationType.Join: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, identityName, space.name);
+				this.text = UtilCommon.sprintf(this.text, identityName, space?.name);
 				break;
 			};
 

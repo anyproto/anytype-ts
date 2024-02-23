@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics, Storage } from 'Lib';
-import { authStore, dbStore, popupStore, menuStore, blockStore } from 'Store';
+import { authStore, dbStore, popupStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ITEM_WIDTH = 112;
@@ -160,9 +160,10 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId, account } = authStore;
+		const participant = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(item.targetSpaceId, account.id));
 
-		if (item.targetSpaceId == accountSpaceId) {
+		if ((item.targetSpaceId == accountSpaceId) || !participant || (participant.permissions != I.ParticipantPermissions.Owner)) {
 			return;
 		};
 
@@ -200,7 +201,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		if (items[this.n] && (items[this.n].id == 'add')) {
+		if (items[this.n] && ([ 'add', 'gallery' ].includes(items[this.n].id))) {
 			this.onArrow(dir);
 		} else {
 			this.props.setActive();

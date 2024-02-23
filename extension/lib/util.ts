@@ -49,8 +49,6 @@ class Util {
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
-		const { serverPort, gatewayPort } = extensionStore;
-
 		authStore.appKeySet(appKey);
 		UtilData.createSession((message: any) => {
 			if (message.error.code) {
@@ -59,9 +57,10 @@ class Util {
 				};
 				return;
 			};
-
-			this.sendMessage({ type: 'init', appKey, serverPort, gatewayPort }, () => {});
-			UtilData.createsSubscriptions(onSuccess);
+			
+			if (onSuccess) {
+				onSuccess();
+			};
 		});
 	};
 

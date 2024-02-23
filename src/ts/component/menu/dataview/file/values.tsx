@@ -25,14 +25,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { param, position, getId } = this.props;
-		const { data } = param;
-		const { subId } = data;
+		const { position, getId } = this.props;
+		const items = this.getItems();
 		
-		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
-
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
@@ -80,22 +75,18 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			);
 		});
 
-        const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					{value.map((item: any, i: number) => (
-						<Item key={i} {...item} index={i} />
-					))}
-				</div>
-			);
-		});
+        const List = SortableContainer(() => (
+			<div className="items">
+				{items.map((item: any, i: number) => <Item key={i} {...item} index={i} />)}
+			</div>
+		));
 
 		return (
 			<div 
 				ref={node => this.node = node}
 				className="items"
 			>
-				{value.length ? (
+				{items.length ? (
 					<div className="section">
 						<List 
 							axis="y" 
@@ -137,9 +128,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { oldIndex, newIndex } = result;
 		const { param, id } = this.props;
 		const { data } = param;
-		
-		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex, newIndex);
+		const value = arrayMove(Relation.getArrayValue(data.value), oldIndex, newIndex);
 
 		menuStore.updateData(id, { value });
 		this.save(value);
@@ -148,7 +137,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
     };
 
 	onAdd (e: any) {
-		const { getId, getSize, close, param, id } = this.props;
+		const { getId, getSize, param } = this.props;
 		const { data } = param;
 		const { classNameWrap } = param;
 
@@ -279,6 +268,16 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				},
 			}
 		});
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { subId } = data;
+
+		return Relation.getArrayValue(data.value).
+			map(it => detailStore.get(subId, it, [])).
+			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
 });

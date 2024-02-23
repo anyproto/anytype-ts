@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as hs from 'history';
+import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { UtilRouter } from 'Lib'; 
+import { C, UtilRouter } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 
 import Index from './iframe/index';
@@ -80,16 +81,16 @@ class Iframe extends React.Component {
 	componentDidMount () {
 		UtilRouter.init(history);
 
+		const win = $(window);
+
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('[Iframe]', msg, sender);
-
 			switch (msg.type) {
-				case 'init':
+				case 'initIframe':
 					const { appKey, gatewayPort, serverPort } = msg;
 
 					Util.init(serverPort, gatewayPort);
-					Util.authorize(appKey, () => UtilRouter.go('/create', {}));
+					Util.authorize(appKey);
 
 					sendResponse({});
 					break;
@@ -98,12 +99,21 @@ class Iframe extends React.Component {
 					extensionStore.setTabUrl(msg.url);
 					extensionStore.setHtml(msg.html);
 
+					UtilRouter.go('/create', {});
 					sendResponse({});
 					break;
 				};
 
 			};
 			return true;
+		});
+
+		win.off('beforeunload').on('beforeunload', (e: any) => {
+			if (authStore.token) {
+				C.WalletCloseSession(authStore.token, () => {
+					authStore.tokenSet('');
+				});
+			};
 		});
 	};
 

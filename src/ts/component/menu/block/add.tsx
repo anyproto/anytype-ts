@@ -83,7 +83,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								subId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								record={detailStore.get(rootId, rootId, [ item.relationKey ])}
+								getRecord={() => detailStore.get(rootId, rootId, [ item.relationKey ])}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
@@ -610,7 +610,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							return;
 						};
 
-						UtilObject.openPopup({ ...details, id: message.targetId });
+						UtilObject.openPopup(message.details);
 
 						analytics.event('CreateLink');
 						analytics.event('CreateObject', { objectType: item.objectTypeId, route: 'Powertool' });

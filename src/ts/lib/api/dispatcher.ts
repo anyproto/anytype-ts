@@ -35,8 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-
-		console.log('[Dispatcher].init Server address: ', address);
 	};
 
 	listenEvents () {
@@ -203,7 +201,7 @@ class Dispatcher {
 		for (const message of messages) {
 			const win = $(window);
 			const type = this.eventType(message.getValueCase());
-			const fn = 'get' + UtilCommon.ucFirst(type);
+			const fn = `get${UtilCommon.ucFirst(type)}`;
 			const data = message[fn] ? message[fn]() : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 

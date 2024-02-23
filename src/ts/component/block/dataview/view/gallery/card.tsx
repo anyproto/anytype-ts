@@ -22,7 +22,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, record, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -51,6 +52,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								elementId={id}
 								key={'list-cell-' + view.id + relation.relationKey}
 								{...this.props}
+								getRecord={() => record}
 								subId={subId}
 								ref={ref => onRef(ref, id)}
 								relationKey={relation.relationKey}
@@ -134,7 +136,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
-		const { isCollection, record, onDragRecordStart } = this.props;
+		const { isCollection, recordId, getRecord, onDragRecordStart } = this.props;
+		const record = getRecord(recordId);
 
 		if (isCollection) {
 			onDragRecordStart(e, record.id);
@@ -144,11 +147,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { record, onContext, dataset } = this.props;
+		const { recordId, getRecord, onContext, dataset } = this.props;
+		const record = getRecord(recordId);
 		const { selection } = dataset || {};
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};
@@ -164,7 +168,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, record } = this.props;
+		const { onCellClick, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
@@ -178,7 +183,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	getCover (): any {
-		const { record, getCoverObject } = this.props;
+		const { recordId, getRecord, getCoverObject } = this.props;
+		const record = getRecord(recordId);
 		const cover = getCoverObject(record.id);
 
 		return cover ? this.mediaCover(cover) : null;
