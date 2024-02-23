@@ -95,7 +95,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									size={96}
 									object={space}
 									forceLetter={true}
-									canEdit={true}
+									canEdit={canWrite}
 									menuParam={{ horizontal: I.MenuDirection.Center }}
 									onSelect={this.onSelect}
 									onUpload={this.onUpload}
@@ -110,8 +110,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										value={this.checkName(space.name)}
 										onKeyUp={this.onName}
 										placeholder={translate('defaultNamePage')}
+										readonly={!canWrite}
 									/>
-
 								</div>
 
 								<Label

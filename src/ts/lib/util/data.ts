@@ -750,6 +750,7 @@ class UtilData {
 
 		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -836,6 +837,7 @@ class UtilData {
 
 		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -891,6 +893,7 @@ class UtilData {
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+			{ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
