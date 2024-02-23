@@ -215,8 +215,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getMembers () {
+		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ];
 		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
 		records.sort((c1, c2) => {
 			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;

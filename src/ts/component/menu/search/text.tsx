@@ -31,10 +31,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	render () {
-		const { param, storageGet } = this.props;
-		const { data } = param;
-		const value = String(data.value || storageGet().search || '');
-		
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -44,7 +40,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 				<Input 
 					ref={ref => this.ref = ref} 
-					value={value} 
 					placeholder={translate('commonSearchPlaceholder')}
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
@@ -66,14 +61,17 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 	
 	componentDidMount () {
+		const { param, storageGet } = this.props;
+		const { data } = param;
+
 		this.container = this.getSearchContainer();
 
 		window.setTimeout(() => { 
-			this.search();
+			const value = String(data.value || storageGet().search || '');
 
-			if (this.ref) {
-				this.ref.focus(); 
-			};
+			this.ref?.setValue(value);
+			this.ref?.setRange({ from: 0, to: value.length });
+			this.search();
 		}, 100);
 	};
 
@@ -107,7 +105,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	onArrow (dir: number) {
-		const max = this.items.length - 1;
+		const max = (this.items || []).length - 1;
 
 		this.n += dir;
 

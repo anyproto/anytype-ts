@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 import { commonStore } from 'Store';
 
@@ -182,6 +182,8 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			
 			this.setState({ isLoading: false });
 		});
+
+		analytics.event('ScreenGallery');
 	};
 
 	componentDidUpdate (): void {

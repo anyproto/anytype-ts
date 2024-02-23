@@ -16,6 +16,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	render (): React.ReactNode {
 		const space = UtilObject.getSpaceview();
+		const canWrite = UtilObject.canParticipantWrite();
 
 		return (
 			<div className="body" onClick={this.onOpenSettings}>
@@ -24,7 +25,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
 					forceLetter={true} 
 					size={36}
-					canEdit={true} 
+					canEdit={canWrite} 
 					onSelect={this.onSelect}
 					onUpload={this.onUpload}
 					menuParam={{ className: 'fixed' }}

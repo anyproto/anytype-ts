@@ -127,8 +127,9 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	getMembers () {
+		const statuses = [ I.ParticipantStatus.Active ];
 		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
 		records.sort((c1, c2) => {
 			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;

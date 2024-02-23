@@ -31,4 +31,5 @@ export enum ParticipantStatus {
 	Removed			 = 2,
 	Declined		 = 3,
 	Removing		 = 4,
+	Canceled		 = 5,
 };
