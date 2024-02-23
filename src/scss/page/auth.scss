@@ -180,10 +180,6 @@ html.bodyAuthDeleted {
 	}
 }
 
-.pageAuthAccountSelect {
-	.frame { padding-bottom: 48px; }
-}
-
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-header3; color: var(--color-text-primary) !important; }

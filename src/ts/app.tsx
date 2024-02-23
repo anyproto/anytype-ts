@@ -177,7 +177,6 @@ class App extends React.Component<object, State> {
 		super(props);
 
 		this.onInit = this.onInit.bind(this);
-		this.onKeytarGet = this.onKeytarGet.bind(this);
 		this.onPopup = this.onPopup.bind(this);
 		this.onUpdateCheck = this.onUpdateCheck.bind(this);
 		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
@@ -261,7 +260,6 @@ class App extends React.Component<object, State> {
 
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
-		Renderer.on('keytarGet', this.onKeytarGet);
 		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
@@ -304,7 +302,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onInit (e: any, data: any) {
-		const { dataPath, config, isDark, isChild, account, phrase, languages, isPinChecked, css } = data;
+		const { dataPath, config, isDark, isChild, account, languages, isPinChecked, css } = data;
 		const win = $(window);
 		const body = $('body');
 		const node = $(this.node);
@@ -353,18 +351,18 @@ class App extends React.Component<object, State> {
 
 		if (accountId) {
 			if (isChild) {
-				authStore.phraseSet(phrase);
+				Renderer.send('keytarGet', accountId).then((phrase: string) => {
+					UtilData.createSession(phrase, '', () => {
+						keyboard.setPinChecked(isPinChecked);
+						commonStore.redirectSet(route);
 
-				UtilData.createSession(() => {
-					keyboard.setPinChecked(isPinChecked);
-					commonStore.redirectSet(route);
-
-					if (account) {
-						authStore.accountSet(account);
-						commonStore.configSet(account.config, false);
-						UtilData.onInfo(account.info);
-						UtilData.onAuth({}, cb);
-					};
+						if (account) {
+							authStore.accountSet(account);
+							commonStore.configSet(account.config, false);
+							UtilData.onInfo(account.info);
+							UtilData.onAuth({}, cb);
+						};
+					});
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -381,34 +379,11 @@ class App extends React.Component<object, State> {
 				});
 			} else {
 				commonStore.redirectSet(route);
-				Renderer.send('keytarGet', accountId);
-
+				UtilRouter.go('/auth/setup/init', { replace: true });
 				cb();
 			};
 		} else {
 			cb();
-		};
-	};
-
-	onKeytarGet (e: any, key: string, value: string) {
-		const accountId = Storage.get('accountId');
-		const phrase = Storage.get('phrase');
-
-		if (!accountId || (key != accountId)) {
-			return;
-		};
-
-		if (phrase) {
-			value = phrase;
-			Renderer.send('keytarSet', accountId, phrase);
-			Storage.delete('phrase');
-		};
-
-		if (value) {
-			authStore.phraseSet(value);
-			UtilRouter.go('/auth/setup/init', { replace: true });
-		} else {
-			Storage.logout();
 		};
 	};
 

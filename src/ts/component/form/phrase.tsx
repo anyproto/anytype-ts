@@ -121,11 +121,9 @@ class Phrase extends React.Component<Props, State> {
 	componentDidMount () {
 		const { value, isHidden } = this.props;
 
-		const text = this.normalizeWhiteSpace(value);
-		const phrase = text.length ? text.split(' '): [];
-
 		this.init();
-		this.setState({ isHidden, phrase });
+		this.setState({ isHidden });
+		this.setValue(value);
 		this.focus();
 	};
 
@@ -262,6 +260,13 @@ class Phrase extends React.Component<Props, State> {
 
 	normalizeWhiteSpace = (val: string) => {
 		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
+	};
+
+	setValue (value: string) {
+		const text = this.normalizeWhiteSpace(value);
+		const phrase = text.length ? text.split(' '): [];
+
+		this.setState({ phrase });
 	};
 
 	getValue () {

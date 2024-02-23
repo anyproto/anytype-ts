@@ -50,7 +50,7 @@ class Util {
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
 		authStore.appKeySet(appKey);
-		UtilData.createSession((message: any) => {
+		UtilData.createSession('', appKey, (message: any) => {
 			if (message.error.code) {
 				if (onError) {
 					onError(message.error);
