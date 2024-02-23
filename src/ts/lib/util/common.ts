@@ -649,7 +649,7 @@ class UtilCommon {
 	};
 
 	matchUrl (s: string): string {
-		const m = String(s || '').match(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		return (m && m.length) ? m[0] : '';
 	};
 
