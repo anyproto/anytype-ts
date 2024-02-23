@@ -129,9 +129,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 									<SlideItem key={idx} idx={idx} {...slide} />
 								))}
 							</div>
-							<div className="bullits">
+							<div className="bullets">
 								{slides.map((slide, idx) => {
-									const cn = [ 'bullit', currentSlide == idx ? 'active' : '' ];
+									const cn = [ 'bullet', currentSlide == idx ? 'active' : '' ];
 
 									return <div className={cn.join(' ')} onClick={() => this.setState({ currentSlide: idx })} key={idx} />;
 								})}
@@ -165,10 +165,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	componentDidMount () {
-		this.slideWidth = $(this.node).width() + 16;
 		$(window).on('resize.membership', () => {
 			this.slideWidth = $(this.node).width() + 16;
 		});
+		$(window).trigger('resize');
 	};
 
 	componentWillUnmount () {

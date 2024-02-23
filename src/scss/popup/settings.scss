@@ -732,11 +732,11 @@
 				.slide.slide2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
 				.slide.slide3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
 
-				.bullits { display: flex; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
-				.bullits {
-					.bullit { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
-					.bullit:hover { background-color: var(--color-control-active); }
-					.bullit.active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+				.bullets { display: flex; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+				.bullets {
+					.bullet { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
+					.bullet:hover { background-color: var(--color-control-active); }
+					.bullet.active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
 				}
 			}
 
