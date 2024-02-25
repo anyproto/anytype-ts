@@ -227,6 +227,9 @@ class UtilEmbed {
 	};
 
 	getYoutubePath (url: string): string {
+		if (/\/shorts\//.test(url)) {
+			url = url.replace(/\/shorts\//, '/watch?v=');
+		}
 		const pm = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
 		const tm = url.match(/(\?t=|&t=)(\d+)/);
 
