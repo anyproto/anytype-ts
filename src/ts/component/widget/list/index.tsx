@@ -340,20 +340,18 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		if ((oldIndex == newIndex) || (targetBlockId != Constant.widgetId.favorite)) {
 			return;
 		};
-		
+
 		const { root } = blockStore;
+		const records = this.getRecords();
 		const children = blockStore.getChildren(root, root, it => it.isLink());
-		const current = children[oldIndex];
-		const target = children[newIndex];
-
-		if (!current || !target) {
-			return;
-		};
-
+		const ro = records[oldIndex];
+		const rn = records[newIndex];
+		const oidx = children.findIndex(it => it.content.targetBlockId == ro);
+		const nidx = children.findIndex(it => it.content.targetBlockId == rn);
+		const current = children[oidx];
+		const target = children[nidx];
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-		const oidx = childrenIds.indexOf(current.id);
-		const nidx = childrenIds.indexOf(target.id);
 
 		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
 		Action.move(root, root, target.id, [ current.id ], position);
