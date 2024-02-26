@@ -989,7 +989,9 @@ class Dispatcher {
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
-							electron.focus();
+							if (electron.focus) {
+								electron.focus();
+							};
 							break;
 						};
 					};

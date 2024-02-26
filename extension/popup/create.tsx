@@ -170,6 +170,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	componentDidUpdate(): void {
 		this.initType();
+		this.placeholderCheck();
 	};
 
 	initSpace () {
@@ -362,18 +363,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const value = this.getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
+		const length = value.existing.length;
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		length ? list.show() : list.hide();
+		value.new || length ? placeholder.hide() : placeholder.show();
 	};
 
 	getValue () {
