@@ -176,7 +176,7 @@ class Util {
 			fs.writeFileSync(exportName, content);
 
 			try {
-				fs.unlinkSync(path.join(filesPath, 'main.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/main.js'));
 				fs.unlinkSync(path.join(filesPath, 'js/run.js'));
 			} catch (e) {
 				this.log('info', e);
