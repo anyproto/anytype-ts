@@ -298,9 +298,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			e.preventDefault();
 			
-			const value = this.getValue();
-			value.existing.pop();
-			this.setValue(value.existing);
+			this.details.tag.pop();
+			this.setValue(this.details.tag);
 		});
 
 		this.placeholderCheck();
@@ -317,7 +316,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onKeyUp (e: any) {
-		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
+		menuStore.updateData('dataviewOptionList', { filter: this.getValue() });
 
 		this.placeholderCheck();
 		this.resize();
@@ -363,28 +362,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const value = this.getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
-		const length = value.existing.length;
+		const length = this.details.tag.length;
 
 		length ? list.show() : list.hide();
-		value.new || length ? placeholder.hide() : placeholder.show();
+		value || length ? placeholder.hide() : placeholder.show();
 	};
 
-	getValue () {
+	getValue (): string {
 		const node = $(this.node);
-		const list = node.find('#list');
-		const items = list.find('.itemWrap');
 		const entry = node.find('#entry');
-		const existing: any[] = [];
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-			existing.push(item.data('id'));
-		});
-
-		return {
-			existing,
-			new: (entry.length ? String(entry.text() || '').trim() : ''),
-		};
+		return entry.length ? String(entry.text() || '').trim() : '';
 	};
 
 	setValue (value: string[]) {
