@@ -34,13 +34,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 		const sections = this.getSections();
-
-		let opts = null;
 		const ccn = [ 'item' ];
 		
 		if (relation) {
 			ccn.push('disabled');
 		};
+
+		let opts = null;
 
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
@@ -218,14 +218,19 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
 
-		let canDuplicate = false;
+		let canDuplicate = true;
+		let canDelete = true;
+
 		if (relation) {
-			canDuplicate = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+			canDuplicate = canDelete = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
 		};
 		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDuplicate = false;
+			canDelete = false;
 		};
-		const canDelete = canDuplicate;
+		if (readonly) {
+			canDuplicate = false;
+			canDelete = false
+		};
 
 		let sections: any[] = [
 			{
