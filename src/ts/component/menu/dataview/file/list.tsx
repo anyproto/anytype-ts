@@ -144,16 +144,14 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 				<div className="bottom">
 					<div className="line" />
-					<div 
-						id="item-upload" 
-						className="item upload" 
-						onClick={this.onUpload} 
-						onMouseEnter={() => setHover({ id: 'upload' })} 
+					<MenuItemVertical 
+						id="upload" 
+						icon="plus" 
+						name={translate('commonUpload')} 
+						onClick={this.onUpload}
+						onMouseEnter={() => setHover({ id: 'upload' })}
 						onMouseLeave={() => setHover()}
-					>
-						<Icon className="plus" />
-						<div className="name">{translate('commonUpload')}</div>
-					</div>
+					/>
 				</div>
 			</div>
 		);
