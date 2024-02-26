@@ -177,7 +177,7 @@ class Util {
 
 			try {
 				fs.unlinkSync(path.join(filesPath, 'main.js'));
-				fs.unlinkSync(path.join(filesPath, 'run.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/run.js'));
 			} catch (e) {
 				this.log('info', e);
 			};

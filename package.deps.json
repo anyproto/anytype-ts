@@ -9,7 +9,7 @@
 	"dist/index.html",
 	"dist/main.js",
 	"dist/main.js.map",
-	"dist/run.js",
+	"dist/js/run.js",
 	"dist/embed/**/*",
 	"dist/challenge/**/*",
 	"dist/lib/**/*",
