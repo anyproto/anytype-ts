@@ -42,6 +42,7 @@ const rootStore = {
 };
 
 class RoutePage extends React.Component<RouteComponentProps> {
+	
 	render () {
 		const { match } = this.props;
 		const params = match.params as any;
@@ -56,6 +57,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 			</React.Fragment>
 		);
 	};
+
 };
 
 class Iframe extends React.Component {
