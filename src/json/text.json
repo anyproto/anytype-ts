@@ -397,6 +397,7 @@
 	"pageMainInviteError": "Incorrect invite data",
 
 	"pageMainMembershipTitle": "Retrieving membership",
+	"pageMainMembershipError": "Something went wrong",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 

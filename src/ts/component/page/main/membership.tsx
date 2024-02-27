@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Loader, Frame, Title } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData, translate } from 'Lib';
+import { Loader, Frame, Title, Error, Button } from 'Component';
+import { I, UtilCommon, UtilObject, UtilData, translate, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -26,6 +26,14 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				<Frame>
 					<Title text={translate('pageMainMembershipTitle')} />
 					<Loader />
+
+					<Error text={error} />
+
+					{error ? (
+						<div className="buttons">
+							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+						</div>
+					) : ''}
 				</Frame>
 			</div>
 		);
@@ -35,7 +43,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 		popupStore.closeAll([], () => {
 			UtilData.getMembershipData((membership) => {
 				if (!membership.tier) {
-					// error logic
+					this.setState({ error: translate('pageMainMembershipError') });
 					return;
 				};
 
@@ -53,7 +61,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 			});
 		});
 
-		// this.resize();
+		this.resize();
 	};
 
 	resize () {
