@@ -771,21 +771,21 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ]);
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'blockContext' ], () => {
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 10,
 				classNameWrap: 'fromHeader',
+				passThrough: true,
 				data: {
 					isPopup,
 					value,
 					route,
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onSearchPopup (route: string) {
