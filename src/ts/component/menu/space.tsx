@@ -175,7 +175,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			},
 			data: {
 				options: [
-					{ id: 'remove', icon: 'remove', name: translate('commonDelete') }
+					{ id: 'remove', color: 'red', name: translate('commonDelete') }
 				],
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {

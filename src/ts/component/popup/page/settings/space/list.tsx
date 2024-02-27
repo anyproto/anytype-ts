@@ -83,7 +83,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	onSpaceMore (e: React.MouseEvent, space) {
 		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
-			{ id: 'delete', color: 'red', name: translate('commonDelete') },
+			{ id: 'remove', color: 'red', name: translate('commonDelete') },
 		];
 
 		menuStore.open('select', {
@@ -97,7 +97,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'delete':
+						case 'remove':
 							Action.removeSpace(item.targetSpaceId, 'ScreenSettings');
 							break;
 					};
