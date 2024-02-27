@@ -65,7 +65,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 	};
 
 	componentDidMount () {
-		const membership = authStore.membership;
+		const { membership } = authStore;
 
 		if (membership.tier) {
 			this.currentTier = membership;

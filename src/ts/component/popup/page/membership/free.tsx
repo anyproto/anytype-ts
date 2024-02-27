@@ -116,10 +116,10 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	onVerifyEmail () {
 		const isSubscribed: boolean = this.refCheckbox.getValue();
 
-		this.setButtonLoading(this.refButton, true);
+		this.refButton?.setLoading(true);
 
 		C.PaymentsSubscriptionGetVerificationEmail(this.email, isSubscribed, (message) => {
-			this.setButtonLoading(this.refButton, false);
+			this.refButton?.setLoading(false);
 
 			if (!message.error.code) {
 				this.setState({ verificationStep: 2 });
@@ -165,12 +165,6 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 	clearStatus () {
 		this.setState({ status: '', statusText: '' });
-	};
-
-	setButtonLoading (ref: any, v: boolean) {
-		if (ref) {
-			ref.setLoading(v);
-		};
 	};
 
 	validateEmail () {

@@ -151,7 +151,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			};
 
 			if (action.id == 'membership') {
-				const membership = authStore.membership;
+				const { membership } = authStore;
 
 				if (membership.tier) {
 					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${membership.tier}`)}</div>;

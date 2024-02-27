@@ -19,9 +19,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	slideWidth: number = 0;
 
 	render () {
+		const { membership } = authStore;
 		const { loading, currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
-		const membership = authStore.membership;
 
 		let currentTier: I.MembershipTier = 0;
 		let currentTierValid: number = 0;
