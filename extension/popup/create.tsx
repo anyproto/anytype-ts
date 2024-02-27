@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
-import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Textarea } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter } from 'Lib';
+import { Label, Input, Button, Select, Loader, Error, DragBox, Tag } from 'Component';
+import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
 import Util from '../lib/util';
@@ -47,7 +47,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.focus = this.focus.bind(this);
 	};
@@ -136,7 +135,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 											contentEditable={true}
 											suppressContentEditableWarning={true} 
 											onFocus={this.onFocus}
-											onBlur={this.onBlur}
 											onInput={this.onInput}
 											onKeyDown={this.onKeyDown}
 											onKeyUp={this.onKeyUp}
@@ -180,7 +178,20 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		const space = commonStore.space || spaces[0].targetSpaceId;
+		let space = commonStore.space || Storage.get('lastSpaceId');
+
+		if (!space) {
+			space = spaces.find(it => it.spaceAccessType == I.SpaceType.Personal)?.id;
+		};
+
+		let check = null;
+		if (space) {
+			check = spaces.find(it => it.id == space);
+		};
+
+		if (!space || !check) {
+			space = spaces[0].id;
+		};
 
 		this.refSpace.setOptions(spaces);
 		this.refSpace.setValue(space);
@@ -194,7 +205,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		this.details.type = this.details.type || options[0].id;
+		if (!this.details.type) {
+			const bookmark = dbStore.getBookmarkType();
+			this.details.type = bookmark?.id || options[0].id;
+		};
 
 		this.refType.setOptions(options);
 		this.refType.setValue(this.details.type);
@@ -246,6 +260,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSpaceChange (id: string): void {
 		commonStore.spaceSet(id);
 		UtilData.createSubscriptions(() => this.forceUpdate());
+
+		Storage.set('lastSpaceId', id);
 	};
 
 	getTagsValue () {
@@ -352,9 +368,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				}
 			}
 		});
-	};
-
-	onBlur () {
 	};
 
 	placeholderCheck () {
