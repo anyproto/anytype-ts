@@ -165,14 +165,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	componentDidMount () {
-		$(window).on('resize.membership', () => {
-			this.slideWidth = $(this.node).width() + 16;
-		});
-		$(window).trigger('resize');
+		this.resize();
 	};
 
-	componentWillUnmount () {
-		$(window).off('resize.membership');
+	resize () {
+		this.slideWidth = $(this.node).width() + 16;
 	};
 });
 
