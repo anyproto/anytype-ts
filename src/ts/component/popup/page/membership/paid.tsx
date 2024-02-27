@@ -13,7 +13,7 @@ interface State {
 	statusText: string
 };
 
-const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePaid extends React.Component<Props, State> {
+const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends React.Component<Props, State> {
 
 	state = {
 		status: '',
@@ -46,11 +46,11 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 
 		return (
 			<React.Fragment>
-				<Title text={translate(`popupSubscriptionPlanPaidTitle`)} />
-				<Label text={translate(`popupSubscriptionPlanPaidText`)} />
+				<Title text={translate(`popupMembershipPaidTitle`)} />
+				<Label text={translate(`popupMembershipPaidText`)} />
 
 				<div className="inputWrapper">
-					<Input ref={ref => this.refName = ref} onKeyUp={this.onKeyUp} placeholder={translate(`popupSubscriptionPlanPaidPlaceholder`)} />
+					<Input ref={ref => this.refName = ref} onKeyUp={this.onKeyUp} placeholder={translate(`popupMembershipPaidPlaceholder`)} />
 					<div className="ns">{Constant.anyNameSpace}</div>
 				</div>
 
@@ -60,8 +60,8 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 					<span className="price">{`$${tier.price}`}</span>{period}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCard)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupSubscriptionPlanPayByCard')} />
-				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCrypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupSubscriptionPlanPayByCrypto')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCard)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCrypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 			</React.Fragment>
 		);
 	};
@@ -90,19 +90,19 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 		if (!l) {
 			this.setState({ status: '', statusText: '' });
 		} else if (l < minNameLength) {
-			this.setState({ status: '', statusText: translate('popupSubscriptionPlanStatusShortName') });
+			this.setState({ status: '', statusText: translate('popupMembershipStatusShortName') });
 		} else {
-			this.setState({ status: '', statusText: translate('popupSubscriptionPlanStatusWaitASecond') });
+			this.setState({ status: '', statusText: translate('popupMembershipStatusWaitASecond') });
 
 			this.timeout = window.setTimeout(() => {
 				C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
 					if (!message.available) {
-						this.setState({ status: 'error', statusText: translate('popupSubscriptionPlanStatusNameNotAvailable') });
+						this.setState({ status: 'error', statusText: translate('popupMembershipStatusNameNotAvailable') });
 						return;
 					};
 
 					this.disableButtons(false);
-					this.setState({ status: 'ok', statusText: translate('popupSubscriptionPlanStatusNameAvailable') });
+					this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
 				});
 			}, Constant.delay.keyboard);
 		};
@@ -146,4 +146,4 @@ const PopupSubscriptionPlanPagePaid = observer(class PopupSubscriptionPlanPagePa
 	};
 });
 
-export default PopupSubscriptionPlanPagePaid;
+export default PopupMembershipPagePaid;

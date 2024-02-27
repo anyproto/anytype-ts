@@ -237,7 +237,6 @@ class UtilData {
 
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
-		this.getMembershipData();
 
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
@@ -257,6 +256,8 @@ class UtilData {
 							commonStore.spaceStorageSet(message);
 						};
 					});
+
+					this.getMembershipData();
 
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
@@ -979,7 +980,7 @@ class UtilData {
 				return;
 			};
 
-			authStore.membershipDataSet(message);
+			authStore.membershipSet(message);
 
 			if (callBack) {
 				callBack(message);

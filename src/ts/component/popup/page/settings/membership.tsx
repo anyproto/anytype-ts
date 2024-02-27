@@ -6,6 +6,7 @@ import { popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
 import Constant from 'json/constant.json';
+import { MembershipTier } from 'Interface/payment';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
@@ -22,7 +23,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const style = { left: -this.slideWidth * currentSlide };
 		const membership = authStore.membership;
 
-		let currentTier: I.SubscriptionTier = 0;
+		let currentTier: I.MembershipTier = 0;
 		let currentTierValid: number = 0;
 
 		if (membership.tier) {
@@ -39,9 +40,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			{ title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
 		];
 		const tiers = [
-			{ id: I.SubscriptionTier.Explorer },
-			{ id: I.SubscriptionTier.Builder1WeekTEST, price: 99, period: 1 },
-			{ id: I.SubscriptionTier.CoCreator1WeekTEST, price: 399, period: 5 },
+			{ id: I.MembershipTier.Explorer },
+			{ id: I.MembershipTier.Builder1WeekTEST, price: 99, period: 1 },
+			{ id: I.MembershipTier.CoCreator1WeekTEST, price: 399, period: 5 },
 		];
 
 		const SlideItem = (slide) => (
@@ -104,7 +105,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							<span className="price">{price}</span>{period}
 						</div>
 						<Button
-							onClick={() => popupStore.open('subscriptionPlan', { data: { tier: item.id } })}
+							onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 							className="c28"
 							text={buttonText}
 						/>

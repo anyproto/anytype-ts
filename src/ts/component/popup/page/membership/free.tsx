@@ -13,7 +13,7 @@ interface State {
 	statusText: string;
 };
 
-const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFree extends React.Component<Props, State> {
+const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends React.Component<Props, State> {
 
 	state = {
 		verificationStep: 1,
@@ -51,15 +51,15 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 			case 1: {
 				content = (
 					<React.Fragment>
-						<Title text={translate(`popupSubscriptionPlanFreeTitleStep1`)} />
-						<Label text={translate(`popupSubscriptionPlanFreeText`)} />
+						<Title text={translate(`popupMembershipFreeTitleStep1`)} />
+						<Label text={translate(`popupMembershipFreeText`)} />
 
 						<div className="inputWrapper">
 							<Input ref={ref => this.refEmail = ref} onKeyUp={this.validateEmail} placeholder={translate(`commonEmail`)} />
 						</div>
 
 						<div className="check" onClick={this.onCheck}>
-							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupSubscriptionPlanFreeCheckboxText')}
+							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupMembershipFreeCheckboxText')}
 						</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
@@ -71,7 +71,7 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 				content = (
 					<React.Fragment>
 						<div onClick={() => this.setState({ verificationStep: 1 })} className="back"><Icon />{translate('commonBack')}</div>
-						<Title text={translate(`popupSubscriptionPlanFreeTitleStep2`)} />
+						<Title text={translate(`popupMembershipFreeTitleStep2`)} />
 						<Pin
 							ref={ref => this.refCode = ref}
 							pinLength={4}
@@ -82,8 +82,8 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 						<div onClick={this.onResend} className={[ 'resend', countdown ? 'countdown' : '' ].join(' ')}>
-							{translate('popupSubscriptionPlanResend')}
-							{countdown ? UtilCommon.sprintf(translate('popupSubscriptionPlanCountdown'), countdown) : ''}
+							{translate('popupMembershipResend')}
+							{countdown ? UtilCommon.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 						</div>
 					</React.Fragment>
 				);
@@ -204,4 +204,4 @@ const PopupSubscriptionPlanPageFree = observer(class PopupSubscriptionPlanPageFr
 	};
 });
 
-export default PopupSubscriptionPlanPageFree;
+export default PopupMembershipPageFree;

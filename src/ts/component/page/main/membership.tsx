@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Loader, Frame, Title } from 'Component';
 import { I, UtilCommon, UtilObject, UtilData, translate } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -33,17 +34,22 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		popupStore.closeAll([], () => {
 			UtilData.getMembershipData((membership) => {
-				if (membership.tier) {
-					UtilObject.openHome('route');
-					popupStore.open('subscriptionPlan', {
+				if (!membership.tier) {
+					// error logic
+					return;
+				};
+
+				UtilObject.openHome('route');
+				window.setTimeout(() => {
+					popupStore.open('membership', {
 						onClose: () => {
 							window.setTimeout(() => {
 								popupStore.open('settings', { data: { page: 'membership' } })
-							}, 500);
+							}, Constant.delay.popup);
 						},
 						data: { tier: membership.tier, success: true }
 					});
-				};
+				}, Constant.delay.popup)
 			});
 		});
 

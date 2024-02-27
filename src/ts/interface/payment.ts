@@ -1,4 +1,4 @@
-export enum SubscriptionTier {
+export enum MembershipTier {
 	Unknown	= 0,
 	Explorer = 1,
 
@@ -10,7 +10,7 @@ export enum SubscriptionTier {
 	CoCreator1Year = 5,
 };
             
-export enum SubscriptionStatus {
+export enum MembershipStatus {
 	StatusUnknown	 = 0,
 	StatusPending	 = 1,
 	StatusActive	 = 2,
