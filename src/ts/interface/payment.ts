@@ -9,6 +9,21 @@ export enum MembershipTier {
 	Builder1Year = 4,
 	CoCreator1Year = 5,
 };
+
+export interface Membership {
+	tier?: MembershipTier;
+	status?: MembershipStatus;
+	dateStarted?: number;
+	dateEnds?: number;
+	isAutoRenew?: boolean;
+	nextTier?: MembershipTier;
+	nextTierEnds?: number;
+	paymentMethod?: PaymentMethod,
+	requestedAnyName?: string;
+	event?: any;
+	error?: any;
+	middleTime?: number;
+};
             
 export enum MembershipStatus {
 	StatusUnknown	 = 0,

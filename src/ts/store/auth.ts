@@ -20,7 +20,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
-	public membershipData: any = {};
+	public membershipData: I.Membership = {};
 	
 	constructor () {
 		makeObservable(this, {
