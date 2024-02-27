@@ -49,7 +49,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						id={id} 
 						className={cn.join(' ')} 
 						onClick={this.onClick}
-						onMouseDown={onMouseDown} 
+						onMouseDown={this.onClick}
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
@@ -100,14 +100,19 @@ class Button extends React.Component<I.ButtonComponent, State> {
 	};
 
 	onClick (e: any) {
-		const { onClick } = this.props;
+		const { onClick, onMouseDown } = this.props;
 		const node = $(this.node);
 
 		if (node.hasClass('disabled')) {
 			return;
 		};
 
-		onClick(e);
+		if (onClick) {
+			onClick(e);
+		} else
+		if (onMouseDown) {
+			onMouseDown(e);
+		};
 	};
 
 	setLoading (v: boolean) {

@@ -75,7 +75,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 						<Pin
 							ref={ref => this.refCode = ref}
 							pinLength={4}
-							visibleValue={true}
+							isVisible={true}
 							onSuccess={this.onConfirmEmailCode}
 						/>
 
