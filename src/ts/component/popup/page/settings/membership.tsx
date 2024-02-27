@@ -41,8 +41,16 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		];
 		const tiers = [
 			{ id: I.MembershipTier.Explorer },
-			{ id: I.MembershipTier.Builder1WeekTEST, price: 99, period: 1 },
-			{ id: I.MembershipTier.CoCreator1WeekTEST, price: 399, period: 5 },
+			{
+				id: I.MembershipTier.Builder1WeekTEST,
+				price: I.MembershipPrice.Price1Year,
+				period: I.MembershipPeriod.Period1Year
+			},
+			{
+				id: I.MembershipTier.CoCreator1WeekTEST,
+				price: I.MembershipPrice.Price5Years,
+				period: I.MembershipPeriod.Period5Years
+			},
 		];
 
 		const SlideItem = (slide) => (

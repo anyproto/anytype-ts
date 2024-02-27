@@ -22,3 +22,13 @@ export enum PaymentMethod {
 	MethodApplePay	 = 2,
 	MethodGooglePay	 = 3,
 };
+
+export enum MembershipPrice {
+	Price1Year 		= 99,
+	Price5Years 	= 399,
+};
+
+export enum MembershipPeriod {
+	Period1Year 	= 1,
+	Period5Years 	= 5,
+};
