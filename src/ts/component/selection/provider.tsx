@@ -310,7 +310,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		scrollOnMove.onMouseUp(e);
 
-		const ids = this.ids.get(I.SelectType.Block);
+		const ids = this.ids.get(I.SelectType.Block) || [];
 		
 		if (ids.length) {
 			focus.clear(true);

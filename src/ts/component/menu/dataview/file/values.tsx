@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical } from 'Component';
+import { Icon, IconObject, MenuItemVertical, EmptySearch } from 'Component';
 import { I, C, UtilCommon, UtilFile, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -25,7 +25,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { position, getId } = this.props;
+		const { position, getId, setHover } = this.props;
 		const items = this.getItems();
 		
         const Handle = SortableHandle(() => (
@@ -84,27 +84,33 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="items"
+				className="wrap"
 			>
 				{items.length ? (
-					<div className="section">
-						<List 
-							axis="y" 
-							lockAxis="y"
-							lockToContainerEdges={true}
-							transitionDuration={150}
-							distance={10}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEnd}
-							useDragHandle={true}
-							helperClass="isDragging"
-							helperContainer={() => $(`#${getId()} .items`).get(0)}
-						/>
-					</div>
-				) : ''}
+					<List 
+						axis="y" 
+						lockAxis="y"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEnd}
+						useDragHandle={true}
+						helperClass="isDragging"
+						helperContainer={() => $(`#${getId()} .items`).get(0)}
+					/>
+				) : <EmptySearch text={translate('popupSearchEmpty')} />}
 
-				<div className="section">
-					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
+				<div className="bottom">
+					<div className="line" />
+					<MenuItemVertical 
+						id="add" 
+						icon="plus" 
+						name={translate('commonAdd')} 
+						onClick={this.onAdd}
+						onMouseEnter={() => setHover({ id: 'add' })}
+						onMouseLeave={() => setHover()}
+					/>
 				</div>
 			</div>
 		);

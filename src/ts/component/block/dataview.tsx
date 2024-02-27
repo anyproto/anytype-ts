@@ -1168,23 +1168,32 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
-		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getSystemLayouts());
-		const sources = this.getSources();
 
 		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		if (!isAllowed) {
+			return false;
+		};
+
 		if (isAllowed && this.isCollection()) {
 			return true;
 		};
 
-		isAllowed = isAllowed && !!sources.length;
+		const sources = this.getSources();
+		if (!sources.length) {
+			return false;
+		};
+
+		const targetId = this.getObjectId();
+		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
+
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
 				isAllowed = false;
 				break;
 			};
 		};
+
 		return isAllowed;
 	};
 

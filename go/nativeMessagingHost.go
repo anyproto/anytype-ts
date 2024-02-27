@@ -2,7 +2,6 @@
 - This is the native messaging host for the AnyType browser extension.
 - It enables the web extension to find the open ports of the AnyType application and to start it if it is not running.
 - It is installed by the Electron script found in electron/js/lib/installNativeMessagingHost.js
-- for more docs, checkout the webclipper repository: https://github.com/anytypeio/webclipper
 */
 
 package main
@@ -48,7 +47,18 @@ func splitStdOutTokens(line string) []string {
 
 // executes a command and returns the stdout as string
 func execCommand(command string) (string, error) {
+	if runtime.GOOS == "windows" {
+		return execCommandWin(command)
+	}
 	stdout, err := exec.Command("bash", "-c", command).Output()
+	return string(stdout), err
+}
+
+func execCommandWin(command string) (string, error) {
+	// Splitting the command into the executable and the arguments
+	// For Windows, commands are executed through cmd /C
+	cmd := exec.Command("cmd", "/C", command)
+	stdout, err := cmd.Output()
 	return string(stdout), err
 }
 
@@ -65,9 +75,10 @@ func contains(s []string, e string) bool {
 // CORE LOGIC
 
 // Windows: returns a list of open ports for all instances of anytypeHelper.exe found using cli utilities tasklist, netstat and findstr
+// Windows: returns a list of open ports for all instances of anytypeHelper.exe found using cli utilities tasklist, netstat and findstr
 func getOpenPortsWindows() (map[string][]string, error) {
 	appName := "anytypeHelper.exe"
-	stdout, err := execCommand(`tasklist | findstr "` + appName + `"`)
+	stdout, err := execCommand(`tasklist`)
 	if err != nil {
 		return nil, err
 	}
@@ -75,6 +86,9 @@ func getOpenPortsWindows() (map[string][]string, error) {
 	lines := splitStdOutLines(stdout)
 	pids := map[string]bool{}
 	for _, line := range lines {
+		if !strings.Contains(line, appName) {
+			continue
+		}
 		tokens := splitStdOutTokens(line)
 		pids[tokens[1]] = true
 	}
@@ -85,7 +99,7 @@ func getOpenPortsWindows() (map[string][]string, error) {
 
 	result := map[string][]string{}
 	for pid := range pids {
-		stdout, err := execCommand(`netstat -ano | findstr ${pid} | findstr LISTENING`)
+		stdout, err := execCommand(`netstat -ano`)
 		if err != nil {
 			return nil, err
 		}
@@ -93,6 +107,9 @@ func getOpenPortsWindows() (map[string][]string, error) {
 		lines := splitStdOutLines(stdout)
 		ports := map[string]bool{}
 		for _, line := range lines {
+			if !strings.Contains(line, pid) || !strings.Contains(line, "LISTENING") {
+				continue
+			}
 			tokens := splitStdOutTokens(line)
 			port := strings.Split(tokens[1], ":")[1]
 			ports[port] = true

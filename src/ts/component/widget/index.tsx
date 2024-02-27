@@ -603,10 +603,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child.content;
+		const data: any = { view: 'Widget' };
 
 		let blockId = '';
 		let event = 'ScreenHome';
-		const data: any = { view: 'Widget' };
 
 		if (!isPreview) {
 			blockId = block.id;

@@ -189,9 +189,8 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	onConfirm (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { objectIds } = data;
+		const { objectIds, route } = data;
 		const { format } = this.data;
-		const route = 'MenuObject';
 
 		analytics.event('ClickExport', { type: format, route });
 

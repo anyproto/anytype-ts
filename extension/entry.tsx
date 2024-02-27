@@ -41,7 +41,7 @@ window.AnytypeGlobalConfig = {
 	emojiUrl: Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
 	menuBorderBottom: 16, 
-	debug: { mw: true },
+	debug: {},
 };
 
 let rootId = '';
