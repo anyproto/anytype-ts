@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Title, Icon, Label } from 'Component';
 import { I, C, translate, UtilCommon, Storage } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import PageFree from './page/subscription/free';
 import PagePaid from './page/subscription/paid';
@@ -23,7 +24,7 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 		const { data } = param;
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
-		const tiers = UtilCommon.mapToObject(Constant.subscriptionTiers, 'id');
+		const tiers = UtilCommon.mapToObject(Constant.membershipTiers, 'id');
 		const cn = [ 'sides', `tier${tier}` ];
 
 		let content: any = null;
@@ -64,10 +65,10 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	};
 
 	componentDidMount () {
-		const subscription = Storage.get('subscription') || {};
+		const membership = authStore.membership;
 
-		if (subscription.tier) {
-			this.currentTier = subscription;
+		if (membership.tier) {
+			this.currentTier = membership;
 			this.forceUpdate();
 		};
 	};

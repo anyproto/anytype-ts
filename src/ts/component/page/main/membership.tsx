@@ -31,8 +31,8 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 
 	componentDidMount (): void {
 		popupStore.closeAll([], () => {
-			UtilData.reloadSubscriptionData((subscription) => {
-				if (subscription.tier) {
+			UtilData.getMembershipData((membership) => {
+				if (membership.tier) {
 					UtilObject.openHome('route');
 					popupStore.open('subscriptionPlan', {
 						onClose: () => {
@@ -40,7 +40,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 								popupStore.open('settings', { data: { page: 'membership' } })
 							}, 500);
 						},
-						data: { tier: subscription.tier, success: true }
+						data: { tier: membership.tier, success: true }
 					});
 				};
 			});

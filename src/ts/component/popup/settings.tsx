@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label, Button } from 'Component';
 import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview, Storage } from 'Lib';
-import { commonStore, popupStore } from 'Store';
+import { commonStore, popupStore, authStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -151,10 +151,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			};
 
 			if (action.id == 'membership') {
-				const subscription = Storage.get('subscription') || {};
+				const membership = authStore.membership;
 
-				if (subscription.tier) {
-					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${subscription.tier}`)}</div>;
+				if (membership.tier) {
+					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${membership.tier}`)}</div>;
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 				};

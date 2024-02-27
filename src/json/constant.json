@@ -27,7 +27,7 @@
 		"googleMaps": { "key": "AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o" }
 	},
 
-	"subscriptionTiers": [
+	"membershipTiers": [
 		{ "id": 1 },
 		{ "id": 2, "price": 99, "period": 1, "minNameLength": 7 },
 		{ "id": 3, "price": 399, "period": 5, "minNameLength": 5 }

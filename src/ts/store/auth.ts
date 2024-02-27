@@ -20,6 +20,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
+	public membershipData: any = {};
 	
 	constructor () {
 		makeObservable(this, {
@@ -30,10 +31,12 @@ class AuthStore {
 			name: observable,
 			phrase: observable,
 			threadMap: observable,
+			membershipData: observable,
 			walletPath: computed,
 			accountPath: computed,
 			accounts: computed,
 			account: computed,
+			membership: computed,
 			walletPathSet: action,
 			accountPathSet: action,
 			phraseSet: action,
@@ -41,6 +44,7 @@ class AuthStore {
 			accountAdd: action,
 			accountSet: action,
 			threadSet: action,
+			membershipDataSet: action,
 			threadRemove: action,
 			clearAll: action,
 			logout: action,
@@ -76,6 +80,10 @@ class AuthStore {
 		};
 	};
 
+	get membership (): any {
+		return this.membershipData;
+	};
+
 	walletPathSet (v: string) {
 		this.walletPathValue = String(v || '');
     };
@@ -106,6 +114,10 @@ class AuthStore {
 
 	appKeySet (v: string) {
 		this.appKey = String(v || '');
+	};
+
+	membershipDataSet (v: any) {
+		this.membershipData = v;
 	};
 
 	accountAdd (account: any) {

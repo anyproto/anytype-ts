@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon, Loader } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, Storage } from 'Lib';
-import { popupStore } from 'Store';
+import { popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
 import Constant from 'json/constant.json';
@@ -20,15 +20,15 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { loading, currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
-		const subscription = Storage.get('subscription') || {};
+		const membership = authStore.membership;
 
 		let currentTier: I.SubscriptionTier = 0;
 		let currentTierValid: number = 0;
 
-		if (subscription.tier) {
-			currentTier = subscription.tier;
-			if (subscription.dateEnds) {
-				currentTierValid = subscription.dateEnds;
+		if (membership.tier) {
+			currentTier = membership.tier;
+			if (membership.dateEnds) {
+				currentTierValid = membership.dateEnds;
 			};
 		};
 

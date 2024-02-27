@@ -237,6 +237,7 @@ class UtilData {
 
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
+		this.getMembershipData();
 
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
@@ -972,14 +973,13 @@ class UtilData {
 		return ret;
 	};
 
-	reloadSubscriptionData (callBack?: (message: any) => void) {
+	getMembershipData (callBack?: (message: any) => void) {
 		C.PaymentsSubscriptionGetStatus((message) => {
 			if (message.error.code) {
-				Storage.delete('subscription');
 				return;
 			};
 
-			Storage.set('subscription', message);
+			authStore.membershipDataSet(message);
 
 			if (callBack) {
 				callBack(message);
