@@ -396,6 +396,8 @@
 	"pageMainInviteTitle": "Downloading invite",
 	"pageMainInviteError": "Incorrect invite data",
 
+	"pageMainMembershipTitle": "Retrieving membership",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",

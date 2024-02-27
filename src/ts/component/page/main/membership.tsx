@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Loader, Frame } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData } from 'Lib';
+import { Loader, Frame, Title } from 'Component';
+import { I, UtilCommon, UtilObject, UtilData, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface State {
@@ -23,6 +23,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
+					<Title text={translate('pageMainMembershipTitle')} />
 					<Loader />
 				</Frame>
 			</div>
