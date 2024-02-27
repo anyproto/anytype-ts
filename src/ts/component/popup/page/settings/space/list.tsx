@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilObject, UtilRouter, translate } from 'Lib';
+import { I, UtilObject, UtilRouter, translate, Action } from 'Lib';
 import { authStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -45,7 +45,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
 					<td>{translate(`spaceStatus${space.spaceLocalStatus}`)}</td>
 
-					<td className="columnMore dn">
+					<td className="columnMore">
 						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
 							<Icon className="more" />
 						</div>
@@ -83,16 +83,8 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	onSpaceMore (e: React.MouseEvent, space) {
 		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
-			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
+			{ id: 'delete', color: 'red', name: translate('commonDelete') },
 		];
-
-		if (UtilObject.isSpaceOwner(space.id)) {
-			if (space.spaceAccessType == I.SpaceType.Shared) {
-				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
-			};
-		} else {
-			options.push({ id: 'leave', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
-		};
 
 		menuStore.open('select', {
 			element,
@@ -105,16 +97,8 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'offload':
-							console.log('OFFLOAD')
-							break;
-
-						case 'leave':
-							console.log('LEAVE')
-							break;
-
-						case 'deleteFromNetwork':
-							console.log('DELETE')
+						case 'delete':
+							Action.removeSpace(item.targetSpaceId, 'ScreenSettings');
 							break;
 					};
 				}

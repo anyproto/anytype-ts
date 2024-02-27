@@ -669,10 +669,6 @@
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
-	"popupSettingsSpacesMenuMoreOffload": "Offload from the device",
-	"popupSettingsSpacesMenuMoreLeave": "Leave and unjoin space",
-	"popupSettingsSpacesMenuMoreDeleteFromNetwork": "Delete from the network",
-
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
