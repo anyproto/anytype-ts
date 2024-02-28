@@ -183,10 +183,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					) : ''}
 				</div>
 
-				<div id="buttons" className="buttons">
-					<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
-					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
-				</div>
+				{cid && key ? (
+					<div id="buttons" className="buttons">
+						<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
+						<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
+					</div>
+				) : ''}
 
 				<Error text={error} />
 			</div>
