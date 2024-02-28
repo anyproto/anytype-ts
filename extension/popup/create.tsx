@@ -214,8 +214,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		};
 
 		if (!this.details.type) {
-			const bookmark = dbStore.getBookmarkType();
-			this.details.type = bookmark?.id || options[0].id;
+			this.details.type = Constant.typeKey.bookmark;
 		};
 
 		this.refType.setOptions(options);
