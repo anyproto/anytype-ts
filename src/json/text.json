@@ -1735,7 +1735,7 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
-	"spaceStatus0": "Unknown",
+	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
 	"spaceStatus3": "Missing",

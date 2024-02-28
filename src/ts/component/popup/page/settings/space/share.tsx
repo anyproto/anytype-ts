@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
+import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -19,8 +19,6 @@ const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
-	cid = '';
-	key = '';
 	node: any = null;
 	cache: any = null;
 	top = 0;
@@ -254,7 +252,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onCopy () {
-		if (this.cid && this.key) {
+		const { cid, key } = this.state;
+
+		if (cid && key) {
 			UtilCommon.copyToast(translate('commonLink'), this.getLink());
 		};
 	};
