@@ -20,7 +20,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
-	public membershipData: any = {};
+	public membershipData: I.Membership = {};
 	
 	constructor () {
 		makeObservable(this, {
@@ -44,7 +44,7 @@ class AuthStore {
 			accountAdd: action,
 			accountSet: action,
 			threadSet: action,
-			membershipDataSet: action,
+			membershipSet: action,
 			threadRemove: action,
 			clearAll: action,
 			logout: action,
@@ -116,7 +116,7 @@ class AuthStore {
 		this.appKey = String(v || '');
 	};
 
-	membershipDataSet (v: any) {
+	membershipSet (v: any) {
 		this.membershipData = v;
 	};
 

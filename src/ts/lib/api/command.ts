@@ -3,6 +3,7 @@ import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 import Constant from 'json/constant.json';
+import { MembershipTier } from 'Interface';
 
 const Rpc = Commands.Rpc;
 
@@ -1903,7 +1904,7 @@ export const PaymentsSubscriptionGetStatus = (callBack?: (message: any) => void)
 	dispatcher.request(PaymentsSubscriptionGetStatus.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetPaymentUrl = (tier: I.SubscriptionTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+export const PaymentsSubscriptionGetPaymentUrl = (tier: I.MembershipTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Payments.Subscription.GetPaymentUrl.Request();
 
 	request.setRequestedtier(tier as number);

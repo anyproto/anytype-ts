@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Loader, Frame } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData } from 'Lib';
+import { Loader, Frame, Title, Error, Button } from 'Component';
+import { I, UtilCommon, UtilObject, UtilData, translate, keyboard } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -23,7 +24,16 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
+					<Title text={translate('pageMainMembershipTitle')} />
 					<Loader />
+
+					<Error text={error} />
+
+					{error ? (
+						<div className="buttons">
+							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+						</div>
+					) : ''}
 				</Frame>
 			</div>
 		);
@@ -32,21 +42,26 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		popupStore.closeAll([], () => {
 			UtilData.getMembershipData((membership) => {
-				if (membership.tier) {
-					UtilObject.openHome('route');
-					popupStore.open('subscriptionPlan', {
+				if (!membership.tier) {
+					this.setState({ error: translate('pageMainMembershipError') });
+					return;
+				};
+
+				UtilObject.openHome('route');
+				window.setTimeout(() => {
+					popupStore.open('membership', {
 						onClose: () => {
 							window.setTimeout(() => {
 								popupStore.open('settings', { data: { page: 'membership' } })
-							}, 500);
+							}, Constant.delay.popup);
 						},
 						data: { tier: membership.tier, success: true }
 					});
-				};
+				}, Constant.delay.popup)
 			});
 		});
 
-		// this.resize();
+		this.resize();
 	};
 
 	resize () {

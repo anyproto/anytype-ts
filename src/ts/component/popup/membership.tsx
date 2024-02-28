@@ -3,13 +3,13 @@ import { Title, Icon, Label } from 'Component';
 import { I, C, translate, UtilCommon, Storage } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import PageFree from './page/subscription/free';
-import PagePaid from './page/subscription/paid';
-import PageCurrent from './page/subscription/current';
-import PageSuccess from './page/subscription/success';
+import PageFree from './page/membership/free';
+import PagePaid from './page/membership/paid';
+import PageCurrent from './page/membership/current';
+import PageSuccess from './page/membership/success';
 import Constant from 'json/constant.json';
 
-const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React.Component<I.Popup> {
+const PopupMembership = observer(class PopupMembership extends React.Component<I.Popup> {
 
 	currentTier: any = null;
 
@@ -50,7 +50,7 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 					<Label text={translate(`popupSettingsMembershipDescription${tier}`)} />
 
 					<div className="contentList">
-						<Label text={translate('popupSubscriptionPlanWhatsIncluded')} />
+						<Label text={translate('popupMembershipWhatsIncluded')} />
 						<ul>
 							{tierContent.map((text, idx) => (
 								<li key={idx}>{translate(text)}</li>
@@ -65,7 +65,7 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	};
 
 	componentDidMount () {
-		const membership = authStore.membership;
+		const { membership } = authStore;
 
 		if (membership.tier) {
 			this.currentTier = membership;
@@ -76,22 +76,22 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	getTierContent (tier) {
 		const content = {
 			1: [
-				'popupSubscriptionPlanTier1Content1',
-				'popupSubscriptionPlanTier1Content2',
-				'popupSubscriptionPlanTier1Content3',
+				'popupMembershipTier1Content1',
+				'popupMembershipTier1Content2',
+				'popupMembershipTier1Content3',
 			],
 			2: [
-				'popupSubscriptionPlanTier2Content1',
-				'popupSubscriptionPlanTier2Content2',
-				'popupSubscriptionPlanTier2Content3',
-				'popupSubscriptionPlanTier2Content4',
+				'popupMembershipTier2Content1',
+				'popupMembershipTier2Content2',
+				'popupMembershipTier2Content3',
+				'popupMembershipTier2Content4',
 			],
 			3: [
-				'popupSubscriptionPlanTier3Content1',
-				'popupSubscriptionPlanTier3Content2',
-				'popupSubscriptionPlanTier3Content3',
-				'popupSubscriptionPlanTier3Content4',
-				'popupSubscriptionPlanTier3Content5',
+				'popupMembershipTier3Content1',
+				'popupMembershipTier3Content2',
+				'popupMembershipTier3Content3',
+				'popupMembershipTier3Content4',
+				'popupMembershipTier3Content5',
 			]
 		};
 
@@ -104,4 +104,4 @@ const PopupSubscriptionPlan = observer(class PopupSubscriptionPlan extends React
 	};
 });
 
-export default PopupSubscriptionPlan;
+export default PopupMembership;

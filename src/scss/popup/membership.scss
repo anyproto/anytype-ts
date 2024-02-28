@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
-    .popup.popupSubscriptionPlan {
+    .popup.popupMembership {
 
         .sides { display: flex; flex-wrap: nowrap; width: 706px; height: 480px; }
         .sides {
@@ -68,8 +68,8 @@
                 .resend.countdown { color: var(--color-text-primary); }
                 .resend:not(.countdown):hover { color: var(--color-control-active); }
 
-                .currentSubscription { text-align: center; }
-                .currentSubscription {
+                .currentMembership { text-align: center; }
+                .currentMembership {
                     .title { @include text-paragraph; font-weight: 700; margin-bottom: 14px; }
                     .valid { display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 20px; border-radius: 8px; background: var(--color-shape-highlight-light-solid); }
                     .valid {

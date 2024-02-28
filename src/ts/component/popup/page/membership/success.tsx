@@ -2,13 +2,13 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
-import { popupStore } from 'Store';
+import { MembershipTier } from 'Interface/payment';
 
 interface Props extends I.Popup {
 	tier: any;
 };
 
-const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPageSuccess extends React.Component<Props, {}> {
+const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess extends React.Component<Props, {}> {
 
 	constructor (props: Props) {
 		super(props);
@@ -22,15 +22,15 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 
 		let text: string = '';
 
-		if (id == I.SubscriptionTier.Explorer) {
-			text = translate('popupSubscriptionPlanSuccessTextCuriosity');
+		if (id == I.MembershipTier.Explorer) {
+			text = translate('popupMembershipSuccessTextCuriosity');
 		} else {
-			text = translate('popupSubscriptionPlanSuccessTextSupport');
+			text = translate('popupMembershipSuccessTextSupport');
 		};
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(translate(`popupSubscriptionPlanSuccessTitle`), translate(`popupSettingsMembershipTitle${id}`))} />
+				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), translate(`popupSettingsMembershipTitle${id}`))} />
 				<Icon className={`tier${id}`} />
 				<Label text={text} />
 
@@ -48,4 +48,4 @@ const PopupSubscriptionPlanPageSuccess = observer(class PopupSubscriptionPlanPag
 	};
 });
 
-export default PopupSubscriptionPlanPageSuccess;
+export default PopupMembershipPageSuccess;

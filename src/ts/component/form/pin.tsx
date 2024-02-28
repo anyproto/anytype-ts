@@ -16,7 +16,7 @@ interface Props {
 	/** callback when the pin is entered (and does not match expectedPin if provided)*/
 	onError?: () => void;
 	/** if true, input will not turn to type password after filled*/
-	visibleValue?: boolean;
+	isVisible?: boolean;
 };
 
 type State = {
@@ -36,7 +36,7 @@ class Pin extends React.Component<Props, State> {
 		pinLength: Constant.pinLength,
 		expectedPin: null,
 		focusOnMount: true,
-		visibleValue: false,
+		isVisible: false,
 	};
 
 	state = {
@@ -157,7 +157,7 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	onInputChange = (index: number, value: string) => {
-		const { visibleValue } = this.props;
+		const { isVisible } = this.props;
 		const input = this.inputRefs[index];
 		const next = this.inputRefs[index + 1];
 
@@ -170,7 +170,7 @@ class Pin extends React.Component<Props, State> {
 			next.focus();
 		};
 
-		if (visibleValue) {
+		if (isVisible) {
 			return;
 		};
 

@@ -4,13 +4,14 @@ import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
 import Constant from 'json/constant.json';
 import { popupStore } from 'Store';
+import { MembershipTier } from 'Interface/payment';
 
 interface Props {
 	current: any;
 	onChangeEmail: () => void;
 };
 
-const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPageCurrent extends React.Component<Props, {}> {
+const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent extends React.Component<Props, {}> {
 
 	constructor (props: Props) {
 		super(props);
@@ -26,27 +27,27 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 		let paidText: string = '';
 		let buttonText: string = '';
 
-		if (tier == I.SubscriptionTier.Explorer) {
-			dateText = translate('popupSubscriptionPlanForever');
-			buttonText = translate('popupSubscriptionPlanChangeEmail');
+		if (tier == I.MembershipTier.Explorer) {
+			dateText = translate('popupMembershipForever');
+			buttonText = translate('popupMembershipChangeEmail');
 		} else {
 			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
-			paidText = UtilCommon.sprintf(translate('popupSubscriptionPlanPaidBy'), translate(`popupSubscriptionPlanPaymentMethod${paymentMethod}`));
+			paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`popupMembershipPaymentMethod${paymentMethod}`));
 
 			if (paymentMethod == I.PaymentMethod.MethodCrypto) {
-				buttonText = translate('popupSubscriptionPlanWriteToAnyteam');
+				buttonText = translate('popupMembershipWriteToAnyteam');
 			} else {
-				buttonText = translate('popupSubscriptionPlanManagePayment');
+				buttonText = translate('popupMembershipManagePayment');
 			};
 		};
 
 		return (
-			<div className="currentSubscription">
-				<Title text={translate('popupSubscriptionPlanCurrentStatus')} />
+			<div className="currentMembership">
+				<Title text={translate('popupMembershipCurrentStatus')} />
 
 				<div className="valid">
 					<div>
-						<Label text={translate('popupSubscriptionPlanValidUntil')} />
+						<Label text={translate('popupMembershipValidUntil')} />
 						<Label className="date" text={dateText} />
 					</div>
 					<Label className="paymentMethod" text={paidText} />
@@ -61,7 +62,7 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 		const { current, onChangeEmail } = this.props;
 		const { tier, paymentMethod } = current;
 
-		if (tier == I.SubscriptionTier.Explorer) {
+		if (tier == I.MembershipTier.Explorer) {
 			onChangeEmail();
 		} else {
 			if (paymentMethod == I.PaymentMethod.MethodCrypto) {
@@ -73,4 +74,4 @@ const PopupSubscriptionPlanPageCurrent = observer(class PopupSubscriptionPlanPag
 	};
 });
 
-export default PopupSubscriptionPlanPageCurrent;
+export default PopupMembershipPageCurrent;

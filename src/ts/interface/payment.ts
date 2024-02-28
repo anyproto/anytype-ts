@@ -1,4 +1,4 @@
-export enum SubscriptionTier {
+export enum MembershipTier {
 	Unknown	= 0,
 	Explorer = 1,
 
@@ -9,8 +9,23 @@ export enum SubscriptionTier {
 	Builder1Year = 4,
 	CoCreator1Year = 5,
 };
+
+export interface Membership {
+	tier?: MembershipTier;
+	status?: MembershipStatus;
+	dateStarted?: number;
+	dateEnds?: number;
+	isAutoRenew?: boolean;
+	nextTier?: MembershipTier;
+	nextTierEnds?: number;
+	paymentMethod?: PaymentMethod,
+	requestedAnyName?: string;
+	event?: any;
+	error?: any;
+	middleTime?: number;
+};
             
-export enum SubscriptionStatus {
+export enum MembershipStatus {
 	StatusUnknown	 = 0,
 	StatusPending	 = 1,
 	StatusActive	 = 2,
@@ -21,4 +36,14 @@ export enum PaymentMethod {
 	MethodCrypto	 = 1,
 	MethodApplePay	 = 2,
 	MethodGooglePay	 = 3,
+};
+
+export enum MembershipPrice {
+	Price1Year 		= 99,
+	Price5Years 	= 399,
+};
+
+export enum MembershipPeriod {
+	Period1Year 	= 1,
+	Period5Years 	= 5,
 };

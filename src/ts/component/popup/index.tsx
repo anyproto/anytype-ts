@@ -24,7 +24,7 @@ import PopupUsecase from './usecase';
 import PopupAbout from './about';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
-import PopupSubscriptionPlan from './subscription';
+import PopupMembership from './membership';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -65,7 +65,7 @@ class Popup extends React.Component<I.Popup> {
 			about:					 PopupAbout,
 			inviteRequest:			 PopupInviteRequest,
 			inviteConfirm:			 PopupInviteConfirm,
-			subscriptionPlan: 		 PopupSubscriptionPlan,
+			membership: 		 	 PopupMembership,
 		};
 		
 		const popupId = this.getId();

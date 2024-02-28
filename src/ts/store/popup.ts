@@ -16,7 +16,7 @@ const SHOW_DIMMER = [
 	'inviteRequest',
 	'inviteConfirm',
 	'usecase',
-	'subscriptionPlan',
+	'membership',
 ];
 
 class PopupStore {
