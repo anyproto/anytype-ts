@@ -450,7 +450,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
+				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route: ROUTE } });
 				break;
 			};
 				

@@ -16,6 +16,6 @@ exports.default = async function (context) {
 	};
 
 	return await cli.releases.uploadSourceMaps(context.packager.appInfo.version, { 
-		include: [ '../../dist/main.js.map' ],
+		include: [ '../../dist/js/main.js.map' ],
 	});
 };

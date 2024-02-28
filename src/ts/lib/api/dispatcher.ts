@@ -989,7 +989,9 @@ class Dispatcher {
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
-							electron.focus();
+							if (electron.focus) {
+								electron.focus();
+							};
 							break;
 						};
 					};
@@ -1055,7 +1057,7 @@ class Dispatcher {
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
 
-		if (details.spaceAccountStatus == I.SpaceStatus.Deleted) {
+		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == blockStore.spaceview) {
 				UtilRouter.switchSpace(authStore.accountSpaceId, '');
 			};

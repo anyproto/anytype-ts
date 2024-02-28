@@ -176,8 +176,8 @@ class Util {
 			fs.writeFileSync(exportName, content);
 
 			try {
-				fs.unlinkSync(path.join(filesPath, 'main.js'));
-				fs.unlinkSync(path.join(filesPath, 'run.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/main.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/run.js'));
 			} catch (e) {
 				this.log('info', e);
 			};
@@ -223,10 +223,11 @@ class Util {
 			"cs-CZ", "da-DK", "de-DE", 
 			"en-US", "es-ES", "fr-FR", 
 			"hi-IN", "id-ID", "it-IT", 
-			"ja-JP", "nl-NL", "no-NO", 
-			"pl-PL", "pt-BR", "ro-RO", 
-			"ru-RU", "tr-TR", "uk-UA", 
-			"vi-VN", "zh-CN", "zh-TW"
+			"lt-LT", "ja-JP", "nl-NL", 
+			"no-NO", "pl-PL", "pt-BR", 
+			"ro-RO", "ru-RU", "tr-TR", 
+			"uk-UA", "vi-VN", "zh-CN", 
+			"zh-TW"
 		];
 	};
 

@@ -84,7 +84,7 @@ class Checkbox extends React.Component<Props, State> {
 	getValue () {
 		return this.state.value;
 	};
-	
+
 };
 
 export default Checkbox;

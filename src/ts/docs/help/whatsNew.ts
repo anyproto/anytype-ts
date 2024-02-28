@@ -26,7 +26,7 @@ export default [
 
 	h3(`Webclipper`),
 	video('39/1.mp4'),
-	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link('', 'this link')}.`),
+	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link(Url.webclipper, 'this link')}.`),
 	text(`Once installed, you have two options to save content from the web:`),
 	bullet(`Click the web clipper extension icon in your toolbar to save web pages as new objects in Anytype.`),
 	bullet(`Select a text snippet, right click, and add the text to any previously-created object in your space.`),

@@ -227,12 +227,18 @@ class UtilEmbed {
 	};
 
 	getYoutubePath (url: string): string {
+		const shortsReg = /\/shorts\//;
+
+		if (shortsReg.test(url)) {
+			url = url.replace(shortsReg, '/watch?v=');
+		};
+
 		const pm = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
 		const tm = url.match(/(\?t=|&t=)(\d+)/);
 
 		if (!pm || !pm[2].length) {
 			return '';
-		}
+		};
 
 		return pm[2] + ((tm && tm[2].length) ? `?start=${tm[2]}` : '');
 	};

@@ -82,16 +82,19 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
 			e.preventDefault();
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
-		
+
+		const cmd = keyboard.cmdKey();
+
 		let ret = false;
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
+
+		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 			ret = true;
 		});
@@ -128,7 +131,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
-		const value = UtilCommon.regexEscape(this.ref.getValue());
+		const value = this.ref.getValue();
 		const node = $(this.node);
 		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
@@ -149,7 +152,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		findAndReplaceDOMText(this.container.get(0), {
 			preset: 'prose',
-			find: new RegExp(value, 'gi'),
+			find: new RegExp(UtilCommon.regexEscape(value), 'gi'),
 			wrap: 'search',
 			portionMode: 'first',
 			filterElements: (el: any) => {

@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
-import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Textarea } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter } from 'Lib';
+import { Label, Input, Button, Select, Loader, Error, DragBox, Tag } from 'Component';
+import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
 import Util from '../lib/util';
@@ -47,7 +47,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.focus = this.focus.bind(this);
 	};
@@ -136,7 +135,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 											contentEditable={true}
 											suppressContentEditableWarning={true} 
 											onFocus={this.onFocus}
-											onBlur={this.onBlur}
 											onInput={this.onInput}
 											onKeyDown={this.onKeyDown}
 											onKeyUp={this.onKeyUp}
@@ -170,6 +168,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	componentDidUpdate(): void {
 		this.initType();
+		this.placeholderCheck();
 	};
 
 	initSpace () {
@@ -179,7 +178,20 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		const space = commonStore.space || spaces[0].targetSpaceId;
+		let space = commonStore.space || Storage.get('lastSpaceId');
+
+		if (!space) {
+			space = spaces.find(it => it.spaceAccessType == I.SpaceType.Personal)?.id;
+		};
+
+		let check = null;
+		if (space) {
+			check = spaces.find(it => it.id == space);
+		};
+
+		if (!space || !check) {
+			space = spaces[0].id;
+		};
 
 		this.refSpace.setOptions(spaces);
 		this.refSpace.setValue(space);
@@ -193,7 +205,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		this.details.type = this.details.type || options[0].id;
+		if (!this.details.type) {
+			const bookmark = dbStore.getBookmarkType();
+			this.details.type = bookmark?.id || options[0].id;
+		};
 
 		this.refType.setOptions(options);
 		this.refType.setValue(this.details.type);
@@ -245,6 +260,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSpaceChange (id: string): void {
 		commonStore.spaceSet(id);
 		UtilData.createSubscriptions(() => this.forceUpdate());
+
+		Storage.set('lastSpaceId', id);
 	};
 
 	getTagsValue () {
@@ -297,9 +314,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			e.preventDefault();
 			
-			const value = this.getValue();
-			value.existing.pop();
-			this.setValue(value.existing);
+			this.details.tag.pop();
+			this.setValue(this.details.tag);
 		});
 
 		this.placeholderCheck();
@@ -316,7 +332,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onKeyUp (e: any) {
-		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
+		menuStore.updateData('dataviewOptionList', { filter: this.getValue() });
 
 		this.placeholderCheck();
 		this.resize();
@@ -354,44 +370,22 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		});
 	};
 
-	onBlur () {
-	};
-
 	placeholderCheck () {
 		const node = $(this.node);
 		const value = this.getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
+		const length = this.details.tag.length;
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		length ? list.show() : list.hide();
+		value || length ? placeholder.hide() : placeholder.show();
 	};
 
-	getValue () {
+	getValue (): string {
 		const node = $(this.node);
-		const list = node.find('#list');
-		const items = list.find('.itemWrap');
 		const entry = node.find('#entry');
-		const existing: any[] = [];
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-			existing.push(item.data('id'));
-		});
-
-		return {
-			existing,
-			new: (entry.length ? String(entry.text() || '').trim() : ''),
-		};
+		return entry.length ? String(entry.text() || '').trim() : '';
 	};
 
 	setValue (value: string[]) {
