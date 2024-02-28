@@ -213,10 +213,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		if (!this.details.type) {
-			this.details.type = Constant.typeKey.bookmark;
-		};
-
+		this.details.type = this.details.type || Constant.typeKey.bookmark;
 		this.refType.setOptions(options);
 		this.refType.setValue(this.details.type);
 	};
