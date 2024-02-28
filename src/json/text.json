@@ -744,6 +744,8 @@
 	"popupSettingsSpaceShareMembersViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
+	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
+	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
 

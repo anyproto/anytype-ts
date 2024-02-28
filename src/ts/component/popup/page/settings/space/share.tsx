@@ -10,6 +10,8 @@ import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
+	cid: string;
+	key: string;
 };
 
 const HEIGHT = 64;
@@ -27,6 +29,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refCopy: any = null;
 	state = {
 		error: '',
+		cid: '',
+		key: '',
 	};
 
 	constructor (props: I.PopupSettings) {
@@ -35,12 +39,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onScroll = this.onScroll.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onGenerate = this.onGenerate.bind(this);
+		this.onInviteRevoke = this.onInviteRevoke.bind(this);
+		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 	};
 
 	render () {
-		const { error } = this.state;
+		const { error, cid, key } = this.state;
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
@@ -117,7 +123,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
 
-				<div className="titleWrapper">
+				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
 					<div className="info">
@@ -126,22 +132,30 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					</div>
 				</div>
 
-				<div className="section sectionInvite">
-					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
-					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
+				<div id="sectionInvite" className="section sectionInvite">
+					{cid && key ? (
+						<React.Fragment>
+							<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
+							<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
-					<div className="inviteLinkWrapper">
-						<Input ref={ref => this.refInput = ref} readonly={true} />
-						<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
-						<Icon id="generate" className="refresh" onClick={() => this.onGenerate(false)} />
-					</div>
+							<div className="inviteLinkWrapper">
+								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
+								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
+								<Icon id="generate" className="refresh" onClick={this.onGenerate} />
+							</div>
 
-					<div className="invitesLimit">
-						{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
-					</div>
+							<div className="invitesLimit">
+								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
+							</div>
+						</React.Fragment>
+					) : (
+						<div className="buttons">
+							<Button onClick={this.onInitLink} className="c40" text={translate('popupSettingsSpaceShareGenerateInvite')} />
+						</div>		
+					)}
 				</div>
 
-				<div className="section sectionMembers">
+				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
 
 					{this.cache ? (
@@ -171,7 +185,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					) : ''}
 				</div>
 
-				<div className="buttons">
+				<div id="buttons" className="buttons">
+					<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
 					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 				</div>
 
@@ -182,19 +197,20 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	componentDidMount () {
 		this.updateCache();
-		this.refCopy?.setDisabled(true);
 
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-			if (message.error.code) {
-				this.onGenerate(true);
-			} else {
-				this.setLink(message.inviteCid, message.inviteKey);
+			if (!message.error.code) {
+				this.setInvite(message.inviteCid, message.inviteKey);
 			};
 		});
 	};
 
 	componentDidUpdate() {
 		this.resize();
+	};
+
+	setInvite (cid: string, key: string) {
+		this.setState({ cid, key });
 	};
 
 	updateCache () {
@@ -233,14 +249,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getLink () {
-		return `${Constant.protocol}://invite/?cid=${this.cid}&key=${this.key}`
-	};
-
-	setLink (cid: string, key: string) {
-		this.cid = cid;
-		this.key = key;
-		this.refInput.setValue(this.getLink());
-		this.refCopy.setDisabled(false);
+		const { cid, key } = this.state;
+		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`
 	};
 
 	onCopy () {
@@ -249,45 +259,41 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
-	onGenerate (auto: boolean) {
+	onInitLink () {
+		const { space } = commonStore;
+
+		C.SpaceInviteGenerate(space, (message: any) => {
+			if (!this.setError(message.error)) {
+				this.setInvite(message.inviteCid, message.inviteKey);
+			};
+		});
+	};
+
+	onGenerate () {
 		const { space } = commonStore;
 		const node = $(this.node);
 		const button = node.find('#generate');
-		const onConfirm = () => {
-			C.SpaceInviteGenerate(space, (message: any) => {
-				if (!auto) {
-					button.removeClass('loading');
-				};
 
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
+		button.addClass('loading');
 
-				this.setLink(message.inviteCid, message.inviteKey);
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceInviteGenerate(space, (message: any) => {
+						button.removeClass('loading');
 
-				if (!auto) {
-					this.onCopy();
-				};
-			});
-		};
-
-		if (!auto) {
-			button.addClass('loading');
-
-			popupStore.open('confirm', {
-				data: {
-					title: translate('popupConfirmRevokeLinkTitle'),
-					text: translate('popupConfirmRevokeLinkText'),
-					textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-					colorConfirm: 'red',
-					onConfirm,
-					onCancel: () => button.removeClass('loading'),
+						if (!this.setError(message.error)) {
+							this.setInvite(message.inviteCid, message.inviteKey);
+						};
+					});
 				},
-			});
-		} else {
-			onConfirm();
-		};
+				onCancel: () => button.removeClass('loading'),
+			},
+		});
 	};
 
 	onStopSharing () {
@@ -303,6 +309,24 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm: () => {
 					C.SpaceStopSharing(space);
 					onPage('spaceIndex');
+				},
+			},
+		});
+	};
+
+	onInviteRevoke () {
+		const { space } = commonStore;
+
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmStopInviteRevokeTitle'),
+				text: translate('popupConfirmInviteRevokeText'),
+				textConfirm: translate('popupConfirmInviteRevokeConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceInviteRevoke(space, (message: any) => {
+						this.setInvite('', '');
+					});
 				},
 			},
 		});
@@ -377,9 +401,28 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			}
 		});
 	};
+
+	setError (error: { description: string, code: number}) {
+		if (!error.code) {
+			return false;
+		};
+
+		this.setState({ error: error.description });
+		return true;
+	};
 	
 	resize () {
-		const { position } = this.props;
+		const { position, getId } = this.props;
+		const node = $(this.node);
+		const obj = $(`#${getId()}-innerWrap`);
+		const head = node.find('.head')
+		const titleWrapper = node.find('#titleWrapper');
+		const sectionInvite = node.find('#sectionInvite');
+		const sectionMember = node.find('#sectionMembers');
+		const buttons = node.find('#buttons');
+		const mh = obj.height() - head.outerHeight(true) - titleWrapper.outerHeight(true) - sectionInvite.outerHeight(true) - buttons.outerHeight(true) - 80;
+
+		sectionMember.css({ minHeight: mh });
 
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
