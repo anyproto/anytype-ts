@@ -76,11 +76,16 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = this.isMain();
+		const isMain = this.isMain();
+		const showSidebar = isMain;
 
 		if (account) {
 			const { status } = account || {};
 			const { type } = status || {};
+		};
+
+		if (isMain && !account) {
+			return null;
 		};
 
 		const Component = Components[path];

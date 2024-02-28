@@ -829,14 +829,15 @@ class UtilCommon {
 	};
 
 	fixAsarPath (path: string): string {
-		const Electron = this.getElectron();
+		const electron = this.getElectron();
 
-		let href = Electron.dirname(location.href);
-		if (Electron.isPackaged) {
-			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			path = href + path.replace(/^\.\//, '/');
+		if (!electron.dirname || !electron.isPackaged) {
+			return path;
 		};
-		return path;
+
+		let href = electron.dirname(location.href);
+		href = href.replace('/app.asar/', '/app.asar.unpacked/');
+		return href + path.replace(/^\.\//, '/');
 	};
 
 	injectCss (id: string, css: string) {
