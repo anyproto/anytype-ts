@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
-import { Label, Input, Button, Select, Loader, Error, DragBox, Tag } from 'Component';
+import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -12,6 +12,7 @@ import Util from '../lib/util';
 interface State {
 	error: string;
 	isLoading: boolean;
+	withContent: boolean;
 };
 
 const MAX_LENGTH = 320;
@@ -32,8 +33,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	url = '';
 
 	state = {
-		isLoading: false,
 		error: '',
+		isLoading: false,
+		withContent: true,
 	};
 
 	constructor (props: I.PageComponent) {
@@ -48,11 +50,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 		this.focus = this.focus.bind(this);
 	};
 
 	render () {
-		const { isLoading, error } = this.state;
+		const { error, isLoading, withContent } = this.state;
 		const { space } = commonStore;
 		const tags = this.getTagsValue();
 
@@ -99,6 +102,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 									data: { maxHeight: 180 }
 								}}
 							/>
+						</div>
+
+						<div className="row withContent" onClick={this.onCheckbox}>
+							<Icon className={[ 'checkbox', (withContent ? 'active' : '') ].join(' ')} />
+							<Label text="Add page content" />
 						</div>
 
 						<div className="row">
@@ -410,6 +418,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
+		const { withContent } = this.state;
+
 		this.isCreating = true;
 		this.setState({ isLoading: true, error: '' });
 
@@ -418,7 +428,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		delete(details.type);
 
-		C.ObjectCreateFromUrl(details, commonStore.space, type, this.url, (message: any) => {
+		C.ObjectCreateFromUrl(details, commonStore.space, type, this.url, withContent, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
@@ -431,6 +441,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			this.isCreating = false;
 		});
+	};
+
+	onCheckbox () {
+		this.setState({ withContent: !this.state.withContent });
 	};
 
 	scrollToBottom () {
