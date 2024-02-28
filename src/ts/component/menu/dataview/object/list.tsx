@@ -71,7 +71,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				);
 			} else
 			if (item.isSection) {
-				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+				content = <div className="sectionName" style={param.style}>{item.name}</div>;
 			} else
 			if (item.id == 'add') {
 				content = (
