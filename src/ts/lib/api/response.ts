@@ -484,15 +484,17 @@ export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.
 
 export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscription.GetStatus.Response) => {
 	return {
-		tier: response.getTier(),
-		status: response.getStatus(),
-		dateStarted: response.getDatestarted(),
-		dateEnds: response.getDateends(),
-		isAutoRenew: response.getIsautorenew(),
-		nextTier: response.getNexttier(),
-		nextTierEnds: response.getNexttierends(),
-		paymentMethod: response.getPaymentmethod(),
-		requestedAnyName: response.getRequestedanyname(),
+		membership: {
+			tier: response.getTier(),
+			status: response.getStatus(),
+			dateStarted: response.getDatestarted(),
+			dateEnds: response.getDateends(),
+			isAutoRenew: response.getIsautorenew(),
+			nextTier: response.getNexttier(),
+			nextTierEnds: response.getNexttierends(),
+			paymentMethod: response.getPaymentmethod(),
+			requestedAnyName: response.getRequestedanyname(),
+		},
 	};
 };
 

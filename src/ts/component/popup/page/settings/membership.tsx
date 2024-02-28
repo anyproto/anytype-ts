@@ -1,12 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate, Storage } from 'Lib';
+import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
-import Constant from 'json/constant.json';
-import { MembershipTier } from 'Interface/payment';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
@@ -23,10 +21,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const { loading, currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
 
-		let currentTier: I.MembershipTier = 0;
+		let currentTier: I.MembershipTier = I.MembershipTier.None;
 		let currentTierValid: number = 0;
 
-		if (membership.tier) {
+		if (membership.tier != I.MembershipTier.None) {
 			currentTier = membership.tier;
 			if (membership.dateEnds) {
 				currentTierValid = membership.dateEnds;
@@ -51,7 +49,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				price: I.MembershipPrice.Price5Years,
 				period: I.MembershipPeriod.Period5Years
 			},
-		];
+		].filter(it => it.id > currentTier);
 
 		const SlideItem = (slide) => (
 			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
@@ -64,30 +62,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 
 		const TierItem = (item: any) => {
-			if (item.id < currentTier) {
-				return null;
-			};
-
 			const isCurrent = item.id == currentTier;
+			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
-			let price = '';
 			let period = '';
 			let currentLabel = null;
 			let buttonText = translate('popupSettingsMembershipLearnMore');
-
-			if (!item.price) {
-				price = translate('popupSettingsMembershipJustEmail');
-			} else {
-				price = `$${item.price}`;
-			};
-
-			if (item.period) {
-				if (item.period == 1) {
-					period = translate('popupSettingsMembershipPerYear')
-				} else {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
-				};
-			};
 
 			if (isCurrent) {
 				if (item.period && currentTierValid) {
@@ -98,6 +78,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 				currentLabel = <div className="currentLabel">{translate('popupSettingsMembershipCurrent')}</div>;
 				buttonText = translate('popupSettingsMembershipManage');
+			} else 
+			if (item.period) {
+				period = item.period == I.MembershipPeriod.Period1Year ? 
+					translate('popupSettingsMembershipPerYear') : 
+					UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
 			};
 
 			return (

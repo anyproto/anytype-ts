@@ -1,18 +1,18 @@
 export enum MembershipTier {
-	Unknown	= 0,
-	Explorer = 1,
+	None				 = 0,
+	Explorer			 = 1,
 
 	// these are for testing only, won't require real payment
-	Builder1WeekTEST = 2,
-	CoCreator1WeekTEST = 3,
+	Builder1WeekTEST	 = 2,
+	CoCreator1WeekTEST	 = 3,
 
-	Builder1Year = 4,
-	CoCreator1Year = 5,
+	Builder1Year		 = 4,
+	CoCreator1Year		 = 5,
 };
 
 export interface Membership {
-	tier?: MembershipTier;
-	status?: MembershipStatus;
+	tier: MembershipTier;
+	status: MembershipStatus;
 	dateStarted?: number;
 	dateEnds?: number;
 	isAutoRenew?: boolean;
@@ -26,9 +26,9 @@ export interface Membership {
 };
             
 export enum MembershipStatus {
-	StatusUnknown	 = 0,
-	StatusPending	 = 1,
-	StatusActive	 = 2,
+	Unknown			 = 0,
+	Pending			 = 1,
+	Active			 = 2,
 };
             
 export enum PaymentMethod {

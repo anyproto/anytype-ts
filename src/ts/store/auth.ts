@@ -20,7 +20,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
-	public membershipData: I.Membership = {};
+	public membershipData: I.Membership = { tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown };
 	
 	constructor () {
 		makeObservable(this, {

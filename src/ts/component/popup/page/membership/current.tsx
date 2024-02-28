@@ -1,17 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
-import Constant from 'json/constant.json';
-import { popupStore } from 'Store';
-import { MembershipTier } from 'Interface/payment';
+import { Title, Label, Button } from 'Component';
+import { I, translate, UtilCommon, UtilDate } from 'Lib';
+import { authStore } from 'Store';
 
 interface Props {
-	current: any;
 	onChangeEmail: () => void;
 };
 
-const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent extends React.Component<Props, {}> {
+const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent extends React.Component<Props> {
 
 	constructor (props: Props) {
 		super(props);
@@ -20,8 +17,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	render() {
-		const { current } = this.props;
-		const { tier, dateEnds, paymentMethod } = current;
+		const { membership } = authStore;
+		const { tier, dateEnds, paymentMethod } = membership;
 
 		let dateText: string = '';
 		let paidText: string = '';
@@ -59,8 +56,9 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	onButton () {
-		const { current, onChangeEmail } = this.props;
-		const { tier, paymentMethod } = current;
+		const { membership } = authStore;
+		const { onChangeEmail } = this.props;
+		const { tier, paymentMethod } = membership;
 
 		if (tier == I.MembershipTier.Explorer) {
 			onChangeEmail();
@@ -72,6 +70,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			};
 		};
 	};
+
 });
 
 export default PopupMembershipPageCurrent;

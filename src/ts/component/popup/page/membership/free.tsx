@@ -3,9 +3,6 @@ import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilRouter } from 'Lib';
 
-interface Props {
-	tier: any;
-};
 interface State {
 	verificationStep: number;
 	countdown: number;
@@ -13,7 +10,7 @@ interface State {
 	statusText: string;
 };
 
-const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends React.Component<Props, State> {
+const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends React.Component<I.Popup, State> {
 
 	state = {
 		verificationStep: 1,
@@ -32,7 +29,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 	email: string = '';
 
-	constructor (props: Props) {
+	constructor (props: I.Popup) {
 		super(props);
 
 		this.onCheck = this.onCheck.bind(this);
@@ -42,7 +39,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		this.validateEmail = this.validateEmail.bind(this);
 	};
 
-	render() {
+	render () {
 		const { verificationStep, countdown, status, statusText } = this.state;
 
 		let content: any = null;
@@ -190,6 +187,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			};
 		}, 1000);
 	};
+
 });
 
 export default PopupMembershipPageFree;

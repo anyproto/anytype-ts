@@ -490,6 +490,7 @@
 				}
 			}
 
+			.buttons { display: flex; gap: 0px 16px; justify-content: space-evenly; }
 			.buttons {
 				.button { width: 100%; }
 			}

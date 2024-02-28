@@ -1,17 +1,23 @@
 import * as React from 'react';
-import { Title, Icon, Label } from 'Component';
-import { I, C, translate, UtilCommon, Storage } from 'Lib';
-import { authStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Title, Icon, Label } from 'Component';
+import { I, translate } from 'Lib';
+import { authStore } from 'Store';
+
 import PageFree from './page/membership/free';
 import PagePaid from './page/membership/paid';
 import PageCurrent from './page/membership/current';
 import PageSuccess from './page/membership/success';
-import Constant from 'json/constant.json';
 
-const PopupMembership = observer(class PopupMembership extends React.Component<I.Popup> {
+interface State {
+	isEditing: boolean;
+};
 
-	currentTier: any = null;
+const PopupMembership = observer(class PopupMembership extends React.Component<I.Popup, State> {
+
+	state = {
+		isEditing: false,
+	};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -19,27 +25,28 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		this.onChangeEmail = this.onChangeEmail.bind(this);
 	};
 
-	render() {
+	render () {
+		const { membership } = authStore;
+		const { isEditing } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
-		const tiers = UtilCommon.mapToObject(Constant.membershipTiers, 'id');
 		const cn = [ 'sides', `tier${tier}` ];
 
 		let content: any = null;
 
 		if (success) {
 			cn.push('success');
-			content = <PageSuccess {...this.props} tier={tiers[tier]} />;
+			content = <PageSuccess {...this.props} />;
 		} else
-		if (this.currentTier && (this.currentTier.tier == tier)) {
-			content = <PageCurrent current={this.currentTier} onChangeEmail={this.onChangeEmail} />;
+		if (!isEditing && (membership.tier == tier)) {
+			content = <PageCurrent {...this.props} onChangeEmail={this.onChangeEmail} />;
 		} else
-		if (tier == 1) {
-			content = <PageFree tier={tiers[tier]} />;
+		if (tier == I.MembershipTier.Explorer) {
+			content = <PageFree {...this.props} />;
 		} else {
-			content = <PagePaid tier={tiers[tier]} />;
+			content = <PagePaid {...this.props} />;
 		};
 
 		return (
@@ -64,44 +71,43 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		);
 	};
 
-	componentDidMount () {
-		const { membership } = authStore;
+	getTierContent (tier: I.MembershipTier): string[] {
+		switch (tier) {
+			case I.MembershipTier.Explorer: {
+				return  [
+					'popupMembershipTier1Content1',
+					'popupMembershipTier1Content2',
+					'popupMembershipTier1Content3',
+				];
+			};
 
-		if (membership.tier) {
-			this.currentTier = membership;
-			this.forceUpdate();
+			case I.MembershipTier.Builder1WeekTEST: 
+			case I.MembershipTier.Builder1Year: {
+				return [
+					'popupMembershipTier2Content1',
+					'popupMembershipTier2Content2',
+					'popupMembershipTier2Content3',
+					'popupMembershipTier2Content4',
+				];
+			};
+
+			case I.MembershipTier.CoCreator1WeekTEST:
+			case I.MembershipTier.CoCreator1Year: {
+				return [
+					'popupMembershipTier3Content1',
+					'popupMembershipTier3Content2',
+					'popupMembershipTier3Content3',
+					'popupMembershipTier3Content4',
+					'popupMembershipTier3Content5',
+				];
+			};
 		};
-	};
-
-	getTierContent (tier) {
-		const content = {
-			1: [
-				'popupMembershipTier1Content1',
-				'popupMembershipTier1Content2',
-				'popupMembershipTier1Content3',
-			],
-			2: [
-				'popupMembershipTier2Content1',
-				'popupMembershipTier2Content2',
-				'popupMembershipTier2Content3',
-				'popupMembershipTier2Content4',
-			],
-			3: [
-				'popupMembershipTier3Content1',
-				'popupMembershipTier3Content2',
-				'popupMembershipTier3Content3',
-				'popupMembershipTier3Content4',
-				'popupMembershipTier3Content5',
-			]
-		};
-
-		return content[tier];
 	};
 
 	onChangeEmail () {
-		this.currentTier = null;
-		this.forceUpdate();
+		this.setState({ isEditing: true });
 	};
+
 });
 
 export default PopupMembership;

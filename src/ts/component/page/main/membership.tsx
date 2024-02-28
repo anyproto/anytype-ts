@@ -51,9 +51,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				window.setTimeout(() => {
 					popupStore.open('membership', {
 						onClose: () => {
-							window.setTimeout(() => {
-								popupStore.open('settings', { data: { page: 'membership' } })
-							}, Constant.delay.popup);
+							window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup);
 						},
 						data: { tier: membership.tier, success: true }
 					});

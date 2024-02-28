@@ -61,8 +61,8 @@ class UtilData {
 			case I.BlockType.Div:
 				switch (v) {
 					default:
-					case I.DivStyle.Line:		 icon = 'div-line'; break;
-					case I.DivStyle.Dot:		 icon = 'dot'; break;
+					case I.DivStyle.Line:		 icon = 'divLine'; break;
+					case I.DivStyle.Dot:		 icon = 'divDot'; break;
 				};
 				break;
 		};
@@ -980,10 +980,10 @@ class UtilData {
 				return;
 			};
 
-			authStore.membershipSet(message);
+			authStore.membershipSet(message.membership);
 
 			if (callBack) {
-				callBack(message);
+				callBack(message.membership);
 			};
 		});
 	};

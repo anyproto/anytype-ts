@@ -5,9 +5,14 @@
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
 	"appName": "Anytype",
-	"storeSpaceId": "_anytype_marketplace",
 	"anyNameSpace": ".any",
 
+	"membershipTiers": {
+		"1": { "id": 1 },
+		"2": { "id": 2, "price": 99, "period": 1, "minNameLength": 7 },
+		"3": { "id": 3, "price": 399, "period": 5, "minNameLength": 5 }
+	},
+	
 	"networkId": {
 		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",
 		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD"
@@ -26,12 +31,6 @@
 	"embed": {
 		"googleMaps": { "key": "AIzaSyAgXu3wCb6mPJv4wNWKe2E3YycaYuqFm9o" }
 	},
-
-	"membershipTiers": [
-		{ "id": 1 },
-		{ "id": 2, "price": 99, "period": 1, "minNameLength": 7 },
-		{ "id": 3, "price": 399, "period": 5, "minNameLength": 5 }
-	],
 
 	"limit": {
 		"menuRecords": 100,
@@ -315,6 +314,8 @@
 		"date": "ot-date",
 		"profile": "ot-profile"
 	},
+
+	"storeSpaceId": "_anytype_marketplace",
 
 	"templateId": {
 		"blank": "blank",

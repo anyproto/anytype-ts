@@ -4,16 +4,12 @@ import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-interface Props {
-	tier: any;
-};
-
 interface State {
 	status: string,
 	statusText: string
 };
 
-const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends React.Component<Props, State> {
+const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends React.Component<I.Popup, State> {
 
 	state = {
 		status: '',
@@ -25,7 +21,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	refButtonCrypto: any = null;
 	timeout: any = null;
 
-	constructor (props: Props) {
+	constructor (props: I.Popup) {
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);
@@ -33,16 +29,14 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	render() {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
 		const { status, statusText } = this.state;
-		const { tier } = this.props;
-
-		let period = '';
-
-		if (tier.period == I.MembershipPeriod.Period1Year) {
-			period = translate('popupSettingsMembershipPerYear')
-		} else {
-			period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tier.period);
-		};
+		const tierItem = Constant.membershipTiers[tier];
+		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
+			translate('popupSettingsMembershipPerYear') : 
+			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
 
 		return (
 			<React.Fragment>
@@ -57,7 +51,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 				<div className="priceWrapper">
-					<span className="price">{`$${tier.price}`}</span>{period}
+					<span className="price">{`$${tierItem.price}`}</span>{period}
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCard)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
@@ -77,62 +71,54 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	onKeyUp () {
-		const { tier } = this.props;
-		const { minNameLength } = tier;
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+		const tierItem = Constant.membershipTiers[tier];
 		const name = this.refName.getValue();
 		const l = name.length;
 
-		if (this.timeout) {
-			window.clearTimeout(this.timeout);
-		};
 		this.disableButtons(true);
 
-		let status = '';
-		let statusText = '';
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			this.setState({ statusText: '' });
 
-		if (l) {
-			if (l < minNameLength) {
-				statusText = translate('popupMembershipStatusShortName');
-			} else {
-				statusText = translate('popupMembershipStatusWaitASecond');
-
-				this.timeout = window.setTimeout(() => {
-					C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
-						if (!message.available) {
-							this.setState({ status: 'error', statusText: translate('popupMembershipStatusNameNotAvailable') });
-							return;
-						};
-
-						this.disableButtons(false);
-						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
-					});
-				}, Constant.delay.keyboard);
+			if (l && (l < tierItem.minNameLength)) {
+				this.setState({ statusText: translate('popupMembershipStatusShortName') });
+				return;
 			};
-		};
 
-		this.setState({ status, statusText });
+			C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
+				let error = '';
+				if (message.error.code) {
+					error = message.error.description;
+				} else
+				if (!message.available) {
+					error = translate('popupMembershipStatusNameNotAvailable');
+				};
+
+				if (error) {
+					this.setState({ status: 'error', statusText: error });
+				} else {
+					this.disableButtons(false);
+					this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
+				};
+			});
+		}, Constant.delay.keyboard);
 	};
 
 	disableButtons (v: boolean) {
-		if (this.refButtonCard) {
-			this.refButtonCard.setDisabled(v);
-		};
-		if (this.refButtonCrypto) {
-			this.refButtonCrypto.setDisabled(v);
-		};
+		this.refButtonCard?.setDisabled(v);
+		this.refButtonCrypto?.setDisabled(v);
 	};
 
 	onPay (method: I.PaymentMethod) {
-		const { tier } = this.props;
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
 		const name = this.refName.getValue() + Constant.anyNameSpace;
-
-		let refButton;
-
-		if (method == I.PaymentMethod.MethodCard) {
-			refButton = this.refButtonCard;
-		} else {
-			refButton = this.refButtonCrypto;
-		};
+		const refButton = method == I.PaymentMethod.MethodCard ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 
@@ -149,6 +135,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			};
 		});
 	};
+
 });
 
 export default PopupMembershipPagePaid;

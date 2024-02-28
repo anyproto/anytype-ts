@@ -1242,13 +1242,14 @@ export const ObjectCreateBookmark = (details: any, spaceId: string, callBack?: (
 	dispatcher.request(ObjectCreateBookmark.name, request, callBack);
 };
 
-export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, callBack?: (message: any) => void) => {
+export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: string, url: string, withContent: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.CreateFromUrl.Request();
 
 	request.setDetails(Encode.struct(details));
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
+	//request.setAddpagecontent(withContent);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
@@ -1961,6 +1962,14 @@ export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => 
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
+};
+
+export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
+	//const request = new Rpc.Space.StopSharing.Request();
+
+	//request.setSpaceid(spaceId);
+
+	//dispatcher.request(SpaceStopSharing.name, request, callBack);
 };
 
 export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
