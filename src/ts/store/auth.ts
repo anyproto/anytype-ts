@@ -80,7 +80,7 @@ class AuthStore {
 		};
 	};
 
-	get membership (): any {
+	get membership (): I.Membership {
 		return this.membershipData;
 	};
 
@@ -116,7 +116,7 @@ class AuthStore {
 		this.appKey = String(v || '');
 	};
 
-	membershipSet (v: any) {
+	membershipSet (v: I.Membership) {
 		this.membershipData = v;
 	};
 

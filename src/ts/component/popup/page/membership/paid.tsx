@@ -38,7 +38,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		let period = '';
 
-		if (tier.period == 1) {
+		if (tier.period == I.MembershipPeriod.Period1Year) {
 			period = translate('popupSettingsMembershipPerYear')
 		} else {
 			period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tier.period);
@@ -87,25 +87,30 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 		this.disableButtons(true);
 
-		if (!l) {
-			this.setState({ status: '', statusText: '' });
-		} else if (l < minNameLength) {
-			this.setState({ status: '', statusText: translate('popupMembershipStatusShortName') });
-		} else {
-			this.setState({ status: '', statusText: translate('popupMembershipStatusWaitASecond') });
+		let status = '';
+		let statusText = '';
 
-			this.timeout = window.setTimeout(() => {
-				C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
-					if (!message.available) {
-						this.setState({ status: 'error', statusText: translate('popupMembershipStatusNameNotAvailable') });
-						return;
-					};
+		if (l) {
+			if (l < minNameLength) {
+				statusText = translate('popupMembershipStatusShortName');
+			} else {
+				statusText = translate('popupMembershipStatusWaitASecond');
 
-					this.disableButtons(false);
-					this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
-				});
-			}, Constant.delay.keyboard);
+				this.timeout = window.setTimeout(() => {
+					C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
+						if (!message.available) {
+							this.setState({ status: 'error', statusText: translate('popupMembershipStatusNameNotAvailable') });
+							return;
+						};
+
+						this.disableButtons(false);
+						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
+					});
+				}, Constant.delay.keyboard);
+			};
 		};
+
+		this.setState({ status, statusText });
 	};
 
 	disableButtons (v: boolean) {

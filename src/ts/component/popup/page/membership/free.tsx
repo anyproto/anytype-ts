@@ -108,9 +108,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onCheck () {
-		const value = !this.refCheckbox.getValue();
-
-		this.refCheckbox.setValue(value);
+		this.refCheckbox.toggle();
 	};
 
 	onVerifyEmail () {
@@ -142,17 +140,13 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onResend () {
-		const { countdown } = this.state;
-
-		if (countdown) {
-			return;
+		if (!this.state.countdown) {
+			this.onVerifyEmail();
 		};
-
-		this.onVerifyEmail();
 	};
 
-	setStatus (status: string, text: string) {
-		this.setState({ status, statusText: text });
+	setStatus (status: string, statusText: string) {
+		this.setState({ status, statusText });
 
 		if (this.timeout) {
 			window.clearTimeout(this.timeout);
