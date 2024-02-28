@@ -541,13 +541,7 @@ class Keyboard {
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, {
-					zip: true, 
-					nested: true, 
-					files: true, 
-					archived: true, 
-					route: 'MenuSystem',
-				});
+				popupStore.open('export', { data: { objectIds: [ rootId ], route: 'MenuSystem', allowHtml: true } });
 				break;
 			};
 
@@ -777,21 +771,21 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ]);
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'blockContext' ], () => {
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 10,
 				classNameWrap: 'fromHeader',
+				passThrough: true,
 				data: {
 					isPopup,
 					value,
 					route,
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onSearchPopup (route: string) {

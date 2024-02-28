@@ -164,12 +164,12 @@
 	"electronMenuLogs": "Show Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
-	"electronMenuSaveAs": "Save as file",
+	"electronMenuSaveAs": "Export Object",
 	"electronMenuDebugSpace": "Space",
 	"electronMenuDebugObject": "Current Object",
 	"electronMenuDebugProcess": "Process",
 	"electronMenuDebugTree": "Tree diagnostics",
-	"electronMenuClose": "Close window",
+	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
 	"electronMenuRedo": "Redo",
@@ -180,7 +180,7 @@
 	"electronMenuSearch": "Search",
 	"electronMenuPrint": "Print",
 	"electronMenuWindow": "Window",
-	"electronMenuNewWindow": "New window",
+	"electronMenuNewWindow": "New Window",
 	"electronMenuSearchObject": "Search Object",
 	"electronMenuMinimise": "Minimise",
 	"electronMenuZoomIn": "Zoom in",
@@ -669,10 +669,6 @@
 	"popupSettingsSpacesListNetwork": "Network",
 	"popupSettingsSpacesListDevice": "Device",
 
-	"popupSettingsSpacesMenuMoreOffload": "Offload from the device",
-	"popupSettingsSpacesMenuMoreLeave": "Leave and unjoin space",
-	"popupSettingsSpacesMenuMoreDeleteFromNetwork": "Delete from the network",
-
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
@@ -748,6 +744,8 @@
 	"popupSettingsSpaceShareMembersViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
+	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
+	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
 
@@ -1737,7 +1735,7 @@
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
 
-	"spaceStatus0": "Unknown",
+	"spaceStatus0": "Active",
 	"spaceStatus1": "Loading",
 	"spaceStatus2": "Ok",
 	"spaceStatus3": "Missing",

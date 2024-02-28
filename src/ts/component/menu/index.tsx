@@ -897,7 +897,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-
 		const refInput = this.ref.refFilter || this.ref.refName;
 		if ((this.ref.n == -1) && refInput) {
 			refInput.focus();

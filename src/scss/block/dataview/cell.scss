@@ -79,7 +79,7 @@
 	.element {
 		.iconObject { margin: 0px !important; }
 		.flex { align-items: center; gap: 0px 4px; }
-		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+		.name { line-height: 18px; width: 100%; @include text-overflow-nw; }
 	}
 }
 .cellContent.c-object.canEdit {

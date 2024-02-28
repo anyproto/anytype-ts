@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.38.21-alpha",
+	"version": "0.38.23-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -167,10 +167,7 @@
 			}
 		],
 		"asarUnpack": [
-			"dist/main.js",
-			"dist/main.js.map",
 			"dist/index.html",
-			"dist/run.js",
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
@@ -215,9 +212,6 @@
 			"build",
 			"!dist/*",
 			"dist/index.html",
-			"dist/main.js",
-			"dist/main.js.map",
-			"dist/run.js",
 			"dist/embed/**/*",
 			"dist/challenge/**/*",
 			"dist/lib/**/*",
