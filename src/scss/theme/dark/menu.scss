@@ -39,7 +39,7 @@
             .icon.back { background-image: url('#{$themePath}/arrow/menu.svg'); }
         }
 
-        .item { background: none; }
+        .item { background: var(--color-bg-secondary); }
 		.item::before { background: rgba(238, 238, 238, 0); }
 
         .item {

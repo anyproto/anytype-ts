@@ -267,6 +267,7 @@ class DetailStore {
 		object.format = object.relationFormat;
 		object.maxCount = Number(object.relationMaxCount) || 0;
 		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
+		object.optionOrder = Relation.getArrayValue(object.relationOptionOrder);
 		object.isReadonlyRelation = Boolean(object.isReadonly);
 		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
@@ -276,10 +277,9 @@ class DetailStore {
 			object.name = translate('commonDeletedRelation');
 		};
 
-		delete(object.isReadonly);
-		delete(object.relationMaxCount);
-		delete(object.relationReadonlyValue);
-		delete(object.relationFormatObjectTypes);
+		for (const key of [ 'isReadonly', 'relationMaxCount', 'relationReadonlyValue', 'relationFormatObjectTypes', 'relationOptionOrder' ]) {
+			delete(object[key]);
+		};
 
 		return object;
 	};
@@ -288,7 +288,9 @@ class DetailStore {
 		object.text = Relation.getStringValue(object.name);
 		object.color = Relation.getStringValue(object.relationOptionColor);
 
-		delete(object.relationOptionColor);
+		for (const key of [ 'relationOptionColor' ]) {
+			delete(object[key]);
+		};
 
 		return object;
 	};
@@ -318,8 +320,9 @@ class DetailStore {
 		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
 
-		delete(object.participantPermissions);
-		delete(object.participantStatus);
+		for (const key of [ 'participantPermissions', 'participantStatus' ]) {
+			delete(object[key]);
+		};
 
 		return object;
 	};

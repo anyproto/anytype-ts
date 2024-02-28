@@ -13,7 +13,7 @@
 			.items { height: calc(100% - 38px); }
 		}
 
-		.item { padding-top: 5px; padding-bottom: 5px; }
+		.item { padding: 5px 14px 5px 8px; display: flex; align-items: center; }
 		.item {
 			.clickable { width: calc(100% - 20px); }
 			.buttons { display: none; position: absolute; right: 6px; top: 2px; }
