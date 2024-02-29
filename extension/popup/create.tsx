@@ -35,7 +35,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	state = {
 		error: '',
 		isLoading: false,
-		withContent: true,
+		withContent: false,
 	};
 
 	constructor (props: I.PageComponent) {
@@ -171,6 +171,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.initSpace();
 			this.initName();
 			this.initType();
+
+			this.setState({ withContent: Boolean(Number(Storage.get('withContent'))) });
 		});
 	};
 
@@ -440,7 +442,10 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onCheckbox () {
-		this.setState({ withContent: !this.state.withContent });
+		const { withContent } = this.state;
+
+		Storage.set('withContent', Number(!withContent));
+		this.setState({ withContent: !withContent });
 	};
 
 	scrollToBottom () {
