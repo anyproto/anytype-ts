@@ -1,9 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Loader } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
-import { observer } from 'mobx-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -14,6 +16,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	node: any = null;
+	swiper: any = null;
 	slideWidth: number = 0;
 
 	render () {
@@ -105,20 +108,29 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
-						<div className="slider">
-							<div style={style} className="feed">
-								{slides.map((slide, idx) => (
+						<Swiper
+							spaceBetween={16}
+							slidesPerView={'auto'}
+							initialSlide={1}
+							pagination={{
+								clickable: true,
+							}}
+							autoplay={{
+								waitForTransition: true,
+								delay: 4000,
+								disableOnInteraction: false,
+							}}
+							modules={[Pagination, Autoplay]}
+							centeredSlides={true}
+							loop={true}
+							onSwiper={swiper => this.onSwiper(swiper)}
+						>
+							{slides.map((slide: any, idx: number) => (
+								<SwiperSlide key={idx}>
 									<SlideItem key={idx} idx={idx} {...slide} />
-								))}
-							</div>
-							<div className="bullets">
-								{slides.map((slide, idx) => {
-									const cn = [ 'bullet', currentSlide == idx ? 'active' : '' ];
-
-									return <div className={cn.join(' ')} onClick={() => this.setState({ currentSlide: idx })} key={idx} />;
-								})}
-							</div>
-						</div>
+								</SwiperSlide>
+							))}
+						</Swiper>
 					</React.Fragment>
 				)}
 
@@ -148,6 +160,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	componentDidMount () {
 		this.resize();
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	resize () {

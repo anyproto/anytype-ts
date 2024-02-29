@@ -3,7 +3,6 @@ const { is } = require('electron-util');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
-const Api = require("./api");
 
 const Separator = { type: 'separator' };
 
