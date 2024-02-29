@@ -43,7 +43,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
-			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
+			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
 				<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
 				<div className="text">
 					<Title text={slide.title} />
