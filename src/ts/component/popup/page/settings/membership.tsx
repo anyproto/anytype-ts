@@ -35,10 +35,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		};
 
 		const slides = [
-			{ title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
-			{ title: translate('popupSettingsMembershipSlide1Title'), text: translate('popupSettingsMembershipSlide1Text') },
-			{ title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
-			{ title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
+			{ idx: 3, title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
+			{ idx: 0, title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
+			{ idx: 1, title: translate('popupSettingsMembershipSlide1Title'), text: translate('popupSettingsMembershipSlide1Text') },
+			{ idx: 2, title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
 		];
 		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
@@ -127,7 +127,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 						>
 							{slides.map((slide: any, idx: number) => (
 								<SwiperSlide key={idx}>
-									<SlideItem key={idx} idx={idx} {...slide} />
+									<SlideItem key={idx} {...slide} />
 								</SwiperSlide>
 							))}
 						</Swiper>
