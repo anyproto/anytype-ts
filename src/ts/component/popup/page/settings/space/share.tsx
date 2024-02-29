@@ -280,6 +280,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		button.addClass('loading');
 
 		popupStore.open('confirm', {
+			onClose: () => button.removeClass('loading'),
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
 				text: translate('popupConfirmRevokeLinkText'),
