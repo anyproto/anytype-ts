@@ -1,22 +1,7 @@
-import {
-	analytics,
-	C,
-	dispatcher,
-	focus,
-	I,
-	keyboard,
-	Mark,
-	Storage,
-	translate,
-	UtilCommon,
-	UtilObject,
-	UtilRouter
-} from 'Lib';
+import { analytics, C, dispatcher, focus, I, keyboard, Mark, Storage, translate, UtilCommon, UtilObject, UtilRouter } from 'Lib';
 import { authStore, blockStore, commonStore, dbStore, detailStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
-import { MembershipTier } from 'Interface';
-import { MembershipTierItem } from 'Interface/payment';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -1020,7 +1005,7 @@ class UtilData {
 				minNameLength: 7,
 			},
 			{
-				id: testPayment ? I.MembershipTier.CoCreator1WeekTEST : MembershipTier.CoCreator1Year,
+				id: testPayment ? I.MembershipTier.CoCreator1WeekTEST : I.MembershipTier.CoCreator1Year,
 				idx: 3,
 				price: I.MembershipPrice.Price5Years,
 				period: I.MembershipPeriod.Period5Years,

@@ -6,6 +6,7 @@ import { I, C, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
+import arrayMove from 'array-move';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -34,12 +35,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 		};
 
-		const slides = [
-			{ idx: 3, title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
-			{ idx: 0, title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
-			{ idx: 1, title: translate('popupSettingsMembershipSlide1Title'), text: translate('popupSettingsMembershipSlide1Text') },
-			{ idx: 2, title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
-		];
+		let slides = [];
+		for (let i = 0; i < 4; i++) {
+			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) })
+		};
+		slides = arrayMove(slides, 3, 0);
+
+
 		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
