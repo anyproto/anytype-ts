@@ -23,10 +23,16 @@
 		.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
 		.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
 		.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
+
+		ul { padding-left: 1.25em; }
 	}
 
 	.popup.popupConfirm.isWide {
 		.innerWrap { width: 640px; }
+	}
+
+	.popup.popupConfirm.shareMoreInfo {
+		.innerWrap { width: 548px; }
 	}
 
 	.popup.popupConfirm.techInfo {
