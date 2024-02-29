@@ -37,10 +37,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 		let slides = [];
 		for (let i = 0; i < 4; i++) {
-			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) })
+			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) });
 		};
+		// swiper has weird bug with setting initial slide to 0 with autoplay and loop enabled
+		// so in order to keep the flow as it was designed we move last element to position 0
 		slides = arrayMove(slides, 3, 0);
-
 
 		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
