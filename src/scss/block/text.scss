@@ -82,7 +82,7 @@
 					> .flex {
 						> .editableWrap { flex: auto; padding: 0px; width: 100%; }
 						> .editableWrap {
-							#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; position: relative; z-index: 1; user-select: text; padding: 1px 0px; }
+							#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; position: relative; z-index: 2; user-select: text; padding: 1px 0px; }
 							#value * { user-select: text !important; }
 							#value.isFocused { background: none; }
 						}
@@ -90,7 +90,7 @@
 				}
 			}
 
-			> .selectable.isSelectionSelected::after { z-index: 0; }
+			> .selectable.isSelectionSelected::after { z-index: 1; }
 		}
 	}
 
