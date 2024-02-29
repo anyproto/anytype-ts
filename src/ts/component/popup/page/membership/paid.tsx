@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -33,7 +33,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
-		const tierItem = Constant.membershipTiers[tier];
+		const tiers = UtilData.getMembershipTiersMap();
+		const tierItem = tiers[tier];
 		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
 			translate('popupSettingsMembershipPerYear') : 
 			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
@@ -74,21 +75,23 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = Constant.membershipTiers[tier];
+		const tiers = UtilData.getMembershipTiersMap();
+		const tierItem = tiers[tier];
 		const name = this.refName.getValue();
 		const l = name.length;
 
 		this.disableButtons(true);
 
+		this.setState({ statusText: '', status: '' });
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ statusText: '' });
 
 			if (l && (l < tierItem.minNameLength)) {
 				this.setState({ statusText: translate('popupMembershipStatusShortName') });
 				return;
 			};
 
+			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
 			C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
 				let error = '';
 				if (message.error.code) {
@@ -122,7 +125,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		refButton.setLoading(true);
 
-		C.PaymentsSubscriptionGetPaymentUrl(tier.id, method, name, (message) => {
+		C.PaymentsSubscriptionGetPaymentUrl(tier, method, name, (message) => {
 			refButton.setLoading(false);
 
 			if (message.error.code) {

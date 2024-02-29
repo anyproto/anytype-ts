@@ -1,9 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Button, Icon, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
-import { popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Title, Label, Button, Icon, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
+import { popupStore, authStore } from 'Store';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+import arrayMove from 'array-move';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -14,6 +17,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	node: any = null;
+	swiper: any = null;
 	slideWidth: number = 0;
 
 	render () {
@@ -31,28 +35,17 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 		};
 
-		const slides = [
-			{ title: translate('popupSettingsMembershipSlide0Title'), text: translate('popupSettingsMembershipSlide0Text') },
-			{ title: translate('popupSettingsMembershipSlide1Title'), text: translate('popupSettingsMembershipSlide1Text') },
-			{ title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
-			{ title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
-		];
-		const tiers = [
-			{ id: I.MembershipTier.Explorer },
-			{
-				id: I.MembershipTier.Builder1WeekTEST,
-				price: I.MembershipPrice.Price1Year,
-				period: I.MembershipPeriod.Period1Year
-			},
-			{
-				id: I.MembershipTier.CoCreator1WeekTEST,
-				price: I.MembershipPrice.Price5Years,
-				period: I.MembershipPeriod.Period5Years
-			},
-		].filter(it => it.id > currentTier);
+		let slides = [];
+		for (let i = 0; i < 4; i++) {
+			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) })
+		};
+		slides = arrayMove(slides, 3, 0);
+
+
+		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
-			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
+			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
 				<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
 				<div className="text">
 					<Title text={slide.title} />
@@ -86,12 +79,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 
 			return (
-				<div className={[ 'tier', `tier${item.id}`, isCurrent ? 'current' : '' ].join(' ')}>
+				<div className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}>
 					<div className="top">
 						{currentLabel}
-						<div className={[ 'icon', `tier${item.id}` ].join(' ')} />
-						<Title text={translate(`popupSettingsMembershipTitle${item.id}`)} />
-						<Label text={translate(`popupSettingsMembershipDescription${item.id}`)} />
+						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
+						<Title text={translate(`popupSettingsMembershipTitle${item.idx}`)} />
+						<Label text={translate(`popupSettingsMembershipDescription${item.idx}`)} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
@@ -117,20 +110,29 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
-						<div className="slider">
-							<div style={style} className="feed">
-								{slides.map((slide, idx) => (
-									<SlideItem key={idx} idx={idx} {...slide} />
-								))}
-							</div>
-							<div className="bullets">
-								{slides.map((slide, idx) => {
-									const cn = [ 'bullet', currentSlide == idx ? 'active' : '' ];
-
-									return <div className={cn.join(' ')} onClick={() => this.setState({ currentSlide: idx })} key={idx} />;
-								})}
-							</div>
-						</div>
+						<Swiper
+							spaceBetween={16}
+							slidesPerView={'auto'}
+							initialSlide={1}
+							pagination={{
+								clickable: true,
+							}}
+							autoplay={{
+								waitForTransition: true,
+								delay: 4000,
+								disableOnInteraction: false,
+							}}
+							modules={[Pagination, Autoplay]}
+							centeredSlides={true}
+							loop={true}
+							onSwiper={swiper => this.onSwiper(swiper)}
+						>
+							{slides.map((slide: any, idx: number) => (
+								<SwiperSlide key={idx}>
+									<SlideItem key={idx} {...slide} />
+								</SwiperSlide>
+							))}
+						</Swiper>
 					</React.Fragment>
 				)}
 
@@ -160,6 +162,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	componentDidMount () {
 		this.resize();
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	resize () {

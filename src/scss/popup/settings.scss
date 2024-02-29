@@ -709,9 +709,11 @@
 			.membershipTitle { font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; margin-bottom: 0px; }
 			.description { text-align: center; }
 
-			.slider { margin-bottom: 8px; }
-			.slider {
-				.feed { display: flex; position: relative; transition: left 400ms $easeInQuint; flex-wrap: nowrap; gap: 0px 16px; margin-bottom: 10px; }
+			.swiper { margin-bottom: 8px; margin-left: -31px; width: calc(100% + 62px); }
+			.swiper {
+				.swiper-wrapper { margin-bottom: 10px; }
+				.swiper-slide { width: calc(100% - 62px); }
+
 				.slide { display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 32px 0px 24px; width: 100%; height: 288px; border-radius: 12px; flex-shrink: 0; }
 				.slide {
 					.title { @include text-header3; margin-bottom: 4px; }
@@ -732,11 +734,11 @@
 				.slide.slide2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
 				.slide.slide3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
 
-				.bullets { display: flex; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
-				.bullets {
-					.bullet { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
-					.bullet:hover { background-color: var(--color-control-active); }
-					.bullet.active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+				.swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+				.swiper-pagination {
+					.swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
+					.swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
+					.swiper-pagination-bullet.swiper-pagination-bullet-active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
 				}
 			}
 
