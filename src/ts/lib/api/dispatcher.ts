@@ -984,7 +984,7 @@ class Dispatcher {
 						break;
 					};
 
-					let payload = {};
+					let payload: any = {};
 					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
 
 					switch (payload.type) {
