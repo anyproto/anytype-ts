@@ -49,7 +49,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				price: I.MembershipPrice.Price5Years,
 				period: I.MembershipPeriod.Period5Years
 			},
-		].filter(it => it.id > currentTier);
+		].filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
 			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
