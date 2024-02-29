@@ -74,7 +74,7 @@ import { ContentRelation } from './block/relation';
 import { EmbedProcessor, ContentEmbed } from './block/embed';
 import { BlockComponentTable, ContentTableRow } from './block/table';
 import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
-import { MembershipTier, Membership, MembershipStatus, PaymentMethod, MembershipPrice, MembershipPeriod } from './payment';
+import { MembershipTier, Membership, MembershipTierItem, MembershipStatus, PaymentMethod, MembershipPrice, MembershipPeriod } from './payment';
 
 export {
 	Account,
@@ -241,6 +241,7 @@ export {
 
 	MembershipTier,
 	Membership,
+	MembershipTierItem,
 	MembershipStatus,
 	PaymentMethod,
 	MembershipPrice,

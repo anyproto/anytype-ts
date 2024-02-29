@@ -3,6 +3,7 @@ const { is } = require('electron-util');
 const path = require('path');
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
+const Api = require("./api");
 
 const Separator = { type: 'separator' };
 
@@ -232,6 +233,16 @@ class MenuManager {
 					label: 'Experimental features', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						Api.setConfig(this.win, { experimental: !config.experimental });
+						this.win.reload();
+					}
+				},
+
+				Separator,
+
+				{
+					label: 'Test payment', type: 'checkbox', checked: config.testPayment,
+					click: () => {
+						Api.setConfig(this.win, { testPayment: !config.testPayment });
 						this.win.reload();
 					}
 				},

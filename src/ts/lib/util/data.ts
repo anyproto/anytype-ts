@@ -1,7 +1,22 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
+import {
+	analytics,
+	C,
+	dispatcher,
+	focus,
+	I,
+	keyboard,
+	Mark,
+	Storage,
+	translate,
+	UtilCommon,
+	UtilObject,
+	UtilRouter
+} from 'Lib';
+import { authStore, blockStore, commonStore, dbStore, detailStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
+import { MembershipTier } from 'Interface';
+import { MembershipTierItem } from 'Interface/payment';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -986,6 +1001,36 @@ class UtilData {
 				callBack(message.membership);
 			};
 		});
+	};
+
+	getMembershipTiers (): I.MembershipTierItem[] {
+		const { config } = commonStore;
+		const { testPayment } = config;
+
+		return [
+			{
+				id: I.MembershipTier.Explorer,
+				idx: 1
+			},
+			{
+				id: testPayment ? I.MembershipTier.Builder1WeekTEST : I.MembershipTier.Builder1Year,
+				idx: 2,
+				price: I.MembershipPrice.Price1Year,
+				period: I.MembershipPeriod.Period1Year,
+				minNameLength: 7,
+			},
+			{
+				id: testPayment ? I.MembershipTier.CoCreator1WeekTEST : MembershipTier.CoCreator1Year,
+				idx: 3,
+				price: I.MembershipPrice.Price5Years,
+				period: I.MembershipPeriod.Period5Years,
+				minNameLength: 5,
+			}
+		];
+	};
+
+	getMembershipTiersMap () {
+		return UtilCommon.mapToObject(this.getMembershipTiers(), 'id');
 	};
 };
 

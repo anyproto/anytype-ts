@@ -24,6 +24,14 @@ export interface Membership {
 	error?: any;
 	middleTime?: number;
 };
+
+export interface MembershipTierItem {
+	id: MembershipTier;
+	idx: number;
+	price?: MembershipPrice;
+	period?: MembershipPeriod;
+	minNameLength?: number;
+};
             
 export enum MembershipStatus {
 	Unknown			 = 0,

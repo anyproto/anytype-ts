@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Icon, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
+import { I, C, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Url from 'json/url.json';
@@ -37,19 +37,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			{ title: translate('popupSettingsMembershipSlide2Title'), text: UtilCommon.sprintf(translate('popupSettingsMembershipSlide2Text'), Url.vision) },
 			{ title: translate('popupSettingsMembershipSlide3Title'), text: translate('popupSettingsMembershipSlide3Text') },
 		];
-		const tiers = [
-			{ id: I.MembershipTier.Explorer },
-			{
-				id: I.MembershipTier.Builder1WeekTEST,
-				price: I.MembershipPrice.Price1Year,
-				period: I.MembershipPeriod.Period1Year
-			},
-			{
-				id: I.MembershipTier.CoCreator1WeekTEST,
-				price: I.MembershipPrice.Price5Years,
-				period: I.MembershipPeriod.Period5Years
-			},
-		].filter(it => it.id >= currentTier);
+		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
 			<div onClick={() => this.setState({ currentSlide: slide.idx })} className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
@@ -86,12 +74,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 
 			return (
-				<div className={[ 'tier', `tier${item.id}`, isCurrent ? 'current' : '' ].join(' ')}>
+				<div className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}>
 					<div className="top">
 						{currentLabel}
-						<div className={[ 'icon', `tier${item.id}` ].join(' ')} />
-						<Title text={translate(`popupSettingsMembershipTitle${item.id}`)} />
-						<Label text={translate(`popupSettingsMembershipDescription${item.id}`)} />
+						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
+						<Title text={translate(`popupSettingsMembershipTitle${item.idx}`)} />
+						<Label text={translate(`popupSettingsMembershipDescription${item.idx}`)} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">

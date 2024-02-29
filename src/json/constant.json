@@ -6,12 +6,6 @@
 	"protocol": "anytype",
 	"appName": "Anytype",
 	"anyNameSpace": ".any",
-
-	"membershipTiers": {
-		"1": { "id": 1 },
-		"2": { "id": 2, "price": 99, "period": 1, "minNameLength": 7 },
-		"3": { "id": 3, "price": 399, "period": 5, "minNameLength": 5 }
-	},
 	
 	"networkId": {
 		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",

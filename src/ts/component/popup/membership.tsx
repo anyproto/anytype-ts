@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { I, translate } from 'Lib';
+import { I, translate, UtilData } from 'Lib';
 import { authStore } from 'Store';
 
 import PageFree from './page/membership/free';
@@ -32,7 +32,11 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { data } = param;
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
-		const cn = [ 'sides', `tier${tier}` ];
+
+		const tiers = UtilData.getMembershipTiersMap();
+		const tierItem = tiers[tier];
+		const suffix = tierItem.idx;
+		const cn = [ 'sides', `tier${suffix}` ];
 
 		let content: any = null;
 
@@ -53,8 +57,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 			<div className={cn.join(' ')}>
 				<div className="side left">
 					<Icon />
-					<Title text={translate(`popupSettingsMembershipTitle${tier}`)} />
-					<Label text={translate(`popupSettingsMembershipDescription${tier}`)} />
+					<Title text={translate(`popupSettingsMembershipTitle${suffix}`)} />
+					<Label text={translate(`popupSettingsMembershipDescription${suffix}`)} />
 
 					<div className="contentList">
 						<Label text={translate('popupMembershipWhatsIncluded')} />
