@@ -111,22 +111,26 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'remove':
+						case 'remove': {
 							Action.removeSpace(space.targetSpaceId, 'ScreenSettings');
 							break;
+						};
 
-						case 'cancel':
+						case 'cancel': {
 							C.SpaceJoinCancel(space.targetSpaceId, (message: any) => {
 								if (message.error.code) {
-									popupStore.open('confirm', {
-										data: {
-											title: translate('commonError'),
-											text: message.error.description,
-										}
-									});
+									window.setTimeout(() => {
+										popupStore.open('confirm', {
+											data: {
+												title: translate('commonError'),
+												text: message.error.description,
+											}
+										});
+									}, Constant.delay.popup);
 								};
 							});
 							break;
+						};
 					};
 				}
 			}
