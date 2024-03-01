@@ -139,8 +139,8 @@
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
 	"pluralUCRelation": "Relation|Relations",
-	"pluralLinks": "link from|links from",
-	"pluralBacklinks": "link to|links to",
+	"pluralLinks": "link|links",
+	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
 
 	"electronAboutVersion": "Version:",
