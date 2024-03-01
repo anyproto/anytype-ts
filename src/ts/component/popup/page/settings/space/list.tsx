@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, C, UtilObject, UtilRouter, translate, Action } from 'Lib';
-import { popupStore, dbStore, detailStore, menuStore } from 'Store';
+import { popupStore, dbStore, detailStore, menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
@@ -13,6 +13,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	render () {
+		const { accountSpaceId } = authStore;
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {
@@ -20,6 +21,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			const participant = UtilObject.getMyParticipant(space.targetSpaceId);
 			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
 			const permissions = participant ? translate(`participantPermissions${participant.permissions}`) : '';
+			const hasMenu = space.targetSpaceId != accountSpaceId;
 
 			return (
 				<tr>
@@ -42,9 +44,11 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
 
 					<td className="columnMore">
-						<div id={`icon-more-${space.id}`} onClick={() => this.onMore(space)} className="iconWrap">
-							<Icon className="more" />
-						</div>
+						{hasMenu ? (
+							<div id={`icon-more-${space.id}`} onClick={() => this.onMore(space)} className="iconWrap">
+								<Icon className="more" />
+							</div>
+						) : ''}
 					</td>
 				</tr>
 			);
@@ -108,7 +112,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'remove':
-							Action.removeSpace(item.targetSpaceId, 'ScreenSettings');
+							Action.removeSpace(space.targetSpaceId, 'ScreenSettings');
 							break;
 
 						case 'cancel':

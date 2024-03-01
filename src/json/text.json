@@ -750,6 +750,17 @@
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
 
+	"popupConfirmUpdatePromptTitle": "Update available",
+	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
+	"popupConfirmUpdatePromptRestartOk": "Restart and update",
+	"popupConfirmUpdatePromptOk": "Update",
+	"popupConfirmUpdatePromptCancel": "Later",
+	"popupConfirmUpdateDoneTitle": "You are up-to-date",
+	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
+	"popupConfirmUpdateDoneOk": "Great!",
+	"popupConfirmUpdateErrorTitle": "Oops!",
+	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
 	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
 	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
@@ -763,6 +774,9 @@
 	"popupConfirmRevokeLinkTitle": "Revoke sharing link",
 	"popupConfirmRevokeLinkText": "A new link will be generated and the previous link will be deactivated.",
 	"popupConfirmRevokeLinkConfirm": "Revoke link",
+
+	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
+	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
 
 	"popupSettingsSpaceLeave": "Leave %s?",
 	"popupSettingsSpaceLeaveTitle": "Leave space",
@@ -868,17 +882,6 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
-
-	"popupConfirmUpdatePromptTitle": "Update available",
-	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
-	"popupConfirmUpdatePromptRestartOk": "Restart and update",
-	"popupConfirmUpdatePromptOk": "Update",
-	"popupConfirmUpdatePromptCancel": "Later",
-	"popupConfirmUpdateDoneTitle": "You are up-to-date",
-	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
-	"popupConfirmUpdateDoneOk": "Great!",
-	"popupConfirmUpdateErrorTitle": "Oops!",
-	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",

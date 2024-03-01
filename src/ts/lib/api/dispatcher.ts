@@ -984,14 +984,13 @@ class Dispatcher {
 						break;
 					};
 
-					const payload = JSON.parse(data.getPayload());
+					let payload: any = {};
+					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
 
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
-							if (electron.focus) {
-								electron.focus();
-							};
+							window.focus();
 							break;
 						};
 					};
