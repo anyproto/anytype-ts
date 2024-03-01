@@ -991,6 +991,10 @@ class Dispatcher {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
 							window.focus();
+
+							if (electron.focus) {
+								electron.focus();
+							};
 							break;
 						};
 					};
