@@ -228,10 +228,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onScrollLeft () {
+		const { isPopup } = this.props;
 		const node = $(this.node);
 		const sideLeft = node.find('#body > #sideLeft');
+		const container = UtilCommon.getScrollContainer(isPopup);
 		
 		this.scrollLeft = sideLeft.scrollTop();
+		container.trigger('scroll');
 	};
 
 	onScrollRight () {
