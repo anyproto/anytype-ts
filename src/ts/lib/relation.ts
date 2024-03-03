@@ -303,7 +303,7 @@ class Relation {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && (it.relationKey != 'done');
+			return relation && (it.relationKey != 'done') && ![ I.RelationType.File ].includes(relation.format);
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
