@@ -218,6 +218,7 @@
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
+			"!dist/js/main.js.map",
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"dist/nativeMessagingHost.exe",
