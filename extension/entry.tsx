@@ -24,7 +24,7 @@ declare global {
 window.$ = $;
 window.isExtension = true;
 window.Electron = {
-	currentWindow: () => ({ windowId: 1 }),
+	currentWindow: () => ({}),
 	Api: () => {},
 };
 
@@ -41,7 +41,7 @@ window.AnytypeGlobalConfig = {
 	emojiUrl: Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
 	menuBorderBottom: 16, 
-	debug: {},
+	debug: { mw: true },
 };
 
 let rootId = '';

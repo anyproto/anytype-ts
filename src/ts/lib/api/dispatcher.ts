@@ -23,7 +23,7 @@ const SORT_IDS = [
 	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText' ];
+const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage' ];
 
 class Dispatcher {
 
@@ -166,6 +166,7 @@ class Dispatcher {
 		const electron = UtilCommon.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
+		const isMainWindow = windowId === 1;
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -224,7 +225,7 @@ class Dispatcher {
 				};
 
 				case 'accountLinkChallenge': {
-					if (windowId !== 1) {
+					if (!isMainWindow) {
 						break;
 					};
 
@@ -237,6 +238,7 @@ class Dispatcher {
 						theme: commonStore.getThemeClass(),
 						lang: commonStore.interfaceLang,
 					}, '*'), false);
+					win.focus();
 
 					window.setTimeout(() => {
 						try { win.close(); } catch (e) { /**/ };
@@ -968,7 +970,7 @@ class Dispatcher {
 
 					notificationStore.add(item);
 
-					if ((windowId == 1) && !electron.isFocused()) {
+					if (isMainWindow && !electron.isFocused()) {
 						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
@@ -980,15 +982,18 @@ class Dispatcher {
 				};
 
 				case 'payloadBroadcast': {
-					if (electron.currentWindow().windowId !== 1) {
+					if (!isMainWindow) {
 						break;
 					};
 
-					const payload = JSON.parse(data.getPayload());
+					let payload: any = {};
+					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
 
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
+							window.focus();
+
 							if (electron.focus) {
 								electron.focus();
 							};

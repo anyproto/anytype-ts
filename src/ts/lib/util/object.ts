@@ -84,19 +84,20 @@ class UtilObject {
 		return object._empty_ ? null : object;
 	};
 
-	getMyParticipant (spaceId: string) {
+	getMyParticipant (spaceId?: string) {
 		const { account } = authStore;
+		const { space } = commonStore;
 
 		if (!account) {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(spaceId, account.id));
+		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(spaceId || space, account.id));
 		return object._empty_ ? null : object;
 	};
 
-	canParticipantWrite (): boolean {
-		const participant = this.getParticipant();
+	canParticipantWrite (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId);
 		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
