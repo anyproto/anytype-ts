@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.38.27-beta",
+	"version": "0.38.29-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -218,6 +218,7 @@
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
+			"!dist/js/main.js.map",
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"dist/nativeMessagingHost.exe",
