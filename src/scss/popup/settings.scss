@@ -773,10 +773,12 @@
 				};
 			}
 
-			.actionItems { margin-bottom: 0 !important; }
+			.actionItems { margin-bottom: 28px; }
 			.actionItems {
 				.icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
 			}
+
+			.special {}
 		}
 	}
 
