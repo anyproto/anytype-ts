@@ -760,7 +760,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (!commonFilter) {
+		if (!commonFilter && !keyboard.isFocused) {
 			shortcutClose.push('arrowleft');
 			shortcutSelect.push('arrowright');
 		};
@@ -896,7 +896,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
-
 
 		const refInput = this.ref.refFilter || this.ref.refName;
 		if ((this.ref.n == -1) && refInput) {

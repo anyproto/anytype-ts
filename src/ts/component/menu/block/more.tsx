@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, Storage } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -94,6 +94,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
+		const { config } = commonStore;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -165,10 +166,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		const allowedArchive = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectCollection();
-		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
+		const allowedPageLink = config.experimental;
 		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
@@ -195,6 +197,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (allowedUninstall)	 archive = null;
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedLinkTo)		 linkTo = null;
+		if (!allowedPageLink)	 pageLink = null;
 
 		let sections = [];
 		if (hasShortMenu) {
@@ -447,7 +450,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true } });
+				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route: ROUTE } });
 				break;
 			};
 				
@@ -478,7 +481,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageCreate': {
 				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					UtilObject.openAuto({ id: message.targetId, layout: object.layout });
+					UtilObject.openAuto(message.details);
 
 					analytics.event('CreateObject', {
 						route: ROUTE,
@@ -490,7 +493,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
+				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.universalRoute(object) });
 				analytics.event('CopyLink', { ROUTE });
 				break;
 			};

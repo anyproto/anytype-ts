@@ -94,7 +94,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 							total={pages} 
 							pageLimit={1}
 							isShort={true}
-							onChange={(page: number) => { this.setState({ page }); }} 
+							onChange={page => this.setState({ page })} 
 						/>
 					);
 				};
@@ -221,8 +221,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onDocumentLoad (result: any) {
-		const { numPages } = result;
-		this.setState({ pages: numPages });
+		this.setState({ pages: result.numPages });
 	};
 
 	onPageRender () {

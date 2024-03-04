@@ -14,7 +14,7 @@
 		.sides { display: flex; }
 
 		.info { 
-			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
+			padding: 6.5px 2px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
 			display: flex; align-items: flex-start; gap: 0px 6px;
 		}
 		.info.noValue { width: 100%; color: var(--color-text-tertiary); }
@@ -39,7 +39,7 @@
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
 		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-		.cell.c-select { padding: 8px; line-height: 18px; }
+		.cell.c-select { padding: 6.5px 8px; line-height: 18px; }
 		.cell.c-select {
 			.empty { line-height: 24px; }
 		}

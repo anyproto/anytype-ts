@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate } from 'Lib';
+import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 import { menuStore, dbStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -128,6 +128,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				break;
 			};
 			
+			case I.RelationType.File:
 			case I.RelationType.Object: {
 				Item = (element: any) => {	
 					const type = dbStore.getTypeById(element.type);
@@ -656,6 +657,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const relation = dbStore.getRelationByKey(item.relationKey);
+		const filters = [];
+
+		if (relation.format == I.RelationType.File) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
+		};
 
 		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
 			menuStore.open('dataviewObjectList', { 
@@ -670,6 +676,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					blockId,
 					value: item.value, 
 					types: relation.objectTypes,
+					filters,
 					relation: observable.box(relation),
 					canAdd: true,
 					onChange: (value: any, callBack?: () => void) => {

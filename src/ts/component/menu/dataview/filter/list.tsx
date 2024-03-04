@@ -32,7 +32,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	};
 	
 	render () {
-		const { param, getId } = this.props;
+		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
@@ -138,8 +138,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd}
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => this.props.setHover()}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewFilterNewFilter')}</div>

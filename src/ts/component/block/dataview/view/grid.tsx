@@ -31,10 +31,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, getKeys, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
-		const subId = dbStore.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
@@ -55,8 +54,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						<BodyRow 
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
-							readonly={!isAllowedObject}
-							record={detailStore.get(subId, records[index], getKeys(view.id))}
+							recordId={records[index]}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
 						/>
@@ -87,10 +85,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 												onRowsRendered={onRowsRendered}
 												rowRenderer={({ key, index, style }) => (
 													<BodyRow 
-														key={'grid-row-' + view.id + index} 
+														key={`grid-row-${view.id + index}`} 
 														{...this.props} 
-														readonly={!isAllowedObject}
-														record={detailStore.get(subId, records[index], getKeys(view.id))}
+														recordId={records[index]}
 														style={{ ...style, top: style.top + 2 }}
 														cellPosition={this.cellPosition}
 														getColumnWidths={this.getColumnWidths}

@@ -7,6 +7,9 @@ export enum SpaceStatus {
 	RemoteWaitingDeletion	 = 5,
 	RemoteDeleted			 = 6,
 	Deleted					 = 7,
+	Active					 = 8,
+	Joining					 = 9,
+	Removing				 = 10,
 };
 
 export enum SpaceType {
@@ -28,4 +31,5 @@ export enum ParticipantStatus {
 	Removed			 = 2,
 	Declined		 = 3,
 	Removing		 = 4,
+	Canceled		 = 5,
 };

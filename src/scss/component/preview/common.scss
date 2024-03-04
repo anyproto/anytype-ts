@@ -42,7 +42,7 @@
 	.previewHeader {
 		.iconObject { flex-shrink: 0; }
 	}
-    .name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; width: calc(100% - 22px); }
+    .name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; width: calc(100% - 22px); line-height: 20px; }
     .descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
     .featured { @include text-very-small; color: var(--color-control-active); }
 }

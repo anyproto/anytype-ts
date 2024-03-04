@@ -91,7 +91,7 @@
 	}
 
 	.block.blockEmbed.isReadonly {
-		.icon.resize { display: none; }
+		.icon.resize, .icon.source { display: none; }
 	}
 
 	.block.blockEmbed.align1 { 

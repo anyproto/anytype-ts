@@ -362,7 +362,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'export': {
-				popupStore.open('export', { data: { objectIds } });
+				popupStore.open('export', { data: { objectIds, route } });
 				break;
 			};
 		};

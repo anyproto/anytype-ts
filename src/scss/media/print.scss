@@ -16,6 +16,7 @@ html.printMedia {
 	.notifications,
 	#navigationPanel,
 	#sidebar,
+	#listWidget,
 	.sidebarDummy,
 	.progress,
 	.toast,
@@ -29,6 +30,15 @@ html.printMedia {
 	.popups {
 		.popup { position: relative; }
 		.dimmer { display: none !important; }
+
+		.popup.popupPage {
+			.innerWrap { 
+				width: 100% !important; height: auto !important; margin: 0px !important; left: 0px; top: 0px; 
+				border-radius: 0px; box-shadow: 0px 0px; overflow: visible; position: static;
+			}
+		}
+
+		.popup.popupExport { display: none !important; }
 	}
 	
 	#editorWrapper { width: 100% !important; padding-left: 48px; }
@@ -44,13 +54,6 @@ html.printMedia {
 				.side.center { margin: 0px; }
 				.side.right { display: none; }
 			}	
-		}
-	}
-
-	.popupPage {
-		.innerWrap { 
-			width: 100% !important; height: auto !important; margin: 0px !important; left: 0px; top: 0px; 
-			border-radius: 0px; box-shadow: 0px 0px; overflow: visible; position: static;
 		}
 	}
 

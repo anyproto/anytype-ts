@@ -61,8 +61,8 @@ class UtilData {
 			case I.BlockType.Div:
 				switch (v) {
 					default:
-					case I.DivStyle.Line:		 icon = 'div-line'; break;
-					case I.DivStyle.Dot:		 icon = 'dot'; break;
+					case I.DivStyle.Line:		 icon = 'divLine'; break;
+					case I.DivStyle.Dot:		 icon = 'divDot'; break;
 				};
 				break;
 		};
@@ -244,7 +244,7 @@ class UtilData {
 			};
 
 			C.ObjectOpen(widgets, '', space, () => {
-				this.createsSubscriptions(() => {
+				this.createSubscriptions(() => {
 					C.NotificationList(false, Constant.limit.notification, (message: any) => {
 						if (!message.error.code) {
 							notificationStore.set(message.list);
@@ -285,10 +285,10 @@ class UtilData {
 		});
 	};
 
-	createsSubscriptions (callBack?: () => void): void {
+	createSubscriptions (callBack?: () => void): void {
 		const { space } = commonStore;
-
-		const list = [
+		const { account } = authStore;
+		const list: any[] = [
 			{
 				subId: Constant.subId.profile,
 				filters: [
@@ -296,6 +296,7 @@ class UtilData {
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			},
 			{
 				subId: Constant.subId.deleted,
@@ -373,8 +374,25 @@ class UtilData {
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
-			}
+				ignoreDeleted: true,
+			},
 		];
+
+		if (account) {
+			list.push({
+				subId: Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+			});
+		};
 
 		let cnt = 0;
 		const cb = (item: any) => {
@@ -511,10 +529,16 @@ class UtilData {
 		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
-		const ret: any = {
-			withCover: Boolean((coverType != I.CoverType.None) && coverId),
+		const ret = {
+			withCover: false,
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
+			className: '',
+		};
+
+		let className = [];
+		if (!object._empty_) {
+			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
+			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
 		};
 
 		switch (object.layout) {
@@ -539,28 +563,28 @@ class UtilData {
 		};
 
 		if (checkType) {
-			ret.className.push('noSystemBlocks');
+			className.push('noSystemBlocks');
 		};
 
 		if ((object.featuredRelations || []).includes('description')) {
-			ret.className.push('withDescription');
+			className.push('withDescription');
 		};
 
 		if (object.templateIsBundled) {
-			ret.className.push('isBundled');
+			className.push('isBundled');
 		};
 
 		if (ret.withIcon && ret.withCover) {
-			ret.className.push('withIconAndCover');
+			className.push('withIconAndCover');
 		} else
 		if (ret.withIcon) {
-			ret.className.push('withIcon');
+			className.push('withIcon');
 		} else
 		if (ret.withCover) {
-			ret.className.push('withCover');
+			className.push('withCover');
 		};
 
-		ret.className = ret.className.join(' ');
+		ret.className = className.join(' ');
 		return ret;
 	};
 
@@ -726,6 +750,7 @@ class UtilData {
 
 		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -812,6 +837,7 @@ class UtilData {
 
 		if (ignoreHidden && !config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -867,6 +893,7 @@ class UtilData {
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+			{ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },

@@ -20,19 +20,19 @@
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
-		video { width: 100%; }
+		video { width: 100%; object-fit: contain; }
 
 		.pdfWrapper { 
 			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px var(--color-shape-primary);
 			border-radius: 8px; display: inline-flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {
-			.info { @include text-common; flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+			.info { @include text-common; flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0px 8px; }
 			.info {
 				.name { height: 24px; line-height: 24px; display: inline-block; vertical-align: top; @include text-overflow-nw; }
 				.size {
-					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: var(--color-control-active); margin: 0px 8px;
-					display: inline-block; vertical-align: top;
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: var(--color-control-active);
+					display: inline-block; vertical-align: top; flex-shrink: 0;
 				}
 			}
 

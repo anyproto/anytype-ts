@@ -17,6 +17,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 	last = '';
 	n = 0;
 	toggled = [];
+	items: any = null;
+	container = null;
+	timeout = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -28,10 +31,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	render () {
-		const { param, storageGet } = this.props;
-		const { data } = param;
-		const value = String(data.value || storageGet().search || '');
-		
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -41,7 +40,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 				<Input 
 					ref={ref => this.ref = ref} 
-					value={value} 
 					placeholder={translate('commonSearchPlaceholder')}
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
@@ -63,31 +61,40 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 	
 	componentDidMount () {
-		this.search();
+		const { param, storageGet } = this.props;
+		const { data } = param;
+
+		this.container = this.getSearchContainer();
 
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
-			};
+			const value = String(data.value || storageGet().search || '');
+
+			this.ref?.setValue(value);
+			this.ref?.setRange({ from: 0, to: value.length });
+			this.search();
 		}, 100);
 	};
 
 	componentWillUnmount () {
 		this.clear();
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
 			e.preventDefault();
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
-		
+
+		const cmd = keyboard.cmdKey();
+
 		let ret = false;
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
+
+		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 			ret = true;
 		});
@@ -96,12 +103,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		this.search();
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.search(), Constant.delay.keyboard);
 	};
 
 	onArrow (dir: number) {
-		const items = this.getItems();
-		const max = items.length - 1;
+		const max = (this.items || []).length - 1;
 
 		this.n += dir;
 
@@ -124,9 +131,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
-		const searchContainer = this.getSearchContainer();
-		const value = UtilCommon.regexEscape(this.ref.getValue());
+		const value = this.ref.getValue();
 		const node = $(this.node);
+		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
 
 		if (this.last != value) {
@@ -143,9 +150,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		analytics.event('SearchWords', { length: value.length, route });
 
-		findAndReplaceDOMText(searchContainer.get(0), {
+		findAndReplaceDOMText(this.container.get(0), {
 			preset: 'prose',
-			find: new RegExp(value, 'gi'),
+			find: new RegExp(UtilCommon.regexEscape(value), 'gi'),
 			wrap: 'search',
 			portionMode: 'first',
 			filterElements: (el: any) => {
@@ -171,18 +178,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		const items = this.getItems();
+		this.items = this.container.get(0).querySelectorAll('search') || [];
+		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
-		items.length ? switcher.addClass('active') : switcher.removeClass('active');
+		cnt.text(`${this.n + 1}/${this.items.length}`);
+
 		this.focus();
-	};
-
-	setCnt () {
-		const node = $(this.node);
-		const cnt = node.find('#cnt');
-		const items = this.getItems();
-
-		cnt.text(`${this.n + 1}/${items.length}`);
 	};
 
 	onClear () {
@@ -192,14 +193,18 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
+		if (!this.items) {
+			return;
+		};
+
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
-		const items = this.getItems();
 
-		items.each((i: number, item: any) => {
-			item = $(item);
+		for (let i = 0; i < this.items.length; i++) {
+			const item = $(this.items[i]);
+
 			item.replaceWith(item.html());
-		});
+		};
 
 		for (const id of this.toggled) {
 			$(`#block-${id}`).removeClass('isToggled');
@@ -217,10 +222,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 		if (!isPopup) {
 			return $(window);
 		} else {
-			const container = this.getSearchContainer();
-			const scrollable = container.find('.scrollable');
+			const scrollable = this.container.find('.scrollable');
 
-			return scrollable.length ? scrollable : container;
+			return scrollable.length ? scrollable : this.container;
 		};
 	};
 
@@ -236,44 +240,38 @@ class MenuSearchText extends React.Component<I.Menu> {
 		};
 	};
 
-	getItems () {
-		return this.getSearchContainer().find('search');
-	};
-
 	focus () {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const searchContainer = this.getSearchContainer();
-		const items = this.getItems();
 		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
 
-		searchContainer.find('search.active').removeClass('active');
+		this.container.find('search.active').removeClass('active');
 
-		this.setCnt();
+		const next = $(this.items[this.n]);
 
-		const next = $(items.get(this.n));
-
-		if (next && next.length) {
-			next.addClass('active');
-		
-			const st = searchContainer.scrollTop();
-			const no = next.offset().top;
-
-			let wh = 0;
-			let y = 0;
-
-			if (isPopup) {
-				y = no - searchContainer.offset().top + st;
-				wh = scrollContainer.height();
-			} else {
-				y = no;
-				wh = $(window).height();
-			};
-
-			scrollContainer.scrollTop(y - wh + offset);
+		if (!next || !next.length) {
+			return;
 		};
+
+		next.addClass('active');
+		
+		const st = this.container.scrollTop();
+		const no = next.offset().top;
+
+		let wh = 0;
+		let y = 0;
+
+		if (isPopup) {
+			y = no - this.container.offset().top + st;
+			wh = scrollContainer.height();
+		} else {
+			y = no;
+			wh = $(window).height();
+		};
+
+		scrollContainer.scrollTop(y - wh + offset);
 	};
 	
 };

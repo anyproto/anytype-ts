@@ -50,19 +50,29 @@ class MenuManager {
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
-					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
+					{ label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
+					{ label: Util.translate('commonNewSpace'), accelerator: 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
+
 					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
 
-					{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-					{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
-					{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
+					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
+					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
+
+					Separator,
+
+					{ 
+						label: Util.translate('electronMenuDebug'),	submenu: [
+							{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
+							{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
+							{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
+						],
+					},
 
 					Separator,
 
@@ -358,7 +368,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { 
 					this.winShow();
-					Util.send(this.win, 'commandGlobal', 'create'); 
+					Util.send(this.win, 'commandGlobal', 'createObject'); 
 				} 
 			},
 		].filter(it => it);

@@ -34,13 +34,6 @@ class Dataview {
 		relations.sort((c1: any, c2: any) => {
 			const o1 = order[c1.relationKey];
 			const o2 = order[c2.relationKey];
-			const isName1 = c1.relationKey == 'name';
-			const isName2 = c2.relationKey == 'name';
-
-			if (!isName1 && !isName2) {
-				if (c1.isHidden && !c2.isHidden) return 1;
-				if (!c1.isHidden && c2.isHidden) return -1;
-			};
 
 			if (o1 > o2) return 1;
 			if (o1 < o2) return -1;

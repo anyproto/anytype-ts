@@ -38,7 +38,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 
 		if (width) {
 			css.width = (width * 100) + '%';
-			css.height = this.getHeight(width);
 		};
 
 		let element = null;
@@ -209,10 +208,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const w = this.getWidth(true, 0);
-		const h = this.getHeight(w);
-		
-		wrap.css({ width: (w * 100) + '%', height: h });
+		wrap.css({ width: (this.getWidth(true, 0) * 100) + '%' });
 	};
 
 	onResizeStart (e: any, checkMax: boolean) {
@@ -258,9 +254,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
-		const h = this.getHeight(w);
 		
-		wrap.css({ width: (w * 100) + '%', height: h });
+		wrap.css({ width: (w * 100) + '%' });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -305,18 +300,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
 		return Math.min(1, Math.max(0, w / rect.width));
-	};
-	
-	getHeight (p: number) {
-		const { block } = this.props;
-		const el = $(`#selectable-${block.id}`);
-		
-		if (!el.length) {
-			return 0;
-		};
-
-		const rect = el.get(0).getBoundingClientRect() as DOMRect;
-		return Math.floor(p * rect.width / (this.div || 1));
 	};
 	
 });

@@ -112,12 +112,11 @@
 					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: var(--color-bg-loader); }
 
 					.iconObject { flex-shrink: 0; }
-					.iconObject::after {
-						content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
-						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
-						transition: $transitionAllCommon; opacity: 0; background-color: rgba(0,0,0,0.1);
+					.iconObject.canEdit::after {
+						content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: url('~img/icon/camera.svg') no-repeat center; 
+						background-size: 40px 30px; transition: $transitionAllCommon; opacity: 0; background-color: rgba(0,0,0,0.1);
 					}
-					.iconObject:hover:after { opacity: 1; }
+					.iconObject.canEdit:hover:after { opacity: 1; }
 				}
 
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
@@ -194,9 +193,10 @@
 		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
 			.spaceHeader { margin-bottom: 32px; }
 			.spaceHeader {
-				.sides { display: flex; flex-wrap: nowrap; width: 100%; }
+				.sides { display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 16px; }
 				.sides {
 					.side.left { width: 100%; flex-wrap: nowrap; display: flex; align-items: center; }
+					.side.right { display: flex; flex-direction: row; gap: 0px 16px; }
 				}
 				.iconWrapper { width: 96px; }
 
@@ -368,21 +368,21 @@
 				td:last-child,
 				th:last-child { padding-right: 0; }
 
-				.columnSpace { width: 156px; }
-				.columnMore { width: 28px; }
-
 				.spaceNameWrapper,
 				.creatorNameWrapper { display: flex; flex-wrap: nowrap; align-items: center; }
 
-				.spaceNameWrapper { gap: 0 12px; }
-				.creatorNameWrapper { gap: 0 6px; @include text-small; color: var(--color-text-secondary); }
+				.creatorNameWrapper { gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 
-				.spaceName {
-					.name { max-width: 104px; @include text-overflow-nw; }
-					.creatorNameWrapper {
-						.name { max-width: 79px; @include text-overflow-nw; }
+				.spaceNameWrapper { width: 100%; gap: 0px 12px; }
+				.spaceNameWrapper {
+					.iconObject { flex-shrink: 0; }
+					.info { width: 100%; }
+					.info {
+						.name { @include text-overflow-nw; }
 					}
 				}
+
+				.columnMore { width: 28px; }
 
 				.iconWrap { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
 				.iconWrap {
@@ -487,8 +487,25 @@
 				}
 			}
 
+			.buttons { display: flex; gap: 0px 16px; justify-content: space-evenly; }
 			.buttons {
 				.button { width: 100%; }
+			}
+		}
+
+		.side.right.tabSpaceMembers {
+			.title { margin-bottom: 26px !important; }
+
+			.section.sectionMembers {
+				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px 120px; }
+				.row {
+					.col { display: flex; gap: 0px 12px; align-items: center; justify-content: center; }
+					.col:first-child { justify-content: flex-start; }
+					.col:first-child {
+						.iconObject { flex-shrink: 0; }
+						.name { @include text-common; }
+					}
+				}
 			}
 		}
 
@@ -560,7 +577,7 @@
 		}
 
 		.side.right.tabPersonal {
-			.title { margin-bottom: 32px; }
+			.title { margin-bottom: 32px !important; }
 		}
 
 		.side.right.tabImportIndex, 

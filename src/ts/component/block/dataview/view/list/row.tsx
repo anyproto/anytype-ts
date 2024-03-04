@@ -15,11 +15,12 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, record, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, block.id);
+		const record = getRecord(recordId);
 		const cn = [ 'row' ];
 
 		// Subscriptions
@@ -40,6 +41,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							elementId={id}
 							ref={ref => onRef(ref, id)}
 							{...this.props}
+							getRecord={() => record}
 							subId={subId}
 							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}
@@ -116,11 +118,12 @@ const Row = observer(class Row extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { onContext, dataset, record } = this.props;
+		const { onContext, dataset, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const { selection } = dataset || {};
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};
@@ -136,7 +139,8 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, record } = this.props;
+		const { onCellClick, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {

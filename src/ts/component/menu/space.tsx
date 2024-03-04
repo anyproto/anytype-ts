@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics, Storage } from 'Lib';
-import { authStore, dbStore, popupStore, menuStore, blockStore } from 'Store';
+import { authStore, dbStore, popupStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ITEM_WIDTH = 112;
@@ -23,7 +23,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	render () {
 		const { setHover } = this.props;
 		const items = this.getItems();
-		const profile = UtilObject.getProfile();
+		const participant = UtilObject.getParticipant();
 		const { spaceview } = blockStore;
 
 		const Item = (item) => {
@@ -76,8 +76,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			>
 				<div className="head" onClick={this.onSettings}>
 					<div className="side left">
-						<IconObject object={profile} size={40} />
-						<ObjectName object={profile} />
+						<IconObject object={participant} size={40} />
+						<ObjectName object={participant} />
 					</div>
 					<div className="side right">
 						<Icon className="settings" />
@@ -162,7 +162,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const { classNameWrap } = param;
 		const { accountSpaceId } = authStore;
 
-		if (item.targetSpaceId == accountSpaceId) {
+		if ((item.targetSpaceId == accountSpaceId)) {
 			return;
 		};
 
@@ -174,7 +174,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			},
 			data: {
 				options: [
-					{ id: 'remove', icon: 'remove', name: translate('commonDelete') }
+					{ id: 'remove', color: 'red', name: translate('commonDelete') }
 				],
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
@@ -200,7 +200,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		if (items[this.n] && (items[this.n].id == 'add')) {
+		if (items[this.n] && ([ 'add', 'gallery' ].includes(items[this.n].id))) {
 			this.onArrow(dir);
 		} else {
 			this.props.setActive();
