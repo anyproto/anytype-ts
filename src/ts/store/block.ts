@@ -154,6 +154,8 @@ class BlockStore {
 				};
 			});
 		};
+
+		console.log('[blockStore].updateStructureParents', rootId);
 	};
 
     delete (rootId: string, id: string) {
