@@ -490,10 +490,10 @@ export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscriptio
 			dateStarted: response.getDatestarted(),
 			dateEnds: response.getDateends(),
 			isAutoRenew: response.getIsautorenew(),
-			nextTier: response.getNexttier(),
-			nextTierEnds: response.getNexttierends(),
 			paymentMethod: response.getPaymentmethod(),
 			requestedAnyName: response.getRequestedanyname(),
+			userEmail: response.getUseremail(),
+			subscribeToNewsletter: response.getSubscribetonewsletter(),
 		},
 	};
 };
