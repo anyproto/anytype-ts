@@ -144,19 +144,21 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				</div>
 
 				<div className="actionItems">
-					<div className="item">
+					<div onClick={() => this.onUrl(Url.pricing)} className="item">
 						<Label text={translate('popupSettingsMembershipLevelsDetails')} />
 						<Icon />
 					</div>
-					<div className="item">
+					<div onClick={() => this.onUrl(Url.privacy)} className="item">
 						<Label text={translate('popupSettingsMembershipPrivacyPolicy')} />
 						<Icon />
 					</div>
-					<div className="item">
+					<div onClick={() => this.onUrl(Url.terms)} className="item">
 						<Label text={translate('popupSettingsMembershipTermsAndConditions')} />
 						<Icon />
 					</div>
 				</div>
+
+				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), Url.membershipSpecial)} />
 			</div>
 		);
 	};
@@ -167,6 +169,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
+	};
+
+	onUrl (url) {
+		UtilCommon.onUrl(url);
 	};
 
 	resize () {

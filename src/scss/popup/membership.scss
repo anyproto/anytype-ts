@@ -19,7 +19,7 @@
                     .label { color: var(--color-text-secondary); margin-bottom: 8px; }
                     ul { list-style-type: none; }
                     li { position: relative; margin-bottom: 8px; padding-left: 20px; }
-                    li::before { position: absolute; content: ''; left: 0; top: 5px; width: 12px; height: 11px; }
+                    li::before { position: absolute; content: ''; background-image: url('~img/icon/payment/tick.svg'); left: 0; top: 5px; width: 12px; height: 11px; }
                 }
             }
 
@@ -99,9 +99,6 @@
             .side.left { background: linear-gradient(180deg, #d7fbff 0%, #f6f6f6 23.05%); }
             .side.left {
                 > .icon { background-image: url('~img/icon/payment/tier1.svg'); }
-                .contentList {
-                    li::before { background-image: url('~img/icon/payment/tick-tier1.svg'); }
-                }
             }
             .side.right {
                 .inputWrapper { margin-bottom: 20px; }
@@ -111,18 +108,12 @@
             .side.left { background: linear-gradient(180deg, #eceeff 0%, #f6f6f6 23.05%); }
             .side.left {
                 .icon { background-image: url('~img/icon/payment/tier2.svg'); }
-                .contentList {
-                    li::before { background-image: url('~img/icon/payment/tick-tier2.svg'); }
-                }
             }
         }
         .sides.tier3 {
             .side.left { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 23.05%); }
             .side.left {
                 .icon { background-image: url('~img/icon/payment/tier3.svg'); }
-                .contentList {
-                    li::before { background-image: url('~img/icon/payment/tick-tier3.svg'); }
-                }
             }
         }
     }
