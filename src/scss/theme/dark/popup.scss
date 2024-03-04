@@ -102,7 +102,7 @@
 				.tier { background: var(--color-shape-tertiary) !important; }
 			}
 			.actionItems {
-				.icon { width: 16px; height: 16px; background: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+				.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
 			}
 		}
     }
