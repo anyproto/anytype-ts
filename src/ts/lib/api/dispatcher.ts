@@ -229,20 +229,11 @@ class Dispatcher {
 						break;
 					};
 
-					const info = data.getClientinfo();
-					const challenge = data.getChallenge();
-					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=424,height=232,menubar=no,resizable=no,scrollbars=no,location=no,toolbar=no,frame=no');
-
-					win.addEventListener('load', () => win.postMessage({ 
-						challenge,
+					Renderer.send('showChallenge', {
+						challenge: data.getChallenge(),
 						theme: commonStore.getThemeClass(),
 						lang: commonStore.interfaceLang,
-					}, '*'), false);
-					win.focus();
-
-					window.setTimeout(() => {
-						try { win.close(); } catch (e) { /**/ };
-					}, 5000);
+					});
 					break;
 				};
 
