@@ -1724,6 +1724,12 @@
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>\"%s\"</b> space",
 
+	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>\"%s\"</b> space",
+
+	"notificationApproveSuccessText": "Your request to join <b>\"%s\"</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+
+	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space",
+
 	"notificationButtonSpace": "Go to Space",
 	"notificationButtonRequest": "View request",
 
