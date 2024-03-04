@@ -24,7 +24,7 @@ window.Electron = {
     },
 	send: function () {},
 	currentWindow: function () {
-		return { windowId: 1 };
+		return {};
 	},
 	Api: () => {},
 };
