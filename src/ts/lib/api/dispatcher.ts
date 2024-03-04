@@ -1173,6 +1173,7 @@ class Dispatcher {
 
 		blockStore.set(contextId, blocks);
 		blockStore.setStructure(contextId, structure);
+		blockStore.updateStructureParents(contextId);
 		blockStore.updateNumbers(contextId); 
 		blockStore.updateMarkup(contextId);
 		blockStore.checkTypeSelect(contextId);
