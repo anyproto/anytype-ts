@@ -23,7 +23,7 @@ const SORT_IDS = [
 	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText' ];
+const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage' ];
 
 class Dispatcher {
 
@@ -35,8 +35,6 @@ class Dispatcher {
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
-
-		console.log('[Dispatcher].init Server address: ', address);
 	};
 
 	listenEvents () {
@@ -168,6 +166,7 @@ class Dispatcher {
 		const electron = UtilCommon.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
+		const isMainWindow = windowId === 1;
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -203,7 +202,7 @@ class Dispatcher {
 		for (const message of messages) {
 			const win = $(window);
 			const type = this.eventType(message.getValueCase());
-			const fn = 'get' + UtilCommon.ucFirst(type);
+			const fn = `get${UtilCommon.ucFirst(type)}`;
 			const data = message[fn] ? message[fn]() : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 
@@ -226,23 +225,15 @@ class Dispatcher {
 				};
 
 				case 'accountLinkChallenge': {
-					if (windowId !== 1) {
+					if (!isMainWindow) {
 						break;
 					};
 
-					const info = data.getClientinfo();
-					const challenge = data.getChallenge();
-					const win = window.open(UtilCommon.fixAsarPath('./challenge/index.html'), '', 'width=424,height=232,menubar=no,resizable=no,scrollbars=no,location=no,toolbar=no,frame=no');
-
-					win.addEventListener('load', () => win.postMessage({ 
-						challenge,
+					Renderer.send('showChallenge', {
+						challenge: data.getChallenge(),
 						theme: commonStore.getThemeClass(),
 						lang: commonStore.interfaceLang,
-					}, '*'), false);
-
-					window.setTimeout(() => {
-						try { win.close(); } catch (e) { /**/ };
-					}, 5000);
+					});
 					break;
 				};
 
@@ -970,7 +961,7 @@ class Dispatcher {
 
 					notificationStore.add(item);
 
-					if ((windowId == 1) && !electron.isFocused()) {
+					if (isMainWindow && !electron.isFocused()) {
 						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
@@ -982,15 +973,21 @@ class Dispatcher {
 				};
 
 				case 'payloadBroadcast': {
-					if (electron.currentWindow().windowId !== 1) {
+					if (!isMainWindow) {
 						break;
 					};
 
-					const payload = JSON.parse(data.getPayload());
+					let payload: any = {};
+					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
 
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
+							window.focus();
+
+							if (electron.focus) {
+								electron.focus();
+							};
 							break;
 						};
 					};
@@ -1056,7 +1053,7 @@ class Dispatcher {
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
 
-		if (details.spaceAccountStatus == I.SpaceStatus.Deleted) {
+		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == blockStore.spaceview) {
 				UtilRouter.switchSpace(authStore.accountSpaceId, '');
 			};

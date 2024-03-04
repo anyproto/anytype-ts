@@ -1,21 +1,25 @@
 @import "~scss/_vars";
 
 .menus {
+
+	.menu.menuDataviewText {
+		#input { -webkit-user-modify: read-write-plaintext-only; white-space: normal; z-index: 1; @include text-common; overflow: auto; height: 100%; width: 100%; }
+	}
+
 	.menu.menuDataviewText:not(.fromFeatured) { box-shadow: 0px 0px; background: transparent; }
 	.menu.menuDataviewText:not(.fromFeatured) {
 		.content { overflow: visible !important; max-height: none; height: 100%; transition: $transitionAllCommon; padding: 0px; }
 		.editableWrap { height: 100%; }
 
-		#input { 
-			@include text-common; border-radius: 4px; padding: 13px 14px; overflow: auto; height: 100%; width: 100%; background: var(--color-bg-primary); z-index: 1; white-space: normal; 
-			-webkit-user-modify: read-write-plaintext-only;
-		}
+		#input { border-radius: 4px; padding: 13px 14px; background: var(--color-bg-primary); }
 		#placeholder { padding: 13px 14px; }
 	}
+
 	.menu.menuDataviewText.fromBlock {
 		#input { padding: 5px 8px; }
 		#placeholder { padding: 5px 8px; }
 	}
+
 	.menu.menuDataviewText.show:not(.fromFeatured) {
 		#input { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 	}

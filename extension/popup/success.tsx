@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, UtilCommon, UtilObject } from 'Lib';
+import { I, C, UtilCommon } from 'Lib';
 import { extensionStore, detailStore } from 'Store';
-import Url from 'json/url.json';
 
 interface State {
 	error: string;
@@ -37,8 +36,9 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	onOpen () {
-		C.BroadcastPayloadEvent({ type: 'openObject', object: extensionStore.createdObject });
-		window.close();
+		C.BroadcastPayloadEvent({ type: 'openObject', object: extensionStore.createdObject }, () => {
+			window.close();
+		});
 	};
 
 });

@@ -10,6 +10,7 @@ const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
+const { set } = require('lodash');
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -29,7 +30,9 @@ class WindowManager {
 			backgroundColor: Util.getBgColor('dark'),
 			show: false,
 			titleBarStyle: 'hidden-inset',
-			webPreferences: {},
+			webPreferences: {
+				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+			},
 		}, param);
 
 		param.webPreferences = Object.assign({
@@ -41,6 +44,8 @@ class WindowManager {
 		}, param.webPreferences);
 
 		let win = new BrowserWindow(param);
+
+		remote.enable(win.webContents);
 
 		win.isChild = isChild;
 		win.route = route;
@@ -83,10 +88,6 @@ class WindowManager {
 			minHeight: MIN_HEIGHT,
 			width: DEFAULT_WIDTH, 
 			height: DEFAULT_HEIGHT,
-
-			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
-			},
 		};
 
 		if (is.macos) {
@@ -121,8 +122,6 @@ class WindowManager {
 
 		const win = this.create(options, param);
 
-		remote.enable(win.webContents);
-
 		if (!isChild) {
 			state.manage(win);
 		};
@@ -135,6 +134,25 @@ class WindowManager {
 			win.toggleDevTools();
 		};
 
+		return win;
+	};
+
+	createChallenge (options) {
+		const win = this.create({}, {
+			backgroundColor: '',
+			width: 424, 
+			height: 232,
+			titleBarStyle: 'hidden',
+		});
+
+		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
+		win.setMenu(null);
+
+		win.webContents.once('did-finish-load', () => {
+			win.webContents.postMessage('challenge', options);
+		});
+
+		setTimeout(() => win.close(), 5000);
 		return win;
 	};
 
@@ -185,7 +203,7 @@ class WindowManager {
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
 
 		if (currentWindow) {
-			const [xPos, yPos] = currentWindow.getPosition();
+			const [ xPos, yPos ] = currentWindow.getPosition();
 
 			x = xPos + NEW_WINDOW_SHIFT;
 			y = yPos + NEW_WINDOW_SHIFT;

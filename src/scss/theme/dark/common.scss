@@ -97,6 +97,21 @@ html.themeDark {
         .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
 	}
 
+	#root-loader {
+		.version { color: var(--color-text-primary); }
+	}
+
+	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
+	.toast {
+		.inner {
+			.buttons {
+				.button { color: var(--color-text-primary); }
+			}
+		}
+	}
+
+	search { color: var(--color-bg-primary) !important; }
+
     /* Components */
 
     .loaderWrapper {

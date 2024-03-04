@@ -206,6 +206,10 @@ class Api {
 		};
 	};
 
+	showChallenge (win, param) {
+		WindowManager.createChallenge(param);
+	};
+
 };
 
 module.exports = new Api();

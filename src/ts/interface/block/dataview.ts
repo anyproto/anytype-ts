@@ -112,7 +112,8 @@ export interface ViewComponent {
 	isCollection?: boolean;
 	className?: string;
 	refCells?: any;
-	record?: any;
+	recordId?: string;
+	getRecord?(id: string): any;
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
@@ -205,7 +206,8 @@ export interface Cell {
 	shortUrl?: boolean;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
-	record?: any;
+	recordId?: string;
+	getRecord?(id: string): any;
 	getView?(): View;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;

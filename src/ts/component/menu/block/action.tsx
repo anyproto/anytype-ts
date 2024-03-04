@@ -325,7 +325,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasFile) {
-				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isFile: true },);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true },);
 			};
 
 			if (hasTitle) {
@@ -342,7 +342,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnDiv) {
-				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true });
 			};
 
 			if (hasAlign) {
@@ -422,10 +422,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const node = $(this.node);
 		const el = node.find(`#item-${item.id}`);
 		const offsetX = node.outerWidth();
-		
-		let ids: string[] = [];
-		let filters = [];
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
@@ -440,11 +436,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			},
 		};
 
+		let ids: string[] = [];
+		let filters = [];
+		let menuId = '';
+
 		switch (item.itemId) {
 			case 'turnStyle': {
 				menuId = 'blockStyle';
 
-				if (item.isDiv || item.isFile) {
+				if (item.isBlockDiv || item.isBlockFile) {
 					menuParam.offsetY = 0;
 					menuParam.vertical = I.MenuDirection.Center;
 				};

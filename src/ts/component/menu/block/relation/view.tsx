@@ -102,7 +102,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						<Section key={i} {...item} index={i} />
 					))}
 				</div>
-				{!readonly ? <ItemAdd /> : ''}
+				{!readonly && allowedRelation ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
@@ -162,7 +162,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(UtilData.sortByHidden).filter((it: any) => {
+		items = items.sort(UtilData.sortByName).sort(UtilData.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
 			};

@@ -11,10 +11,10 @@ interface State {
 	isLoading: boolean;
 };
 
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const MENU_ID = 'dataviewFileValues';
-const LIMIT_HEIGHT = 20;
+const LIMIT = 20;
 
 const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<I.Menu, State> {
 
@@ -45,7 +45,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { isLoading } = this.state;
 		const { data } = param;
 		const { filter } = data;
@@ -65,14 +65,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				content = (
 					<div className="separator" style={param.style}>
 						<div className="inner" />
-					</div>
-				);
-			} else
-			if (item.id == 'upload') {
-				content = (
-					<div id="item-upload" className="item upload" onMouseEnter={e => this.onOver(e, item)} onClick={this.onUpload} style={param.style}>
-						<Icon className="upload" />
-						<div className="name">{item.name}</div>
 					</div>
 				);
 			} else {
@@ -125,7 +117,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 							rowCount={items.length + 1}
 							loadMoreRows={this.loadMoreRows}
 							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
+							threshold={LIMIT}
 						>
 							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
@@ -139,7 +131,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
-											overscanRowCount={LIMIT_HEIGHT}
+											overscanRowCount={LIMIT}
 											onScroll={this.onScroll}
 											scrollToAlignment="center"
 										/>
@@ -149,6 +141,18 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						</InfiniteLoader>
 					</div>
 				) : ''}
+
+				<div className="bottom">
+					<div className="line" />
+					<MenuItemVertical 
+						id="upload" 
+						icon="plus" 
+						name={translate('commonUpload')} 
+						onClick={this.onUpload}
+						onMouseEnter={() => setHover({ id: 'upload' })}
+						onMouseLeave={() => setHover()}
+					/>
+				</div>
 			</div>
 		);
 	};
@@ -213,14 +217,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		let items = UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
-
-		items = items.concat([
-			{ isDiv: true },
-			{ id: 'upload', name: translate('commonUpload') },
-		]);
-
-		return items;
+		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 
 	reload () {
@@ -325,10 +322,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = Relation.getArrayValue(data.value);
-		value.push(id);
-		value = UtilCommon.arrayUnique(value);
-
+		let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat(id));
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
 		};
@@ -341,21 +335,18 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 
 	getRowHeight (item: any) {
-		if (item.isDiv) {
-			return HEIGHT_DIV;
-		};
-		return HEIGHT;
+		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 58;
-		const itemsHeight = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, offset);
-		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight));
+		const offset = 102;
+		const itemsHeight = items.reduce((res: number, current: any) => res + this.getRowHeight(current), offset);
+		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

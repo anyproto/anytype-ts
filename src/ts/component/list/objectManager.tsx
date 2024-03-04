@@ -348,6 +348,11 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 		this.forceUpdate();
 	};
 
+	setSelection (ids: string[]) {
+		this.selected = ids;
+		this.forceUpdate();
+	};
+
     onSelectAll () {
         this.selected.length ? this.selectionClear() : this.selectionAll();
     };

@@ -194,7 +194,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								subId={rootId}
 								block={block}
 								relationKey={relationKey}
-								record={object}
+								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}
@@ -595,12 +595,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const { isPopup, rootId, block, readonly } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
 		const relation = dbStore.getRelationByKey(relationKey);
 
-		if (readonly || relation.isReadonlyValue) {
+		if (readonly || !relation || relation.isReadonlyValue) {
 			return;
 		};
 
@@ -613,10 +613,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'dataviewObjectValues';
 				menuParam.subIds = [ 'dataviewObjectList' ];
 				menuData = {
+					types: relation.objectTypes,
 					value: Relation.getArrayValue(object[relationKey]),
 					filters: []
 				};
-
 				break;
 			};
 
@@ -634,9 +634,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'dataviewCalendar';
 				menuData = {
 					value,
-					isEmpty
+					isEmpty,
 				};
-
 				break;
 			};
 
@@ -671,7 +670,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'dataviewText';
 				menuParam.width = 288;
 				menuData.value = object[relationKey] || '';
-
 				break;
 			};
 
@@ -701,8 +699,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						menuStore.closeAll();
 					},
 					data: {
-						relationKey: '',
-						rootId,
+						relationKey,
 					},
 				};
 
@@ -746,6 +743,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				rootId,
 				blockId: block.id,
 				relation: observable.box(relation),
+				relationKey,
 				onChange: (v: any, callBack?: () => void) => {
 					const details = [
 						{ key: relationKey, value: Relation.formatValue(relation, v, true) },

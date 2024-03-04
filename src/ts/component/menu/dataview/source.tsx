@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { I, C, Relation, analytics, keyboard, translate } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore } from 'Store';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
@@ -18,7 +18,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { data } = param;
 		const { rootId, objectId } = data;
 		const items = this.getItems();
@@ -61,8 +61,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd} 
-							onMouseEnter={() => this.props.setHover({ id: 'add' })} 
-							onMouseLeave={() => this.props.setHover()}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>

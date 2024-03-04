@@ -44,11 +44,19 @@ html.anytypeWebclipper-popup { width: 268px; }
 		.row { margin: 0px 0px 10px 0px; }
 		.row:last-child { margin: 0px; }
 
+		.row.withContent { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; cursor: pointer; }
+		.row.withContent {
+			.icon.checkbox { width: 14px; height: 14px; background-image: url('../img/checkbox0.svg'); }
+			.icon.checkbox.active {  background-image: url('../img/checkbox1.svg'); }
+
+			.label { color: var(--color-text-primary); margin: 0px; }
+		}
+
 		.label { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 4px 0px; }
 
 		.box { border: 1px solid var(--color-shape-secondary); border-radius: 1px; min-height: 32px; }
 		.box {
-			.value { padding: 6px 10px 0px 10px; }
+			.value { padding: 5px 10px 0px 10px; }
 			.value {
 				.itemWrap { margin: 0px 6px 6px 0px; }
 			}

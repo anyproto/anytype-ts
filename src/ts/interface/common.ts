@@ -72,7 +72,6 @@ export interface HistoryVersion {
 	id: string;
 	previousIds: string[];
 	authorId: string;
-	authorName: string;
 	groupId: number;
 	time: number;
 };
