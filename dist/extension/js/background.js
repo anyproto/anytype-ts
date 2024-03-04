@@ -104,7 +104,7 @@
 
 					let html = '';
 					if (sel.rangeCount) {
-						const container = document.createElement("div");
+						const container = document.createElement('div');
 						for (var i = 0, len = sel.rangeCount; i < len; ++i) {
 							container.appendChild(sel.getRangeAt(i).cloneContents());
 						};

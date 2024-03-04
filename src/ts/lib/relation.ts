@@ -42,7 +42,7 @@ class Relation {
 			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
+			case I.RelationType.Phone: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
@@ -52,10 +52,12 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 
+			case I.RelationType.File: 
 			case I.RelationType.Object: 
 			case I.RelationType.Select: 
-			case I.RelationType.MultiSelect: 
+			case I.RelationType.MultiSelect: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
 					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
@@ -64,8 +66,9 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 			
-			case I.RelationType.Number:
+			case I.RelationType.Number: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: '=' }, 
 					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
@@ -77,8 +80,9 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 
-			case I.RelationType.Date:
+			case I.RelationType.Date: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
@@ -90,14 +94,17 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 			
 			case I.RelationType.Checkbox:
-			default:
+			default: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
 				]);
 				break;
+			};
+
 		};
 		return ret;
 	};
@@ -293,11 +300,10 @@ class Relation {
 	};
 
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
-		const formats = [ I.RelationType.File ];
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && !formats.includes(relation.format) && (it.relationKey != 'done');
+			return relation && (it.relationKey != 'done') && ![ I.RelationType.File ].includes(relation.format);
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
 

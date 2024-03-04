@@ -41,6 +41,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
+		this.onInfo = this.onInfo.bind(this);
 	};
 
 	render () {
@@ -124,7 +125,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
-					<div className="info">
+					<div className="info" onClick={this.onInfo}>
 						<span>{translate('popupSettingsSpaceShareMoreInfo')}</span>
 						<Icon className="question" />
 					</div>
@@ -183,10 +184,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					) : ''}
 				</div>
 
-				<div id="buttons" className="buttons">
-					<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
-					<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
-				</div>
+				{cid && key ? (
+					<div id="buttons" className="buttons">
+						<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
+						<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
+					</div>
+				) : ''}
 
 				<Error text={error} />
 			</div>
@@ -277,6 +280,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		button.addClass('loading');
 
 		popupStore.open('confirm', {
+			onClose: () => button.removeClass('loading'),
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
 				text: translate('popupConfirmRevokeLinkText'),
@@ -387,6 +391,18 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: button,
 				colorConfirm: 'red',
 				onConfirm,
+			},
+		});
+	};
+
+	onInfo () {
+		popupStore.open('confirm', {
+			className: 'isLeft shareMoreInfo',
+			data: {
+				title: translate('popupConfirmSpaceShareMoreInfoTitle'),
+				text: translate('popupConfirmSpaceShareMoreInfoText'),
+				textConfirm: translate('commonOk'),
+				canCancel: false,
 			},
 		});
 	};

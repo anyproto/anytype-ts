@@ -115,11 +115,17 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	initBlocks () {
 		const { html, tabUrl } = extensionStore;
 
-		if (!html || (html == this.html)) {
+		if (html == this.html) {
 			return;
 		};
 
 		this.html = html;
+		blockStore.clear(ROOT_ID);
+
+		if (!html) {
+			this.forceUpdate();
+			return;
+		};
 
 		C.BlockPreview(html, tabUrl, (message: any) => {
 			if (message.error.code) {
