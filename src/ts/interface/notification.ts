@@ -6,7 +6,7 @@ export enum NotificationType {
 	Export	 = 'export',
 	Gallery	 = 'galleryImport',
 	Join	 = 'requestToJoin',
-	Leave	 = 'leaveRequest',
+	Leave	 = 'requestToLeave',
 	Approve	 = 'participantRequestApproved',
 	Remove	 = 'participantRemove',
 };

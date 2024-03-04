@@ -46,8 +46,8 @@ export const Mapper = {
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
 		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
+		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
 		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
-		if (v == V.LEAVEREQUEST)	 t = 'leaveRequest';
 		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
 
 		return t;
