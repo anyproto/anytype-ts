@@ -66,7 +66,7 @@
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
 			.side.left { padding: 16px 16px 16px 80px; flex-grow: 1; }
-			.iconObject { position: absolute; left: 16px; top: 15px; background-color: var(--color-shape-tertiary); border-radius: 10px; }
+			.iconObject { position: absolute; left: 16px; top: 15px; background-color: var(--color-shape-highlight-medium); border-radius: 10px; }
 		}
 
 		.linkCard.c48.withIcon.withCover.isVertical {
