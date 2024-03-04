@@ -334,6 +334,8 @@ class Dispatcher {
 
 						blockStore.delete(rootId, blockId);
 					};
+
+					updateParents = true;
 					break;
 				};
 
