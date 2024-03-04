@@ -15,7 +15,7 @@ const PageMainCreate = observer(class PageMainCreate extends React.Component<I.P
 	
 	componentDidMount () {
 		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			UtilObject.openRoute({ id: message.targetId });
+			UtilObject.openRoute(message.details);
 		});
 	};
 

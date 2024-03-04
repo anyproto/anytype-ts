@@ -212,6 +212,10 @@ class Api {
 		WindowManager.sendToAll('data-path', Util.dataPath());
 	};
 
+	showChallenge (win, param) {
+		WindowManager.createChallenge(param);
+	};
+
 };
 
 module.exports = new Api();

@@ -116,7 +116,6 @@ export interface Block {
 	canHaveColor?(): boolean;
 	canHaveBackground?(): boolean;
 	canHaveMarks?(): boolean;
-	canHaveHistory?(): boolean;
 	canTurn?(): boolean;
 	canTurnText?(): boolean;
 	canTurnPage?(): boolean;

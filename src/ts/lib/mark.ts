@@ -430,7 +430,7 @@ class Mark {
 		});
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {
+		html.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);

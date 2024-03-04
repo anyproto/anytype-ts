@@ -546,6 +546,7 @@ class App extends React.Component<object, State> {
 
 		keyboard.disableContextOpen(true);
 
+		const { focused, range } = focus.state;
 		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const element = $(document.elementFromPoint(x, y));
@@ -558,9 +559,7 @@ class App extends React.Component<object, State> {
 		menuStore.open('select', {
 			className: 'fromBlock',
 			classNameWrap: 'fromPopup',
-			recalcRect: () => { 
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
-			},
+			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			onOpen: () => menuStore.close('blockContext'),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
@@ -569,18 +568,18 @@ class App extends React.Component<object, State> {
 					raf(() => {
 						switch (item.id) {
 							default: {
-								const { focused, range } = focus.state;
 								const rootId = keyboard.getRootId();
 								const block = blockStore.getLeaf(rootId, focused);
 
 								if (block && block.isText()) {
-									focus.apply();
-
 									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 									const value = String(obj.get(0).innerText || '');
 
 									blockStore.updateContent(rootId, focused, { text: value });
 									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
+
+									focus.set(focused, { from: range.from, to: range.from + item.id.length });
+									focus.apply();
 								} else 
 								if (isInput || isTextarea || isEditable) {
 									let value = '';

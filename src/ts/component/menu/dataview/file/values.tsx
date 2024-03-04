@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical } from 'Component';
+import { Icon, IconObject, MenuItemVertical, EmptySearch } from 'Component';
 import { I, C, UtilCommon, UtilFile, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -25,14 +25,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { param, position, getId } = this.props;
-		const { data } = param;
-		const { subId } = data;
+		const { position, getId, setHover } = this.props;
+		const items = this.getItems();
 		
-		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
-
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
@@ -80,40 +75,42 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			);
 		});
 
-        const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					{value.map((item: any, i: number) => (
-						<Item key={i} {...item} index={i} />
-					))}
-				</div>
-			);
-		});
+        const List = SortableContainer(() => (
+			<div className="items">
+				{items.map((item: any, i: number) => <Item key={i} {...item} index={i} />)}
+			</div>
+		));
 
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="items"
+				className="wrap"
 			>
-				{value.length ? (
-					<div className="section">
-						<List 
-							axis="y" 
-							lockAxis="y"
-							lockToContainerEdges={true}
-							transitionDuration={150}
-							distance={10}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEnd}
-							useDragHandle={true}
-							helperClass="isDragging"
-							helperContainer={() => $(`#${getId()} .items`).get(0)}
-						/>
-					</div>
-				) : ''}
+				{items.length ? (
+					<List 
+						axis="y" 
+						lockAxis="y"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEnd}
+						useDragHandle={true}
+						helperClass="isDragging"
+						helperContainer={() => $(`#${getId()} .items`).get(0)}
+					/>
+				) : <EmptySearch text={translate('popupSearchEmpty')} />}
 
-				<div className="section">
-					<MenuItemVertical id="add" icon="plus" name={translate('commonAdd')} onClick={this.onAdd} />
+				<div className="bottom">
+					<div className="line" />
+					<MenuItemVertical 
+						id="add" 
+						icon="plus" 
+						name={translate('commonAdd')} 
+						onClick={this.onAdd}
+						onMouseEnter={() => setHover({ id: 'add' })}
+						onMouseLeave={() => setHover()}
+					/>
 				</div>
 			</div>
 		);
@@ -137,9 +134,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { oldIndex, newIndex } = result;
 		const { param, id } = this.props;
 		const { data } = param;
-		
-		let value = Relation.getArrayValue(data.value);
-		value = arrayMove(value, oldIndex, newIndex);
+		const value = arrayMove(Relation.getArrayValue(data.value), oldIndex, newIndex);
 
 		menuStore.updateData(id, { value });
 		this.save(value);
@@ -148,7 +143,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
     };
 
 	onAdd (e: any) {
-		const { getId, getSize, close, param, id } = this.props;
+		const { getId, getSize, param } = this.props;
 		const { data } = param;
 		const { classNameWrap } = param;
 
@@ -279,6 +274,16 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				},
 			}
 		});
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { subId } = data;
+
+		return Relation.getArrayValue(data.value).
+			map(it => detailStore.get(subId, it, [])).
+			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
 });

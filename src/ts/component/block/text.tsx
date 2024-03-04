@@ -79,6 +79,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
 		let additional = null;
+		let spellcheck = true;
 
 		if (color) {
 			cv.push('textColor textColor-' + color);
@@ -126,6 +127,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				for (const i in Constant.codeLang) {
 					options.push({ id: i, name: Constant.codeLang[i] });
 				};
+
+				spellcheck = false;
 				
 				additional = (
 					<React.Fragment>
@@ -193,6 +196,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					classNameEditor={cv.join(' ')}
 					classNamePlaceholder={'c' + id}
 					readonly={readonly}
+					spellcheck={spellcheck}
 					placeholder={placeholder}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
@@ -661,6 +665,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowleft` },
 			{ key: `${cmd}+shift+arrowright` },
+			{ key: `${cmd}+shift+r` },
 			{ key: `${cmd}+c`, preventDefault: true },
 			{ key: `${cmd}+x`, preventDefault: true },
 			{ key: `${cmd}+d`, preventDefault: true },
@@ -1126,6 +1131,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const range = this.getRange();
+
 		let value = this.getValue();
 
 		menuStore.open('smile', {
@@ -1178,7 +1184,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select' ])) {
+		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
 			return;
 		};
 
@@ -1328,7 +1334,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		keyboard.setFocus(true);
-		
+
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
 
@@ -1449,7 +1455,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	placeholderCheck () {
-		if (this.refEditable) {
+		if (this.refEditable && !this.props.readonly) {
 			this.refEditable.placeholderCheck();
 		};			
 	};

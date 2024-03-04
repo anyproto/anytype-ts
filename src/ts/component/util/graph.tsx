@@ -467,10 +467,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
 							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
-								UtilObject.openPopup({ id: message.targetId }, {
-									onClose: () => this.addNewNode(message.targetId, '', data),
-								});
-
+								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
 							});
 							break;

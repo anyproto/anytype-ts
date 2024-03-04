@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
@@ -316,7 +316,7 @@ class Keyboard {
 		const { fullscreenObject } = commonStore;
 
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			fullscreenObject ? UtilObject.openAuto({ id: message.targetId }) : UtilObject.openPopup({ id: message.targetId });
+			fullscreenObject ? UtilObject.openAuto(message.details) : UtilObject.openPopup(message.details);
 			analytics.event('CreateObject', { route, objectType: commonStore.type });
 		});
 	};
@@ -503,8 +503,29 @@ class Keyboard {
 				break;
 			};
 
-			case 'create': {
+			case 'createObject': {
 				this.pageCreate({}, 'MenuSystem');
+				break;
+			};
+
+			case 'createSpace': {
+				const items = dbStore.getSpaces();
+
+				if (items.length >= Constant.limit.space) {
+					break;
+				};
+
+				popupStore.open('settings', { 
+					className: 'isSpaceCreate',
+					data: { 
+						page: 'spaceCreate', 
+						isSpace: true,
+						onCreate: (id) => {
+							UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+							analytics.event('SwitchSpace');
+						},
+					}, 
+				});
 				break;
 			};
 
@@ -515,17 +536,12 @@ class Keyboard {
 
 			case 'saveAsHTMLSuccess': {
 				this.printRemove();
+				popupStore.close('export');
 				break;
 			};
 
 			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, {
-					zip: true, 
-					nested: true, 
-					files: true, 
-					archived: true, 
-					route: 'MenuSystem',
-				});
+				popupStore.open('export', { data: { objectIds: [ rootId ], route: 'MenuSystem', allowHtml: true } });
 				break;
 			};
 
@@ -755,21 +771,21 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ]);
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'blockContext' ], () => {
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 10,
 				classNameWrap: 'fromHeader',
+				passThrough: true,
 				data: {
 					isPopup,
 					value,
 					route,
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onSearchPopup (route: string) {

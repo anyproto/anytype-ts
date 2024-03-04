@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilObject, translate } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { I, UtilObject, UtilRouter, translate, Action } from 'Lib';
+import { authStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
@@ -13,18 +13,24 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	render () {
+		const { account, accountSpaceId } = authStore;
 		const spaces = dbStore.getSpaces();
 
-		const Row = (space) => {
+		const Row = (space: any) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const isOwner = creator.permissions == I.ParticipantPermissions.Owner;
+			const participant = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(space.targetSpaceId, account.id));
+			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
+			const hasMenu = space.targetSpaceId != accountSpaceId;
 
 			return (
 				<tr>
 					<td className="columnSpace">
-						<div className="spaceNameWrapper">
+						<div 
+							className="spaceNameWrapper"
+							onClick={() => UtilRouter.switchSpace(space.targetSpaceId)}
+						>
 							<IconObject object={space} size={40} />
-							<div className="spaceName">
+							<div className="info">
 								<ObjectName object={space} />
 
 								{!isOwner ? (
@@ -36,14 +42,15 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 							</div>
 						</div>
 					</td>
-					<td>{translate(`participantPermissions${creator.permissions}`)}</td>
+					<td>{translate(`participantPermissions${participant.permissions}`)}</td>
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
-					<td>{translate(`spaceStatus${space.spaceLocalStatus}`)}</td>
 
 					<td className="columnMore">
-						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
-							<Icon className="more" />
-						</div>
+						{hasMenu ? (
+							<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
+								<Icon className="more" />
+							</div>
+						) : ''}
 					</td>
 				</tr>
 			);
@@ -60,7 +67,6 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 								<th className="columnSpace">{translate('popupSettingsSpacesListSpace')}</th>
 								<th>{translate('popupSettingsSpacesListAccess')}</th>
 								<th>{translate('popupSettingsSpacesListNetwork')}</th>
-								<th>{translate('popupSettingsSpacesListDevice')}</th>
 								<th className="columnMore"> </th>
 							</tr>
 						</thead>
@@ -75,20 +81,11 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		);
 	};
 
-	onSpaceMore (e: React.MouseEvent, space) {
-		const { spaceAccessType, creator } = space;
+	onSpaceMore (e: React.MouseEvent, space: any) {
 		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
-			{ id: 'offload', name: translate('popupSettingsSpacesMenuMoreOffload') },
+			{ id: 'remove', color: 'red', name: translate('commonDelete') },
 		];
-
-		if (UtilObject.isSpaceOwner(creator)) {
-			if (spaceAccessType == I.SpaceType.Shared) {
-				options.push({ id: 'deleteFromNetwork', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
-			};
-		} else {
-			options.push({ id: 'leave', color: 'red', name: translate('popupSettingsSpacesMenuMoreDeleteFromNetwork') });
-		};
 
 		menuStore.open('select', {
 			element,
@@ -101,16 +98,8 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'offload':
-							console.log('OFFLOAD')
-							break;
-
-						case 'leave':
-							console.log('LEAVE')
-							break;
-
-						case 'deleteFromNetwork':
-							console.log('DELETE')
+						case 'remove':
+							Action.removeSpace(space.targetSpaceId, 'ScreenSettings');
 							break;
 					};
 				}

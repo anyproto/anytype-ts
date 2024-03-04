@@ -90,19 +90,12 @@
 		}
 	}
 
-	/* Div */
-	.block.blockLayout.layoutDiv {
-		> .wrapContent { width: 100%; overflow: visible; }
-	}
-
-	/* Header */
-	.block.blockLayout.layoutHeader { margin: 0px !important; }
-	.block.blockLayout.layoutHeader {
-		> .wrapContent { width: 100%; overflow: visible; }
-	}
-
-	/* Footer */
+	.block.blockLayout.layoutDiv, 
+	.block.blockLayout.layoutHeader, 
 	.block.blockLayout.layoutFooter { margin: 0px !important; }
+
+	.block.blockLayout.layoutDiv, 
+	.block.blockLayout.layoutHeader, 
 	.block.blockLayout.layoutFooter {
 		> .wrapContent { width: 100%; overflow: visible; }
 	}

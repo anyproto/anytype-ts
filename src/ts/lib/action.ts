@@ -329,6 +329,12 @@ class Action {
 						callBack();
 					};
 
+					// Remove last opened object in case it is deleted
+					const home = Storage.get('lastOpened');
+					if (home && ids.includes(home.id)) {
+						Storage.delete('lastOpened');
+					};
+
 					analytics.event('RemoveCompletely', { count, route });
 				},
 				onCancel: () => {

@@ -107,6 +107,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const length = phrase.split(' ').length;
 
 		if (length < Constant.limit.phrase.word) {
+			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')})
 			return;
 		};
 

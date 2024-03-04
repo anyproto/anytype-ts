@@ -38,11 +38,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilObject.getSpaceview();
 		const home = UtilObject.getSpaceDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const participant = UtilObject.getParticipant();
-		const canShare = config.experimental && (space.spaceAccessType != I.SpaceType.Personal) && (participant.permissions == I.ParticipantPermissions.Owner);
+		const isOwner = UtilObject.isSpaceOwner();
+		const isAllowed = config.experimental || config.allowCollaboration;
+		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
+		const canMembers = isAllowed && (space.spaceAccessType == I.SpaceType.Shared);
 		const canWrite = UtilObject.canParticipantWrite();
-		const usageCn = [ 'item' ];
 		const canDelete = space.targetSpaceId != accountSpaceId;
+		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
 		let extend = null;
@@ -64,7 +66,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 
 		if (canShare) {
-			button = <Button className="c36" onClick={() => onPage('spaceShare')} text={translate('popupSettingsSpaceIndexShare')} />;
+			button = <Button className="c36" text={translate('popupSettingsSpaceIndexShare')} onClick={() => onPage('spaceShare')} />;
 		};
 
 		// old accounts don't have space creation date
@@ -92,7 +94,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									size={96}
 									object={space}
 									forceLetter={true}
-									canEdit={true}
+									canEdit={canWrite}
 									menuParam={{ horizontal: I.MenuDirection.Center }}
 									onSelect={this.onSelect}
 									onUpload={this.onUpload}
@@ -107,8 +109,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										value={this.checkName(space.name)}
 										onKeyUp={this.onName}
 										placeholder={translate('defaultNamePage')}
+										readonly={!canWrite}
 									/>
-
 								</div>
 
 								<Label
@@ -121,6 +123,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 						<div className="side right">
 							{button}
+
+							{canMembers ? (
+								<Button className="c36" text="Members" onClick={() => onPage('spaceMembers')} />
+							) : ''}
 						</div>
 					</div>
 				</div>

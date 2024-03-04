@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { UtilRouter } from 'Lib'; 
+import { UtilRouter, C } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
 
@@ -65,10 +65,6 @@ class Popup extends React.Component {
 
 	node: any = null;
 
-	constructor (props: any) {
-		super(props);
-	};
-
 	render () {
 		return (
 			<Router history={history}>
@@ -88,16 +84,24 @@ class Popup extends React.Component {
 	componentDidMount () {
 		UtilRouter.init(history);
 
+		const win = $(window);
+
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			console.log('[Popup]', msg, sender);
-
-			if (sender.id != Extension.clipper.id) {
+			if (!Extension.clipper.ids.includes(sender.id)) {
 				return false;
 			};
 
 			//sendResponse({ type: msg.type, ref: 'popup' });
 			return true;
+		});
+
+		win.off('beforeunload').on('beforeunload', (e: any) => {
+			if (authStore.token) {
+				C.WalletCloseSession(authStore.token, () => {
+					authStore.tokenSet('');
+				});
+			};
 		});
 	};
 

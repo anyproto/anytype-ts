@@ -1,8 +1,7 @@
-/* 
+/*
 - This is the native messaging host for the AnyType browser extension.
 - It enables the web extension to find the open ports of the AnyType application and to start it if it is not running.
 - It is installed by the Electron script found in electron/js/lib/installNativeMessagingHost.js
-- for more docs, checkout the webclipper repository: https://github.com/anytypeio/webclipper
 */
 
 package main
@@ -10,19 +9,22 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"io"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 	"unsafe"
 )
-
 
 // UTILITY FUNCTIONS
 
@@ -45,7 +47,18 @@ func splitStdOutTokens(line string) []string {
 
 // executes a command and returns the stdout as string
 func execCommand(command string) (string, error) {
+	if runtime.GOOS == "windows" {
+		return execCommandWin(command)
+	}
 	stdout, err := exec.Command("bash", "-c", command).Output()
+	return string(stdout), err
+}
+
+func execCommandWin(command string) (string, error) {
+	// Splitting the command into the executable and the arguments
+	// For Windows, commands are executed through cmd /C
+	cmd := exec.Command("cmd", "/C", command)
+	stdout, err := cmd.Output()
 	return string(stdout), err
 }
 
@@ -62,9 +75,10 @@ func contains(s []string, e string) bool {
 // CORE LOGIC
 
 // Windows: returns a list of open ports for all instances of anytypeHelper.exe found using cli utilities tasklist, netstat and findstr
+// Windows: returns a list of open ports for all instances of anytypeHelper.exe found using cli utilities tasklist, netstat and findstr
 func getOpenPortsWindows() (map[string][]string, error) {
 	appName := "anytypeHelper.exe"
-	stdout, err := execCommand(`tasklist | findstr "` + appName + `"`)
+	stdout, err := execCommand(`tasklist`)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +86,9 @@ func getOpenPortsWindows() (map[string][]string, error) {
 	lines := splitStdOutLines(stdout)
 	pids := map[string]bool{}
 	for _, line := range lines {
+		if !strings.Contains(line, appName) {
+			continue
+		}
 		tokens := splitStdOutTokens(line)
 		pids[tokens[1]] = true
 	}
@@ -82,7 +99,7 @@ func getOpenPortsWindows() (map[string][]string, error) {
 
 	result := map[string][]string{}
 	for pid := range pids {
-		stdout, err := execCommand(`netstat -ano | findstr ${pid} | findstr LISTENING`)
+		stdout, err := execCommand(`netstat -ano`)
 		if err != nil {
 			return nil, err
 		}
@@ -90,6 +107,9 @@ func getOpenPortsWindows() (map[string][]string, error) {
 		lines := splitStdOutLines(stdout)
 		ports := map[string]bool{}
 		for _, line := range lines {
+			if !strings.Contains(line, pid) || !strings.Contains(line, "LISTENING") {
+				continue
+			}
 			tokens := splitStdOutTokens(line)
 			port := strings.Split(tokens[1], ":")[1]
 			ports[port] = true
@@ -104,6 +124,62 @@ func getOpenPortsWindows() (map[string][]string, error) {
 	}
 
 	return result, nil
+}
+
+func isFileGateway(port string) bool {
+	client := &http.Client{}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, "GET", "http://127.0.0.1:"+port+"/file", nil)
+	if err != nil {
+		return false
+	}
+	// disable follow redirect
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+
+	bu := bytes.NewBuffer(nil)
+	resp.Request.Write(bu)
+	ioutil.ReadAll(bu)
+
+	defer resp.Body.Close()
+	// should return 301 redirect Location: /file/
+	if resp.StatusCode == 301 {
+		return true
+	}
+	return false
+}
+
+func isGrpcWebServer(port string) bool {
+	client := &http.Client{}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+	var data = strings.NewReader(`AAAAAAIQFA==`)
+	req, err := http.NewRequestWithContext(ctx, "POST", "http://127.0.0.1:"+port+"/anytype.ClientCommands/AppGetVersion", data)
+	if err != nil {
+		return false
+
+	}
+	req.Header.Set("Content-Type", "application/grpc-web-text")
+	req.Header.Set("X-Grpc-Web", "1")
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	// should has Content-Type: application/grpc-web-text
+	if resp.Header.Get("Content-Type") == "application/grpc-web-text" {
+		return true
+	}
+
+	return false
 }
 
 // MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities lsof and grep
@@ -148,19 +224,47 @@ func getOpenPortsUnix() (map[string][]string, error) {
 func getOpenPorts() (map[string][]string, error) {
 	// Get Platform
 	platform := runtime.GOOS
-
-	Trace.Print("Getting Open Ports on Platform: " + platform)
-
+	var (
+		ports map[string][]string
+		err   error
+	)
 	// Platform specific functions
 	if platform == "windows" {
-		return getOpenPortsWindows()
+		ports, err = getOpenPortsWindows()
+		if err != nil {
+			return nil, err
+		}
 	} else if platform == "darwin" {
-		return getOpenPortsUnix()
+		ports, err = getOpenPortsUnix()
+		if err != nil {
+			return nil, err
+		}
 	} else if platform == "linux" {
-		return getOpenPortsUnix()
+		ports, err = getOpenPortsUnix()
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		return nil, errors.New("unsupported platform")
 	}
+	for pid, pidports := range ports {
+		var gatewayPort, grpcWebPort string
+		for _, port := range pidports {
+			if isFileGateway(port) {
+				gatewayPort = port
+			} else if isGrpcWebServer(port) {
+				grpcWebPort = port
+			}
+		}
+		if gatewayPort != "" && grpcWebPort != "" {
+			ports[pid] = []string{grpcWebPort, gatewayPort}
+		} else {
+			delete(ports, pid)
+		}
+	}
+	Trace.Printf("found ports: %v", ports)
+
+	return ports, nil
 }
 
 // Windows, MacOS and Linux: Starts AnyType as a detached process and returns the PID
@@ -237,7 +341,9 @@ func Init(traceHandle io.Writer, errorHandle io.Writer) {
 }
 
 func main() {
-	file, err := os.OpenFile("nmh.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// create temp file for logging
+	tmpFileName := filepath.Join(os.TempDir(), "anytype-nmh.log")
+	file, err := os.OpenFile(tmpFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		Init(os.Stdout, os.Stderr)
 		Error.Printf("Unable to create and/or open log file. Will log to Stdout and Stderr. Error: %v", err)
@@ -247,7 +353,7 @@ func main() {
 		defer file.Close()
 	}
 
-	Trace.Printf("Chrome native messaging host started. Native byte order: %v.", nativeEndian)
+	Trace.Printf("Chrome native messaging host started")
 	read()
 	Trace.Print("Chrome native messaging host exited.")
 }
@@ -257,7 +363,6 @@ func read() {
 	v := bufio.NewReader(os.Stdin)
 	// adjust buffer size to accommodate your json payload size limits; default is 4096
 	s := bufio.NewReaderSize(v, bufferSize)
-	Trace.Printf("IO buffer reader created with buffer size of %v.", s.Size())
 
 	lengthBytes := make([]byte, 4)
 	lengthNum := int(0)
@@ -267,7 +372,6 @@ func read() {
 	for b, err := s.Read(lengthBytes); b > 0 && err == nil; b, err = s.Read(lengthBytes) {
 		// convert message length bytes to integer value
 		lengthNum = readMessageLength(lengthBytes)
-		Trace.Printf("Message size in bytes: %v", lengthNum)
 
 		// If message length exceeds size of buffer, the message will be truncated.
 		// This will likely cause an error when we attempt to unmarshal message to JSON.
@@ -303,7 +407,7 @@ func readMessageLength(msg []byte) int {
 // parseMessage parses incoming message
 func parseMessage(msg []byte) {
 	iMsg := decodeMessage(msg)
-	Trace.Printf("Message received: %s", msg)
+	Trace.Printf("Message received: %s: %s", iMsg.Type, msg)
 
 	// start building outgoing json message
 	oMsg := OutgoingMessage{

@@ -276,9 +276,10 @@ class DetailStore {
 			object.name = translate('commonDeletedRelation');
 		};
 
-		delete(object.relationMaxCount);
 		delete(object.isReadonly);
+		delete(object.relationMaxCount);
 		delete(object.relationReadonlyValue);
+		delete(object.relationFormatObjectTypes);
 
 		return object;
 	};

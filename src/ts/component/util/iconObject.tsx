@@ -473,11 +473,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	svgBgColor () {
-		return Theme[commonStore.getThemeClass()].icon.bg[this.props.color];
+		return Theme[commonStore.getThemeClass()]?.icon.bg[this.props.color];
 	};
 
 	svgColor () {
-		return Theme[commonStore.getThemeClass()].icon.text;
+		return Theme[commonStore.getThemeClass()]?.icon.text;
 	};
 
 	userSvg (): string {
