@@ -485,9 +485,12 @@ class Block implements I.Block {
 		switch (this.type) {
 			case I.BlockType.Link: {
 				ret = this.content.targetBlockId;
+				break;
 			};
+
 			default: {
 				ret = this.content.targetObjectId;
+				break;
 			};
 		};
 

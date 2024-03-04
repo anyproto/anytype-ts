@@ -160,10 +160,9 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const { accountSpaceId, account } = authStore;
-		const participant = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(item.targetSpaceId, account.id));
+		const { accountSpaceId } = authStore;
 
-		if ((item.targetSpaceId == accountSpaceId) || !participant || (participant.permissions != I.ParticipantPermissions.Owner)) {
+		if ((item.targetSpaceId == accountSpaceId)) {
 			return;
 		};
 

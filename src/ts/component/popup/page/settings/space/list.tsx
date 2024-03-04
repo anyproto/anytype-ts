@@ -13,13 +13,14 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	render () {
-		const { account } = authStore;
+		const { account, accountSpaceId } = authStore;
 		const spaces = dbStore.getSpaces();
 
 		const Row = (space: any) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
 			const participant = detailStore.get(Constant.subId.myParticipant, UtilObject.getParticipantId(space.targetSpaceId, account.id));
 			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
+			const hasMenu = space.targetSpaceId != accountSpaceId;
 
 			return (
 				<tr>
@@ -45,9 +46,11 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
 
 					<td className="columnMore">
-						<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
-							<Icon className="more" />
-						</div>
+						{hasMenu ? (
+							<div id={`icon-more-${space.id}`} onClick={e => this.onSpaceMore(e, space)} className="iconWrap">
+								<Icon className="more" />
+							</div>
+						) : ''}
 					</td>
 				</tr>
 			);
@@ -78,7 +81,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		);
 	};
 
-	onSpaceMore (e: React.MouseEvent, space) {
+	onSpaceMore (e: React.MouseEvent, space: any) {
 		const element = $(`#icon-more-${space.id}`);
 		const options: any[] = [
 			{ id: 'remove', color: 'red', name: translate('commonDelete') },
@@ -96,7 +99,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'remove':
-							Action.removeSpace(item.targetSpaceId, 'ScreenSettings');
+							Action.removeSpace(space.targetSpaceId, 'ScreenSettings');
 							break;
 					};
 				}
