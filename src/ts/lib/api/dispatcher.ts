@@ -1041,6 +1041,7 @@ class Dispatcher {
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
 		this.timeoutEvent[rootId] = window.setTimeout(() => { 
+			blockStore.updateStructureParents(rootId);
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
