@@ -50,13 +50,13 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				};
 
 				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
-				if (!space) {
+				if (space) {
 					this.setState({ error: translate('pageMainInviteErrorDuplicate') });
 					return;
 				};
 
 				UtilObject.openHome('route');
-				window.setTimeout(() => popupStore.open('inviteRequest', { data }), Constant.delay.popup);
+				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message } }), Constant.delay.popup);
 			});
 		};
 		this.resize();
