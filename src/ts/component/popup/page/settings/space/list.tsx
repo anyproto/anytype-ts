@@ -23,6 +23,8 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			const permissions = participant ? translate(`participantPermissions${participant.permissions}`) : '';
 			const hasMenu = space.targetSpaceId != accountSpaceId;
 
+			console.log(participant);
+
 			return (
 				<tr>
 					<td className="columnSpace">
