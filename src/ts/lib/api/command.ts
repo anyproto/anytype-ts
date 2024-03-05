@@ -1926,12 +1926,10 @@ export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: 
 	dispatcher.request(SpaceJoin.name, request, callBack);
 };
 
-export const SpaceJoinCancel = (spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
+export const SpaceJoinCancel = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.JoinCancel.Request();
 
 	request.setSpaceid(spaceId);
-	request.setInvitecid(cid);
-	request.setInvitefilekey(key);
 
 	dispatcher.request(SpaceJoinCancel.name, request, callBack);
 };
