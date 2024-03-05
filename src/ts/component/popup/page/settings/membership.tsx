@@ -21,7 +21,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	slideWidth: number = 0;
 
 	render () {
-		const { membership } = authStore;
+		const { membership, account } = authStore;
 		const { loading, currentSlide } = this.state;
 		const style = { left: -this.slideWidth * currentSlide };
 
@@ -101,6 +101,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			);
 		};
 
+		let url = Url.membershipSpecial;
+		url = url.replace(/\%25accountId\%25/g, account.id);
+
 		return (
 			<div ref={node => this.node = node}>
 				<div className="membershipTitle">{currentTier ? translate('popupSettingsMembership') : translate('popupSettingsMembershipTitle')}</div>
@@ -158,7 +161,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					</div>
 				</div>
 
-				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), Url.membershipSpecial)} />
+				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), url)} />
 			</div>
 		);
 	};
