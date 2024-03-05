@@ -107,6 +107,10 @@
 				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
 			}
 
+			.cellContent.c-object {
+				.element { max-width: 150px; }
+			}
+
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
 				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
