@@ -86,7 +86,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	onClick (space: any) {
 		if (space.spaceAccountStatus != I.SpaceStatus.Joining) {
-			UtilRouter.switchSpace(space.targetSpaceId, 'ScreenSettings');
+			UtilRouter.switchSpace(space.targetSpaceId);
 		};
 	};
 

@@ -375,6 +375,7 @@ class UtilData {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				ignoreDeleted: true,
+				noDeps: true,
 			},
 		];
 
@@ -388,6 +389,7 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				noDeps: true,
 			});
 		};
 
@@ -624,6 +626,16 @@ class UtilData {
 		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
 		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByOwner (c1: any, c2: any) {
+		const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
+		const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+
+		if (isOwner1 && !isOwner2) return -1;
+		if (!isOwner1 && isOwner2) return 1;
+
+		return 0;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
