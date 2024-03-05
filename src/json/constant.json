@@ -352,6 +352,10 @@
 			"default": 140
 		},
 
+		"menu": {
+			"border": 10
+		},
+
 		"dataview": {
 			"gallery": {
 				"width": 224,

@@ -150,14 +150,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const check = async () => {
 			const items = await this.getClipboardData();
-			if (this.clipboardItems !== items) {
-				this.clipboardItems = items;
+			const needUpdate = this.clipboardItems.length != items.length;
+
+			this.clipboardItems = items;
+
+			if (needUpdate) {
 				this.forceUpdate();
 			};
 		};
 
 		check();
-		this.intervalClipboard = window.setInterval(check, 1000);
+		this.intervalClipboard = window.setInterval(check, 2000);
 	};
 
 	componentDidUpdate () {
@@ -611,14 +614,21 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	beforePosition () {
-		const node = $(this.node);
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+		const { ww } = UtilCommon.getWindowDimensions();
+		
+		obj.css({ width: '' });
 
-		node.find('.item').each((i: number, item: any) => {
+		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 
-			item.css({ width: Math.ceil(item.outerWidth()) });
+			item.css({ width: '' });
+			item.css({ width: Math.max(48, Math.ceil(item.outerWidth())) });
 		});
+
+		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2, obj.width()) });
 	};
 
 };

@@ -18,7 +18,7 @@
 		.section { height: auto; padding: 0px; border: 0px; }
 		.section > .name { @include text-small; color: var(--color-text-secondary); padding: 4px 0px; margin: 0px 0px 4px 0px; width: 100%; flex-shrink: 0; }
 
-		.items { display: flex; gap: 0px 8px; }
+		.items { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 
 		.item {
 			position: relative; display: flex; flex-wrap: nowrap; height: 48px; align-items: center; gap: 0px 8px; padding: 0px 14px;
