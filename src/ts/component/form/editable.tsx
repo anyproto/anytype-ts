@@ -28,9 +28,9 @@ class Editable extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
-	placeholder: any = null;
-	editable: any = null;
 	composition = false;
+	refPlaceholder = null;
+	refEditable = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -70,6 +70,7 @@ class Editable extends React.Component<Props> {
 			editor = (
 				<div 
 					id={id} 
+					ref={ref => this.refEditable = ref}
 					className={cne.join(' ')} 
 					contentEditable={true}
 					suppressContentEditableWarning={true}
@@ -81,6 +82,7 @@ class Editable extends React.Component<Props> {
 			editor = (
 				<div
 					id={id}
+					ref={ref => this.refEditable = ref}
 					className={cne.join(' ')}
 					contentEditable={true}
 					suppressContentEditableWarning={true}
@@ -107,39 +109,23 @@ class Editable extends React.Component<Props> {
 				onMouseDown={onMouseDown}
 			>
 				{editor}
-				<div id="placeholder" className={cnp.join(' ')}>{placeholder}</div>
+				<div
+					id="placeholder" 
+					className={cnp.join(' ')}
+					ref={ref => this.refPlaceholder = ref}
+				>
+					{placeholder}
+				</div>
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-
-	init () {
-		const pl = this.placeholder ? this.placeholder.length : 0;
-		const el = this.editable ? this.editable.length : 0;
-
-		if (pl && el) {
-			return;
-		};
-
-		const node = $(this.node);
-		if (!pl) {
-			this.placeholder = node.find('#placeholder');
-		};
-		if (!el) {
-			this.editable = node.find('.editable');
-		};
 	};
 
 	placeholderCheck () {
@@ -147,37 +133,37 @@ class Editable extends React.Component<Props> {
 	};
 
 	placeholderSet (v: string) {
-		this.placeholder.text(v);
+		$(this.refPlaceholder).text(v);
 	};
 	
 	placeholderHide () {
-		this.placeholder.hide();
+		$(this.refPlaceholder).hide();
 	};
 
 	placeholderShow () {
-		this.placeholder.show();
+		$(this.refPlaceholder).show();
 	};
 
 	setValue (html: string) {
-		this.editable.get(0).innerHTML = UtilCommon.sanitize(html);
+		$(this.refEditable).get(0).innerHTML = UtilCommon.sanitize(html);
 	};
 
 	getTextValue (): string {
-		const obj = Mark.cleanHtml(this.editable.html());
+		const obj = Mark.cleanHtml($(this.refEditable).html());
 		return String(obj.get(0).innerText || '');
 	};
 
 	getHtmlValue () : string {
-		return String(this.editable.html() || '');
+		return String($(this.refEditable).html() || '');
 	};
 
 	getRange (): I.TextRange {
-		const range = getRange(this.editable.get(0) as Element);
+		const range = getRange($(this.refEditable).get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 
 	setRange (range: I.TextRange) {
-		const el = this.editable.get(0);
+		const el = $(this.refEditable).get(0);
 
 		el.focus({ preventScroll: true });
 		setRange(el, { start: range.from, end: range.to });

@@ -2092,7 +2092,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const element = blockStore.getMapElement(rootId, last.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 
-			if (!parent.isLayoutDiv() && !parent.isPage()) {
+			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;
 			};
 		};
