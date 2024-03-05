@@ -579,6 +579,16 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugStat': {
+				C.DebugStat((message: any) => {
+					if (!message.error.code) {
+						UtilCommon.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
+				break;
+			};
+
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, (message: any) => {
 					if (!message.error.code) {

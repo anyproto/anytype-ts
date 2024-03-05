@@ -50,6 +50,12 @@ export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => 
 	return response.toObject();
 };
 
+export const DebugStat = (response: Rpc.Debug.Stat.Response) => {
+	let res = {};
+	try { res = JSON.parse(response.getJsonstat()); } catch (e) { /**/ };
+	return res;
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.getPath(),

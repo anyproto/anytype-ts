@@ -1846,6 +1846,12 @@ export const DebugStackGoroutines = (path: string, callBack?: (message: any) => 
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+export const DebugStat = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.Stat.Request();
+
+	dispatcher.request(DebugStat.name, request, callBack);
+};
+
 // ---------------------- NOTIFICATION ---------------------- //
 
 export const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {

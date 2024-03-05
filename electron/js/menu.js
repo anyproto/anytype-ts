@@ -22,6 +22,8 @@ class MenuManager {
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
 
+		config.debug = config.debug || {};
+
 		const menuParam = [
 			{
 				label: 'Anytype',
@@ -63,16 +65,6 @@ class MenuManager {
 
 					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
 					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
-
-					Separator,
-
-					{ 
-						label: Util.translate('electronMenuDebug'),	submenu: [
-							{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-							{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
-							{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
-						],
-					},
 
 					Separator,
 
@@ -172,42 +164,48 @@ class MenuManager {
 			},
 		];
 
-		//if (config.allowDebug || config.allowBeta) {
-			config.debug = config.debug || {};
+		const flags = { 
+			ui: Util.translate('electronMenuFlagInterface'), 
+			ho: Util.translate('electronMenuFlagHidden'), 
+			mw: Util.translate('electronMenuFlagMiddleware'), 
+			th: Util.translate('electronMenuFlagThreads'), 
+			fi: Util.translate('electronMenuFlagFiles'), 
+			an: Util.translate('electronMenuFlagAnalytics'), 
+			js: Util.translate('electronMenuFlagJson'),
+		};
+		const flagMenu = [];
 
-			const flags = { 
-				ui: Util.translate('electronMenuFlagInterface'), 
-				ho: Util.translate('electronMenuFlagHidden'), 
-				mw: Util.translate('electronMenuFlagMiddleware'), 
-				th: Util.translate('electronMenuFlagThreads'), 
-				fi: Util.translate('electronMenuFlagFiles'), 
-				an: Util.translate('electronMenuFlagAnalytics'), 
-				js: Util.translate('electronMenuFlagJson'),
-			};
-			const flagMenu = [];
-
-			for (const i in flags) {
-				flagMenu.push({
-					label: flags[i], type: 'checkbox', checked: config.debug[i],
-					click: () => {
-						config.debug[i] = !config.debug[i];
-						Api.setConfig(this.win, { debug: config.debug });
-						
-						if ([ 'ho' ].includes(i)) {
-							this.win.reload();
-						};
-					}
-				});
-			};
-
-			menuParam.push({
-				label: Util.translate('electronMenuDebug'),
-				submenu: [
-					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
-					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
-				]
+		for (const i in flags) {
+			flagMenu.push({
+				label: flags[i], type: 'checkbox', checked: config.debug[i],
+				click: () => {
+					config.debug[i] = !config.debug[i];
+					Api.setConfig(this.win, { debug: config.debug });
+					
+					if ([ 'ho' ].includes(i)) {
+						this.win.reload();
+					};
+				}
 			});
-		//};
+		};
+
+		menuParam.push({
+			label: Util.translate('electronMenuDebug'),
+			submenu: [
+				{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
+
+				Separator,
+
+				{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
+				{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
+				{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
+				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
+
+				Separator,
+
+				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
+			]
+		});
 
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
