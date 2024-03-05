@@ -3,6 +3,7 @@ import { Title, Icon, Label, Button, Error } from 'Component';
 import { I, C, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { popupStore, authStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -13,6 +14,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 	state = {
 		error: '',
 	};
+
+	refButton = null;
 	invite = {
 		spaceName: '',
 		creatorName: '',
@@ -39,7 +42,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), this.invite.spaceName, this.invite.creatorName)} />
 
 				<div className="buttons">
-					<Button onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
+					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
 				</div>
 
 				<div className="note">{translate('popupInviteRequestNote')}</div>
@@ -71,11 +74,15 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { cid, key } = data;
 		const { account } = authStore;
 
-		if (!account) {
+		if (!account || this.refButton.state.isLoading) {
 			return;
 		};
 
+		this.refButton.setLoading(true);
+
 		C.SpaceJoin(account.info.networkId, this.invite.spaceId, cid, key, (message: any) => {
+			this.refButton.setLoading(false);
+
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;

@@ -386,9 +386,6 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
 				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 			});
