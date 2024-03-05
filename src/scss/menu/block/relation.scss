@@ -88,6 +88,10 @@
 
 			.cellContent.isName { display: flex; align-items: center; }
 
+			.cellContent.c-object {
+				.element { max-width: 150px; }
+			}
+
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background $transitionCommon; 
 				position: relative; margin-right: 6px;
@@ -105,10 +109,6 @@
 			.cell.c-object, 
 			.cell.c-file {
 				.over { overflow: visible !important; width: 100%; flex-wrap: wrap; gap: 4px 6px; }
-			}
-
-			.cellContent.c-object {
-				.element { max-width: 150px; }
 			}
 
 			.cell.isEditing { padding: 0px; }
