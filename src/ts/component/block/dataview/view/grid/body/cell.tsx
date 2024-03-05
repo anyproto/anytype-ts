@@ -18,7 +18,7 @@ interface Props {
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
-	canCellEdit?(relationKey: string, recordId: string): boolean;
+	canCellEdit?(relation: any, recordId: any): boolean;
 };
 
 const BodyCell = observer(class BodyCell extends React.Component<Props> {
@@ -41,7 +41,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const canEdit = canCellEdit(relationKey, record.id);
+		const canEdit = canCellEdit(relation, record);
 
 		if (relationKey == 'name') {
 			cn.push('isName');
