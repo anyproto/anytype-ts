@@ -89,6 +89,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					return;
 				};
 
+				window.focus();
 				extensionStore.challengeId = message.challengeId;
 				UtilRouter.go('/challenge', {});
 			});
