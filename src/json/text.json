@@ -392,7 +392,8 @@
 	"pageMainImportTitle": "Downloading manifest",
 
 	"pageMainInviteTitle": "Downloading invite",
-	"pageMainInviteError": "Incorrect invite data",
+	"pageMainInviteErrorData": "Incorrect invite data",
+	"pageMainInviteErrorDuplicate": "You have already joined this space",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 

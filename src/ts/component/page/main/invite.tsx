@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -25,8 +25,6 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			>
 				<Frame>
 					<Title text={translate('pageMainInviteTitle')} />
-					<Loader />
-
 					<Error text={error} />
 
 					{error ? (
@@ -43,10 +41,23 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 		const data = this.getSearch();
 
 		if (!data.cid || !data.key) {
-			this.setState({ error: translate('pageMainInviteError') });
+			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
-			UtilObject.openHome('route');
-			window.setTimeout(() => popupStore.open('inviteRequest', { data }), Constant.delay.popup);
+			C.SpaceInviteView(data.cid, data.key, (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
+
+				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
+				if (!space._empty_) {
+					this.setState({ error: translate('pageMainInviteErrorDuplicate') });
+					return;
+				};
+
+				UtilObject.openHome('route');
+				window.setTimeout(() => popupStore.open('inviteRequest', { data }), Constant.delay.popup);
+			});
 		};
 		this.resize();
 	};

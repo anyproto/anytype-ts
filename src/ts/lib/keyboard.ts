@@ -804,49 +804,42 @@ class Keyboard {
 		});
 	};
 
-	onSpaceMenu (shortcut: boolean) {
+	menuFromNavigation (id: string, param: Partial<I.MenuParam>, data: any) {
+		if (menuStore.isOpen(id)) {
+			menuStore.close(id);
+			return;
+		};
+
+		const menuParam = Object.assign({
+			element: '#navigationPanel',
+			className: 'fixed',
+			classNameWrap: 'fromNavigation',
+			type: I.MenuType.Horizontal,
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
+			noFlipY: true,
+			offsetY: -12,
+			data,
+		}, param);
+
 		popupStore.close('search', () => {
-			menuStore.closeAll([ 'quickCapture' ], () => {
-				menuStore.open('space', {
-					element: '#navigationPanel',
-					className: 'fixed',
-					classNameWrap: 'fromNavigation',
-					type: I.MenuType.Horizontal,
-					horizontal: I.MenuDirection.Center,
-					vertical: I.MenuDirection.Top,
-					offsetY: -12,
-					data: {
-						shortcut,
-					}
-				});
+			menuStore.closeAll(Constant.menuIds.navigation, () => {
+				menuStore.open(id, menuParam);
 			});
 		});
 	};
 
+	onSpaceMenu (shortcut: boolean) {
+		this.menuFromNavigation('space', {}, { shortcut });
+	};
+
 	onQuickCapture () {
-		if (menuStore.isOpen('quickCapture')) {
-			menuStore.close('quickCapture');
-			return;
-		};
+		const button = $('#button-navigation-plus');
 
-		const element = '#button-navigation-plus';
-
-		popupStore.close('search', () => {
-			menuStore.closeAll([ 'quickCapture', 'space' ], () => {
-				menuStore.open('quickCapture', {
-					element,
-					className: 'fixed',
-					classNameWrap: 'fromNavigation',
-					type: I.MenuType.Horizontal,
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Center,
-					noFlipY: true,
-					offsetY: -20,
-					onOpen: () => $(element).addClass('active'),
-					onClose: () => $(element).removeClass('active'),
-				});
-			});
-		});
+		this.menuFromNavigation('quickCapture', {
+			onOpen: () => button.addClass('active'),
+			onClose: () => button.removeClass('active'),
+		}, {});
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
