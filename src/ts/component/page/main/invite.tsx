@@ -56,7 +56,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				};
 
 				UtilObject.openHome('route');
-				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message } }), Constant.delay.popup);
+				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), Constant.delay.popup);
 			});
 		};
 		this.resize();

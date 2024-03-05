@@ -15,7 +15,6 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 	};
 
 	refButton = null;
-	invite: any = {};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -25,6 +24,9 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 	render() {
 		const { error } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { invite } = data;
 
 		return (
 			<React.Fragment>
@@ -34,7 +36,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 					<Icon />
 				</div>
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), this.invite.spaceName, this.invite.creatorName)} />
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), invite.spaceName, invite.creatorName)} />
 
 				<div className="buttons">
 					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
@@ -47,18 +49,11 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		);
 	};
 
-	componentDidMount (): void {
-		const { param } = this.props;
-		const { data } = param;
-		const { invite } = data;
-
-		this.invite = invite;
-		this.forceUpdate();
-	};
-
 	onRequest () {
-		const { close } = this.props;
+		const { param, close } = this.props;
 		const { account } = authStore;
+		const { data } = param;
+		const { invite, cid, key } = data;
 
 		if (!account || this.refButton.state.isLoading) {
 			return;
@@ -66,7 +61,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 		this.refButton.setLoading(true);
 
-		C.SpaceJoin(account.info.networkId, this.invite.spaceId, this.invite.cid, this.invite.key, (message: any) => {
+		C.SpaceJoin(account.info.networkId, invite.spaceId, cid, key, (message: any) => {
 			this.refButton.setLoading(false);
 
 			if (message.error.code) {
