@@ -617,6 +617,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 		const { ww } = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 		
 		obj.css({ width: '' });
 
@@ -628,7 +630,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			item.css({ width: Math.max(48, Math.ceil(item.outerWidth())) });
 		});
 
-		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2, obj.width()) });
+		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, obj.width()) });
 	};
 
 };
