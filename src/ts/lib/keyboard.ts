@@ -805,11 +805,6 @@ class Keyboard {
 	};
 
 	menuFromNavigation (id: string, param: Partial<I.MenuParam>, data: any) {
-		if (menuStore.isOpen(id)) {
-			menuStore.close(id);
-			return;
-		};
-
 		const menuParam = Object.assign({
 			element: '#navigationPanel',
 			className: 'fixed',
@@ -822,11 +817,15 @@ class Keyboard {
 			data,
 		}, param);
 
-		popupStore.close('search', () => {
-			menuStore.closeAll(Constant.menuIds.navigation, () => {
-				menuStore.open(id, menuParam);
+		if (menuStore.isOpen(id)) {
+			menuStore.open(id, menuParam);
+		} else {
+			popupStore.close('search', () => {
+				menuStore.closeAll(Constant.menuIds.navigation, () => {
+					menuStore.open(id, menuParam);
+				});
 			});
-		});
+		};
 	};
 
 	onSpaceMenu (shortcut: boolean) {
@@ -834,6 +833,11 @@ class Keyboard {
 	};
 
 	onQuickCapture () {
+		if (menuStore.isOpen('quickCapture')) {
+			menuStore.close('quickCapture');
+			return;
+		};
+
 		const button = $('#button-navigation-plus');
 
 		this.menuFromNavigation('quickCapture', {
