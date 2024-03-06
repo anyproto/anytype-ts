@@ -982,10 +982,7 @@ class UtilData {
 	};
 
 	isLocalOnly (): boolean {
-		const { account } = authStore;
-		const { info } = account;
-
-		return info.networkId == '';
+		return authStore.account?.info?.networkId == '';
 	};
 
 };
