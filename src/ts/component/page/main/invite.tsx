@@ -50,7 +50,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				};
 
 				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
-				if (space) {
+				if (space && ![ I.SpaceStatus.Deleted ].includes(space.spaceAccountStatus)) {
 					this.setState({ error: translate('pageMainInviteErrorDuplicate') });
 					return;
 				};
