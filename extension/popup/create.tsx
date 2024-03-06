@@ -172,7 +172,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.initName();
 			this.initType();
 
-			this.setState({ withContent: Boolean(Number(Storage.get('withContent'))) });
+			this.setState({ withContent: Boolean(Storage.get('withContent')) });
 		});
 	};
 
@@ -444,7 +444,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onCheckbox () {
 		const { withContent } = this.state;
 
-		Storage.set('withContent', Number(!withContent));
+		Storage.set('withContent', !withContent);
 		this.setState({ withContent: !withContent });
 	};
 
