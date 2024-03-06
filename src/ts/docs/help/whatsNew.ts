@@ -64,8 +64,8 @@ export default [
 	h3(`Graph and Flow Added to Global Search`),
 	text(`You can now use the global search menu to navigate to your Graph and Flow tabs.`),
 
-	h3(`Czech Added to Interface Languages`),
-	text(`Thank you to everyone who’s contributed to Czech translation, we now have 20 languages available for Desktop!`),
+	h3(`Czech, Lithuanian, and Korean Added to Interface Languages`),
+	text(`Thanks to everyone who’s contributed to these three new translations, we now have 22 languages available on Desktop!`),
 
 	h2(`💻 Tech:`),
 	bullet(`Electron updated to 0.28.2`),
