@@ -411,10 +411,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { close } = this.props;
 
 		const cb = (created?: any) => {
+			const { isExpanded } = this.state;
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 			const type = created || item;
 
-			if (this.state.isExpanded && this.filter.length) {
+			if (isExpanded && this.filter.length) {
 				analytics.event('TypeSearchResult');
 			};
 
