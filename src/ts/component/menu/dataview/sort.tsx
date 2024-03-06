@@ -72,6 +72,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							options={relationOptions} 
 							value={item.relationKey} 
 							onChange={v => this.onChange(item.id, 'relationKey', v)} 
+							readonly={isReadonly}
 						/>
 
 						<Select 
@@ -80,6 +81,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							options={typeOptions} 
 							value={item.type} 
 							onChange={v => this.onChange(item.id, 'type', v)} 
+							readonly={isReadonly}
 						/>
 					</div>
 					{!isReadonly ? (

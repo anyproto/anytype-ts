@@ -82,8 +82,9 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject, isCollection, allowedLink, allowedOpen } = data;
+		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
@@ -91,7 +92,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
-		let unlink = null;
+		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -101,10 +102,11 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedFav = true;
 		let allowedCopy = true;
 		let allowedType = true;
-
-		if (isCollection) {
-			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
-		};
+		let allowedLink = data.allowedLink;
+		let allowedOpen = data.allowedOpen;
+		let allowedUnlink = isCollection;
+		let allowedExport = true;
+		let allowedWidget = true;
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -143,17 +145,27 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (length > 1) {
-			open = null;
-			linkTo = null;
-			createWidget = null;
+			allowedOpen = false;
+			allowedLink = false;
+			allowedWidget = false;
+		};
+
+		if (!canWrite) {
+			allowedArchive = false;
+			allowedFav = false;
+			allowedCopy = false;
+			allowedType = false;
+			allowedLink = false;
+			allowedUnlink = false;
+			allowedWidget = false;
 		};
 
 		if (archiveCnt == length) {
-			open = null;
-			linkTo = null;
-			unlink = null;
-			changeType = null;
-			exportObject = null;
+			allowedOpen = false;
+			allowedLink = false;
+			allowedUnlink = false;
+			allowedType = false;
+			allowedFav = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -165,6 +177,9 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedType)		 changeType = null;
 		if (!allowedLink)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
+		if (!allowedUnlink)		 unlink = null;
+		if (!allowedExport)		 exportObject = null;
+		if (!allowedWidget)		 createWidget = null;
 
 		let sections = [
 			{ children: [ createWidget, open, fav, linkTo, exportObject ] },

@@ -101,7 +101,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					return (
 						<div 
 							id={`item-tag-${element.id}`} 
-							className="item" 
+							className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
 							onMouseEnter={() => {
 								menuStore.close('select'); 
 								setHover({ id: `tag-${element.id}` }); 
@@ -140,7 +140,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					return (
 						<div 
 							id={`item-object-${element.id}`} 
-							className="item withCaption"
+							className={[ 'item', 'withCaption', (isReadonly ? 'isReadonly' : '') ].join(' ')}
 							onMouseEnter={() => setHover({ id: `object-${element.id}` })}
 						>
 							<div className="clickable" onClick={e => this.onObject(e, item)}>
