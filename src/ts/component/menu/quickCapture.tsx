@@ -404,6 +404,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		if (item.itemId == SystemIds.Search) {
 			this.onExpand();
+			analytics.event('ScreenObjectTypeSearch');
 			return;
 		};
 
@@ -492,13 +493,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'pin': {
 							isPinned ? Storage.removePinnedType(item.itemId) : Storage.addPinnedType(item.itemId);
+							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route: 'Navigation' });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'default': {
 							commonStore.typeSet(item.uniqueKey);
-							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Navigation' });
 							this.forceUpdate();
 							break;
 						};
@@ -506,6 +508,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 								Action.uninstall({ ...item, id: item.itemId }, true);
+								analytics.event('ObjectUninstall', { route: 'Navigation' });
 							};
 							break;
 						};
@@ -560,6 +563,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	async onPaste () {
 		const type = dbStore.getTypeById(commonStore.type);
 		const data = await this.getClipboardData();
+
+		analytics.event('CreateObject', { route: 'Clipboard' });
 
 		data.forEach(async item => {
 			let text = '';

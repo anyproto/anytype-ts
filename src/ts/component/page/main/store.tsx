@@ -599,6 +599,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 			Action.uninstall(item, true);
+			analytics.event('ObjectUninstall', { route: 'Library' });
 		};
 	};
 
