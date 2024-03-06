@@ -39,6 +39,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 	componentDidMount (): void {
 		const data = this.getSearch();
+		const allowedStatuses = [ I.SpaceStatus.Deleted ];
 
 		if (!data.cid || !data.key) {
 			this.setState({ error: translate('pageMainInviteErrorData') });
@@ -50,7 +51,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				};
 
 				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
-				if (space && ![ I.SpaceStatus.Deleted ].includes(space.spaceAccountStatus)) {
+				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
 					this.setState({ error: translate('pageMainInviteErrorDuplicate') });
 					return;
 				};
