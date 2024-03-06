@@ -125,6 +125,7 @@
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
+	"commonLeaveSpace": "Leave space",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -779,11 +780,6 @@
 
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
-
-	"popupSettingsSpaceLeave": "Leave %s?",
-	"popupSettingsSpaceLeaveTitle": "Leave space",
-	"popupSettingsSpaceLeaveText": "You will no longer see the space and all files inside.<br \/>You could be back again via the invite link.",
-	"popupSettingsSpaceLeaveButton": "Yes, I want to leave",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1548,7 +1544,7 @@
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 
-	"deletedBanner": "This file is in the Bin and is shown in view mode",
+	"deletedBanner": "This Object is in the Bin and is shown in view mode",
 	"deletedBannerRestore": "Restore",
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",
