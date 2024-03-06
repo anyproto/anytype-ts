@@ -199,6 +199,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedPageLink)	 pageLink = null;
 
+		if (!canWrite) {
+			template = null;
+			setDefaultTemplate = null;
+		};
+
 		let sections = [];
 		if (hasShortMenu) {
 			if (!UtilObject.isSetLayout(object.layout)) {
