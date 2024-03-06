@@ -21,15 +21,18 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     render () {
         const { onPage } = this.props;
         const { localUsage } = commonStore.spaceStorage;
-        const { walletPath, accountPath } = authStore;
+        const { walletPath, accountPath, account } = authStore;
+		const { info } = account;
         const { config } = commonStore;
         const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
         const canMove = config.experimental;
+		const localOnly = info.networkId == '';
+		const suffix = localOnly ? 'LocalOnly' : '';
 
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsDataManagementTitle')} />
-                <Label className="description" text={translate('popupSettingsDataManagementLocalStorageText')} />
+                <Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
                 <div className="actionItems">
                     <div className="item storageUsage">
@@ -42,7 +45,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                             </div>
                         </div>
 						<div className="side right">
-							<Button color="blank" className="c28" text={translate('popupSettingsDataManagementOffloadFiles')} onClick={this.onOffload} />
+							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
 						</div>
                     </div>
 
@@ -64,14 +67,20 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     onOffload (e: any) {
         const { setLoading } = this.props;
+		const { account } = authStore;
+		const { info } = account;
+		const localOnly = info.networkId == '';
+		const suffix = localOnly ? 'LocalOnly' : '';
 
         analytics.event('ScreenFileOffloadWarning');
 
         popupStore.open('confirm',{
             data: {
                 title: translate('popupSettingsDataOffloadWarningTitle'),
-                text: translate('popupSettingsDataOffloadWarningText'),
-                textConfirm: translate('commonYes'),
+                text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
+                textConfirm: localOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+				canCancel: localOnly,
+				textCancel: translate('popupSettingsDataRemoveFiles'),
                 onConfirm: () => {
                     setLoading(true);
                     analytics.event('SettingsStorageOffload');
