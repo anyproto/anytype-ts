@@ -14,6 +14,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 		error: '',
 	};
 	node = null;
+	refFrame = null;
 
 	render () {
 		const { error } = this.state;
@@ -23,7 +24,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				ref={ref => this.node = ref}
 				className="wrapper"
 			>
-				<Frame>
+				<Frame ref={ref => this.refFrame = ref}>
 					<Title text={translate('pageMainInviteTitle')} />
 					<Error text={error} />
 
@@ -31,7 +32,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 						<div className="buttons">
 							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
 						</div>
-					) : ''}
+					) : <Loader />}
 				</Frame>
 			</div>
 		);
@@ -52,7 +53,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
 				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
-					this.setState({ error: translate('pageMainInviteErrorDuplicate') });
+					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), space.name) });
 					return;
 				};
 
@@ -60,6 +61,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), Constant.delay.popup);
 			});
 		};
+
 		this.resize();
 	};
 
@@ -76,13 +78,13 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 		const win = $(window);
 		const obj = UtilCommon.getPageContainer(isPopup);
 		const node = $(this.node);
-		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();
 		const header = node.find('#header');
 		const hh = header.height();
 		const wh = isPopup ? oh - hh : win.height();
 
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
+		node.css({ height: wh, paddingTop: isPopup ? 0 : hh });
+		this.refFrame.resize();
 	};
 
 };

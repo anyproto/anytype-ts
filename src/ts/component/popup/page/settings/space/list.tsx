@@ -2,11 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, C, UtilObject, UtilRouter, translate, Action } from 'Lib';
+import { I, C, UtilObject, UtilRouter, translate, Action, UtilMenu } from 'Lib';
 import { popupStore, dbStore, detailStore, menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<{}, {}> {
+const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 
 	constructor (props) {
 		super(props);
@@ -91,49 +91,16 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onMore (space: any) {
-		const element = $(`#icon-more-${space.id}`);
-		const options: any[] = [];
+		const { getId } = this.props;
+		const element = $(`#${getId()} #icon-more-${space.id}`);
 
-		if (space.spaceAccountStatus == I.SpaceStatus.Joining) {
-			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
-		} else {
-			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
-		};
-
-		menuStore.open('select', {
+		UtilMenu.spaceContext(space, {
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'remove': {
-							Action.removeSpace(space.targetSpaceId, 'ScreenSettings');
-							break;
-						};
-
-						case 'cancel': {
-							C.SpaceJoinCancel(space.targetSpaceId, (message: any) => {
-								if (message.error.code) {
-									window.setTimeout(() => {
-										popupStore.open('confirm', {
-											data: {
-												title: translate('commonError'),
-												text: message.error.description,
-											}
-										});
-									}, Constant.delay.popup);
-								};
-							});
-							break;
-						};
-					};
-				}
-			}
 		});
 	};
 

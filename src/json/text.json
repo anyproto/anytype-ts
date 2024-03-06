@@ -393,7 +393,7 @@
 
 	"pageMainInviteTitle": "Downloading invite",
 	"pageMainInviteErrorData": "Incorrect invite data",
-	"pageMainInviteErrorDuplicate": "You have already joined this space",
+	"pageMainInviteErrorDuplicate": "You are joining or have already joined %s space",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
