@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon } from 'Lib';
+import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { authStore, commonStore, popupStore } from 'Store';
 
@@ -21,13 +21,11 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     render () {
         const { onPage } = this.props;
         const { localUsage } = commonStore.spaceStorage;
-        const { walletPath, accountPath, account } = authStore;
-		const { info } = account;
+        const { walletPath, accountPath } = authStore;
         const { config } = commonStore;
         const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
         const canMove = config.experimental;
-		const localOnly = info.networkId == '';
-		const suffix = localOnly ? 'LocalOnly' : '';
+		const suffix = UtilData.isLocalOnly() ? 'LocalOnly' : '';
 
         return (
             <React.Fragment>
@@ -67,17 +65,14 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     onOffload (e: any) {
         const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localOnly = info.networkId == '';
-		const suffix = localOnly ? 'LocalOnly' : '';
+		const localOnly =  UtilData.isLocalOnly();
 
         analytics.event('ScreenFileOffloadWarning');
 
         popupStore.open('confirm',{
             data: {
                 title: translate('popupSettingsDataOffloadWarningTitle'),
-                text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
+                text: translate(`popupSettingsDataOffloadWarningText${localOnly ? 'LocalOnly' : ''}`),
                 textConfirm: localOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
 				canCancel: localOnly,
 				textCancel: translate('popupSettingsDataRemoveFiles'),

@@ -981,6 +981,13 @@ class UtilData {
 		return ret;
 	};
 
+	isLocalOnly (): boolean {
+		const { account } = authStore;
+		const { info } = account;
+
+		return info.networkId == '';
+	};
+
 };
 
 export default new UtilData();
