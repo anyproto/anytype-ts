@@ -981,6 +981,10 @@ class UtilData {
 		return ret;
 	};
 
+	isLocalOnly (): boolean {
+		return authStore.account?.info?.networkId == '';
+	};
+
 };
 
 export default new UtilData();
