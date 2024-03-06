@@ -591,6 +591,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onFocusDate (e: any) {
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
@@ -630,6 +635,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onTag () {
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
+
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
@@ -657,6 +667,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onObject (e: any, item: any) {
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
+
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
