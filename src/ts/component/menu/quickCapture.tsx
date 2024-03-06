@@ -309,7 +309,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					id: SystemIds.Clipboard, 
 					icon: 'clipboard', 
 					name: '', 
-					tooltip: translate('menuQuickCaptureTooltipSearch'),
+					tooltip: translate('menuQuickCaptureTooltipClipboard'),
 					caption: '0',
 				});
 			};
