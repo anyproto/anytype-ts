@@ -975,7 +975,10 @@ class UtilData {
 	};
 
 	getMembershipData (callBack?: (message: any) => void) {
-		C.PaymentsSubscriptionGetStatus((message) => {
+		// not used yet
+		const noCache = false;
+
+		C.PaymentsSubscriptionGetStatus(noCache, (message) => {
 			if (message.error.code) {
 				return;
 			};

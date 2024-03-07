@@ -1900,8 +1900,11 @@ export const NameServiceUserAccountGet = (callBack?: (message: any) => void) => 
 
 // ---------------------- PAYMENTS ---------------------- //
 
-export const PaymentsSubscriptionGetStatus = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
+export const PaymentsSubscriptionGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Payments.Subscription.GetStatus.Request();
+	
+	request.setNocache(noCache);
+
 	dispatcher.request(PaymentsSubscriptionGetStatus.name, request, callBack);
 };
 
