@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, analytics } from 'Lib';
+import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
 import Constant from 'json/constant.json';
 import Util from '../lib/util';
@@ -440,12 +440,6 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			extensionStore.createdObject = object;
 			UtilRouter.go('/success', {});
-
-			analytics.event('CreateObject', { 
-				route: 'Webclipper',
-				objectType: object.type,
-				layout: object.layout,
-			});
 
 			this.isCreating = false;
 		});
