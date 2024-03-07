@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, Storage, analytics } from 'Lib';
+import { I, C, UtilRouter, Storage } from 'Lib';
 import { extensionStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -60,6 +60,8 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 
 				Util.init(response.ports[0], response.ports[1]);
 				this.login();
+
+				clearInterval(this.interval);
 			});
 		});
 	};

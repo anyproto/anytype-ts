@@ -987,6 +987,8 @@ class Dispatcher {
 					let payload: any = {};
 					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
 
+					console.log(payload);
+
 					switch (payload.type) {
 						case 'openObject': {
 							UtilObject.openAuto(payload.object);
@@ -995,6 +997,12 @@ class Dispatcher {
 							if (electron.focus) {
 								electron.focus();
 							};
+
+							analytics.event('CreateObject', {
+								route: 'Webclipper',
+								objectType: payload.object.type,
+								layout: payload.object.layout,
+							});
 							break;
 						};
 					};
