@@ -75,6 +75,22 @@ html.bodyIndex, html.bodyAuth {
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 
+	/* Notifications */
+
+	.notifications {
+		@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
+		.head {
+			.icon { border-color: var(--color-bg-secondary); }
+		}
+
+		.notification {	background: var(--color-bg-secondary); @include shadow; border: 0px; }
+
+		.notification {
+			.icon.delete { background-color: var(--color-bg-secondary); }
+		}
+	}
+
 	.loaderWrapper {
 		.loader { border-color: #555; border-left-color: var(--color-system-accent-100) !important; }
 		.dot { border-color: #fff; }

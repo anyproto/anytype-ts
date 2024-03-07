@@ -187,6 +187,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	};
 
 	onConfirm (e: any) {
+		const { space } = commonStore;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { objectIds, route } = data;
@@ -196,7 +197,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		switch (format) {
 			default:
-				Action.export(objectIds, format, { ...this.data, route });
+				Action.export(space, objectIds, format, { ...this.data, route });
 				close();
 				break;
 
