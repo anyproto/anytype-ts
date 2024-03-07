@@ -19,7 +19,6 @@ enum View {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 
-
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
@@ -59,6 +58,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const canWrite = UtilObject.canParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
@@ -132,7 +132,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		);
 
 		const Item = (item: any) => {
-			const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const allowedDelete = canWrite && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 			const icons: any[] = [];
 			const buttons: any[] = [];
@@ -555,6 +555,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getViews (): any[] {
 		const views: any[] = [];
+		const canWrite = UtilObject.canParticipantWrite();
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -566,7 +567,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
+		if (canWrite) {
+			views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
+		};
 		return views;
 	};
 
