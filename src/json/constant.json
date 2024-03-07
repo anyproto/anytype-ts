@@ -270,7 +270,6 @@
 	"pageCoverRelationKey": "pageCover",
 
 	"subId": {
-		"index": "index",
 		"search": "search",
 		"profile": "profile",
 		"deleted": "deleted",

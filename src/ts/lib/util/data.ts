@@ -411,6 +411,10 @@ class UtilData {
 		};
 	};
 
+	destroySubscriptions (callBack?: () => void): void {
+		C.ObjectSearchUnsubscribe(Object.values(Constant.subId), callBack);
+	};
+
 	spaceRelationKeys () {
 		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
 	};
