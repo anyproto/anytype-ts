@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { C, UtilCommon, UtilRouter } from 'Lib'; 
+import { C, UtilCommon, UtilRouter, analytics } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
@@ -26,6 +26,7 @@ window.isExtension = true;
 window.Electron = {
 	currentWindow: () => ({}),
 	Api: () => {},
+	platform: '',
 };
 
 window.Anytype = {
@@ -43,6 +44,11 @@ window.AnytypeGlobalConfig = {
 	menuBorderBottom: 16, 
 	debug: { mw: false },
 };
+
+analytics.init({
+	batchEvents: false,
+	saveEvents: false,
+});
 
 let rootId = '';
 let component: any = null;
