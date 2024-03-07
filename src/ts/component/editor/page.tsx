@@ -1312,10 +1312,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent.id);
+		const parent = blockStore.getLeaf(rootId, element?.parentId);
+		const parentElement = blockStore.getMapElement(rootId, parent?.id);
 
-		if (!element || !parentElement) {
+		if (!element || !parent || !parentElement) {
 			return;
 		};
 
