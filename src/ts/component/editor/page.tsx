@@ -1489,7 +1489,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, element?.parentId);
+
+			if (!rowElement) {
+				return;
+			};
+
 			const idx = rowElement.childrenIds.indexOf(block.id);
 
 			if (idx < 0) {
