@@ -1,4 +1,4 @@
-import { I, Onboarding, keyboard, translate } from 'Lib';
+import { I, Onboarding, keyboard, translate, UtilObject } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -175,54 +175,58 @@ export default {
         },
     }),
 
-    dashboard: () => ({
-        category: translate('onboardingDashboard'),
-        showConfetti: true,
-		onComplete: (force: boolean) => {
-			if (!$('#navigationPanel').hasClass('hide')) {
-				Onboarding.start('space', keyboard.isPopup(), force);
-			};
-		},
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingDashboard11')}</p>
-					<p>${translate('onboardingDashboard12')}</p>
-					<p>${translate('onboardingDashboard13')}</p>
-				`,
-                video: './img/help/onboarding/homepage.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard41')}</p>
-					<p>${translate('onboardingDashboard42')}</p>
-                `,
-                video: './img/help/onboarding/sidebar.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard51')}</p>
-					<p>${translate('onboardingDashboard52')}</p>
-					<p>${translate('onboardingDashboard53')}</p>
-                `,
-                buttons: [
-                    { text: translate('commonImport'), action: 'import' }
-                ]
-            }
-        ],
+    dashboard: () => {
+		const canWrite = UtilObject.canParticipantWrite();
 
-		param: {
-			element: '#page.isFull #footer #button-help',
-			classNameWrap: 'fixed',
-			className: 'wizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-            noArrow: true,
-			noClose: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-    }),
+		return {
+			category: translate('onboardingDashboard'),
+			showConfetti: true,
+			onComplete: (force: boolean) => {
+				if (!$('#navigationPanel').hasClass('hide')) {
+					Onboarding.start('space', keyboard.isPopup(), force);
+				};
+			},
+			items: [
+				{
+					description: `
+						<p>${translate('onboardingDashboard11')}</p>
+						<p>${translate('onboardingDashboard12')}</p>
+						<p>${translate('onboardingDashboard13')}</p>
+					`,
+					video: './img/help/onboarding/homepage.mp4',
+				},
+				{
+					description: `
+						<p>${translate('onboardingDashboard41')}</p>
+						<p>${translate('onboardingDashboard42')}</p>
+					`,
+					video: './img/help/onboarding/sidebar.mp4',
+				},
+				{
+					description: `
+						<p>${translate('onboardingDashboard51')}</p>
+						<p>${translate('onboardingDashboard52')}</p>
+						<p>${translate('onboardingDashboard53')}</p>
+					`,
+					buttons: [
+						canWrite ? { text: translate('commonImport'), action: 'import' } : null
+					]
+				}
+			],
+
+			param: {
+				element: '#page.isFull #footer #button-help',
+				classNameWrap: 'fixed',
+				className: 'wizard',
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Right,
+				noArrow: true,
+				noClose: true,
+				passThrough: true,
+				offsetY: -4,
+			},
+		};
+	},
 
     editor: () => ({
         category: translate('onboardingEditor'),
@@ -412,8 +416,13 @@ export default {
 		}
 	),
 
-	quickCapture: () => (
-		{
+	quickCapture: () => {
+		const canWrite = UtilObject.canParticipantWrite();
+		if (!canWrite) {
+			return;
+		};
+
+		return {
 			items: [
 				{
 					name: translate('onboardingQuickCaptureTitle'),
@@ -431,7 +440,7 @@ export default {
 				offsetY: -24,
 				noButton: true,
 			},
-		}
-	),
+		};
+	},
 
 };

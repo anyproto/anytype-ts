@@ -98,10 +98,13 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	componentDidUpdate (): void {
 		this.initBlocks();
+
 	};
 
 	init () {
-		const spaces = dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 })).filter(it => it);
+		const spaces = dbStore.getSpaces()
+			.filter(it => it && UtilObject.canParticipantWrite(it.targetSpaceId))
+			.map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 }));
 
 		if (this.refSpace && spaces.length) {
 			const space = commonStore.space || spaces[0].targetSpaceId;
@@ -141,6 +144,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			blockStore.set(ROOT_ID, blocks);
 			blockStore.setStructure(ROOT_ID, structure);
+			blockStore.updateStructureParents(ROOT_ID);
+			blockStore.updateNumbers(ROOT_ID); 
+			blockStore.updateMarkup(ROOT_ID);
 
 			this.forceUpdate();
 		});

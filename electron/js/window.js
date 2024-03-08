@@ -58,7 +58,6 @@ class WindowManager {
 			win = null;
 		});
 
-		win.once('ready-to-show', () => win.show());
 		win.on('focus', () => { 
 			UpdateManager.setWindow(win);
 			MenuManager.setWindow(win); 
@@ -127,6 +126,8 @@ class WindowManager {
 		};
 
 		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+
+		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 
@@ -147,12 +148,17 @@ class WindowManager {
 
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
+		win.showInactive();
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
 		});
 
-		setTimeout(() => win.close(), 5000);
+		setTimeout(() => {
+			if (win && !win.isDestroyed()) {
+				win.close();
+			};
+		}, 30000);
 		return win;
 	};
 

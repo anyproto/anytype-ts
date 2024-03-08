@@ -150,14 +150,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const check = async () => {
 			const items = await this.getClipboardData();
-			if (this.clipboardItems !== items) {
-				this.clipboardItems = items;
+			const needUpdate = this.clipboardItems.length != items.length;
+
+			this.clipboardItems = items;
+
+			if (needUpdate) {
 				this.forceUpdate();
 			};
 		};
 
 		check();
-		this.intervalClipboard = window.setInterval(check, 1000);
+		this.intervalClipboard = window.setInterval(check, 2000);
 	};
 
 	componentDidUpdate () {
@@ -306,7 +309,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					id: SystemIds.Clipboard, 
 					icon: 'clipboard', 
 					name: '', 
-					tooltip: translate('menuQuickCaptureTooltipSearch'),
+					tooltip: translate('menuQuickCaptureTooltipClipboard'),
 					caption: '0',
 				});
 			};
@@ -401,14 +404,20 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		if (item.itemId == SystemIds.Search) {
 			this.onExpand();
+			analytics.event('ScreenObjectTypeSearch');
 			return;
 		};
 
 		const { close } = this.props;
 
 		const cb = (created?: any) => {
+			const { isExpanded } = this.state;
 			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 			const type = created || item;
+
+			if (isExpanded && this.filter.length) {
+				analytics.event('TypeSearchResult');
+			};
 
 			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 				if (message.error.code || !message.details) {
@@ -489,13 +498,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'pin': {
 							isPinned ? Storage.removePinnedType(item.itemId) : Storage.addPinnedType(item.itemId);
+							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route: 'Navigation' });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'default': {
 							commonStore.typeSet(item.uniqueKey);
-							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Navigation' });
 							this.forceUpdate();
 							break;
 						};
@@ -503,6 +513,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 								Action.uninstall({ ...item, id: item.itemId }, true);
+								analytics.event('ObjectUninstall', { route: 'Navigation' });
 							};
 							break;
 						};
@@ -558,6 +569,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = dbStore.getTypeById(commonStore.type);
 		const data = await this.getClipboardData();
 
+		analytics.event('CreateObject', { route: 'Clipboard' });
+
 		data.forEach(async item => {
 			let text = '';
 			let html = '';
@@ -611,14 +624,23 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	beforePosition () {
-		const node = $(this.node);
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
+		
+		obj.css({ width: '' });
 
-		node.find('.item').each((i: number, item: any) => {
+		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 
-			item.css({ width: Math.ceil(item.outerWidth()) });
+			item.css({ width: '' });
+			item.css({ width: Math.max(48, Math.ceil(item.outerWidth())) });
 		});
+
+		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, obj.width()) });
 	};
 
 };

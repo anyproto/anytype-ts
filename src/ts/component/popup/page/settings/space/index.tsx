@@ -132,36 +132,37 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				</div>
 
 				<div className="sections">
-					<div className="section sectionSpaceManager">
-						<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
-						<div className="sectionContent">
 
-							<div className={usageCn.join(' ')}>
-								<div className="sides alignTop">
-									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
-										<div className="storageLabel">
-											<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
-											&nbsp;
-											{extend}
+					{canWrite ? (
+						<div className="section sectionSpaceManager">
+							<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
+							<div className="sectionContent">
+
+								<div className={usageCn.join(' ')}>
+									<div className="sides alignTop">
+										<div className="side left">
+											<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
+											<div className="storageLabel">
+												<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
+												&nbsp;
+												{extend}
+											</div>
+										</div>
+										<div className="side right">
+											{canWrite ? (
+												<Button 
+													onClick={() => onPage('spaceStorageManager')} 
+													text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
+													color="blank" 
+													className="c28" 
+												/>
+											) : ''}
 										</div>
 									</div>
-									<div className="side right">
-										{canWrite ? (
-											<Button 
-												onClick={() => onPage('spaceStorageManager')} 
-												text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
-												color="blank" 
-												className="c28" 
-											/>
-										) : ''}
-									</div>
+
+									<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
 								</div>
 
-								<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
-							</div>
-
-							{canWrite ? (
 								<div className="item">
 									<div className="sides">
 										<div className="side left">
@@ -179,28 +180,28 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										</div>
 									</div>
 								</div>
-							) : ''}
 
-							<div className="item">
-								<div className="sides">
-									<div className="side left">
-										<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
-										<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
-									</div>
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsPersonalDefaultObjectType')} />
+											<Label text={translate('popupSettingsPersonalDefaultObjectTypeDescription')} />
+										</div>
 
-									<div className="side right">
-										<div id="defaultType" className="select" onClick={this.onType}>
-											<div className="item">
-												<div className="name">{type?.name || translate('commonSelect')}</div>
+										<div className="side right">
+											<div id="defaultType" className="select" onClick={this.onType}>
+												<div className="item">
+													<div className="name">{type?.name || translate('commonSelect')}</div>
+												</div>
+												<Icon className="arrow black" />
 											</div>
-											<Icon className="arrow black" />
 										</div>
 									</div>
 								</div>
-							</div>
 
+							</div>
 						</div>
-					</div>
+					) : ''}	
 
 					<div className="section sectionIntegrations">
 						<Title text={translate(`popupSettingsSpaceIndexIntegrations`)} />
@@ -291,7 +292,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					{canDelete ? (
 						<div className="buttons">
-							<Button text={translate('commonDelete')} color="red c36" onClick={this.onDelete} />
+							<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red c36" onClick={this.onDelete} />
 						</div>
 					) : ''}
 

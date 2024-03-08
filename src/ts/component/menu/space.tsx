@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, Action, analytics, Storage } from 'Lib';
-import { authStore, dbStore, popupStore, menuStore, blockStore, detailStore } from 'Store';
+import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
+import { authStore, dbStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ITEM_WIDTH = 112;
@@ -159,30 +159,12 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
-		const { classNameWrap } = param;
-		const { accountSpaceId } = authStore;
 
-		if ((item.targetSpaceId == accountSpaceId)) {
-			return;
-		};
-
-		menuStore.open('select', {
-			classNameWrap,
+		UtilMenu.spaceContext(item, {
+			classNameWrap: param.classNameWrap,
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
-			},
-			data: {
-				options: [
-					{ id: 'remove', color: 'red', name: translate('commonDelete') }
-				],
-				onSelect: (e: any, element: any) => {
-					switch (element.id) {
-						case 'remove':
-							Action.removeSpace(item.targetSpaceId, 'Navigation');
-							break;
-					};
-				},
 			},
 		});
 	};

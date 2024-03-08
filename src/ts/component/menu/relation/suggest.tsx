@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, translate } from 'Lib';
+import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilObject, translate } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -273,26 +273,29 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
 			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
 		];
 
-		if (filter) {
-			const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
-			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
-			]);
-		} else {
-			sections = sections.concat([
-				{ 
-					children: [
-						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-					] 
-				},
-			]);
+		if (canWrite) {
+			if (filter) {
+				const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
+				sections = sections.concat([
+					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
+				]);
+			} else {
+				sections = sections.concat([
+					{ 
+						children: [
+							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
+						] 
+					},
+				]);
+			};
 		};
 
 		sections = sections.filter((section: any) => {

@@ -377,6 +377,7 @@ class UtilData {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				ignoreDeleted: true,
+				noDeps: true,
 			},
 		];
 
@@ -388,11 +389,9 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
 				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				noDeps: true,
 			});
 		};
 
@@ -412,6 +411,10 @@ class UtilData {
 		for (const item of list) {
 			this.searchSubscribe(item, () => cb(item));
 		};
+	};
+
+	destroySubscriptions (callBack?: () => void): void {
+		C.ObjectSearchUnsubscribe(Object.values(Constant.subId), callBack);
 	};
 
 	spaceRelationKeys () {
@@ -629,6 +632,16 @@ class UtilData {
 		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
 		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
+	};
+
+	sortByOwner (c1: any, c2: any) {
+		const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
+		const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+
+		if (isOwner1 && !isOwner2) return -1;
+		if (!isOwner1 && isOwner2) return 1;
+
+		return 0;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
@@ -1020,6 +1033,11 @@ class UtilData {
 	getMembershipTiersMap () {
 		return UtilCommon.mapToObject(this.getMembershipTiers(), 'id');
 	};
+
+	isLocalOnly (): boolean {
+		return authStore.account?.info?.networkId == '';
+	};
+
 };
 
 export default new UtilData();

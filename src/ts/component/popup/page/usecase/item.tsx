@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, Renderer, analytics } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilObject, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
@@ -170,11 +170,18 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 
 	getSpaceOptions (): any[] {
-		const list: any[] = dbStore.getSpaces().map(it => ({ ...it, iconSize: 48, object: it }));
+		let list: any[] = [
+			{ name: translate('popupUsecaseMenuLabel'), isSection: true }
+		];
+
 		if (list.length < Constant.limit.space) {
-			list.unshift({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
+			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
-		list.unshift({ name: translate('popupUsecaseMenuLabel'), isSection: true });
+
+		list = list.concat(dbStore.getSpaces()
+			.filter(it => UtilObject.canParticipantWrite(it.targetSpaceId))
+			.map(it => ({ ...it, iconSize: 48, object: it })));
+		
 		return list;
 	};
 

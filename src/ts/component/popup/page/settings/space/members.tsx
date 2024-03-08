@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, translate } from 'Lib';
+import { I, UtilObject, UtilData, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -131,17 +131,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		const subId = Constant.subId.participant;
 		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
-		records.sort((c1, c2) => {
-			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
-			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
-
-			if (isOwner1 && !isOwner2) return -1;
-			if (!isOwner1 && isOwner2) return 1;
-
-			return 0;
-		});
-
-		return records;
+		return records.sort(UtilData.sortByOwner);
 	};
 
 	resize () {
