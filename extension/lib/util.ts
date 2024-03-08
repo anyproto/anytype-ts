@@ -57,6 +57,10 @@ class Util {
 				};
 				return;
 			};
+
+			if (message.accountId) {
+				authStore.accountSet({ id: message.accountId });
+			};
 			
 			if (onSuccess) {
 				onSuccess();
