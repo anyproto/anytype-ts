@@ -101,6 +101,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	save () {
+		console.log(this.details);		
 	};
 
 });
