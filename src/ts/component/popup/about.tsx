@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 
-	render() {
+	render () {
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
@@ -26,6 +26,7 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 	onVersionCopy () {
 		UtilCommon.clipboardCopy({ text: window.Electron.version.app });
 	};
+
 });
 
 export default PopupAbout;

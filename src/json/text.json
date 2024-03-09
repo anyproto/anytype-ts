@@ -1196,9 +1196,10 @@
 
 	"menuDataviewContextNoAvailableActions": "No available actions",
 	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
+	"menuDataviewContextTryAgain": "Please try again",
+	"menuDataviewContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
-	"menuDataviewContextTryAgain": "Please try again",
 
 	"menuDataviewDateDateFormat": "Date format",
 	"menuDataviewDateTimeFormat": "Time format",

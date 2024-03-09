@@ -93,6 +93,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
+		let relation = { id: 'relation', icon: 'relation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -107,6 +108,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedExport = true;
 		let allowedWidget = true;
+		let allowedRelation = true;
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -135,6 +137,9 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
 				allowedType = false;
+			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
+				allowedRelation = false;
 			};
 		});
 
@@ -180,9 +185,10 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedUnlink)		 unlink = null;
 		if (!allowedExport)		 exportObject = null;
 		if (!allowedWidget)		 createWidget = null;
+		if (!allowedRelation)	 relation = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo, exportObject ] },
+			{ children: [ createWidget, open, fav, linkTo, exportObject, relation ] },
 			{ children: [ changeType, pageCopy, unlink, archive ] },
 		];
 
@@ -380,6 +386,12 @@ class MenuContext extends React.Component<I.Menu> {
 				popupStore.open('export', { data: { objectIds, route } });
 				break;
 			};
+
+			case 'relation': {
+				popupStore.open('relation', { data: { objectIds, route } });
+				break;
+			};
+
 		};
 		
 		close();
