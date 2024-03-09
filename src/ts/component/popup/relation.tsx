@@ -78,11 +78,17 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getItems (): any[] {
-		const { space, config } = commonStore;
+		const { config } = commonStore;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { relationKeys } = data;
 
 		const relations = UtilCommon.objectCopy(dbStore.getRelations()).filter(it => {
 			let ret = !config.debug.ho ? !it.isHidden : true;
-			if ((it.spaceId != space) || it.isReadonlyValue) {
+			if (relationKeys && !relationKeys.includes(it.relationKey)) {
+				ret = false;
+			};
+			if (!it.isInstalled || it.isReadonlyValue) {
 				ret = false;
 			};
 			return ret;
