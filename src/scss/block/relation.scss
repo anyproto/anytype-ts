@@ -60,8 +60,7 @@
 		}
 
 		.cell.isEditing.c-select {
-			.cellContent, .placeholder  { padding: 6px 8px; }
-			#entry { margin-top: 2px; }
+			.cellContent, .placeholder  { padding: 6px 8px 4px 8px; }
 		}
 		.cell.isEditing.c-select.isSelect {
 			.over { width: calc(100% - 26px); }
