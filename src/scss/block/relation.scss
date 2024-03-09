@@ -11,7 +11,7 @@
 
 		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; }
 
-		.sides { display: flex; }
+		.sides { display: flex; width: 100%; }
 
 		.info { 
 			padding: 6.5px 2px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
