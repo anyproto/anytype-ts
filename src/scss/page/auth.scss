@@ -33,7 +33,7 @@ html.bodyIndex, html.bodyAuth {
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		h1 { font-size: 18px; margin-bottom: 16px; color: var(--color-text-primary) !important; }
+		h1 { font-size: var(--font-size-header3); margin-bottom: 16px; color: var(--color-text-primary) !important; }
 		b { display: block; font-weight: 700; color: var(--color-text-primary) !important; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
@@ -165,7 +165,7 @@ html.bodyAuthDeleted {
 	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: 0px; transform: translateY(calc(-100% - 16px)); }
 
 	.title { margin: 0px 0px 20px 0px; }
-	.phraseWrapper { margin: 0px 0px 20px 0px; }
+	.phraseWrapper { margin: 0px 0px 20px 0px; background: var(--color-button-blank-hover); }
 }
 
 .pageAuthInvite {
@@ -180,7 +180,7 @@ html.bodyAuthDeleted {
 	.pin {
 		.input { 
 			width: 86px; height: 86px; border-radius: 24px; background: var(--color-input-opaque) !important; padding: 0px; text-align: center; 
-			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
+			vertical-align: top; font-size: var(--font-size-header3); border-width: 2px; border-color: rgba(0,0,0,0);
 		}
 		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100) !important; }
 	}
@@ -249,8 +249,11 @@ html.bodyAuthDeleted {
 	}
 
 	.inputWrapper {
-		.input { border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
-		.input:hover { filter: brightness(1.2) }
+		.input { 
+			border-radius: 26px; border: none !important; background: var(--color-input-opaque) !important; color: var(--color-text-primary) !important; 
+			font-size: var(--font-size-header3); padding: 36px 26px; width: 392px; height: auto; 
+		}
+		.input:hover { filter: brightness(1.2); }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
 	}
 }
