@@ -1,15 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, C, UtilRouter } from 'Lib';
-import { notificationStore, popupStore } from 'Store';
+import { Icon, Title, Label, Button } from 'Component';
+import { I, C, UtilRouter, translate } from 'Lib';
+import { notificationStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-
-import NotificationImport from './import';
-import NotificationExport from './export';
-import NotificationGallery from './gallery';
-import NotificationJoin from './join';
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
 
@@ -26,27 +21,29 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 	render () {
 		const { item, style } = this.props;
-		const { id, type } = item;
+		const { space } = commonStore;
+		const { id, type, payload, title, text } = item;
+		const { errorCode, spaceId } = payload;
 
-		let content = null;
+		let buttons = [];
+
 		switch (type) {
+			case I.NotificationType.Gallery:
+			case I.NotificationType.Export:
 			case I.NotificationType.Import: {
-				content = <NotificationImport {...this.props} onButton={this.onButton} />;
-				break;
-			};
-
-			case I.NotificationType.Export: {
-				content = <NotificationExport {...this.props} onButton={this.onButton} />;
-				break;
-			};
-
-			case I.NotificationType.Gallery: {
-				content = <NotificationGallery {...this.props} onButton={this.onButton} />;
+				if (!errorCode && (spaceId != space)) {
+					buttons = buttons.concat([
+						{ id: 'space', text: translate('notificationButtonSpace') }
+					]);
+				};
 				break;
 			};
 
 			case I.NotificationType.Join: {
-				content = <NotificationJoin {...this.props} onButton={this.onButton} />;
+				buttons = buttons.concat([
+					{ id: 'space', text: translate('notificationButtonSpace') },
+					{ id: 'request', text: translate('notificationButtonRequest') }
+				]);
 				break;
 			};
 		};
@@ -59,7 +56,18 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				style={style}
 			>
 				<Icon className="delete" onClick={this.onDelete} />
-				<div className="content">{content}</div>
+				<div className="content">
+					{title ? <Title text={title} /> : ''}
+					{text ? <Label text={text} /> : ''}
+
+					{buttons.length ? (
+						<div className="buttons">
+							{buttons.map((item: any, i: number) => (
+								<Button key={i} color="blank" className="c28" {...item} onClick={e => this.onButton(e, item.id)} />
+							))}
+						</div>
+					) : ''}
+				</div>
 			</div>
 		);
 	};

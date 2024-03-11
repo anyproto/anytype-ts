@@ -46,6 +46,9 @@ export const Mapper = {
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
 		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
+		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
+		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
+		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
 
 		return t;
 	},
@@ -491,8 +494,8 @@ export const Mapper = {
 			if (field) {
 				switch (type) {
 
-					case 'import':
-					case 'galleryImport': {
+					case I.NotificationType.Import:
+					case I.NotificationType.Gallery: {
 						payload = Object.assign(payload, {
 							processId: field.getProcessid(),
 							errorCode: field.getErrorcode(),
@@ -506,7 +509,7 @@ export const Mapper = {
 						break;
 					};
 
-					case 'export': {
+					case I.NotificationType.Export: {
 						payload = Object.assign(payload, {
 							errorCode: field.getErrorcode(),
 							exportType: field.getExporttype(),
@@ -514,12 +517,22 @@ export const Mapper = {
 						break;
 					};
 
-					case 'requestToJoin': {
+					case I.NotificationType.Join: 
+					case I.NotificationType.Leave: 
+					case I.NotificationType.Remove: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
 							identity: field.getIdentity(),
 							identityName: field.getIdentityname(),
 							identityIcon: field.getIdentityicon(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Approve: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+        					permissions: field.getPermissions(),
 						});
 						break;
 					};

@@ -6,6 +6,9 @@ export enum NotificationType {
 	Export	 = 'export',
 	Gallery	 = 'galleryImport',
 	Join	 = 'requestToJoin',
+	Leave	 = 'requestToLeave',
+	Approve	 = 'participantRequestApproved',
+	Remove	 = 'participantRemove',
 };
 
 export enum NotificationStatus {
@@ -41,6 +44,5 @@ export interface NotificationPayloadImport {
 export interface NotificationComponent {
 	item: Notification;
 	style?: any;
-	onButton?: (e: any, action: string) => void;
 	resize?: () => void;
 };
