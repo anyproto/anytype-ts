@@ -15,7 +15,6 @@ class AuthStore {
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
 	public name = '';
-	public phrase = '';
 	public token = '';
 	public appToken = '';
 	public appKey = '';
@@ -28,7 +27,6 @@ class AuthStore {
 			accountItem: observable,
 			accountList: observable,
 			name: observable,
-			phrase: observable,
 			threadMap: observable,
 			walletPath: computed,
 			accountPath: computed,
@@ -36,7 +34,6 @@ class AuthStore {
 			account: computed,
 			walletPathSet: action,
 			accountPathSet: action,
-			phraseSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -82,10 +79,6 @@ class AuthStore {
 
 	accountPathSet (v: string) {
 		this.accountPathValue = String(v || '');
-    };
-
-	phraseSet (v: string) {
-		this.phrase = String(v || '');
     };
 
 	nameSet (v: string) {
@@ -180,7 +173,6 @@ class AuthStore {
 
 		this.accountListClear();
 		this.nameSet('');
-		this.phraseSet('');
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {

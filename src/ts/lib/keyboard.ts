@@ -684,6 +684,7 @@ class Keyboard {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
+				focus.scroll(this.isPopup(), message.blockId);
 			};
 
 			if (callBack) {
@@ -703,6 +704,7 @@ class Keyboard {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
+				focus.scroll(this.isPopup(), message.blockId);
 			};
 
 			if (callBack) {
