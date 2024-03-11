@@ -172,7 +172,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			this.initName();
 			this.initType();
 
-			this.setState({ withContent: Boolean(Number(Storage.get('withContent'))) });
+			this.setState({ withContent: Boolean(Storage.get('withContent')) });
 		});
 	};
 
@@ -242,7 +242,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getSpaces () {
-		return dbStore.getSpaces().map(it => ({ ...it, id: it.targetSpaceId, object: it })).filter(it => it)
+		return dbStore.getSpaces()
+			.filter(it => it && UtilObject.canParticipantWrite(it.targetSpaceId))
+			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};
 
 	getTypes () {
@@ -431,11 +433,13 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
-			} else {
-				extensionStore.createdObject = message.details;
-
-				UtilRouter.go('/success', {});
+				return;
 			};
+
+			const object = message.details;
+
+			extensionStore.createdObject = object;
+			UtilRouter.go('/success', {});
 
 			this.isCreating = false;
 		});
@@ -444,7 +448,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onCheckbox () {
 		const { withContent } = this.state;
 
-		Storage.set('withContent', Number(!withContent));
+		Storage.set('withContent', !withContent);
 		this.setState({ withContent: !withContent });
 	};
 

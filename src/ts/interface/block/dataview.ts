@@ -145,7 +145,7 @@ export interface ViewComponent {
 	onSourceTypeSelect?(element: any): void;
 	onViewSettings?(): void;
 	getSearchIds?(): string[];
-	canCellEdit?(relationKey: string, recordId: string): boolean;
+	canCellEdit?(relation: any, record: any): boolean;
 };
 
 export interface ViewEmpty {

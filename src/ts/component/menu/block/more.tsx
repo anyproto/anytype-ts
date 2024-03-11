@@ -170,7 +170,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
-		const allowedPageLink = config.experimental;
+		const allowedPageLink = true;
 		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
@@ -198,6 +198,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedPageLink)	 pageLink = null;
+
+		if (!canWrite) {
+			template = null;
+			setDefaultTemplate = null;
+		};
 
 		let sections = [];
 		if (hasShortMenu) {

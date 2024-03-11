@@ -59,6 +59,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			buttons = item.forceButtons;
 		};
 
+		buttons = buttons.filter(it => it);
+
 		const Steps = () => (
 			<div className="steps">
 				{l > 1 ? (

@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
-		.item.empty { font-size: 12px; line-height: 18px; padding-top: 8px; }
+		.item.empty { @include text-small; padding-top: 8px; }
 	}
 
 	.menu.menuBlockAction { width: 240px; }

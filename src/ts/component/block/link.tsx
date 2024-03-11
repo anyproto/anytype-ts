@@ -58,7 +58,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 					className="loading" 
 					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
 				>
-					<Loader />
+					<Loader type="loader" />
 					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>
 			);

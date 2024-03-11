@@ -804,7 +804,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					e.preventDefault();
 
 					value = parsed.value;
-					this.marks = Mark.checkRanges(value, this.marks);
 					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						onKeyDown(e, value, this.marks, range, this.props);
 					});
@@ -812,9 +811,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 			} else 
 			if (!menuOpenAdd && !menuOpenMention && !range.to) {
-				const parsed = this.getMarksFromHtml();
+				if (block.canHaveMarks()) {
+					const { marks } = this.getMarksFromHtml();
+					this.marks = marks;
+				};
 
-				this.marks = Mark.checkRanges(value, parsed.marks);
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
@@ -1109,9 +1110,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					skipIds: [ rootId ],
 					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
 						value = UtilCommon.stringInsert(value, text, from, from);
-						this.marks = Mark.checkRanges(value, marks);
 
-						UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+						UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
 							focus.set(block.id, { from: to, to: to });
 							focus.apply();
 

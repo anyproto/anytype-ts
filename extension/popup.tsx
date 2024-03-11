@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { UtilRouter, C } from 'Lib'; 
+import { UtilRouter, C, UtilData } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
 import Extension from 'json/extension.json';
 
@@ -97,11 +97,13 @@ class Popup extends React.Component {
 		});
 
 		win.off('beforeunload').on('beforeunload', (e: any) => {
-			if (authStore.token) {
-				C.WalletCloseSession(authStore.token, () => {
-					authStore.tokenSet('');
-				});
+			if (!authStore.token) {
+				return;
 			};
+
+			UtilData.destroySubscriptions(() => {
+				C.WalletCloseSession(authStore.token, () => authStore.tokenSet(''));
+			});
 		});
 	};
 

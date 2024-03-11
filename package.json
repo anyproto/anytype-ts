@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.38.30-beta",
+	"version": "0.39.1-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -70,7 +70,7 @@
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^1.0.2",
-		"npm": "^10.2.5",
+		"npm": "^10.5.0",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"sass": "^1.62.0",
@@ -218,6 +218,7 @@
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
+			"dist/*.js",
 			"!dist/js/main.js.map",
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",

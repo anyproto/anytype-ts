@@ -368,9 +368,13 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	onViewContext (e: any, element: string, view: any) {
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, readonly } = this.props;
+		if (readonly) {
+			return;
+		};
 
-		const contextParam = {
+		this.onViewSet(view);
+		UtilMenu.viewContextMenu({
 			rootId,
 			blockId: block.id,
 			view,
@@ -382,10 +386,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
 			}
-		};
-
-		this.onViewSet(view);
-		UtilMenu.viewContextMenu(contextParam);
+		});
 	};
 
 	onSortStart () {

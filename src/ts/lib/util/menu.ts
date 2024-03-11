@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore, dbStore } from 'Store';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview, Action } from 'Lib';
+import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilMenu {
@@ -603,6 +603,57 @@ class UtilMenu {
 		});
 	};
 
+	spaceContext (space: any, param: any) {
+		const { accountSpaceId } = authStore;
+
+		if ((space.targetSpaceId == accountSpaceId)) {
+			return;
+		};
+
+		const options: any[] = [];
+
+		if (UtilObject.isSpaceOwner(space.targetSpaceId) && (space.spaceAccessType == I.SpaceType.Shared)) {
+			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		};
+
+		if (space.spaceAccountStatus == I.SpaceStatus.Joining) {
+			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
+		} else {
+			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+		};
+
+		menuStore.open('select', {
+			...param,
+			data: {
+				options,
+				onSelect: (e: any, element: any) => {
+					switch (element.id) {
+						case 'remove': {
+							Action.removeSpace(space.targetSpaceId, 'Navigation');
+							break;
+						};
+
+						case 'cancel': {
+							C.SpaceJoinCancel(space.targetSpaceId, (message: any) => {
+								if (message.error.code) {
+									window.setTimeout(() => {
+										popupStore.open('confirm', {
+											data: {
+												title: translate('commonError'),
+												text: message.error.description,
+											}
+										});
+									}, Constant.delay.popup);
+								};
+							});
+							break;
+						};
+					};
+				},
+			},
+		});
+
+	};
 };
 
 export default new UtilMenu();
