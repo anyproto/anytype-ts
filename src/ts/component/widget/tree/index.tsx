@@ -25,11 +25,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	state = {
 		loading: false,
 	};
-	scrollTop: number = 0;
-	id: string = '';
+	top = 0;
+	id = '';
 	cache: CellMeasurerCache = null;
-	subscriptionHashes: { [key: string]: string } = {};
+	subscriptionHashes: { [ key: string ]: string } = {};
 	branches: string[] = [];
+	refList = null;
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
@@ -98,6 +99,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<List
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -162,6 +164,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.refList) {
+			this.refList.scrollToPosition(this.top);
+		};
 	};
 
 	componentWillUnmount () {
@@ -363,7 +369,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { dragProvider } = dataset || {};
 
 		if (scrollTop) {
-			this.scrollTop = scrollTop;
+			this.top = scrollTop;
 		};
 
 		if (dragProvider) {
