@@ -78,9 +78,15 @@ const installToMacOS = (manifest) => {
 };
 
 const installToLinux = (manifest) => {
-	const dir = `${getHomeDir()}/.config/google-chrome/`;
+	const dirs = getLinuxDirectory();
 
-	writeManifest(`${dir}NativeMessagingHosts/${MANIFEST_FILENAME}`, manifest);
+	for (const [ key, value ] of Object.entries(dirs)) {
+		if (fs.existsSync(value)) {
+			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
+		} else {
+			console.log(`Manifest skipped: ${key}`);
+		};
+	};
 };
 
 const installToWindows = (manifest) => {
@@ -137,21 +143,34 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 	};
 };
 
-const getDarwinDirectory = () => {
-	const HOME_DIR = getHomeDir();
+const getLinuxDirectory = () => {
+	const home = path.join(getHomeDir(), '.config');
+
 	/* eslint-disable no-useless-escape */
+
 	return {
-		Firefox: `${HOME_DIR}/Library/Application\ Support/Mozilla/`,
-		Chrome: `${HOME_DIR}/Library/Application\ Support/Google/Chrome/`,
-		'Chrome Beta': `${HOME_DIR}/Library/Application\ Support/Google/Chrome\ Beta/`,
-		'Chrome Dev': `${HOME_DIR}/Library/Application\ Support/Google/Chrome\ Dev/`,
-		'Chrome Canary': `${HOME_DIR}/Library/Application\ Support/Google/Chrome\ Canary/`,
-		Chromium: `${HOME_DIR}/Library/Application\ Support/Chromium/`,
-		'Microsoft Edge': `${HOME_DIR}/Library/Application\ Support/Microsoft\ Edge/`,
-		'Microsoft Edge Beta': `${HOME_DIR}/Library/Application\ Support/Microsoft\ Edge\ Beta/`,
-		'Microsoft Edge Dev': `${HOME_DIR}/Library/Application\ Support/Microsoft\ Edge\ Dev/`,
-		'Microsoft Edge Canary': `${HOME_DIR}/Library/Application\ Support/Microsoft\ Edge\ Canary/`,
-		Vivaldi: `${HOME_DIR}/Library/Application\ Support/Vivaldi/`,
+		'Chrome': path.join(home, 'google-chrome'),
+		'Chromium': path.join(home, 'chromium'),
+	};
+};
+
+const getDarwinDirectory = () => {
+	const home = path.join(getHomeDir(), 'Library', 'Application Support');
+
+	/* eslint-disable no-useless-escape */
+
+	return {
+		'Firefox': path.join(home, 'Mozilla'),
+		'Chrome': path.join(home, 'Google', 'Chrome'),
+		'Chrome Beta': path.join(home, 'Google', 'Chrome Beta'),
+		'Chrome Dev': path.join(home, 'Google', 'Chrome Dev'),
+		'Chrome Canary': path.join(home, 'Google', 'Chrome Canary'),
+		'Chromium': path.join(home, 'Chromium'),
+		'Microsoft Edge': path.join(home, 'Microsoft Edge'),
+		'Microsoft Edge Beta': path.join(home, 'Microsoft Edge Beta'),
+		'Microsoft Edge Dev': path.join(home, 'Microsoft Edge Dev'),
+		'Microsoft Edge Canary': path.join(home, 'Microsoft Edge Canary'),
+		'Vivaldi': path.join(home, 'Vivaldi'),
 	};
 	/* eslint-enable no-useless-escape */
 };
@@ -162,14 +181,7 @@ const writeManifest = (dst, data) => {
 			fs.mkdirSync(path.dirname(dst));
 		};
 
-		fs.writeFileSync(dst, JSON.stringify(data, null, 2), {}, (err) => {
-			if (err) {
-				console.log(err);
-			} else {
-				console.log(`Manifest written: ${dst}`);
-			};
-		});
-
+		fs.writeFileSync(dst, JSON.stringify(data, null, 2), {});
 		console.log(`Manifest written: ${dst}`);
 	} catch(err) {
 		console.error(err);
