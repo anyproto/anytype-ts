@@ -125,7 +125,6 @@ class BlockStore {
 		});
 
 		this.treeMap.set(rootId, map);
-		this.updateStructureParents(rootId);
 
 		for (const [ id, item ] of map.entries()) {
 			map.set(id, new M.BlockStructure(item));
@@ -141,8 +140,6 @@ class BlockStore {
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};
-
-		this.updateStructureParents(rootId);
 	};
 
 	updateStructureParents (rootId: string) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, popupStore } from 'Store';
 
@@ -25,7 +25,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsDataManagementTitle')} />
-                <Label className="description" text={translate('popupSettingsDataManagementLocalStorageText')} />
+                <Label className="description" text={translate(`popupSettingsDataManagementLocalStorageText${suffix}`)} />
 
                 <div className="actionItems">
                     <div className="item storageUsage">
@@ -38,7 +38,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                             </div>
                         </div>
 						<div className="side right">
-							<Button color="blank" className="c28" text={translate('popupSettingsDataManagementOffloadFiles')} onClick={this.onOffload} />
+							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
 						</div>
                     </div>
                 </div>
@@ -52,14 +52,17 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     onOffload (e: any) {
         const { setLoading } = this.props;
+		const localOnly =  UtilData.isLocalOnly();
 
         analytics.event('ScreenFileOffloadWarning');
 
         popupStore.open('confirm',{
             data: {
                 title: translate('popupSettingsDataOffloadWarningTitle'),
-                text: translate('popupSettingsDataOffloadWarningText'),
-                textConfirm: translate('commonYes'),
+                text: translate(`popupSettingsDataOffloadWarningText${localOnly ? 'LocalOnly' : ''}`),
+                textConfirm: localOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+				canCancel: localOnly,
+				textCancel: translate('popupSettingsDataRemoveFiles'),
                 onConfirm: () => {
                     setLoading(true);
                     analytics.event('SettingsStorageOffload');

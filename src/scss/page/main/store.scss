@@ -37,10 +37,7 @@
 
 		.tabs { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; }
 		.tabs {
-			.tab { 
-				display: inline-block; font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
-				color: var(--color-control-active); transition: $transitionAllCommon;
-			}
+			.tab { display: inline-block; @include text-header3; color: var(--color-control-active); transition: $transitionAllCommon; }
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 

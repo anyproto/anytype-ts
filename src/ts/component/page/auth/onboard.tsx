@@ -21,6 +21,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refNext: Button = null;
 	isDelayed = false;
 	isCreating = false;
+	phrase = '';
 
 	state: State = {
 		stage: Stage.Void,
@@ -81,7 +82,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="animation" onClick={this.onCopy}>
 						<Phrase
 							ref={ref => this.refPhrase = ref}
-							value={authStore.phrase}
+							value={this.phrase}
 							readonly={true}
 							isHidden={!phraseVisible}
 							onCopy={this.onCopy}
@@ -157,6 +158,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentWillUnmount (): void {
 		this.unbind();
+		this.phrase = '';
 	};
 
 	unbind () {
@@ -207,13 +209,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { account, name } = authStore;
 		const next = () => {
 			Animation.from(() => {
-				this.refNext.setLoading(false);
+				this.refNext?.setLoading(false);
 				this.setState({ stage: stage + 1 });
 			});
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext.setLoading(true);
+			this.refNext?.setLoading(true);
 
 			if (account) {
 				this.accountUpdate(() => next());
@@ -260,7 +262,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountCreate (callBack?: () => void) {
-		this.refNext.setLoading(true);
+		this.refNext?.setLoading(true);
 
 		const { name, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
@@ -272,11 +274,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				return;
 			};
 
-			const phrase = message.mnemonic;
+			this.phrase = message.mnemonic;
 
-			authStore.phraseSet(phrase);
-
-			UtilData.createSession((message) => {
+			UtilData.createSession(this.phrase, '', (message) => {
 				if (message.error.code) {
 					this.setError(message.error.description);
 					return;
@@ -293,7 +293,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.isSidebarFixedSet(true);
 
 					UtilData.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, phrase);
+					Renderer.send('keytarSet', message.account.id, this.phrase);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
@@ -316,7 +316,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
-		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
+		UtilCommon.copyToast(translate('commonPhrase'), this.phrase);
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 

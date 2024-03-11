@@ -136,7 +136,7 @@
 				.phraseWrapper { border-radius: 12px; background-color: var(--color-shape-tertiary); padding: 16px 44px; line-height: unset; }
 				.phraseWrapper {
 					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
-					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+					.word { @include text-small; font-weight: 500; margin: 0; }
 					.bg { filter: blur(8px); opacity: 0.5; }
 
 					.icon { width: 28px; height: 28px; background-size: 20px; margin: 0px; top: 12px; right: 12px; border-radius: 6px; z-index: 1; }

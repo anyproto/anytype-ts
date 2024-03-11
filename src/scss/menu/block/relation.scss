@@ -88,6 +88,10 @@
 
 			.cellContent.isName { display: flex; align-items: center; }
 
+			.cellContent.c-object {
+				.element { max-width: 150px; }
+			}
+
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background $transitionCommon; 
 				position: relative; margin-right: 6px;

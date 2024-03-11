@@ -60,6 +60,8 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 
 				Util.init(response.ports[0], response.ports[1]);
 				this.login();
+
+				clearInterval(this.interval);
 			});
 		});
 	};

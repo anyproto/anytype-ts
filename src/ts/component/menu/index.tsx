@@ -82,7 +82,6 @@ interface State {
 	tab: string;
 };
 
-const BORDER = 10;
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
@@ -444,6 +443,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const { border } = Constant.size.menu;
 		const borderTop = Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
 		const borderBottom = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
 
@@ -535,7 +535,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x += offsetX;
 
 					// Switch
-					if (!noFlipX && (x >= ww - width - BORDER)) {
+					if (!noFlipX && (x >= ww - width - border)) {
 						x = ox - width;
 						flipX = true;
 					};
@@ -549,7 +549,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x -= width + offsetX - ew;
 
 					// Switch
-					if (!noFlipX && (x <= BORDER)) {
+					if (!noFlipX && (x <= border)) {
 						x = ox + ew;
 						flipX = true;
 					};
@@ -561,8 +561,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(BORDER, x);
-			x = Math.min(ww - width - BORDER, x);
+			x = Math.max(border, x);
+			x = Math.min(ww - width - border, x);
 
 			y = Math.max(borderTop, y);
 			y = Math.min(wh - height - borderBottom, y);
@@ -930,6 +930,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const node = $(this.node);
 		const menu = node.find('.menu');
+		const { border } = Constant.size.menu;
 		
 		menu.find('.item.hover').removeClass('hover');
 
@@ -958,7 +959,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const pt = el.position().top;
 			const eh = el.outerHeight();
 			const ch = scrollWrap.height();
-			const top = Math.max(0, st + pt + eh - BORDER - ch);
+			const top = Math.max(0, st + pt + eh - border - ch);
 			
 			scrollWrap.scrollTop(top);
 		};

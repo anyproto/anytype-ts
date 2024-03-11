@@ -143,9 +143,10 @@ function createWindow () {
 		};
 
 		if (Api[cmd]) {
-			Api[cmd].apply(Api, [ win ].concat(args || []));
+			return Api[cmd].apply(Api, [ win ].concat(args || []));
 		} else {
 			console.error('[Api] method not defined:', cmd);
+			return null;
 		};
 	});
 };

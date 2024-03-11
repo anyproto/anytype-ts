@@ -196,6 +196,7 @@ class Dispatcher {
 		let subId = '';
 		let afterId = '';
 		let content: any = {};
+		let updateParents = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
@@ -313,6 +314,8 @@ class Dispatcher {
 						blockStore.add(rootId, new M.Block(block));
 						blockStore.updateStructure(rootId, block.id, block.childrenIds);
 					};
+
+					updateParents = true;
 					break;
 				};
 
@@ -331,6 +334,8 @@ class Dispatcher {
 
 						blockStore.delete(rootId, blockId);
 					};
+
+					updateParents = true;
 					break;
 				};
 
@@ -342,6 +347,8 @@ class Dispatcher {
 					if (id == rootId) {
 						blockStore.checkTypeSelect(rootId);
 					};
+
+					updateParents = true;
 					break;
 				};
 
@@ -988,6 +995,12 @@ class Dispatcher {
 							if (electron.focus) {
 								electron.focus();
 							};
+
+							analytics.event('CreateObject', {
+								route: 'Webclipper',
+								objectType: payload.object.type,
+								layout: payload.object.layout,
+							});
 							break;
 						};
 					};
@@ -1037,6 +1050,10 @@ class Dispatcher {
 			if (needLog) {
 				log(rootId, type, data, message.getValueCase());
 			};
+		};
+
+		if (updateParents) {
+			blockStore.updateStructureParents(rootId);
 		};
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
@@ -1165,6 +1182,7 @@ class Dispatcher {
 
 		blockStore.set(contextId, blocks);
 		blockStore.setStructure(contextId, structure);
+		blockStore.updateStructureParents(contextId);
 		blockStore.updateNumbers(contextId); 
 		blockStore.updateMarkup(contextId);
 		blockStore.checkTypeSelect(contextId);

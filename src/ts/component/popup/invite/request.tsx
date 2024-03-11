@@ -13,11 +13,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 	state = {
 		error: '',
 	};
-	invite = {
-		spaceName: '',
-		creatorName: '',
-		spaceId: '',
-	};
+
+	refButton = null;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -27,6 +24,9 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 	render() {
 		const { error } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { invite } = data;
 
 		return (
 			<React.Fragment>
@@ -36,10 +36,10 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 					<Icon />
 				</div>
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), this.invite.spaceName, this.invite.creatorName)} />
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), invite.spaceName, invite.creatorName)} />
 
 				<div className="buttons">
-					<Button onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
+					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
 				</div>
 
 				<div className="note">{translate('popupInviteRequestNote')}</div>
@@ -49,33 +49,21 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		);
 	};
 
-	componentDidMount (): void {
-		const { param } = this.props;
-		const { data } = param;
-		const { cid, key } = data;
-
-		C.SpaceInviteView(cid, key, (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-				return;
-			};
-
-			this.invite = message;
-			this.forceUpdate();
-		});
-	};
-
 	onRequest () {
 		const { param, close } = this.props;
-		const { data } = param;
-		const { cid, key } = data;
 		const { account } = authStore;
+		const { data } = param;
+		const { invite, cid, key } = data;
 
-		if (!account) {
+		if (!account || this.refButton.state.isLoading) {
 			return;
 		};
 
-		C.SpaceJoin(account.info.networkId, this.invite.spaceId, cid, key, (message: any) => {
+		this.refButton?.setLoading(true);
+
+		C.SpaceJoin(account.info.networkId, invite.spaceId, cid, key, (message: any) => {
+			this.refButton?.setLoading(false);
+
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;

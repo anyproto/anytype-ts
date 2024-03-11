@@ -125,6 +125,7 @@
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
+	"commonLeaveSpace": "Leave space",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -165,10 +166,12 @@
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
+	"electronMenuDebug": "Debug",
 	"electronMenuDebugSpace": "Space",
 	"electronMenuDebugObject": "Current Object",
 	"electronMenuDebugProcess": "Process",
 	"electronMenuDebugTree": "Tree diagnostics",
+	"electronMenuDebugStat": "Statistics",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -205,7 +208,6 @@
 	"electronMenuFlagFiles": "Files",
 	"electronMenuFlagAnalytics": "Analytics",
 	"electronMenuFlagJson": "JSON",
-	"electronMenuDebug": "Debug",
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
@@ -391,7 +393,8 @@
 	"pageMainImportTitle": "Downloading manifest",
 
 	"pageMainInviteTitle": "Downloading invite",
-	"pageMainInviteError": "Incorrect invite data",
+	"pageMainInviteErrorData": "Incorrect invite data",
+	"pageMainInviteErrorDuplicate": "You are joining or have already joined the %s space",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
 
@@ -662,6 +665,7 @@
 
 	"popupSettingsSpacesListTitle": "Spaces",
 	"popupSettingsSpacesListSpace": "Space",
+	"popupSettingsSpacesCancelRequest": "Cancel request",
 	"popupSettingsSpacesListAccess": "Access",
 	"popupSettingsSpacesListSize": "Size",
 	"popupSettingsSpacesListNetwork": "Network",
@@ -670,8 +674,10 @@
 	"popupSettingsDataManagementTitle": "Data management",
 	"popupSettingsDataManagementLocalStorageTitle": "Local storage",
 	"popupSettingsDataManagementLocalStorageText": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them.",
+	"popupSettingsDataManagementLocalStorageTextLocalOnly": "In order to save space on this device, you can remove all your files. Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",
 	"popupSettingsDataManagementOffloadFiles": "Offload files",
+	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDataManagementDeleteButton": "Delete account",
@@ -775,11 +781,6 @@
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
 
-	"popupSettingsSpaceLeave": "Leave %s?",
-	"popupSettingsSpaceLeaveTitle": "Leave space",
-	"popupSettingsSpaceLeaveText": "You will no longer see the space and all files inside.<br \/>You could be back again via the invite link.",
-	"popupSettingsSpaceLeaveButton": "Yes, I want to leave",
-
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
@@ -792,7 +793,10 @@
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningTitle": "Are you sure?",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
+	"popupSettingsDataOffloadWarningTextLocalOnly": "Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
 	"popupSettingsDataFilesOffloaded": "Files offloaded",
+	"popupSettingsDataKeepFiles": "Keep files",
+	"popupSettingsDataRemoveFiles": "Remove files",
 
 	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel account deletion",
 	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
@@ -1544,7 +1548,7 @@
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 
-	"deletedBanner": "This file is in the Bin and is shown in view mode",
+	"deletedBanner": "This Object is in the Bin and is shown in view mode",
 	"deletedBannerRestore": "Restore",
 	"selectTemplateBanner": "This type has templates",
 	"selectTemplateBannerWithNumber": "This type has %s %s",

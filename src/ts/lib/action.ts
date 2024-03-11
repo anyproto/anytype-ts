@@ -457,7 +457,7 @@ class Action {
 		});
 	};
 
-	export (ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
 		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
@@ -465,7 +465,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(commonStore.space, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
+			C.ObjectListExport(spaceId, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

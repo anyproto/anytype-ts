@@ -1838,6 +1838,12 @@ export const DebugStackGoroutines = (path: string, callBack?: (message: any) => 
 	dispatcher.request(DebugStackGoroutines.name, request, callBack);
 };
 
+export const DebugStat = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.Stat.Request();
+
+	dispatcher.request(DebugStat.name, request, callBack);
+};
+
 // ---------------------- NOTIFICATION ---------------------- //
 
 export const NotificationList = (includeRead: boolean, limit: number, callBack?: (message: any) => void) => {
@@ -1912,12 +1918,10 @@ export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: 
 	dispatcher.request(SpaceJoin.name, request, callBack);
 };
 
-export const SpaceJoinCancel = (spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
+export const SpaceJoinCancel = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.JoinCancel.Request();
 
 	request.setSpaceid(spaceId);
-	request.setInvitecid(cid);
-	request.setInvitefilekey(key);
 
 	dispatcher.request(SpaceJoinCancel.name, request, callBack);
 };

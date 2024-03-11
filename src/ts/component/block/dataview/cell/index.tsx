@@ -49,7 +49,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
-		const canEdit = this.canCellEdit();
+		const canEdit = this.canCellEdit(relation, record);
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
@@ -159,8 +159,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const value = record[relation.relationKey] || '';
+		const canEdit = this.canCellEdit(relation, record);
 
-		if (!this.canCellEdit()) {
+		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
@@ -485,14 +486,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		return dbStore.getRelationByKey(this.props.relationKey);
 	};
 
-	canCellEdit (): boolean {
-		const { readonly, recordId, getRecord } = this.props;
+	canCellEdit (relation: any, record: any): boolean {
+		const { readonly } = this.props;
 		if (readonly) {
 			return false;
 		};
-
-		const record = getRecord(recordId);
-		const relation = this.getRelation();
 
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;

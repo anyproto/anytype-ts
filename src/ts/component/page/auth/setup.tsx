@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -117,30 +117,28 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { phrase } = authStore;
 		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
-		if (!phrase) {
-			return;
-		};
-
-		C.WalletRecover(dataPath, phrase, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			UtilData.createSession((message: any) => {
+		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
 
 				if (accountId) {
-					authStore.phraseSet(phrase);
 					this.select(accountId, false);
 				} else {
 					UtilRouter.go('/auth/account-select', { replace: true });
 				};
+
+				UtilData.createSession(phrase, '' ,(message: any) => {
+					if (this.setError(message.error)) {
+						return;
+					};
+
+					this.select(accountId, false);
+				});
 			});
 		});
 	};

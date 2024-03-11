@@ -15,7 +15,8 @@ const SNAP = 10;
 const BlockTable = observer(class BlockTable extends React.Component<I.BlockComponent> {
 
 	_isMounted = false;
-	node: any = null;
+	node = null;
+	refTable = null;
 	offsetX = 0;
 	cache: any = {};
 	scrollX = 0;
@@ -81,7 +82,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					<div className="inner">
 						<div id="selectionFrameContainer" />
 
-						<div id="table" className="table">
+						<div ref={ref => this.refTable = ref} id="table" className="table">
 							<div className="rows">
 								{rows.map((row: any, i: number) => {
 									return (
@@ -596,8 +597,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.onOptionsClose();
 
-		const node = $(this.node);
-		const table = node.find('#table');
+		const table = $(this.refTable);
 
 		switch (type) {
 			case I.BlockType.TableColumn: {
@@ -635,8 +635,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			return;
 		};
 
-		const node = $(this.node);
-		const table = node.find('#table');
+		const table = $(this.refTable);
 	
 		table.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
 		table.find('.isHighlightedRow').removeClass('isHighlightedRow');

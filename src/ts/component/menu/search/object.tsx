@@ -240,12 +240,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
+		const canWrite = UtilObject.canParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (canAdd) {
+		if (canAdd && canWrite) {
 			if (length && (addParam || filter)) {
 				items.push({ isDiv: true });
 			};

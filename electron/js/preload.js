@@ -53,6 +53,6 @@ contextBridge.exposeInMainWorld('Electron', {
 		cmd = String(cmd || '');
 		args = args || [];
 
-		ipcRenderer.invoke('Api', id, cmd, args);
+		return ipcRenderer.invoke('Api', id, cmd, args);
 	},
 });

@@ -413,6 +413,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = Constant.default.interfaceLang;
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let name = '';
 		if (filter) {
@@ -441,24 +442,34 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (filter) {
 			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
 
-			const itemsImport: any[] = ([
-				{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
-				{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
-				{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
-				{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
-			] as any[]).map(it => ({ ...it, isImport: true }));
+			let itemsImport: any[] = [];
 
-			const settingsSpace: any[] = ([
+			if (canWrite) {
+				([
+					{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
+					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
+					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
+					{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
+				] as any[]).map(it => ({ ...it, isImport: true }));
+			};
+
+			let settingsSpace: any[] = [
 				{ id: 'spaceIndex', name: translate('popupSettingsSpaceTitle') },
-
-				{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
-				{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
-				{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
 
 				{ id: 'exportIndex', icon: 'settings-export', name: translate('popupSettingsExportTitle') },
 				{ id: 'exportProtobuf', icon: 'import-protobuf', name: translate('popupSettingsExportProtobufTitle') },
 				{ id: 'exportMarkdown', icon: 'import-markdown', name: translate('popupSettingsExportMarkdownTitle') },
-			] as any).map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
+			];
+
+			if (canWrite) {
+				settingsSpace = settingsSpace.concat([
+					{ id: 'importIndex', icon: 'settings-import', name: translate('popupSettingsImportTitle') },
+					{ id: 'importNotion', icon: 'import-notion', name: translate('popupSettingsImportNotionTitle') },
+					{ id: 'importCsv', icon: 'import-csv', name: translate('popupSettingsImportCsvTitle') },
+				]);
+			};
+
+			settingsSpace = settingsSpace.map(it => ({ ...it, isSpace: true, className: 'isSpace' }));
 			
 			const settingsAccount: any[] = [
 				{ id: 'account', name: translate('popupSettingsProfileTitle') },
@@ -508,10 +519,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		};
 
-		items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
+		if (canWrite) {
+			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
 
-		if (hasRelations) {
-			items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
+			if (hasRelations) {
+				items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
+			};
 		};
 
 		return items.map(it => {
