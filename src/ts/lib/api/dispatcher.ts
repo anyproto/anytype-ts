@@ -1051,12 +1051,13 @@ class Dispatcher {
 				log(rootId, type, data, message.getValueCase());
 			};
 		};
+
+		if (updateParents) {
+			blockStore.updateStructureParents(rootId);
+		};
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
 		this.timeoutEvent[rootId] = window.setTimeout(() => { 
-			if (updateParents) {
-				blockStore.updateStructureParents(rootId);
-			};
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
