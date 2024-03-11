@@ -59,10 +59,10 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 			return;
 		};
 
-		this.refButton.setLoading(true);
+		this.refButton?.setLoading(true);
 
 		C.SpaceJoin(account.info.networkId, invite.spaceId, cid, key, (message: any) => {
-			this.refButton.setLoading(false);
+			this.refButton?.setLoading(false);
 
 			if (message.error.code) {
 				this.setState({ error: message.error.description });

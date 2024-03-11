@@ -217,13 +217,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { account, name } = authStore;
 		const next = () => {
 			Animation.from(() => {
-				this.refNext.setLoading(false);
+				this.refNext?.setLoading(false);
 				this.setState({ stage: stage + 1 });
 			});
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext.setLoading(true);
+			this.refNext?.setLoading(true);
 
 			if (account) {
 				this.accountUpdate(() => next());
@@ -270,7 +270,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountCreate (callBack?: () => void) {
-		this.refNext.setLoading(true);
+		this.refNext?.setLoading(true);
 
 		const { name, walletPath, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
