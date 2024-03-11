@@ -522,7 +522,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
-		const limit = this.getLimit(block.content);
+		let limit = this.getLimit(block.content);
 
 		if (targetBlockId != Constant.widgetId.recentOpen) {
 			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
@@ -531,6 +531,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 

@@ -2,6 +2,7 @@ import { RouteComponentProps } from 'react-router';
 import { I } from 'Lib';
 
 export enum Platform {
+	None	 = '',
 	Windows	 = 'Windows',
 	Mac		 = 'Mac',
 	Linux	 = 'Linux',

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview } from 'Lib';
-import { popupStore } from 'Store';
+import { popupStore, commonStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -317,7 +317,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	onExport (type: I.ExportType, param: any) {
 		analytics.event('ClickExport', { type, route: 'Settings' });
-		Action.export([], type, { ...param, route: 'Settings' }, () => this.props.close());
+		Action.export(commonStore.space, [], type, { ...param, route: 'Settings' }, () => this.props.close());
 	};
 
 	onKeyDown (e: any) {

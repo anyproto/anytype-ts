@@ -28,29 +28,17 @@ class Analytics {
 		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
-	init () {
+	init (options?: any) {
 		if (this.instance) {
 			return;
 		};
 
-		const { config, interfaceLang } = commonStore;
+		const { interfaceLang } = commonStore;
+		const electron = UtilCommon.getElectron();
 		const platform = UtilCommon.getPlatform();
 
-		let version = String(UtilCommon.getElectron().version.app || '').split('-');
-		if (version.length) {
-			version = [ version[0] ];
-		};
-		if (config.sudo || !UtilCommon.getElectron().isPackaged || [ 'alpha' ].includes(config.channel)) {
-			version.push('dev');
-		} else
-		if ([ 'beta' ].includes(config.channel)) {
-			version.push(config.channel);
-		};
-
-		C.MetricsSetParameters(platform, version.join('-'));
-
 		this.instance = amplitude.getInstance();
-		this.instance.init(Constant.amplitude, null, {
+		this.instance.init(Constant.amplitude, null, Object.assign({
 			apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
@@ -60,18 +48,49 @@ class Analytics {
 			trackingOptions: {
 				ipAddress: false,
 			},
-		});
+		}, options || {}));
 
-		this.instance.setVersionName(UtilCommon.getElectron().version.app);
-		this.instance.setUserProperties({ 
+		const props: any = { 
 			deviceType: 'Desktop',
 			platform,
-			osVersion: UtilCommon.getElectron().version.os,
 			interfaceLang,
-		});
+		};
 
+		if (electron.version) {
+			props.osVersion = electron.version.os;
+			this.instance.setVersionName(electron.version.app);
+		};
+
+		this.instance.setUserProperties(props);
 		this.removeContext();
+		this.setVersion();
+
 		this.log('[Analytics].init');
+	};
+
+	setVersion () {
+		const { config } = commonStore;
+		const platform = UtilCommon.getPlatform();
+		const electron = UtilCommon.getElectron();
+		const { version, isPackaged } = electron;
+
+		if (!version) {
+			return;
+		};
+
+		let ret = String(version.app || '').split('-')
+		if (ret.length) {
+			ret = [ ret[0] ];
+		};
+
+		if (config.sudo || !isPackaged || [ 'alpha' ].includes(config.channel)) {
+			ret.push('dev');
+		} else
+		if ([ 'beta' ].includes(config.channel)) {
+			ret.push(config.channel);
+		};
+
+		C.MetricsSetParameters(platform, ret.join('-'));
 	};
 
 	profile (id: string, networkId: string) {

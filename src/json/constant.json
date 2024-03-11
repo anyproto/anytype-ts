@@ -51,16 +51,16 @@
 	},
 
 	"fileExtension": {
-		"image": ["jpg", "jpeg", "png", "gif", "svg", "webp"],
-		"video": ["mp4", "m4v", "mov"],
-		"cover": ["jpg", "jpeg", "png"],
-		"audio": ["mp3", "m4a", "flac", "ogg", "wav"],
-		"pdf": ["pdf"],
+		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
+		"video": [ "mp4", "m4v", "mov" ],
+		"cover": [ "jpg", "jpeg", "png" ],
+		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
+		"pdf": [ "pdf" ],
 		"import": {
-			"1": ["zip", "md"],
-			"3": ["zip", "pb", "json"],
-			"4": ["zip", "html", "htm", "mhtml"],
-			"5": ["zip", "txt"]
+			"1": [ "zip", "md" ],
+			"3": [ "zip", "pb", "json" ],
+			"4": [ "zip", "html", "htm", "mhtml" ],
+			"5": [ "zip", "txt" ]
 		}
 	},
 
@@ -92,7 +92,7 @@
 			"blockColor",
 			"blockBackground"
 		],
-		"add": ["searchObject", "blockRelationEdit", "typeSuggest"],
+		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
 		"action": [
 			"blockStyle",
 			"blockColor",
@@ -102,8 +102,8 @@
 			"searchObject",
 			"typeSuggest"
 		],
-		"more": ["select", "searchObject", "blockAlign", "typeSuggest"],
-		"index": ["searchObject"],
+		"more": [ "select", "searchObject", "blockAlign", "typeSuggest" ],
+		"index": [ "searchObject" ],
 		"relationEdit": [
 			"select",
 			"searchObject",
@@ -111,19 +111,19 @@
 			"dataviewObjectValues",
 			"dataviewObjectList"
 		],
-		"layout": ["blockAlign"],
-		"latex": ["previewLatex"],
-		"viewEdit": ["select"],
-		"featuredType": ["searchObject", "typeSuggest"],
-		"dataviewHead": ["dataviewSource", "searchObject"],
-		"store": ["typeSuggest", "relationSuggest"],
-		"widget": ["searchObject", "select"],
-		"dataviewTemplate": ["previewObject"],
-		"table": ["select2", "blockColor", "blockBackground"],
-		"navigation": ["quickCapture"]
+		"layout": [ "blockAlign" ],
+		"latex": [ "previewLatex" ],
+		"viewEdit": [ "select" ],
+		"featuredType": [ "searchObject", "typeSuggest" ],
+		"dataviewHead": [ "dataviewSource", "searchObject" ],
+		"store": [ "typeSuggest", "relationSuggest" ],
+		"widget": [ "searchObject", "select" ],
+		"dataviewTemplate": [ "previewObject" ],
+		"table": [ "select2", "blockColor", "blockBackground" ],
+		"navigation": [ "quickCapture", "space" ]
 	},
 
-	"popupPinIds": ["search"],
+	"popupPinIds": [ "search" ],
 
 	"defaultRelationKeys": [
 		"id",
@@ -270,7 +270,6 @@
 	"pageCoverRelationKey": "pageCover",
 
 	"subId": {
-		"index": "index",
 		"search": "search",
 		"profile": "profile",
 		"deleted": "deleted",
@@ -350,6 +349,10 @@
 			"min": 50,
 			"max": 2000,
 			"default": 140
+		},
+
+		"menu": {
+			"border": 10
 		},
 
 		"dataview": {

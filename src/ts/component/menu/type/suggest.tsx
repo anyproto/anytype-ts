@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, Storage } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilObject } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -283,26 +283,29 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
+		const canWrite = UtilObject.canParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
 		];
 
-		if (filter) {
-			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+		if (canWrite) {
+			if (filter) {
+				const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
-			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
-			]);
-		} else {
-			sections = sections.concat([
-				{ 
-					children: [
-						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-					] 
-				},
-			]);
+				sections = sections.concat([
+					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
+				]);
+			} else {
+				sections = sections.concat([
+					{ 
+						children: [
+							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
+						] 
+					},
+				]);
+			};
 		};
 
 		sections = sections.filter((section: any) => {

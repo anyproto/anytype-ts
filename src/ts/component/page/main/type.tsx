@@ -54,6 +54,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = dbStore.getRecords(subIdTemplate, '');
+		const canWrite = UtilObject.canParticipantWrite();
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
@@ -62,7 +63,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
 		const subIdObject = this.getSubIdObject();

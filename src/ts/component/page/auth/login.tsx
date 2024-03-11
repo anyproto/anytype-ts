@@ -76,7 +76,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { accounts, phrase } = authStore;
+		const { accounts } = authStore;
 
 		this.focus();
 
@@ -84,7 +84,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			const account = accounts[0];
 
 			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, phrase);
+			Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
 			this.select();
 		};
@@ -119,10 +119,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				return;
 			};
 
-			authStore.phraseSet(phrase);
 			authStore.accountListClear();
-
-			UtilData.createSession(() => {
+			UtilData.createSession(phrase, '', () => {
 				C.AccountRecover(message => this.setError(message.error));
 			});
 		});

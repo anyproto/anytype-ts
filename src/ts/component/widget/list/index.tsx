@@ -27,16 +27,19 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	node = null;
 	refSelect = null;
+	refList = null;
 	state = {
 		isLoading: false,
 	};
 	cache: any = null;
+	top = 0;
 
 	constructor (props: Props) {
 		super(props);
 		
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -94,6 +97,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<VList
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -103,6 +107,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
 										scrollToAlignment="center"
+										onScroll={this.onScroll}
 									/>
 							)}
 							</AutoSizer>
@@ -223,6 +228,10 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
 			this.load(viewId);
+		};
+
+		if (this.refList) {
+			this.refList.scrollToPosition(this.top);
 		};
 
 		this.initCache();
@@ -449,6 +458,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			return index ? HEIGHT_COMPACT + 12 : HEIGHT_COMPACT;
 		};
 		return this.props.isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
+	};
+
+	onScroll ({ scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 });

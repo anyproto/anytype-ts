@@ -501,19 +501,19 @@ class UtilCommon {
 		return cnt.substr(-1) == '1' ? single : multiple;
 	};
 
-	getPlatform () {
-		return Constant.platforms[this.getElectron().platform];
+	getPlatform (): I.Platform {
+		return Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
-	isPlatformMac () {
+	isPlatformMac (): boolean {
 		return this.getPlatform() == I.Platform.Mac;
 	};
 
-	isPlatformWindows () {
+	isPlatformWindows (): boolean {
 		return this.getPlatform() == I.Platform.Windows;
 	};
 
-	isPlatformLinux () {
+	isPlatformLinux (): boolean {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 

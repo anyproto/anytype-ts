@@ -283,12 +283,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 		const relation = this.getRelation();
-		const relations = Dataview.viewGetRelations(rootId, blockId, view);
-		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
 
 		if (!relation) {
 			return;
 		};
+
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const idx = view.relations.findIndex(it => it && (it.relationKey == relation.relationKey));
 
 		let close = true;
 

@@ -92,7 +92,7 @@ class UtilObject {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, this.getParticipantId(spaceId || space, account.id));
+		const object = detailStore.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
 		return object._empty_ ? null : object;
 	};
 

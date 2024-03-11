@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, UtilRouter, Storage } from 'Lib';
+import { I, Storage } from 'Lib';
 import Util from '../lib/util';
 
 const Index = observer(class Index extends React.Component<I.PageComponent> {

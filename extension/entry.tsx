@@ -26,6 +26,7 @@ window.isExtension = true;
 window.Electron = {
 	currentWindow: () => ({}),
 	Api: () => {},
+	platform: '',
 };
 
 window.Anytype = {

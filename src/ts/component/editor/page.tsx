@@ -1312,10 +1312,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent.id);
+		const parent = blockStore.getLeaf(rootId, element?.parentId);
+		const parentElement = blockStore.getMapElement(rootId, parent?.id);
 
-		if (!element || !parentElement) {
+		if (!element || !parent || !parentElement) {
 			return;
 		};
 
@@ -1489,7 +1489,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getMapElement(rootId, element?.parentId);
+
+			if (!rowElement) {
+				return;
+			};
+
 			const idx = rowElement.childrenIds.indexOf(block.id);
 
 			if (idx < 0) {
@@ -2092,7 +2097,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const element = blockStore.getMapElement(rootId, last.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 
-			if (!parent.isLayoutDiv() && !parent.isPage()) {
+			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;
 			};
 		};
