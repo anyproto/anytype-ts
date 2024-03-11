@@ -427,8 +427,9 @@ class UtilData {
 		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
 	};
 
-	createSession (callBack?: (message: any) => void) {
-		C.WalletCreateSession(authStore.phrase, authStore.appKey, (message: any) => {
+	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
+		C.WalletCreateSession(phrase, key, (message: any) => {
+
 			if (!message.error.code) {
 				authStore.tokenSet(message.token);
 				authStore.appTokenSet(message.appToken);

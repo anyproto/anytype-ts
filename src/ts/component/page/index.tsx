@@ -11,7 +11,6 @@ import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
@@ -40,7 +39,6 @@ const Components = {
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
-	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 

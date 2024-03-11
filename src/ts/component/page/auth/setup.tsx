@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -117,29 +117,27 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { walletPath, phrase } = authStore;
+		const { walletPath } = authStore;
 		const accountId = Storage.get('accountId');
 
-		if (!phrase) {
+		if (!accountId || !walletPath) {
+			this.setError({ description: 'Invalid account or wallet path', code: 0 });
 			return;
 		};
 
-		C.WalletRecover(walletPath, phrase, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			UtilData.createSession((message: any) => {
+		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+			C.WalletRecover(walletPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
 
-				if (accountId) {
-					authStore.phraseSet(phrase);
+				UtilData.createSession(phrase, '' ,(message: any) => {
+					if (this.setError(message.error)) {
+						return;
+					};
+
 					this.select(accountId, walletPath, false);
-				} else {
-					UtilRouter.go('/auth/account-select', { replace: true });
-				};
+				});
 			});
 		});
 	};

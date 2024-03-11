@@ -16,7 +16,7 @@ class Renderer {
 			return it;
 		});
 
-		UtilCommon.getElectron().Api(winId, cmd, UtilCommon.objectCopy(args));
+		return UtilCommon.getElectron().Api(winId, cmd, UtilCommon.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {
