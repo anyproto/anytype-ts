@@ -5,7 +5,7 @@
 	.block.blockFile.withContent { padding: 0px; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-primary); height: 48px; width: 100%; }
-		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
+		.error { margin: 0px; font-size: var(--font-size-small); line-height: 24px; height: 24px; }
 		
 		.name {
 			min-width: 40px; height: 24px; line-height: 24px; display: inline-block; font-weight: 500;
