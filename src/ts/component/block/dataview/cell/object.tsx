@@ -384,6 +384,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 				objectType: details.type,
 				layout: details.layout,
 				template: '',
+				middleTime: message.middleTime,
 			});
 		});
 	};

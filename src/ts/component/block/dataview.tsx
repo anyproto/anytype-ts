@@ -681,6 +681,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					route: this.analyticsRoute(),
 					objectType: object.type,
 					layout: object.layout,
+					middleTime: message.middleTime,
 				});
 			};
 		});

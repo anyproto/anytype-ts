@@ -1827,6 +1827,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 									objectType: Constant.typeKey.bookmark,
 									layout: I.ObjectLayout.Bookmark,
 									template: '',
+									middleTime: message.middleTime,
 								});
 							});
 							break;

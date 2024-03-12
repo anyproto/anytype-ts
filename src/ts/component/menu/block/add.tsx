@@ -606,14 +606,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					};
 
 					UtilObject.create(rootId, blockId, details, position, '', UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], (message: any) => {
-						if (message.error.code) {
+						if (message.error.code || !message.details) {
 							return;
 						};
+
+						const object = message.details;
 
 						UtilObject.openPopup(message.details);
 
 						analytics.event('CreateLink');
-						analytics.event('CreateObject', { objectType: item.objectTypeId, route: 'Powertool' });
+						analytics.event('CreateObject', {
+							route: 'Powertool',
+							objectType: object.type,
+							layout: object.layout,
+							template: '',
+							middleTime: message.middleTime,
+						});
 					});
 				} else {
 					keyboard.setFocus(false);
