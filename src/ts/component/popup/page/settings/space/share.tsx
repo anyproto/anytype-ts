@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, Preview } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -421,16 +421,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onLeaveRequest (item: any) {
-		popupStore.open('confirm', {
-			data: {
-				title: translate('popupConfirmMemberRemoveTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmMemberRemoveText'), item.name),
-				textConfirm: translate('commonRemove'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceParticipantRemove(commonStore.space, [ item.identity ]);
-				},
-			},
+		C.SpaceParticipantRemove(commonStore.space, [ item.identity ], () => {
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), item.name) });
 		});
 	};
 

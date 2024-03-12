@@ -1413,6 +1413,7 @@
 	"toastLinkedTo": "has been linked to",
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
+	"toastApproveLeaveRequest": "You approved %s request",
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",
