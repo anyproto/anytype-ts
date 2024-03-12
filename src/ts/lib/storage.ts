@@ -44,7 +44,7 @@ class Storage {
 		};
 		
 		let o = this.get(key);
-		if (typeof o === 'object') {
+		if ((typeof o === 'object') && (o !== null)) {
 			for (const i in obj) {
 				o[i] = obj[i];
 			};

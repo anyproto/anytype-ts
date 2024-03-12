@@ -186,9 +186,15 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	rebind () {
+		const { getId, close, setActive } = this.props;
+
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+		window.setTimeout(() => setActive(), 15);
+
+		if (commonStore.navigationMenu == I.NavigationMenuMode.Hover) {
+			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => close());
+		};
 	};
 
 	unbind () {
@@ -440,7 +446,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			if (item.isInstalled) {
 				cb();
 			} else {
-				Action.install(item, true, message => cb(message.details));
+				Action.install({ ...item, id: item.itemId }, true, message => cb(message.details));
 			};
 		};
 

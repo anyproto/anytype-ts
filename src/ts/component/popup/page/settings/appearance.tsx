@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Title, Label, Switch, Select } from 'Component';
+import { Icon, Title, Label, Switch } from 'Component';
 import { I, UtilCommon, translate, analytics, Renderer } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { autoSidebar, showRelativeDates, navigationMenu, config, theme, fullscreenObject } = commonStore;
+		const { autoSidebar, showRelativeDates, config, theme } = commonStore;
 		const { hideTray, hideMenuBar } = config;
 		const canHideMenu = UtilCommon.isPlatformWindows() || UtilCommon.isPlatformLinux();
 		const themes: any[] = [
@@ -61,11 +61,6 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
 						</div>
 					) : ''}
-
-					<div className="item">
-						<Label text={translate('popupSettingsAppearancePersonalisationFullscreen')} />
-						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => commonStore.fullscreenObjectSet(v)} />
-					</div>
 				</div>
 			</React.Fragment>
 		);

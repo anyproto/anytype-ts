@@ -580,27 +580,47 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 			menu.css(css);
 
-			if (isSub && (type == I.MenuType.Vertical)) {
+			if (isSub) {
 				const coords = UtilCommon.objectCopy(keyboard.mouse.page);
 				const offset = 8;
 
-				let w = Math.abs(x - coords.x) - offset;
-				let t = '';
-				let l = coords.x + offset;
+				let w = 0;
+				let h = 0;
+				let left = 0;
+				let top = 0;
+				let transform = '';
+				let clipPath = '';
 
-				if (flipX) {
-					w -= width;
-					l -= w + offset * 2;
-					t = 'scaleX(-1)';
+				if (type == I.MenuType.Vertical) {
+					h = height;
+					top = y;
+					w = Math.abs(x - coords.x) - offset;
+					left = coords.x + offset;
+
+					if (flipX) {
+						w -= width;
+						left -= w + offset * 2;
+						transform = 'scaleX(-1)';
+					};
+
+					clipPath = `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`;
+				};
+
+				if (type == I.MenuType.Horizontal) {
+					w = width;
+					left = x;
+					h = Math.abs(y - coords.y) - offset;
+					top = y;
+					clipPath = `polygon(0 ${height}px, 100% ${height}px, ${ox - x + ew}px 100%, ${ox - x}px 100%)`;
 				};
 
 				this.poly.show().css({
 					width: w,
-					height: height,
-					left: l,
-					top: y,
-					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
-					transform: t,
+					height: h,
+					left,
+					top,
+					clipPath,
+					transform,
 					position: (isFixed ? 'fixed' : 'absolute'),
 				});
 

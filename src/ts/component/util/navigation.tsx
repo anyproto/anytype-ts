@@ -50,13 +50,9 @@ const Navigation = observer(class Navigation extends React.Component {
 
 				case I.NavigationMenuMode.Hover: {
 					buttonPlus.onMouseEnter = e => {
-						keyboard.onQuickCapture();
-						this.onTooltipShow(e, buttonPlus.tooltip, buttonPlus.caption);
+						keyboard.onQuickCapture({ isSub: true });
 					};
-					buttonPlus.onMouseLeave = () => {
-						menuStore.close('quickCapture');						
-						Preview.tooltipHide(false);
-					};
+					buttonPlus.onMouseLeave = () => {};
 					break;
 				};
 
