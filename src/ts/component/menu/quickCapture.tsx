@@ -193,12 +193,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		window.setTimeout(() => setActive(), 15);
 
 		if (commonStore.navigationMenu == I.NavigationMenuMode.Hover) {
-			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => close());
+			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => {
+				if (!this.state.isExpanded) {
+					close();
+				};
+			});
 		};
 	};
 
 	unbind () {
 		$(window).off('keydown.menu');
+		$(`#${this.props.getId()}`).off(`mouseleave`);
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
