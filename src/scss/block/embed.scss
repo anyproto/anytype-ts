@@ -50,7 +50,6 @@
 		
 		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }
-		#value svg { max-width: 100% !important; background: #fff; }
 
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
@@ -79,6 +78,10 @@
 			.ToolIcon__icon { width: 20px; height: 20px; }
 			.Stack_horizontal { white-space: nowrap; @include text-small; }
 		}
+	}
+
+	.block.blockEmbed:not(.isLatex) {
+		#value svg { max-width: 100% !important; background: #fff; }
 	}
 
 	.block.blockEmbed.isGraphviz {
@@ -116,7 +119,6 @@
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }
 		.katex .base { margin-top: 2px; margin-bottom: 2px; }
-		#value svg { background: none; }
 	}
 }
 
