@@ -1,14 +1,16 @@
 import { I } from 'Lib';
 
 export enum NotificationType {
-	None	 = '',
-	Import	 = 'import',
-	Export	 = 'export',
-	Gallery	 = 'galleryImport',
-	Join	 = 'requestToJoin',
-	Leave	 = 'requestToLeave',
-	Approve	 = 'participantRequestApproved',
-	Remove	 = 'participantRemove',
+	None		 = '',
+	Import		 = 'import',
+	Export		 = 'export',
+	Gallery		 = 'galleryImport',
+	Join		 = 'requestToJoin',
+	Leave		 = 'requestToLeave',
+	Approve		 = 'participantRequestApproved',
+	Remove		 = 'participantRemove',
+	Decline		 = 'participantRequestDecline',
+	Permission	 = 'participantPermissionsChange',
 };
 
 export enum NotificationStatus {

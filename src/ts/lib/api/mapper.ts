@@ -49,6 +49,8 @@ export const Mapper = {
 		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
 		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
 		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
+		if (v == V.PARTICIPANTREQUESTDECLINE) t = 'participantRequestDecline';
+		if (v == V.PARTICIPANTPERMISSIONSCHANGE) t = 'participantPermissionsChange';
 
 		return t;
 	},

@@ -39,8 +39,6 @@ class Notification implements I.Notification {
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
 
-		console.log(this);
-
 		switch (this.type) {
 			case I.NotificationType.Import: {
 				if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
@@ -73,9 +71,16 @@ class Notification implements I.Notification {
 				break;
 			};
 
+			case I.NotificationType.Decline:
 			case I.NotificationType.Remove: {
 				this.title = '';
 				this.text = UtilCommon.sprintf(this.text, space?.name);
+				break;
+			};
+
+			case I.NotificationType.Permission: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, translate(`participantPermissions${permissions}`), space?.name);
 				break;
 			};
 

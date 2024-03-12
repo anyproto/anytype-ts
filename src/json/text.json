@@ -1734,6 +1734,10 @@
 
 	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space",
 
+	"notificationDeclineSuccessText": "Your request to join the <b>\"%s\"</b> space has been declined.",
+
+	"notificationPermissionSuccessText": "Your access rights were changed to <b>\"%s\"</b> in the <b>\"%s\"</b> space.",
+
 	"notificationButtonSpace": "Go to Space",
 	"notificationButtonRequest": "View request",
 
