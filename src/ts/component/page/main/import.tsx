@@ -47,7 +47,9 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				this.setState({ error: message.error.description });
 			} else {
 				UtilObject.openHome('route');
-				window.setTimeout(() => popupStore.open('usecase', { data: { object: message.info } }), Constant.delay.popup);
+				window.setTimeout(() => {
+					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
+				}, Constant.delay.popup);
 			};
 		});
 
