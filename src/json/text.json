@@ -1523,7 +1523,7 @@
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Personal Space",
+	"spaceAccessType1": "Default Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
