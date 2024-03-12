@@ -48,7 +48,7 @@
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
 		
-		#value { font-size: 20px; line-height: 20px; width: 100%; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }
 		#value svg { max-width: 100% !important; background: #fff; }
 
