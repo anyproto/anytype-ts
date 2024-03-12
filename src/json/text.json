@@ -633,6 +633,10 @@
 	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
 	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
 	"popupSettingsAppearancePersonalisationFullscreen": "Open objects in fullscreen",
+	"popupSettingsAppearanceNavigationMenu": "Show navigation menus on",
+	"popupSettingsAppearanceNavigationMenuContext": "Right click",
+	"popupSettingsAppearanceNavigationMenuClick": "Click",
+	"popupSettingsAppearanceNavigationMenuHover": "Hover",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",

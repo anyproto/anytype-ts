@@ -50,6 +50,7 @@ class CommonStore {
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
+	public navigationMenuValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -207,6 +208,14 @@ class CommonStore {
 
 	get showRelativeDates (): boolean {
 		return this.boolGet('showRelativeDates');
+	};
+
+	get navigationMenu (): I.NavigationMenuMode {
+		if (this.navigationMenuValue === null) {
+			this.navigationMenuValue = Storage.get('navigationMenu');
+		};
+
+		return Number(this.navigationMenuValue) || I.NavigationMenuMode.Context;
 	};
 
     gatewaySet (v: string) {
@@ -396,6 +405,12 @@ class CommonStore {
 
 	languagesSet (v: string[]) {
 		this.languages = v;
+	};
+
+	navigationMenuSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.navigationMenuValue = v;
+		Storage.set('navigationMenu', v);
 	};
 
 	configSet (config: any, force: boolean) {

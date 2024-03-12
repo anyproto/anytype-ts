@@ -227,7 +227,7 @@ export enum FileSyncStatus {
 };
 
 export enum StoreTab {
-	Type = 'type',
+	Type	 = 'type',
 	Relation = 'relation',
 };
 
@@ -239,16 +239,22 @@ export enum BannerType {
 };
 
 export enum ObjectManagerItemInfo {
-	Description 	= 0,
-	FileSize 		= 1,
+	Description	 = 0,
+	FileSize	 = 1,
 };
 
 export enum ObjectManagerPopup {
-	Favorites 	= 0,
+	Favorites	 = 0,
 };
 
 export enum NetworkMode {
 	Default		 = 0,
 	Local		 = 1,
 	Custom		 = 2,
+};
+
+export enum NavigationMenuMode {
+	Context		 = 0,
+	Click		 = 1,
+	Hover		 = 2,
 };

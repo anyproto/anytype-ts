@@ -7,13 +7,19 @@ import { observer } from 'mobx-react';
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { autoSidebar, showRelativeDates, config, theme, fullscreenObject } = commonStore;
+		const { autoSidebar, showRelativeDates, navigationMenu, config, theme, fullscreenObject } = commonStore;
 		const { hideTray, hideMenuBar } = config;
 		const canHideMenu = UtilCommon.isPlatformWindows() || UtilCommon.isPlatformLinux();
 		const themes: any[] = [
 			{ id: '', class: 'light', name: translate('popupSettingsAppearanceColorModeButtonLight') },
 			{ id: 'dark', class: 'dark', name: translate('popupSettingsAppearanceColorModeButtonDark') },
 			{ id: 'system', class: 'system', name: translate('popupSettingsAppearanceColorModeButtonSystem') },
+		];
+
+		const navigationMenuModes: I.Option[] = [
+			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsAppearanceNavigationMenuContext') },
+			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsAppearanceNavigationMenuClick') },
+			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsAppearanceNavigationMenuHover') },
 		];
 
 		return (
@@ -53,6 +59,11 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 					<div className="item">
 						<Label text={translate('popupSettingsAppearancePersonalisationRelativeDates')} />
 						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => commonStore.showRelativeDatesSet(v)} />
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsAppearanceNavigationMenu')} />
+						<Select id="navigationMenu" options={navigationMenuModes} value={navigationMenu} onChange={id => commonStore.navigationMenuSet(id)} />
 					</div>
 
 					{canHideMenu ? (
