@@ -125,7 +125,7 @@ $transitionAllCommon: all $transitionCommon;
 	letter-spacing: var(--letter-spacing-title); font-weight: var(--font-weight-title); 
 }
 @mixin text-header1 { 
-	font-size: var(--font-size-header1); line-height: var(--letter-spacing-header1); 
+	font-size: var(--font-size-header1); line-height: var(--line-height-header1); 
 	letter-spacing: var(--letter-spacing-header1); font-weight: var(--font-weight-header1); 
 }
 @mixin text-header2 { 
