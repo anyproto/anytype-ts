@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Select } from 'Component';
+import { Title, Label, Select, Switch } from 'Component';
 import { I, translate, UtilMenu, Action } from 'Lib';
 import { commonStore } from 'Store';
 
@@ -11,10 +11,15 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { config, interfaceLang } = commonStore;
+		const { config, interfaceLang, navigationMenu, fullscreenObject } = commonStore;
 		const { languages } = config;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const spellingLanguages = UtilMenu.getSpellingLanguages();
+		const navigationMenuModes: I.Option[] = [
+			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
+			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
+			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
+		];
 
 		return (
 			<React.Fragment>
@@ -52,6 +57,28 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								className: 'fixed',
 							}}
 						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
+
+						<Select
+							id="navigationMenu"
+							value={navigationMenu}
+							options={navigationMenuModes}
+							onChange={v => commonStore.navigationMenuSet(v)}
+							arrowClassName="black"
+							menuParam={{ 
+								horizontal: I.MenuDirection.Right, 
+								width: 300,
+								className: 'fixed',
+							}}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalFullscreen')} />
+						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => commonStore.fullscreenObjectSet(v)} />
 					</div>
 				</div>
 

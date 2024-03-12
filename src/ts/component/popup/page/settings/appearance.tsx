@@ -16,12 +16,6 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 			{ id: 'system', class: 'system', name: translate('popupSettingsAppearanceColorModeButtonSystem') },
 		];
 
-		const navigationMenuModes: I.Option[] = [
-			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsAppearanceNavigationMenuContext') },
-			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsAppearanceNavigationMenuClick') },
-			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsAppearanceNavigationMenuHover') },
-		];
-
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSettingsAppearanceTitle')} />
@@ -59,11 +53,6 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 					<div className="item">
 						<Label text={translate('popupSettingsAppearancePersonalisationRelativeDates')} />
 						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => commonStore.showRelativeDatesSet(v)} />
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsAppearanceNavigationMenu')} />
-						<Select id="navigationMenu" options={navigationMenuModes} value={navigationMenu} onChange={id => commonStore.navigationMenuSet(id)} />
 					</div>
 
 					{canHideMenu ? (

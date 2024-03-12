@@ -97,6 +97,7 @@ class CommonStore {
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
+			navigationMenuValue: observable,
 			spaceId: observable,
             config: computed,
             progress: computed,
@@ -211,11 +212,11 @@ class CommonStore {
 	};
 
 	get navigationMenu (): I.NavigationMenuMode {
-		if (this.navigationMenuValue === null) {
-			this.navigationMenuValue = Storage.get('navigationMenu');
+		let ret = this.navigationMenuValue;
+		if (ret === null) {
+			ret = Storage.get('navigationMenu');
 		};
-
-		return Number(this.navigationMenuValue) || I.NavigationMenuMode.Context;
+		return Number(ret) || I.NavigationMenuMode.Context;
 	};
 
     gatewaySet (v: string) {
