@@ -26,8 +26,10 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	render () {
 		const members = this.getMembers();
 		const length = members.length;
+		const participant = UtilObject.getParticipant();
 
 		const Member = (item: any) => {
+			const isActive = item.id == participant.id;
 			return (
 				<div 
 					id={`item-${item.id}`} 
@@ -37,9 +39,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 					<div className="col">
 						<IconObject size={42} object={item} />
 						<ObjectName object={item} />
-					</div>
-					<div className="col">
-						<Label text={translate(`participantStatus${item.status}`)} />
+						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="col">
 						<Label text={translate(`participantPermissions${item.permissions}`)} />
@@ -66,7 +66,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
 				<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
 
