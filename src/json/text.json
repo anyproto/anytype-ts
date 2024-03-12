@@ -127,6 +127,7 @@
 	"commonGallery": "Gallery",
 	"commonLeaveSpace": "Leave space",
 	"commonYou": "you",
+	"commonApprove": "Approve",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -746,15 +747,16 @@
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
-	"popupSettingsSpaceShareMembersAndRequestsTitle": "Members and requests",
-	"popupSettingsSpaceShareMembersRequested": "Requested",
-	"popupSettingsSpaceShareMembersViewRequest": "View request",
+	"popupSettingsSpaceShareMembersTitle": "Members and requests",
+	"popupSettingsSpaceShareJoinRequest": "Join Request",
+	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
+	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
+	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",

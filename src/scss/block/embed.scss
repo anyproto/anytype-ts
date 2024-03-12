@@ -107,6 +107,11 @@
 	}
 
 	.block.blockEmbed.isLatex {
+		> .wrapContent { border-radius: 0px; }
+		> .wrapContent {
+			.selectable.isSelectionSelected::after { border-radius: 0px; }
+		}
+
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }
