@@ -132,7 +132,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
@@ -260,7 +260,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { cid, key } = this.state;
 
 		if (cid && key) {
-			UtilCommon.copyToast(translate('commonLink'), this.getLink());
+			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
 		};
 	};
 

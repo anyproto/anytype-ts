@@ -314,9 +314,9 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	copyToast (label: string, text: string) {
+	copyToast (label: string, text: string, toast?: string) {
 		this.clipboardCopy({ text });
-		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), label) });
+		Preview.toastShow({ text: this.sprintf(toast || translate('toastCopy'), label) });
 	};
 	
 	cacheImages (images: string[], callBack?: () => void) {

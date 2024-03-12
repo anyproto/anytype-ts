@@ -1414,6 +1414,7 @@
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
 	"toastApproveLeaveRequest": "You approved %s request",
+	"toastInviteCopy": "Invite link was copied", 
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",
