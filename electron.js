@@ -71,10 +71,11 @@ remote.initialize();
 Util.setAppPath(path.join(__dirname));
 
 function waitForLibraryAndCreateWindows () {
-	const currentPath = app.getPath('userData');
 	const { userDataPath } = ConfigManager.config;
 
+	let currentPath = app.getPath('userData');
 	if (userDataPath && (userDataPath != currentPath)) {
+		currentPath = userDataPath;
 		app.setPath('userData', userDataPath);
 	};
 
@@ -83,7 +84,7 @@ function waitForLibraryAndCreateWindows () {
 		Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
 		waitLibraryPromise = Promise.resolve();
 	} else {
-		waitLibraryPromise = Server.start(binPath, userDataPath);
+		waitLibraryPromise = Server.start(binPath, currentPath);
 	};
 
 	Util.mkDir(Util.logPath());
