@@ -35,7 +35,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.onNext = this.onNext.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onAccountPath = this.onAccountPath.bind(this);
 		this.onShowPhrase = this.onShowPhrase.bind(this);
 	};
 
@@ -106,15 +105,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				if (!phraseVisible) {
 					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-				};
-
-				if (config.experimental) {
-					footer = (
-						<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-							<Icon className="gear" />
-							{translate('pageAuthOnboardAccountDataLocation')}
-						</div>
-					);
 				};
 				break;
 			};
@@ -274,10 +264,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	accountCreate (callBack?: () => void) {
 		this.refNext?.setLoading(true);
 
-		const { name, walletPath, networkConfig } = authStore;
+		const { name, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
 
-		C.WalletCreate(walletPath, (message) => {
+		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 				return;
@@ -291,9 +282,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					return;
 				};
 
-				const { accountPath } = authStore;
-
-				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate(name, '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						this.setError(message.error.description);
 						return;
@@ -335,16 +324,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: this.state.stage });
-	};
-
-	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath () {
-		menuStore.open('accountPath', {
-			element: '#accountPath',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			offsetY: -20,
-		});
 	};
 
 	setError (error: string) {

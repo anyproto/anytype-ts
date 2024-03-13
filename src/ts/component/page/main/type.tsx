@@ -404,16 +404,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
-			if (message.error.code) {
+			if (message.error.code || !message.details) {
 				return;
 			};
 
-			UtilObject.openPopup(message.details);
+			const object = message.details;
+
+			UtilObject.openPopup(object);
 
 			analytics.event('CreateObject', {
 				route: 'ObjectType',
-				objectType: rootId,
-				layout: message.details.layout,
+				objectType: object.type,
+				layout: object.layout,
+				middleTime: message.middleTime,
 			});
 		});
 	};

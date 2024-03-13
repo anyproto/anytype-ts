@@ -103,7 +103,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			return;
 		};
 		
-		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
@@ -114,7 +113,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.refSubmit?.setLoading(true);
 		
-		C.WalletRecover(walletPath, phrase, (message: any) => {
+		C.WalletRecover(commonStore.dataPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
@@ -127,10 +126,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { account, walletPath, networkConfig } = authStore;
+		const { account, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
 
-		C.AccountSelect(account.id, walletPath, mode, path, (message: any) => {
+		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};

@@ -31,6 +31,7 @@ interface SpaceStorage {
 
 class CommonStore {
 
+	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
@@ -217,6 +218,10 @@ class CommonStore {
 			ret = Storage.get('navigationMenu');
 		};
 		return Number(ret) || I.NavigationMenuMode.Context;
+	};
+
+	get dataPath (): string {
+		return String(this.dataPathValue || '');
 	};
 
     gatewaySet (v: string) {
@@ -436,6 +441,10 @@ class CommonStore {
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	dataPathSet (v: string) {
+		this.dataPathValue = String(v || '');
 	};
 
 };

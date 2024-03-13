@@ -435,8 +435,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					return;
 				};
 
-				UtilObject.openAuto(message.details);
-				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
+				const object = message.details;
+
+				UtilObject.openAuto(object);
+
+				analytics.event('CreateObject', { 
+					route: 'Navigation', 
+					objectType: object.type,
+					layout: object.layout,
+					template: item.defaultTemplateId,
+					middleTime: message.middleTime,
+				});
 			});
 		};
 
@@ -580,8 +589,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = dbStore.getTypeById(commonStore.type);
 		const data = await this.getClipboardData();
 
-		analytics.event('CreateObject', { route: 'Clipboard' });
-
 		data.forEach(async item => {
 			let text = '';
 			let html = '';
@@ -613,12 +620,20 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					UtilObject.openAuto(message.details);
 				});
 			} else {
-				C.ObjectCreate({}, [], '', type?.uniqueKey, commonStore.space, (message: any) => {
+				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
 
 					const object = message.details;
+
+					analytics.event('CreateObject', { 
+						route: 'Clipboard', 
+						objectType: object.type,
+						layout: object.layout,
+						template: type?.defaultTemplateId,
+						middleTime: message.middleTime,
+					});
 
 					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
 						UtilObject.openAuto(object);

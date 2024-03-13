@@ -10,14 +10,12 @@ const remote = require('@electron/remote/main');
 const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 
-if (is.development) {
-	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
-};
-
 // Fix notifications app name
 if (is.windows) {
     app.setAppUserModelId(app.name);
 };
+
+storage.setDataPath(app.getPath('userData'));
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -27,9 +25,6 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
-
-const userPath = Util.userPath();
-const logPath = Util.logPath();
 const csp = [];
 
 for (let i in Cors) {
@@ -73,19 +68,26 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 };
 
 remote.initialize();
-storage.setDataPath(userPath);
 Util.setAppPath(path.join(__dirname));
-Util.mkDir(logPath);
-
-if (process.env.ANYTYPE_USE_SIDE_SERVER) {
-	// use the grpc server started from the outside
-	Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
-	waitLibraryPromise = Promise.resolve();
-} else {
-	waitLibraryPromise = Server.start(binPath, userPath);
-};
 
 function waitForLibraryAndCreateWindows () {
+	const currentPath = app.getPath('userData');
+	const { userDataPath } = ConfigManager.config;
+
+	if (userDataPath && (userDataPath != currentPath)) {
+		app.setPath('userData', userDataPath);
+	};
+
+	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
+		// use the grpc server started from the outside
+		Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
+		waitLibraryPromise = Promise.resolve();
+	} else {
+		waitLibraryPromise = Server.start(binPath, userDataPath);
+	};
+
+	Util.mkDir(Util.logPath());
+
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();

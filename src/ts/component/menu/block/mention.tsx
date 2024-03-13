@@ -315,6 +315,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					objectType: type.id,
 					layout: type.layout,
 					template: '',
+					middleTime: message.middleTime,
 				});
 			});
 		} else {

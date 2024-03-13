@@ -126,6 +126,8 @@
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
 	"commonLeaveSpace": "Leave space",
+	"commonYou": "you",
+	"commonApprove": "Approve",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -400,7 +402,6 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
 
-	"pageAuthOnboardAccountDataLocation": "Account Data Location",
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
@@ -610,7 +611,6 @@
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
 	"popupSettingsAccountTitle": "Profile",
 	"popupSettingsAccountDeleteTitle": "Delete Account",
-	"popupSettingsAccountMoveTitle": "Account Data Location",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
@@ -749,15 +749,16 @@
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
-	"popupSettingsSpaceShareMembersAndRequestsTitle": "Members and requests",
-	"popupSettingsSpaceShareMembersRequested": "Requested",
-	"popupSettingsSpaceShareMembersViewRequest": "View request",
+	"popupSettingsSpaceShareMembersTitle": "Members and requests",
+	"popupSettingsSpaceShareJoinRequest": "Join Request",
+	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
+	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
+	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
@@ -794,6 +795,7 @@
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
+	"popupSettingsOnboardingStoragePath": "Account Data Location",
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningTitle": "Are you sure?",
@@ -1414,6 +1416,8 @@
 	"toastLinkedTo": "has been linked to",
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
+	"toastApproveLeaveRequest": "You approved %s request",
+	"toastInviteCopy": "Invite link was copied", 
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",
@@ -1527,7 +1531,7 @@
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Personal Space",
+	"spaceAccessType1": "Default Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",

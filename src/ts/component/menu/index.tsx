@@ -7,8 +7,6 @@ import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import MenuAccountPath from './account/path';
-
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
 
@@ -88,8 +86,6 @@ const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
 const Components: any = {
-
-	accountPath:			 MenuAccountPath,
 
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
