@@ -59,22 +59,24 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						/>
 					</div>
 
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
+					{config.experimental ? (
+						<div className="item">
+							<Label text={translate('popupSettingsPersonalNavigationMenu')} />
 
-						<Select
-							id="navigationMenu"
-							value={navigationMenu}
-							options={navigationMenuModes}
-							onChange={v => commonStore.navigationMenuSet(v)}
-							arrowClassName="black"
-							menuParam={{ 
-								horizontal: I.MenuDirection.Right, 
-								width: 300,
-								className: 'fixed',
-							}}
-						/>
-					</div>
+							<Select
+								id="navigationMenu"
+								value={navigationMenu}
+								options={navigationMenuModes}
+								onChange={v => commonStore.navigationMenuSet(v)}
+								arrowClassName="black"
+								menuParam={{ 
+									horizontal: I.MenuDirection.Right, 
+									width: 300,
+									className: 'fixed',
+								}}
+							/>
+						</div>
+					) : ''}
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
