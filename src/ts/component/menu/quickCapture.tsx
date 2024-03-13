@@ -96,6 +96,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				cn.push('isDefault');
 			};
 
+			if (item.className) {
+				cn.push(item.className);
+			};
+
 			if ([ SystemIds.Search, SystemIds.Add, SystemIds.Clipboard ].includes(item.itemId)) {
 				icon = <Icon className={item.itemId} />;
 			} else {
@@ -251,6 +255,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { isExpanded } = this.state;
 		const { space, type } = commonStore;
 		const pinnedIds = Storage.getPinnedTypes();
+		const hasClipboard = this.clipboardItems && this.clipboardItems.length;
+		const cmd = keyboard.cmdSymbol();
 
 		let sections: any[] = [];
 		let items: any[] = [];
@@ -315,15 +321,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				caption: '0',
 			});
 
-			if (this.clipboardItems && this.clipboardItems.length) {
-				items.push({ 
-					id: SystemIds.Clipboard, 
-					icon: 'clipboard', 
-					name: '', 
-					tooltip: translate('menuQuickCaptureTooltipClipboard'),
-					caption: '0',
-				});
-			};
+			items.push({ 
+				id: SystemIds.Clipboard, 
+				icon: 'clipboard', 
+				name: '', 
+				tooltip: translate('menuQuickCaptureTooltipClipboard'),
+				caption: `${cmd} + V`,
+				className: [ 'clipboard', (hasClipboard ? 'active' : '') ].join(' '),
+			});
 
 			sections.push({ id: 'collapsed', children: items });
 		};
