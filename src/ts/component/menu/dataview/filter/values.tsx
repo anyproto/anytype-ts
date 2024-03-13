@@ -463,7 +463,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				noFlipY: true,
 				data: {
 					noFilter: true,
-					noScroll: true,
 					noVirtualisation: true,
 					rebind: this.rebind,
 					value: item[key],
