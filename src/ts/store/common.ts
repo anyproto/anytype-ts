@@ -428,8 +428,6 @@ class CommonStore {
 	};
 
 	dataPathSet (v: string) {
-		console.log('[dataPathSet]', v);
-
 		this.dataPathValue = String(v || '');
 	};
 

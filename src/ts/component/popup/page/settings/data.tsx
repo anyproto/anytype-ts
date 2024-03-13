@@ -21,6 +21,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         const { onPage } = this.props;
         const { localUsage } = commonStore.spaceStorage;
         const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
+		const suffix = this.getSuffix();
 
         return (
             <React.Fragment>
@@ -52,16 +53,17 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     onOffload (e: any) {
         const { setLoading } = this.props;
-		const localOnly =  UtilData.isLocalOnly();
+		const suffix = this.getSuffix();
+		const isLocalOnly = UtilData.isLocalOnly();
 
         analytics.event('ScreenFileOffloadWarning');
 
         popupStore.open('confirm',{
             data: {
                 title: translate('popupSettingsDataOffloadWarningTitle'),
-                text: translate(`popupSettingsDataOffloadWarningText${localOnly ? 'LocalOnly' : ''}`),
-                textConfirm: localOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
-				canCancel: localOnly,
+                text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
+                textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+				canCancel: isLocalOnly,
 				textCancel: translate('popupSettingsDataRemoveFiles'),
                 onConfirm: () => {
                     setLoading(true);
@@ -89,6 +91,10 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
             }
         });
     };
+
+	getSuffix () {
+		return UtilData.isLocalOnly() ? 'LocalOnly' : '';
+	};
 
 });
 
