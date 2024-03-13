@@ -32,6 +32,7 @@ import {
 	ObjectManagerItemInfo,
 	ObjectManagerPopup,
 	NetworkMode,
+	NavigationMenuMode,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -111,6 +112,7 @@ export {
 	HomePredefinedId,
 	Usecase,
 	NetworkMode,
+	NavigationMenuMode,
 
 	ImportType,
 	ImportMode,

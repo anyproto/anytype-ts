@@ -22,6 +22,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	render () {
+		const { navigationMenu } = commonStore;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
 		const participant = UtilObject.getParticipant();
@@ -31,13 +32,49 @@ const Navigation = observer(class Navigation extends React.Component {
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
 		const canWrite = UtilObject.canParticipantWrite();
 
+		let buttonPlus: any = null;
+		if (canWrite) {
+			buttonPlus = { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
+
+			switch (navigationMenu) {
+				case I.NavigationMenuMode.Context: {
+					buttonPlus.onClick = this.onAdd;
+					buttonPlus.onContextMenu = () => keyboard.onQuickCapture();
+					break;
+				};
+
+				case I.NavigationMenuMode.Click: {
+					buttonPlus.onClick = () => keyboard.onQuickCapture();
+					break;
+				};
+
+				case I.NavigationMenuMode.Hover: {
+					buttonPlus.onMouseEnter = e => {
+						keyboard.onQuickCapture({ isSub: true, passThrough: false });
+					};
+					buttonPlus.onMouseLeave = () => {};
+					break;
+				};
+
+			};
+
+		};
+
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			canWrite ? { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() } : null, 
+			buttonPlus,
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
-		].filter(it => it);
+		].filter(it => it).map(it => {
+			if (!it.onMouseEnter && !it.disabled) {
+				it.onMouseEnter = e => this.onTooltipShow(e, it.tooltip, it.caption);
+			};
+			if (!it.onMouseLeave) {
+				it.onMouseLeave = () => Preview.tooltipHide(false);
+			};
+			return it;
+		});
 
 		return (
 			<div 
@@ -57,11 +94,11 @@ const Navigation = observer(class Navigation extends React.Component {
 							<div 
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
+								className={cn.join(' ')}
 								onClick={item.onClick}
 								onContextMenu={item.onContextMenu}
-								className={cn.join(' ')}
-								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
-								onMouseLeave={e => Preview.tooltipHide(false)}
+								onMouseEnter={item.onMouseEnter}
+								onMouseLeave={item.onMouseLeave}
 							>
 								<Icon className={item.id} />
 							</div>

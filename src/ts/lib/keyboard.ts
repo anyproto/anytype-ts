@@ -841,8 +841,10 @@ class Keyboard {
 		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
-	onQuickCapture () {
-		if (menuStore.isOpen('quickCapture')) {
+	onQuickCapture (param?: Partial<I.MenuParam>) {
+		param = param || {};
+
+		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
 		};
@@ -850,6 +852,7 @@ class Keyboard {
 		const button = $('#button-navigation-plus');
 
 		this.menuFromNavigation('quickCapture', {
+			...param,
 			onOpen: () => button.addClass('active'),
 			onClose: () => button.removeClass('active'),
 		}, {});
