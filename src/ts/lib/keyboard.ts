@@ -463,8 +463,8 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = UtilCommon.getElectron().logPath;
-		const tmpPath = UtilCommon.getElectron().tmpPath;
+		const logPath = UtilCommon.getElectron().logPath();
+		const tmpPath = UtilCommon.getElectron().tmpPath();
 
 		switch (cmd) {
 			case 'search': {

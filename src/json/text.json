@@ -402,7 +402,6 @@
 
 	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
 
-	"pageAuthOnboardAccountDataLocation": "Account Data Location",
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
@@ -612,7 +611,6 @@
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
 	"popupSettingsAccountTitle": "Profile",
 	"popupSettingsAccountDeleteTitle": "Delete Account",
-	"popupSettingsAccountMoveTitle": "Account Data Location",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
@@ -793,6 +791,7 @@
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
+	"popupSettingsOnboardingStoragePath": "Account Data Location",
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningTitle": "Are you sure?",

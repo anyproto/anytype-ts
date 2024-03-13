@@ -276,6 +276,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('logout', () => authStore.logout(false, false));
+		Renderer.on('dataPath', (e: any, p: string) => commonStore.dataPathSet(p));
 		Renderer.on('shutdownStart', () => {
 			this.setState({ loading: true });
 
@@ -316,9 +317,7 @@ class App extends React.Component<object, State> {
 		commonStore.nativeThemeSet(isDark);
 		commonStore.themeSet(config.theme);
 		commonStore.languagesSet(languages);
-
-		authStore.walletPathSet(dataPath);
-		authStore.accountPathSet(dataPath);
+		commonStore.dataPathSet(dataPath);
 
 		analytics.init();
 		this.initStorage();

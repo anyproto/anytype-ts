@@ -10,8 +10,6 @@ interface NetworkConfig {
 
 class AuthStore {
 	
-	public walletPathValue = '';
-	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
 	public name = '';
@@ -22,18 +20,12 @@ class AuthStore {
 	
 	constructor () {
 		makeObservable(this, {
-			walletPathValue: observable,
-			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
 			name: observable,
 			threadMap: observable,
-			walletPath: computed,
-			accountPath: computed,
 			accounts: computed,
 			account: computed,
-			walletPathSet: action,
-			accountPathSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -52,14 +44,6 @@ class AuthStore {
 		return this.accountItem;
     };
 
-	get walletPath (): string {
-		return String(this.walletPathValue || '');
-    };
-
-	get accountPath (): string {
-		return String(this.accountPathValue || '');
-    };
-
 	get accountSpaceId (): string {
 		return String(this.accountItem?.info?.accountSpaceId || '');
 	};
@@ -72,14 +56,6 @@ class AuthStore {
 			path: String(obj.path || ''),
 		};
 	};
-
-	walletPathSet (v: string) {
-		this.walletPathValue = String(v || '');
-    };
-
-	accountPathSet (v: string) {
-		this.accountPathValue = String(v || '');
-    };
 
 	nameSet (v: string) {
 		this.name = String(v || '');

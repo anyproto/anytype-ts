@@ -200,6 +200,12 @@ class Api {
 		};
 	};
 
+	setUserDataPath (win, p) {
+		this.setConfig(win, { userDataPath: p });
+		app.setPath('userData', p);
+		WindowManager.sendToAll('data-path', Util.dataPath());
+	};
+
 	showChallenge (win, param) {
 		WindowManager.createChallenge(param);
 	};

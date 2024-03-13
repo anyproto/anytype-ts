@@ -31,6 +31,7 @@ interface SpaceStorage {
 
 class CommonStore {
 
+	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
@@ -207,6 +208,10 @@ class CommonStore {
 
 	get showRelativeDates (): boolean {
 		return this.boolGet('showRelativeDates');
+	};
+
+	get dataPath (): string {
+		return String(this.dataPathValue || '');
 	};
 
     gatewaySet (v: string) {
@@ -420,6 +425,10 @@ class CommonStore {
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	dataPathSet (v: string) {
+		this.dataPathValue = String(v || '');
 	};
 
 };

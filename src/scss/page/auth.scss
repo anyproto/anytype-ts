@@ -200,14 +200,7 @@ html.bodyAuthDeleted {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-header3; color: var(--color-text-primary) !important; }
 	.label { @include text-paragraph; color: var(--color-text-secondary) !important; }
-
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
-	.bottom {
-		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
-	}
-	.bottom:hover {
-		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
-	}
 }
 
 .pageAuthOnboard, .pageAuthLogin {
@@ -227,13 +220,6 @@ html.bodyAuthDeleted {
 
 	.label { width: 415px; }
 	.button { min-width: 192px; width: auto; }
-
-	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; }
-
-	#accountPath { display: flex; align-items: center; flex-direction: row; gap: 0px 6px; }
-	#accountPath:hover {
-		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
-	}
 
 	.tooltipLink { color: var(--color-text-primary) !important; }
 	.tooltipLink:hover { text-decoration: underline; }

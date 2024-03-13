@@ -92,7 +92,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const { account, walletPath } = authStore;
+		const { account } = authStore;
 
 		switch (match?.params?.id) {
 			case 'init': {
@@ -101,7 +101,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			case 'select': {
-				this.select(account.id, walletPath, true);
+				this.select(account.id, true);
 				break;
 			};
 
@@ -117,18 +117,19 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { walletPath } = authStore;
+		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
-		if (!accountId || !walletPath) {
-			this.setError({ description: 'Invalid account or wallet path', code: 0 });
-			return;
-		};
-
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
-			C.WalletRecover(walletPath, phrase, (message: any) => {
+			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
+				};
+
+				if (accountId) {
+					this.select(accountId, false);
+				} else {
+					UtilRouter.go('/auth/account-select', { replace: true });
 				};
 
 				UtilData.createSession(phrase, '' ,(message: any) => {
@@ -136,18 +137,19 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						return;
 					};
 
-					this.select(accountId, walletPath, false);
+					this.select(accountId, false);
 				});
 			});
 		});
 	};
 
-	select (accountId: string, walletPath: string, animate: boolean) {
+	select (accountId: string, animate: boolean) {
 		const { networkConfig } = authStore;
+		const { dataPath } = commonStore;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
-		C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
+		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
