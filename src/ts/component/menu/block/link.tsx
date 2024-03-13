@@ -380,6 +380,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 					objectType: type.id,
 					layout: type.layout,
 					template: '',
+					middleTime: message.middleTime,
 				});
 			});
 		} else {

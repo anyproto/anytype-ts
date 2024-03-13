@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, Preview } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore, detailStore, popupStore, commonStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -54,19 +54,31 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
 			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
 			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
-			const isRemoved = [ I.ParticipantStatus.Removed, I.ParticipantStatus.Removing ].includes(item.status);
+			const isRemoving = [ I.ParticipantStatus.Removing ].includes(item.status);
+			const isRemoved = [ I.ParticipantStatus.Removed ].includes(item.status);
 
 			let tag = null;
 			let button = null;
 
 			if (isJoining) {
-				tag = <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} />;
+				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 				button = (
 					<Button
 						className="c36"
 						color="blank"
-						text={translate('popupSettingsSpaceShareMembersViewRequest')}
-						onClick={() => this.onViewRequest(item)}
+						text={translate('popupSettingsSpaceShareViewRequest')}
+						onClick={() => this.onJoinRequest(item)}
+					/>
+				);
+			} else 
+			if (isRemoving) {
+				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
+				button = (
+					<Button
+						className="c36"
+						color="blank"
+						text={translate('commonApprove')}
+						onClick={() => this.onLeaveRequest(item)}
 					/>
 				);
 			} else 
@@ -120,7 +132,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
@@ -155,7 +167,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div id="sectionMembers" className="section sectionMembers">
-					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
+					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
 
 					{this.cache ? (
 						<div id="list" className="rows">
@@ -232,8 +244,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getMembers () {
-		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ];
 		const subId = Constant.subId.participant;
+		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
 		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
 		return records.sort(UtilData.sortByOwner);
@@ -248,7 +260,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { cid, key } = this.state;
 
 		if (cid && key) {
-			UtilCommon.copyToast(translate('commonLink'), this.getLink());
+			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
 		};
 	};
 
@@ -397,7 +409,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	onViewRequest (item: any) {
+	onJoinRequest (item: any) {
 		popupStore.open('inviteConfirm', { 
 			data: {
 				name: item.name,
@@ -405,6 +417,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				spaceId: commonStore.space,
 				identity: item.identity,
 			}
+		});
+	};
+
+	onLeaveRequest (item: any) {
+		C.SpaceParticipantRemove(commonStore.space, [ item.identity ], () => {
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), item.name) });
 		});
 	};
 

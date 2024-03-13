@@ -106,6 +106,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				break;
 			};
 
+			case I.RelationType.File:
 			case I.RelationType.Object: {
 				Item = (item: any) => {
 					return (

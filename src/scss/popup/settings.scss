@@ -294,6 +294,10 @@
 						}
 					}
 				}
+
+				.buttons {
+					.button { width: 100%; }
+				}
 			}
 		}
 
@@ -468,7 +472,7 @@
 					.side.left {
 						.iconObject { flex-shrink: 0; }
 						.name { @include text-common; }
-						.tagItem.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
+						.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); }
 					}
 
 					.side.right {
@@ -497,13 +501,14 @@
 			.title { margin-bottom: 26px !important; }
 
 			.section.sectionMembers {
-				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px 120px; }
+				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
 				.row {
-					.col { display: flex; gap: 0px 12px; align-items: center; justify-content: center; }
+					.col { display: flex; align-items: center; justify-content: center; }
 					.col:first-child { justify-content: flex-start; }
 					.col:first-child {
-						.iconObject { flex-shrink: 0; }
-						.name { @include text-common; }
+						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
+						.name { @include text-common; width: auto; }
+						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 					}
 				}
 			}

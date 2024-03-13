@@ -317,7 +317,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
-						analytics.event('CreateObject', { route: ROUTE, objectType: object.type });
+						
+						analytics.event('CreateObject', { 
+							route: ROUTE, 
+							objectType: object.type,
+						});
 
 						close();
 
@@ -492,6 +496,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						route: ROUTE,
 						objectType: object.targetObjectType,
 						layout: object.layout,
+						middleTime: message.middleTime,
 					});
 				});
 				break;

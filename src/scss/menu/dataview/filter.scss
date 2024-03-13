@@ -75,13 +75,15 @@
 			.icon.arrow { right: -8px !important; }
 		}
 
-		.item { display: flex; }
+		.item { display: flex; gap: 0px 6px; }
 		.item.withCaption { align-items: center; justify-content: space-between; }
 		.item {
 			.clickable { width: 100%; height: 20px; display: flex; }
-			.buttons { margin: 0px; position: absolute; right: 10px; top: 2px; display: none; }
+			.buttons { margin: 0px; position: static; display: none; }
 
-			.icon.delete { transition: none; }
+			.icon.delete { transition: none; width: 20px; height: 20px; }
+			.icon.plus { margin: 0px; }
+
 			.name { @include text-overflow-nw; width: calc(100% - 40px); }
 
 			.input { width: calc(100% - 20px); }
@@ -96,7 +98,6 @@
 		.item.empty { padding: 13px 16px; }
 
 		.item:not(.isReadonly):hover, .item:not(.isReadonly).hover {
-			.clickable { margin-right: 6px; }
 			.caption { display: none; }
 			.buttons { display: block; }
 		}

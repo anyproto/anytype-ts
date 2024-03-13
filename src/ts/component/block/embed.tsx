@@ -724,6 +724,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			case I.EmbedProcessor.Latex: {
 				value.html(katex.renderToString(text, { 
 					displayMode: true, 
+					strict: false,
 					throwOnError: false,
 					output: 'html',
 					fleqn: true,

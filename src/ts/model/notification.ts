@@ -31,7 +31,7 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, spaceId, identityName } = this.payload;
+		const { importType, errorCode, name, spaceId, identityName, permissions } = this.payload;
 		const space = spaceId ? UtilObject.getSpaceviewBySpaceId(spaceId) : null;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
@@ -58,9 +58,29 @@ class Notification implements I.Notification {
 				break;
 			};
 
-			case I.NotificationType.Join: {
+			case I.NotificationType.Join: 
+			case I.NotificationType.Leave: {
 				this.title = '';
 				this.text = UtilCommon.sprintf(this.text, identityName, space?.name);
+				break;
+			};
+
+			case I.NotificationType.Approve: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, space?.name, translate(`participantPermissions${permissions}`));
+				break;
+			};
+
+			case I.NotificationType.Decline:
+			case I.NotificationType.Remove: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, space?.name);
+				break;
+			};
+
+			case I.NotificationType.Permission: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, translate(`participantPermissions${permissions}`), space?.name);
 				break;
 			};
 

@@ -126,6 +126,8 @@
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
 	"commonLeaveSpace": "Leave space",
+	"commonYou": "you",
+	"commonApprove": "Approve",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -743,15 +745,16 @@
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
-	"popupSettingsSpaceShareMembersAndRequestsTitle": "Members and requests",
-	"popupSettingsSpaceShareMembersRequested": "Requested",
-	"popupSettingsSpaceShareMembersViewRequest": "View request",
+	"popupSettingsSpaceShareMembersTitle": "Members and requests",
+	"popupSettingsSpaceShareJoinRequest": "Join Request",
+	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
+	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
+	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
@@ -1409,6 +1412,8 @@
 	"toastLinkedTo": "has been linked to",
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
+	"toastApproveLeaveRequest": "You approved %s request",
+	"toastInviteCopy": "Invite link was copied", 
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",
@@ -1522,7 +1527,7 @@
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Personal Space",
+	"spaceAccessType1": "Default Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
@@ -1726,6 +1731,16 @@
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>\"%s\"</b> space",
+
+	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>\"%s\"</b> space",
+
+	"notificationApproveSuccessText": "Your request to join <b>\"%s\"</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+
+	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space",
+
+	"notificationDeclineSuccessText": "Your request to join the <b>\"%s\"</b> space has been declined.",
+
+	"notificationPermissionSuccessText": "Your access rights were changed to <b>\"%s\"</b> in the <b>\"%s\"</b> space.",
 
 	"notificationButtonSpace": "Go to Space",
 	"notificationButtonRequest": "View request",

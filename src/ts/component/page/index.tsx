@@ -144,6 +144,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		const { history } = this.props;
+		const data = UtilCommon.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
@@ -151,6 +152,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (pathname.match('/object')) {
 			ret.params.page = 'main';
 			ret.params.action = 'object';
+			ret.params.id = data.objectId;
+			ret.params.spaceId = data.spaceId;
 		};
 
 		// Invite route
