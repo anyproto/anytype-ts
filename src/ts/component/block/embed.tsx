@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
-import mermaid from 'mermaid';
 import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
@@ -18,6 +17,7 @@ import 'excalidraw/dist/excalidraw.min.css';
 
 const katex = require('katex');
 const pako = require('pako');
+const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 
@@ -724,6 +724,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			case I.EmbedProcessor.Latex: {
 				value.html(katex.renderToString(text, { 
 					displayMode: true, 
+					strict: false,
 					throwOnError: false,
 					output: 'html',
 					fleqn: true,

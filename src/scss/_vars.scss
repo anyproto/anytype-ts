@@ -48,6 +48,53 @@
 	--color-teal: #0fc8ba;
 	--color-lime: #5dd400;
 	--color-green: #57c600;
+
+	/* Font */
+
+	--font-size-9: 9px;
+	--line-height-9: 12px;
+	--letter-spacing-9: 0.14px;
+
+	--font-size-very-small: 11px; 
+	--line-height-very-small: 18px; 
+	--letter-spacing-very-small: 0.2px;
+
+	--font-size-small: 12px; 
+	--line-height-small: 18px; 
+	--letter-spacing-small: 0px;
+
+	--font-size-common: 14px; 
+	--line-height-common: 22px; 
+	--letter-spacing-common: -0.12px;
+
+	--font-size-paragraph: 16px; 
+	--line-height-paragraph: 24px; 
+	--letter-spacing-paragraph: -0.2px;
+
+	--font-size-title: 36px; 
+	--line-height-title: 40px; 
+	--letter-spacing-title: -0.64px; 
+	--font-weight-title: 700;
+
+	--font-size-header1: 28px; 
+	--line-height-header1: 32px; 
+	--letter-spacing-header1: -0.56px; 
+	--font-weight-header1: 700;
+
+	--font-size-header2: 22px; 
+	--line-height-header2: 28px; 
+	--letter-spacing-header2: -0.48px; 
+	--font-weight-header2: 700;
+
+	--font-size-header3: 18px; 
+	--line-height-header3: 26px; 
+	--letter-spacing-header3: -0.28px; 
+	--font-weight-header3: 700;
+
+	--font-size-description: 18px; 
+	--line-height-description: 26px; 
+	--letter-spacing-description: -0.28px;
+
 }
 
 $easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -57,16 +104,37 @@ $transitionAllCommon: all $transitionCommon;
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-@mixin text-9 { font-size: 9px; line-height: 12px; letter-spacing: 0.14px; }
-@mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.2px; color: var(--color-control-active); }
-@mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0px; }
-@mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: -0.12px; }
-@mixin text-paragraph { font-size: 16px; line-height: 24px; letter-spacing: -0.2px; }
-@mixin text-title { font-size: 36px; line-height: 40px; letter-spacing: -0.64px; font-weight: 700; }
-@mixin text-header1 { font-size: 28px; line-height: 32px; letter-spacing: -0.56px; font-weight: 700; }
-@mixin text-header2 { font-size: 22px; line-height: 28px; letter-spacing: -0.48px; font-weight: 700; }
-@mixin text-header3 { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; font-weight: 700; }
-@mixin text-description { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+@mixin text-9 { 
+	font-size: var(--font-size-9); line-height: var(--line-height-9); letter-spacing: var(--letter-spacing-9); 
+}
+@mixin text-very-small { 
+	font-size: var(--font-size-very-small); line-height: var(--line-height-very-small); letter-spacing: var(--letter-spacing-very-small); 
+	color: var(--color-control-active); 
+}
+@mixin text-small { 
+	font-size: var(--font-size-small); line-height: var(--line-height-small); letter-spacing: var(--letter-spacing-small); 
+}
+@mixin text-common { 
+	font-size: var(--font-size-common); line-height: var(--line-height-common); letter-spacing: var(--letter-spacing-common); 
+}
+@mixin text-paragraph { 
+	font-size: var(--font-size-paragraph); line-height: var(--line-height-paragraph); letter-spacing: var(--letter-spacing-paragraph); 
+}
+@mixin text-title { 
+	font-size: var(--font-size-title); line-height: var(--line-height-title); letter-spacing: var(--letter-spacing-title); font-weight: var(--font-weight-title); 
+}
+@mixin text-header1 { 
+	font-size: var(--font-size-header1); line-height: var(--line-height-header1); letter-spacing: var(--letter-spacing-header1); font-weight: var(--font-weight-header1); 
+}
+@mixin text-header2 { 
+	font-size: var(--font-size-header2); line-height: var(--line-height-header2); letter-spacing: var(--letter-spacing-header2); font-weight: var(--font-weight-header2); 
+}
+@mixin text-header3 { 
+	font-size: var(--font-size-header3); line-height: var(--line-height-header3); letter-spacing: var(--letter-spacing-header3); font-weight: var(--font-weight-header3); 
+}
+@mixin text-description { 
+	font-size: var(--font-size-description); line-height: var(--line-height-description); letter-spacing: var(--letter-spacing-description); 
+}
 
 @mixin pos-abs-mid { position: absolute; left: 50%; top: 50%; }
 

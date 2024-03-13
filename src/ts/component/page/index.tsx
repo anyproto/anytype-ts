@@ -11,7 +11,6 @@ import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
@@ -41,7 +40,6 @@ const Components = {
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
-	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
@@ -147,6 +145,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		const { history } = this.props;
+		const data = UtilCommon.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
@@ -154,6 +153,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (pathname.match('/object')) {
 			ret.params.page = 'main';
 			ret.params.action = 'object';
+			ret.params.id = data.objectId;
+			ret.params.spaceId = data.spaceId;
 		};
 
 		// Invite route

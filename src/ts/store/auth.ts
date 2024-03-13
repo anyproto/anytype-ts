@@ -10,12 +10,9 @@ interface NetworkConfig {
 
 class AuthStore {
 	
-	public walletPathValue = '';
-	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
 	public name = '';
-	public phrase = '';
 	public token = '';
 	public appToken = '';
 	public appKey = '';
@@ -24,22 +21,14 @@ class AuthStore {
 	
 	constructor () {
 		makeObservable(this, {
-			walletPathValue: observable,
-			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
 			name: observable,
-			phrase: observable,
 			threadMap: observable,
 			membershipData: observable,
-			walletPath: computed,
-			accountPath: computed,
+			membership: computed,
 			accounts: computed,
 			account: computed,
-			membership: computed,
-			walletPathSet: action,
-			accountPathSet: action,
-			phraseSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -59,14 +48,6 @@ class AuthStore {
 		return this.accountItem;
     };
 
-	get walletPath (): string {
-		return String(this.walletPathValue || '');
-    };
-
-	get accountPath (): string {
-		return String(this.accountPathValue || '');
-    };
-
 	get accountSpaceId (): string {
 		return String(this.accountItem?.info?.accountSpaceId || '');
 	};
@@ -81,20 +62,8 @@ class AuthStore {
 	};
 
 	get membership (): I.Membership {
-		return this.membershipData;
+		return this.membershipData || { tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown };
 	};
-
-	walletPathSet (v: string) {
-		this.walletPathValue = String(v || '');
-    };
-
-	accountPathSet (v: string) {
-		this.accountPathValue = String(v || '');
-    };
-
-	phraseSet (v: string) {
-		this.phrase = String(v || '');
-    };
 
 	nameSet (v: string) {
 		this.name = String(v || '');
@@ -192,7 +161,6 @@ class AuthStore {
 
 		this.accountListClear();
 		this.nameSet('');
-		this.phraseSet('');
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {

@@ -39,7 +39,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		const data = this.getSearch();
+		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
 		const allowedStatuses = [ I.SpaceStatus.Deleted ];
 
 		if (!data.cid || !data.key) {
@@ -67,10 +67,6 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 	componentDidUpdate (): void {
 		this.resize();
-	};
-
-	getSearch () {
-		return UtilCommon.searchParam(UtilRouter.history.location.search);
 	};
 
 	resize () {

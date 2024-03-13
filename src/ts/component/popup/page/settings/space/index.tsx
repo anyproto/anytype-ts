@@ -292,7 +292,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					{canDelete ? (
 						<div className="buttons">
-							<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red c36" onClick={this.onDelete} />
+							<Button text={isOwner ? translate('commonDelete') : translate('commonLeaveSpace')} color="red" onClick={this.onDelete} />
 						</div>
 					) : ''}
 

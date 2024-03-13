@@ -316,8 +316,15 @@ class Keyboard {
 		const { fullscreenObject } = commonStore;
 
 		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			fullscreenObject ? UtilObject.openAuto(message.details) : UtilObject.openPopup(message.details);
-			analytics.event('CreateObject', { route, objectType: commonStore.type });
+			const object = message.details;
+
+			fullscreenObject ? UtilObject.openAuto(object) : UtilObject.openPopup(object);
+			analytics.event('CreateObject', { 
+				route, 
+				objectType: object.type,
+				layout: object.layout,
+				middleTime: message.middleTime,
+			});
 		});
 	};
 
@@ -456,8 +463,8 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = UtilCommon.getElectron().logPath;
-		const tmpPath = UtilCommon.getElectron().tmpPath;
+		const logPath = UtilCommon.getElectron().logPath();
+		const tmpPath = UtilCommon.getElectron().tmpPath();
 
 		switch (cmd) {
 			case 'search': {
@@ -684,6 +691,7 @@ class Keyboard {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
+				focus.scroll(this.isPopup(), message.blockId);
 			};
 
 			if (callBack) {
@@ -703,6 +711,7 @@ class Keyboard {
 			if (message.blockId && message.range) {
 				focus.set(message.blockId, message.range);
 				focus.apply();
+				focus.scroll(this.isPopup(), message.blockId);
 			};
 
 			if (callBack) {
@@ -832,8 +841,10 @@ class Keyboard {
 		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
-	onQuickCapture () {
-		if (menuStore.isOpen('quickCapture')) {
+	onQuickCapture (param?: Partial<I.MenuParam>) {
+		param = param || {};
+
+		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
 		};
@@ -841,6 +852,7 @@ class Keyboard {
 		const button = $('#button-navigation-plus');
 
 		this.menuFromNavigation('quickCapture', {
+			...param,
 			onOpen: () => button.addClass('active'),
 			onClose: () => button.removeClass('active'),
 		}, {});

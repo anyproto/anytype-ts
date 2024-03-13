@@ -1,11 +1,16 @@
 import { I } from 'Lib';
 
 export enum NotificationType {
-	None	 = '',
-	Import	 = 'import',
-	Export	 = 'export',
-	Gallery	 = 'galleryImport',
-	Join	 = 'requestToJoin',
+	None		 = '',
+	Import		 = 'import',
+	Export		 = 'export',
+	Gallery		 = 'galleryImport',
+	Join		 = 'requestToJoin',
+	Leave		 = 'requestToLeave',
+	Approve		 = 'participantRequestApproved',
+	Remove		 = 'participantRemove',
+	Decline		 = 'participantRequestDecline',
+	Permission	 = 'participantPermissionsChange',
 };
 
 export enum NotificationStatus {
@@ -41,6 +46,5 @@ export interface NotificationPayloadImport {
 export interface NotificationComponent {
 	item: Notification;
 	style?: any;
-	onButton?: (e: any, action: string) => void;
 	resize?: () => void;
 };

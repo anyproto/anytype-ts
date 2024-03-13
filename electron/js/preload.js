@@ -3,9 +3,7 @@ const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@el
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const userPath = app.getPath('userData');
-const tmpPath = app.getPath('temp');
-const logPath = path.join(userPath, 'logs');
+const tmpPath = () => app.getPath('temp');
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
@@ -18,9 +16,9 @@ contextBridge.exposeInMainWorld('Electron', {
 	arch: process.arch,
 
 	isPackaged: app.isPackaged,
-	userPath,
+	userPath: () => app.getPath('userData'),
 	tmpPath,
-	logPath,
+	logPath: () => path.join(app.getPath('userData'), 'logs'),
 
 	currentWindow: () => getCurrentWindow(),
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
@@ -34,7 +32,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		options = options || {};
 
 		const fn = path.parse(name).base;
-		const fp = path.join(tmpPath, fn);
+		const fp = path.join(tmpPath(), fn);
 
 		options.mode = 0o666;
 
@@ -55,6 +53,6 @@ contextBridge.exposeInMainWorld('Electron', {
 		cmd = String(cmd || '');
 		args = args || [];
 
-		ipcRenderer.invoke('Api', id, cmd, args);
+		return ipcRenderer.invoke('Api', id, cmd, args);
 	},
 });

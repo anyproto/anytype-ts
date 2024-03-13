@@ -31,6 +31,7 @@ interface SpaceStorage {
 
 class CommonStore {
 
+	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
@@ -50,6 +51,7 @@ class CommonStore {
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
+	public navigationMenuValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -96,6 +98,7 @@ class CommonStore {
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
+			navigationMenuValue: observable,
 			spaceId: observable,
             config: computed,
             progress: computed,
@@ -207,6 +210,18 @@ class CommonStore {
 
 	get showRelativeDates (): boolean {
 		return this.boolGet('showRelativeDates');
+	};
+
+	get navigationMenu (): I.NavigationMenuMode {
+		let ret = this.navigationMenuValue;
+		if (ret === null) {
+			ret = Storage.get('navigationMenu');
+		};
+		return Number(ret) || I.NavigationMenuMode.Context;
+	};
+
+	get dataPath (): string {
+		return String(this.dataPathValue || '');
 	};
 
     gatewaySet (v: string) {
@@ -398,6 +413,12 @@ class CommonStore {
 		this.languages = v;
 	};
 
+	navigationMenuSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.navigationMenuValue = v;
+		Storage.set('navigationMenu', v);
+	};
+
 	configSet (config: any, force: boolean) {
 		const html = $('html');
 		
@@ -420,6 +441,10 @@ class CommonStore {
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	dataPathSet (v: string) {
+		this.dataPathValue = String(v || '');
 	};
 
 };

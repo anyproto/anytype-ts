@@ -392,7 +392,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			UtilObject.openAuto(created);
-			analytics.event('CreateObject', { objectType: typeKey, route: 'Widget' });
+
+			analytics.event('CreateObject', { 
+				objectType: typeKey, 
+				layout: created.layout,
+				route: 'Widget',
+				middleTime: message.middleTime,
+			});
 		};
 
 		if (createWithLink) {

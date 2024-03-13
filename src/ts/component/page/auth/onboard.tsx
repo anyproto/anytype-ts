@@ -21,6 +21,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refNext: Button = null;
 	isDelayed = false;
 	isCreating = false;
+	phrase = '';
 
 	state: State = {
 		stage: Stage.Void,
@@ -34,7 +35,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.onNext = this.onNext.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onAccountPath = this.onAccountPath.bind(this);
 		this.onShowPhrase = this.onShowPhrase.bind(this);
 	};
 
@@ -82,7 +82,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="animation" onClick={this.onCopy}>
 						<Phrase
 							ref={ref => this.refPhrase = ref}
-							value={authStore.phrase}
+							value={this.phrase}
 							readonly={true}
 							isHidden={!phraseVisible}
 							onCopy={this.onCopy}
@@ -105,15 +105,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				if (!phraseVisible) {
 					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
-				};
-
-				if (config.experimental) {
-					footer = (
-						<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-							<Icon className="gear" />
-							{translate('pageAuthOnboardAccountDataLocation')}
-						</div>
-					);
 				};
 				break;
 			};
@@ -167,6 +158,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentWillUnmount (): void {
 		this.unbind();
+		this.phrase = '';
 	};
 
 	unbind () {
@@ -217,13 +209,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { account, name } = authStore;
 		const next = () => {
 			Animation.from(() => {
-				this.refNext.setLoading(false);
+				this.refNext?.setLoading(false);
 				this.setState({ stage: stage + 1 });
 			});
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext.setLoading(true);
+			this.refNext?.setLoading(true);
 
 			if (account) {
 				this.accountUpdate(() => next());
@@ -270,28 +262,27 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountCreate (callBack?: () => void) {
-		this.refNext.setLoading(true);
+		this.refNext?.setLoading(true);
 
-		const { name, walletPath, networkConfig } = authStore;
+		const { name, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
 
-		C.WalletCreate(walletPath, (message) => {
+		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {
 				this.setError(message.error.description);
 				return;
 			};
 
-			authStore.phraseSet(message.mnemonic);
+			this.phrase = message.mnemonic;
 
-			UtilData.createSession((message) => {
+			UtilData.createSession(this.phrase, '', (message) => {
 				if (message.error.code) {
 					this.setError(message.error.description);
 					return;
 				};
 
-				const { accountPath, phrase } = authStore;
-
-				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate(name, '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						this.setError(message.error.description);
 						return;
@@ -302,7 +293,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.isSidebarFixedSet(true);
 
 					UtilData.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, phrase);
+					Renderer.send('keytarSet', message.account.id, this.phrase);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
@@ -325,7 +316,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
-		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
+		UtilCommon.copyToast(translate('commonPhrase'), this.phrase);
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
@@ -333,16 +324,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: this.state.stage });
-	};
-
-	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath () {
-		menuStore.open('accountPath', {
-			element: '#accountPath',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			offsetY: -20,
-		});
 	};
 
 	setError (error: string) {

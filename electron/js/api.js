@@ -17,7 +17,6 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	account = null;
-	phrase = '';
 	isPinChecked = false;
 
 	appOnLoad (win) {
@@ -35,7 +34,6 @@ class Api {
 			isChild: win.isChild,
 			route: win.route,
 			account: this.account,
-			phrase: this.phrase,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
@@ -104,16 +102,12 @@ class Api {
 
 	keytarSet (win, key, value) {
 		if (key && value) {
-			this.phrase = value;
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
 	};
 
-	keytarGet (win, key) {
-		keytar.getPassword(KEYTAR_SERVICE, key).then(value => { 
-			this.phrase = value;
-			Util.send(win, 'keytarGet', key, value); 
-		});
+	async keytarGet (win, key) {
+		return await keytar.getPassword(KEYTAR_SERVICE, key);
 	};
 
 	keytarDelete (win, key) {
@@ -204,6 +198,12 @@ class Api {
 		if (is.macos) {
 			app.dock.setBadge(t);
 		};
+	};
+
+	setUserDataPath (win, p) {
+		this.setConfig(win, { userDataPath: p });
+		app.setPath('userData', p);
+		WindowManager.sendToAll('data-path', Util.dataPath());
 	};
 
 	showChallenge (win, param) {

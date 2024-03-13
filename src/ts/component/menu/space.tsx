@@ -191,12 +191,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	getItems () {
 		const items = UtilCommon.objectCopy(dbStore.getSpaces());
-
-		if (items.length < Constant.limit.space) {
-			items.push({ id: 'add', name: translate('commonCreateNew') });
-		};
+		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
+
+		if (length < Constant.limit.space) {
+			items.push({ id: 'add', name: translate('commonCreateNew') });
+		};
 
 		return items;
 	};

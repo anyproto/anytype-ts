@@ -126,6 +126,7 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 	return {
 		token: response.getToken(),
 		appToken: response.getApptoken(),
+		accountId: response.getAccountid(),
 	};
 };
 

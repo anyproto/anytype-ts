@@ -68,7 +68,7 @@ html.platformWindows, html.platformLinux {
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
 
-	.overPopup { padding-right: 15px; }
+	.overPopup { padding-right: 10px; }
 }
 
 .dn { display: none !important; }
@@ -138,15 +138,15 @@ search.active { background: orange !important; }
 .textColor-lime { color: var(--color-lime) !important; }
 
 .bgColor-grey { background: var(--color-shape-tertiary) !important; }
-.bgColor-yellow { background: #fef9cc !important; }
-.bgColor-orange { background: #fef3c5 !important; }
-.bgColor-red { background: #ffebe5 !important; }
-.bgColor-pink { background: #fee3f5 !important; }
-.bgColor-purple { background: #f4e3fa !important; }
-.bgColor-blue { background: #e4e7fc !important; }
-.bgColor-ice { background: #d6effd !important; }
-.bgColor-teal { background: #d6f5f3 !important; }
-.bgColor-lime { background: #e3f7d0 !important; }
+.bgColor-yellow { background: #fcf8d6 !important; }
+.bgColor-orange { background: #fff2d7 !important; }
+.bgColor-red { background: #fee7e0 !important; }
+.bgColor-pink { background: #fbdff2 !important; }
+.bgColor-purple { background: #f3e7f8 !important; }
+.bgColor-blue { background: #e4e8fc !important; }
+.bgColor-ice { background: #ddf1fc !important; }
+.bgColor-teal { background: #d9f6f4 !important; }
+.bgColor-lime { background: #e5f8d6 !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
 .isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: var(--color-bg-primary) !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }

@@ -76,7 +76,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { accounts, phrase } = authStore;
+		const { accounts } = authStore;
 
 		this.focus();
 
@@ -84,7 +84,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			const account = accounts[0];
 
 			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, phrase);
+			Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
 			this.select();
 		};
@@ -103,7 +103,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			return;
 		};
 		
-		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
@@ -114,25 +113,23 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.refSubmit?.setLoading(true);
 		
-		C.WalletRecover(walletPath, phrase, (message: any) => {
+		C.WalletRecover(commonStore.dataPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
 
-			authStore.phraseSet(phrase);
 			authStore.accountListClear();
-
-			UtilData.createSession(() => {
+			UtilData.createSession(phrase, '', () => {
 				C.AccountRecover(message => this.setError(message.error));
 			});
 		});
 	};
 
 	select () {
-		const { account, walletPath, networkConfig } = authStore;
+		const { account, networkConfig } = authStore;
 		const { mode, path } = networkConfig;
 
-		C.AccountSelect(account.id, walletPath, mode, path, (message: any) => {
+		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
