@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, Preview } from 'Lib';
+import { I, C, translate, UtilCommon, UtilObject, UtilData, Preview } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
@@ -25,6 +25,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refInput = null;
 	refList: any = null;
 	refCopy: any = null;
+	refButton: any = null;
 	state = {
 		error: '',
 		cid: '',
@@ -42,15 +43,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 		this.onInfo = this.onInfo.bind(this);
+		this.onMoreSpace = this.onMoreSpace.bind(this);
 	};
 
 	render () {
 		const { error, cid, key } = this.state;
+		const isShared = cid && key;
+		const participant = UtilObject.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 
 		const Member = (item: any) => {
+			const isActive = item.id == participant.id;
 			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
 			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
 			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
@@ -106,6 +111,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
+						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">
 						{button}
@@ -137,18 +143,20 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
-					<div className="info" onClick={this.onInfo}>
-						<span>{translate('popupSettingsSpaceShareMoreInfo')}</span>
-						<Icon className="question" />
+					<div className="icons">
+						<Icon className="question" onClick={this.onInfo} />
+						{isShared ? (
+							<Icon id="button-more-space" className="more" onClick={this.onMoreSpace} />
+						) : ''}
 					</div>
 				</div>
 
 				<div id="sectionInvite" className="section sectionInvite">
-					{cid && key ? (
-						<React.Fragment>
-							<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
-							<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
+					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
+					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
+					{isShared ? (
+						<React.Fragment>
 							<div className="inviteLinkWrapper">
 								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
 								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
@@ -161,8 +169,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						</React.Fragment>
 					) : (
 						<div className="buttons">
-							<Button onClick={this.onInitLink} className="c40" text={translate('popupSettingsSpaceShareGenerateInvite')} />
-						</div>		
+							<Button 
+								ref={ref => this.refButton = ref} 
+								onClick={this.onInitLink} 
+								className="c40" 
+								text={translate('popupSettingsSpaceShareGenerateInvite')} 
+							/>
+						</div>
 					)}
 				</div>
 
@@ -199,7 +212,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				{cid && key ? (
 					<div id="buttons" className="buttons">
 						<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
-						<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
 					</div>
 				) : ''}
 
@@ -267,9 +279,15 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onInitLink () {
 		const { space } = commonStore;
 
+		this.refButton?.setLoading(true);
+
 		C.SpaceInviteGenerate(space, (message: any) => {
+			this.refButton?.setLoading(false);
+
 			if (!this.setError(message.error)) {
 				this.setInvite(message.inviteCid, message.inviteKey);
+
+				Preview.toastShow({ text: translate('toastInviteGenerate') });
 			};
 		});
 	};
@@ -294,6 +312,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 						if (!this.setError(message.error)) {
 							this.setInvite(message.inviteCid, message.inviteKey);
+
+							Preview.toastShow({ text: translate('toastInviteGenerate') });
 						};
 					});
 				},
@@ -304,7 +324,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onStopSharing () {
 		const { space } = commonStore;
-		const { onPage } = this.props;
 
 		popupStore.open('confirm', {
 			data: {
@@ -314,7 +333,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.SpaceStopSharing(space);
-					onPage('spaceIndex');
+					this.setInvite('', '');
 				},
 			},
 		});
@@ -423,6 +442,28 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onLeaveRequest (item: any) {
 		C.SpaceParticipantRemove(commonStore.space, [ item.identity ], () => {
 			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), item.name) });
+		});
+	};
+
+	onMoreSpace () {
+		const { getId } = this.props;
+		const options = [
+			{ id: 'stop-sharing', color: 'red', name: translate('popupSettingsSpaceShareStopSharing') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #button-more-space`,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'stop-sharing': {
+							this.onStopSharing();
+							break;
+						};
+					};
+				},
+			}
 		});
 	};
 

@@ -110,7 +110,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				<div className="sections">
 					{canShare || canMembers ? (
 						<div className="section sectionSpaceShare">
-							<Title text={translate(`popupSettingsSpaceIndexShare`)} />
+							<Title text={translate(`popupSettingsSpaceShareTitle`)} />
 
 							<div className="sectionContent">
 								{canShare ? (

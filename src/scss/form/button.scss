@@ -22,6 +22,10 @@
 .button.black:not(.disabled):hover, .button.black:not(.disabled).hover { background: #41403d; }
 .button.black {
 	.arrow { background-image: url('~img/arrow/button/white.svg'); }
+
+	.loaderWrapper {
+		.dot { border-color: #fff; animation-name: dots-dark; }
+	}
 }
 
 .button.red { color: var(--color-red); border: solid 1px var(--color-shape-primary); }

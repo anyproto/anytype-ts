@@ -430,14 +430,14 @@
 			.titleWrapper { display: flex; justify-content: space-between; margin-bottom: 24px; }
 			.titleWrapper {
 				.title { margin-bottom: 0px; }
-				.info { 
-					display: flex; align-items: center; @include text-common; color: var(--color-text-secondary); padding: 0px 8px; border-radius: 4px;
-					gap: 0px 6px; flex-direction: row; margin-right: -8px;
+
+				.icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
+				.icons {
+					.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; }
+					.icon.question { background-image: url('~img/icon/question.svg'); }
+					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+					.icon:hover { background-color: var(--color-shape-highlight-medium); }
 				}
-				.info {
-					.icon { width: 14px; height: 14px; background-image: url('~img/icon/info.svg'); }
-				}
-				.info:hover { background-color: var(--color-shape-highlight-medium); }
 			}
 
 			.section { margin-bottom: 36px; }
@@ -448,7 +448,7 @@
 			.section.sectionInvite {
 				.title,
 				.label { margin-bottom: 8px; }
-				.label { @include text-paragraph; }
+				.label { @include text-common; color: var(--color-text-secondary); }
 
 				.inviteLinkWrapper { display: flex; flex-wrap: nowrap; align-items: center; height: 40px; margin-bottom: 12px; gap: 0px 8px; }
 				.inviteLinkWrapper {
@@ -471,11 +471,12 @@
 
 				.row { border-bottom: 0px solid; padding: 0; }
 				.row {
-					.side { display: flex; gap: 0px 12px; align-items: center; }
+					.side { display: flex; align-items: center; }
 					.side.left {
-						.iconObject { flex-shrink: 0; }
+						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
 						.name { @include text-common; }
 						.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); }
+						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 					}
 
 					.side.right {

@@ -690,7 +690,6 @@
 	"popupSettingsDataManagementDeleteButton": "Delete account",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexShare": "Sharing",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
@@ -754,13 +753,12 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
-	"popupSettingsSpaceShareTitle": "Share space",
-	"popupSettingsSpaceShareMoreInfo": "More info",
+	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
-	"popupSettingsSpaceShareMembersTitle": "Members and requests",
+	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
@@ -1429,6 +1427,7 @@
 	"toastManageFiles": "Manage files",
 	"toastApproveLeaveRequest": "You approved %s request",
 	"toastInviteCopy": "Invite link was copied", 
+	"toastInviteGenerate": "Invite link was created",
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",

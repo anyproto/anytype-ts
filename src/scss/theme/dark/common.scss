@@ -115,12 +115,6 @@ html.themeDark {
     /* Components */
 
     .loaderWrapper {
-		@keyframes dots-dark {
-			0% { background-color: #171717; }
-			32% { background-color: #171717; }
-			100% { background-color: #fff; }
-		}
-
 		.dot { animation-name: dots-dark; }
     }
 
