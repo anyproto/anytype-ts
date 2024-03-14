@@ -1764,7 +1764,7 @@
 
 	"notificationButtonSpaceSwitch": "Go to Space",
 	"notificationButtonSpaceExport": "Export Space",
-	"notificationButtonSpaceDelete": "Go to Space",
+	"notificationButtonSpaceDelete": "Delete Space",
 	"notificationButtonRequest": "View request",
 
 	"participantStatus0": "Joining",
