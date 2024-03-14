@@ -604,7 +604,6 @@
 			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
-				"snap",
 				"AppImage",
 				"deb",
 				"rpm",
