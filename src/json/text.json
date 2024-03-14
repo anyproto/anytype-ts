@@ -764,8 +764,9 @@
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
-	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
+	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
+	"popupSettingsSpaceShareShowQR": "Show QR code",
 
 	"popupSettingsSpaceMembersTitle": "Members",
 
@@ -790,9 +791,9 @@
 	"popupConfirmMemberChangeTitle": "Are you sure?",
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
-	"popupConfirmRevokeLinkTitle": "Revoke sharing link",
-	"popupConfirmRevokeLinkText": "A new link will be generated and the previous link will be deactivated.",
-	"popupConfirmRevokeLinkConfirm": "Revoke link",
+	"popupConfirmRevokeLinkTitle": "Delete sharing link",
+	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkConfirm": "Delete link",
 
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
@@ -1426,8 +1427,9 @@
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
 	"toastApproveLeaveRequest": "You approved %s request",
-	"toastInviteCopy": "Invite link was copied", 
-	"toastInviteGenerate": "Invite link was created",
+	"toastInviteCopy": "Invite link has been copied", 
+	"toastInviteGenerate": "Invite link has been created",
+	"toastInviteRevoke": "Invite link has been deleted",
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",

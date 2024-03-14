@@ -37,13 +37,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		this.onScroll = this.onScroll.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onGenerate = this.onGenerate.bind(this);
 		this.onInviteRevoke = this.onInviteRevoke.bind(this);
 		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 		this.onInfo = this.onInfo.bind(this);
 		this.onMoreSpace = this.onMoreSpace.bind(this);
+		this.onMoreLink = this.onMoreLink.bind(this);
 	};
 
 	render () {
@@ -158,9 +158,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					{isShared ? (
 						<React.Fragment>
 							<div className="inviteLinkWrapper">
-								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
-								<Icon id="generate" className="refresh" onClick={this.onGenerate} />
+								<div className="inputWrapper">
+									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
+									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
+								</div>
+								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
 							</div>
 
 							<div className="invitesLimit">
@@ -208,12 +210,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						</div>
 					) : ''}
 				</div>
-
-				{cid && key ? (
-					<div id="buttons" className="buttons">
-						<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
-					</div>
-				) : ''}
 
 				<Error text={error} />
 			</div>
@@ -292,36 +288,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	onGenerate () {
-		const { space } = commonStore;
-		const node = $(this.node);
-		const button = node.find('#generate');
-
-		button.addClass('loading');
-
-		popupStore.open('confirm', {
-			onClose: () => button.removeClass('loading'),
-			data: {
-				title: translate('popupConfirmRevokeLinkTitle'),
-				text: translate('popupConfirmRevokeLinkText'),
-				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceInviteGenerate(space, (message: any) => {
-						button.removeClass('loading');
-
-						if (!this.setError(message.error)) {
-							this.setInvite(message.inviteCid, message.inviteKey);
-
-							Preview.toastShow({ text: translate('toastInviteGenerate') });
-						};
-					});
-				},
-				onCancel: () => button.removeClass('loading'),
-			},
-		});
-	};
-
 	onStopSharing () {
 		const { space } = commonStore;
 
@@ -344,13 +310,15 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		popupStore.open('confirm', {
 			data: {
-				title: translate('popupConfirmStopInviteRevokeTitle'),
-				text: translate('popupConfirmInviteRevokeText'),
-				textConfirm: translate('popupConfirmInviteRevokeConfirm'),
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.SpaceInviteRevoke(space, (message: any) => {
 						this.setInvite('', '');
+
+						Preview.toastShow({ text: translate('toastInviteRevoke') });
 					});
 				},
 			},
@@ -453,12 +421,41 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		menuStore.open('select', {
 			element: `#${getId()} #button-more-space`,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'stop-sharing': {
 							this.onStopSharing();
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
+	onMoreLink () {
+		const { getId } = this.props;
+		const options = [
+			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #button-more-link`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'qr': {
+							break;
+						};
+
+						case 'delete': {
+							this.onInviteRevoke();
 							break;
 						};
 					};
