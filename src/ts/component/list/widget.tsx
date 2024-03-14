@@ -22,8 +22,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		previewId: '',
 	};
 
-	node: any = null;
-	top = 0;
+	node = null;
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
@@ -36,7 +35,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
@@ -198,16 +196,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onDragOver={e => e.preventDefault()}
-				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
 				{content}
 			</div>
 		);
-	};
-
-	componentDidUpdate (): void {
-		$(this.node).scrollTop(this.top);
 	};
 
 	onEdit (e: any): void {
@@ -312,10 +305,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		keyboard.setDragging(false);
 		this.isDragging = false;
 		this.clear();
-	};
-
-	onScroll () {
-		this.top = $(this.node).scrollTop();
 	};
 
 	onLibrary (e: any) {
