@@ -232,7 +232,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
 		const sw = scroll.width();
-		const container = $(UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const container = $(isPopup ? '#popupPage-innerWrap' : 'body');
 		const ww = container.width();
 		const rx = x - sx + width;
 
