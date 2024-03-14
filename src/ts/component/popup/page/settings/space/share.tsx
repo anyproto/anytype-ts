@@ -451,6 +451,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'qr': {
+							popupStore.open('inviteQr', { data: { link: this.getLink() } });
 							break;
 						};
 

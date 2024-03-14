@@ -876,6 +876,8 @@
 	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
 	"popupInviteConfirmButtonReject": "Reject",
 
+	"popupInviteQrTitle": "QR code for joing a Space",
+
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
 	"networkMode1Title": "Local-only",
