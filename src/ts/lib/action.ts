@@ -259,8 +259,12 @@ class Action {
 		});
 	};
 
-	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
 		const eventParam: any = { layout: object.layout };
+
+		if (route) {
+			eventParam.route = route;
+		};
 
 		let title = '';
 		let text = '';
