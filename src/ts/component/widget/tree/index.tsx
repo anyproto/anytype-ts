@@ -78,7 +78,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 							{...this.props}
 							{...node}
 							index={index}
-							treeKey={this.getTreeKey(node)}
+							treeKey={key}
 							style={style}
 							onClick={this.onClick}
 							onToggle={this.onToggle}
@@ -121,6 +121,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				<div className="ReactVirtualized__List">
 					{nodes.map((node, i: number) => {
 						const key = this.getTreeKey(node);
+
 						return (
 							<Item
 								key={key}
@@ -229,22 +230,20 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			children = addGroupLabels(children, targetBlockId);
 		};
 
-		return this.loadTreeRecursive(object.id, object.id, [], children, 1);
+		return this.loadTreeRecursive(object.id, object.id, [], children, 1, '');
 	};
 
 	// Recursive function which returns the tree structure
-	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number): I.WidgetTreeItem[] {
+	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] {
 		if (!childNodeList.length || depth >= MAX_DEPTH) {
 			return treeNodeList;
 		};
 
-		const regN = new RegExp(`-${parentId}$`);
-		const regS = new RegExp(`^${parentId}$`);
-		const branch = this.branches.find((branchId) => branchId.match(regN) || branchId.match(regS)) || parentId;
-
 		for (const childNode of childNodeList) {
-			const links = this.filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter((nodeId) => {
-				const branchId = [ branch, nodeId ].join('-');
+			const childBranch = [ branch, childNode.id ].join('-');
+
+			const links = this.filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
+				const branchId = [ childBranch, nodeId ].join('-');
 				if (this.branches.includes(branchId)) {
 					return false;
 				} else {
@@ -261,6 +260,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				parentId,
 				rootId,
 				isSection: childNode.isSection,
+				branch: childBranch,
 			};
 			treeNodeList.push(node);
 
@@ -271,7 +271,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
 			if (isOpen) {
 				this.subscribeToChildNodes(childNode.id, childNode.links);
-				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1);
+				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1, childBranch);
 			};
 		};
 
@@ -332,9 +332,9 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
 	getTreeKey (node: I.WidgetTreeItem): string {
 		const { block } = this.props;
-		const { rootId, parentId, id, depth } = node;
+		const { depth, branch } = node;
 
-		return [ block.id, rootId, parentId, id, depth ].join('-');
+		return [ block.id, branch, depth ].join('-');
 	};
 
 	sortByIds (ids: string[], id1: string, id2: string) {
