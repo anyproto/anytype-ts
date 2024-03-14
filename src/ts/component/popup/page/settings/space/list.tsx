@@ -81,7 +81,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const subId = Constant.subId.space;
 		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 
-		return items.filter(it => ![ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(it.spaceAccountStatus));
+		return items.filter(it => ![ I.SpaceStatus.Deleted ].includes(it.spaceAccountStatus));
 	};
 
 	onClick (space: any) {
@@ -101,6 +101,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
+			route: 'Settings',
 		});
 	};
 

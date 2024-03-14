@@ -259,8 +259,12 @@ class Action {
 		});
 	};
 
-	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
 		const eventParam: any = { layout: object.layout };
+
+		if (route) {
+			eventParam.route = route;
+		};
 
 		let title = '';
 		let text = '';
@@ -555,7 +559,7 @@ class Action {
 				text: translate('spaceDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete', route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -565,7 +569,7 @@ class Action {
 
 							if (!message.error.code) {
 								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType });
+								analytics.event('DeleteSpace', { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
@@ -577,9 +581,15 @@ class Action {
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel', route });
 				}
 			},
+		});
+	};
+
+	removeParticipant (spaceId: string, identity: string, name: string) {
+		C.SpaceParticipantRemove(spaceId, [ identity ], () => {
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
 		});
 	};
 

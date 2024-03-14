@@ -40,16 +40,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilObject.isSpaceOwner();
 		const isAllowed = config.experimental || config.allowCollaboration;
+		const isShared = space.spaceAccessType == I.SpaceType.Shared;
+		const requestCnt = this.getRequestCnt();
 		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
-		const canMembers = isAllowed && (space.spaceAccessType == I.SpaceType.Shared);
+		const canMembers = isAllowed && !isOwner && isShared;
 		const canWrite = UtilObject.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
 		let extend = null;
-		let createdDate = null;
-		let button = null;
+		let requestCaption = null;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -65,73 +66,84 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			extend = <Label text={translate(`popupSettingsSpaceIndexRemoteStorageExtend`)} onClick={this.onExtend} className="extend" />;
 		};
 
-		if (canShare) {
-			button = <Button className="c36" text={translate('popupSettingsSpaceIndexShare')} onClick={() => onPage('spaceShare')} />;
-		};
-
-		// old accounts don't have space creation date
-		if (space.createdDate) {
-			createdDate = (
-				<div className="item">
-					<div className="sides">
-						<div className="side left">
-							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-							<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
-						</div>
-					</div>
-				</div>
-			);
+		if (requestCnt) {
+			requestCaption = <Label text={UtilCommon.sprintf('%d %s', requestCnt, UtilCommon.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
 		};
 
 		return (
 			<React.Fragment>
 				<div className="spaceHeader">
-					<div className="sides">
-						<div className="side left">
-							<div className="iconWrapper">
-								<IconObject
-									id="spaceIcon"
-									size={96}
-									object={space}
-									forceLetter={true}
-									canEdit={canWrite}
-									menuParam={{ horizontal: I.MenuDirection.Center }}
-									onSelect={this.onSelect}
-									onUpload={this.onUpload}
-								/>
-							</div>
+					<div className="iconWrapper">
+						<IconObject
+							id="spaceIcon"
+							size={96}
+							object={space}
+							forceLetter={true}
+							canEdit={canWrite}
+							menuParam={{ horizontal: I.MenuDirection.Center }}
+							onSelect={this.onSelect}
+							onUpload={this.onUpload}
+						/>
+					</div>
 
-							<div className="headerContent">
-								<div className="name">
-									<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
-									<Input
-										ref={ref => this.refName = ref}
-										value={this.checkName(space.name)}
-										onKeyUp={this.onName}
-										placeholder={translate('defaultNamePage')}
-										readonly={!canWrite}
-									/>
-								</div>
-
-								<Label
-									className="spaceAccessType"
-									text={translate(`spaceAccessType${space.spaceAccessType}`)}
-									onMouseEnter={onSpaceTypeTooltip}
-									onMouseLeave={e => Preview.tooltipHide(false)}
-								/>
-							</div>
+					<div className="headerContent">
+						<div className="name">
+							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
+							<Input
+								ref={ref => this.refName = ref}
+								value={this.checkName(space.name)}
+								onKeyUp={this.onName}
+								placeholder={translate('defaultNamePage')}
+								readonly={!canWrite}
+							/>
 						</div>
-						<div className="side right">
-							{button}
 
-							{canMembers ? (
-								<Button className="c36" text="Members" onClick={() => onPage('spaceMembers')} />
-							) : ''}
-						</div>
+						<Label
+							className="spaceAccessType"
+							text={translate(`spaceAccessType${space.spaceAccessType}`)}
+							onMouseEnter={onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
+						/>
 					</div>
 				</div>
 
 				<div className="sections">
+					{canShare || canMembers ? (
+						<div className="section sectionSpaceShare">
+							<Title text={translate(`popupSettingsSpaceShareTitle`)} />
+
+							<div className="sectionContent">
+								{canShare ? (
+									<div className="item" onClick={() => onPage('spaceShare')}>
+										<div className="sides">
+											<div className="side left">
+												<Title text={isShared ? translate('popupSettingsSpaceIndexShareManageTitle') : translate('popupSettingsSpaceIndexShareShareTitle')} />
+												<Label text={isShared ? translate('popupSettingsSpaceIndexShareManageText') : translate('popupSettingsSpaceIndexShareShareText')} />
+											</div>
+											<div className="side right">
+												{requestCaption}
+												<Icon className="arrow" />
+											</div>
+										</div>
+									</div>
+								) : ''}
+
+								{canMembers ? (
+									<div className="item" onClick={() => onPage('spaceMembers')}>
+										<div className="sides">
+											<div className="side left">
+												<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
+												<Label text={translate('popupSettingsSpaceIndexShareMembersText')} />
+											</div>
+											<div className="side right">
+												<Icon className="arrow" />
+											</div>
+										</div>
+									</div>
+								) : ''}
+							</div>
+						</div>
+					) : ''}
 
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
@@ -286,7 +298,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							{createdDate}
+							{space.createdDate ? (
+								<div className="item">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
+											<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
+										</div>
+									</div>
+								</div>
+							) : ''}
 						</div>
 					</div>
 
@@ -381,6 +402,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			v = '';
 		};
 		return v;
+	};
+
+	getRequestCnt () {
+		const subId = Constant.subId.participant;
+		const statuses = [ I.ParticipantStatus.Joining ];
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+
+		return records.length;
 	};
 
 });

@@ -166,6 +166,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
+			route: 'Navigation',
 		});
 	};
 

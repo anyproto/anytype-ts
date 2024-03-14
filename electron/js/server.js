@@ -4,15 +4,15 @@ const childProcess = require('child_process');
 const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const { app, dialog, shell } = require('electron');
-
 const Util = require('./util.js');
-const { sign } = require('crypto');
 
 let maxStdErrChunksBuffer = 10;
 
 class Server {
 
 	start (binPath, workingDir) {
+		console.log('[Server] start', binPath, workingDir);
+
 		return new Promise((resolve, reject) => {
 
 			// stop will resolve immediately in case child process is not running

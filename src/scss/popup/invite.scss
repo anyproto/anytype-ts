@@ -37,4 +37,14 @@
             .button { width: 100%; }
         }
     }
+
+	.popup.popupInviteQr {
+        .innerWrap { width: 424px; padding: 32px; text-align: center; }
+        .qrWrap { margin-bottom: 16px; display: flex; justify-content: center; }
+        .title { @include text-header3; margin-bottom: 16px; }
+
+        .buttons {
+            .button { width: 100%; }
+        }
+    }
 }

@@ -13,8 +13,10 @@ const SHOW_DIMMER = [
 	'pin',
 	'preview',
 	'about',
+	'usecase',
 	'inviteRequest',
 	'inviteConfirm',
+	'inviteQr',
 	'usecase',
 	'membership',
 ];

@@ -148,6 +148,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isExpanded } = data;
+
 		this._isMounted = true;
 		this.load(true);
 		this.rebind();
@@ -165,6 +169,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		check();
 		this.intervalClipboard = window.setInterval(check, 2000);
+
+		if (isExpanded) {
+			this.onExpand();
+		};
 	};
 
 	componentDidUpdate () {
@@ -537,8 +545,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall({ ...item, id: item.itemId }, true);
-								analytics.event('ObjectUninstall', { route: 'Navigation' });
+								Action.uninstall({ ...item, id: item.itemId }, true, 'Navigation');
 							};
 							break;
 						};
@@ -666,9 +673,6 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
-
-			item.css({ width: '' });
-			item.css({ width: Math.max(48, Math.ceil(item.outerWidth())) });
 		});
 
 		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, obj.width()) });

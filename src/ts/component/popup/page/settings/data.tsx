@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, popupStore } from 'Store';
 
@@ -19,8 +19,8 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     render () {
         const { onPage } = this.props;
-        const { localUsage } = commonStore.spaceStorage;
-        const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
+		const { dataPath, spaceStorage } = commonStore
+        const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
 
         return (
@@ -31,17 +31,32 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 <div className="actionItems">
                     <div className="item storageUsage">
                         <div className="side left">
-                            <IconObject object={localStorage} size={44} />
+							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
 
-                            <div className="txt">
-                                <ObjectName object={localStorage} />
-                                <div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
-                            </div>
+							<div className="txt">
+								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
+								<div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
+							</div>
                         </div>
 						<div className="side right">
 							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
 						</div>
                     </div>
+
+
+					<div className="item">
+						<div className="side left">
+							<IconObject object={{ iconEmoji: ':file_folder:' }} size={44} />
+
+							<div className="txt">
+								<Title text={translate('popupSettingsDataManagementDataLocation')} />
+								<Label text={dataPath} />
+							</div>
+						</div>
+						<div className="side right">
+							<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={this.onOpenDataLocation} />
+						</div>
+					</div>
                 </div>
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
@@ -91,6 +106,10 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
             }
         });
     };
+
+	onOpenDataLocation () {
+		Renderer.send('pathOpen', commonStore.dataPath);
+	};
 
 	getSuffix () {
 		return UtilData.isLocalOnly() ? 'LocalOnly' : '';

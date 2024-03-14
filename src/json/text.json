@@ -148,6 +148,7 @@
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
+	"pluralRequest": "request|requests",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -166,7 +167,8 @@
 	"electronMenuShowMenu": "Show system menu",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuDirectory": "Show Work Directory",
+	"electronMenuWorkDirectory": "Show Work Directory",
+	"electronMenuDataDirectory": "Show Data Directory",
 	"electronMenuLogs": "Show Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
@@ -690,16 +692,26 @@
 	"popupSettingsDataManagementLocalStorageUsage": "%s used",
 	"popupSettingsDataManagementOffloadFiles": "Offload files",
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
+	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
 	"popupSettingsDataManagementDeleteText": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDataManagementDeleteButton": "Delete account",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexShare": "Share",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
+
+	"popupSettingsSpaceIndexShareShareTitle": "Share space",
+	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
+
+	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
+	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
+
+	"popupSettingsSpaceIndexShareMembersTitle": "Space members",
+	"popupSettingsSpaceIndexShareMembersText": "List of members",
+
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
 	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
 	"popupSettingsSpaceIndexRemoteStorageExtend": "Get more Storage",
@@ -749,20 +761,20 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
-	"popupSettingsSpaceShareTitle": "Share space",
-	"popupSettingsSpaceShareMoreInfo": "More info",
+	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
-	"popupSettingsSpaceShareMembersTitle": "Members and requests",
+	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
 	"popupSettingsSpaceShareRemoveMember": "Remove member",
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
-	"popupSettingsSpaceShareRevokeInvite": "Revoke invite",
+	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
+	"popupSettingsSpaceShareShowQR": "Show QR code",
 
 	"popupSettingsSpaceMembersTitle": "Members",
 
@@ -787,9 +799,9 @@
 	"popupConfirmMemberChangeTitle": "Are you sure?",
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
-	"popupConfirmRevokeLinkTitle": "Revoke sharing link",
-	"popupConfirmRevokeLinkText": "A new link will be generated and the previous link will be deactivated.",
-	"popupConfirmRevokeLinkConfirm": "Revoke link",
+	"popupConfirmRevokeLinkTitle": "Delete sharing link",
+	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkConfirm": "Delete link",
 
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
@@ -958,6 +970,8 @@
 	"popupInviteConfirmButtonConfirmReader": "Grant read access",
 	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
 	"popupInviteConfirmButtonReject": "Reject",
+
+	"popupInviteQrTitle": "QR code for joing a Space",
 
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
@@ -1510,7 +1524,9 @@
 	"toastUploadLimitExceeded": "You exceeded file limit upload",
 	"toastManageFiles": "Manage files",
 	"toastApproveLeaveRequest": "You approved %s request",
-	"toastInviteCopy": "Invite link was copied", 
+	"toastInviteCopy": "Invite link has been copied", 
+	"toastInviteGenerate": "Invite link has been created",
+	"toastInviteRevoke": "Invite link has been deleted",
 
 	"toastObjectTypeAdded": "Object type <b>%s</b> has been added to your Library",
 	"toastRelationAdded": "Relation <b>%s</b> has been added to your Library",
@@ -1833,13 +1849,15 @@
 
 	"notificationApproveSuccessText": "Your request to join <b>\"%s\"</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
 
-	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space",
+	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space, or the space has been deleted by the owner",
 
 	"notificationDeclineSuccessText": "Your request to join the <b>\"%s\"</b> space has been declined.",
 
 	"notificationPermissionSuccessText": "Your access rights were changed to <b>\"%s\"</b> in the <b>\"%s\"</b> space.",
 
-	"notificationButtonSpace": "Go to Space",
+	"notificationButtonSpaceSwitch": "Go to Space",
+	"notificationButtonSpaceExport": "Export Space",
+	"notificationButtonSpaceDelete": "Go to Space",
 	"notificationButtonRequest": "View request",
 
 	"participantStatus0": "Joining",

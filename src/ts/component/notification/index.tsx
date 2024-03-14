@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, C, UtilRouter, translate } from 'Lib';
+import { I, C, UtilRouter, translate, Action, Preview, UtilCommon } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -33,7 +33,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case I.NotificationType.Import: {
 				if (!errorCode && (spaceId != space)) {
 					buttons = buttons.concat([
-						{ id: 'space', text: translate('notificationButtonSpace') }
+						{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') }
 					]);
 				};
 				break;
@@ -41,11 +41,27 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Join: {
 				buttons = buttons.concat([
-					{ id: 'space', text: translate('notificationButtonSpace') },
+					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') },
 					{ id: 'request', text: translate('notificationButtonRequest') }
 				]);
 				break;
 			};
+
+			case I.NotificationType.Leave: {
+				buttons = buttons.concat([
+					{ id: 'approve', text: translate('commonApprove') }
+				]);
+				break;
+			};
+
+			case I.NotificationType.Remove: {
+				buttons = buttons.concat([
+					{ id: 'spaceExport', text: translate('notificationButtonSpaceExport') },
+					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete') }
+				]);
+				break;
+			};
+
 		};
 
 		return (
@@ -94,8 +110,25 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { payload } = item;
 
 		switch (action) {
-			case 'space': {
+			case 'spaceSwitch': {
 				UtilRouter.switchSpace(payload.spaceId);
+				break;
+			};
+
+			case 'spaceExport': {
+				Action.export(payload.spaceId, [], I.ExportType.Markdown, { 
+					zip: true, 
+					nested: true, 
+					files: true, 
+					archived: true, 
+					json: false, 
+					route: 'Notification',
+				});
+				break;
+			};
+
+			case 'spaceDelete': {
+				Action.removeSpace(payload.spaceId, 'Notification');
 				break;
 			};
 
@@ -108,7 +141,14 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 						identity: payload.identity
 					}
 				});
+				break;
 			};
+
+			case 'approve': {
+				Action.removeParticipant(payload.spaceId, payload.identity, payload.identityName);
+				break;
+			};
+
 		};
 
 		this.onDelete(e);

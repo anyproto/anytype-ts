@@ -13,6 +13,12 @@
 		100% { background-color: rgba(0,0,0,0); }
 	}
 
+	@keyframes dots-dark {
+		0% { background-color: #171717; }
+		32% { background-color: #171717; }
+		100% { background-color: #fff; }
+	}
+
 	.loader {
 		border: 2px solid var(--color-shape-secondary); border-radius: 100%; width: 24px; height: 24px; border-left: 2px solid var(--color-control-active); position: absolute; 
 		left: 50%; top: 50%; margin: -12px 0px 0px -12px; transform: translateZ(0); animation: rotate 0.8s infinite linear;

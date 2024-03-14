@@ -195,9 +195,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	onSelect (icon: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, icon, '');
+		UtilObject.setIcon(this.props.id, icon, '');
 	};
 
 	onUpload (objectId: string) {

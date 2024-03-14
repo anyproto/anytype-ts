@@ -16,9 +16,6 @@
 		.head {
 			.date { color: var(--color-control-active); margin-bottom: 6px; }
 			.sides { margin-bottom: 10px; }
-			.side.left {
-				.select { margin-left: -4px; }
-			}
 			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
 			.side.right {
 				.btn { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; border-radius: 4px; }

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Header, Footer, Error } from 'Component';
+import { Frame, Label, Button, Header, Footer } from 'Component';
 import { I, UtilRouter, translate, Animation, analytics } from 'Lib';
-import { observer } from 'mobx-react';
 
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
+class PageAuthSelect extends React.Component<I.PageComponent> {
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -34,13 +33,9 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		Animation.to();
 		window.setTimeout(() => analytics.event('ScreenIndex'), 100);
-	};
-
-	componentDidUpdate(): void {
-		Animation.to();
 	};
 
 	onLogin () {
@@ -51,6 +46,6 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		Animation.from(() => UtilRouter.go('/auth/onboard', {}));
 	};
 
-});
+};
 
 export default PageAuthSelect;
