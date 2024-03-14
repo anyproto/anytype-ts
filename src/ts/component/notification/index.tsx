@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, C, UtilRouter, translate, Action, analytics } from 'Lib';
+import { I, C, UtilRouter, translate, Action, Preview, UtilCommon } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -43,6 +43,13 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				buttons = buttons.concat([
 					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') },
 					{ id: 'request', text: translate('notificationButtonRequest') }
+				]);
+				break;
+			};
+
+			case I.NotificationType.Leave: {
+				buttons = buttons.concat([
+					{ id: 'approve', text: translate('commonApprove') }
 				]);
 				break;
 			};
@@ -134,7 +141,14 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 						identity: payload.identity
 					}
 				});
+				break;
 			};
+
+			case 'approve': {
+				Action.removeParticipant(payload.spaceId, payload.identity, payload.identityName);
+				break;
+			};
+
 		};
 
 		this.onDelete(e);
