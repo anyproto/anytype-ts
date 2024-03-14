@@ -63,7 +63,8 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
+					{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
+					{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
 					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
 
 					Separator,
