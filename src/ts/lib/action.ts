@@ -555,7 +555,7 @@ class Action {
 				text: translate('spaceDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete', route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -565,7 +565,7 @@ class Action {
 
 							if (!message.error.code) {
 								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType });
+								analytics.event('DeleteSpace', { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
@@ -577,7 +577,7 @@ class Action {
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
+					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel', route });
 				}
 			},
 		});

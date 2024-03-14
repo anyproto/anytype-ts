@@ -605,18 +605,25 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { accountSpaceId } = authStore;
+		const { targetSpaceId, spaceAccountStatus, spaceAccessType } = space;
 
-		if ((space.targetSpaceId == accountSpaceId)) {
+		if ((targetSpaceId == accountSpaceId)) {
 			return;
 		};
 
 		const options: any[] = [];
+		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
+		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
-		if (UtilObject.isSpaceOwner(space.targetSpaceId) && (space.spaceAccessType == I.SpaceType.Shared)) {
+		if (UtilObject.isSpaceOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (space.spaceAccountStatus == I.SpaceStatus.Joining) {
+		if (isRemoving) {
+			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
+		};
+
+		if (isJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
 			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
@@ -628,16 +635,28 @@ class UtilMenu {
 				options,
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
+						case 'export': {
+							Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
+								zip: true, 
+								nested: true, 
+								files: true, 
+								archived: true, 
+								json: false, 
+								route: param.route,
+							});
+							break;
+						};
+
 						case 'remove': {
-							Action.removeSpace(space.targetSpaceId, 'Navigation');
+							Action.removeSpace(targetSpaceId, param.route);
 							break;
 						};
 
 						case 'cancel': {
-							C.SpaceJoinCancel(space.targetSpaceId, (message: any) => {
+							C.SpaceJoinCancel(targetSpaceId, (message: any) => {
 								if (message.error.code) {
 									window.setTimeout(() => {
-										popupStore.open('confirm', {
+										popupStore.open('confirm', { 
 											data: {
 												title: translate('commonError'),
 												text: message.error.description,

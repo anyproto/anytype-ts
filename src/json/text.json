@@ -1754,13 +1754,15 @@
 
 	"notificationApproveSuccessText": "Your request to join <b>\"%s\"</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
 
-	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space",
+	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space, or the space has been deleted by the owner",
 
 	"notificationDeclineSuccessText": "Your request to join the <b>\"%s\"</b> space has been declined.",
 
 	"notificationPermissionSuccessText": "Your access rights were changed to <b>\"%s\"</b> in the <b>\"%s\"</b> space.",
 
-	"notificationButtonSpace": "Go to Space",
+	"notificationButtonSpaceSwitch": "Go to Space",
+	"notificationButtonSpaceExport": "Export Space",
+	"notificationButtonSpaceDelete": "Go to Space",
 	"notificationButtonRequest": "View request",
 
 	"participantStatus0": "Joining",
