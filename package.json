@@ -62,8 +62,8 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^28.2.0",
-		"electron-builder": "^24.6.3",
+		"electron": "^29.1.4",
+		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
@@ -88,7 +88,7 @@
 		"webpack-dev-server": "^4.13.1"
 	},
 	"dependencies": {
-		"@electron/remote": "^2.1.1",
+		"@electron/remote": "^2.1.2",
 		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
