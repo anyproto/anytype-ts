@@ -636,7 +636,7 @@ class UtilMenu {
 				onSelect: (e: any, element: any) => {
 					switch (element.id) {
 						case 'export': {
-							Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
+							Action.export(targetSpaceId, [], I.ExportType.Markdown, { 
 								zip: true, 
 								nested: true, 
 								files: true, 

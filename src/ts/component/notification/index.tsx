@@ -109,7 +109,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'spaceExport': {
-				Action.export(payload.spaceId, [], I.ExportType.Protobuf, { 
+				Action.export(payload.spaceId, [], I.ExportType.Markdown, { 
 					zip: true, 
 					nested: true, 
 					files: true, 
