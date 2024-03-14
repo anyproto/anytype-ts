@@ -191,26 +191,21 @@
 		}
 
 		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
-			.spaceHeader { margin-bottom: 32px; }
+			.spaceHeader { margin: 0px 0px 32px 0px; display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 24px; }
 			.spaceHeader {
-				.sides { display: flex; flex-wrap: nowrap; width: 100%; gap: 0px 16px; }
-				.sides {
-					.side.left { width: 100%; flex-wrap: nowrap; display: flex; align-items: center; }
-					.side.right { display: flex; flex-direction: row; gap: 0px 16px; }
-				}
-				.iconWrapper { width: 96px; }
+				.iconWrapper { width: 96px; flex-shrink: 0; }
 
-				.headerContent { margin-left: 24px; width: 100%; }
+				.headerContent { width: calc(100% - 96px); }
 				.headerContent {
-					.input { padding: 0; }
+					.input { padding: 0px; }
 
-					.name { margin-bottom: 8px; }
+					.name { margin: 0px 0px 8px 0px; }
 					.name {
 						.input { @include text-header1; height: 32px; }
 					}
 
 					.spaceAccessType {
-						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
+						display: inline-block; width: unset; padding: 3px 8px 3px 26px; border-radius: 6px;
 						background: var(--color-shape-highlight-light) url('~img/icon/space/personal.svg') 4px 2px no-repeat;
 						@include text-small; color: var(--color-text-secondary); transition: $transitionAllCommon;
 					}
@@ -249,8 +244,17 @@
 							}
 
 							.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
-							.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+							.icon.arrow { width: 6px; height: 10px; background-image: url('~img/icon/popup/settings/forward.svg'); }
 							.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+						}
+					}
+				}
+
+				.section.sectionSpaceShare {
+					.sectionContent {
+						> .item {
+							.caption { @include text-common; color: var(--color-text-primary); }
+							.side.right { display: flex; align-items: center; gap: 0px 8px; }
 						}
 					}
 				}
@@ -277,7 +281,6 @@
 								.icon { width: 22px; height: 22px; }
 								.title { margin-bottom: 0; }
 							}
-							.arrow { width: 6px; height: 11px; }
 						}
 					}
 				}

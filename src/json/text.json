@@ -145,6 +145,7 @@
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
+	"pluralRequest": "request|requests",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -689,11 +690,21 @@
 	"popupSettingsDataManagementDeleteButton": "Delete account",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexShare": "Share",
+	"popupSettingsSpaceIndexShare": "Sharing",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
+
+	"popupSettingsSpaceIndexShareShareTitle": "Share space",
+	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
+
+	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
+	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
+
+	"popupSettingsSpaceIndexShareMembersTitle": "Space members",
+	"popupSettingsSpaceIndexShareMembersText": "List of members",
+
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
 	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
 	"popupSettingsSpaceIndexRemoteStorageExtend": "Get more Storage",
