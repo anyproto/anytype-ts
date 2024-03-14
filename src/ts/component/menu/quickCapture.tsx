@@ -537,7 +537,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall({ ...item, id: item.itemId }, true, { route: 'Navigation' });
+								Action.uninstall({ ...item, id: item.itemId }, true, 'Navigation');
 							};
 							break;
 						};

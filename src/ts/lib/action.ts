@@ -259,11 +259,11 @@ class Action {
 		});
 	};
 
-	uninstall (object: any, showToast: boolean, analytics?: any, callBack?: (message: any) => void) {
-		let eventParam: any = { layout: object.layout };
+	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
+		const eventParam: any = { layout: object.layout };
 
-		if (analytics) {
-			eventParam = Object.assign(eventParam, analytics);
+		if (route) {
+			eventParam.route = route;
 		};
 
 		let title = '';
