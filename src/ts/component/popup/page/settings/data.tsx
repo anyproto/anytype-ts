@@ -21,7 +21,6 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         const { onPage } = this.props;
 		const { dataPath, spaceStorage } = commonStore
         const { localUsage } = spaceStorage;
-        const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
 		const suffix = this.getSuffix();
 
         return (
@@ -32,10 +31,10 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 <div className="actionItems">
                     <div className="item storageUsage">
                         <div className="side left">
-							<IconObject object={localStorage} size={44} />
+							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
 
 							<div className="txt">
-								<ObjectName object={localStorage} />
+								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
 								<div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
 							</div>
                         </div>
@@ -47,6 +46,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
 					<div className="item">
 						<div className="side left">
+							<IconObject object={{ iconEmoji: ':file_folder:' }} size={44} />
 
 							<div className="txt">
 								<Title text={translate('popupSettingsDataManagementDataLocation')} />
@@ -108,9 +108,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     };
 
 	onOpenDataLocation () {
-		const { dataPath } = commonStore
-
-		Renderer.send('pathOpen', dataPath);
+		Renderer.send('pathOpen', commonStore.dataPath);
 	};
 
 	getSuffix () {

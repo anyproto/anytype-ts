@@ -340,9 +340,7 @@
 			.actionItems {
 				.title { @include text-common; font-weight: 400; margin-bottom: 0; }
 				.label { @include text-small; color: var(--color-text-secondary); }
-			}
 
-			.storageUsage {
 				.side.left {
 					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; border-radius: 8px; transition: $transitionAllCommon;
 				}
@@ -352,11 +350,6 @@
 					.name { @include text-common; }
 					.type { @include text-small; color: var(--color-text-secondary); }
 				}
-			}
-
-			.accountLocation {
-				.locationDescription { @include text-small; color: var(--color-text-secondary); }
-				.locationLabel { color: var(--color-text-secondary); }
 			}
 
 			.iconObject { background-color: var(--color-shape-tertiary); border-radius: 4px; }
