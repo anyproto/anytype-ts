@@ -132,6 +132,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				</div>
 
 				<div className="sections">
+					<div className="section sectionSpaceShare">
+						<div className="sectionContent">
+							<div className="item">
+								<div className="sides">
+									<div className="side left"></div>
+									<div className="side left"></div>
+								</div>
+							</div>
+						</div>
+					</div>
 
 					{canWrite ? (
 						<div className="section sectionSpaceManager">

@@ -531,10 +531,18 @@ export const Mapper = {
 						break;
 					};
 
+					case I.NotificationType.Permission:
 					case I.NotificationType.Approve: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
         					permissions: field.getPermissions(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Decline: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
 						});
 						break;
 					};
