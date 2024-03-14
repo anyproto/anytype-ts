@@ -476,7 +476,7 @@
 					.side.left {
 						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
 						.name { @include text-common; }
-						.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); }
+						.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); margin: 0px 0px 0px 4px; }
 						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 					}
 
