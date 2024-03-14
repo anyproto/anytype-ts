@@ -624,6 +624,12 @@
 				"--rpm-rpmbuild-define",
 				"_build_id_links none"
 			]
+		},
+		"snap": {
+			"publish": {
+				"provider": "generic",
+				"url": "https://anydummyurl.com"
+			}
 		}
 	},
 	"lint-staged": {
