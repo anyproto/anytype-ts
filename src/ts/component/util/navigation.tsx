@@ -39,18 +39,18 @@ const Navigation = observer(class Navigation extends React.Component {
 			switch (navigationMenu) {
 				case I.NavigationMenuMode.Context: {
 					buttonPlus.onClick = this.onAdd;
-					buttonPlus.onContextMenu = () => keyboard.onQuickCapture();
+					buttonPlus.onContextMenu = () => keyboard.onQuickCapture(false);
 					break;
 				};
 
 				case I.NavigationMenuMode.Click: {
-					buttonPlus.onClick = () => keyboard.onQuickCapture();
+					buttonPlus.onClick = () => keyboard.onQuickCapture(false);
 					break;
 				};
 
 				case I.NavigationMenuMode.Hover: {
 					buttonPlus.onMouseEnter = e => {
-						keyboard.onQuickCapture({ isSub: true, passThrough: false });
+						keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
 					};
 					buttonPlus.onMouseLeave = () => {};
 					break;
@@ -154,7 +154,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onAdd (e: any) {
-		e.altKey ? keyboard.onQuickCapture() : keyboard.pageCreate({}, 'Navigation');
+		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, 'Navigation');
 	};
 
 	onGraph () {

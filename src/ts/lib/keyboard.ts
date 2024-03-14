@@ -282,7 +282,7 @@ class Keyboard {
 				// Quick capture menu
 				this.shortcut(`${cmd}+alt+n`, e, () => {
 					e.preventDefault();
-					this.onQuickCapture();
+					this.onQuickCapture(true);
 				});
 
 				// Lock/Unlock
@@ -841,7 +841,7 @@ class Keyboard {
 		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
-	onQuickCapture (param?: Partial<I.MenuParam>) {
+	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
 		param = param || {};
 
 		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
@@ -855,7 +855,7 @@ class Keyboard {
 			...param,
 			onOpen: () => button.addClass('active'),
 			onClose: () => button.removeClass('active'),
-		}, {});
+		}, { isExpanded: shortcut });
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
