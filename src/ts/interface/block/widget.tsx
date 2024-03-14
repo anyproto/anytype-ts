@@ -31,6 +31,7 @@ export interface WidgetTreeItem {
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
 	isSection?: boolean;
+	branch: string;
 };
 
 export interface WidgetTreeDetails { 
