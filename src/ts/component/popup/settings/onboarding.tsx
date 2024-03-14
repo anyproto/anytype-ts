@@ -163,8 +163,6 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		} else {
 			callBack();
 		};
-
-
 	};
 
 	onPathClick (path: string) {
@@ -175,7 +173,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onChangeStorage () {
 		Action.openDir({}, (paths: string[]) => {
-			this.onChange('userPath', paths[0])
+			this.onChange('userPath', paths[0]);
 		});
 	};
 
