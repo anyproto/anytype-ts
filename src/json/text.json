@@ -808,6 +808,9 @@
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Account Data Location",
+	"popupSettingsOnboardingLocalOnlyWarningTitle": "Are you sure?",
+	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
+	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningTitle": "Are you sure?",

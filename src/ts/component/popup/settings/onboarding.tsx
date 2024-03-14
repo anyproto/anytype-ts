@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
 import { I, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
@@ -21,8 +21,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	render () {
-		const { mode, path } = this.config;
-		const userPath = window.Electron.userPath();
+		const { mode, path, userPath } = this.config;
 		const { interfaceLang, config } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const networkModes: any[] = ([
@@ -106,7 +105,15 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	componentDidMount(): void {
-		this.config = authStore.networkConfig;
+		const { networkConfig } = authStore;
+		const { mode, path } = networkConfig;
+		const userPath = window.Electron.userPath();
+
+		this.config = {
+			userPath,
+			mode,
+			path: path || ''
+		};
 		this.refMode?.setValue(this.config.mode);
 		this.forceUpdate();
 	};
@@ -122,17 +129,42 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onSave () {
 		const { networkConfig } = authStore;
+		const userPath = window.Electron.userPath();
 
-		if (this.config.mode !== networkConfig.mode) {
-			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
+		const callBack = () => {
+			if (this.config.mode !== networkConfig.mode) {
+				analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
+			};
+
+			if (this.config.path !== networkConfig.path) {
+				analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+			};
+
+			if (this.config.userPath !== userPath) {
+				Renderer.send('setUserDataPath', this.config.userPath);
+				commonStore.dataPathSet(this.config.userPath);
+				delete this.config.userPath;
+			};
+
+			authStore.networkConfigSet(this.config);
+			this.props.close();
 		};
 
-		if (this.config.path !== networkConfig.path) {
-			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+		if ((this.config.mode == I.NetworkMode.Local) && (this.config.userPath !== userPath)) {
+			popupStore.open('confirm', {
+				className: 'isWide',
+				data: {
+					title: translate('popupSettingsOnboardingLocalOnlyWarningTitle'),
+					text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
+					onConfirm: callBack,
+					textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
+				},
+			});
+		} else {
+			callBack();
 		};
 
-		authStore.networkConfigSet(this.config);
-		this.props.close();
+
 	};
 
 	onPathClick (path: string) {
@@ -143,9 +175,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onChangeStorage () {
 		Action.openDir({}, (paths: string[]) => {
-			Renderer.send('setUserDataPath', paths[0]);
-			commonStore.dataPathSet(paths[0]);
-			this.forceUpdate();
+			this.onChange('userPath', paths[0])
 		});
 	};
 
