@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
