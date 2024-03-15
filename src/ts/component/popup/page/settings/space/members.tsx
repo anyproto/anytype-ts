@@ -24,7 +24,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	render () {
-		const members = this.getMembers();
+		const members = UtilObject.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const length = members.length;
 		const participant = UtilObject.getParticipant();
 
@@ -110,7 +110,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	updateCache () {
-		const members = this.getMembers();
+		const members = UtilObject.getParticipantsList([ I.ParticipantStatus.Active ]);
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -124,14 +124,6 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
-	};
-
-	getMembers () {
-		const statuses = [ I.ParticipantStatus.Active ];
-		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
-
-		return records.sort(UtilData.sortByOwner);
 	};
 
 	resize () {

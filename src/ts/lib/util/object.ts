@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -56,6 +56,13 @@ class UtilObject {
 			return null;
 		};
 		return home;
+	};
+
+	getParticipantsList (statuses: I.ParticipantStatus[]) {
+		const subId = Constant.subId.participant;
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+
+		return records.sort(UtilData.sortByOwner);
 	};
 
 	getParticipantId (spaceId: string, accountId: string) {
