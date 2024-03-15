@@ -93,7 +93,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
 			if (isOwner) {
-				button = <Label text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
+				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
 			} else {
 				button = (
 					<Select
@@ -256,7 +256,23 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
 		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
-		return records.sort(UtilData.sortByOwner);
+		return records.sort((c1, c2) => {
+			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
+			const isJoining2 = c2.status === I.ParticipantStatus.Joining;
+			const isLeaving1 = c1.status === I.ParticipantStatus.Removing;
+			const isLeaving2 = c2.status === I.ParticipantStatus.Removing;
+			const isOwner1 = c1.permissions === I.ParticipantPermissions.Owner;
+			const isOwner2 = c2.permissions === I.ParticipantPermissions.Owner;
+
+			if (isJoining1 && !isJoining2) return -1;
+			if (!isJoining1 && isJoining2) return 1;
+			if (isLeaving1 && !isLeaving2) return -1;
+			if (!isLeaving1 && isLeaving2) return 1;
+			if (isOwner1 && !isOwner2) return -1;
+			if (!isOwner1 && isOwner2) return 1;
+
+			return 0;
+		});
 	};
 
 	getLink () {
