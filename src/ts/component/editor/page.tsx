@@ -1746,6 +1746,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const win = $(window);
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
@@ -1766,10 +1767,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
-		menuStore.open('selectPasteUrl', { 
+		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,
-			offsetX: Constant.size.blockMenu,
+			recalcRect: () => { 
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			},
+			offsetX: () => {
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			onOpen: () => {
 				if (block) {
 					window.setTimeout(() => {
@@ -1865,6 +1873,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 				},
 			}
+		};
+
+		menuStore.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+			menuStore.open('selectPasteUrl', menuParam);
 		});
 	};
 
