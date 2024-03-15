@@ -465,7 +465,7 @@
 
 			.section.sectionMembers { min-height: 236px; }
 			.section.sectionMembers {
-				.title { margin-bottom: 0px; }
+				.title { margin-bottom: 8px; }
 
 				.row { border-bottom: 0px solid; padding: 0; }
 				.row {
@@ -511,6 +511,9 @@
 						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
 						.name { @include text-common; width: auto; }
 						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
+					}
+					.col {
+						.label { @include text-common; color: var(--color-text-secondary); }
 					}
 				}
 			}
