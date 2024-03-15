@@ -41,7 +41,7 @@ html.printMedia {
 		.popup.popupExport { display: none !important; }
 	}
 	
-	#editorWrapper { width: 100% !important; padding-left: 48px; }
+	#editorWrapper { padding-left: 48px; }
 	#editorWrapper {
 		#editorSize { display: none !important; }
 	}
@@ -120,6 +120,10 @@ html.printMedia {
 	.editor {
 		.blockLast { display: none; }
 	}
+}
+
+html.printMedia.print {
+	#editorWrapper { width: 100% !important; }
 }
 
 html.printMedia.withPopup {
