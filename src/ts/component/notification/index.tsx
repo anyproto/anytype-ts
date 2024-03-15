@@ -41,8 +41,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Join: {
 				buttons = buttons.concat([
+					{ id: 'request', text: translate('notificationButtonRequest') },
 					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') },
-					{ id: 'request', text: translate('notificationButtonRequest') }
 				]);
 				break;
 			};
@@ -57,7 +57,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case I.NotificationType.Remove: {
 				buttons = buttons.concat([
 					{ id: 'spaceExport', text: translate('notificationButtonSpaceExport') },
-					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete') }
+					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete') },
 				]);
 				break;
 			};
