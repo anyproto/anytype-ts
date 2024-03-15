@@ -612,7 +612,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 						const object = message.details;
 
-						UtilObject.openPopup(message.details);
+						UtilObject.openConfig(message.details);
 
 						analytics.event('CreateLink');
 						analytics.event('CreateObject', {

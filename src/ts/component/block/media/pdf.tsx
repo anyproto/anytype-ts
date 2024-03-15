@@ -233,7 +233,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			UtilObject.openPopup({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
+			UtilObject.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 
