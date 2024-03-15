@@ -216,7 +216,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		view = Object.assign(view, this.param);
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, onSave);
+		Dataview.viewUpdate(rootId, blockId, view.id, this.param, onSave);
 	};
 
 	getSections () {

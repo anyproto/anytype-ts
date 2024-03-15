@@ -182,7 +182,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			view.name = this.param.name;
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, () => {
+		Dataview.viewUpdate(rootId, blockId, view.id, this.param, () => {
 			if (clearGroups) {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, onSave);

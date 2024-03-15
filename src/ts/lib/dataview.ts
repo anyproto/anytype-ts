@@ -367,6 +367,16 @@ class Dataview {
 		return translate('blockDataviewCreateNew');
 	};
 
+	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
+		let view = dbStore.getView(rootId, blockId, viewId);
+		if (!view) {
+			return;
+		};
+
+		view = Object.assign(view, param);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
+	};
+
 };
 
 export default new Dataview();
