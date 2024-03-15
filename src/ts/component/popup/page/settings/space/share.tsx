@@ -159,7 +159,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<React.Fragment>
 							<div className="inviteLinkWrapper">
 								<div className="inputWrapper">
-									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
+									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
 									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 								</div>
 								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />

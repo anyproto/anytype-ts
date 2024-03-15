@@ -202,15 +202,13 @@ class Input extends React.Component<Props, State> {
 
 	getInputElement() {
 		return $(this.node).get(0) as HTMLInputElement;
-	}
+	};
 	
 	focus () {
 		window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
+			if (this._isMounted) {
+				this.getInputElement().focus({ preventScroll: true }); 
 			};
-
-			this.getInputElement().focus({ preventScroll: true }); 
 		});
 	};
 	
@@ -223,9 +221,11 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	select () {
-		if (this._isMounted) {
-			window.setTimeout(() => { this.getInputElement().select();	});
-		};
+		window.setTimeout(() => {
+			if (this._isMounted) {
+				this.getInputElement().select();
+			};
+		});
 	};
 	
 	setValue (v: string) {
