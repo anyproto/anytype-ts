@@ -206,8 +206,7 @@
 					}
 
 					.spaceAccessType {
-						display: inline-block; width: unset; padding: 3px 8px 3px 26px; border-radius: 6px;
-						background: var(--color-shape-highlight-light) url('~img/icon/space/personal.svg') 4px 2px no-repeat;
+						display: inline-block; width: unset; padding: 3px 8px; border-radius: 6px; background-color: var(--color-shape-highlight-light);
 						@include text-small; color: var(--color-text-secondary); transition: $transitionAllCommon;
 					}
 					.spaceAccessType:hover { background-color: var(--color-shape-highlight-medium); }
