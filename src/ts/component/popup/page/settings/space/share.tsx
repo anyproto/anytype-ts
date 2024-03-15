@@ -48,7 +48,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error, cid, key } = this.state;
-		const isShared = cid && key;
+		const hasLink = cid && key;
+		const space = UtilObject.getSpaceview();
+		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilObject.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
@@ -145,9 +147,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{isShared ? (
-							<Icon id="button-more-space" className="more" onClick={this.onMoreSpace} />
-						) : ''}
+						{isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -155,7 +155,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
-					{isShared ? (
+					{hasLink ? (
 						<React.Fragment>
 							<div className="inviteLinkWrapper">
 								<div className="inputWrapper">

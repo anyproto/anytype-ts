@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
