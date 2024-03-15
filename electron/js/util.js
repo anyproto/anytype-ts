@@ -238,6 +238,10 @@ class Util {
 		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 	};
 
+	defaultUserDataPath () {
+		return path.join(app.getPath('appData'), app.getName());
+	};
+
 };
 
 module.exports = new Util();
