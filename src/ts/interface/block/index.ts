@@ -74,7 +74,6 @@ export interface BlockComponent {
 	isContextMenuDisabled?: boolean;
 	index?: any;
 	className?: string;
-	setLoading?(v: boolean): void;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange, marks: I.Mark[]): void;

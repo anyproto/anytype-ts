@@ -50,6 +50,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
+	timeoutLoading = 0;
 
 	frameMove = 0;
 	frameResize = 0;
@@ -71,7 +72,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
-		this.setLoading = this.setLoading.bind(this);
 	};
 
 	render () {
@@ -121,7 +121,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
-							setLoading={this.setLoading}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -136,7 +135,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							readonly={readonly}
 							blockRemove={this.blockRemove}
 							getWrapperWidth={this.getWrapperWidth}
-							setLoading={this.setLoading}
 						/>
 					</div>
 					
@@ -231,16 +229,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false, isLoading: true });
+		this.setState({ isDeleted: false });
+
+		window.clearTimeout(this.timeoutLoading);
+		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
+			window.clearTimeout(this.timeoutLoading);
+			this.setLoading(false);
+
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};
 
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
+					this.setState({ isDeleted: true });
 				} else {
 					UtilObject.openHome('route');
 				};
@@ -249,14 +253,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			const object = detailStore.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+				this.setState({ isDeleted: true });
 				return;
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
-			this.setLoading(false);
-			
+
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
