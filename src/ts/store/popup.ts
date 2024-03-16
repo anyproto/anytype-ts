@@ -164,7 +164,7 @@ class PopupStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout(items);
+		const timeout = items.length ? Constant.delay.popup : 0;
 
 		items.forEach(it => this.close(it.id));
 
@@ -178,8 +178,8 @@ class PopupStore {
 		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 	};
 
-	getTimeout (items: I.Popup[]) {
-		return items.length ? Constant.delay.popup : 0;
+	getTimeout () {
+		return this.getItems().length ? Constant.delay.popup : 0;
 	};
 
 	closeLast () {

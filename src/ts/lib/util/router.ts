@@ -63,9 +63,9 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const { space } = commonStore;
 
-		let timeout = menuStore.getTimeout(menuStore.getItems());
+		let timeout = menuStore.getTimeout();
 		if (!timeout) {
-			timeout = popupStore.getTimeout(popupStore.getItems());
+			timeout = popupStore.getTimeout();
 		};
 
 		menuStore.closeAll();

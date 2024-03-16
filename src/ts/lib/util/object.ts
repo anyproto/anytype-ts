@@ -263,7 +263,7 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), popupStore.getTimeout());
 	};
 
 	openConfig (object: any) {
