@@ -187,13 +187,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	onClear () {
-		const { storageSet, close } = this.props;
+		const { storageSet } = this.props;
 
 		this.ref.setValue('');
 		this.clear();
 
 		storageSet({ search: '' });
-		close();
 	};
 
 	clear () {
