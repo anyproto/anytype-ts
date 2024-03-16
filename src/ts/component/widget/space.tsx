@@ -51,7 +51,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					</div>
 				</div>
 				<div className="side right">
-					{isSpaceOwner ? <div className="cnt" onClick={this.onRequest}>{requestCnt}</div> : ''}
+					{isSpaceOwner && requestCnt ? <div className="cnt" onClick={this.onRequest}>{requestCnt}</div> : ''}
 				</div>
 			</div>
 		);
