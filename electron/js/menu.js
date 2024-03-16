@@ -293,13 +293,13 @@ class MenuManager {
 	};
 
 	winShow () {
-		if (this.win) {
+		if (this.win && !win.isDestroyed()) {
 			this.win.show();
 		};
 	};
 
 	winHide () {
-		if (this.win) {
+		if (this.win && !win.isDestroyed()) {
 			this.win.hide();
 		};
 	};
