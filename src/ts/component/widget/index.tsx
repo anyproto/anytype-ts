@@ -393,11 +393,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			UtilObject.openAuto(object);
-			analytics.createObject(object.type, object.layout, 'Widget', message.middleTime);
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, 'Widget', callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};

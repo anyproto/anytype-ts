@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, UtilData, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -270,7 +270,7 @@ class UtilObject {
 		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
 	};
 
-	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
+	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
 		details = details || {};
@@ -291,8 +291,13 @@ class UtilObject {
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
-			if (!message.error.code && callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				if (callBack) {
+					callBack(message);
+				};
+
+				const object = message.details;
+				analytics.createObject(object.type, object.layout, route, message.middleTime);
 			};
 		});
 	};

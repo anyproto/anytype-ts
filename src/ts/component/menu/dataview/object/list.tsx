@@ -399,14 +399,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
-			const type = dbStore.getTypeById(details.type);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultTemplateId, {}, flags, (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Relation', (message: any) => {
 				cb(message.targetId);
 				close();
-
-				const object = message.details;
-				analytics.createObject(object.type, object.layout, 'Relation', message.middleTime);
 			});
 		} else {
 			cb(item.id);

@@ -14,9 +14,8 @@ const PageMainCreate = observer(class PageMainCreate extends React.Component<I.P
 	};
 	
 	componentDidMount () {
-		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			UtilObject.openRoute(message.details);
-		});
+		const flags = [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ];
+		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, '', message => UtilObject.openRoute(message.details));
 	};
 
 });

@@ -456,15 +456,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
+				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 				details = { name: filter, type: commonStore.type, ...details };
-				const type = dbStore.getTypeById(details.type);
 
-				UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultDemplateId, {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-					const object = message.details;
-
-					process(object, true);
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Search', (message: any) => {
+					process(message.details, true);
 					close();
-					analytics.createObject(object.type, object.layout, 'Search', message.middleTime);
 				});
 			};
 		} else {

@@ -300,14 +300,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const type = dbStore.getTypeById(commonStore.type) || {};
 			const name = this.getFilter();
 
-			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, type.defaultTemplateId, {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-				if (!message.error.code) {
-					cb(message.targetId, name);
-					analytics.createObject(type.id, type.recommendedLayout, 'Mention', message.middleTime);
-				};
+			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
+				cb(message.targetId, name);
 			});
 		} else {
 			cb(item.id, item.name);

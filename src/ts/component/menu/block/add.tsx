@@ -605,17 +605,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = type.recommendedLayout;
 					};
 
-					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], (message: any) => {
-						if (message.error.code || !message.details) {
-							return;
-						};
-
-						const object = message.details;
-
+					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
 						UtilObject.openConfig(message.details);
-
 						analytics.event('CreateLink');
-						analytics.createObject(object.type, object.layout, 'Powertool', message.middleTime);
 					});
 				} else {
 					keyboard.setFocus(false);

@@ -307,19 +307,10 @@ class Keyboard {
 	};
 
 	pageCreate (details: any, route: string) {
-		const isMain = this.isMain();
-		const type = dbStore.getTypeById(details.type);
-
-		if (!isMain) {
-			return;
+		if (this.isMain()) {
+			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, route, message => UtilObject.openConfig(message.details));
 		};
-
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultTemplateId, {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			const object = message.details;
-
-			UtilObject.openConfig(object);
-			analytics.createObject(object.type, object.layout, route, message.middleTime);
-		});
 	};
 
 	isPopup () {

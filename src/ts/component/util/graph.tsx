@@ -465,13 +465,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					switch (item.id) {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-							const type = dbStore.getTypeById(data.type);
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, type.defaultTemplateId, {}, flags, (message: any) => {
-								const object = message.details;
-
-								UtilObject.openPopup(object, { onClose: () => this.addNewNode(message.targetId, '', data) });
-								analytics.createObject(object.type, object.layout, 'Graph', message.middleTime);
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, 'Graph', (message: any) => {
+								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
