@@ -989,18 +989,16 @@ class Dispatcher {
 
 					switch (payload.type) {
 						case 'openObject': {
-							UtilObject.openAuto(payload.object);
+							const { object } = payload;
+
+							UtilObject.openAuto(object);
 							window.focus();
 
 							if (electron.focus) {
 								electron.focus();
 							};
 
-							analytics.event('CreateObject', {
-								route: 'Webclipper',
-								objectType: payload.object.type,
-								layout: payload.object.layout,
-							});
+							analytics.createObject(object.type, object.layout, 'Webclipper', 0);
 							break;
 						};
 					};

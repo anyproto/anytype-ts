@@ -368,20 +368,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		if (item.itemId == 'add') {
 			const type = dbStore.getTypeById(commonStore.type);
 
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-				if (message.error.code) {
-					return;
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, type?.defaultTemplateId, {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
+				if (!message.error.code) {
+					onChange(I.MarkType.Object, message.targetId);
+					analytics.createObject(type.id, type.recommendedLayout, 'Link', message.middleTime);
 				};
-
-				onChange(I.MarkType.Object, message.targetId);
-
-				analytics.event('CreateObject', {
-					route: 'Link',
-					objectType: type.id,
-					layout: type.layout,
-					template: '',
-					middleTime: message.middleTime,
-				});
 			});
 		} else {
 			onChange(I.MarkType.Object, item.itemId);

@@ -677,12 +677,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
-				analytics.event('CreateObject', { 
-					route: this.analyticsRoute(),
-					objectType: object.type,
-					layout: object.layout,
-					middleTime: message.middleTime,
-				});
+				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
 			};
 		});
 	};

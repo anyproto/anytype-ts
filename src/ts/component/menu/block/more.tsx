@@ -316,13 +316,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
-						
-						analytics.event('CreateObject', { 
-							route: ROUTE, 
-							objectType: object.type,
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey, (message: any) => {
+							analytics.createObject(item.id, item.recommendedLayout, ROUTE, message.middleTime);
 						});
-
+						
 						close();
 
 						if (onMenuSelect) {
@@ -491,13 +488,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageCreate': {
 				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
 					UtilObject.openAuto(message.details);
-
-					analytics.event('CreateObject', {
-						route: ROUTE,
-						objectType: object.targetObjectType,
-						layout: object.layout,
-						middleTime: message.middleTime,
-					});
+					analytics.createObject(object.targetObjectType, object.layout, ROUTE, message.middleTime);
 				});
 				break;
 			};
