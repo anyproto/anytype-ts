@@ -390,7 +390,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
 		const object = detailStore.get(rootId, blockId);
-		const details = data.details || {};
+
+		let details = data.details || {};
 
 		if (!noClose) {
 			close();
@@ -455,9 +456,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				UtilObject.create('', '', { name: filter, type: commonStore.type, ...details }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-					UtilObject.getById(message.targetId, object => process(object, true));
+				details = { name: filter, type: commonStore.type, ...details };
+				const type = dbStore.getTypeById(details.type);
+
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultDemplateId, {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
+					const object = message.details;
+
+					process(object, true);
 					close();
+					analytics.createObject(object.type, object.layout, 'Search', message.middleTime);
 				});
 			};
 		} else {

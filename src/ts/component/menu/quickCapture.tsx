@@ -451,14 +451,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				UtilObject.openAuto(object);
-
-				analytics.event('CreateObject', { 
-					route: 'Navigation', 
-					objectType: object.type,
-					layout: object.layout,
-					template: item.defaultTemplateId,
-					middleTime: message.middleTime,
-				});
+				analytics.createObject(object.type, object.layout, 'Navigation', message.middleTime);
 			});
 		};
 
@@ -639,17 +632,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 					const object = message.details;
 
-					analytics.event('CreateObject', { 
-						route: 'Clipboard', 
-						objectType: object.type,
-						layout: object.layout,
-						template: type?.defaultTemplateId,
-						middleTime: message.middleTime,
-					});
-
 					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
 						UtilObject.openAuto(object);
 					});
+
+					analytics.createObject(object.type, object.layout, 'Clipboard', message.middleTime);
 				});
 			};
 		});

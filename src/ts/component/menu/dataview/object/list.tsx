@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -399,10 +399,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
+			const type = dbStore.getTypeById(details.type);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultTemplateId, {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
+
+				const object = message.details;
+				analytics.createObject(object.type, object.layout, 'Relation', message.middleTime);
 			});
 		} else {
 			cb(item.id);

@@ -377,29 +377,23 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const callBack = (message) => {
+		const callBack = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const created = message.details || { id: message.targetId };
+			const object = message.details;
 
 			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setIsFavorite([ created.id ], true, 'widget');
+				Action.setIsFavorite([ object.id ], true, 'widget');
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ created.id ]);
+				C.ObjectCollectionAdd(object.id, [ object.id ]);
 			};
 
-			UtilObject.openAuto(created);
-
-			analytics.event('CreateObject', { 
-				objectType: typeKey, 
-				layout: created.layout,
-				route: 'Widget',
-				middleTime: message.middleTime,
-			});
+			UtilObject.openAuto(object);
+			analytics.createObject(object.type, object.layout, 'Widget', message.middleTime);
 		};
 
 		if (createWithLink) {

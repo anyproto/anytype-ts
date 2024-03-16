@@ -1829,19 +1829,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						case 'object': {
 							C.ObjectToBookmark(rootId, url, (message: any) => {
-								if (message.error.code) {
-									return;
+								if (!message.error.code) {
+									UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, 'Bookmark', message.middleTime);
 								};
-
-								UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-
-								analytics.event('CreateObject', {
-									route: 'Bookmark',
-									objectType: Constant.typeKey.bookmark,
-									layout: I.ObjectLayout.Bookmark,
-									template: '',
-									middleTime: message.middleTime,
-								});
 							});
 							break;
 						};

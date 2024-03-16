@@ -925,17 +925,20 @@ class UtilData {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		const type = dbStore.getTypeById(typeId);
-		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
+
+		if (!type) {
+			return;
 		};
+		
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		if (!ids.length) {
-			ids = [ blockId ];
+			ids.push(blockId);
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
-			analytics.event('CreateObject', { route, objectType: typeId });
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, (message: any) => {
+			if (!message.error.code) {
+				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
+			};
 		});
 	};
 

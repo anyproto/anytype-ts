@@ -373,19 +373,13 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
+		const type = dbStore.getTypeById(details.type);
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, type?.defaultTemplateId, {}, flags, (message: any) => {
 			if (!message.error.code) {
 				this.onValueAdd(message.targetId);
+				analytics.createObject(details.type, details.layout, 'Relation', message.middleTime);
 			};
-
-			analytics.event('CreateObject', {
-				route: 'Relation',
-				objectType: details.type,
-				layout: details.layout,
-				template: '',
-				middleTime: message.middleTime,
-			});
 		});
 	};
 

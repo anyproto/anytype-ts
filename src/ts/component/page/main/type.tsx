@@ -390,7 +390,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
 		const type = dbStore.getTypeById(rootId);
 
 		if (!type) {
@@ -399,11 +398,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		
 		const details: any = {};
 
-		if (UtilObject.isSetLayout(object.recommendedLayout)) {
-			details.layout = object.recommendedLayout;
+		if (UtilObject.isSetLayout(type.recommendedLayout)) {
+			details.layout = type.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 			if (message.error.code || !message.details) {
 				return;
 			};
@@ -411,13 +410,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			const object = message.details;
 
 			UtilObject.openPopup(object);
-
-			analytics.event('CreateObject', {
-				route: 'ObjectType',
-				objectType: object.type,
-				layout: object.layout,
-				middleTime: message.middleTime,
-			});
+			analytics.createObject(object.type, object.layout, 'ObjectType', message.middleTime);
 		});
 	};
 

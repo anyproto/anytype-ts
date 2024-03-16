@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Theme from 'json/theme.json';
 
@@ -465,19 +465,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					switch (item.id) {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+							const type = dbStore.getTypeById(data.type);
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, type.defaultTemplateId, {}, flags, (message: any) => {
 								const object = message.details;
 
 								UtilObject.openPopup(object, { onClose: () => this.addNewNode(message.targetId, '', data) });
-
-								analytics.event('CreateObject', { 
-									objectType: object.type, 
-									layout: object.layout,
-									route: 'Graph',
-									template: '',
-									middleTime: message.middleTime,
-								});
+								analytics.createObject(object.type, object.layout, 'Graph', message.middleTime);
 							});
 							break;
 						};
