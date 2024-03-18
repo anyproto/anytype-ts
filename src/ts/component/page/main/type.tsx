@@ -84,7 +84,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (Relation.systemKeysWithoutUser().includes(it.relationKey)) {
 				return false;
 			};
-			return config.debug.ho ? true : !it.isHidden;
+			return config.debug.hiddenObject ? true : !it.isHidden;
 		});
 
 		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);

@@ -17,7 +17,7 @@ class Dataview {
 		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 

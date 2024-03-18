@@ -20,7 +20,7 @@ class Analytics {
 
 	debug () {
 		const { config } = commonStore;
-		return config.debug.an;
+		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {

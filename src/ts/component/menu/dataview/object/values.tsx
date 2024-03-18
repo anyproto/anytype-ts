@@ -203,7 +203,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 		
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			value = value.filter(it => !it.isHidden);
 		};
 

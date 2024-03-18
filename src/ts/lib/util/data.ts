@@ -501,7 +501,7 @@ class UtilData {
 
 		items = items.filter(it => it);
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
@@ -762,7 +762,7 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
@@ -849,7 +849,7 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};

@@ -539,7 +539,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const { config } = commonStore;
-		if (!config.debug.ho && it.isHidden) {
+		if (!config.debug.hiddenObject && it.isHidden) {
 			return false;
 		};
 		return true;
