@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, Storage } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -35,16 +35,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { localUsage, bytesLimit } = spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
-		const space = UtilObject.getSpaceview();
-		const home = UtilObject.getSpaceDashboard();
+		const space = UtilSpace.getSpaceview();
+		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const isOwner = UtilObject.isSpaceOwner();
+		const isOwner = UtilSpace.isOwner();
 		const isAllowed = config.experimental || config.allowCollaboration;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
 		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
 		const canMembers = isAllowed && !isOwner && isShared;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const usageCn = [ 'item' ];
 

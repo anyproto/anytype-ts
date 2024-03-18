@@ -20,7 +20,7 @@ class Analytics {
 
 	debug () {
 		const { config } = commonStore;
-		return config.debug.an;
+		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
@@ -416,7 +416,11 @@ class Analytics {
 		this.instance.logEvent(code, param);
 		this.log(`[Analytics].event: ${code}`, param);
 	};
-	
+
+	createObject (objectType: string, layout: I.ObjectLayout, route: string, time: number) {
+		this.event('CreateObject', { objectType, layout, route, middleTime: time });
+	};
+
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
@@ -470,7 +474,11 @@ class Analytics {
 	};
 
 	typeMapper (id: string): string {
-		const object = dbStore.getTypeById(id);
+		let object = dbStore.getTypeById(id);
+		if (!object) {
+			object = dbStore.getTypeByKey(id);
+		};
+
 		if (!object) {
 			return '';
 		};

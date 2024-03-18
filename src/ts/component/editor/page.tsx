@@ -5,7 +5,10 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { 
+	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
+	Renderer, sidebar, UtilSpace 
+} from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -50,6 +53,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
+	timeoutLoading = 0;
 
 	frameMove = 0;
 	frameResize = 0;
@@ -71,7 +75,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
-		this.setLoading = this.setLoading.bind(this);
 	};
 
 	render () {
@@ -121,7 +124,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
-							setLoading={this.setLoading}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -136,7 +138,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							readonly={readonly}
 							blockRemove={this.blockRemove}
 							getWrapperWidth={this.getWrapperWidth}
-							setLoading={this.setLoading}
 						/>
 					</div>
 					
@@ -189,6 +190,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
+		window.clearTimeout(this.timeoutLoading);
+		window.clearTimeout(this.timeoutMove);
 		Renderer.remove('commandEditor');
 	};
 
@@ -231,32 +234,37 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false, isLoading: true });
+		this.setState({ isDeleted: false });
+
+		window.clearTimeout(this.timeoutLoading);
+		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
+			window.clearTimeout(this.timeoutLoading);
+			this.setLoading(false);
+
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};
 
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
+					this.setState({ isDeleted: true });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+				this.setState({ isDeleted: true });
 				return;
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
-			this.setLoading(false);
-			
+
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
@@ -1746,6 +1754,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const win = $(window);
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
@@ -1766,10 +1775,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
-		menuStore.open('selectPasteUrl', { 
+		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,
-			offsetX: Constant.size.blockMenu,
+			recalcRect: () => { 
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			},
+			offsetX: () => {
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			onOpen: () => {
 				if (block) {
 					window.setTimeout(() => {
@@ -1816,19 +1832,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						case 'object': {
 							C.ObjectToBookmark(rootId, url, (message: any) => {
-								if (message.error.code) {
-									return;
+								if (!message.error.code) {
+									UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, 'Bookmark', message.middleTime);
 								};
-
-								UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-
-								analytics.event('CreateObject', {
-									route: 'Bookmark',
-									objectType: Constant.typeKey.bookmark,
-									layout: I.ObjectLayout.Bookmark,
-									template: '',
-									middleTime: message.middleTime,
-								});
 							});
 							break;
 						};
@@ -1865,6 +1872,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 				},
 			}
+		};
+
+		menuStore.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+			menuStore.open('selectPasteUrl', menuParam);
 		});
 	};
 
@@ -2257,7 +2268,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return true;
 		};
 
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return true;
 		};
 

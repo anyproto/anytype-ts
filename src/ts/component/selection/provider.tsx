@@ -148,7 +148,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.focused = focused;
 		this.top = this.startTop = container.scrollTop();
 		this.idsOnStart = new Map(this.ids);
-		this.clearCache();
+		this.cacheChildrenMap.clear();
+		this.cacheNodeMap.clear();
 		this.setIsSelecting(true);
 
 		keyboard.disablePreview(true);
@@ -474,7 +475,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		this.hide();
 		this.setIsSelecting(false);
-		this.clearCache();
+		this.cacheNodeMap.clear();
 		this.focused = '';
 		this.range = null;
 		this.containerOffset = null;
@@ -483,11 +484,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.nodes = [];
 	};
 
-	clearCache () {
-		this.cacheNodeMap.clear();
-		this.cacheChildrenMap.clear();
-	};
-	
 	set (type: I.SelectType, ids: string[]) {
 		this.ids.set(type, UtilCommon.arrayUnique(ids || []));
 		this.renderSelection();
@@ -504,18 +500,28 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return ids;
 		};
 
+		let ret = [];
+
 		if (withChildren) {
-			ids.forEach(id => this.getChildrenIds(id, ids));
+			ids.forEach(id => {
+				ret.push(id);
+				ret = ret.concat(this.getChildrenIds(id));
+			});
 		} else {
-			const childrenIds = [];
-			ids.forEach(id => this.getChildrenIds(id, childrenIds));
+			let childrenIds = [];
+
+			ids.forEach(id => {
+				childrenIds = childrenIds.concat(this.getChildrenIds(id));
+			});
 
 			if (childrenIds.length) {
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
+
+			ret = ids;
 		};
 
-		return ids;
+		return ret;
 	};
 
 	cacheChildrenIds (id: string): string[] {
@@ -539,12 +545,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return ids;
 	};
 
-	getChildrenIds (id: string, ids: string[]) {
-		const cache = this.cacheChildrenMap.get(id);
-		if (cache && cache.length) {
-			ids = ids.concat(cache);
-		};
-		return ids;
+	getChildrenIds (id: string) {
+		return this.cacheChildrenMap.get(id) || [];
 	};
 
 	getPageContainer () {
@@ -573,7 +575,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 					if (type == I.SelectType.Block) {
 						$(`#block-${id}`).addClass('isSelectionSelected');
 
-						const childrenIds = this.getChildrenIds(id, []);
+						const childrenIds = this.getChildrenIds(id);
 						if (childrenIds.length) {
 							childrenIds.forEach(childId => $(`#block-${childId}`).addClass('isSelectionSelected'));
 						};

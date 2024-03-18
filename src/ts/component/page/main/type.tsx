@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, Storage } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -54,7 +54,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = dbStore.getRecords(subIdTemplate, '');
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
@@ -84,7 +84,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (Relation.systemKeysWithoutUser().includes(it.relationKey)) {
 				return false;
 			};
-			return config.debug.ho ? true : !it.isHidden;
+			return config.debug.hiddenObject ? true : !it.isHidden;
 		});
 
 		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);
@@ -257,7 +257,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};
@@ -390,7 +390,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
 		const type = dbStore.getTypeById(rootId);
 
 		if (!type) {
@@ -399,11 +398,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		
 		const details: any = {};
 
-		if (UtilObject.isSetLayout(object.recommendedLayout)) {
-			details.layout = object.recommendedLayout;
+		if (UtilObject.isSetLayout(type.recommendedLayout)) {
+			details.layout = type.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], object.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 			if (message.error.code || !message.details) {
 				return;
 			};
@@ -411,13 +410,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			const object = message.details;
 
 			UtilObject.openPopup(object);
-
-			analytics.event('CreateObject', {
-				route: 'ObjectType',
-				objectType: object.type,
-				layout: object.layout,
-				middleTime: message.middleTime,
-			});
+			analytics.createObject(object.type, object.layout, 'ObjectType', message.middleTime);
 		});
 	};
 

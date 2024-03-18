@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
@@ -236,6 +235,10 @@ class Util {
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+	};
+
+	defaultUserDataPath () {
+		return path.join(app.getPath('appData'), app.getName());
 	};
 
 };

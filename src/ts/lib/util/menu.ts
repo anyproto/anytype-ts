@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview, Action } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -479,7 +479,7 @@ class UtilMenu {
 				};
 
 				if (openRoute) {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 			});
 		};
@@ -615,7 +615,7 @@ class UtilMenu {
 		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
 		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
-		if (UtilObject.isSpaceOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
+		if (UtilSpace.isOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 

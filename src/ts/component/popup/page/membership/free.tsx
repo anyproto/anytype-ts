@@ -47,7 +47,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		switch (verificationStep) {
 			case 1: {
 				content = (
-					<React.Fragment>
+					<form onSubmit={this.onVerifyEmail}>
 						<Title text={translate(`popupMembershipFreeTitleStep1`)} />
 						<Label text={translate(`popupMembershipFreeText`)} />
 
@@ -60,7 +60,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 						</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
-					</React.Fragment>
+					</form>
 				);
 				break;
 			};
@@ -78,7 +78,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
-						<div onClick={this.onResend} className={[ 'resend', countdown ? 'countdown' : '' ].join(' ')}>
+						<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 							{translate('popupMembershipResend')}
 							{countdown ? UtilCommon.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 						</div>
@@ -108,12 +108,12 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		this.refCheckbox.toggle();
 	};
 
-	onVerifyEmail () {
-		const isSubscribed: boolean = this.refCheckbox.getValue();
+	onVerifyEmail (e: any) {
+		e.preventDefault();
 
 		this.refButton?.setLoading(true);
 
-		C.PaymentsSubscriptionGetVerificationEmail(this.email, isSubscribed, (message) => {
+		C.PaymentsSubscriptionGetVerificationEmail(this.email, this.refCheckbox?.getValue(), (message) => {
 			this.refButton?.setLoading(false);
 
 			if (!message.error.code) {
@@ -136,9 +136,9 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		});
 	};
 
-	onResend () {
+	onResend (e: any) {
 		if (!this.state.countdown) {
-			this.onVerifyEmail();
+			this.onVerifyEmail(e);
 		};
 	};
 

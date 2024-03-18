@@ -222,7 +222,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onObjectTo (layout: I.ObjectLayout) {
-		const { rootId, isPopup, setLoading } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		let typeId = '';
 
@@ -237,8 +237,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			analytics.event('SelectObjectType', { objectType: typeId, layout });
 		};
-
-		setLoading(true);
 
 		switch (layout) {
 			case I.ObjectLayout.Set: {

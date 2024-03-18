@@ -151,7 +151,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		if (!view.groupBackgroundColors && this.color) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, groupBackgroundColors: true });
+			Dataview.viewUpdate(rootId, blockId, view.id, { groupBackgroundColors: true  });
 		};
 
 		if ([ I.RelationType.MultiSelect, I.RelationType.Select ].includes(relation.format)) {

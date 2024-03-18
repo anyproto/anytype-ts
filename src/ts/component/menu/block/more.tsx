@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, Storage } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -110,7 +110,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let archive = null;
 		let remove = null;
@@ -316,13 +316,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
-						
-						analytics.event('CreateObject', { 
-							route: ROUTE, 
-							objectType: object.type,
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey, (message: any) => {
+							analytics.createObject(item.id, item.recommendedLayout, ROUTE, message.middleTime);
 						});
-
+						
 						close();
 
 						if (onMenuSelect) {
@@ -417,7 +414,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				return;
 			};
 
-			const home = UtilObject.getSpaceDashboard();
+			const home = UtilSpace.getDashboard();
 			if (home && (object.id == home.id)) {
 				UtilObject.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
@@ -489,16 +486,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageCreate': {
-				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					UtilObject.openAuto(message.details);
-
-					analytics.event('CreateObject', {
-						route: ROUTE,
-						objectType: object.targetObjectType,
-						layout: object.layout,
-						middleTime: message.middleTime,
-					});
-				});
+				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], ROUTE, message => UtilObject.openAuto(message.details));
 				break;
 			};
 

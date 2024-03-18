@@ -1,126 +1,8 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
+import { I, C, keyboard, history as historyPopup, Renderer, UtilFile, translate, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
-
-	openHome (type: string, param?: any) {
-		const fn = UtilCommon.toCamelCase(`open-${type}`);
-		
-		let home = this.getSpaceDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.get('lastOpened');
-			if (home && !home.spaceId) {
-				home.spaceId = commonStore.space;
-			};
-		};
-
-		if (!home) {
-			this.openRoute({ layout: I.ObjectLayout.Empty }, param);
-			return;
-		};
-
-		if (this[fn]) {
-			this[fn](home, param);
-		};
-	};
-
-	getSpaceview (id?: string) {
-		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
-	};
-
-	getSpaceviewBySpaceId (id: string) {
-		const subId = Constant.subId.space;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
-	};
-
-	getSpaceDashboard () {
-		const space = this.getSpaceview();
-		const id = space.spaceDashboardId;
-
-		if (!id) {
-			return null;
-		};
-
-		let home = null;
-		if (id == I.HomePredefinedId.Graph) {
-			home = this.getGraph();
-		} else
-		if (id == I.HomePredefinedId.Last) {
-			home = this.getLastOpened();
-		} else {
-			home = detailStore.get(Constant.subId.space, id);
-		};
-
-		if (!home || home._empty_ || home.isDeleted) {
-			return null;
-		};
-		return home;
-	};
-
-	getParticipantId (spaceId: string, accountId: string) {
-		spaceId = String(spaceId || '').replace('.', '_');
-		return `_participant_${spaceId}_${accountId}`;
-	};
-
-	getAccountFromParticipantId (id: string) {
-		const a = String(id || '').split('_');
-		return a.length ? a[a.length - 1] : '';
-	};
-
-	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
-	};
-
-	getParticipant (id?: string) {
-		const { space } = commonStore;
-		const { account } = authStore;
-
-		if (!account) {
-			return null;
-		};
-
-		const object = detailStore.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
-		return object._empty_ ? null : object;
-	};
-
-	getMyParticipant (spaceId?: string) {
-		const { account } = authStore;
-		const { space } = commonStore;
-
-		if (!account) {
-			return null;
-		};
-
-		const object = detailStore.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
-		return object._empty_ ? null : object;
-	};
-
-	canParticipantWrite (spaceId?: string): boolean {
-		const participant = this.getMyParticipant(spaceId);
-		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
-	};
-
-	isSpaceOwner (spaceId?: string): boolean {
-		const participant = this.getMyParticipant(spaceId || commonStore.space);
-		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
-	};
-
-	getGraph () {
-		return { 
-			id: I.HomePredefinedId.Graph, 
-			name: translate('commonGraph'), 
-			iconEmoji: ':earth_americas:',
-			layout: I.ObjectLayout.Graph,
-		};
-	};
-
-	getLastOpened () {
-		return { 
-			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'),
-		};
-	};
 
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
@@ -256,14 +138,14 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => popupStore.open('page', param), Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), popupStore.getTimeout());
 	};
 
 	openConfig (object: any) {
 		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
 	};
 
-	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
+	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
 		details = details || {};
@@ -284,8 +166,13 @@ class UtilObject {
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
-			if (!message.error.code && callBack) {
-				callBack(message);
+			if (!message.error.code) {
+				if (callBack) {
+					callBack(message);
+				};
+
+				const object = message.details;
+				analytics.createObject(object.type, object.layout, route, message.middleTime);
 			};
 		});
 	};

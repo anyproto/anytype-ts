@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -240,7 +240,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
@@ -390,7 +390,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
 		const object = detailStore.get(rootId, blockId);
-		const details = data.details || {};
+
+		let details = data.details || {};
 
 		if (!noClose) {
 			close();
@@ -455,8 +456,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				UtilObject.create('', '', { name: filter, type: commonStore.type, ...details }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-					UtilObject.getById(message.targetId, object => process(object, true));
+				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+				details = { name: filter, type: commonStore.type, ...details };
+
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Search', (message: any) => {
+					process(message.details, true);
 					close();
 				});
 			};

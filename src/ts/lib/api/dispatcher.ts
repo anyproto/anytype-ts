@@ -6,7 +6,7 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
-import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -167,6 +167,8 @@ class Dispatcher {
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		const isMainWindow = windowId === 1;
+		const debugEvent = config.flagsMw.event;
+		const debugJson = config.flagsMw.json;
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -175,6 +177,10 @@ class Dispatcher {
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
 		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
+			if (!debugEvent) {
+				return;
+			};
+
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
@@ -182,7 +188,7 @@ class Dispatcher {
 
 			if (data && data.toObject) {
 				const d = UtilCommon.objectClear(data.toObject());
-				console.log(config.debug.js ? JSON.stringify(d, null, 3) : d); 
+				console.log(debugJson ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
 
@@ -989,18 +995,16 @@ class Dispatcher {
 
 					switch (payload.type) {
 						case 'openObject': {
-							UtilObject.openAuto(payload.object);
+							const { object } = payload;
+
+							UtilObject.openAuto(object);
 							window.focus();
 
 							if (electron.focus) {
 								electron.focus();
 							};
 
-							analytics.event('CreateObject', {
-								route: 'Webclipper',
-								objectType: payload.object.type,
-								layout: payload.object.layout,
-							});
+							analytics.createObject(object.type, object.layout, 'Webclipper', 0);
 							break;
 						};
 					};
@@ -1075,7 +1079,7 @@ class Dispatcher {
 				UtilRouter.switchSpace(authStore.accountSpaceId, '');
 			};
 
-			const spaceview = UtilObject.getSpaceview(id);
+			const spaceview = UtilSpace.getSpaceview(id);
 			if (spaceview && !spaceview._empty_) {
 				Storage.deleteSpace(spaceview.targetSpaceId);
 			};
@@ -1192,7 +1196,9 @@ class Dispatcher {
 		type = type.replace(/^command_/, '');
 
 		const { config } = commonStore;
-		const debug = config.debug.mw;
+		const debugTime = config.flagsMw.time;
+		const debugRequest = config.flagsMw.request;
+		const debugJson = config.flagsMw.json;
 		const ct = UtilCommon.toCamelCase(type);
 		const t0 = performance.now();
 
@@ -1205,10 +1211,10 @@ class Dispatcher {
 		let t2 = 0;
 		let d = null;
 
-		if (debug && !SKIP_IDS.includes(type)) {
+		if (debugRequest && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = UtilCommon.objectClear(data.toObject());
-			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
+			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
@@ -1247,10 +1253,10 @@ class Dispatcher {
 					message.error.description = UtilCommon.translateError(type, message.error);
 				};
 
-				if (debug && !SKIP_IDS.includes(type)) {
-					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
+				if (debugRequest && !SKIP_IDS.includes(type)) {
+					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
 					d = UtilCommon.objectClear(response.toObject());
-					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
+					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 
 				if (message.event) {
@@ -1269,7 +1275,7 @@ class Dispatcher {
 				const renderTime = Math.ceil(t2 - t1);
 				const totalTime = middleTime + renderTime;
 
-				if (debug && !SKIP_IDS.includes(type)) {
+				if (debugTime && !SKIP_IDS.includes(type)) {
 					const times = [
 						'Middle:', middleTime + 'ms',
 						'Render:', renderTime + 'ms',
@@ -1286,8 +1292,8 @@ class Dispatcher {
 	checkLog (type: string) {
 		const { config } = commonStore;
 		const debugCommon = config.debug.mw;
-		const debugThread = config.debug.th;
-		const debugFile = config.debug.fi;
+		const debugThread = config.flagsMw.thread;
+		const debugFile = config.flagsMw.file;
 
 		let check = false;
 		if (debugCommon && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {

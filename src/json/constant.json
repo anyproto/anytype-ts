@@ -44,7 +44,7 @@
 
 	"delay": {
 		"menu": 160,
-		"popup": 310,
+		"popup": 160,
 		"toast": 2500,
 		"route": 250,
 		"keyboard": 500,

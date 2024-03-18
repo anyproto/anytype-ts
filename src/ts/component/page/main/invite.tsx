@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -51,13 +51,13 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 					return;
 				};
 
-				const space = UtilObject.getSpaceviewBySpaceId(message.spaceId);
+				const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
 				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
 					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), space.name) });
 					return;
 				};
 
-				UtilObject.openHome('route');
+				UtilSpace.openDashboard('route');
 				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), Constant.delay.popup);
 			});
 		};

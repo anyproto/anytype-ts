@@ -151,6 +151,8 @@ const getLinuxDirectory = () => {
 	return {
 		'Chrome': path.join(home, 'google-chrome'),
 		'Chromium': path.join(home, 'chromium'),
+		'Brave': path.join(home, 'BraveSoftware', 'Brave-Browser'),
+		'BraveFlatpak': path.join('.var', 'app', 'com.brave.Browser', 'config', 'BraveSoftware', 'Brave-Browser'),
 	};
 };
 

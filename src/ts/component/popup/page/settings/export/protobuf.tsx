@@ -34,7 +34,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 
 						<Select 
 							id="file-format"
-							value={this.data.json ? 'json' : ''}
+							value={this.data.json ? 'json' : 'pb'}
 							options={formatOptios}
 							onChange={(v: string) => {
 								this.data.json = v == 'json';

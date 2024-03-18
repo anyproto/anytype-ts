@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
-import { authStore, dbStore, popupStore, blockStore } from 'Store';
+import { I, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
+import { dbStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ITEM_WIDTH = 112;
@@ -23,7 +23,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	render () {
 		const { setHover } = this.props;
 		const items = this.getItems();
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 		const { spaceview } = blockStore;
 
 		const Item = (item) => {

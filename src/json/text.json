@@ -210,16 +210,19 @@
 	"electronMenuPrivacy": "Privacy Policy",
 	"electronMenuFlagInterface": "Interface",
 	"electronMenuFlagHidden": "Hidden objects",
-	"electronMenuFlagMiddleware": "Middleware",
-	"electronMenuFlagThreads": "Threads",
-	"electronMenuFlagFiles": "Files",
-	"electronMenuFlagAnalytics": "Analytics",
-	"electronMenuFlagJson": "JSON",
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
 	"electronMenuOpen": "Open Anytype",
 	"electronMenuLanguage": "Interface Language",
+	"electronMenuFlagAnalytics": "Analytics",
+	"electronMenuFlagMw": "Middleware",
+	"electronMenuFlagMwRequest": "Request/Response",
+	"electronMenuFlagMwEvent": "Common events",
+	"electronMenuFlagMwThread": "Sync events",
+	"electronMenuFlagMwFile": "File events",
+	"electronMenuFlagMwJson": "JSON logs",
+	"electronMenuFlagMwTime": "Time",
 
 	"month1": "January",
 	"month2": "February",
@@ -763,7 +766,7 @@
 
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
-	"popupSettingsSpaceShareInviteLinkLabel": "Send this link to invite others. Assign access rights upon their request approval.",
+	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
 	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
@@ -1835,29 +1838,29 @@
 	"notificationExportErrorTitle": "Export failed",
 	"notificationExportErrorText": "Sorry, but something went wrong during the export. Please try again, and let us know if it doesn't work.",
 
-	"notificationGallerySuccessTitle": "<b>\"%s\"</b> was installed",
-	"notificationGallerySuccessText": "Experience was successfully installed to the <b>\"%s\"</b> space. You can now open and start using it.",
+	"notificationGallerySuccessTitle": "<b>'%s'</b> was installed",
+	"notificationGallerySuccessText": "Experience was successfully installed to the <b>'%s'</b> space. You can now open and start using it.",
 	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! <b>\"%s\"</b> wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your internet connection and try again or post a report on forum.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
 
-	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>\"%s\"</b> space",
+	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
 
-	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>\"%s\"</b> space",
+	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>'%s'</b> space",
 
-	"notificationApproveSuccessText": "Your request to join <b>\"%s\"</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
 
-	"notificationRemoveSuccessText": "You were removed from <b>\"%s\"</b> space, or the space has been deleted by the owner",
+	"notificationRemoveSuccessText": "You were removed from <b>'%s'</b> space, or the space has been deleted by the owner",
 
-	"notificationDeclineSuccessText": "Your request to join the <b>\"%s\"</b> space has been declined.",
+	"notificationDeclineSuccessText": "Your request to join the <b>'%s'</b> space has been declined.",
 
-	"notificationPermissionSuccessText": "Your access rights were changed to <b>\"%s\"</b> in the <b>\"%s\"</b> space.",
+	"notificationPermissionSuccessText": "Your access rights were changed to <b>'%s'</b> in the <b>'%s'</b> space.",
 
 	"notificationButtonSpaceSwitch": "Go to Space",
 	"notificationButtonSpaceExport": "Export Space",
-	"notificationButtonSpaceDelete": "Go to Space",
+	"notificationButtonSpaceDelete": "Delete Space",
 	"notificationButtonRequest": "View request",
 
 	"participantStatus0": "Joining",

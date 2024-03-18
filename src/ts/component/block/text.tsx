@@ -1072,14 +1072,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	onMention () {
-		const { rootId, block } = this.props;
-		const win = $(window);
 		const range = this.getRange();
-		const el = $(`#block-${block.id}`);
 
 		if (!range) {
 			return;
 		};
+
+		const { rootId, block } = this.props;
+		const win = $(window);
+		const element = $(`#block-${block.id}`);
 
 		let value = this.getValue();
 		value = UtilCommon.stringCut(value, range.from - 1, range.from);
@@ -1089,7 +1090,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		raf(() => {
 			menuStore.open('blockMention', {
-				element: el,
+				element,
 				recalcRect: () => {
 					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1329,7 +1330,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		focus.set(block.id, range);
 
-		if (readonly) {
+		if (readonly || menuStore.isOpen('selectPasteUrl')) {
 			return;
 		};
 

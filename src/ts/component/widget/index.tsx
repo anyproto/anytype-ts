@@ -1,8 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -376,33 +377,26 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const callBack = (message) => {
+		const callBack = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const created = message.details || { id: message.targetId };
+			const object = message.details;
 
 			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setIsFavorite([ created.id ], true, 'widget');
+				Action.setIsFavorite([ object.id ], true, 'widget');
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ created.id ]);
+				C.ObjectCollectionAdd(object.id, [ object.id ]);
 			};
 
-			UtilObject.openAuto(created);
-
-			analytics.event('CreateObject', { 
-				objectType: typeKey, 
-				layout: created.layout,
-				route: 'Widget',
-				middleTime: message.middleTime,
-			});
+			UtilObject.openAuto(object);
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, 'Widget', callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};
@@ -412,7 +406,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return;
 		};
 
@@ -521,7 +515,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child.content;
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const templateType = dbStore.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
@@ -639,7 +633,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing || !UtilObject.canParticipantWrite()) {
+		if (!object || isEditing || !UtilSpace.canParticipantWrite()) {
 			return false;
 		};
 

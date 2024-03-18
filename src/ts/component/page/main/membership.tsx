@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, UtilCommon, UtilObject, UtilData, translate, keyboard } from 'Lib';
+import { I, UtilCommon, UtilSpace, UtilData, translate, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -47,7 +47,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 					return;
 				};
 
-				UtilObject.openHome('route');
+				UtilSpace.openDashboard('route');
 				window.setTimeout(() => {
 					popupStore.open('membership', {
 						onClose: () => {

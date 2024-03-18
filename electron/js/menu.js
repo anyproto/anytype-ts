@@ -23,6 +23,7 @@ class MenuManager {
 		const UpdateManager = require('./update.js');
 
 		config.debug = config.debug || {};
+		config.flagsMw = config.flagsMw || {};
 
 		const menuParam = [
 			{
@@ -167,14 +168,21 @@ class MenuManager {
 
 		const flags = { 
 			ui: Util.translate('electronMenuFlagInterface'), 
-			ho: Util.translate('electronMenuFlagHidden'), 
-			mw: Util.translate('electronMenuFlagMiddleware'), 
-			th: Util.translate('electronMenuFlagThreads'), 
-			fi: Util.translate('electronMenuFlagFiles'), 
-			an: Util.translate('electronMenuFlagAnalytics'), 
-			js: Util.translate('electronMenuFlagJson'),
+			hiddenObject: Util.translate('electronMenuFlagHidden'), 
+			analytics: Util.translate('electronMenuFlagAnalytics'),
 		};
+
+		const flagsMw = {
+			request: Util.translate('electronMenuFlagMwRequest'),
+			event: Util.translate('electronMenuFlagMwEvent'),
+			thread: Util.translate('electronMenuFlagMwThread'),
+			file: Util.translate('electronMenuFlagMwFile'),
+			time: Util.translate('electronMenuFlagMwTime'),
+			json: Util.translate('electronMenuFlagMwJson'),
+		};
+
 		const flagMenu = [];
+		const flagMwMenu = [];
 
 		for (const i in flags) {
 			flagMenu.push({
@@ -189,6 +197,22 @@ class MenuManager {
 				}
 			});
 		};
+
+		for (const i in flagsMw) {
+			flagMwMenu.push({
+				label: flagsMw[i], type: 'checkbox', checked: config.flagsMw[i],
+				click: () => {
+					config.flagsMw[i] = !config.flagsMw[i];
+					Api.setConfig(this.win, config);
+				}
+			});
+		};
+
+		flagMenu.push(Separator);
+		flagMenu.push({
+			label: Util.translate('electronMenuFlagMw'),
+			submenu: flagMwMenu,
+		});
 
 		menuParam.push({
 			label: Util.translate('electronMenuDebug'),
@@ -303,13 +327,13 @@ class MenuManager {
 	};
 
 	winShow () {
-		if (this.win) {
+		if (this.win && !this.win.isDestroyed()) {
 			this.win.show();
 		};
 	};
 
 	winHide () {
-		if (this.win) {
+		if (this.win && !this.win.isDestroyed()) {
 			this.win.hide();
 		};
 	};

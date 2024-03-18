@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard } from 'Lib';
+import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
 import { detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -402,7 +402,7 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return false;
 		};
 

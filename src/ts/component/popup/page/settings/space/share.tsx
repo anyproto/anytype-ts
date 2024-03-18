@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject, UtilData, Preview, Action } from 'Lib';
 import { observer } from 'mobx-react';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
 import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -48,8 +48,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	render () {
 		const { error, cid, key } = this.state;
-		const isShared = cid && key;
-		const participant = UtilObject.getParticipant();
+		const hasLink = cid && key;
+		const space = UtilSpace.getSpaceview();
+		const isShared = space.spaceAccessType == I.SpaceType.Shared;
+		const participant = UtilSpace.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
@@ -91,7 +93,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
 			if (isOwner) {
-				button = <Label text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
+				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
 			} else {
 				button = (
 					<Select
@@ -145,9 +147,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{isShared ? (
-							<Icon id="button-more-space" className="more" onClick={this.onMoreSpace} />
-						) : ''}
+						{isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -155,11 +155,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
-					{isShared ? (
+					{hasLink ? (
 						<React.Fragment>
 							<div className="inviteLinkWrapper">
 								<div className="inputWrapper">
-									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
+									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
 									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 								</div>
 								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
@@ -256,7 +256,23 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
 		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
-		return records.sort(UtilData.sortByOwner);
+		return records.sort((c1, c2) => {
+			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
+			const isJoining2 = c2.status === I.ParticipantStatus.Joining;
+			const isLeaving1 = c1.status === I.ParticipantStatus.Removing;
+			const isLeaving2 = c2.status === I.ParticipantStatus.Removing;
+			const isOwner1 = c1.permissions === I.ParticipantPermissions.Owner;
+			const isOwner2 = c2.permissions === I.ParticipantPermissions.Owner;
+
+			if (isJoining1 && !isJoining2) return -1;
+			if (!isJoining1 && isJoining2) return 1;
+			if (isLeaving1 && !isLeaving2) return -1;
+			if (!isLeaving1 && isLeaving2) return 1;
+			if (isOwner1 && !isOwner2) return -1;
+			if (!isOwner1 && isOwner2) return 1;
+
+			return 0;
+		});
 	};
 
 	getLink () {

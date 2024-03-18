@@ -50,7 +50,6 @@ class Pin extends React.Component<Props, State> {
 
 	render () {
 		const { pinLength } = this.props;
-		const { index } = this.state;
 
 		return (
 			<div className="pin" onClick={this.onClick}>
@@ -59,6 +58,7 @@ class Pin extends React.Component<Props, State> {
 						ref={ref => this.inputRefs[i] = ref} 
 						maxLength={1} 
 						key={i} 
+						onPaste={e => this.onPaste(e, i)}
 						onFocus={() => this.onInputFocus(i)} 
 						onKeyUp={this.onInputKeyUp} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
@@ -175,6 +175,24 @@ class Pin extends React.Component<Props, State> {
 		};
 
 		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+	};
+
+	onPaste (e, index: number) {
+		e.preventDefault();
+
+		const { pinLength } = this.props;
+		const data = e.clipboardData;
+		const value = String(data.getData('text/plain') || '').split('');
+
+		for (let i = index; i < pinLength; i++) {
+			const input = this.inputRefs[i];
+			const char = value[i - index] || '';
+
+			input.setValue(char);
+		};
+
+		this.inputRefs[pinLength - 1].focus();
+		this.check();
 	};
 
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
+import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate, UtilSpace } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -135,7 +135,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};

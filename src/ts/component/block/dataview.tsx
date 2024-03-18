@@ -677,12 +677,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
-				analytics.event('CreateObject', { 
-					route: this.analyticsRoute(),
-					objectType: object.type,
-					layout: object.layout,
-					middleTime: message.middleTime,
-				});
+				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
 			};
 		});
 	};
@@ -773,17 +768,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateId: this.getDefaultTemplateId(),
 				route,
 				onTypeChange: (id) => {
-					if (!view || (id == this.getTypeId())) {
-						return;
+					if (id != this.getTypeId()) {
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+						analytics.event('DefaultTypeChange', { route });
 					};
-
-					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-					analytics.event('DefaultTypeChange', { route });
 				},
 				onSetDefault: (item) => {
-					if (view) {
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
-					};
+					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
 					if (!view) {
@@ -801,8 +792,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
-
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
 						menuContext.close();
 						analytics.event('ChangeDefaultTemplate', { route });

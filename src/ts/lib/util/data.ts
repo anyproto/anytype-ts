@@ -1,5 +1,5 @@
-import { analytics, C, dispatcher, focus, I, keyboard, Mark, Storage, translate, UtilCommon, UtilObject, UtilRouter } from 'Lib';
-import { authStore, blockStore, commonStore, dbStore, detailStore, notificationStore } from 'Store';
+import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -266,7 +266,7 @@ class UtilData {
 						if (redirect) {
 							UtilRouter.go(redirect, routeParam);
 						} else {
-							UtilObject.openHome('route', routeParam);
+							UtilSpace.openDashboard('route', routeParam);
 						};
 
 						commonStore.redirectSet('');
@@ -503,7 +503,7 @@ class UtilData {
 
 		items = items.filter(it => it);
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
@@ -764,7 +764,7 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
@@ -851,7 +851,7 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
@@ -889,7 +889,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const title = [];
 
 		if (name) {
@@ -927,17 +927,20 @@ class UtilData {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		const type = dbStore.getTypeById(typeId);
-		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
+
+		if (!type) {
+			return;
 		};
+		
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		if (!ids.length) {
-			ids = [ blockId ];
+			ids.push(blockId);
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
-			analytics.event('CreateObject', { route, objectType: typeId });
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, (message: any) => {
+			if (!message.error.code) {
+				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
+			};
 		});
 	};
 

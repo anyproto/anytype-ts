@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilObject, translate } from 'Lib';
+import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilSpace, translate } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -273,7 +273,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },

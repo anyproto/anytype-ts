@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -25,7 +25,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { name, icon, spaceId } = data;
-		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
+		const space = UtilSpace.getSpaceviewBySpaceId(spaceId);
 
 		if (!space) {
 			return null;

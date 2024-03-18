@@ -661,7 +661,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openAsObject': {
-				UtilObject.openPopup(detailStore.get(rootId, targetObjectId));
+				UtilObject.openConfig(detailStore.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {
@@ -673,7 +673,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openDataviewFullscreen': {
-				UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
+				UtilObject.openConfig({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				analytics.event('InlineSetOpenFullscreen');
 				break;
 			};

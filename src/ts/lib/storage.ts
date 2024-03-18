@@ -148,6 +148,7 @@ class Storage {
 		try {
 			obj[key] = obj[key] || {};
 			obj[key][rootId] = Number(scroll) || 0;
+
 			this.set('scroll', obj, true);
 		} catch (e) { /**/ };
 		return obj;
