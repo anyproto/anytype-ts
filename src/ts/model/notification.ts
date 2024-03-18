@@ -1,4 +1,4 @@
-import { I, UtilCommon, UtilObject, translate } from 'Lib';
+import { I, UtilCommon, UtilSpace, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 import Errors from 'json/error.json';
 
@@ -32,7 +32,7 @@ class Notification implements I.Notification {
 
 	fillContent () {
 		const { importType, errorCode, name, spaceId, identityName, permissions } = this.payload;
-		const space = spaceId ? UtilObject.getSpaceviewBySpaceId(spaceId) : null;
+		const space = spaceId ? UtilSpace.getSpaceviewBySpaceId(spaceId) : null;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 

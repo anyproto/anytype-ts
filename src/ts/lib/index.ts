@@ -12,6 +12,7 @@ import UtilData from './util/data';
 import UtilSmile from './util/smile';
 import UtilFile from './util/file';
 import UtilObject from './util/object';
+import UtilSpace from './util/space';
 import UtilMenu from './util/menu';
 import UtilRouter from './util/router';
 import UtilDate from './util/date';
@@ -69,6 +70,7 @@ export {
 	UtilSmile,
 	UtilFile,
 	UtilObject,
+	UtilSpace,
 	UtilMenu,
 	UtilRouter,
 	UtilDate,

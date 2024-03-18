@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate, UtilCommon } from 'Lib';
+import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -43,7 +43,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
-		const hasMore = UtilObject.canParticipantWrite();
+		const hasMore = UtilSpace.canParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;

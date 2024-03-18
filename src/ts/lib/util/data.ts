@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -264,7 +264,7 @@ class UtilData {
 						if (redirect) {
 							UtilRouter.go(redirect, routeParam);
 						} else {
-							UtilObject.openHome('route', routeParam);
+							UtilSpace.openDashboard('route', routeParam);
 						};
 
 						commonStore.redirectSet('');
@@ -887,7 +887,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const title = [];
 
 		if (name) {

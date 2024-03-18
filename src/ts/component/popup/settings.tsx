@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilObject, analytics, Action, keyboard, translate, Preview } from 'Lib';
+import { I, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 
 import PageAccount from './page/settings/account';
@@ -98,7 +98,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { page } = data;
 		const { loading } = this.state;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 

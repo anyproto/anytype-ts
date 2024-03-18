@@ -1,12 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, translate } from 'Lib';
+import { I, UtilObject, UtilSpace, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
-import Constant from 'json/constant.json';
 
 const HEIGHT = 62;
 
@@ -24,9 +22,9 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	render () {
-		const members = UtilObject.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const length = members.length;
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -110,7 +108,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	updateCache () {
-		const members = UtilObject.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,

@@ -4,8 +4,8 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Theme from 'json/theme.json';
 
@@ -451,7 +451,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return;
 		};
 

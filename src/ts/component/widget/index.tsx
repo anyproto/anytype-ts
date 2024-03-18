@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -406,7 +406,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return;
 		};
 
@@ -515,7 +515,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child.content;
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const templateType = dbStore.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
@@ -633,7 +633,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing || !UtilObject.canParticipantWrite()) {
+		if (!object || isEditing || !UtilSpace.canParticipantWrite()) {
 			return false;
 		};
 

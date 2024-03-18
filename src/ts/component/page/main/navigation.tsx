@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, Key, focus, translate } from 'Lib';
-import { blockStore, popupStore, commonStore } from 'Store';
+import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
+import { popupStore, commonStore } from 'Store';
 
 interface State {
 	loading: boolean;
@@ -474,7 +474,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		let root = rootId ? rootId : match.params.id;
 		if (root == I.HomePredefinedId.Graph) {
-			root = UtilObject.getLastOpened()?.id;
+			root = UtilSpace.getLastOpened()?.id;
 		};
 		return root;
 	};

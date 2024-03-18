@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, UtilCommon, Action, UtilObject, translate, UtilRouter } from 'Lib';
+import { I, C, UtilCommon, Action, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -99,7 +99,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};

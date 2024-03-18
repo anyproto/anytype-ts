@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -177,7 +177,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 
 		return id || home?.id;
 	};
@@ -248,7 +248,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	dashboardOnboardingCheck () {
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 

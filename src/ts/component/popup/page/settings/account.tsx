@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
-import { authStore, detailStore, blockStore, menuStore, commonStore } from 'Store';
+import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
+import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -37,7 +37,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { error, loading } = this.state;
 		const { account } = authStore;
-		const profile = UtilObject.getProfile();
+		const profile = UtilSpace.getProfile();
 	
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
