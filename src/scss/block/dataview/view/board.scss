@@ -84,7 +84,6 @@
 
 				.cellContent.isName {
 					.name { @include clamp2; white-space: normal; }
-					.input.name { padding: 0; height: unset; }
 				}
 
 				.cellContent.c-longText {
