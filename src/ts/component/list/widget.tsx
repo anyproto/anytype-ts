@@ -444,7 +444,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, Constant.delay.menu);
+		}, menuStore.getTimeout());
 	};
 
 });

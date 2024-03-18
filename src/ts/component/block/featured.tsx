@@ -225,7 +225,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			window.setTimeout(() => {
 				this.checkType();
 				this.checkSource();
-			}, Constant.delay.menu);
+			}, menuStore.getTimeout());
 		};
 
 		this.init();

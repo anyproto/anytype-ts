@@ -996,9 +996,7 @@ class Keyboard {
 
 		switch (type) {
 			case I.Source.Popup:
-				window.setTimeout(() => {
-					popupStore.open(data.id, data.param);
-				}, Constant.delay.popup);
+				window.setTimeout(() => popupStore.open(data.id, data.param), popupStore.getTimeout());
 				break;
 		};
 

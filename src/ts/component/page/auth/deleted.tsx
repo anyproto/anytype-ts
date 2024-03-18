@@ -107,7 +107,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => Survey.check(I.SurveyType.Delete), Constant.delay.popup);
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), popupStore.getTimeout());
 	};
 
 	onRemove () {

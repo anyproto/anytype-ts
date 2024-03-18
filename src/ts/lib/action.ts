@@ -378,7 +378,7 @@ class Action {
 
 						UtilData.onInfo(message.account.info);
 						UtilData.onAuth({ routeParam: { animate: true } }, () => {
-							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, Constant.delay.popup);
+							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, popupStore.getTimeout());
 							blockStore.closeRecentWidgets();
 						});
 					});
@@ -448,7 +448,7 @@ class Action {
 									type: I.ObjectManagerPopup.Favorites,
 								} 
 							});
-						}, Constant.delay.popup + 10);
+						}, popupStore.getTimeout() + 10);
 					};
 
 					analytics.event('Import', { middleTime: message.middleTime, type });

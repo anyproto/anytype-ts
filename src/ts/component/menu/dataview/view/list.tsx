@@ -241,7 +241,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			close();
-			window.setTimeout(() => onViewSwitch(view), Constant.delay.menu);
+			window.setTimeout(() => onViewSwitch(view), menuStore.getTimeout());
 
 			analytics.event('AddView', {
 				type: view.type,

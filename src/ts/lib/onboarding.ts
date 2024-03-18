@@ -1,7 +1,6 @@
 import { I, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
-import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { menuStore, popupStore } from 'Store';
 
 class Onboarding {
 
@@ -18,7 +17,7 @@ class Onboarding {
 		};
 
 		const { items } = section;
-		const t = isPopup ? Constant.delay.popup : 0;
+		const t = isPopup ? popupStore.getTimeout() : 0;
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {

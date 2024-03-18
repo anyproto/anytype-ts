@@ -629,7 +629,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							if (param.type == I.BlockType.Dataview) {
 								win.trigger(`setDataviewSource.${newBlockId}`);
 							};
-						}, Constant.delay.menu);
+						}, menuStore.getTimeout());
 					});
 				};
 			};
