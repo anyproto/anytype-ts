@@ -171,7 +171,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			return !config.debug.ho ? !it.isHidden : true;
+			return !config.debug.hiddenObject ? !it.isHidden : true;
 		});
 
 		const sections = [ 

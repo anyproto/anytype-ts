@@ -442,7 +442,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		let ret = !it.isDeleted;
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			ret = ret && !it.isHidden;
 		};
 		return ret;
