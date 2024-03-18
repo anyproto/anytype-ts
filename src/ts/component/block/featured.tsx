@@ -146,9 +146,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 					const relation = dbStore.getRelationByKey(relationKey);
+					const value = object[relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
-					const check = Relation.checkRelationValue(relation, object[relationKey]);
+					const check = Relation.checkRelationValue(relation, value);
 
 					if (!check && !canEdit) {
 						return null;
@@ -159,7 +160,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					if ([ 'links', 'backlinks' ].includes(relationKey)) {
-						const options = object[relationKey].map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+						const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
 						const l = options.length;
 
 						if (!l) {
