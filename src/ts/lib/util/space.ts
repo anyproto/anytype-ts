@@ -20,8 +20,8 @@ class UtilSpace {
 			return;
 		};
 
-		if (this[fn]) {
-			this[fn](home, param);
+		if (UtilObject[fn]) {
+			UtilObject[fn](home, param);
 		};
 	};
 
