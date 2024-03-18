@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -544,8 +544,8 @@ class Action {
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const { accountSpaceId } = authStore;
-		const space = UtilObject.getSpaceview();
-		const deleted = UtilObject.getSpaceviewBySpaceId(id);
+		const space = UtilSpace.getSpaceview();
+		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, C, UtilObject, UtilRouter, translate, Action, UtilMenu } from 'Lib';
-import { popupStore, dbStore, detailStore, menuStore, authStore } from 'Store';
+import { I, UtilSpace, UtilRouter, translate, UtilMenu } from 'Lib';
+import { dbStore, detailStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
@@ -18,7 +18,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 		const Row = (space: any) => {
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const participant = UtilObject.getMyParticipant(space.targetSpaceId);
+			const participant = UtilSpace.getMyParticipant(space.targetSpaceId);
 			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
 			const permissions = participant ? translate(`participantPermissions${participant.permissions}`) : '';
 			const hasMenu = space.targetSpaceId != accountSpaceId;

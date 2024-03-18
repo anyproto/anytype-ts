@@ -1,4 +1,4 @@
-import { I, Onboarding, keyboard, translate, UtilObject } from 'Lib';
+import { I, Onboarding, keyboard, translate, UtilSpace } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -176,7 +176,7 @@ export default {
     }),
 
     dashboard: () => {
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 
 		return {
 			category: translate('onboardingDashboard'),
@@ -417,7 +417,7 @@ export default {
 	),
 
 	quickCapture: () => {
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 		if (!canWrite) {
 			return;
 		};

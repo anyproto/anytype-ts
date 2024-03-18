@@ -5,7 +5,10 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { 
+	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
+	Renderer, sidebar, UtilSpace 
+} from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -248,7 +251,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};
@@ -2265,7 +2268,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return true;
 		};
 
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace. canParticipantWrite()) {
 			return true;
 		};
 

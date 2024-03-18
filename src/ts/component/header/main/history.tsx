@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { C, UtilDate, UtilObject, I, translate, analytics } from 'Lib';
+import { C, UtilDate, UtilObject, I, translate, analytics, UtilSpace } from 'Lib';
 import { detailStore } from 'Store';
 
 interface State {
@@ -23,7 +23,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	render () {
 		const { version } = this.state;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 
 		return (
 			<React.Fragment>

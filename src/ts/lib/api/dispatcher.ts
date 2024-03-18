@@ -6,7 +6,7 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
-import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage } from 'Lib';
+import { UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 import Constant from 'json/constant.json';
@@ -1079,7 +1079,7 @@ class Dispatcher {
 				UtilRouter.switchSpace(authStore.accountSpaceId, '');
 			};
 
-			const spaceview = UtilObject.getSpaceview(id);
+			const spaceview = UtilSpace.getSpaceview(id);
 			if (spaceview && !spaceview._empty_) {
 				Storage.deleteSpace(spaceview.targetSpaceId);
 			};

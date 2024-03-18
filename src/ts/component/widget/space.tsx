@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, UtilObject, UtilCommon, translate } from 'Lib';
+import { I, C, UtilSpace, UtilCommon, translate } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
@@ -16,12 +16,12 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	render (): React.ReactNode {
-		const space = UtilObject.getSpaceview();
-		const canWrite = UtilObject.canParticipantWrite();
-		const members = UtilObject.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ]);
+		const space = UtilSpace.getSpaceview();
+		const canWrite = UtilSpace. canParticipantWrite();
+		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ]);
 		const memberCnt = members.filter(it => it.status == I.ParticipantStatus.Active).length;
 		const requestCnt = members.filter(it => it.status == I.ParticipantStatus.Joining).length;
-		const isSpaceOwner = UtilObject.isSpaceOwner();
+		const isSpaceOwner = UtilSpace.isSpaceOwner();
 
 		let status = '';
 		if (space && !space._empty_) {

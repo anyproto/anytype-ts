@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -46,7 +46,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
-				UtilObject.openHome('route');
+				UtilSpace.openDashboard('route');
 				window.setTimeout(() => {
 					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
 				}, Constant.delay.popup);

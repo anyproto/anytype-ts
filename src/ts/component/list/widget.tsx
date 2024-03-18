@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -47,7 +47,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 
 		let content = null;
 
@@ -325,7 +325,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilObject.canParticipantWrite()) {
+		if (previewId || !UtilSpace. canParticipantWrite()) {
 			return;
 		};
 

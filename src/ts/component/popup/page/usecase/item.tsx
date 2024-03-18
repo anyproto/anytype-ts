@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilObject, analytics } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
@@ -179,7 +179,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		};
 
 		list = list.concat(dbStore.getSpaces()
-			.filter(it => UtilObject.canParticipantWrite(it.targetSpaceId))
+			.filter(it => UtilSpace. canParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, iconSize: 48, object: it })));
 		
 		return list;

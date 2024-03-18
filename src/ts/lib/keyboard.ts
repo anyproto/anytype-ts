@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
+import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -123,7 +123,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 
 		this.pressed.push(key);
 
@@ -236,7 +236,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 			});
 
@@ -350,7 +350,7 @@ class Keyboard {
 			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				UtilObject.openHome('route');
+				UtilSpace.openDashboard('route');
 				return;
 			};
 

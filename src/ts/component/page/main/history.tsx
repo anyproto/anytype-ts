@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -82,7 +82,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const Version = (item: any) => {
 			const withChildren = item.list && item.list.length;
-			const author = UtilObject.getParticipant(item.authorId);
+			const author = UtilSpace.getParticipant(item.authorId);
 
 			return (
 				<React.Fragment>
@@ -376,7 +376,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};

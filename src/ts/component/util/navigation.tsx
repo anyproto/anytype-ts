@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -25,12 +25,12 @@ const Navigation = observer(class Navigation extends React.Component {
 		const { navigationMenu } = commonStore;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 		const isWin = UtilCommon.isPlatformWindows();
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace. canParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {

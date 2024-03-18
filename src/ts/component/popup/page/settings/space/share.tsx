@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilObject, UtilData, Preview, Action } from 'Lib';
 import { observer } from 'mobx-react';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
 import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -49,9 +49,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	render () {
 		const { error, cid, key } = this.state;
 		const hasLink = cid && key;
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
