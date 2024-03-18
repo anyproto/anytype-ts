@@ -21,7 +21,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ]);
 		const memberCnt = members.filter(it => it.status == I.ParticipantStatus.Active).length;
 		const requestCnt = members.filter(it => it.status == I.ParticipantStatus.Joining).length;
-		const isSpaceOwner = UtilSpace.isSpaceOwner();
+		const isSpaceOwner = UtilSpace.isOwner();
 
 		let status = '';
 		if (space && !space._empty_) {

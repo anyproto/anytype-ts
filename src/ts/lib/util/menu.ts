@@ -615,7 +615,7 @@ class UtilMenu {
 		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
 		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
-		if (UtilSpace.isSpaceOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
+		if (UtilSpace.isOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 

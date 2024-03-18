@@ -124,7 +124,7 @@ class UtilSpace {
 		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
 	};
 
-	isSpaceOwner (spaceId?: string): boolean {
+	isOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
 		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
 	};
