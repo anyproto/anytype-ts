@@ -100,6 +100,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
+		const { membership } = authStore;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const participant = UtilSpace.getParticipant();
 		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
@@ -151,12 +152,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			};
 
 			if (action.id == 'membership') {
-				const tiers = UtilData.getMembershipTiersMap();
-				const { membership } = authStore;
-				const tierItem = tiers[membership.tier];
-
 				if (membership.tier) {
-					caption = <div className="caption">{translate(`popupSettingsMembershipTitle${tierItem.idx}`)}</div>;
+					const tierItem = UtilData.getMembershipTier(membership.tier);
+					if (tierItem) {
+						caption = <div className="caption">{translate(`popupSettingsMembershipTitle${tierItem.idx}`)}</div>;
+					};
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 				};

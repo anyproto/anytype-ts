@@ -32,9 +32,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { data } = param;
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
-
-		const tiers = UtilData.getMembershipTiersMap();
-		const tierItem = tiers[tier];
+		const tierItem = UtilData.getMembershipTier(tier);
 		const suffix = tierItem.idx;
 		const cn = [ 'sides', `tier${suffix}` ];
 

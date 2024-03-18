@@ -1034,8 +1034,9 @@ class UtilData {
 		];
 	};
 
-	getMembershipTiersMap () {
-		return UtilCommon.mapToObject(this.getMembershipTiers(), 'id');
+	getMembershipTier (id: I.MembershipTier) {
+		const tiers = this.getMembershipTiers();
+		return tiers.find(it => it.id == id) || {};
 	};
 
 	isLocalOnly (): boolean {
