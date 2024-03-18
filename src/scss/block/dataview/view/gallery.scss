@@ -97,6 +97,11 @@
 			.cellContent.isName {
 				.input.name { padding: 0; height: unset; }
 			}
+
+			.cellContent.isEditing.isName {
+				.iconObject { position: relative; }
+				.input.name { text-indent: 0px; }
+			}
 		}
 	}
 
