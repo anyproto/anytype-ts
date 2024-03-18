@@ -17,7 +17,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	render (): React.ReactNode {
 		const space = UtilSpace.getSpaceview();
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ]);
 		const memberCnt = members.filter(it => it.status == I.ParticipantStatus.Active).length;
 		const requestCnt = members.filter(it => it.status == I.ParticipantStatus.Joining).length;

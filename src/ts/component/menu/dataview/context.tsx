@@ -84,7 +84,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };

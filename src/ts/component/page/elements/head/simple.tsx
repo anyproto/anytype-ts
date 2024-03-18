@@ -42,7 +42,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);

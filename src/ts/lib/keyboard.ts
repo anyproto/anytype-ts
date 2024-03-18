@@ -123,7 +123,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		this.pressed.push(key);
 

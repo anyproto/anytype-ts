@@ -44,7 +44,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const requestCnt = this.getRequestCnt();
 		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
 		const canMembers = isAllowed && !isOwner && isShared;
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const usageCn = [ 'item' ];
 

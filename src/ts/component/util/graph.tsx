@@ -451,7 +451,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilSpace. canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return;
 		};
 

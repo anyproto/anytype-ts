@@ -44,7 +44,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
-		const hasMore = UtilSpace. canParticipantWrite();
+		const hasMore = UtilSpace.canParticipantWrite();
 
 		if (isSection) {
 			return (

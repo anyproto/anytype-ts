@@ -176,7 +176,7 @@ export default {
     }),
 
     dashboard: () => {
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		return {
 			category: translate('onboardingDashboard'),
@@ -417,7 +417,7 @@ export default {
 	),
 
 	quickCapture: () => {
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		if (!canWrite) {
 			return;
 		};

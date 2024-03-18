@@ -2268,7 +2268,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return true;
 		};
 
-		if (!UtilSpace. canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return true;
 		};
 

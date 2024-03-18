@@ -43,7 +43,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
-		const hasMore = UtilSpace. canParticipantWrite();
+		const hasMore = UtilSpace.canParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;

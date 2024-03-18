@@ -413,7 +413,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = Constant.default.interfaceLang;
-		const canWrite = UtilSpace. canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let name = '';
 		if (filter) {
