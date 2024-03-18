@@ -989,6 +989,10 @@ class UtilData {
 		return ret;
 	};
 
+	isAnytypeNetwork (): boolean {
+		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+	};
+
 	isLocalOnly (): boolean {
 		return authStore.account?.info?.networkId == '';
 	};

@@ -52,6 +52,7 @@ class CommonStore {
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
+	public isOnlineValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -99,6 +100,7 @@ class CommonStore {
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
+			isOnlineValue: observable,
 			spaceId: observable,
             config: computed,
             progress: computed,
@@ -109,6 +111,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			space: computed,
+			isOnline: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -122,6 +125,7 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
+			isOnlineSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
@@ -226,6 +230,10 @@ class CommonStore {
 
 	get dataPath (): string {
 		return String(this.dataPathValue || '');
+	};
+
+	get isOnline (): boolean {
+		return Boolean(this.isOnlineValue);
 	};
 
     gatewaySet (v: string) {
@@ -421,6 +429,10 @@ class CommonStore {
 		v = Number(v);
 		this.navigationMenuValue = v;
 		Storage.set('navigationMenu', v);
+	};
+
+	isOnlineSet (v: boolean) {
+		this.isOnlineValue = Boolean(v);
 	};
 
 	configSet (config: any, force: boolean) {

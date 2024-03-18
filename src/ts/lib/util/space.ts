@@ -129,6 +129,10 @@ class UtilSpace {
 		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
 	};
 
+	isShareActive () {
+		return commonStore.isOnline && UtilData.isAnytypeNetwork();
+	};
+
 };
 
 export default new UtilSpace();
