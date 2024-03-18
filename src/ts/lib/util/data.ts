@@ -1039,6 +1039,10 @@ class UtilData {
 		return tiers.find(it => it.id == id) || {};
 	};
 
+	isAnytypeNetwork (): boolean {
+		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+	};
+
 	isLocalOnly (): boolean {
 		return authStore.account?.info?.networkId == '';
 	};

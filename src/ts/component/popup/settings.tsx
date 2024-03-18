@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
 import { popupStore, commonStore, authStore } from 'Store';
+import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -259,6 +260,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { isSpace } = data;
 		const { config } = commonStore;
+		const { account } = authStore;
+		const { info } = account;
 
 		if (isSpace) {
 			return [
@@ -284,10 +287,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (config.experimental) {
+			if (UtilData.isAnytypeNetwork() && config.experimental) {
 				settingsVoid.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembership') })
 			};
-			
+
 			return [
 				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle') } ] },
 				{
