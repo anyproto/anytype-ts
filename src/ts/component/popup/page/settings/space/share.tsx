@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
 import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
@@ -9,6 +9,7 @@ import Head from '../head';
 import Constant from 'json/constant.json';
 
 interface State {
+	isLoading: boolean;
 	error: string;
 	cid: string;
 	key: string;
@@ -27,6 +28,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refCopy: any = null;
 	refButton: any = null;
 	state = {
+		isLoading: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -47,7 +49,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	render () {
-		const { error, cid, key } = this.state;
+		const { isLoading, error, cid, key } = this.state;
+
+		if (isLoading) {
+			return <Loader id="loader" />;
+		};
+
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
@@ -218,8 +225,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	componentDidMount () {
 		this.updateCache();
+		this.setState({ isLoading: true });
 
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			this.setState({ isLoading: false });
+
 			if (!message.error.code) {
 				this.setInvite(message.inviteCid, message.inviteKey);
 			};
