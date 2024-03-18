@@ -26,8 +26,8 @@ export interface Membership {
 };
 
 export interface MembershipTierItem {
-	id: MembershipTier;
-	idx: number;
+	id?: MembershipTier;
+	idx?: number;
 	price?: MembershipPrice;
 	period?: MembershipPeriod;
 	minNameLength?: number;

@@ -1034,7 +1034,7 @@ class UtilData {
 		];
 	};
 
-	getMembershipTier (id: I.MembershipTier) {
+	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
 		const tiers = this.getMembershipTiers();
 		return tiers.find(it => it.id == id) || {};
 	};
