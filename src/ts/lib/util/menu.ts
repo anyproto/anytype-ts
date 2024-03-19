@@ -612,6 +612,7 @@ class UtilMenu {
 		};
 
 		const options: any[] = [];
+		const isOwner = UtilSpace.isOwner(targetSpaceId);
 		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
 		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
@@ -626,7 +627,7 @@ class UtilMenu {
 		if (isJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
-			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
 		};
 
 		menuStore.open('select', {
