@@ -490,12 +490,8 @@ export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.
 };
 
 export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
-	const data = response.getData();
-
-	console.log(data);
-
 	return {
-		//membership: Mapper.From.Membership(response.getData()),
+		membership: Mapper.From.Membership(response.getData()),
 	};
 };
 
