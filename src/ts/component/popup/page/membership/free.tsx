@@ -113,7 +113,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		this.refButton?.setLoading(true);
 
-		C.PaymentsSubscriptionGetVerificationEmail(this.email, this.refCheckbox?.getValue(), (message) => {
+		C.MembershipGetVerificationEmail(this.email, this.refCheckbox?.getValue(), (message) => {
 			this.refButton?.setLoading(false);
 
 			if (!message.error.code) {
@@ -126,7 +126,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	onConfirmEmailCode () {
 		const code = this.refCode.getValue();
 
-		C.PaymentsSubscriptionVerifyEmailCode(code, (message) => {
+		C.MembershipVerifyEmailCode(code, (message) => {
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
 				return;

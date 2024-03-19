@@ -123,7 +123,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		refButton.setLoading(true);
 
-		C.PaymentsSubscriptionGetPaymentUrl(tier, method, name, (message) => {
+		C.MembershipGetPaymentUrl(tier, method, name, (message) => {
 			refButton.setLoading(false);
 
 			if (message.error.code) {

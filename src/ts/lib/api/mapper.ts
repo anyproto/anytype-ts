@@ -576,6 +576,20 @@ export const Mapper = {
 			};
 		},
 
+		Membership: (obj: Model.Membership) => {
+			return {
+				tier: obj.getTier(),
+				status: obj.getStatus(),
+				dateStarted: obj.getDatestarted(),
+				dateEnds: obj.getDateends(),
+				isAutoRenew: obj.getIsautorenew(),
+				paymentMethod: obj.getPaymentmethod(),
+				requestedAnyName: obj.getRequestedanyname(),
+				userEmail: obj.getUseremail(),
+				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
+			};
+		},
+
     },
 
 	//------------------------------------------------------------

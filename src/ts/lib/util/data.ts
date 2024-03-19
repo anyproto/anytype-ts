@@ -995,7 +995,7 @@ class UtilData {
 		// not used yet
 		const noCache = false;
 
-		C.PaymentsSubscriptionGetStatus(noCache, (message) => {
+		C.MembershipGetStatus(noCache, (message) => {
 			if (message.error.code) {
 				return;
 			};

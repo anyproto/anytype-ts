@@ -489,23 +489,17 @@ export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.
 	};
 };
 
-export const PaymentsSubscriptionGetStatus = (response: Rpc.Payments.Subscription.GetStatus.Response) => {
+export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
+	const data = response.getData();
+
+	console.log(data);
+
 	return {
-		membership: {
-			tier: response.getTier(),
-			status: response.getStatus(),
-			dateStarted: response.getDatestarted(),
-			dateEnds: response.getDateends(),
-			isAutoRenew: response.getIsautorenew(),
-			paymentMethod: response.getPaymentmethod(),
-			requestedAnyName: response.getRequestedanyname(),
-			userEmail: response.getUseremail(),
-			subscribeToNewsletter: response.getSubscribetonewsletter(),
-		},
+		//membership: Mapper.From.Membership(response.getData()),
 	};
 };
 
-export const PaymentsSubscriptionGetPaymentUrl = (response: Rpc.Payments.Subscription.GetPaymentUrl.Response) => {
+export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
 	return {
 		paymentUrl: response.getPaymenturl(),
 	};

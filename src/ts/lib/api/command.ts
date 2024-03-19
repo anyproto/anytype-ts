@@ -1898,44 +1898,44 @@ export const NameServiceUserAccountGet = (callBack?: (message: any) => void) => 
 
 // ---------------------- PAYMENTS ---------------------- //
 
-export const PaymentsSubscriptionGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Payments.Subscription.GetStatus.Request();
+export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetStatus.Request();
 	
 	request.setNocache(noCache);
 
-	dispatcher.request(PaymentsSubscriptionGetStatus.name, request, callBack);
+	dispatcher.request(MembershipGetStatus.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetPaymentUrl = (tier: I.MembershipTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Payments.Subscription.GetPaymentUrl.Request();
+export const MembershipGetPaymentUrl = (tier: I.MembershipTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetPaymentUrl.Request();
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);
 	request.setRequestedanyname(name);
 
-	dispatcher.request(PaymentsSubscriptionGetPaymentUrl.name, request, callBack);
+	dispatcher.request(MembershipGetPaymentUrl.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetPortalLinkUrl = (callBack?: (message: any) => void) => {
+export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
-	dispatcher.request(PaymentsSubscriptionGetPortalLinkUrl.name, request, callBack);
+	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
 };
 
-export const PaymentsSubscriptionGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Payments.Subscription.GetVerificationEmail.Request();
+export const MembershipGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetVerificationEmail.Request();
 	
 	request.setEmail(email);
 	request.setSubscribetonewsletter(isSubscribed);
 	
-	dispatcher.request(PaymentsSubscriptionGetVerificationEmail.name, request, callBack);
+	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
 };
 
-export const PaymentsSubscriptionVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Payments.Subscription.VerifyEmailCode.Request();
+export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.VerifyEmailCode.Request();
 	
 	request.setCode(code);
 	
-	dispatcher.request(PaymentsSubscriptionVerifyEmailCode.name, request, callBack);
+	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
 };
 
 // ---------------------- SPACE ---------------------- //
