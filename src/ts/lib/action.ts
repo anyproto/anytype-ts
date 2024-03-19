@@ -86,7 +86,7 @@ class Action {
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
 
-		Renderer.send('download', url);
+		Renderer.send('download', url, { saveAs: true });
 		analytics.event('DownloadMedia', { type, route });
 	};
 

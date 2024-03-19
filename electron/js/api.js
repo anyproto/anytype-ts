@@ -132,8 +132,8 @@ class Api {
 		UpdateManager.cancel();
 	};
 
-	async download (win, url) {
-		await download(win, url, { saveAs: true });
+	async download (win, url, options) {
+		await download(win, url, options);
 	};
 
 	winCommand (win, cmd, param) {
