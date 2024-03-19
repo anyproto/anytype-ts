@@ -131,8 +131,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				return;
 			};
 
-			if (message.paymentUrl) {
-				UtilCommon.onUrl(message.paymentUrl);
+			if (message.url) {
+				UtilCommon.onUrl(message.url);
 			};
 		});
 	};

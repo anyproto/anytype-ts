@@ -8,29 +8,29 @@ export enum MembershipTier {
 };
 
 export enum MembershipStatus {
-	Unknown			 = 0,
-	Pending			 = 1,
-	Active			 = 2,
-	Finalization	 = 3,
+	Unknown				 = 0,
+	Pending				 = 1,
+	Active				 = 2,
+	Finalization		 = 3,
 };
 
 export enum PaymentMethod {
-	Card		 = 0,
-	Crypto		 = 1,
-	ApplePay	 = 2,
-	GooglePay	 = 3,
-	AppleInapp	 = 4,
-	GoogleInapp	 = 5,
+	Card				 = 0,
+	Crypto				 = 1,
+	ApplePay			 = 2,
+	GooglePay			 = 3,
+	AppleInapp			 = 4,
+	GoogleInapp			 = 5,
 };
 
 export enum MembershipPrice {
-	Price1Year 		= 99,
-	Price5Years 	= 399,
+	Price1Year 			= 99,
+	Price5Years 		= 399,
 };
 
 export enum MembershipPeriod {
-	Period1Year 	= 1,
-	Period5Years 	= 5,
+	Period1Year 		= 1,
+	Period5Years 		= 5,
 };
 
 export interface Membership {
@@ -43,6 +43,8 @@ export interface Membership {
 	nextTierEnds?: number;
 	paymentMethod?: PaymentMethod,
 	requestedAnyName?: string;
+	userEmail?: string;
+	subscribeToNewsletter?: boolean;
 };
 
 export interface MembershipTierItem {

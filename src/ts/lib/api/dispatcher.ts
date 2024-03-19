@@ -155,6 +155,8 @@ class Dispatcher {
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
 		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
+		
+		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
 
 		return t;
 	};
@@ -1010,6 +1012,12 @@ class Dispatcher {
 					};
 					break;
 				};
+
+				case 'membershipUpdate':
+					const membership = Mapper.From.Membership(data.getData());
+
+					authStore.membershipSet(membership);
+					break;
 
 				case 'processNew':
 				case 'processUpdate':

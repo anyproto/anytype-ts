@@ -501,7 +501,7 @@ export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response)
 
 export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
 	return {
-		paymentUrl: response.getPaymenturl(),
+		url: response.getPaymenturl(),
 	};
 };
 
