@@ -34,8 +34,8 @@ export enum MembershipPeriod {
 };
 
 export interface Membership {
-	tier: MembershipTier;
-	status: MembershipStatus;
+	tier?: MembershipTier;
+	status?: MembershipStatus;
 	dateStarted?: number;
 	dateEnds?: number;
 	isAutoRenew?: boolean;
