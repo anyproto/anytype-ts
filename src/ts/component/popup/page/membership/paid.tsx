@@ -54,8 +54,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					<span className="price">{`$${tierItem.price}`}</span>{period}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCard)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-				<Button onClick={() => this.onPay(I.PaymentMethod.MethodCrypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 			</React.Fragment>
 		);
 	};
@@ -119,7 +119,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const name = this.refName.getValue() + Constant.anyNameSpace;
-		const refButton = method == I.PaymentMethod.MethodCard ? this.refButtonCard : this.refButtonCrypto;
+		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 

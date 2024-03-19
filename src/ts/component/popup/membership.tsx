@@ -83,8 +83,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 				];
 			};
 
-			case I.MembershipTier.Builder1WeekTEST: 
-			case I.MembershipTier.Builder1Year: {
+			case I.MembershipTier.BuilderTest: 
+			case I.MembershipTier.Builder: {
 				return [
 					'popupMembershipTier2Content1',
 					'popupMembershipTier2Content2',
@@ -93,8 +93,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 				];
 			};
 
-			case I.MembershipTier.CoCreator1WeekTEST:
-			case I.MembershipTier.CoCreator1Year: {
+			case I.MembershipTier.CoCreatorTest:
+			case I.MembershipTier.CoCreator: {
 				return [
 					'popupMembershipTier3Content1',
 					'popupMembershipTier3Content2',

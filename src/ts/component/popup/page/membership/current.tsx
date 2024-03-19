@@ -31,7 +31,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
 			paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`popupMembershipPaymentMethod${paymentMethod}`));
 
-			if (paymentMethod == I.PaymentMethod.MethodCrypto) {
+			if (paymentMethod == I.PaymentMethod.Crypto) {
 				buttonText = translate('popupMembershipWriteToAnyteam');
 			} else {
 				buttonText = translate('popupMembershipManagePayment');
@@ -63,7 +63,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		if (tier == I.MembershipTier.Explorer) {
 			onChangeEmail();
 		} else {
-			if (paymentMethod == I.PaymentMethod.MethodCrypto) {
+			if (paymentMethod == I.PaymentMethod.Crypto) {
 				// message to Anyteam
 			} else {
 				// manage payment on Stripe
