@@ -1010,7 +1010,7 @@ export const BlockDataviewSortReplace = (contextId: string, blockId: string, vie
 };
 
 export const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Sort.Sort.Request();
+	const request = new Rpc.BlockDataview.Sort.SSort.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
