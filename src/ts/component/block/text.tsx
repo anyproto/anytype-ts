@@ -1411,7 +1411,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						pageContainer.off('mousedown.context');
 						menuStore.close('blockContext'); 
 					});
-				}, Constant.delay.menu);
+				}, menuStore.getTimeout());
 			});
 		}, 150);
 	};

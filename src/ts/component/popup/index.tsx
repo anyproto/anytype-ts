@@ -163,7 +163,7 @@ class Popup extends React.Component<I.Popup> {
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 
 				this.isAnimating = false;
-			}, Constant.delay.popup);
+			}, popupStore.getTimeout());
 		});
 	};
 	

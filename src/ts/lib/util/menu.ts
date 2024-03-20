@@ -323,7 +323,7 @@ class UtilMenu {
 							case 'copy': onCopy(view); break;
 							case 'remove': onRemove(view); break;
 						};
-					}, Constant.delay.menu);
+					}, menuStore.getTimeout());
 				}
 			}
 		});
@@ -612,6 +612,7 @@ class UtilMenu {
 		};
 
 		const options: any[] = [];
+		const isOwner = UtilSpace.isOwner(targetSpaceId);
 		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
 		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
@@ -626,7 +627,7 @@ class UtilMenu {
 		if (isJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
-			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
 		};
 
 		menuStore.open('select', {
@@ -634,40 +635,43 @@ class UtilMenu {
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
-					switch (element.id) {
-						case 'export': {
-							Action.export(targetSpaceId, [], I.ExportType.Markdown, { 
-								zip: true, 
-								nested: true, 
-								files: true, 
-								archived: true, 
-								json: false, 
-								route: param.route,
-							});
-							break;
+					window.setTimeout(() => {
+						switch (element.id) {
+							case 'export': {
+								Action.export(targetSpaceId, [], I.ExportType.Markdown, { 
+									zip: true, 
+									nested: true, 
+									files: true, 
+									archived: true, 
+									json: false, 
+									route: param.route,
+								});
+								break;
+							};
+
+							case 'remove': {
+								Action.removeSpace(targetSpaceId, param.route);
+								break;
+							};
+
+							case 'cancel': {
+								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
+									if (message.error.code) {
+										window.setTimeout(() => {
+											popupStore.open('confirm', { 
+												data: {
+													title: translate('commonError'),
+													text: message.error.description,
+												}
+											});
+										}, popupStore.getTimeout());
+									};
+								});
+								break;
+							};
 						};
 
-						case 'remove': {
-							Action.removeSpace(targetSpaceId, param.route);
-							break;
-						};
-
-						case 'cancel': {
-							C.SpaceJoinCancel(targetSpaceId, (message: any) => {
-								if (message.error.code) {
-									window.setTimeout(() => {
-										popupStore.open('confirm', { 
-											data: {
-												title: translate('commonError'),
-												text: message.error.description,
-											}
-										});
-									}, Constant.delay.popup);
-								};
-							});
-							break;
-						};
-					};
+					}, menuStore.getTimeout());
 				},
 			},
 		});

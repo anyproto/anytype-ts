@@ -64,11 +64,15 @@ jobs:
 
       - name: Build Native Messaging Host Windows
         if: matrix.os == 'windows-latest'
-        run: CGO_ENABLED=0 npm run build:nmh-win
+        run: npm run build:nmh-win
+        env:
+          CGO_ENABLED: 0
 
       - name: Build Native Messaging Host
         if: matrix.os != 'windows-latest'
-        run: CGO_ENABLED=0 npm run build:nmh
+        run: npm run build:nmh
+        env:
+          CGO_ENABLED: 0
 
       - name: Build Front Mac OS
         if: matrix.os == 'macos-latest'

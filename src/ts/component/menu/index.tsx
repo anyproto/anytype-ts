@@ -435,7 +435,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
 					this.isAnimating = false;
-				}, Constant.delay.menu);
+				}, menuStore.getTimeout());
 			});
 		};
 	};

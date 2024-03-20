@@ -777,6 +777,7 @@
 	"popupSettingsSpaceShareStopSharing": "Stop sharing",
 	"popupSettingsSpaceShareRevokeInvite": "Delete link",
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
+	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
 
 	"popupSettingsSpaceMembersTitle": "Members",

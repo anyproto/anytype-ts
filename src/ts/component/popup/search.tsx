@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace } from 'Lib';
-import { commonStore, dbStore, popupStore } from 'Store';
+import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -576,7 +576,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (item.isSettings) {
 			window.setTimeout(() => {
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
-			}, Constant.delay.popup);
+			}, popupStore.getTimeout());
 		} else 
 
 		// Import action
@@ -593,7 +593,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				case 'relation': {
 					$('#button-header-relation').trigger('click');
-					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), Constant.delay.menu * 2);
+					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), menuStore.getTimeout() * 2);
 					break;
 				};
 

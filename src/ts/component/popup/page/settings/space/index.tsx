@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, UtilSpace, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -31,7 +31,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error } = this.state;
-		const { config, spaceStorage } = commonStore;
+		const { config, spaceStorage, isOnline } = commonStore;
 		const { localUsage, bytesLimit } = spaceStorage;
 		const spaces = dbStore.getSpaces();
 		const { account, accountSpaceId } = authStore;
@@ -46,6 +46,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const canMembers = isAllowed && !isOwner && isShared;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
+		const isShareActive = UtilSpace.isShareActive();
 		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
@@ -114,7 +115,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div className="sectionContent">
 								{canShare ? (
-									<div className="item" onClick={() => onPage('spaceShare')}>
+									<div 
+										className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+										onClick={() => isShareActive ? onPage('spaceShare') : null}
+									>
 										<div className="sides">
 											<div className="side left">
 												<Title text={isShared ? translate('popupSettingsSpaceIndexShareManageTitle') : translate('popupSettingsSpaceIndexShareShareTitle')} />
@@ -129,7 +133,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								) : ''}
 
 								{canMembers ? (
-									<div className="item" onClick={() => onPage('spaceMembers')}>
+									<div 
+										className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+										onClick={() => isShareActive ? onPage('spaceMembers') : null}
+									>
 										<div className="sides">
 											<div className="side left">
 												<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />

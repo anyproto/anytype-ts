@@ -62,6 +62,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
+		const isShareActive = UtilSpace.isShareActive();
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -180,8 +181,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<div className="buttons">
 							<Button 
 								ref={ref => this.refButton = ref} 
-								onClick={this.onInitLink} 
-								className="c40" 
+								onClick={isShareActive ? () => this.onInitLink() : null} 
+								className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')} 
+								tooltip={isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled')}
 								text={translate('popupSettingsSpaceShareGenerateInvite')} 
 							/>
 						</div>
@@ -299,11 +301,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onInitLink () {
-		const { space } = commonStore;
-
 		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(space, (message: any) => {
+		C.SpaceInviteGenerate(commonStore.space, (message: any) => {
 			this.refButton?.setLoading(false);
 
 			if (!this.setError(message.error)) {
@@ -315,8 +315,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onStopSharing () {
-		const { space } = commonStore;
-
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmStopSharingSpaceTitle'),
@@ -324,7 +322,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceStopSharing(space);
+					C.SpaceStopSharing(commonStore.space);
 					this.setInvite('', '');
 				},
 			},

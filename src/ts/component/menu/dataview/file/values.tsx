@@ -254,7 +254,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							};
 
 							if (url) {
-								Renderer.send('download', url);
+								Renderer.send('download', url, { saveAs: true });
 							};
 							break;
 						};

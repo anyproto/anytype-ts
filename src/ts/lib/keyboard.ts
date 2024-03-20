@@ -41,11 +41,14 @@ class Keyboard {
 		const win = $(window);
 		const doc = $(document);
 
+		commonStore.isOnlineSet(navigator.onLine);
+
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
+		win.on('online.common offline.common', () => commonStore.isOnlineSet(navigator.onLine));
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
@@ -73,7 +76,7 @@ class Keyboard {
 	};
 	
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
 	};
 
 	onScroll () {
@@ -993,9 +996,7 @@ class Keyboard {
 
 		switch (type) {
 			case I.Source.Popup:
-				window.setTimeout(() => {
-					popupStore.open(data.id, data.param);
-				}, Constant.delay.popup);
+				window.setTimeout(() => popupStore.open(data.id, data.param), popupStore.getTimeout());
 				break;
 		};
 

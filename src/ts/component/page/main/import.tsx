@@ -49,7 +49,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				UtilSpace.openDashboard('route');
 				window.setTimeout(() => {
 					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
-				}, Constant.delay.popup);
+				}, popupStore.getTimeout());
 			};
 		});
 

@@ -508,7 +508,7 @@
 			.section.sectionMembers {
 				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
 				.row {
-					.col { display: flex; align-items: center; justify-content: center; }
+					.col { display: flex; align-items: center; justify-content: flex-end; }
 					.col:first-child { justify-content: flex-start; }
 					.col:first-child {
 						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
