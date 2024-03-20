@@ -75,7 +75,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
         popupStore.open('confirm',{
             data: {
-                title: translate('popupSettingsDataOffloadWarningTitle'),
+                title: translate('commonAreYouSure'),
                 text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
                 textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
 				canCancel: isLocalOnly,

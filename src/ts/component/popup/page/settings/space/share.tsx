@@ -391,7 +391,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			default: {
 				v = Number(v) || I.ParticipantPermissions.Reader;
 
-				title = translate('popupConfirmMemberChangeTitle');
+				title = translate('commonAreYouSure');
 				text = UtilCommon.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {

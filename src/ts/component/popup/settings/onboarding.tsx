@@ -131,38 +131,22 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { networkConfig } = authStore;
 		const userPath = window.Electron.userPath();
 
-		const callBack = () => {
-			if (this.config.mode !== networkConfig.mode) {
-				analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
-			};
-
-			if (this.config.path !== networkConfig.path) {
-				analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
-			};
-
-			if (this.config.userPath !== userPath) {
-				Renderer.send('setUserDataPath', this.config.userPath);
-				commonStore.dataPathSet(this.config.userPath);
-				delete this.config.userPath;
-			};
-
-			authStore.networkConfigSet(this.config);
-			this.props.close();
+		if (this.config.mode !== networkConfig.mode) {
+			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
 		};
 
-		if ((this.config.mode == I.NetworkMode.Local) && (this.config.userPath !== userPath)) {
-			popupStore.open('confirm', {
-				className: 'isWide',
-				data: {
-					title: translate('popupSettingsOnboardingLocalOnlyWarningTitle'),
-					text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
-					onConfirm: callBack,
-					textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
-				},
-			});
-		} else {
-			callBack();
+		if (this.config.path !== networkConfig.path) {
+			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
 		};
+
+		if (this.config.userPath !== userPath) {
+			Renderer.send('setUserDataPath', this.config.userPath);
+			commonStore.dataPathSet(this.config.userPath);
+			delete this.config.userPath;
+		};
+
+		authStore.networkConfigSet(this.config);
+		this.props.close();
 	};
 
 	onPathClick (path: string) {
@@ -172,9 +156,23 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onChangeStorage () {
-		Action.openDir({}, (paths: string[]) => {
-			this.onChange('userPath', paths[0]);
-		});
+		const onConfirm = () => {
+			Action.openDir({}, (paths: string[]) => this.onChange('userPath', paths[0]));
+		};
+
+		if (this.config.mode == I.NetworkMode.Local) {
+			popupStore.open('confirm', {
+				className: 'isWide',
+				data: {
+					title: translate('commonAreYouSure'),
+					text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
+					textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
+					onConfirm,
+				},
+			});
+		} else {
+			onConfirm();
+		};
 	};
 
 	onTooltipShow (e: any, text: string) {
