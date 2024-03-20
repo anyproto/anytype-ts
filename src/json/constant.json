@@ -113,7 +113,7 @@
 		],
 		"layout": [ "blockAlign" ],
 		"latex": [ "previewLatex" ],
-		"viewEdit": [ "select" ],
+		"viewEdit": [ "select", "graphSettings" ],
 		"featuredType": [ "searchObject", "typeSuggest" ],
 		"dataviewHead": [ "dataviewSource", "searchObject" ],
 		"store": [ "typeSuggest", "relationSuggest" ],

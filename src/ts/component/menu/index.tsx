@@ -357,8 +357,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	componentWillUnmount () {
 		const { param } = this.props;
-		const { isSub, data } = param;
-		const { rebind } = data;
+		const { isSub } = param;
 		const el = this.getElement();
 
 		this._isMounted = false;
@@ -372,6 +371,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.poly.hide();
 			window.clearTimeout(this.timeoutPoly);
 		};
+
+		this.rebindPrevious();
+	};
+
+	rebindPrevious () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
 
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
@@ -680,11 +687,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	close (callBack?: () => void) {
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
+		menuStore.close(this.props.id, () => {
+			window.setTimeout(() => this.rebindPrevious(), Constant.delay.menu);
 
-		menuStore.close(this.props.id, callBack);
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onDimmerClick () {
@@ -701,7 +710,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { isSub } = param;
 		
 		if (isSub) {
-			//this.poly.hide();
+			this.poly.hide();
 		};
 	};
 

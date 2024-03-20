@@ -65,7 +65,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 							readonly={isReadonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
 							onMouseEnter={e => this.onMouseEnter(e, action)}
-							onMouseLeave={e => this.onMouseLeave(e, action)}
 							onClick={e => this.onClick(e, action)} 
 						/>
 					))}
@@ -100,6 +99,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	componentDidUpdate () {
 		this.resize();
+		this.rebind();
 		this.props.setActive();
 	};
 
@@ -115,6 +115,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	rebind () {
 		this.unbind();
+
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
@@ -124,7 +125,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 	
 	onKeyDown (e: any) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
@@ -248,6 +249,8 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
 				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 			});
+		} else {
+			settings.push({ id: 'graphSettings', name: translate('commonSettings'), arrow: true });
 		};
 
 		if (isInline || isBoard) {
@@ -285,12 +288,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 	};
 
-	onMouseLeave (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setHover(null, false);
-		};
-	};
-	
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
@@ -304,12 +301,16 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			return;
 		};
 
+		const element = `#${getId()} #item-${item.id}`;
+
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
+			element,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
 			data: {
 				rebind: this.rebind,
 				value: this.param[item.id],
@@ -353,6 +354,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				menuParam.data = Object.assign(menuParam.data, {
 					options: Relation.getSizeOptions(),
 				});
+				break;
+			};
+
+			case 'graphSettings': {
+				menuId = 'graphSettings';
 				break;
 			};
 		};
