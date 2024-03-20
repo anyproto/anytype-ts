@@ -42,7 +42,7 @@ class PopupInviteQr extends React.Component<I.Popup> {
 		const canvas = node.find('canvas').get(0);
 		const image = canvas.toDataURL('image/png');
 
-		Renderer.send('download', image, { filename: 'Invite QR code.png' });
+		Renderer.send('download', image, { saveAs: true });
 	};
 
 };
