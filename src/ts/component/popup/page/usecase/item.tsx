@@ -155,6 +155,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 						C.WorkspaceCreate({ name: object.title, iconOption: UtilCommon.rand(1, Constant.iconCnt) }, I.Usecase.None, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
+
+								analytics.event('CreateSpace', { middleTime: message.middleTime, route: 'Gallery' });
 							} else {
 								this.setState({ isLoading: false, error: message.error.description });
 							};
