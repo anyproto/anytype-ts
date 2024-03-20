@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
+import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
 import { Graph } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -21,11 +21,6 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	loading = false;
 	timeoutLoading = 0;
 	rootId = '';
-
-	constructor (props: I.ViewComponent) {
-		super(props);
-
-	};
 
 	render () {
 		const { block, className } = this.props;
@@ -89,13 +84,26 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { getView, getSearchIds } = this.props;
+		const { rootId, getView, getSearchIds, getTarget } = this.props;
 		const view = getView();
 		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+		const target = getTarget();
+		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.relationKey);
 
 		if (searchIds) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+		};
+
+		if (types.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
+		};
+
+		if (relations.length) {
+			relations.forEach(relationKey => {
+				filters.push({ operator: I.FilterOperator.And, relationKey, condition: I.FilterCondition.NotEmpty });
+			});
 		};
 
 		this.setLoading(true);
