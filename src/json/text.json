@@ -767,8 +767,10 @@
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
-	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
-
+	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
+	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
+	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
+	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",

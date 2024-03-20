@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
+import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
@@ -55,14 +55,33 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
+		const { onPage } = this.props;
+		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
-		const members = this.getMembers();
+		const members = this.getParticipantList();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 		const isShareActive = UtilSpace.isShareActive();
+
+		let limitLabel = '';
+		let limitButton = '';
+		let showLimit = false;
+
+		if (isShared) {
+			if (!UtilSpace.getWriterLimit()) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				showLimit = true;
+			} else
+			if (!UtilSpace.getReaderLimit() && (membership.tier == I.MembershipTier.Explorer)) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				showLimit = true;
+			};
+		};
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -172,10 +191,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 								</div>
 								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
 							</div>
-
-							<div className="invitesLimit">
-								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
-							</div>
 						</React.Fragment>
 					) : (
 						<div className="buttons">
@@ -192,6 +207,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+					{showLimit ? (
+						<div className="row">
+							<Label text={limitLabel} />
+							<Button className="payment" text={limitButton} onClick={() => onPage('membership')} />
+						</div>
+					) : ''}
 
 					{this.cache ? (
 						<div id="list" className="rows">
@@ -247,7 +268,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	updateCache () {
-		const members = this.getMembers();
+		const members = this.getParticipantList();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -263,10 +284,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
-	getMembers () {
-		const subId = Constant.subId.participant;
-		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+	getParticipantList () {
+		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
 
 		return records.sort((c1, c2) => {
 			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
