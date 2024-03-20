@@ -973,8 +973,10 @@
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
-	"popupInviteConfirmButtonConfirmReader": "Grant read access",
-	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
+	"popupInviteConfirmButtonReader": "Grant read access",
+	"popupInviteConfirmButtonReaderLimit": "✦ Add more readers",
+	"popupInviteConfirmButtonEditor": "Grant edit access",
+	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
 	"popupInviteQrTitle": "QR code for joing a Space",
