@@ -257,7 +257,7 @@ class UtilData {
 						};
 					});
 
-					this.getMembershipData();
+					this.getMembershipData(true);
 
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
@@ -991,10 +991,7 @@ class UtilData {
 		return ret;
 	};
 
-	getMembershipData (callBack?: (message: any) => void) {
-		// not used yet
-		const noCache = false;
-
+	getMembershipData (noCache: boolean, callBack?: (message: any) => void) {
 		C.MembershipGetStatus(noCache, (message) => {
 			if (message.error.code) {
 				return;

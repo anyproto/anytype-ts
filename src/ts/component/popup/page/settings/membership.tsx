@@ -1,8 +1,7 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
@@ -13,17 +12,14 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	state = {
 		loading: false,
-		currentSlide: 0
 	};
 
 	node: any = null;
 	swiper: any = null;
-	slideWidth: number = 0;
 
 	render () {
 		const { membership, account } = authStore;
-		const { loading, currentSlide } = this.state;
-		const style = { left: -this.slideWidth * currentSlide };
+		const { loading } = this.state;
 
 		let currentTier: I.MembershipTier = I.MembershipTier.None;
 		let currentTierValid: number = 0;
@@ -124,7 +120,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							autoplay={{
 								waitForTransition: true,
 								delay: 4000,
-								disableOnInteraction: false,
+								disableOnInteraction: true,
 							}}
 							modules={[Pagination, Autoplay]}
 							centeredSlides={true}
@@ -166,10 +162,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 	};
 
-	componentDidMount () {
-		this.resize();
-	};
-
 	onSwiper (swiper) {
 		this.swiper = swiper;
 	};
@@ -178,9 +170,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		UtilCommon.onUrl(url);
 	};
 
-	resize () {
-		this.slideWidth = $(this.node).width() + 16;
-	};
 });
 
 export default PopupSettingsPageMembership;
