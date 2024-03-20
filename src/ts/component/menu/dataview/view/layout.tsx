@@ -203,6 +203,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isGallery = type == I.ViewType.Gallery;
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
+		const isGraph = type == I.ViewType.Graph;
 
 		let settings: any[] = [];
 
@@ -242,10 +243,12 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			});
 		};
 
-		settings.push({
-			id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
-			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
-		});
+		if (!isGraph) {
+			settings.push({
+				id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
+				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
+			});
+		};
 
 		if (isInline || isBoard) {
 			const options = Relation.getPageLimitOptions(type);
