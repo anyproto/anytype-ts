@@ -257,6 +257,8 @@
 		"spaceAccountStatus",
 		"spaceLocalStatus",
 		"spaceAccessType",
+		"readersLimit",
+		"writersLimit",
 		"targetSpaceId",
 		"creator",
 		"createdDate"

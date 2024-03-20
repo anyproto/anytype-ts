@@ -146,6 +146,8 @@
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
 	"pluralRequest": "request|requests",
+	"pluralReader": "reader|readers",
+	"pluralWriter": "writers|writers",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -761,7 +763,7 @@
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
-	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s",
+	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s and up to %s %s",
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",

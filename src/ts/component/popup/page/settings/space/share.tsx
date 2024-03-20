@@ -57,12 +57,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
+		const { readersLimit, writersLimit } = space;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
 		const members = this.getMembers();
 		const memberOptions = this.getMemberOptions();
 		const length = members.length;
 		const isShareActive = UtilSpace.isShareActive();
+
+		const readersLimitText = UtilCommon.plural(readersLimit, translate('pluralReader'));
+		const writersLimitText = UtilCommon.plural(writersLimit, translate('pluralWriter'));
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -174,7 +178,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 							</div>
 
 							<div className="invitesLimit">
-								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
+								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), readersLimit, readersLimitText, writersLimit, writersLimitText)}
 							</div>
 						</React.Fragment>
 					) : (

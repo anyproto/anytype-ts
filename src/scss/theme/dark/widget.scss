@@ -7,6 +7,10 @@
 	.icon.remove:hover .inner { background-color: var(--color-text-tertiary); }
 }
 
+.widget.widgetSpace {
+	.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
+}
+
 .widget.widgetTree {
 	.icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
 	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }

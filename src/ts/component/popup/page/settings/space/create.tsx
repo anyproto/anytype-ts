@@ -215,7 +215,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				onCreate(message.objectId);
 			};
 
-			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: 'Navigation' });
 			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};
