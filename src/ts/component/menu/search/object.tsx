@@ -216,7 +216,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		});
 
 		this.resize();
-		this.props.setActive();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {

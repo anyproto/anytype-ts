@@ -941,8 +941,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const next = items[this.ref.n];
+		if (!next) {
+			return;
+		};
 
-		if (next && (next.isDiv || next.isSection)) {
+		if (next.isDiv || next.isSection) {
 			this.ref.n++;
 			if (items[this.ref.n]) {
 				this.setActive(items[this.ref.n], scroll);
