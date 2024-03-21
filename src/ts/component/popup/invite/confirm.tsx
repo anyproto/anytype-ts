@@ -24,8 +24,9 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { error } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { name, icon, spaceId } = data;
+		const { icon, spaceId } = data;
 		const space = UtilSpace.getSpaceviewBySpaceId(spaceId);
+		const name = String(data.name || translate('defaultNamePage'));
 
 		if (!space) {
 			return null;
