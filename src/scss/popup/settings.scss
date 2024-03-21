@@ -383,7 +383,7 @@
 					.iconObject { flex-shrink: 0; }
 					.info { width: 100%; }
 					.info {
-						.name { @include text-overflow-nw; }
+						.name { @include clamp1; }
 					}
 				}
 
@@ -467,16 +467,17 @@
 			.section.sectionMembers {
 				.title { margin-bottom: 8px; }
 
-				.row { border-bottom: 0px solid; padding: 0; }
+				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
 				.row {
 					.side { display: flex; align-items: center; }
 					.side.left {
 						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
-						.name { @include text-common; }
+						.name { @include text-common; @include clamp1; width: auto; }
 						.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
 						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 					}
 
+					.side.right { justify-content: flex-end; }
 					.side.right {
 						.button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
 						.button.blank:not(.disabled):hover,
@@ -509,7 +510,7 @@
 					.col:first-child { justify-content: flex-start; }
 					.col:first-child {
 						.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
-						.name { @include text-common; width: auto; }
+						.name { @include text-common; @include clamp1; width: auto; }
 						.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 					}
 					.col {
