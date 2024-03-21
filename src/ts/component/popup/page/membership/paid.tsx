@@ -74,38 +74,46 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
 		const name = this.refName.getValue();
-		const l = name.length;
 
 		this.disableButtons(true);
 
 		this.setState({ statusText: '', status: '' });
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
+			//C.MembershipIsNameValid(tier, name + Constant.anyNameSpace, (message: any) => {
+				/*
+				if (message.error.code) {
+					this.setState({ status: 'error', statusText: message.error.description });
+					return;
+				};
+				*/
 
+				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
+				C.NameServiceResolveName(name + Constant.anyNameSpace, (message: any) => {
+					let error = '';
+					if (message.error.code) {
+						error = message.error.description;
+					} else
+					if (!message.available) {
+						error = translate('popupMembershipStatusNameNotAvailable');
+					};
+
+					if (error) {
+						this.setState({ status: 'error', statusText: error });
+					} else {
+						this.disableButtons(false);
+						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
+					};
+				});
+			//});
+
+			/*
 			if (l && (l < tierItem.minNameLength)) {
 				this.setState({ statusText: translate('popupMembershipStatusShortName') });
 				return;
 			};
-
-			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
-			C.NameServiceResolveName(name + Constant.anyNameSpace, (message) => {
-				let error = '';
-				if (message.error.code) {
-					error = message.error.description;
-				} else
-				if (!message.available) {
-					error = translate('popupMembershipStatusNameNotAvailable');
-				};
-
-				if (error) {
-					this.setState({ status: 'error', statusText: error });
-				} else {
-					this.disableButtons(false);
-					this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
-				};
-			});
+			*/
 		}, Constant.delay.keyboard);
 	};
 

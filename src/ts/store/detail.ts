@@ -307,7 +307,6 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
-
 		return object;
 	};
 
@@ -319,6 +318,7 @@ class DetailStore {
 	private mapParticipant (object) {
 		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+		object.globalName = Relation.getStringValue(object.globalName);
 
 		delete(object.participantPermissions);
 		delete(object.participantStatus);

@@ -265,7 +265,8 @@
 	"participantRelationKeys": [
 		"identity",
 		"participantPermissions",
-		"participantStatus"
+		"participantStatus",
+		"globalName"
 	],
 
 	"pageCoverRelationKey": "pageCover",

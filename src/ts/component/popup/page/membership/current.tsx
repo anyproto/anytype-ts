@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { I, translate, UtilCommon, UtilDate } from 'Lib';
+import { I, C, translate, UtilCommon, UtilDate } from 'Lib';
 import { authStore } from 'Store';
 
 interface Props {
@@ -66,7 +66,11 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			if (paymentMethod == I.PaymentMethod.Crypto) {
 				// message to Anyteam
 			} else {
-				// manage payment on Stripe
+				C.MembershipGetPortalLinkUrl((message: any) => {
+					if (message.url) {
+						UtilCommon.onUrl(message.url);
+					};
+				});
 			};
 		};
 	};
