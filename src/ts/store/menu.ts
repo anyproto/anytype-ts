@@ -231,7 +231,6 @@ class MenuStore {
 
 	resizeAll () {
 		const win = $(window);
-
 		this.list.forEach(it => win.trigger(`resize.${UtilCommon.toCamelCase(`menu-${it.id}`)}`));
 	};
 

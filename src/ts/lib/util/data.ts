@@ -472,14 +472,10 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
 		const skipLayouts = UtilObject.getSetLayouts();
-
-		if (!withBookmark) {
-			skipLayouts.push(I.ObjectLayout.Bookmark);
-		};
 
 		let items: any[] = [];
 

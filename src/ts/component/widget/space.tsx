@@ -22,6 +22,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		const memberCnt = members.filter(it => it.status == I.ParticipantStatus.Active).length;
 		const requestCnt = members.filter(it => it.status == I.ParticipantStatus.Joining).length;
 		const isSpaceOwner = UtilSpace.isOwner();
+		const showCnt = isSpaceOwner && requestCnt;
 
 		let status = '';
 		if (space && !space._empty_) {
@@ -33,7 +34,10 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		};
 
 		return (
-			<div className="body" onClick={this.onSettings}>
+			<div 
+				className={[ 'body', (showCnt ? 'withCnt': '') ].join(' ')} 
+				onClick={this.onSettings}
+			>
 				<div className="side left">
 					<IconObject 
 						id="widget-space-icon" 
@@ -51,7 +55,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					</div>
 				</div>
 				<div className="side right">
-					{isSpaceOwner && requestCnt ? <div className="cnt" onClick={this.onRequest}>{requestCnt}</div> : ''}
+					{showCnt ? <div className="cnt" onClick={this.onRequest}>{requestCnt}</div> : ''}
 				</div>
 			</div>
 		);
@@ -73,7 +77,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	onRequest (e: any) {
 		e.stopPropagation();
-
 		this.openSettings('spaceShare');
 	};
 

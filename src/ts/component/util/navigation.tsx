@@ -49,6 +49,7 @@ const Navigation = observer(class Navigation extends React.Component {
 				};
 
 				case I.NavigationMenuMode.Hover: {
+					buttonPlus.onClick = this.onAdd;
 					buttonPlus.onMouseEnter = e => {
 						keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
 					};
