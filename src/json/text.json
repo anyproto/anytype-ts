@@ -879,6 +879,7 @@
 
 	"popupInviteInviteConfirmTitle": "Request sent",
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
+	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
 	"popupInviteConfirmButtonConfirmReader": "Grant read access",
