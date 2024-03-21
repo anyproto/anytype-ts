@@ -31,11 +31,11 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, spaceId, permissions } = this.payload;
-		const space = spaceId ? UtilSpace.getSpaceviewBySpaceId(spaceId) : null;
+		const { importType, errorCode, name, permissions } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 		const identityName = String(this.payload.identityName || translate('defaultNamePage'));
+		const spaceName = String(this.payload.spaceName || translate('defaultNamePage'));
 
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
@@ -54,7 +54,7 @@ class Notification implements I.Notification {
 					this.text = UtilCommon.sprintf(this.text, name);
 				} else {
 					this.title = UtilCommon.sprintf(this.title, name);
-					this.text = UtilCommon.sprintf(this.text, space?.name);
+					this.text = UtilCommon.sprintf(this.text, spaceName);
 				};
 				break;
 			};
@@ -62,26 +62,26 @@ class Notification implements I.Notification {
 			case I.NotificationType.Join: 
 			case I.NotificationType.Leave: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, identityName, space?.name);
+				this.text = UtilCommon.sprintf(this.text, identityName, spaceName);
 				break;
 			};
 
 			case I.NotificationType.Approve: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, space?.name, translate(`participantPermissions${permissions}`));
+				this.text = UtilCommon.sprintf(this.text, spaceName, translate(`participantPermissions${permissions}`));
 				break;
 			};
 
 			case I.NotificationType.Decline:
 			case I.NotificationType.Remove: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, space?.name);
+				this.text = UtilCommon.sprintf(this.text, spaceName);
 				break;
 			};
 
 			case I.NotificationType.Permission: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, translate(`participantPermissions${permissions}`), space?.name);
+				this.text = UtilCommon.sprintf(this.text, translate(`participantPermissions${permissions}`), spaceName);
 				break;
 			};
 

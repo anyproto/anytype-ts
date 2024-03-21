@@ -524,6 +524,7 @@ export const Mapper = {
 					case I.NotificationType.Remove: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
 							identity: field.getIdentity(),
 							identityName: field.getIdentityname(),
 							identityIcon: field.getIdentityicon(),
@@ -535,6 +536,7 @@ export const Mapper = {
 					case I.NotificationType.Approve: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
         					permissions: field.getPermissions(),
 						});
 						break;
@@ -543,6 +545,7 @@ export const Mapper = {
 					case I.NotificationType.Decline: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
 						});
 						break;
 					};
