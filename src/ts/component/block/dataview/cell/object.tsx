@@ -40,7 +40,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -67,7 +67,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
+						<DragBox onDragEnd={this.onDragEnd}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -78,12 +78,14 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								>
 									<ItemObject 
 										key={item.id} 
-										object={item} 
+										cellId={id}
+										getObject={() => item}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onClick={(e, item) => this.onClick(e, item.id)}
+										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
 							))}
@@ -115,7 +117,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						{value.map((item: any, i: number) => (
 							<ItemObject 
 								key={item.id} 
-								object={item} 
+								cellId={id}
+								getObject={() => item}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
@@ -202,17 +205,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	getItems (): any[] {

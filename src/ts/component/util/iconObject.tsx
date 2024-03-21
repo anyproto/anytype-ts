@@ -336,8 +336,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
 		};
 
-		if (canEdit && (object.layout == I.ObjectLayout.Task) && !object.done) {
-			node.find('#checkbox').attr({ src: CheckboxTask[tc][1] });
+		if (canEdit && (object.layout == I.ObjectLayout.Task)) {
+			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][1] });
 		};
 		
 		if (onMouseEnter) {
@@ -353,8 +353,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		
 		Preview.tooltipHide(false);
 
-		if (canEdit && (object.layout == I.ObjectLayout.Task) && !object.done) {
-			node.find('#checkbox').attr({ src: CheckboxTask[tc][0] });
+		if (canEdit && (object.layout == I.ObjectLayout.Task)) {
+			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][0] });
 		};
 		
 		if (onMouseLeave) {
@@ -388,6 +388,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		if (isEmoji) {
 			this.onEmoji(e);
 		};
+
+		this.onMouseLeave(e);
 	};
 
 	onEmoji (e: any) {
