@@ -52,5 +52,4 @@ export interface MembershipTierItem {
 	idx?: number;
 	price?: MembershipPrice;
 	period?: MembershipPeriod;
-	minNameLength?: number;
 };

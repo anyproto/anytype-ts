@@ -1019,14 +1019,12 @@ class UtilData {
 				idx: 2,
 				price: I.MembershipPrice.Price1Year,
 				period: I.MembershipPeriod.Period1Year,
-				minNameLength: 7,
 			},
 			{
 				id: testPayment ? I.MembershipTier.CoCreatorTest : I.MembershipTier.CoCreator,
 				idx: 3,
 				price: I.MembershipPrice.Price5Years,
 				period: I.MembershipPeriod.Period5Years,
-				minNameLength: 5,
 			}
 		];
 	};

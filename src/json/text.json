@@ -866,9 +866,8 @@
 	"popupMembershipResend": "Resend",
 	"popupMembershipCountdown": " in %s sec",
 
-	"popupMembershipStatusShortName": "Name is too short",
 	"popupMembershipStatusWaitASecond": "Wait a second...",
-	"popupMembershipStatusNameAvailable": "This name is up for grabs!",
+	"popupMembershipStatusNameAvailable": "This name is available!",
 	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
 	"popupMembershipCurrentStatus": "Current status",
 	"popupMembershipValidUntil": "Valid until",
@@ -903,6 +902,12 @@
 	"popupMembershipSuccessTitle": "Welcome to the network, %s",
 	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
 	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
+
+	"popupMembershipCode1": "No .any provided",
+	"popupMembershipCode2": "Name is too short",
+	"popupMembershipCode3": "Name is too long",
+	"popupMembershipCode4": "Name has invalid characters",
+	"popupMembershipCode5": "This tier does not support name",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",

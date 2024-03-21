@@ -502,7 +502,15 @@ export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.R
 };
 
 export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
-	return { url: response.getPortalurl() };
+	return { 
+		url: response.getPortalurl(),
+	};
+};
+
+export const MembershipIsNameValid = (response: Rpc.Membership.IsNameValid.Response) => {
+	return { 
+		code: response.getCode(),
+	};
 };
 
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
