@@ -225,7 +225,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('navigationMenu');
 		};
-		return Number(ret) || I.NavigationMenuMode.Context;
+		return Number(ret) || I.NavigationMenuMode.Click;
 	};
 
 	get dataPath (): string {

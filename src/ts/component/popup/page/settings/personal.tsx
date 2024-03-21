@@ -16,9 +16,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const spellingLanguages = UtilMenu.getSpellingLanguages();
 		const navigationMenuModes: I.Option[] = [
-			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
 			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
 			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
+			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
 		];
 
 		return (

@@ -9,6 +9,7 @@ const Navigation = observer(class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
+	timeoutPlus = 0;
 
 	constructor (props: object) {
 		super(props);
@@ -51,7 +52,10 @@ const Navigation = observer(class Navigation extends React.Component {
 				case I.NavigationMenuMode.Hover: {
 					buttonPlus.onClick = this.onAdd;
 					buttonPlus.onMouseEnter = e => {
-						keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
+						window.clearTimeout(this.timeoutPlus);
+						this.timeoutPlus = window.setTimeout(() => {
+							keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
+						}, 1000);
 					};
 					buttonPlus.onMouseLeave = () => {};
 					break;
