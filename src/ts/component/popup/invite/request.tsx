@@ -27,8 +27,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { invite } = data;
-		const spaceName = String(invite.spaceName || translate('defaultNamePage'));
-		const creatorName = String(invite.creatorName || translate('defaultNamePage'));
+		const spaceName = UtilCommon.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+		const creatorName = UtilCommon.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 		return (
 			<React.Fragment>

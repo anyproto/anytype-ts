@@ -26,7 +26,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { data } = param;
 		const { icon, spaceId } = data;
 		const space = UtilSpace.getSpaceviewBySpaceId(spaceId);
-		const name = String(data.name || translate('defaultNamePage'));
+		const name = UtilCommon.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 		if (!space) {
 			return null;
@@ -38,7 +38,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 					<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), name, space.name)} />
+				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), name, UtilCommon.shorten(space.name, 32))} />
 
 				<div className="buttons">
 					<div className="sides">

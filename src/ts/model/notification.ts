@@ -34,8 +34,8 @@ class Notification implements I.Notification {
 		const { importType, errorCode, name, permissions } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
-		const identityName = String(this.payload.identityName || translate('defaultNamePage'));
-		const spaceName = String(this.payload.spaceName || translate('defaultNamePage'));
+		const identityName = UtilCommon.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
+		const spaceName = UtilCommon.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
 
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
