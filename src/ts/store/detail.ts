@@ -302,8 +302,8 @@ class DetailStore {
 		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
-		object.readersLimit = 1 || Number(object.readersLimit) || 0;
-		object.writersLimit = 1 || Number(object.writersLimit) || 0;
+		object.readersLimit = Number(object.readersLimit) || 0;
+		object.writersLimit = Number(object.writersLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
