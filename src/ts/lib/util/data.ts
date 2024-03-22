@@ -245,20 +245,6 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', space, () => {
 				this.createSubscriptions(() => {
-					C.NotificationList(false, Constant.limit.notification, (message: any) => {
-						if (!message.error.code) {
-							notificationStore.set(message.list);
-						};
-					});
-
-					C.FileNodeUsage((message: any) => {
-						if (!message.error.code) {
-							commonStore.spaceStorageSet(message);
-						};
-					});
-
-					this.getMembershipData(true);
-
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -285,6 +271,22 @@ class UtilData {
 				});
 			});
 		});
+	};
+
+	onAuthOnce () {
+		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+			if (!message.error.code) {
+				notificationStore.set(message.list);
+			};
+		});
+
+		C.FileNodeUsage((message: any) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
+
+		this.getMembershipData(true);
 	};
 
 	createSubscriptions (callBack?: () => void): void {

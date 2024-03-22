@@ -120,16 +120,14 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
+		if (!accountId) {
+			return;
+		};
+
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
 			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
-				};
-
-				if (accountId) {
-					this.select(accountId, false);
-				} else {
-					UtilRouter.go('/auth/account-select', { replace: true });
 				};
 
 				UtilData.createSession(phrase, '' ,(message: any) => {
@@ -164,6 +162,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
+			UtilData.onAuthOnce();
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
