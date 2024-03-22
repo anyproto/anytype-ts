@@ -27,6 +27,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { invite } = data;
+		const spaceName = UtilCommon.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+		const creatorName = UtilCommon.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 		return (
 			<React.Fragment>
@@ -36,7 +38,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 					<Icon />
 				</div>
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), invite.spaceName, invite.creatorName)} />
+				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
 
 				<div className="buttons">
 					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
@@ -75,7 +77,12 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 						title: translate('popupInviteInviteConfirmTitle'),
 						text: translate('popupInviteInviteConfirmText'),
 						textConfirm: translate('commonDone'),
-						canCancel: false,
+						textCancel: translate('popupInviteInviteConfirmCancel'),
+						onCancel: () => {
+							window.setTimeout(() => {
+								popupStore.open('settings', { data: { page: 'spaceList' } });
+							}, popupStore.getTimeout());
+						},
 					},
 				});
 			});

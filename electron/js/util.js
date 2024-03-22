@@ -78,7 +78,13 @@ class Util {
 	};
 
 	logPath () {
-		return path.join(this.userPath(), 'logs');
+		const dir = path.join(this.userPath(), 'logs');
+		this.createPath(dir);
+		return dir;
+	};
+
+	createPath (dir) {
+		try { fs.mkdirSync(dir); } catch (e) {};
 	};
 
 	dataPath () {

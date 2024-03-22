@@ -23,34 +23,31 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			const permissions = participant ? translate(`participantPermissions${participant.permissions}`) : '';
 			const hasMenu = space.targetSpaceId != accountSpaceId;
 
+			let creatorElement = null;
+			if (!isOwner && !creator._empty_) {
+				creatorElement = (
+					<div className="creator">
+						<IconObject object={creator} size={16} />
+						<ObjectName object={creator} />
+					</div>
+				);
+			};
+
 			return (
-				<tr>
-					<td className="columnSpace">
-						<div className="spaceNameWrapper" onClick={() => this.onClick(space)}>
-							<IconObject object={space} size={40} />
-							<div className="info">
-								<ObjectName object={space} />
-
-								{!isOwner && !creator._empty_ ? (
-									<div className="creatorNameWrapper">
-										<IconObject object={creator} size={16} />
-										<ObjectName object={creator} />
-									</div>
-								) : ''}
-							</div>
+				<div className="row">
+					<div className="col colSpace">
+						<IconObject object={space} size={40} />
+						<div className="info">
+							<ObjectName object={space} />
+							{creatorElement}
 						</div>
-					</td>
-					<td>{permissions}</td>
-					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
-
-					<td className="columnMore">
-						{hasMenu ? (
-							<div id={`icon-more-${space.id}`} onClick={() => this.onMore(space)} className="iconWrap">
-								<Icon className="more" />
-							</div>
-						) : ''}
-					</td>
-				</tr>
+					</div>
+					<div className="col">{permissions}</div>
+					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
+					<div className="col colMore">
+						{hasMenu ? <Icon id={`icon-more-${space.id}`} className="more" onClick={() => this.onMore(space)} /> : ''}
+					</div>
+				</div>
 			);
 		};
 
@@ -59,19 +56,13 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				<Title text={translate('popupSettingsSpacesListTitle')} />
 
 				<div className="items">
-					<table>
-						<thead>
-							<tr>
-								<th className="columnSpace">{translate('popupSettingsSpacesListSpace')}</th>
-								<th>{translate('popupSettingsSpacesListAccess')}</th>
-								<th>{translate('popupSettingsSpacesListNetwork')}</th>
-								<th className="columnMore"> </th>
-							</tr>
-						</thead>
-						<tbody>
-							{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
-						</tbody>
-					</table>
+					<div className="row isHead">
+						<div className="col colSpace">{translate('popupSettingsSpacesListSpace')}</div>
+						<div className="col">{translate('popupSettingsSpacesListAccess')}</div>
+						<div className="col">{translate('popupSettingsSpacesListNetwork')}</div>
+						<div className="col colMore" />
+					</div>
+					{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
 				</div>
 			</React.Fragment>
 		);

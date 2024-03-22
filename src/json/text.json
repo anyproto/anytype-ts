@@ -131,6 +131,7 @@
 	"commonLeaveSpace": "Leave space",
 	"commonYou": "you",
 	"commonApprove": "Approve",
+	"commonAreYouSure": "Are you sure?",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -149,6 +150,8 @@
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
 	"pluralRequest": "request|requests",
+	"pluralReader": "reader|readers",
+	"pluralWriter": "writers|writers",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -771,6 +774,7 @@
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
+
 	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
@@ -802,7 +806,6 @@
 	"popupConfirmMemberRemoveTitle": "Remove member",
 	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
 
-	"popupConfirmMemberChangeTitle": "Are you sure?",
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
 	"popupConfirmRevokeLinkTitle": "Delete sharing link",
@@ -912,9 +915,10 @@
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Account Data Location",
+	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
+	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 
 	"popupSettingsDataLocalFiles": "Local files",
-	"popupSettingsDataOffloadWarningTitle": "Are you sure?",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
 	"popupSettingsDataOffloadWarningTextLocalOnly": "Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
 	"popupSettingsDataFilesOffloaded": "Files offloaded",
@@ -976,6 +980,7 @@
 
 	"popupInviteInviteConfirmTitle": "Request sent",
 	"popupInviteInviteConfirmText": "You will receive a notification when the space owner will approve your request.",
+	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
 	"popupInviteConfirmButtonReader": "Grant read access",
@@ -1196,7 +1201,6 @@
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
 
-	"popupRelationValueRemoveTitle": "Are you sure?",
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
 	"menuAccountPeer": "%d\/%d peers",

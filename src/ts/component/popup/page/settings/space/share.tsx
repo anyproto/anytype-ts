@@ -16,7 +16,6 @@ interface State {
 };
 
 const HEIGHT = 64;
-const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
@@ -183,15 +182,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
 					{hasLink ? (
-						<React.Fragment>
-							<div className="inviteLinkWrapper">
-								<div className="inputWrapper">
-									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
-									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
-								</div>
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						<div className="inviteLinkWrapper">
+							<div className="inputWrapper">
+								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
+								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 							</div>
-						</React.Fragment>
+							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						</div>
 					) : (
 						<div className="buttons">
 							<Button 
@@ -406,7 +403,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			default: {
 				v = Number(v) || I.ParticipantPermissions.Reader;
 
-				title = translate('popupConfirmMemberChangeTitle');
+				title = translate('commonAreYouSure');
 				text = UtilCommon.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {

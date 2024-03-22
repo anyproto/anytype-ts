@@ -60,7 +60,7 @@ const installNativeMessagingHost = () => {
 			installToLinux(manifest);
 			break;
 		default:
-			console.log('unsupported platform: ', platform);
+			console.log('[InstallNativeMessaging] Unsupported platform:', platform);
 			break;
 	};
 };
@@ -72,7 +72,7 @@ const installToMacOS = (manifest) => {
 		if (fs.existsSync(value)) {
 			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
 		} else {
-			console.log(`Manifest skipped: ${key}`);
+			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
@@ -84,7 +84,7 @@ const installToLinux = (manifest) => {
 		if (fs.existsSync(value)) {
 			writeManifest(path.join(value, 'NativeMessagingHosts', MANIFEST_FILENAME), manifest);
 		} else {
-			console.log(`Manifest skipped: ${key}`);
+			console.log('[InstallNativeMessaging] Manifest skipped:', key);
 		};
 	};
 };
@@ -115,13 +115,13 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 	const createKey = util.promisify(regedit.createKey);
 	const putValue = util.promisify(regedit.putValue);
 
-	console.log(`Adding registry: ${location}`);
+	console.log('[InstallNativeMessaging] Adding registry:', location);
 
 	// Check installed
 	try {
 		await list(check);
 	} catch {
-		console.log(`Not finding registry ${check} skipping.`);
+		console.log('[InstallNativeMessaging] Registry not found:', check);
 		return;
 	};
 
@@ -139,7 +139,7 @@ const createWindowsRegistry = async (check, location, jsonFile) => {
 
 		return putValue(obj);
 	} catch (error) {
-		console.log(error);
+		console.log('[InstallNativeMessaging] Registry create error:', error);
 	};
 };
 
@@ -184,7 +184,7 @@ const writeManifest = (dst, data) => {
 		};
 
 		fs.writeFileSync(dst, JSON.stringify(data, null, 2), {});
-		console.log(`Manifest written: ${dst}`);
+		console.log('[InstallNativeMessaging] Manifest written:', dst);
 	} catch(err) {
 		console.error(err);
 	};
