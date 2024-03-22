@@ -59,6 +59,8 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupMembershipFreeCheckboxText')}
 						</div>
 
+						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
 					</form>
 				);
@@ -69,6 +71,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 					<React.Fragment>
 						<div onClick={() => this.setState({ verificationStep: 1 })} className="back"><Icon />{translate('commonBack')}</div>
 						<Title text={translate(`popupMembershipFreeTitleStep2`)} />
+
 						<Pin
 							ref={ref => this.refCode = ref}
 							pinLength={4}
@@ -116,10 +119,13 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		C.MembershipGetVerificationEmail(this.email, this.refCheckbox?.getValue(), (message) => {
 			this.refButton?.setLoading(false);
 
-			if (!message.error.code) {
-				this.setState({ verificationStep: 2 });
-				this.startCountdown();
+			if (message.error.code) {
+				this.setStatus('error', message.error.description);
+				return;
 			};
+
+			this.setState({ verificationStep: 2 });
+			this.startCountdown();
 		});
 	};
 
@@ -129,6 +135,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		C.MembershipVerifyEmailCode(code, (message) => {
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
+				this.refCode.reset();
 				return;
 			};
 
@@ -145,13 +152,8 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	setStatus (status: string, statusText: string) {
 		this.setState({ status, statusText });
 
-		if (this.timeout) {
-			window.clearTimeout(this.timeout);
-		};
-
-		this.timeout = window.setTimeout(() => {
-			this.clearStatus();
-		}, 4000);
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.clearStatus(), 4000);
 	};
 
 	clearStatus () {
@@ -176,9 +178,9 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		this.setState({ countdown: 60 });
 
 		this.interval = window.setInterval(() => {
-			let countdown = this.state.countdown;
-			countdown -= 1;
+			let { countdown } = this.state;
 
+			countdown--;
 			this.setState({ countdown });
 
 			if (!countdown) {

@@ -72,7 +72,10 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			};
 
 			return (
-				<div className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}>
+				<div 
+					className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}
+					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
+				>
 					<div className="top">
 						{currentLabel}
 						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
@@ -83,11 +86,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 						<div className="priceWrapper">
 							<span className="price">{price}</span>{period}
 						</div>
-						<Button
-							onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
-							className="c28"
-							text={buttonText}
-						/>
+						<Button className="c28" text={buttonText} />
 					</div>
 				</div>
 			);
