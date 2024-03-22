@@ -20,16 +20,14 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { membership, account } = authStore;
 		const { loading } = this.state;
-
-		let currentTier: I.MembershipTier = I.MembershipTier.None;
-		let currentTierValid: number = 0;
-
-		if (membership.tier != I.MembershipTier.None) {
-			currentTier = membership.tier;
-			if (membership.dateEnds) {
-				currentTierValid = membership.dateEnds;
-			};
-		};
+		const hasTier = membership.tier != I.MembershipTier.None;
+		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
+		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= membership.tier);
+		const links = [
+			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
+			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy') },
+			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions') },
+		];
 
 		let slides = [];
 		for (let i = 0; i < 4; i++) {
@@ -38,8 +36,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		// swiper has weird bug with setting initial slide to 0 with autoplay and loop enabled
 		// so in order to keep the flow as it was designed we move last element to position 0
 		slides = arrayMove(slides, 3, 0);
-
-		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= currentTier);
 
 		const SlideItem = (slide) => (
 			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
@@ -52,7 +48,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 
 		const TierItem = (item: any) => {
-			const isCurrent = item.id == currentTier;
+			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
 			let period = '';
@@ -60,8 +56,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			let buttonText = translate('popupSettingsMembershipLearnMore');
 
 			if (isCurrent) {
-				if (item.period && currentTierValid) {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', currentTierValid))
+				if (item.period && membership.dateEnds) {
+					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds))
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};
@@ -80,8 +76,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					<div className="top">
 						{currentLabel}
 						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
-						<Title text={translate(`popupSettingsMembershipTitle${item.idx}`)} />
-						<Label text={translate(`popupSettingsMembershipDescription${item.idx}`)} />
+						<Title text={translate(`popupSettingsMembershipTier${item.idx}Title`)} />
+						<Label text={translate(`popupSettingsMembershipTier${item.idx}Text`)} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
@@ -97,16 +93,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			);
 		};
 
-		let url = Url.membershipSpecial;
-		url = url.replace(/\%25accountId\%25/g, account.id);
-
 		return (
 			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{currentTier ? translate('popupSettingsMembership') : translate('popupSettingsMembershipTitle')}</div>
+				<div className="membershipTitle">{hasTier ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
 				{loading ? <Loader/> : ''}
 
-				{currentTier ? '' : (
+				{hasTier ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
@@ -143,18 +136,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				</div>
 
 				<div className="actionItems">
-					<div onClick={() => this.onUrl(Url.pricing)} className="item">
-						<Label text={translate('popupSettingsMembershipLevelsDetails')} />
-						<Icon />
-					</div>
-					<div onClick={() => this.onUrl(Url.privacy)} className="item">
-						<Label text={translate('popupSettingsMembershipPrivacyPolicy')} />
-						<Icon />
-					</div>
-					<div onClick={() => this.onUrl(Url.terms)} className="item">
-						<Label text={translate('popupSettingsMembershipTermsAndConditions')} />
-						<Icon />
-					</div>
+					{links.map((item, i) => (
+						<div key={i} onClick={() => UtilCommon.onUrl(item.url)} className="item">
+							<Label text={item.name} />
+							<Icon />
+						</div>
+					))}
 				</div>
 
 				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), url)} />
@@ -162,12 +149,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 	};
 
-	onSwiper (swiper) {
-		this.swiper = swiper;
+	componentDidMount(): void {
+		UtilCommon.renderLinks($(this.node));
 	};
 
-	onUrl (url) {
-		UtilCommon.onUrl(url);
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 });

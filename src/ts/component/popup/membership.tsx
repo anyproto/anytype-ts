@@ -55,8 +55,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 			<div className={cn.join(' ')}>
 				<div className="side left">
 					<Icon />
-					<Title text={translate(`popupSettingsMembershipTitle${suffix}`)} />
-					<Label text={translate(`popupSettingsMembershipDescription${suffix}`)} />
+					<Title text={translate(`popupSettingsMembershipTier${suffix}Title`)} />
+					<Label text={translate(`popupSettingsMembershipTier${suffix}Text`)} />
 
 					<div className="contentList">
 						<Label text={translate('popupMembershipWhatsIncluded')} />

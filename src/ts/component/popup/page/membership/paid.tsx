@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -32,6 +33,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
+		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
 		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
@@ -44,7 +46,13 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				<Label text={translate(`popupMembershipPaidText`)} />
 
 				<div className="inputWrapper">
-					<Input ref={ref => this.refName = ref} onKeyUp={this.onKeyUp} placeholder={translate(`popupMembershipPaidPlaceholder`)} />
+					<Input 
+						ref={ref => this.refName = ref} 
+						value={globalName} 
+						onKeyUp={this.onKeyUp} 
+						readonly={globalName ? true : false}
+						placeholder={translate(`popupMembershipPaidPlaceholder`)} 
+					/>
 					<div className="ns">{Constant.anyNameSpace}</div>
 				</div>
 
@@ -61,7 +69,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	componentDidMount () {
-		this.disableButtons(true);
+		const globalName = this.getName();
+		if (!globalName) {
+			this.disableButtons(true);
+		};
 	};
 
 	componentWillUnmount () {
@@ -117,7 +128,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const name = this.refName.getValue() + Constant.anyNameSpace;
+		const globalName = this.getName();
+		const name = globalName ? '' : this.refName.getValue() + Constant.anyNameSpace;
 		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
@@ -134,6 +146,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				UtilCommon.onUrl(message.url);
 			};
 		});
+	};
+
+	getName () {
+		return String(authStore.membership?.requestedAnyName || '');
 	};
 
 });

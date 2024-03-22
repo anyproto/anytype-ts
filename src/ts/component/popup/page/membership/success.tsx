@@ -13,7 +13,7 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), translate(`popupSettingsMembershipTitle${tier}`))} />
+				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), translate(`popupSettingsMembershipTier${tier}Title`))} />
 				<Icon className={`tier${tier}`} />
 				<Label text={text} />
 

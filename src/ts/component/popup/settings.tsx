@@ -153,10 +153,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			};
 
 			if (action.id == 'membership') {
-				if (membership.tier) {
+				if (membership.tier != I.MembershipTier.None) {
 					const tierItem = UtilData.getMembershipTier(membership.tier);
 					if (tierItem) {
-						caption = <div className="caption">{translate(`popupSettingsMembershipTitle${tierItem.idx}`)}</div>;
+						caption = <div className="caption">{translate(`popupSettingsMembershipTier${tierItem.idx}Title`)}</div>;
 					};
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
@@ -288,7 +288,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 			if (UtilData.isAnytypeNetwork() && config.experimental) {
-				settingsVoid.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembership') })
+				settingsVoid.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
 			};
 
 			return [

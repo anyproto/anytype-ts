@@ -817,8 +817,8 @@
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
-	"popupSettingsMembership": "Membership",
-	"popupSettingsMembershipTitle": "Let’s build together",
+	"popupSettingsMembershipTitle1": "Membership",
+	"popupSettingsMembershipTitle2": "Let’s build together",
 	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
 
 	"popupSettingsMembershipSlide0Title": "Co-create with us",
@@ -830,12 +830,12 @@
 	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
 	"popupSettingsMembershipSlide3Text": "Our software is free by design, but we thrive on the network that connects us all. Support us, and you're investing in the very infrastructure that keeps us united",
 
-	"popupSettingsMembershipTitle1": "Explorer",
-	"popupSettingsMembershipDescription1": "Dive into the network and enjoy the thrill of one-on-one collaboration",
-	"popupSettingsMembershipTitle2": "Builder",
-	"popupSettingsMembershipDescription2": "Unlock the magic of multi-party collaboration and enjoy top-notch support\n\n",
-	"popupSettingsMembershipTitle3": "Co-creator",
-	"popupSettingsMembershipDescription3": "Support our adventure and unlock exclusive access and perks",
+	"popupSettingsMembershipTier1Title": "Explorer",
+	"popupSettingsMembershipTier1Text": "Dive into the network and enjoy the thrill of one-on-one collaboration",
+	"popupSettingsMembershipTier2Title": "Builder",
+	"popupSettingsMembershipTier2Text": "Unlock the magic of multi-party collaboration and enjoy top-notch support\n\n",
+	"popupSettingsMembershipTier3Title": "Co-creator",
+	"popupSettingsMembershipTier3Text": "Support our adventure and unlock exclusive access and perks",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerYear": "per year",
