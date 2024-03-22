@@ -1014,9 +1014,7 @@ class Dispatcher {
 				};
 
 				case 'membershipUpdate':
-					const membership = Mapper.From.Membership(data.getData());
-
-					authStore.membershipSet(membership);
+					authStore.membershipSet(Mapper.From.Membership(data.getData()));
 					break;
 
 				case 'processNew':

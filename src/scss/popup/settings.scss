@@ -52,7 +52,7 @@
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
 					.caption { position: absolute; right: 8px; top: 5px; color: var(--color-text-secondary); }
-					.caption.join { right: 7px; font-weight: 500; padding: 2px 8px; border-radius: 5px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
+					.caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
