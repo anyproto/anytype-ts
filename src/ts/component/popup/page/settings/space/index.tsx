@@ -42,8 +42,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const isAllowed = config.experimental || config.allowCollaboration;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
-		const canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
-		const canMembers = isAllowed && !isOwner && isShared;
+		const sharedCnt = spaces.filter(it => it.spaceAccessType == I.SpaceType.Shared).length;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
@@ -52,6 +51,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let bytesUsed = 0;
 		let extend = null;
 		let requestCaption = null;
+		let canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
+		let canMembers = isAllowed && !isOwner && isShared;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -61,6 +62,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
+
+		if ((sharedCnt >= 3) && !isShared) {
+			canShare = false;
+			canMembers = false;
+		};
 
 		if (isRed) {
 			usageCn.push('red');

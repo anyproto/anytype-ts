@@ -16,7 +16,6 @@ interface State {
 };
 
 const HEIGHT = 64;
-const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
@@ -159,7 +158,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
+						{/*isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''*/}
 					</div>
 				</div>
 
