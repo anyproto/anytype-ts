@@ -42,7 +42,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const isAllowed = config.experimental || config.allowCollaboration;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = spaces.filter(it => it.spaceAccessType == I.SpaceType.Shared).length;
+		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && (it.creator == UtilSpace.getMyParticipant().id)).length;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
