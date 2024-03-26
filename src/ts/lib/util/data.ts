@@ -2,6 +2,7 @@ import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, 
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
+import { MembershipGetTiers } from 'ts/lib/api/command';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -987,6 +988,12 @@ class UtilData {
 				break;
 		};
 		return ret;
+	}
+
+	loadMembershipTiers () {
+		C.MembershipGetTiers((message) => {
+			console.log('TIERS: ', message)
+		});
 	};
 
 	getMembershipData (noCache: boolean, callBack?: (message: any) => void) {

@@ -1906,6 +1906,12 @@ export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) 
 	dispatcher.request(MembershipGetStatus.name, request, callBack);
 };
 
+export const MembershipGetTiers = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.Tiers.Get.Request();
+
+	dispatcher.request(MembershipGetTiers.name, request, callBack);
+};
+
 export const MembershipIsNameValid = (tier: I.MembershipTier, name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.IsNameValid.Request();
 
