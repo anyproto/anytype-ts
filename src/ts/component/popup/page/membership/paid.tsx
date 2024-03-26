@@ -91,10 +91,15 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
+
+		if (!name.length) {
+			return;
+		};
+
 		this.timeout = window.setTimeout(() => {
 			C.MembershipIsNameValid(tier, name + Constant.anyNameSpace, (message: any) => {
-				if (message.code) {
-					this.setState({ status: 'error', statusText: translate(`popupMembershipCode${message.code}`) });
+				if (message.error.code) {
+					this.setState({ status: 'error', statusText: translate(`popupMembershipCode${message.error.code}`) });
 					return;
 				};
 
