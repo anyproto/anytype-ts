@@ -507,12 +507,6 @@ export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLin
 	};
 };
 
-export const MembershipIsNameValid = (response: Rpc.Membership.IsNameValid.Response) => {
-	return { 
-		code: response.getCode(),
-	};
-};
-
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),

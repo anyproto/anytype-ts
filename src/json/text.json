@@ -906,11 +906,12 @@
 	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
 	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
 
-	"popupMembershipCode1": "No .any provided",
-	"popupMembershipCode2": "Name is too short",
-	"popupMembershipCode3": "Name is too long",
-	"popupMembershipCode4": "Name has invalid characters",
-	"popupMembershipCode5": "This tier does not support name",
+	"popupMembershipCode1": "Unknown error occurred",
+	"popupMembershipCode2": "No .any provided",
+	"popupMembershipCode3": "Name is too short",
+	"popupMembershipCode4": "Name is too long",
+	"popupMembershipCode5": "Name has invalid characters",
+	"popupMembershipCode6": "This tier does not support name",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
