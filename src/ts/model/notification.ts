@@ -31,11 +31,12 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, permissions } = this.payload;
+		const { importType, errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
 		const identityName = UtilCommon.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
 		const spaceName = UtilCommon.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
+		const permissions = translate(`participantPermissions${this.payload.permissions}`);
 
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
@@ -68,7 +69,7 @@ class Notification implements I.Notification {
 
 			case I.NotificationType.Approve: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, spaceName, translate(`participantPermissions${permissions}`));
+				this.text = UtilCommon.sprintf(this.text, spaceName, permissions);
 				break;
 			};
 
@@ -81,7 +82,7 @@ class Notification implements I.Notification {
 
 			case I.NotificationType.Permission: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, translate(`participantPermissions${permissions}`), spaceName);
+				this.text = UtilCommon.sprintf(this.text, permissions, spaceName);
 				break;
 			};
 

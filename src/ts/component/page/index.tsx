@@ -30,6 +30,7 @@ import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
+import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 
 const Components = {
@@ -58,7 +59,7 @@ const Components = {
 	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
-
+	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
 };
 

@@ -20,7 +20,7 @@ export interface Popup {
 
 export interface PopupSettings extends Popup {
 	prevPage: string;
-	onPage: (id: string) => void;
+	onPage: (id: string, data?: any) => void;
 	setConfirmPin: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
 	onConfirmPin: () => void;

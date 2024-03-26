@@ -245,18 +245,6 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', space, () => {
 				this.createSubscriptions(() => {
-					C.NotificationList(false, Constant.limit.notification, (message: any) => {
-						if (!message.error.code) {
-							notificationStore.set(message.list);
-						};
-					});
-
-					C.FileNodeUsage((message: any) => {
-						if (!message.error.code) {
-							commonStore.spaceStorageSet(message);
-						};
-					});
-
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -283,6 +271,22 @@ class UtilData {
 				});
 			});
 		});
+	};
+
+	onAuthOnce () {
+		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+			if (!message.error.code) {
+				notificationStore.set(message.list);
+			};
+		});
+
+		C.FileNodeUsage((message: any) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
+
+		this.getMembershipData(true);
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -983,6 +987,49 @@ class UtilData {
 				break;
 		};
 		return ret;
+	};
+
+	getMembershipData (noCache: boolean, callBack?: (message: any) => void) {
+		C.MembershipGetStatus(noCache, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			authStore.membershipSet(message.membership);
+
+			if (callBack) {
+				callBack(message.membership);
+			};
+		});
+	};
+
+	getMembershipTiers (): I.MembershipTierItem[] {
+		const { config } = commonStore;
+		const { testPayment } = config;
+
+		return [
+			{
+				id: I.MembershipTier.Explorer,
+				idx: 1
+			},
+			{
+				id: testPayment ? I.MembershipTier.BuilderTest : I.MembershipTier.Builder,
+				idx: 2,
+				price: I.MembershipPrice.Price1Year,
+				period: I.MembershipPeriod.Period1Year,
+			},
+			{
+				id: testPayment ? I.MembershipTier.CoCreatorTest : I.MembershipTier.CoCreator,
+				idx: 3,
+				price: I.MembershipPrice.Price5Years,
+				period: I.MembershipPeriod.Period5Years,
+			}
+		];
+	};
+
+	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
+		const tiers = this.getMembershipTiers();
+		return tiers.find(it => it.id == id) || {};
 	};
 
 	isAnytypeNetwork (): boolean {

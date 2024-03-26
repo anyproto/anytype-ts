@@ -26,6 +26,8 @@ class Button extends React.Component<I.ButtonComponent, State> {
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onMouseDown = this.onMouseDown.bind(this);
 	};
 
 	render () {
@@ -47,8 +49,8 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						ref={node => this.node = node}
 						id={id} 
 						className={cn.join(' ')} 
-						onClick={onClick}
-						onMouseDown={onMouseDown} 
+						onClick={this.onClick}
+						onMouseDown={this.onMouseDown}
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
@@ -98,6 +100,32 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		Preview.tooltipHide(false);
 	};
 
+	onClick (e: any) {
+		const { onClick } = this.props;
+		const node = $(this.node);
+
+		if (node.hasClass('disabled')) {
+			return;
+		};
+
+		if (onClick) {
+			onClick(e);
+		};
+	};
+
+	onMouseDown (e: any) {
+		const { onMouseDown } = this.props;
+		const node = $(this.node);
+
+		if (node.hasClass('disabled')) {
+			return;
+		};
+
+		if (onMouseDown) {
+			onMouseDown(e);
+		};
+	};
+
 	setLoading (v: boolean) {
 		this.setState({ isLoading: v });
 	};
@@ -106,7 +134,6 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		const node = $(this.node);
 		v ? node.addClass('disabled') : node.removeClass('disabled');
 	};
-	
 };
 
 export default Button;

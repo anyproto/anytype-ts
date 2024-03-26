@@ -692,7 +692,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string) {
+	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -701,7 +701,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const type = dbStore.getTypeById(typeId);
 
 		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
-			this.onBookmarkMenu(e, dir, groupId);
+			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
 		};
@@ -1138,7 +1138,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				if (this.isAllowedObject()) {
 					emptyProps.description = translate('blockDataviewEmptyViewDescription');
 					emptyProps.button = translate('blockDataviewEmptyViewButton');
-					emptyProps.onClick = e => this.onRecordAdd(e, 1);
+					emptyProps.onClick = e => this.onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
 				};
 				break;
 			};

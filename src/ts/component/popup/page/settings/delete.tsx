@@ -74,10 +74,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	};
 
 	onCheck () {
-		const value = !this.refCheckbox.getValue();
-
-		this.refCheckbox.setValue(value);
-		this.refButton.setDisabled(!value);
+		this.refCheckbox.toggle();
 	};
 
 });

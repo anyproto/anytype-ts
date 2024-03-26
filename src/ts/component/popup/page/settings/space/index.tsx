@@ -41,7 +41,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const isOwner = UtilSpace.isOwner();
 		const isAllowed = config.experimental || config.allowCollaboration;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
-		const requestCnt = this.getRequestCnt();
+		const requestCnt = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
 		const sharedCnt = spaces.filter(it => it.spaceAccessType == I.SpaceType.Shared).length;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
@@ -416,15 +416,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 		return v;
 	};
-
-	getRequestCnt () {
-		const subId = Constant.subId.participant;
-		const statuses = [ I.ParticipantStatus.Joining ];
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
-
-		return records.length;
-	};
-
 });
 
 export default PopupSettingsSpaceIndex;

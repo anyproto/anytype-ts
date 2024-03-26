@@ -138,7 +138,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			commonStore.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
-			Animation.from(() => UtilData.onAuth());
+			Animation.from(() => {
+				UtilData.onAuth();
+				UtilData.onAuthOnce();
+			});
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
