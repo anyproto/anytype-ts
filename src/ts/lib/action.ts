@@ -588,7 +588,7 @@ class Action {
 	};
 
 	removeParticipant (spaceId: string, identity: string, name: string) {
-		C.SpaceParticipantRemove(spaceId, [ identity ], () => {
+		C.SpaceLeaveApprove(spaceId, [ identity ], () => {
 			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
 		});
 	};
