@@ -207,9 +207,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	onSelect (icon: string) {
-		const { id } = this.props;
-
-		UtilObject.setIcon(id, icon, '');
+		UtilObject.setIcon(this.props.id, icon, '');
 	};
 
 	onUpload (objectId: string) {
@@ -218,7 +216,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 	onCheckbox () {
 		const { subId, id } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = detailStore.get(subId, id, []);
 
 		UtilObject.setDone(id, !object.done);
 	};

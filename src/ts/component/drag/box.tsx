@@ -4,7 +4,6 @@ import { UtilCommon } from 'Lib';
 interface Props {
 	children?: React.ReactNode;
 	onDragEnd(oldIndex: number, newIndex: number): void;
-	onClick?(e: any, id: string): void;
 };
 
 class DragBox extends React.Component<Props> {
@@ -21,13 +20,11 @@ class DragBox extends React.Component<Props> {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
 		const children = React.Children.map(this.props.children, (child: any) => {
 			return React.cloneElement(child, { 
-				onClick: this.onClick,
 				onDragStart: this.onDragStart 
 			});
 		});
@@ -48,17 +45,6 @@ class DragBox extends React.Component<Props> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-
-	onClick (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { onClick } = this.props;
-
-		if (onClick) {
-			onClick(e, $(e.currentTarget).data('id'));
-		};
 	};
 
 	onDragStart (e: any) {
