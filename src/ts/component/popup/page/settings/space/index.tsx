@@ -41,7 +41,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const isOwner = UtilSpace.isOwner();
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getMyParticipant().id) || !it.creator.length)).length;
+		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator)).length;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
@@ -422,6 +422,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
 		return records.length;
+	};
+
+	getSharedCnt () {
+		const spaces = dbStore.getSpaces();
+		const { account } = authStore;
+		const shared = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator));
+
+		return shared.length
 	};
 });
 
