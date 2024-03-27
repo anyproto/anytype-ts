@@ -39,10 +39,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
-		const isAllowed = config.experimental || config.allowCollaboration;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && (it.creator == UtilSpace.getMyParticipant().id)).length;
+		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getMyParticipant().id) || !it.creator.length)).length;
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
@@ -51,8 +50,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let bytesUsed = 0;
 		let extend = null;
 		let requestCaption = null;
-		let canShare = isAllowed && isOwner && (space.spaceAccessType != I.SpaceType.Personal);
-		let canMembers = isAllowed && !isOwner && isShared;
+		let canShare = isOwner && (space.spaceAccessType != I.SpaceType.Personal);
+		let canMembers = !isOwner && isShared;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -424,7 +423,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		return records.length;
 	};
-
 });
 
 export default PopupSettingsSpaceIndex;
