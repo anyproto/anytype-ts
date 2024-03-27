@@ -176,9 +176,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
 							</div>
 
-							<div className="invitesLimit">
-								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), readersLimit, readersLimitText, writersLimit, writersLimitText)}
-							</div>
+							{/*<div className="invitesLimit">*/}
+							{/*	{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), readersLimit, readersLimitText, writersLimit, writersLimitText)}*/}
+							{/*</div>*/}
 						</React.Fragment>
 					) : (
 						<div className="buttons">
