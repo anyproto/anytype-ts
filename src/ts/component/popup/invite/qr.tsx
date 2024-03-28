@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Button } from 'Component';
-import { I, translate, Renderer } from 'Lib';
+import { I, translate, Renderer, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
 import Theme from 'json/theme.json';
@@ -43,6 +43,8 @@ class PopupInviteQr extends React.Component<I.Popup> {
 		const image = canvas.toDataURL('image/png');
 
 		Renderer.send('download', image, { filename: 'Invite QR code.png' });
+
+		analytics.event('ClickSettingsSpaceShare', { type: 'DownloadQr' });
 	};
 
 };

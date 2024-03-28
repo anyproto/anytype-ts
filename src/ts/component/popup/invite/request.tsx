@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button, Error } from 'Component';
-import { I, C, translate, UtilCommon } from 'Lib';
+import { I, C, translate, UtilCommon, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { popupStore, authStore } from 'Store';
 
@@ -51,6 +51,10 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		);
 	};
 
+	componentDidMount () {
+		analytics.event('ScreenInviteRequest');
+	};
+
 	onRequest () {
 		const { param, close } = this.props;
 		const { account } = authStore;
@@ -85,6 +89,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 						},
 					},
 				});
+
+				analytics.event('ScreenRequestSent');
 			});
 		});
 	};

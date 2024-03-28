@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -54,10 +54,23 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		);
 	};
 
+	componentDidMount () {
+		const { error } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
+		analytics.event('ScreenInviteConfirm', { route });
+	};
+
 	onConfirm (permissions: I.ParticipantPermissions) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { spaceId, identity } = data;
+		const permissionsMap = {
+			0: 'Read',
+			1: 'Write'
+		};
 
 		if (!spaceId || !identity) {
 			return;
@@ -68,6 +81,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			analytics.event('ApproveInviteRequest', { type: permissionsMap[permissions] });
 
 			close();
 		});
@@ -87,6 +102,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			analytics.event('RejectInviteRequest');
 
 			close();
 		});

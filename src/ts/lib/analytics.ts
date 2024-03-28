@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import { OnboardStage } from 'Component/page/auth/animation/constants';
@@ -125,6 +125,14 @@ class Analytics {
 			return;
 		};
 
+		const multiplayerEvents = [
+			'ScreenSet', 'ScreenCollection', 'ScreenObject', 'CreateObject ', 'CreateBlock ', 'ScreenGraph ', 'GraphSelectNode',
+			'CreateType', 'CreateTemplate', 'ChangeObjectType','LinkToObject', 'CreateLink', 'DuplicateObject', 'Print', 'SearchResult',
+			'SearchWords', 'CopyBlock', 'CutBlock', 'PasteBlock', 'DuplicateBlock', 'UploadMedia', 'DownloadMedia', 'FeaureRelation',
+			'UnfeatureRelation', 'AddExistingRelation', 'CreateRelation', 'DeleteRelation', 'ChangeRelationValue', 'DeleteRelationValue',
+			'DuplicateRelation', 'FeatureRelation', 'UnfeatureRelation', 'AddExistingRelation', 'CreateRelation', 'DeleteRelation',
+			'ChangeRelationValue', 'DeleteRelationValue', 'DuplicateRelation', 'Import'
+		];
 		const converted: any = {};
 
 		let param: any = {};
@@ -382,6 +390,29 @@ class Analytics {
 				break;
 			};
 
+		};
+
+		if (multiplayerEvents.includes(code)) {
+			const space = UtilSpace.getSpaceview();
+			const participant = UtilSpace.getMyParticipant();
+			const spaceTypeMap = {
+				0: 'Private',
+				1: 'Personal',
+				2: 'Shared'
+			};
+			const permissionsMap = {
+				0: 'Read',
+				1: 'Write',
+				2: 'Owner',
+				3: 'No permissons'
+			};
+
+			if (space) {
+				param.spaceType = spaceTypeMap[space.spaceAccessType];
+			};
+			if (participant) {
+				param.permissions = permissionsMap[participant.permissions];
+			};
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

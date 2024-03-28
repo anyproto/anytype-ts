@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics } from 'Lib';
 import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -239,6 +239,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				this.setInvite(message.inviteCid, message.inviteKey);
 			};
 		});
+
+		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	componentDidUpdate() {
@@ -301,6 +303,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		if (cid && key) {
 			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
 		};
+
+		analytics.event('ClickShareSpaceCopyLink');
 	};
 
 	onInitLink () {
@@ -313,6 +317,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				this.setInvite(message.inviteCid, message.inviteKey);
 
 				Preview.toastShow({ text: translate('toastInviteGenerate') });
+
+				analytics.event('ShareSpace');
 			};
 		});
 	};
@@ -327,9 +333,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm: () => {
 					C.SpaceStopSharing(commonStore.space);
 					this.setInvite('', '');
+
+					analytics.event('StopSpaceShare');
 				},
 			},
 		});
+
+		analytics.event('ScreenStopShare');
 	};
 
 	onInviteRevoke () {
@@ -346,10 +356,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						this.setInvite('', '');
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
+
+						analytics.event('RevokeShareLink');
 					});
 				},
 			},
 		});
+
+		analytics.event('ScreenRevokeShareLink');
 	};
 
 	getMemberOptions () {
@@ -369,6 +383,10 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onChangePermissions (item: any, v: any) {
 		const { space } = commonStore;
+		const permissionsMap = {
+			0: 'Read',
+			1: 'Write'
+		};
 
 		let title = '';
 		let text = '';
@@ -383,6 +401,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantRemove(space, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
 				};
 				break;
 			};
@@ -395,6 +415,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+
+					analytics.event('ChangeSpaceMemberPermissions', { type: permissionsMap[v] })
 				};
 				break;
 			};
@@ -421,6 +443,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				canCancel: false,
 			},
 		});
+
+		analytics.event('ClickSettingsSpaceShare', { type: 'MoreInfo' });
 	};
 
 	onJoinRequest (item: any) {
@@ -430,6 +454,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				icon: item.iconImage,
 				spaceId: commonStore.space,
 				identity: item.identity,
+				route: 'Settings'
 			}
 		});
 	};
@@ -477,11 +502,15 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					switch (item.id) {
 						case 'qr': {
 							popupStore.open('inviteQr', { data: { link: this.getLink() } });
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;
 						};
 
 						case 'delete': {
 							this.onInviteRevoke();
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
 						};
 					};
