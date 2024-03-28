@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilSpace, UtilRouter, translate, UtilMenu } from 'Lib';
+import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
 import { dbStore, detailStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -66,6 +66,10 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenSettingsSpaceList');
 	};
 
 	getItems () {
