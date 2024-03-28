@@ -551,7 +551,12 @@ class Action {
 			return;
 		};
 
-		analytics.event('ClickDeleteSpace', { route });
+		const { targetSpaceId } = deleted;
+		const participant = UtilSpace.getMyParticipant(targetSpaceId);
+		const { permissions } = participant;
+		const event = permissions == I.ParticipantPermissions.Owner ? 'Delete' : 'Leave';
+
+		analytics.event(`Click${event}Space`, { route });
 
 		popupStore.open('confirm', {
 			data: {
@@ -559,7 +564,7 @@ class Action {
 				text: translate('spaceDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete', route });
+					analytics.event(`Click${event}SpaceWarning`, { type: 'Delete', route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -569,7 +574,7 @@ class Action {
 
 							if (!message.error.code) {
 								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType, route });
+								analytics.event(`${event}Space`, { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
@@ -581,7 +586,7 @@ class Action {
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel', route });
+					analytics.event(`Click${event}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
 		});
@@ -590,6 +595,8 @@ class Action {
 	removeParticipant (spaceId: string, identity: string, name: string) {
 		C.SpaceParticipantRemove(spaceId, [ identity ], () => {
 			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+
+			analytics.event('ApproveLeaveRequest');
 		});
 	};
 
