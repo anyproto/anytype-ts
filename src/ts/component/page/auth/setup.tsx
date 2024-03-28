@@ -137,7 +137,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						return;
 					};
 
-					this.select(accountId, false);
 				});
 			});
 		});
