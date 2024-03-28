@@ -123,7 +123,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		if (!accountId) {
 			UtilRouter.go('/auth/account-select', { replace: true });
 			return;
-		}
+		};
 
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
 			C.WalletRecover(dataPath, phrase, (message: any) => {
