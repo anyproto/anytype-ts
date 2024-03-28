@@ -121,7 +121,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const accountId = Storage.get('accountId');
 
 		if (!accountId) {
-			UtilRouter.go('/auth/account-select', { replace: true });
+			UtilRouter.go('/auth/select', { replace: true });
 			return;
 		};
 
@@ -140,7 +140,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						this.select(accountId, false);
 					});
 				} else {
-					UtilRouter.go('/auth/account-select', { replace: true });
+					UtilRouter.go('/auth/select', { replace: true });
 				};
 
 			});
