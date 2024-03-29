@@ -39,7 +39,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
-		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
 		const sharedCnt = this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
@@ -51,7 +50,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let extend = null;
 		let requestCaption = null;
 		let canShare = isOwner && (space.spaceAccessType != I.SpaceType.Personal);
-		let canMembers = !isOwner && isShared;
+		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
@@ -62,7 +61,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
 
-		if ((sharedCnt >= 3) && !isShared) {
+		if ((sharedCnt >= 3) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};
@@ -126,8 +125,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									>
 										<div className="sides">
 											<div className="side left">
-												<Title text={isShared ? translate('popupSettingsSpaceIndexShareManageTitle') : translate('popupSettingsSpaceIndexShareShareTitle')} />
-												<Label text={isShared ? translate('popupSettingsSpaceIndexShareManageText') : translate('popupSettingsSpaceIndexShareShareText')} />
+												<Title text={space.isShared ? translate('popupSettingsSpaceIndexShareManageTitle') : translate('popupSettingsSpaceIndexShareShareTitle')} />
+												<Label text={space.isShared ? translate('popupSettingsSpaceIndexShareManageText') : translate('popupSettingsSpaceIndexShareShareText')} />
 											</div>
 											<div className="side right">
 												{requestCaption}
@@ -428,7 +427,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			return 0;
 		};
 
-		return spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator)).length;
+		return spaces.filter(it => it.isShared && UtilSpace.isOwner(it.targetSpaceId)).length;
 	};
 
 });

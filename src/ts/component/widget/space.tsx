@@ -26,7 +26,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 		let status = '';
 		if (space && !space._empty_) {
-			if (space.spaceAccessType == I.SpaceType.Shared) {
+			if (space.isShared) {
 				status = UtilCommon.sprintf('%d %s', memberCnt, UtilCommon.plural(memberCnt, translate('pluralMember')));
 			} else {
 				status = translate(`spaceAccessType${space.spaceAccessType}`);
@@ -63,7 +63,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	onSettings (e: React.MouseEvent) {
 		e.stopPropagation();
-
 		this.openSettings('spaceIndex');
 	};
 

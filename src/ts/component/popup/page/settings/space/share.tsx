@@ -59,7 +59,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
-		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
 		const members = this.getParticipantList();
 		const memberOptions = this.getParticipantOptions();
@@ -70,7 +69,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		let limitButton = '';
 		let showLimit = false;
 
-		if (isShared) {
+		if (space.isShared) {
 			if (!UtilSpace.getWriterLimit()) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');

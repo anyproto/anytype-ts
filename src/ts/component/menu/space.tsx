@@ -28,14 +28,10 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
+			const icon = item.isShared ? 'shared' : '';
 
 			if (item.id == spaceview) {
 				cn.push('isActive');
-			};
-
-			let icon = null;
-			if (item.spaceAccessType == I.SpaceType.Shared) {
-				icon = 'shared';
 			};
 
 			return (

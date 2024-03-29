@@ -307,6 +307,10 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
+
+		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
+		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
+		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
 		return object;
 	};
 
