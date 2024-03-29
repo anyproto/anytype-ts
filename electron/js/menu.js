@@ -320,9 +320,11 @@ class MenuManager {
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
 		this.tray.on('double-click', () => {
-			this.win.setAlwaysOnTop(true);
-			this.winShow();
-			this.win.setAlwaysOnTop(false);
+			if (this.win && !this.win.isDestroyed()) {
+				this.win.setAlwaysOnTop(true);
+				this.winShow();
+				this.win.setAlwaysOnTop(false);
+			};
 		});
 	};
 
@@ -441,7 +443,7 @@ class MenuManager {
 	};
 
 	destroy () {
-		if (this.tray) {
+		if (this.tray && !this.tray.isDestroyed()) {
 			this.tray.destroy();
 			this.tray = null;
 		};

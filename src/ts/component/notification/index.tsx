@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button } from 'Component';
-import { I, C, UtilRouter, translate, Action, analytics } from 'Lib';
+import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -24,6 +24,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { space } = commonStore;
 		const { id, type, payload, title, text } = item;
 		const { errorCode, spaceId } = payload;
+		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);
 
 		let buttons = [];
 
@@ -62,6 +63,10 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				break;
 			};
 
+		};
+
+		if ([ I.SpaceStatus.Removing, I.SpaceStatus.Deleted ].includes(spaceview.spaceAccountStatus)) {
+			buttons = buttons.filter(it => ![ 'spaceSwitch', 'spaceExport', 'spaceDelete' ].includes(it.id));
 		};
 
 		return (
@@ -146,7 +151,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'approve': {
-				Action.removeParticipant(payload.spaceId, payload.identity, payload.identityName);
+				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName);
 				break;
 			};
 

@@ -121,6 +121,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const accountId = Storage.get('accountId');
 
 		if (!accountId) {
+			UtilRouter.go('/auth/select', { replace: true });
 			return;
 		};
 
@@ -130,13 +131,17 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					return;
 				};
 
-				UtilData.createSession(phrase, '' ,(message: any) => {
-					if (this.setError(message.error)) {
-						return;
-					};
+				if (phrase) {
+					UtilData.createSession(phrase, '' ,(message: any) => {
+						if (this.setError(message.error)) {
+							return;
+						};
 
-					this.select(accountId, false);
-				});
+						this.select(accountId, false);
+					});
+				} else {
+					UtilRouter.go('/auth/select', { replace: true });
+				};
 			});
 		});
 	};

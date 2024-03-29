@@ -11,7 +11,7 @@
 		}
 		.inner::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-			border-radius: 4px; opacity: 0;
+			border-radius: 6px; opacity: 0;
 		}
 		.inner:hover::before, .inner.hover::before { opacity: 1; }
 
@@ -39,9 +39,8 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons {
 			.icon { margin: 0px; }
-			.icon:hover { background-color: var(--color-shape-highlight-medium); }
-			.icon.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 			.icon.preview { background-size: 16px 14px; background-image: url('~img/icon/sidebar/preview.svg'); }
 		}
 	}
@@ -51,11 +50,11 @@
 		.buttons { display: flex; }
 	}
 	.item.active {
-		.icon.more { background-color: var(--color-shape-highlight-medium); }
+		.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 
-	.item.hover {
-		.inner::before { background: var(--color-shape-highlight-medium); }
+	.item.hover, .item.active {
+		.inner::before { background: var(--color-shape-highlight-medium); opacity: 1; }
 		.icon.preview { display: block; }
 	}
 	.item.isOpen {

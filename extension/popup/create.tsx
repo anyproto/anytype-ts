@@ -188,24 +188,23 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		let space = commonStore.space || Storage.get('lastSpaceId');
-
-		if (!space) {
-			space = spaces.find(it => it.spaceAccessType == I.SpaceType.Personal)?.id;
-		};
-
 		let check = null;
-		if (space) {
-			check = spaces.find(it => it.id == space);
+		let spaceId = commonStore.space || Storage.get('lastSpaceId');
+
+		if (!spaceId) {
+			spaceId = spaces.find(it => it.isPersonal)?.id;
+		};
+		if (spaceId) {
+			check = spaces.find(it => it.id == spaceId);
 		};
 
-		if (!space || !check) {
-			space = spaces[0].id;
+		if (!spaceId || !check) {
+			spaceId = spaces[0].id;
 		};
 
 		this.refSpace.setOptions(spaces);
-		this.refSpace.setValue(space);
-		this.onSpaceChange(space);
+		this.refSpace.setValue(spaceId);
+		this.onSpaceChange(spaceId);
 	};
 
 	initType () {

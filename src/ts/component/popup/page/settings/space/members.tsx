@@ -22,8 +22,8 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	render () {
-		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const length = members.length;
+		const items = this.getItems();
+		const length = items.length;
 		const participant = UtilSpace.getParticipant();
 
 		const Member = (item: any) => {
@@ -47,7 +47,8 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		};
 
 		const rowRenderer = (param: any) => {
-			const item: any = members[param.index];
+			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -100,22 +101,22 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	componentDidMount() {
-		this.updateCache();
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+		this.forceUpdate();
 	};
 
 	componentDidUpdate() {
 		this.resize();
 	};
 
-	updateCache () {
-		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
+	getItems () {
+		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
 	};
 
 	onScroll ({ scrollTop }) {

@@ -635,12 +635,8 @@ class UtilData {
 	};
 
 	sortByOwner (c1: any, c2: any) {
-		const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
-		const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
-
-		if (isOwner1 && !isOwner2) return -1;
-		if (!isOwner1 && isOwner2) return 1;
-
+		if (c1.isOwner1 && !c2.isOwner2) return -1;
+		if (!c1.isOwner1 && c2.isOwner2) return 1;
 		return 0;
 	};
 
