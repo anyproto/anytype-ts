@@ -268,23 +268,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	getMembers () {
 		const subId = Constant.subId.participant;
-		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+		const requestStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
+		const allowedStatuses = requestStatuses.concat(I.ParticipantStatus.Active);
+		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => allowedStatuses.includes(it.status));
 
 		return records.sort((c1, c2) => {
-			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
-			const isJoining2 = c2.status === I.ParticipantStatus.Joining;
-			const isLeaving1 = c1.status === I.ParticipantStatus.Removing;
-			const isLeaving2 = c2.status === I.ParticipantStatus.Removing;
-			const isOwner1 = c1.permissions === I.ParticipantPermissions.Owner;
-			const isOwner2 = c2.permissions === I.ParticipantPermissions.Owner;
+			const isRequest1 = requestStatuses.includes(c1.status);
+			const isRequest2 = requestStatuses.includes(c2.status);
+			const cd1 = c1.createdDate;
+			const cd2 = c2.createdDate;
 
-			if (isJoining1 && !isJoining2) return -1;
-			if (!isJoining1 && isJoining2) return 1;
-			if (isLeaving1 && !isLeaving2) return -1;
-			if (!isLeaving1 && isLeaving2) return 1;
-			if (isOwner1 && !isOwner2) return -1;
-			if (!isOwner1 && isOwner2) return 1;
+			if (isRequest1 && !isRequest2) return -1;
+			if (!isRequest1 && isRequest2) return 1;
+			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
 
 			return 0;
 		});

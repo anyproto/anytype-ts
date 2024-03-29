@@ -416,21 +416,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return v;
 	};
 
-	getRequestCnt () {
-		const subId = Constant.subId.participant;
-		const statuses = [ I.ParticipantStatus.Joining ];
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
-
-		return records.length;
+	getRequestCnt (): number {
+		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
 	};
 
-	getSharedCnt () {
+	getSharedCnt (): number {
 		const spaces = dbStore.getSpaces();
 		const { account } = authStore;
-		const shared = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator));
 
-		return shared.length
+		if (!account) {
+			return 0;
+		};
+
+		return spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator)).length;
 	};
+
 });
 
 export default PopupSettingsSpaceIndex;

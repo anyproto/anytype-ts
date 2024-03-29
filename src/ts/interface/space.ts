@@ -22,7 +22,7 @@ export enum ParticipantPermissions {
 	Reader			 = 0,
 	Writer			 = 1,
 	Owner			 = 2,
-	NoPermissions	 = 3,
+	None			 = 3,
 };
 
 export enum ParticipantStatus {
