@@ -7,6 +7,7 @@ import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 interface State {
 	isLoading: boolean;
@@ -298,7 +299,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	getLink () {
 		const { cid, key } = this.state;
-		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`
+		//return UtilCommon.sprintf(Url.invite, cid, key);
+		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 	onCopy () {
