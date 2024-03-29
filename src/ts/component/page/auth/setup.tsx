@@ -142,7 +142,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				} else {
 					UtilRouter.go('/auth/select', { replace: true });
 				};
-
 			});
 		});
 	};
@@ -168,6 +167,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
+			UtilData.onAuthOnce();
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
+import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
@@ -54,18 +54,33 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
+		const { onPage } = this.props;
+		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
-		const { readersLimit, writersLimit } = space;
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
-		const members = this.getMembers();
-		const memberOptions = this.getMemberOptions();
+		const members = this.getParticipantList();
+		const memberOptions = this.getParticipantOptions();
 		const length = members.length;
 		const isShareActive = UtilSpace.isShareActive();
 
-		const readersLimitText = UtilCommon.plural(readersLimit, translate('pluralReader'));
-		const writersLimitText = UtilCommon.plural(writersLimit, translate('pluralWriter'));
+		let limitLabel = '';
+		let limitButton = '';
+		let showLimit = false;
+
+		if (isShared) {
+			if (!UtilSpace.getWriterLimit()) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				showLimit = true;
+			} else
+			if (!UtilSpace.getReaderLimit() && (membership.tier == I.MembershipTier.Explorer)) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				showLimit = true;
+			};
+		};
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -167,19 +182,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
 					{hasLink ? (
-						<React.Fragment>
-							<div className="inviteLinkWrapper">
-								<div className="inputWrapper">
-									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
-									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
-								</div>
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						<div className="inviteLinkWrapper">
+							<div className="inputWrapper">
+								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
+								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 							</div>
-
-							{/*<div className="invitesLimit">*/}
-							{/*	{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), readersLimit, readersLimitText, writersLimit, writersLimitText)}*/}
-							{/*</div>*/}
-						</React.Fragment>
+							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						</div>
 					) : (
 						<div className="buttons">
 							<Button 
@@ -195,6 +204,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+					{showLimit ? (
+						<div className="row">
+							<Label text={limitLabel} />
+							<Button className="payment" text={limitButton} onClick={() => onPage('membership')} />
+						</div>
+					) : ''}
 
 					{this.cache ? (
 						<div id="list" className="rows">
@@ -229,7 +244,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	componentDidMount () {
-		this.updateCache();
+		const items = this.getParticipantList();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
 		this.setState({ isLoading: true });
 
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
@@ -249,28 +271,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.setState({ cid, key });
 	};
 
-	updateCache () {
-		const members = this.getMembers();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
-	};
-
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
 	};
 
-	getMembers () {
-		const subId = Constant.subId.participant;
+	getParticipantList () {
 		const requestStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
 		const allowedStatuses = requestStatuses.concat(I.ParticipantStatus.Active);
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => allowedStatuses.includes(it.status));
+		const records = UtilSpace.getParticipantsList(allowedStatuses);
 
 		return records.sort((c1, c2) => {
 			const isRequest1 = requestStatuses.includes(c1.status);
@@ -348,7 +358,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	getMemberOptions () {
+	getParticipantOptions () {
 		let items: any[] = ([
 			{ id: I.ParticipantPermissions.Reader },
 			{ id: I.ParticipantPermissions.Writer },

@@ -41,7 +41,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const isOwner = UtilSpace.isOwner();
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = spaces.filter(it => (it.spaceAccessType == I.SpaceType.Shared) && ((it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)) || !it.creator)).length;
+		const sharedCnt = this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();

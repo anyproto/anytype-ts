@@ -7,7 +7,7 @@ interface State {
 	error: string;
 };
 
-class PageMainImport extends React.Component<I.PageComponent, State> {
+class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: '',
@@ -97,4 +97,4 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 };
 
-export default PageMainImport;
+export default PageMainInvite;

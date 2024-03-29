@@ -132,6 +132,26 @@ class UtilSpace {
 		return commonStore.isOnline && UtilData.isAnytypeNetwork();
 	};
 
+	getReaderLimit () {
+		const space = this.getSpaceview();
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]);
+		return space.readersLimit - participants.length;
+	};
+
+	getWriterLimit () {
+		const space = this.getSpaceview();
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(it.permissions));
+		return space.writersLimit - participants.length;
+	};
+
 };
 
 export default new UtilSpace();

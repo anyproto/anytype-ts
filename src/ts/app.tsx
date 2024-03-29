@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace,
 } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -101,6 +101,7 @@ if (!UtilCommon.getElectron().isPackaged) {
 			UtilRouter,
 			UtilSmile,
 			UtilDate,
+			UtilSpace,
 			analytics,
 			dispatcher,
 			keyboard,

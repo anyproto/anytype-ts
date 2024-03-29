@@ -456,6 +456,57 @@ export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	};
 };
 
+export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
+	return {
+		available: response.getAvailable(),
+		ownerScwEthAddress: response.getOwnerscwethaddress(),
+		ownerEtherAddress: response.getOwnerethaddress(),
+		ownerAnyAddress: response.getOwneranyaddress(),
+		spaceId: response.getSpaceid(),
+		nameExpires: response.getNameexpires(),
+	};
+};
+
+export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyId.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceId.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.Get.Response) => {
+	return {
+		anyNameAttached: response.getAnynameattached(),
+		namesCountLeft: response.getNamescountleft(),
+		operationsCountLeft: response.getOperationscountleft(),
+	};
+};
+
+export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
+	return {
+		membership: Mapper.From.Membership(response.getData()),
+	};
+};
+
+export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
+	return {
+		url: response.getPaymenturl(),
+	};
+};
+
+export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
+	return { 
+		url: response.getPortalurl(),
+	};
+};
+
 export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
 	return {
 		inviteCid: response.getInvitecid(),

@@ -23,7 +23,7 @@ const SORT_IDS = [
 	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage' ];
+const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
 
 class Dispatcher {
 
@@ -155,6 +155,8 @@ class Dispatcher {
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
 		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
+		
+		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
 
 		return t;
 	};
@@ -1010,6 +1012,10 @@ class Dispatcher {
 					};
 					break;
 				};
+
+				case 'membershipUpdate':
+					authStore.membershipSet(Mapper.From.Membership(data.getData()));
+					break;
 
 				case 'processNew':
 				case 'processUpdate':
