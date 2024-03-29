@@ -431,7 +431,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onLeaveRequest (item: any) {
-		Action.removeParticipant(commonStore.space, item.identity, item.name);
+		Action.leaveApprove(commonStore.space, [ item.identity ], item.name);
 	};
 
 	onMoreSpace () {

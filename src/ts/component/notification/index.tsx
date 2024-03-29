@@ -151,7 +151,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'approve': {
-				Action.removeParticipant(payload.spaceId, payload.identity, payload.identityName);
+				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName);
 				break;
 			};
 
