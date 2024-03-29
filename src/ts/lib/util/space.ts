@@ -76,9 +76,8 @@ class UtilSpace {
 
 	getParticipantsList (statuses: I.ParticipantStatus[]) {
 		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 
-		return records.sort(UtilData.sortByOwner);
+		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
 	};
 
 	getParticipantId (spaceId: string, accountId: string) {

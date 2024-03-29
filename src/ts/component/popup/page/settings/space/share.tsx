@@ -61,7 +61,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
 		const members = this.getParticipantList();
-		const memberOptions = this.getMemberOptions();
+		const memberOptions = this.getParticipantOptions();
 		const length = members.length;
 		const isShareActive = UtilSpace.isShareActive();
 
@@ -244,7 +244,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	componentDidMount () {
-		this.updateCache();
+		const items = this.getParticipantList();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
 		this.setState({ isLoading: true });
 
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
@@ -264,17 +271,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.setState({ cid, key });
 	};
 
-	updateCache () {
-		const members = this.getParticipantList();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
-	};
-
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
@@ -282,22 +278,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getParticipantList () {
-		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+		const requestStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
+		const allowedStatuses = requestStatuses.concat(I.ParticipantStatus.Active);
+		const records = UtilSpace.getParticipantsList(allowedStatuses);
 
 		return records.sort((c1, c2) => {
-			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
-			const isJoining2 = c2.status === I.ParticipantStatus.Joining;
-			const isLeaving1 = c1.status === I.ParticipantStatus.Removing;
-			const isLeaving2 = c2.status === I.ParticipantStatus.Removing;
-			const isOwner1 = c1.permissions === I.ParticipantPermissions.Owner;
-			const isOwner2 = c2.permissions === I.ParticipantPermissions.Owner;
+			const isRequest1 = requestStatuses.includes(c1.status);
+			const isRequest2 = requestStatuses.includes(c2.status);
+			const cd1 = c1.createdDate;
+			const cd2 = c2.createdDate;
 
-			if (isJoining1 && !isJoining2) return -1;
-			if (!isJoining1 && isJoining2) return 1;
-			if (isLeaving1 && !isLeaving2) return -1;
-			if (!isLeaving1 && isLeaving2) return 1;
-			if (isOwner1 && !isOwner2) return -1;
-			if (!isOwner1 && isOwner2) return 1;
+			if (isRequest1 && !isRequest2) return -1;
+			if (!isRequest1 && isRequest2) return 1;
+			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
 
 			return 0;
 		});
@@ -365,7 +358,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	getMemberOptions () {
+	getParticipantOptions () {
 		let items: any[] = ([
 			{ id: I.ParticipantPermissions.Reader },
 			{ id: I.ParticipantPermissions.Writer },
