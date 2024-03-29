@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -13,6 +12,8 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	state = {
 		error: '',
 	};
+	cid = '';
+	key = '';
 	node = null;
 	refFrame = null;
 
@@ -25,7 +26,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame ref={ref => this.refFrame = ref}>
-					<Title text={translate('pageMainInviteTitle')} />
+					<Title text={error ? translate('commonError') : translate('pageMainInviteTitle')} />
 					<Error text={error} />
 
 					{error ? (
@@ -39,8 +40,23 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
 		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
 		const allowedStatuses = [ I.SpaceStatus.Deleted ];
+
+		if ((this.cid == data.cid) && (this.key == data.key)) {
+			return;
+		};
+
+		this.cid = data.cid;
+		this.key = data.key;
 
 		if (!data.cid || !data.key) {
 			this.setState({ error: translate('pageMainInviteErrorData') });
@@ -53,7 +69,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 				const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
 				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
-					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), space.name) });
+					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), UtilCommon.shorten(space.name, 32)) });
 					return;
 				};
 
@@ -62,10 +78,6 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			});
 		};
 
-		this.resize();
-	};
-
-	componentDidUpdate (): void {
 		this.resize();
 	};
 
