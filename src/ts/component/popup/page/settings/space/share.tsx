@@ -84,7 +84,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
-			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
 			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
 			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
 			const isRemoving = [ I.ParticipantStatus.Removing ].includes(item.status);
@@ -118,7 +117,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			if (isDeclined || isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
-			if (isOwner) {
+			if (item.isOwner) {
 				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
 			} else {
 				button = (

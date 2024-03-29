@@ -328,6 +328,10 @@ class DetailStore {
 		delete(object.participantPermissions);
 		delete(object.participantStatus);
 
+		object.isOwner = object.permissions == I.ParticipantPermissions.Owner;
+		object.isWriter = object.permissions == I.ParticipantPermissions.Writer;
+		object.isReader = object.permissions == I.ParticipantPermissions.Reader;
+
 		return object;
 	};
 

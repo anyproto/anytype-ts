@@ -120,12 +120,12 @@ class UtilSpace {
 
 	canParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
-		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
+		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
 	isOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
-		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
+		return participant ? participant.isOwner : false;
 	};
 
 	isShareActive () {
@@ -148,7 +148,7 @@ class UtilSpace {
 			return 0;
 		};
 
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(it.permissions));
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
 		return space.writersLimit - participants.length;
 	};
 
