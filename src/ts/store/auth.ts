@@ -161,6 +161,7 @@ class AuthStore {
 
 		this.accountListClear();
 		this.nameSet('');
+		this.membershipSet({ tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown });
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {
