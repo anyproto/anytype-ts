@@ -375,7 +375,6 @@ class UtilData {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				ignoreDeleted: true,
-				ignoreHidden: false,
 				noDeps: true,
 			},
 		];
