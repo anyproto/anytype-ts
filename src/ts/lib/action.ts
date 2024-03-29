@@ -543,23 +543,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const { accountSpaceId } = authStore;
-		const space = UtilSpace.getSpaceview();
 		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
 		};
 
-		analytics.event('ClickDeleteSpace', { route });
+		const { accountSpaceId } = authStore;
+		const { space } = commonStore;
+		const isOwner = UtilSpace.isOwner(id);
+		const name = UtilCommon.shorten(deleted.name, 32);
+		const suffix = isOwner ? 'Delete' : 'Leave';
+		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+
+		analytics.event(`Click${suffix}Space`, { route });
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
-				text: translate('spaceDeleteWarningText'),
-				textConfirm: translate('commonDelete'),
+				title,
+				text,
+				textConfirm: confirm,
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -568,20 +576,20 @@ class Action {
 							};
 
 							if (!message.error.code) {
-								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType, route });
+								Preview.toastShow({ text: toast });
+								analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
 
-					if (space.id == deleted.id) {
+					if (space == id) {
 						UtilRouter.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
 		});

@@ -1666,6 +1666,9 @@
 	"spaceDeleteWarningTitle": "Delete \"%s\" space",
 	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
 	"spaceDeleteToast": "Space \"%s\" was deleted",
+	"spaceLeaveWarningTitle": "Leave a space",
+	"spaceLeaveWarningText": "\"%s\" will be removed from your devices and you will no longer have access to it",
+	"spaceLeaveToast": "You have left the \"%s\" space",
 
 	"quickOption0": "Exact date",
 	"quickOption1": "Yesterday",
