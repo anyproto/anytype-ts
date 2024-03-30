@@ -48,8 +48,13 @@ export interface Membership {
 };
 
 export interface MembershipTierItem {
-	id?: MembershipTier;
-	idx?: number;
-	price?: MembershipPrice;
-	period?: MembershipPeriod;
+	id: MembershipTier,
+	name: string,
+	description: string,
+	nameMinLength: number,
+	isTest: boolean,
+	periodType: number,
+	period: number,
+	price: number,
+	features: any[]
 };

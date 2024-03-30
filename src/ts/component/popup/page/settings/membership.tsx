@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Loader } from 'Component';
 import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
-import { popupStore, authStore } from 'Store';
+import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import arrayMove from 'array-move';
@@ -18,11 +18,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	swiper: any = null;
 
 	render () {
-		const { membership, account } = authStore;
 		const { loading } = this.state;
+		const { membership, account } = authStore;
+		const { membershipTiers } = commonStore;
 		const hasTier = membership.tier != I.MembershipTier.None;
 		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
-		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= membership.tier);
 		const links = [
 			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
 			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy') },
@@ -73,14 +73,14 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}
+					className={[ 'tier', `tier${item.id}`, isCurrent ? 'current' : '' ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
 						{currentLabel}
-						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
-						<Title text={translate(`popupSettingsMembershipTier${item.idx}Title`)} />
-						<Label text={translate(`popupSettingsMembershipTier${item.idx}Text`)} />
+						<div className={[ 'icon', `tier${item.id}` ].join(' ')} />
+						<Title text={item.name} />
+						<Label text={item.description} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
@@ -129,7 +129,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				)}
 
 				<div className="tiers">
-					{tiers.map((tier, idx) => (
+					{membershipTiers.map((tier, idx) => (
 						<TierItem key={idx} {...tier} />
 					))}
 				</div>
@@ -150,8 +150,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	componentDidMount(): void {
 		UtilCommon.renderLinks($(this.node));
-
-		UtilData.loadMembershipTiers(false, '');
 	};
 
 	onSwiper (swiper) {

@@ -33,8 +33,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
 		const tierItem = UtilData.getMembershipTier(tier);
-		const suffix = tierItem.idx;
-		const cn = [ 'sides', `tier${suffix}` ];
+		const cn = [ 'sides', `tier${tier}` ];
 
 		let content: any = null;
 
@@ -55,8 +54,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 			<div className={cn.join(' ')}>
 				<div className="side left">
 					<Icon />
-					<Title text={translate(`popupSettingsMembershipTier${suffix}Title`)} />
-					<Label text={translate(`popupSettingsMembershipTier${suffix}Text`)} />
+					<Title text={tierItem.name} />
+					<Label text={tierItem.description} />
 
 					<div className="contentList">
 						<Label text={translate('popupMembershipWhatsIncluded')} />

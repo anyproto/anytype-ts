@@ -83,6 +83,8 @@ class CommonStore {
 		spaces: [],
 	};
 
+	public membershipTiersList: I.MembershipTierItem[] = [];
+
     constructor() {
         makeObservable(this, {
             progressObj: observable,
@@ -112,6 +114,7 @@ class CommonStore {
 			nativeTheme: computed,
 			space: computed,
 			isOnline: computed,
+			membershipTiers: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -126,6 +129,7 @@ class CommonStore {
 			spaceSet: action,
 			spaceStorageSet: action,
 			isOnlineSet: action,
+			membershipTiersListSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
@@ -234,6 +238,10 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
+	};
+
+	get membershipTiers (): I.MembershipTierItem[] {
+		return this.membershipTiersList;
 	};
 
     gatewaySet (v: string) {
@@ -461,6 +469,10 @@ class CommonStore {
 
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
+	};
+
+	membershipTiersListSet (list: I.MembershipTierItem[]) {
+		this.membershipTiersList = list;
 	};
 
 };

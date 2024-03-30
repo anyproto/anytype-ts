@@ -2,7 +2,6 @@ import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, 
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
-import { MembershipGetTiers } from 'ts/lib/api/command';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -238,6 +237,8 @@ class UtilData {
 
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
+
+		this.loadMembershipTiers(false, '');
 
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
@@ -987,8 +988,17 @@ class UtilData {
 	}
 
 	loadMembershipTiers (noCache, locale) {
+		const { config } = commonStore;
+		const { testPayment } = config;
+
 		C.MembershipGetTiers(noCache, locale, (message) => {
-			console.log('TIERS: ', message)
+			if (message.error.code) {
+				return;
+			};
+
+			const tiers = message.tiers.filter(it => it.id == 1 || (testPayment ? it.isTest : !it.isTest));
+
+			commonStore.membershipTiersListSet(tiers);
 		});
 	};
 
@@ -1006,33 +1016,10 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers (): I.MembershipTierItem[] {
-		const { config } = commonStore;
-		const { testPayment } = config;
-
-		return [
-			{
-				id: I.MembershipTier.Explorer,
-				idx: 1
-			},
-			{
-				id: testPayment ? I.MembershipTier.BuilderTest : I.MembershipTier.Builder,
-				idx: 2,
-				price: I.MembershipPrice.Price1Year,
-				period: I.MembershipPeriod.Period1Year,
-			},
-			{
-				id: testPayment ? I.MembershipTier.CoCreatorTest : I.MembershipTier.CoCreator,
-				idx: 3,
-				price: I.MembershipPrice.Price5Years,
-				period: I.MembershipPeriod.Period5Years,
-			}
-		];
-	};
-
 	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
-		const tiers = this.getMembershipTiers();
-		return tiers.find(it => it.id == id) || {};
+		const { membershipTiers } = commonStore;
+
+		return membershipTiers.find(it => it.id == id);
 	};
 
 	isAnytypeNetwork (): boolean {
