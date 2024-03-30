@@ -94,7 +94,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				ref={node => this.node = node}
 				className={[ 'setWrapper', check.className ].join(' ')}
 			>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{content}
 

@@ -102,7 +102,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { menuStore } from 'Store';
+import { popupStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -37,11 +37,10 @@ class Header extends React.Component<Props> {
 		this.renderLeftIcons = this.renderLeftIcons.bind(this);
 		this.renderTabs = this.renderTabs.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-		this.onNavigation = this.onNavigation.bind(this);
-		this.onGraph = this.onGraph.bind(this);
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
+		this.onExpand = this.onExpand.bind(this);
 	};
 	
 	render () {
@@ -59,8 +58,6 @@ class Header extends React.Component<Props> {
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
 					onSearch={this.onSearch}
-					onNavigation={this.onNavigation}
-					onGraph={this.onGraph}
 					onTooltipShow={this.onTooltipShow}
 					onTooltipHide={this.onTooltipHide}
 					menuOpen={this.menuOpen}
@@ -80,7 +77,7 @@ class Header extends React.Component<Props> {
 		this.refChild.forceUpdate();
 	};
 
-	renderLeftIcons (onOpen: () => void){
+	renderLeftIcons (onOpen?: () => void) {
 		const cmd = keyboard.cmdSymbol();
 
 		return (
@@ -92,7 +89,12 @@ class Header extends React.Component<Props> {
 					tooltipY={I.MenuDirection.Bottom}
 					onClick={() => sidebar.toggleExpandCollapse()}
 				/>
-				<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={onOpen} />
+
+				<Icon 
+					className="expand" 
+					tooltip={translate('commonOpenObject')} 
+					onClick={onOpen || this.onExpand} 
+				/>
 			</React.Fragment>
 		);
 	};
@@ -117,16 +119,14 @@ class Header extends React.Component<Props> {
 		);
 	};
 
-	onSearch () {
-		keyboard.onSearchPopup('Header');
+	onExpand () {
+		const { rootId, layout } = this.props;
+
+		popupStore.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
 	};
 
-	onNavigation () {
-		UtilObject.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
-	};
-	
-	onGraph () {
-		UtilObject.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+	onSearch () {
+		keyboard.onSearchPopup('Header');
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

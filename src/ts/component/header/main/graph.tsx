@@ -40,7 +40,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	componentDidMount(): void {
-		this.rootId = this.props.rootId;
+		this.setRootId(this.props.rootId);
 	};
 
 	onOpen () {
@@ -48,15 +48,14 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	onSearch () {
-		const { graph } = commonStore;
-		const menuParam = {
+		this.props.menuOpen('searchObject', '#button-header-search', {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
 				filters: UtilData.graphFilters(),
-				filter: graph.filter,
+				filter: commonStore.graph.filter,
 				canAdd: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
@@ -65,9 +64,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 					commonStore.graphSet({ filter: v });
 				},
 			}
-		};
-
-		this.props.menuOpen('searchObject', '#button-header-search', menuParam);
+		});
 	};
 
 	onFilter () {

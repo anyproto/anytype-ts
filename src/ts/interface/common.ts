@@ -142,12 +142,10 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	tab?: string;
 	text?: string;
 	layout?: I.ObjectLayout;
-	renderLeftIcons?: (onOpen: () => void) => any;
+	renderLeftIcons?: (onOpen?: () => void) => any;
 	renderTabs?: () => any;
 	onTab?: (id: string) => void;
 	onSearch?: () => void;
-	onNavigation?: () => void;
-	onGraph?: () => void;
 	onTooltipShow?: (e: any, text: string, caption?: string) => void;
 	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;

@@ -60,7 +60,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{isLoading ? <Loader id="loader" /> : ''}
 
