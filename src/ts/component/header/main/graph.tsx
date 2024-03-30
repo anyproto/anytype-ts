@@ -14,7 +14,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.onSettings = this.onSettings.bind(this);
-		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
@@ -22,13 +21,8 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 		return (
 			<React.Fragment>
-				<div className="side left">
-					{renderLeftIcons(this.onOpen)}
-				</div>
-
-				<div className="side center">
-					{renderTabs()}
-				</div>
+				<div className="side left">{renderLeftIcons()}</div>
+				<div className="side center">{renderTabs()}</div>
 
 				<div className="side right">
 					<Icon id="button-header-search" className="btn-search" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
@@ -41,10 +35,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	componentDidMount(): void {
 		this.setRootId(this.props.rootId);
-	};
-
-	onOpen () {
-		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
