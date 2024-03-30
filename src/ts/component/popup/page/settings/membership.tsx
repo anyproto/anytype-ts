@@ -151,7 +151,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	componentDidMount(): void {
 		UtilCommon.renderLinks($(this.node));
 
-		UtilData.loadMembershipTiers();
+		UtilData.loadMembershipTiers(false, '');
 	};
 
 	onSwiper (swiper) {

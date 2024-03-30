@@ -986,8 +986,8 @@ class UtilData {
 		return ret;
 	}
 
-	loadMembershipTiers () {
-		C.MembershipGetTiers((message) => {
+	loadMembershipTiers (noCache, locale) {
+		C.MembershipGetTiers(noCache, locale, (message) => {
 			console.log('TIERS: ', message)
 		});
 	};
