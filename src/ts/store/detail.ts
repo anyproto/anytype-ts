@@ -174,10 +174,6 @@ class DetailStore {
 	public mapper (object: any): any {
 		object = this.mapCommon(object || {});
 
-		if (object.isDeleted) {
-			object.name = translate('commonDeletedObject');
-		};
-
 		const fn = `map${I.ObjectLayout[object.layout]}`;
 		if (this[fn]) {
 			object = this[fn](object);
@@ -208,6 +204,11 @@ class DetailStore {
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedObject');
+		};
+
 		return object;
 	};
 

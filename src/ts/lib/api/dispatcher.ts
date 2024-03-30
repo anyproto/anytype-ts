@@ -1014,7 +1014,7 @@ class Dispatcher {
 				};
 
 				case 'membershipUpdate':
-					authStore.membershipSet(Mapper.From.Membership(data.getData()));
+					authStore.membershipUpdate(Mapper.From.Membership(data.getData()));
 					break;
 
 				case 'processNew':
