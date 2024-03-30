@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -18,21 +17,13 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 	};
 
 	render () {
-		const cmd = keyboard.cmdSymbol();
+		const { renderLeftIcons } = this.props;
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					{renderLeftIcons(this.onOpen)}
 				</div>
-
 				<div className="side center" />
 				<div className="side right" />
 			</React.Fragment>
