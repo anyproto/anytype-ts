@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
-import { observer } from 'mobx-react';
 
-const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
+class PopupAbout extends React.Component<I.Popup> {
 
-	render() {
+	render () {
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
@@ -15,7 +14,7 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 				<Label text={translate('popupAboutDescription')} />
 
 				<div className="version">
-					{UtilCommon.sprintf(translate('popupAboutVersion'), window.Electron.version.app)}
+					{UtilCommon.sprintf(translate('popupAboutVersion'), UtilCommon.getElectron().version.app)}
 					<Button onClick={this.onVersionCopy} text={translate('commonCopy')} className="c28" color="blank" />
 				</div>
 				<div className="copyright">{translate('popupAboutCopyright')}</div>
@@ -24,8 +23,9 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 	};
 
 	onVersionCopy () {
-		UtilCommon.clipboardCopy({ text: window.Electron.version.app });
+		UtilCommon.clipboardCopy({ text: UtilCommon.getElectron().version.app });
 	};
-});
+
+};
 
 export default PopupAbout;
