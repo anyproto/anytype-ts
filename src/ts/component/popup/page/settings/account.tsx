@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
 import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
-import { authStore, detailStore, blockStore, menuStore } from 'Store';
+import { authStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -96,9 +96,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	onMenu () {
 		const { getId } = this.props;
-        const object = this.getObject();
+        const profile = UtilSpace.getProfile();
 
-        if (!object.iconImage) {
+        if (!profile.iconImage) {
             this.onUpload();
             return;
         };
@@ -153,10 +153,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	onDescription (e) {
 		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
-	};
-
-	getObject () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 });

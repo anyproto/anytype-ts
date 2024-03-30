@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action } from 'Lib';
+import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -330,8 +330,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		switch (this.tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
-					{ name: translate('menuBlockCoverGradients'), children: UtilData.coverGradients() },
-					{ name: translate('menuBlockCoverSolidColors'), children: UtilData.coverColors() },
+					{ name: translate('menuBlockCoverGradients'), children: UtilMenu.getCoverGradients() },
+					{ name: translate('menuBlockCoverSolidColors'), children: UtilMenu.getCoverColors() },
 				]);
 				break;
 			};
