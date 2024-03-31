@@ -996,8 +996,6 @@ class UtilData {
 				return;
 			};
 
-			console.log('TIERS: ', message.tiers)
-
 			const tiers = message.tiers.filter(it => it.id == I.MembershipTier.Explorer || (testPayment ? it.isTest : !it.isTest));
 
 			commonStore.membershipTiersListSet(tiers);
