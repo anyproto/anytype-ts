@@ -712,9 +712,9 @@
 			.actionItems { margin: 32px 0px 24px 0px; }
 		}
 
-		.side.right.tabMembership { display: flex; flex-direction: column; padding: 48px 32px !important; }
+		.side.right.tabMembership { display: flex; flex-direction: column; padding: 46px 32px 45px !important; }
 		.side.right.tabMembership {
-			.membershipTitle { font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; margin-bottom: 0px; }
+			.membershipTitle { font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; margin-bottom: 2px; }
 			.description { text-align: center; }
 
 			.swiper { margin-bottom: 8px; margin-left: -31px; width: calc(100% + 62px); }
@@ -723,7 +723,7 @@
 				.swiper-slide { width: calc(100% - 62px); }
 			}
 
-			.slide { display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 32px 0px 24px; width: 100%; height: 288px; border-radius: 12px; flex-shrink: 0; }
+			.slide { display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 32px 0px 19px; width: 100%; height: 288px; border-radius: 12px; flex-shrink: 0; }
 			.slide {
 				.title { @include text-header3; margin-bottom: 4px; }
 				.label { width: 360px; }
@@ -750,7 +750,7 @@
 				.swiper-pagination-bullet.swiper-pagination-bullet-active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
 			}
 
-			.tiers { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 16px; padding-top: 18px; margin-bottom: 48px; }
+			.tiers { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 16px; padding-top: 22px; margin-bottom: 48px; }
 			.tiers {
 				.tier { position: relative; display: flex; flex-direction: column; justify-content: space-between; height: 296px; flex-shrink: 0; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
 				.tier {
@@ -782,10 +782,10 @@
 					.priceWrapper {
 						.price { display: none; }
 					}
-				};
+				}
 			}
 
-			.actionItems { margin-bottom: 28px; }
+			.actionItems { margin-bottom: 29px !important; }
 			.actionItems {
 				.icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
 			}
