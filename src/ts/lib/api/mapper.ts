@@ -605,7 +605,7 @@ export const Mapper = {
 				price: obj.getPricestripeusdcents(),
 				features: (obj.getFeaturesList() || []).map((it: any) => {
 					return {
-						feature: it.getFeatureid(),
+						featureId: it.getFeatureid(),
 						value: it.getValueuint()
 					};
 				})

@@ -58,3 +58,21 @@ export interface MembershipTierItem {
 	price: number,
 	features: any[]
 };
+
+export enum MembershipTierDataFeatureId {
+	Unknown 		= 0,
+	StorageGBs 		= 1,
+	Invites 		= 2,
+	SpaceWriters 	= 3,
+	SpaceReaders 	= 4,
+	SharedSpaces 	= 5,
+};
+
+export enum MembershipTierDataPeriodType {
+	PeriodTypeUnknown 		= 0,
+	PeriodTypeUnlimited 	= 1,
+	PeriodTypeDays 			= 2,
+	PeriodTypeWeeks 		= 3,
+	PeriodTypeMonths 		= 4,
+	PeriodTypeYears 		= 5,
+};

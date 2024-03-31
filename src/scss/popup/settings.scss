@@ -757,8 +757,10 @@
 					.currentLabel { position: absolute; top: 16px; right: 16px; border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px; padding: 0px 8px; }
 					.icon { width: 64px; height: 64px;  background-size: 64px 64px; margin-bottom: 10px; }
 					.icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-					.icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 12px; background-size: 60px 60px; }
-					.icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
+					.icon.tier2,
+					.icon.tier4 { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 12px; background-size: 60px 60px; }
+					.icon.tier3,
+					.icon.tier5 { background-image: url('~img/icon/payment/tier3.svg'); }
 
 					.title { @include text-paragraph; margin-bottom: 4px; }
 					.label { @include text-small; }
@@ -772,8 +774,10 @@
 				}
 
 				.tier.tier1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
-				.tier.tier2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
-				.tier.tier3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
+				.tier.tier2,
+				.tier.tier4 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
+				.tier.tier3,
+				.tier.tier5 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
 				.tier.current {
 					.priceWrapper {
 						.price { display: none; }

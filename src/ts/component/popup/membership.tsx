@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { I, translate, UtilData } from 'Lib';
+import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { authStore } from 'Store';
 
 import PageFree from './page/membership/free';
@@ -61,7 +61,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 						<Label text={translate('popupMembershipWhatsIncluded')} />
 						<ul>
 							{tierContent.map((text, idx) => (
-								<li key={idx}>{translate(text)}</li>
+								<li key={idx}>{text}</li>
 							))}
 						</ul>
 					</div>
@@ -73,36 +73,19 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 	};
 
 	getTierContent (tier: I.MembershipTier): string[] {
-		switch (tier) {
-			case I.MembershipTier.Explorer: {
-				return  [
-					'popupMembershipTier1Content1',
-					'popupMembershipTier1Content2',
-					'popupMembershipTier1Content3',
-				];
-			};
+		const tierItem = UtilData.getMembershipTier(tier);
+		const { features, nameMinLength } = tierItem;
+		const list = [];
 
-			case I.MembershipTier.BuilderTest: 
-			case I.MembershipTier.Builder: {
-				return [
-					'popupMembershipTier2Content1',
-					'popupMembershipTier2Content2',
-					'popupMembershipTier2Content3',
-					'popupMembershipTier2Content4',
-				];
-			};
-
-			case I.MembershipTier.CoCreatorTest:
-			case I.MembershipTier.CoCreator: {
-				return [
-					'popupMembershipTier3Content1',
-					'popupMembershipTier3Content2',
-					'popupMembershipTier3Content3',
-					'popupMembershipTier3Content4',
-					'popupMembershipTier3Content5',
-				];
-			};
+		if (nameMinLength) {
+			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeatureAnyNameContent`), nameMinLength));
 		};
+
+		features.forEach((item) => {
+			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeature${item.featureId}Content`), item.value));
+		});
+
+		return list;
 	};
 
 	onChangeEmail () {

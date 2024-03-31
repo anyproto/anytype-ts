@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button } from 'Component';
-import { I, translate, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon, UtilData } from 'Lib';
 
 const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess extends React.Component<I.Popup> {
 
@@ -10,10 +10,12 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 		const { data } = param;
 		const { tier } = data;
 		const text = tier == I.MembershipTier.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
+		const tierItem = UtilData.getMembershipTier(tier);
+		const { name } = tierItem;
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), translate(`popupSettingsMembershipTier${tier}Title`))} />
+				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), name)} />
 				<Icon className={`tier${tier}`} />
 				<Label text={text} />
 
