@@ -35,20 +35,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions') },
 		];
 
-		let slides = [];
-		for (let i = 0; i < 4; i++) {
-			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) });
-		};
-		// swiper has weird bug with setting initial slide to 0 with autoplay and loop enabled
-		// so in order to keep the flow as it was designed we move last element to position 0
-		slides = arrayMove(slides, 3, 0);
-
 		const SlideItem = (slide) => (
-			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
-				<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
+			<div className={[ 'slide', `c${slide.id}` ].join(' ')}>
+				<div className="illustration" />
 				<div className="text">
-					<Title text={slide.title} />
-					<Label text={slide.text} />
+					<Title text={translate(`popupSettingsMembershipSlide${slide.id}Title`)} />
+					<Label text={translate(`popupSettingsMembershipSlide${slide.id}Text`)} />
 				</div>
 			</div>
 		);
@@ -110,26 +102,21 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 						<Swiper
 							spaceBetween={16}
-							slidesPerView={'auto'}
-							initialSlide={1}
-							pagination={{
-								clickable: true,
-							}}
-							/*
+							slidesPerView={1.15}
+							pagination={{ clickable: true }}
 							autoplay={{
 								waitForTransition: true,
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							*/
-							modules={[Pagination, Autoplay]}
+							modules={[ Pagination, Autoplay ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}
 						>
-							{slides.map((slide: any, idx: number) => (
-								<SwiperSlide key={idx}>
-									<SlideItem key={idx} {...slide} />
+							{Array(4).fill(null).map((item: any, i: number) => (
+								<SwiperSlide key={i}>
+									<SlideItem key={i} id={i} />
 								</SwiperSlide>
 							))}
 						</Swiper>

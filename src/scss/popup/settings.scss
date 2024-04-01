@@ -732,16 +732,24 @@
 				}
 
 				.illustration { width: 320px; height: 104px; }
-				.illustration.slide0 { background: url('~img/icon/payment/slide0.svg'); }
-				.illustration.slide1 { background: url('~img/icon/payment/slide1.svg'); }
-				.illustration.slide2 { background: url('~img/icon/payment/slide2.svg'); }
-				.illustration.slide3 { background: url('~img/icon/payment/slide3.svg'); }
 			}
 
-			.slide.slide0 { background: linear-gradient(180deg, #cff5ce 0%, #f6f6f6 50%); }
-			.slide.slide1 { background: linear-gradient(180deg, #fef2c6 0%, #f6f6f6 50%); }
-			.slide.slide2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
-			.slide.slide3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
+			.slide.c0 { background: linear-gradient(180deg, #cff5ce 0%, #f6f6f6 50%); }
+			.slide.c0 {
+				.illustration { background: url('~img/icon/payment/slide0.svg'); }
+			}
+			.slide.c1 { background: linear-gradient(180deg, #fef2c6 0%, #f6f6f6 50%); }
+			.slide.c1 {
+				.illustration { background: url('~img/icon/payment/slide1.svg'); }
+			}
+			.slide.c2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
+			.slide.c2 {
+				.illustration { background: url('~img/icon/payment/slide2.svg'); }
+			}
+			.slide.c3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
+			.slide.c3 {
+				.illustration { background: url('~img/icon/payment/slide3.svg'); }
+			}
 
 			.swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
 			.swiper-pagination {
