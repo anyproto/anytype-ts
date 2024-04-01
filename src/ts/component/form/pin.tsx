@@ -15,6 +15,8 @@ interface Props {
 	onSuccess?: (value: string) => void;
 	/** callback when the pin is entered (and does not match expectedPin if provided)*/
 	onError?: () => void;
+	/** if true, input will not turn to type password after filled*/
+	isVisible?: boolean;
 };
 
 type State = {
@@ -34,6 +36,7 @@ class Pin extends React.Component<Props, State> {
 		pinLength: Constant.pinLength,
 		expectedPin: null,
 		focusOnMount: true,
+		isVisible: false,
 	};
 
 	state = {
@@ -47,7 +50,6 @@ class Pin extends React.Component<Props, State> {
 
 	render () {
 		const { pinLength } = this.props;
-		const { index } = this.state;
 
 		return (
 			<div className="pin" onClick={this.onClick}>
@@ -56,6 +58,7 @@ class Pin extends React.Component<Props, State> {
 						ref={ref => this.inputRefs[i] = ref} 
 						maxLength={1} 
 						key={i} 
+						onPaste={e => this.onPaste(e, i)}
 						onFocus={() => this.onInputFocus(i)} 
 						onKeyUp={this.onInputKeyUp} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
@@ -154,6 +157,7 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	onInputChange = (index: number, value: string) => {
+		const { isVisible } = this.props;
 		const input = this.inputRefs[index];
 		const next = this.inputRefs[index + 1];
 
@@ -166,7 +170,29 @@ class Pin extends React.Component<Props, State> {
 			next.focus();
 		};
 
+		if (isVisible) {
+			return;
+		};
+
 		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
+	};
+
+	onPaste (e, index: number) {
+		e.preventDefault();
+
+		const { pinLength } = this.props;
+		const data = e.clipboardData;
+		const value = String(data.getData('text/plain') || '').split('');
+
+		for (let i = index; i < pinLength; i++) {
+			const input = this.inputRefs[i];
+			const char = value[i - index] || '';
+
+			input.setValue(char);
+		};
+
+		this.inputRefs[pinLength - 1].focus();
+		this.check();
 	};
 
 };

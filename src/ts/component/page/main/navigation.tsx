@@ -135,7 +135,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					rootId={rootId} 
 					tabs={UtilMenu.getGraphTabs()} 
 					tab="navigation" 
-					onTab={this.onTab} 
+					onTab={this.onTab}
+					layout={I.ObjectLayout.Navigation}
 				/>
 
 				{loading ? <Loader id="loader" /> : ''}

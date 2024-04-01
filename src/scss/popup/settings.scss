@@ -45,11 +45,14 @@
 
 				.items { display: flex; flex-direction: column; }
 
-				.item { display: flex; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
+				.item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
 				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon { width: 24px; height: 24px; flex-shrink: 0; }
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
+
+					.caption { position: absolute; right: 8px; top: 5px; color: var(--color-text-secondary); }
+					.caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
 				}
 
 				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
@@ -367,7 +370,7 @@
 			.title { margin-bottom: 32px !important; }
 
 			.items {
-				.row { @include text-common; display: grid; grid-template-columns: 1fr 100px 100px 28px; padding: 0px; gap: 0px 8px; }
+				.row { @include text-common; display: grid; grid-template-columns: minmax(0, 1fr) 100px 100px 28px; padding: 0px; gap: 0px 8px; }
 
 				.row.isHead { 
 					@include text-small; color: var(--color-text-secondary); font-weight: 400; border-color: var(--color-shape-secondary); border-style: solid;
@@ -382,9 +385,9 @@
 				.col.colSpace { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 12px; }
 				.col.colSpace {
 					.iconObject { flex-shrink: 0; }
-					.info { width: 100%; }
+					.info { width: calc(100% - 52px); }
 					.info {
-						.name { max-width: 230px; @include text-overflow-nw; }
+						.name { @include text-overflow-nw; }
 					}
 					.creator { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 				}
@@ -707,6 +710,104 @@
 			}
 
 			.actionItems { margin: 32px 0px 24px 0px; }
+		}
+
+		.side.right.tabMembership { display: flex; flex-direction: column; padding: 48px 32px !important; }
+		.side.right.tabMembership {
+			.membershipTitle { font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; margin-bottom: 0px; }
+			.description { text-align: center; }
+
+			.swiper { margin-bottom: 8px; margin-left: -31px; width: calc(100% + 62px); }
+			.swiper {
+				.swiper-wrapper { margin-bottom: 10px; }
+				.swiper-slide { width: calc(100% - 62px); }
+			}
+
+			.slide { display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 32px 0px 24px; width: 100%; height: 288px; border-radius: 12px; flex-shrink: 0; }
+			.slide {
+				.title { @include text-header3; margin-bottom: 4px; }
+				.label { width: 360px; }
+				.label {
+					a { font-weight: 600; }
+				}
+
+				.illustration { width: 320px; height: 104px; }
+			}
+
+			.slide.c0 { background: linear-gradient(180deg, #cff5ce 0%, #f6f6f6 50%); }
+			.slide.c0 {
+				.illustration { background: url('~img/icon/payment/slide0.svg'); }
+			}
+			.slide.c1 { background: linear-gradient(180deg, #fef2c6 0%, #f6f6f6 50%); }
+			.slide.c1 {
+				.illustration { background: url('~img/icon/payment/slide1.svg'); }
+			}
+			.slide.c2 { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 50%); }
+			.slide.c2 {
+				.illustration { background: url('~img/icon/payment/slide2.svg'); }
+			}
+			.slide.c3 { background: linear-gradient(180deg, #ebedfe 0%, #f6f6f6 50%); }
+			.slide.c3 {
+				.illustration { background: url('~img/icon/payment/slide3.svg'); }
+			}
+
+			.swiper-pagination { display: flex; height: 8px; flex-wrap: nowrap; gap: 0px 10px; justify-content: center; }
+			.swiper-pagination {
+				.swiper-pagination-bullet { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-control-inactive); }
+				.swiper-pagination-bullet:hover { background-color: var(--color-control-active); }
+				.swiper-pagination-bullet.swiper-pagination-bullet-active { background-color: var(--color-control-accent) !important; box-shadow: 0 0 0 1px var(--color-control-accent); }
+			}
+
+			.tiers { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 16px; padding-top: 18px; margin-bottom: 48px; }
+			.tiers {
+				.tier { position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
+				.tier {
+					.iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 10px 0px; justify-content: space-between; gap: 0px 8px; }
+					.iconWrapper {
+						.icon { width: 64px; height: 64px; background-size: contain; }
+						.current { 
+							border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px; 
+							padding: 0px 8px; display: none;
+						}
+					}
+
+					.title { @include text-paragraph; margin: 0px 0px 4px 0px; }
+					.label { @include text-small; margin: 0px 0px 42px 0px; }
+					.button { width: 100%; }
+
+					.priceWrapper { margin: 0px 0px 10px 0px; @include text-small; display: flex; align-items: baseline; gap: 0px 4px; }
+					.priceWrapper {
+						.price { @include text-paragraph; font-weight: 600; }
+					}
+				}
+
+				.tier.c1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
+				.tier.c1 {
+					.icon { background-image: url('~img/icon/payment/tier1.svg'); }
+				}
+				.tier.c2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
+				.tier.c2 {
+					.icon { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 0px 0px; }
+				}
+				.tier.c3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
+				.tier.c3 {
+					.icon { background-image: url('~img/icon/payment/tier3.svg'); }
+				}
+
+				.tier.isCurrent {
+					.iconWrap {
+						.current { display: block; }
+					}
+					.priceWrapper {
+						.price { display: none; }
+					}
+				};
+			}
+
+			.actionItems { margin-bottom: 28px; }
+			.actionItems {
+				.icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
+			}
 		}
 	}
 

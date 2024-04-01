@@ -153,6 +153,8 @@ class Action {
 			return;
 		};
 
+		const { layout } = block.content;
+
 		C.BlockListDelete(widgets, [ id ]);
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
@@ -162,7 +164,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { target });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -543,28 +545,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const { accountSpaceId } = authStore;
-		const space = UtilSpace.getSpaceview();
 		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
 		};
 
-		const { targetSpaceId } = deleted;
-		const participant = UtilSpace.getMyParticipant(targetSpaceId);
-		const { permissions } = participant;
-		const event = permissions == I.ParticipantPermissions.Owner ? 'Delete' : 'Leave';
+		const { accountSpaceId } = authStore;
+		const { space } = commonStore;
+		const isOwner = UtilSpace.isOwner(id);
+		const name = UtilCommon.shorten(deleted.name, 32);
+		const suffix = isOwner ? 'Delete' : 'Leave';
+		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
 
-		analytics.event(`Click${event}Space`, { route });
+		analytics.event(`Click${suffix}Space`, { route });
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
-				text: translate('spaceDeleteWarningText'),
-				textConfirm: translate('commonDelete'),
+				title,
+				text,
+				textConfirm: confirm,
 				onConfirm: () => {
-					analytics.event(`Click${event}SpaceWarning`, { type: 'Delete', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -573,27 +578,27 @@ class Action {
 							};
 
 							if (!message.error.code) {
-								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event(`${event}Space`, { type: deleted.spaceAccessType, route });
+								Preview.toastShow({ text: toast });
+								analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
 
-					if (space.id == deleted.id) {
+					if (space == id) {
 						UtilRouter.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};
 				},
 				onCancel: () => {
-					analytics.event(`Click${event}SpaceWarning`, { type: 'Cancel', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
 		});
 	};
 
-	removeParticipant (spaceId: string, identity: string, name: string) {
-		C.SpaceParticipantRemove(spaceId, [ identity ], () => {
+	leaveApprove (spaceId: string, identities: string[], name: string) {
+		C.SpaceLeaveApprove(spaceId, identities, () => {
 			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
 
 			analytics.event('ApproveLeaveRequest');

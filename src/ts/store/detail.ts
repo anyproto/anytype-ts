@@ -150,7 +150,7 @@ class DetailStore {
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
-		let list = this.getDetailList(rootId, id);
+		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
@@ -174,49 +174,9 @@ class DetailStore {
 	public mapper (object: any): any {
 		object = this.mapCommon(object || {});
 
-		if (object.layout == I.ObjectLayout.Note) {
-			object.coverType = I.CoverType.None;
-			object.coverId = '';
-			object.iconEmoji = '';
-			object.iconImage = '';
-			object.name = object.snippet;
-		};
-
-		if (object.isDeleted) {
-			object.name = translate('commonDeletedObject');
-		};
-
-		switch (object.layout) {
-			case I.ObjectLayout.Type: {
-				object = this.mapType(object);
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				object = this.mapRelation(object);
-				break;
-			};
-
-			case I.ObjectLayout.Option: {
-				object = this.mapOption(object);
-				break;
-			};
-
-			case I.ObjectLayout.Date:
-			case I.ObjectLayout.Set: {
-				object = this.mapSet(object);
-				break;
-			};
-
-			case I.ObjectLayout.SpaceView: {
-				object = this.mapSpace(object);
-				break;
-			};
-
-			case I.ObjectLayout.Participant: {
-				object = this.mapParticipant(object);
-				break;
-			};
+		const fn = `map${I.ObjectLayout[object.layout]}`;
+		if (this[fn]) {
+			object = this[fn](object);
 		};
 
 		if (UtilObject.isFileLayout(object.layout)) {
@@ -244,6 +204,25 @@ class DetailStore {
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedObject');
+		};
+
+		return object;
+	};
+
+	private mapNote (object: any) {
+		object.coverType = I.CoverType.None;
+		object.coverId = '';
+		object.iconEmoji = '';
+		object.iconImage = '';
+		object.name = object.snippet;
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedObject');
+		};
+
 		return object;
 	};
 
@@ -298,7 +277,11 @@ class DetailStore {
 		return object;
 	};
 
-	private mapSpace (object: any) {
+	private mapDate (object: any) {
+		return this.mapSet(object);
+	};
+
+	private mapSpaceView (object: any) {
 		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
@@ -307,6 +290,11 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
+
+		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
+		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
+		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
+
 		return object;
 	};
 
@@ -319,17 +307,16 @@ class DetailStore {
 		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
 		object.globalName = Relation.getStringValue(object.globalName);
-		object.name = object.name || object.globalName;
+		object.name = object.globalName || object.name;
 
 		delete(object.participantPermissions);
 		delete(object.participantStatus);
 
-		return object;
-	};
+		object.isOwner = object.permissions == I.ParticipantPermissions.Owner;
+		object.isWriter = object.permissions == I.ParticipantPermissions.Writer;
+		object.isReader = object.permissions == I.ParticipantPermissions.Reader;
 
-	/** return detail list by rootId and id. returns empty if none found */
-	private getDetailList (rootId: string, id: string): Detail[] {
-		return this.map.get(rootId)?.get(id) || [];
+		return object;
 	};
 
 };

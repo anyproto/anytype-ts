@@ -364,6 +364,22 @@ class UtilMenu {
 		};
 		return options.map(id => ({ id: String(id), name: id }));
 	};
+
+	getCoverColors () {
+		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
+			id,
+			type: I.CoverType.Color,
+			name: translate(`textColor-${id}`),
+		}));
+	};
+
+	getCoverGradients () {
+		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
+			id,
+			type: I.CoverType.Gradient,
+			name: translate(`gradientColor-${id}`),
+		}));
+	};
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = UtilCommon.regexEscape(filter);
@@ -616,7 +632,7 @@ class UtilMenu {
 		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
 		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
-		if (UtilSpace.isOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
+		if (UtilSpace.isOwner(targetSpaceId) && space.isShared) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 

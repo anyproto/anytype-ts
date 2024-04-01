@@ -261,6 +261,16 @@ class MenuManager {
 
 				Separator,
 
+				{
+					label: 'Test payment', type: 'checkbox', checked: config.testPayment,
+					click: () => {
+						Api.setConfig(this.win, { testPayment: !config.testPayment });
+						this.win.reload();
+					}
+				},
+
+				Separator,
+
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
 				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },
@@ -310,9 +320,11 @@ class MenuManager {
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
 		this.tray.on('double-click', () => {
-			this.win.setAlwaysOnTop(true);
-			this.winShow();
-			this.win.setAlwaysOnTop(false);
+			if (this.win && !this.win.isDestroyed()) {
+				this.win.setAlwaysOnTop(true);
+				this.winShow();
+				this.win.setAlwaysOnTop(false);
+			};
 		});
 	};
 
@@ -431,7 +443,7 @@ class MenuManager {
 	};
 
 	destroy () {
-		if (this.tray) {
+		if (this.tray && !this.tray.isDestroyed()) {
 			this.tray.destroy();
 			this.tray = null;
 		};

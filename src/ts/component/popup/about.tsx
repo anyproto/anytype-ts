@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
-import { observer } from 'mobx-react';
 
-const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
+class PopupAbout extends React.Component<I.Popup> {
 
-	render() {
+	constructor (props: I.Popup) {
+		super(props);
+
+		this.onVersionCopy = this.onVersionCopy.bind(this);
+	};
+
+	render () {
 		return (
 			<React.Fragment>
 				<div className="iconWrapper">
@@ -15,7 +20,7 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 				<Label text={translate('popupAboutDescription')} />
 
 				<div className="version">
-					{UtilCommon.sprintf(translate('popupAboutVersion'), window.Electron.version.app)}
+					{UtilCommon.sprintf(translate('popupAboutVersion'), this.getVersion())}
 					<Button onClick={this.onVersionCopy} text={translate('commonCopy')} className="c28" color="blank" />
 				</div>
 				<div className="copyright">{translate('popupAboutCopyright')}</div>
@@ -23,9 +28,14 @@ const PopupAbout = observer(class PopupAbout extends React.Component<I.Popup> {
 		);
 	};
 
-	onVersionCopy () {
-		UtilCommon.clipboardCopy({ text: window.Electron.version.app });
+	getVersion () {
+		return UtilCommon.getElectron().version.app;
 	};
-});
+
+	onVersionCopy () {
+		UtilCommon.copyToast(translate('commonVersion'), this.getVersion());
+	};
+
+};
 
 export default PopupAbout;

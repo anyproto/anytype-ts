@@ -340,9 +340,10 @@ class Analytics {
 			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (data.target) {
-					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-					delete data.target;
+				const target = data.params.target;
+
+				if (target) {
+					data.type = Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
 				data.layout = I.WidgetLayout[data.layout];

@@ -80,7 +80,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
@@ -142,7 +141,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				} else {
 					UtilRouter.go('/auth/select', { replace: true });
 				};
-
 			});
 		});
 	};
@@ -168,6 +166,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
+			UtilData.onAuthOnce();
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

@@ -136,8 +136,8 @@ html.themeDark {
     /* Button */
 
 	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
-	.button.black:hover,
-    .button.black.hover { background: var(--color-control-active); }
+	.button.black:not(.disabled):hover,
+    .button.black:not(.disabled).hover { background: var(--color-control-active); }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
@@ -148,10 +148,11 @@ html.themeDark {
 
 	.button.red,
     .button.red.blank { background: none; }
-    .button.red:hover,
-    .button.red.hover,
-    .button.red.blank:hover,
-    .button.red.blank.hover { border-color: #581f0c; background: #311107; }
+
+    .button.red:not(.disabled):hover,
+    .button.red:not(.disabled).hover,
+    .button.red.blank:not(.disabled):hover,
+    .button.red.blank:not(.disabled).hover { border-color: #581f0c; background: #311107; }
 
     .filter {
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }

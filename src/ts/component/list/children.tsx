@@ -40,6 +40,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 						dropType={I.DropType.Block} 
 						canDropMiddle={true} 
 						onClick={this.onEmptyToggle} 
+						cacheKey="emptyToggle"
 					>
 						{translate('blockTextToggleEmpty')}
 					</DropTarget>

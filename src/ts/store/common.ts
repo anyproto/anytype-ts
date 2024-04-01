@@ -311,7 +311,6 @@ class CommonStore {
 		this.spaceId = String(id || '');
 	};
 
-
 	previewClear () {
 		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};

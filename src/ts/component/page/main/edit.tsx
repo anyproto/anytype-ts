@@ -20,7 +20,12 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 		return (
 			<React.Fragment>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} rootId={rootId} {...this.props} />
+				<Header 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					{...this.props} 
+					rootId={rootId} 
+				/>
 
 				<div id="bodyWrapper" className="wrapper">
 					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />

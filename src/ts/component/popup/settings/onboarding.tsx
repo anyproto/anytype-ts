@@ -107,7 +107,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	componentDidMount(): void {
 		const { networkConfig } = authStore;
 		const { mode, path } = networkConfig;
-		const userPath = window.Electron.userPath();
+		const userPath = UtilCommon.getElectron().userPath();
 
 		this.config = {
 			userPath,
@@ -129,7 +129,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onSave () {
 		const { networkConfig } = authStore;
-		const userPath = window.Electron.userPath();
+		const userPath = UtilCommon.getElectron().userPath();
 
 		if (this.config.mode !== networkConfig.mode) {
 			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });

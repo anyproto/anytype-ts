@@ -179,6 +179,16 @@ class UtilDate {
 		return f;
 	};
 
+	timeFormat (v: I.TimeFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.TimeFormat.H12:	 f = 'g:i A'; break;
+			case I.TimeFormat.H24:	 f = 'H:i'; break;
+		};
+		return f;
+	};
+
 	dayString (t: any): string {
 		t = Number(t) || 0;
 

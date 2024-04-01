@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { I, UtilObject, Renderer, keyboard, sidebar, Preview } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { Icon } from 'Component';
+import { popupStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -32,13 +33,14 @@ class Header extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
+		this.menuOpen = this.menuOpen.bind(this);
+		this.renderLeftIcons = this.renderLeftIcons.bind(this);
+		this.renderTabs = this.renderTabs.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-		this.onNavigation = this.onNavigation.bind(this);
-		this.onGraph = this.onGraph.bind(this);
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
-		this.menuOpen = this.menuOpen.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
+		this.onExpand = this.onExpand.bind(this);
 	};
 	
 	render () {
@@ -56,11 +58,11 @@ class Header extends React.Component<Props> {
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
 					onSearch={this.onSearch}
-					onNavigation={this.onNavigation}
-					onGraph={this.onGraph}
 					onTooltipShow={this.onTooltipShow}
 					onTooltipHide={this.onTooltipHide}
 					menuOpen={this.menuOpen}
+					renderLeftIcons={this.renderLeftIcons}
+					renderTabs={this.renderTabs}
 				/>
 			</div>
 		);
@@ -75,16 +77,56 @@ class Header extends React.Component<Props> {
 		this.refChild.forceUpdate();
 	};
 
-	onSearch () {
-		keyboard.onSearchPopup('Header');
+	renderLeftIcons (onOpen?: () => void) {
+		const cmd = keyboard.cmdSymbol();
+
+		return (
+			<React.Fragment>
+				<Icon
+					className="toggle"
+					tooltip={translate('sidebarToggle')}
+					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+					tooltipY={I.MenuDirection.Bottom}
+					onClick={() => sidebar.toggleExpandCollapse()}
+				/>
+
+				<Icon 
+					className="expand" 
+					tooltip={translate('commonOpenObject')} 
+					onClick={onOpen || this.onExpand} 
+				/>
+			</React.Fragment>
+		);
 	};
 
-	onNavigation () {
-		UtilObject.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
+	renderTabs () {
+		const { tab, tabs, onTab } = this.props;
+
+		return (
+			<div id="tabs" className="tabs">
+				{tabs.map((item: any, i: number) => (
+					<div 
+						key={i}
+						className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+						onClick={() => onTab(item.id)}
+						onMouseOver={e => this.onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
+						onMouseOut={this.onTooltipHide}
+					>
+						{item.name}
+					</div>
+				))}
+			</div>
+		);
 	};
-	
-	onGraph () {
-		UtilObject.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+
+	onExpand () {
+		const { rootId, layout } = this.props;
+
+		popupStore.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
+	};
+
+	onSearch () {
+		keyboard.onSearchPopup('Header');
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

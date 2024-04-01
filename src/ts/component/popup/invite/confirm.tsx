@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
 import { observer } from 'mobx-react';
+import { Title, Button, Error, IconObject } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
+import { authStore } from 'Store';
 
 interface State {
 	error: string;
@@ -12,6 +13,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	state = {
 		error: '',
 	};
+
+	participants = [];
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -24,12 +27,25 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { error } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { icon, spaceId } = data;
+		const { icon } = data;
+		const { membership } = authStore;
+		const spaceId = this.getSpaceId();
 		const space = UtilSpace.getSpaceviewBySpaceId(spaceId);
 		const name = UtilCommon.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 		if (!space) {
 			return null;
+		};
+
+		let readerButton = translate('popupInviteConfirmButtonReader');
+		let writerButton = translate('popupInviteConfirmButtonEditor');
+
+		if (!this.getWriterLimit()) {
+			writerButton = translate('popupInviteConfirmButtonEditorLimit');
+		} else
+		if (!this.getReaderLimit() && (membership.tier == I.MembershipTier.Explorer)) {
+			readerButton = translate('popupInviteConfirmButtonReaderLimit');
+			writerButton = translate('popupInviteConfirmButtonEditorLimit');
 		};
 
 		return (
@@ -42,8 +58,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 				<div className="buttons">
 					<div className="sides">
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={translate('popupInviteConfirmButtonConfirmReader')} className="c36" />
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={translate('popupInviteConfirmButtonConfirmEditor')} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={readerButton} className="c36" />
+						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={writerButton} className="c36" />
 					</div>
 
 					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
@@ -55,22 +71,23 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	componentDidMount () {
-		const { error } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { route } = data;
 
 		analytics.event('ScreenInviteConfirm', { route });
+		this.load();
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { spaceId, identity } = data;
 		const permissionsMap = {
 			0: 'Read',
 			1: 'Write'
 		};
+		const { identity } = data;
+		const spaceId = this.getSpaceId();
 
 		if (!spaceId || !identity) {
 			return;
@@ -107,6 +124,50 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 			close();
 		});
+	};
+
+	load () {
+		const { param } = this.props;
+		const { data } = param;
+		const { spaceId } = data;
+
+		UtilData.search({
+			keys: UtilData.participantRelationKeys(),
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: spaceId },
+			],
+			ignoreWorkspace: true,
+			ignoreDeleted: true,
+			noDeps: true,
+		}, (message: any) => {
+			this.participants = message.records || [];
+			this.forceUpdate();
+		});
+	};
+
+	getSpaceId () {
+		return this.props.param.data.spaceId;
+	};
+
+	getReaderLimit () {
+		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.participants.filter(it => [ I.ParticipantStatus.Active ].includes(it.status));
+		return space.readersLimit - participants.length;
+	};
+
+	getWriterLimit () {
+		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.participants.filter(it => [ I.ParticipantStatus.Active ].includes(it.status) && (it.isWriter || it.isOwner));
+		return space.writersLimit - participants.length;
 	};
 
 });

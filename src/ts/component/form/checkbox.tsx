@@ -84,7 +84,10 @@ class Checkbox extends React.Component<Props, State> {
 	getValue () {
 		return this.state.value;
 	};
-	
+
+	toggle () {
+		this.setValue(!this.getValue());
+	};
 };
 
 export default Checkbox;

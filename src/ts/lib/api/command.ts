@@ -3,6 +3,7 @@ import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 import Constant from 'json/constant.json';
+import { MembershipTier } from 'Interface';
 
 const Rpc = Commands.Rpc;
 
@@ -1240,7 +1241,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
-	request.setAddpagecontent(withContent);
+	//request.setAddpagecontent(withContent);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
@@ -1864,6 +1865,88 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
 
+// ---------------------- NAME SERVICE ---------------------- //
+
+export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveName.Request();
+
+	request.setFullname(name);
+
+	dispatcher.request(NameServiceResolveName.name, request, callBack);
+};
+
+export const NameServiceResolveAnyId = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveAnyId.Request();
+
+	request.setAnyid(id);
+
+	dispatcher.request(NameServiceResolveAnyId.name, request, callBack);
+};
+
+export const NameServiceResolveSpaceId = (id: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveSpaceId.Request();
+
+	request.setSpaceid(id);
+
+	dispatcher.request(NameServiceResolveSpaceId.name, request, callBack);
+};
+
+export const NameServiceUserAccountGet = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(NameServiceUserAccountGet.name, request, callBack);
+};
+
+// ---------------------- PAYMENTS ---------------------- //
+
+export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetStatus.Request();
+	
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipGetStatus.name, request, callBack);
+};
+
+export const MembershipIsNameValid = (tier: I.MembershipTier, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.IsNameValid.Request();
+
+	request.setRequestedtier(tier as number);
+	request.setRequestedanyname(name);
+
+	dispatcher.request(MembershipIsNameValid.name, request, callBack);
+};
+
+export const MembershipGetPaymentUrl = (tier: I.MembershipTier, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetPaymentUrl.Request();
+
+	request.setRequestedtier(tier as number);
+	request.setPaymentmethod(method as number);
+	request.setRequestedanyname(name);
+
+	dispatcher.request(MembershipGetPaymentUrl.name, request, callBack);
+};
+
+export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
+};
+
+export const MembershipGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetVerificationEmail.Request();
+	
+	request.setEmail(email);
+	request.setSubscribetonewsletter(isSubscribed);
+	
+	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
+};
+
+export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.VerifyEmailCode.Request();
+	
+	request.setCode(code);
+	
+	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
@@ -1892,11 +1975,11 @@ export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => 
 };
 
 export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.StopSharing.Request();
+	//const request = new Rpc.Space.StopSharing.Request();
 
-	request.setSpaceid(spaceId);
+	//request.setSpaceid(spaceId);
 
-	dispatcher.request(SpaceStopSharing.name, request, callBack);
+	//dispatcher.request(SpaceStopSharing.name, request, callBack);
 };
 
 export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
@@ -1961,6 +2044,15 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};
+
+export const SpaceLeaveApprove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.LeaveApprove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentitiesList(identities);
+
+	dispatcher.request(SpaceLeaveApprove.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //
