@@ -63,7 +63,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `tier${item.idx}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
+					className={[ 'tier', `c${item.idx}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">

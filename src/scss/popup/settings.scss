@@ -781,16 +781,16 @@
 					}
 				}
 
-				.tier.tier1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
-				.tier.tier1 {
+				.tier.c1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
+				.tier.c1 {
 					.icon { background-image: url('~img/icon/payment/tier1.svg'); }
 				}
-				.tier.tier2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
-				.tier.tier2 {
+				.tier.c2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
+				.tier.c2 {
 					.icon { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 0px 0px; }
 				}
-				.tier.tier3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
-				.tier.tier3 {
+				.tier.c3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
+				.tier.c3 {
 					.icon { background-image: url('~img/icon/payment/tier3.svg'); }
 				}
 
