@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface State {
 	error: string;

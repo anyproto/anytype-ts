@@ -214,7 +214,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className={[ 'wrapper', this.tab, this.view ].join(' ')}
 			>
-				<Header component="mainStore" {...this.props} tabs={tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
+				<Header 
+					{...this.props}
+					component="mainStore" 
+					tabs={tabs}
+					tab={this.tab}
+					layout={I.ObjectLayout.Store}
+					onTab={id => this.onTab(id, true)} 
+				/>
 
 				<div className="body">
 					<div className="items">

@@ -27,7 +27,6 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		
 		return (
 			<div>
-				<Header {...this.props} component="authIndex" />
 				<Frame>
 					<Title text={translate('authPinCheckTitle')} />
 					<Pin 

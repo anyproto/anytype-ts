@@ -51,9 +51,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 						value={globalName} 
 						onKeyUp={this.onKeyUp} 
 						readonly={globalName ? true : false}
+						className={globalName ? 'disabled' : ''}
 						placeholder={translate(`popupMembershipPaidPlaceholder`)} 
 					/>
-					<div className="ns">{Constant.anyNameSpace}</div>
+					{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
 				</div>
 
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>

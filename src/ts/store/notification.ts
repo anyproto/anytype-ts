@@ -18,8 +18,6 @@ class NotificationStore {
 		return this.itemList || [];
 	};
 
-
-
 	set (list: I.Notification[]): void {
 		this.itemList = list.map(it => new M.Notification(it));
 		this.setBadge();

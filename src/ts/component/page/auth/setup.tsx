@@ -80,7 +80,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>

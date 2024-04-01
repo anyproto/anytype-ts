@@ -120,7 +120,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{isLoading ? <Loader id="loader" /> : ''}
 

@@ -153,10 +153,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { block, isCollection, getData } = this.props;
+		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			getData(this.getSubId(targetBlockId), this.initCache);
 		} else {
 			this.initCache();
@@ -181,10 +181,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	updateData () {
-		const { block, isCollection, getData } = this.props;
+		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			getData(this.getSubId(targetBlockId), this.initCache);
 		};
 	};
@@ -202,7 +202,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	loadTree (): I.WidgetTreeItem[] {
-		const { block, isCollection, isPreview, sortFavorite, addGroupLabels } = this.props;
+		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
 		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
@@ -211,7 +211,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.branches = [];
 
 		let children = [];
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
 			let records = dbStore.getRecords(subId, '');

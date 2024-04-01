@@ -366,7 +366,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	onExtend () {
 		const { account } = authStore;
 		const { bytesLimit } = commonStore.spaceStorage;
-		const space = detailStore.get(Constant.subId.space, commonStore.space);
+		const space = UtilSpace.getSpaceview();
 		const limit = String(UtilFile.size(bytesLimit)).replace(' ', '');
 
 		if (!account || !space || !bytesLimit) {

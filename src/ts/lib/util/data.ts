@@ -33,15 +33,15 @@ const SYSTEM_DATE_RELATION_KEYS = [
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
-		return UtilCommon.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
+		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
 	};
 	
 	blockDivClass (v: I.DivStyle): string {
-		return UtilCommon.toCamelCase('div-' + String(I.DivStyle[v]));
+		return `div${String(I.DivStyle[v])}`;
 	};
 
 	blockLayoutClass (v: I.LayoutStyle): string {
-		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
+		return `layout${String(I.LayoutStyle[v])}`;
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
@@ -58,12 +58,8 @@ class UtilData {
 				};
 				break;
 
-			case I.BlockType.Div:
-				switch (v) {
-					default:
-					case I.DivStyle.Line:		 icon = 'divLine'; break;
-					case I.DivStyle.Dot:		 icon = 'divDot'; break;
-				};
+			case I.BlockType.Div: 
+				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;
@@ -80,21 +76,13 @@ class UtilData {
 				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 					c.push(dc);
 				} else {
-					c.push('blockMedia');
-
-					switch (type) {
-						case I.FileType.Image:	 c.push('isImage'); break;
-						case I.FileType.Video:	 c.push('isVideo'); break;
-						case I.FileType.Audio:	 c.push('isAudio'); break;
-						case I.FileType.Pdf:	 c.push('isPdf'); break;
-					};
+					c.push(`blockMedia is${I.FileType[type]}`);
 				};
 				break;
 			};
 
 			case I.BlockType.Embed: {
-				c.push('blockEmbed');
-				c.push(this.blockEmbedClass(processor));
+				c.push(`blockEmbed ${this.blockEmbedClass(processor)}`);
 				break;
 			};
 
@@ -126,45 +114,6 @@ class UtilData {
 
 	cardSizeClass (v: I.CardSize) {
 		return String(I.CardSize[v] || 'small').toLowerCase();
-	};
-
-	dateFormat (v: I.DateFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d, Y'; break;
-			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M, Y'; break;
-			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
-			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
-			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
-		};
-		return f;
-	};
-
-	timeFormat (v: I.TimeFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.TimeFormat.H12:	 f = 'g:i A'; break;
-			case I.TimeFormat.H24:	 f = 'H:i'; break;
-		};
-		return f;
-	};
-
-	coverColors () {
-		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
-			id,
-			type: I.CoverType.Color,
-			name: translate(`textColor-${id}`),
-		}));
-	};
-
-	coverGradients () {
-		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
-			id,
-			type: I.CoverType.Gradient,
-			name: translate(`gradientColor-${id}`),
-		}));
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -633,12 +582,6 @@ class UtilData {
 		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
 		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
-	};
-
-	sortByOwner (c1: any, c2: any) {
-		if (c1.isOwner1 && !c2.isOwner2) return -1;
-		if (!c1.isOwner1 && c2.isOwner2) return 1;
-		return 0;
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {

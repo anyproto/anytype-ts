@@ -65,7 +65,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		};
 
-		if ([ I.SpaceStatus.Removing, I.SpaceStatus.Deleted ].includes(spaceview.spaceAccountStatus)) {
+		// Check that space is not removed
+		if (spaceview && [ I.SpaceStatus.Removing, I.SpaceStatus.Deleted ].includes(spaceview.spaceAccountStatus)) {
 			buttons = buttons.filter(it => ![ 'spaceSwitch', 'spaceExport', 'spaceDelete' ].includes(it.id));
 		};
 

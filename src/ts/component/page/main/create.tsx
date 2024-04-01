@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Loader, Frame } from 'Component';
 import { I, UtilObject } from 'Lib';
-import { observer } from 'mobx-react';
 
-const PageMainCreate = observer(class PageMainCreate extends React.Component<I.PageComponent> {
+class PageMainCreate extends React.Component<I.PageComponent> {
 
 	render () {
 		return (
@@ -18,6 +17,6 @@ const PageMainCreate = observer(class PageMainCreate extends React.Component<I.P
 		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, '', message => UtilObject.openRoute(message.details));
 	};
 
-});
+};
 
 export default PageMainCreate;

@@ -313,8 +313,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						};
 
 						analytics.event('ChangeWidgetSource', {
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: target
+							params: { target },
 						});
 					},
 				});
@@ -339,7 +340,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						analytics.event('ChangeWidgetLayout', {
 							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: this.target
+							params: { target: this.target },
 						});
 					},
 				});
@@ -362,8 +363,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 						analytics.event('ChangeWidgetLimit', {
 							limit: this.limit,
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: this.target
+							params: { target: this.target },
 						});
 					},
 				});

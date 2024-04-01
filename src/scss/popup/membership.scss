@@ -90,15 +90,18 @@
             .side.right {
                 .title { @include text-header1; margin-bottom: 0; }
                 .label { @include text-paragraph; margin-bottom: 0; }
+
                 .icon { width: 120px; height: 120px; }
                 .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
                 .icon.tier2,
                 .icon.tier4 { background-image: url('~img/icon/payment/tier2.svg'); }
                 .icon.tier3,
                 .icon.tier5 { background-image: url('~img/icon/payment/tier3.svg'); }
+
                 .button { margin-bottom: 0; }
             }
         }
+
         .sides.tier1 {
             .side.left { background: linear-gradient(180deg, #d7fbff 0%, #f6f6f6 23.05%); }
             .side.left {
@@ -108,6 +111,7 @@
                 .inputWrapper { margin-bottom: 20px; }
             }
         }
+
         .sides.tier2,
         .sides.tier4 {
             .side.left { background: linear-gradient(180deg, #eceeff 0%, #f6f6f6 23.05%); }
@@ -115,6 +119,7 @@
                 .icon { background-image: url('~img/icon/payment/tier2.svg'); }
             }
         }
+
         .sides.tier3,
         .sides.tier5 {
             .side.left { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 23.05%); }

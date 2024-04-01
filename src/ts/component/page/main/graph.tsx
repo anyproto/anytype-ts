@@ -42,6 +42,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					tabs={UtilMenu.getGraphTabs()} 
 					tab="graph" 
 					onTab={this.onTab} 
+					layout={I.ObjectLayout.Graph}
 				/>
 
 				<Loader id="loader" />

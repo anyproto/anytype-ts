@@ -1,24 +1,24 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon, Loader } from 'Component';
+import { Title, Label, Button, Icon } from 'Component';
 import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
-import arrayMove from 'array-move';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
-	state = {
-		loading: false,
-	};
-
 	node: any = null;
 	swiper: any = null;
 
+	constructor (props: I.PopupSettings) {
+		super(props);
+
+		this.onSwiper = this.onSwiper.bind(this);
+	};
+
 	render () {
-		const { loading } = this.state;
 		const { membership, account } = authStore;
 		const { membershipTiers } = commonStore;
 		const hasTier = membership.tier != I.MembershipTier.None;
@@ -29,20 +29,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions') },
 		];
 
-		let slides = [];
-		for (let i = 0; i < 4; i++) {
-			slides.push({ idx: i, title: translate(`popupSettingsMembershipSlide${i}Title`), text: translate(`popupSettingsMembershipSlide${i}Text`) });
-		};
-		// swiper has weird bug with setting initial slide to 0 with autoplay and loop enabled
-		// so in order to keep the flow as it was designed we move last element to position 0
-		slides = arrayMove(slides, 3, 0);
-
 		const SlideItem = (slide) => (
-			<div className={[ 'slide', `slide${slide.idx}` ].join(' ')}>
-				<div className={[ 'illustration', `slide${slide.idx}` ].join(' ')} />
+			<div className={[ 'slide', `c${slide.id}` ].join(' ')}>
+				<div className="illustration" />
 				<div className="text">
-					<Title text={slide.title} />
-					<Label text={slide.text} />
+					<Title text={translate(`popupSettingsMembershipSlide${slide.id}Title`)} />
+					<Label text={translate(`popupSettingsMembershipSlide${slide.id}Text`)} />
 				</div>
 			</div>
 		);
@@ -52,7 +44,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
 			let period = '';
-			let currentLabel = null;
 			let buttonText = translate('popupSettingsMembershipLearnMore');
 
 			if (isCurrent) {
@@ -62,7 +53,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipForeverFree');
 				};
 
-				currentLabel = <div className="currentLabel">{translate('popupSettingsMembershipCurrent')}</div>;
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
@@ -73,14 +63,17 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `tier${item.id}`, isCurrent ? 'current' : '' ].join(' ')}
+					className={[ 'tier', `c${item.id}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
-						{currentLabel}
-						<div className={[ 'icon', `tier${item.id}` ].join(' ')} />
-						<Title text={item.name} />
-						<Label text={item.description} />
+						<div className="iconWrapper">
+							<Icon />
+							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
+						</div>
+
+						<Title text={translate(`popupSettingsMembershipTier${item.id}Title`)} />
+						<Label text={translate(`popupSettingsMembershipTier${item.id}Text`)} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
@@ -96,32 +89,27 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			<div ref={node => this.node = node}>
 				<div className="membershipTitle">{hasTier ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
-				{loading ? <Loader/> : ''}
-
 				{hasTier ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
 						<Swiper
 							spaceBetween={16}
-							slidesPerView={'auto'}
-							initialSlide={1}
-							pagination={{
-								clickable: true,
-							}}
+							slidesPerView={1.15}
+							pagination={{ clickable: true }}
 							autoplay={{
 								waitForTransition: true,
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							modules={[Pagination, Autoplay]}
+							modules={[ Pagination, Autoplay ]}
 							centeredSlides={true}
 							loop={true}
-							onSwiper={swiper => this.onSwiper(swiper)}
+							onSwiper={this.onSwiper}
 						>
-							{slides.map((slide: any, idx: number) => (
-								<SwiperSlide key={idx}>
-									<SlideItem key={idx} {...slide} />
+							{Array(4).fill(null).map((item: any, i: number) => (
+								<SwiperSlide key={i}>
+									<SlideItem key={i} id={i} />
 								</SwiperSlide>
 							))}
 						</Swiper>

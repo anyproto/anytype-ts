@@ -15,7 +15,7 @@ export interface WidgetComponent {
 	block: I.Block;
 	isEditing?: boolean;
 	isPreview?: boolean;
-	isCollection?: (blockId: string) => boolean;
+	isSystemTarget?: () => boolean;
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;

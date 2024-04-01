@@ -36,7 +36,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
-		this.isCollection = this.isCollection.bind(this);
+		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
@@ -57,7 +57,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
+		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const withPlus = this.isPlusAllowed();
 
@@ -65,7 +65,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			...this.props,
 			parent: block,
 			block: child,
-			isCollection: this.isCollection,
+			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
@@ -122,7 +122,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (layout != I.WidgetLayout.Space) {
-			const onClick = this.isCollection(targetBlockId) ? this.onSetPreview : this.onClick;
+			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
 				<div className="head">
@@ -352,7 +352,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 
-					if (!this.isCollection(targetBlockId)) {
+					if (!this.isSystemTarget()) {
 						details.type = type.id;
 						createWithLink = true;
 					};
@@ -603,7 +603,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const { targetBlockId } = child.content;
 		const data: any = { view: 'Widget' };
 
 		let blockId = '';
@@ -612,7 +611,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!isPreview) {
 			blockId = block.id;
 			event = 'SelectHomeTab';
-			data.tab = this.isCollection(targetBlockId) ? object.name : analytics.typeMapper(object.type);
+			data.tab = this.isSystemTarget() ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
@@ -620,13 +619,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	onDragEnd () {
-		const target = this.getObject();
+		const { block } = this.props;
+		const { layout } = block.content;
 
-		analytics.event('ReorderWidget', { target });
+		analytics.event('ReorderWidget', {
+			layout,
+			params: { target: this.getObject() }
+		});
 	};
 
-	isCollection (blockId: string) {
-		return Object.values(Constant.widgetId).includes(blockId);
+	isSystemTarget (): boolean {
+		const target = this.getTargetBlock();
+		if (!target) {
+			return false;
+		};
+
+		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
 	isPlusAllowed (): boolean {

@@ -86,7 +86,11 @@ class AuthStore {
 	};
 
 	membershipSet (v: I.Membership) {
-		this.membershipData = v;
+		this.membershipData = new M.Membership(v);
+	};
+
+	membershipUpdate (v: I.Membership) {
+		set(this.membershipData, v);
 	};
 
 	accountAdd (account: any) {
