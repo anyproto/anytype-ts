@@ -760,29 +760,44 @@
 
 			.tiers { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 16px; padding-top: 18px; margin-bottom: 48px; }
 			.tiers {
-				.tier { position: relative; display: flex; flex-direction: column; justify-content: space-between; height: 296px; flex-shrink: 0; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
+				.tier { position: relative; display: flex; flex-direction: column; justify-content: space-between; text-align: left; border-radius: 16px; padding: 16px 16px 20px; }
 				.tier {
-					.currentLabel { position: absolute; top: 16px; right: 16px; border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px; padding: 0px 8px; }
-					.icon { width: 64px; height: 64px;  background-size: 64px 64px; margin-bottom: 10px; }
-					.icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-					.icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 12px; background-size: 60px 60px; }
-					.icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
-
-					.title { @include text-paragraph; margin-bottom: 4px; }
-					.label { @include text-small; }
-
-					.priceWrapper { margin-bottom: 10px; @include text-small; }
-					.priceWrapper {
-						.price { @include text-paragraph; font-weight: 600; display: inline-block; padding-right: 4px; }
+					.iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 10px 0px; justify-content: space-between; gap: 0px 8px; }
+					.iconWrapper {
+						.icon { width: 64px; height: 64px; background-size: contain; }
+						.current { 
+							border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px; 
+							padding: 0px 8px; display: none;
+						}
 					}
 
+					.title { @include text-paragraph; margin: 0px 0px 4px 0px; }
+					.label { @include text-small; margin: 0px 0px 42px 0px; }
 					.button { width: 100%; }
+
+					.priceWrapper { margin: 0px 0px 10px 0px; @include text-small; display: flex; align-items: baseline; gap: 0px 4px; }
+					.priceWrapper {
+						.price { @include text-paragraph; font-weight: 600; }
+					}
 				}
 
 				.tier.tier1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
+				.tier.tier1 {
+					.icon { background-image: url('~img/icon/payment/tier1.svg'); }
+				}
 				.tier.tier2 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
+				.tier.tier2 {
+					.icon { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 0px 0px; }
+				}
 				.tier.tier3 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
-				.tier.current {
+				.tier.tier3 {
+					.icon { background-image: url('~img/icon/payment/tier3.svg'); }
+				}
+
+				.tier.isCurrent {
+					.iconWrap {
+						.current { display: block; }
+					}
 					.priceWrapper {
 						.price { display: none; }
 					}
@@ -793,8 +808,6 @@
 			.actionItems {
 				.icon { width: 16px; height: 16px; background: url('~img/icon/payment/hyperlink.svg'); }
 			}
-
-			.special {}
 		}
 	}
 

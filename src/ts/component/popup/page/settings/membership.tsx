@@ -44,7 +44,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
 			let period = '';
-			let currentLabel = null;
 			let buttonText = translate('popupSettingsMembershipLearnMore');
 
 			if (isCurrent) {
@@ -54,7 +53,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipForeverFree');
 				};
 
-				currentLabel = <div className="currentLabel">{translate('popupSettingsMembershipCurrent')}</div>;
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
@@ -65,12 +63,15 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `tier${item.idx}`, isCurrent ? 'current' : '' ].join(' ')}
+					className={[ 'tier', `tier${item.idx}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
-						{currentLabel}
-						<div className={[ 'icon', `tier${item.idx}` ].join(' ')} />
+						<div className="iconWrapper">
+							<Icon />
+							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
+						</div>
+
 						<Title text={translate(`popupSettingsMembershipTier${item.idx}Title`)} />
 						<Label text={translate(`popupSettingsMembershipTier${item.idx}Text`)} />
 					</div>
