@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Icon, Loader } from 'Component';
+import { Title, Label, Button, Icon } from 'Component';
 import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
-import arrayMove from 'array-move';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
-
-	state = {
-		loading: false,
-	};
 
 	node: any = null;
 	swiper: any = null;
@@ -25,7 +20,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	render () {
 		const { membership, account } = authStore;
-		const { loading } = this.state;
 		const hasTier = membership.tier != I.MembershipTier.None;
 		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
 		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= membership.tier);
@@ -93,8 +87,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		return (
 			<div ref={node => this.node = node}>
 				<div className="membershipTitle">{hasTier ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
-
-				{loading ? <Loader/> : ''}
 
 				{hasTier ? '' : (
 					<React.Fragment>
