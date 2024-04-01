@@ -2094,10 +2094,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly) {
+		if (readonly) {
 			return;
 		};
 
