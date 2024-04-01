@@ -958,9 +958,7 @@ class UtilData {
 	};
 
 	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
-		const { membershipTiers } = commonStore;
-
-		return membershipTiers.find(it => it.id == id);
+		return commonStore.membershipTiers.find(it => it.id == id);
 	};
 
 	isAnytypeNetwork (): boolean {

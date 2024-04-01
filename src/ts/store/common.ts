@@ -114,7 +114,6 @@ class CommonStore {
 			nativeTheme: computed,
 			space: computed,
 			isOnline: computed,
-			membershipTiers: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -129,7 +128,6 @@ class CommonStore {
 			spaceSet: action,
 			spaceStorageSet: action,
 			isOnlineSet: action,
-			membershipTiersListSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
@@ -241,7 +239,7 @@ class CommonStore {
 	};
 
 	get membershipTiers (): I.MembershipTierItem[] {
-		return this.membershipTiersList;
+		return this.membershipTiersList || [];
 	};
 
     gatewaySet (v: string) {
@@ -471,7 +469,7 @@ class CommonStore {
 	};
 
 	membershipTiersListSet (list: I.MembershipTierItem[]) {
-		this.membershipTiersList = list;
+		this.membershipTiersList = list || [];
 	};
 
 };
