@@ -17,6 +17,12 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	node: any = null;
 	swiper: any = null;
 
+	constructor (props: I.PopupSettings) {
+		super(props);
+
+		this.onSwiper = this.onSwiper.bind(this);
+	};
+
 	render () {
 		const { membership, account } = authStore;
 		const { loading } = this.state;
@@ -109,15 +115,17 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							pagination={{
 								clickable: true,
 							}}
+							/*
 							autoplay={{
 								waitForTransition: true,
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
+							*/
 							modules={[Pagination, Autoplay]}
 							centeredSlides={true}
 							loop={true}
-							onSwiper={swiper => this.onSwiper(swiper)}
+							onSwiper={this.onSwiper}
 						>
 							{slides.map((slide: any, idx: number) => (
 								<SwiperSlide key={idx}>
