@@ -939,7 +939,7 @@ class UtilData {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => it.id == 1 || (testPayment ? it.isTest : !it.isTest));
+			const tiers = message.tiers.filter(it => it.id == I.MembershipTier.Explorer || (testPayment ? it.isTest : !it.isTest));
 
 			commonStore.membershipTiersListSet(tiers);
 		});

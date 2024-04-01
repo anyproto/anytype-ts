@@ -72,8 +72,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
 						</div>
 
-						<Title text={translate(`popupSettingsMembershipTier${item.id}Title`)} />
-						<Label text={translate(`popupSettingsMembershipTier${item.id}Text`)} />
+						<Title text={item.name} />
+						<Label text={item.description} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">

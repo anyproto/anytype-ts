@@ -55,11 +55,11 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 							<Input ref={ref => this.refEmail = ref} onKeyUp={this.validateEmail} placeholder={translate(`commonEmail`)} />
 						</div>
 
+						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+
 						<div className="check" onClick={this.onCheck}>
 							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupMembershipFreeCheckboxText')}
 						</div>
-
-						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
 					</form>
@@ -70,7 +70,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 				content = (
 					<React.Fragment>
 						<div onClick={() => this.setState({ verificationStep: 1 })} className="back"><Icon />{translate('commonBack')}</div>
-						<Title text={translate(`popupMembershipFreeTitleStep2`)} />
+						<Title className="step2" text={translate(`popupMembershipFreeTitleStep2`)} />
 
 						<Pin
 							ref={ref => this.refCode = ref}
