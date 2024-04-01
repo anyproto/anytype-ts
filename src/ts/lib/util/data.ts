@@ -943,13 +943,11 @@ class UtilData {
 		});
 	};
 
-	getMembershipData (callBack?: (message: any) => void) {
-		C.MembershipGetStatus(true, (message) => {
-			if (message.error.code) {
-				return;
+	getMembershipData (callBack?: (membership: I.Membership) => void) {
+		C.MembershipGetStatus(true, (message: any) => {
+			if (message.membership) {
+				authStore.membershipSet(message.membership);
 			};
-
-			authStore.membershipSet(message.membership);
 
 			if (callBack) {
 				callBack(message.membership);
