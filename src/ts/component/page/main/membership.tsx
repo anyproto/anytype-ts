@@ -39,7 +39,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		UtilData.getMembershipData(true, (membership) => {
+		UtilData.getMembershipData((membership) => {
 			if (membership.tier == I.MembershipTier.None) {
 				this.setState({ error: translate('pageMainMembershipError') });
 				return;
