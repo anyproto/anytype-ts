@@ -43,7 +43,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview } = this.props;
+		const { parent, block, isSystemTarget, isPreview } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -142,7 +142,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let viewSelect = null;
 
-		if (!isCollection(targetBlockId) && (views.length > 1)) {
+		if (!isSystemTarget() && (views.length > 1)) {
 			if (isSelect) {
 				viewSelect = (
 					<Select 
@@ -196,11 +196,11 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidMount (): void {
-		const { parent, block, isCollection, getData } = this.props;
+		const { parent, block, isSystemTarget, getData } = this.props;
 		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
 		} else {
 			this.setState({ isLoading: true });
@@ -220,13 +220,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate (): void {
-		const { parent, block, isCollection } = this.props;
+		const { parent, isSystemTarget } = this.props;
 		const { viewId } = parent.content;
-		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const view = Dataview.getView(rootId, BLOCK_ID);
 
-		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
+		if (!isSystemTarget() && view && (viewId != view.id)) {
 			this.load(viewId);
 		};
 
@@ -255,7 +254,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	updateData () {
-		const { block, isCollection, getData } = this.props;
+		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const srcBlock = blockStore.getLeaf(targetBlockId, BLOCK_ID);
@@ -269,7 +268,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			};
 		};
 
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
 		} else {
 			const view = Dataview.getView(this.getRootId(), BLOCK_ID);

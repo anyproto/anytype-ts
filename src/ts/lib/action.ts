@@ -153,6 +153,8 @@ class Action {
 			return;
 		};
 
+		const { layout } = block.content;
+
 		C.BlockListDelete(widgets, [ id ]);
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
@@ -162,7 +164,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { target });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
