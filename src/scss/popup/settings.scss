@@ -764,7 +764,7 @@
 				.tier {
 					.iconWrapper { display: flex; align-items: flex-start; flex-direction: row; margin: 0px 0px 10px 0px; justify-content: space-between; gap: 0px 8px; }
 					.iconWrapper {
-						.icon { width: 64px; height: 64px; background-size: contain; }
+						.icon { width: 64px; height: 64px; background-size: contain; background-position: left center; }
 						.current { 
 							border: 1px solid var(--color-control-accent); border-radius: 10px; @include text-small; font-weight: 500; height: 20px; 
 							padding: 0px 8px; display: none;
@@ -787,7 +787,7 @@
 				}
 				.tier.c2, .tier.c4 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
 				.tier.c2, .tier.c4 {
-					.icon { background-image: url('~img/icon/payment/tier2.svg'); width: 60px; height: 60px; margin: 2px 0px 0px 0px; }
+					.icon { background-image: url('~img/icon/payment/tier2.svg'); background-size: 60px; }
 				}
 				.tier.c3, .tier.c5 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
 				.tier.c3, .tier.c5 {
