@@ -40,6 +40,22 @@ class MembershipTier implements I.MembershipTier {
 		return UtilCommon.round(this.priceCents / 100, 2);
 	};
 
+	get isNone (): boolean {
+		return this.id == I.TierType.None;
+	};
+
+	get isExplorer (): boolean {
+		return this.id == I.TierType.Explorer;
+	};
+
+	get isBuilder (): boolean {
+		return [ I.TierType.BuilderTest, I.TierType.Builder ].includes(this.id);
+	};
+
+	get isCreator (): boolean {
+		return [ I.TierType.CoCreatorTest, I.TierType.CoCreator ].includes(this.id);
+	};
+
 };
 
 export default MembershipTier;

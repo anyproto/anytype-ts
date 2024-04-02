@@ -77,4 +77,7 @@ export interface MembershipTier {
 	features: string[];
 	color?: string;
 	price?: number;
+	isExplorer?: boolean;
+	isBuilder?: boolean;
+	isCreator?: boolean;
 };
