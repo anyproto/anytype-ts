@@ -654,7 +654,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (element.id) {
 							case 'export': {
-								Action.export(targetSpaceId, [], I.ExportType.Markdown, { 
+								Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
 									zip: true, 
 									nested: true, 
 									files: true, 
