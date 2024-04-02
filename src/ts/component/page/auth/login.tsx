@@ -15,6 +15,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	node = null;
 	refPhrase = null;
 	refSubmit = null;
+	isSelecting = false;
 
 	state = {
 		error: '',
@@ -117,9 +118,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	select () {
 		const { accounts, networkConfig } = authStore;
-		if (!accounts.length) {
+		if (this.isSelecting || !accounts.length) {
 			return;
 		};
+
+		this.isSelecting = true;
 
 		const { mode, path } = networkConfig;
 		const account = accounts[0];
@@ -129,6 +132,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
+				this.isSelecting = false;
 				return;
 			};
 
@@ -139,6 +143,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			Animation.from(() => {
 				UtilData.onAuth();
 				UtilData.onAuthOnce();
+
+				this.isSelecting = false;
 			});
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
