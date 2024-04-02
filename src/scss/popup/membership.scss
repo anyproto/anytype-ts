@@ -8,7 +8,7 @@
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
             .side.left {
-                .icon { width: 80px; height: 80px; margin-bottom: 14px; background-size: 80px; }
+                .icon { width: 80px; height: 80px; margin-bottom: 14px; }
 
                 .title { @include text-header2; margin-bottom: 8px; }
                 .label { margin-bottom: 20px; }
@@ -88,40 +88,33 @@
                 .title { @include text-header1; margin-bottom: 0; }
                 .label { @include text-paragraph; margin-bottom: 0; }
 
-                .icon { width: 120px; height: 120px; }
+                .tierIcon { width: 120px; height: 120px; }
                 .button { margin-bottom: 0; }
             }
         }
 
 		.sides.green {
+			.tierIcon { background-image: url('~img/icon/payment/green.svg'); }
+
 			.side.left { background: linear-gradient(to bottom, #d7fbff 0%, #f6f6f6 25%); }
-			.side.left {
-				> .icon { background-image: url('~img/icon/payment/green.svg'); }
-			}
 			.side.right {
 				.inputWrapper { margin-bottom: 0px; }
 			}
 		}
 
 		.sides.blue {
+			.tierIcon { background-image: url('~img/icon/payment/blue.svg'); }
 			.side.left { background: linear-gradient(to bottom, #eceeff 0%, #f6f6f6 25%); }
-			.side.left {
-				> .icon { background-image: url('~img/icon/payment/blue.svg'); }
-			}
 		}
 
 		.sides.red {
+			.tierIcon { background-image: url('~img/icon/payment/red.svg'); }
 			.side.left { background: linear-gradient(to bottom, #ffebeb 0%, #f6f6f6 25%); }
-            .side.left {
-                > .icon { background-image: url('~img/icon/payment/red.svg'); }
-            }
 		}
 
 		.sides.default {
+			.tierIcon { background-image: url('~img/icon/payment/purple.svg'); }
 			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }
-            .side.left {
-                > .icon { background-image: url('~img/icon/payment/purple.svg'); }
-            }
 		}
     }
 }

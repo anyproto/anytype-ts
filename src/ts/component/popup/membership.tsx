@@ -58,7 +58,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		return (
 			<div className={cn.join(' ')}>
 				<div className="side left">
-					<Icon />
+					<Icon className="tierIcon" />
 					<Title text={tierItem.name} />
 					<Label text={tierItem.description} />
 
