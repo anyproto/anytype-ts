@@ -25,12 +25,11 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				<Frame>
 					<Title text={translate('pageMainMembershipTitle')} />
 					<Loader />
-
 					<Error text={error} />
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+							<Button text={translate('commonBack')} className="c28" onClick={() => UtilSpace.openDashboard('route')} />
 						</div>
 					) : ''}
 				</Frame>
@@ -39,8 +38,8 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		UtilData.getMembershipData(true, (membership) => {
-			if (membership.tier == I.MembershipTier.None) {
+		UtilData.getMembershipData((membership: I.Membership) => {
+			if (!membership || (membership.tier == I.MembershipTier.None)) {
 				this.setState({ error: translate('pageMainMembershipError') });
 				return;
 			};

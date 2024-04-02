@@ -11,11 +11,14 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 		const { tier } = data;
 		const text = tier == I.MembershipTier.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
 		const tierItem = UtilData.getMembershipTier(tier);
-		const { name } = tierItem;
+
+		if (!tierItem) {
+			return null;
+		};
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), name)} />
+				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name)} />
 				<Icon className={`tier${tier}`} />
 				<Label text={text} />
 

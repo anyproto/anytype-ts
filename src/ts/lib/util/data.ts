@@ -187,8 +187,6 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		this.loadMembershipTiers(false, '');
-
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
@@ -237,7 +235,8 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipData(true);
+		this.getMembershipData();
+		this.getMembershipTiers();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -930,28 +929,26 @@ class UtilData {
 		return ret;
 	}
 
-	loadMembershipTiers (noCache, locale) {
-		const { config } = commonStore;
+	getMembershipTiers () {
+		const { config, interfaceLang } = commonStore;
 		const { testPayment } = config;
 
-		C.MembershipGetTiers(noCache, locale, (message) => {
+		C.MembershipGetTiers(true, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => it.id == I.MembershipTier.Explorer || it.isTest == testPayment);
-
+			const tiers = message.tiers.filter(it => (it.id == I.MembershipTier.Explorer) || (it.isTest == testPayment));
+			
 			commonStore.membershipTiersListSet(tiers);
 		});
 	};
 
-	getMembershipData (noCache: boolean, callBack?: (message: any) => void) {
-		C.MembershipGetStatus(noCache, (message) => {
-			if (message.error.code) {
-				return;
+	getMembershipData (callBack?: (membership: I.Membership) => void) {
+		C.MembershipGetStatus(true, (message: any) => {
+			if (message.membership) {
+				authStore.membershipSet(message.membership);
 			};
-
-			authStore.membershipSet(message.membership);
 
 			if (callBack) {
 				callBack(message.membership);
@@ -960,9 +957,7 @@ class UtilData {
 	};
 
 	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
-		const { membershipTiers } = commonStore;
-
-		return membershipTiers.find(it => it.id == id);
+		return commonStore.membershipTiers.find(it => it.id == id);
 	};
 
 	isAnytypeNetwork (): boolean {

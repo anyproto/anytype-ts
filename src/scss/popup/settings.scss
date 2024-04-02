@@ -714,7 +714,10 @@
 
 		.side.right.tabMembership { display: flex; flex-direction: column; padding: 46px 32px 45px !important; }
 		.side.right.tabMembership {
-			.membershipTitle { font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; margin-bottom: 2px; }
+			.membershipTitle { 
+				font-family: 'RiccioneExtraLight', 'Inter'; text-align: center; font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.518px; 
+				margin-bottom: 2px; 
+			}
 			.description { text-align: center; }
 
 			.swiper { margin-bottom: 8px; margin-left: -31px; width: calc(100% + 62px); }

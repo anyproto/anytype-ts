@@ -496,7 +496,6 @@ export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response)
 };
 
 export const MembershipGetTiers = (response: Rpc.Membership.Tiers.Get.Response) => {
-	//list: (response.getExperiencesList() || []).map(Mapper.From.Manifest),
 	return {
 		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
 	};

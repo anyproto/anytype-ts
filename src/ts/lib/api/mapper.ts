@@ -593,7 +593,7 @@ export const Mapper = {
 			};
 		},
 
-		MembershipTierData: (obj: Model.MembershipTierData) => {
+		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTierItem => {
 			return {
 				id: obj.getId(),
 				name: obj.getName(),

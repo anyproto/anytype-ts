@@ -36,6 +36,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
+
+		if (!tierItem) {
+			return null;
+		};
+
 		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
 			translate('popupSettingsMembershipPerYear') : 
 			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
