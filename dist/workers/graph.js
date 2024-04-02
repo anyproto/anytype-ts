@@ -229,9 +229,6 @@ updateForces = () => {
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
-	//map = getNodeMap();
-	//edges = edges.filter(d => map.get(d.source) && map.get(d.target));
-
 	// Shallow copy to disable mutations
 	nodes = nodes.map(d => {
 		let o = old.get(d.id);
