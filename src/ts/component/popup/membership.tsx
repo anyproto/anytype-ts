@@ -38,7 +38,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 			return null;
 		};
 
-		const cn = [ 'sides', `tier${tier}` ];
+		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
 		let content: any = null;
 

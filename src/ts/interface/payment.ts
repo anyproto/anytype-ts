@@ -64,10 +64,12 @@ export interface MembershipTier {
 	id: TierType,
 	name: string,
 	description: string,
+	colorStr: string;
 	nameMinLength: number,
 	isTest: boolean,
 	periodType: number,
 	period: number,
 	price: number,
 	features: string[];
+	color?: string;
 };

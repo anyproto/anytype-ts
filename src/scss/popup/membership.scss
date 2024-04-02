@@ -8,12 +8,7 @@
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
             .side.left {
-                .icon { width: 80px; height: 80px; margin-bottom: 14px; background-size: 80px 80px; }
-                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-                .icon.tier2,
-                .icon.tier4 { background-image: url('~img/icon/payment/tier2.svg'); }
-                .icon.tier3,
-                .icon.tier5 { background-image: url('~img/icon/payment/tier3.svg'); }
+                .icon { width: 80px; height: 80px; margin-bottom: 14px; background-size: 80px; }
 
                 .title { @include text-header2; margin-bottom: 8px; }
                 .label { margin-bottom: 20px; }
@@ -94,40 +89,39 @@
                 .label { @include text-paragraph; margin-bottom: 0; }
 
                 .icon { width: 120px; height: 120px; }
-                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-                .icon.tier2,
-                .icon.tier4 { background-image: url('~img/icon/payment/tier2.svg'); }
-                .icon.tier3,
-                .icon.tier5 { background-image: url('~img/icon/payment/tier3.svg'); }
-
                 .button { margin-bottom: 0; }
             }
         }
 
-        .sides.tier1 {
-            .side.left { background: linear-gradient(180deg, #d7fbff 0%, #f6f6f6 23.05%); }
-            .side.left {
-                > .icon { background-image: url('~img/icon/payment/tier1.svg'); }
-            }
-            .side.right {
-                .inputWrapper { margin-bottom: 0px; }
-            }
-        }
+		.sides.green {
+			.side.left { background: linear-gradient(to bottom, #d7fbff 0%, #f6f6f6 25%); }
+			.side.left {
+				> .icon { background-image: url('~img/icon/payment/green.svg'); }
+			}
+			.side.right {
+				.inputWrapper { margin-bottom: 0px; }
+			}
+		}
 
-        .sides.tier2,
-        .sides.tier4 {
-            .side.left { background: linear-gradient(180deg, #eceeff 0%, #f6f6f6 23.05%); }
-            .side.left {
-                .icon { background-image: url('~img/icon/payment/tier2.svg'); }
-            }
-        }
+		.sides.blue {
+			.side.left { background: linear-gradient(to bottom, #eceeff 0%, #f6f6f6 25%); }
+			.side.left {
+				> .icon { background-image: url('~img/icon/payment/blue.svg'); }
+			}
+		}
 
-        .sides.tier3,
-        .sides.tier5 {
-            .side.left { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 23.05%); }
+		.sides.red {
+			.side.left { background: linear-gradient(to bottom, #ffebeb 0%, #f6f6f6 25%); }
             .side.left {
-                .icon { background-image: url('~img/icon/payment/tier3.svg'); }
+                > .icon { background-image: url('~img/icon/payment/red.svg'); }
             }
-        }
+		}
+
+		.sides.default {
+			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }
+            .side.left {
+                > .icon { background-image: url('~img/icon/payment/purple.svg'); }
+            }
+		}
     }
 }

@@ -39,7 +39,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			</div>
 		);
 
-		const TierItem = (item: any) => {
+		const TierItem = (props: any) => {
+			const item = membershipTiers[props.idx];
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
@@ -63,7 +64,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `c${item.id}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
+					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
@@ -117,8 +118,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				)}
 
 				<div className="tiers">
-					{membershipTiers.map((tier, idx) => (
-						<TierItem key={idx} {...tier} />
+					{membershipTiers.map((tier, i) => (
+						<TierItem key={i} idx={i} />
 					))}
 				</div>
 

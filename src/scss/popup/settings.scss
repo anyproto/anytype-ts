@@ -784,17 +784,21 @@
 					}
 				}
 
-				.tier.c1 { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25.64%); }
-				.tier.c1 {
-					.icon { background-image: url('~img/icon/payment/tier1.svg'); }
+				.tier.green { background: linear-gradient(180deg, #d7faff 0%, #f3f3f3 25%); }
+				.tier.green {
+					.icon { background-image: url('~img/icon/payment/green.svg'); }
 				}
-				.tier.c2, .tier.c4 { background: linear-gradient(180deg, #eaecfe 0%, #f3f3f3 25.64%); }
-				.tier.c2, .tier.c4 {
-					.icon { background-image: url('~img/icon/payment/tier2.svg'); background-size: 60px; }
+				.tier.blue { background: linear-gradient(180deg, #eaecfe 0%, #f4f4f4 25%); }
+				.tier.blue {
+					.icon { background-image: url('~img/icon/payment/blue.svg'); background-size: 60px; }
 				}
-				.tier.c3, .tier.c5 { background: linear-gradient(180deg, #ffebeb 0%, #f3f3f3 25.64%); }
-				.tier.c3, .tier.c5 {
-					.icon { background-image: url('~img/icon/payment/tier3.svg'); }
+				.tier.red { background: linear-gradient(180deg, #ffebeb 0%, #f5f5f5 25%); }
+				.tier.red {
+					.icon { background-image: url('~img/icon/payment/red.svg'); }
+				}
+				.tier.default { background: linear-gradient(180deg, #ffeaff 0%, #f3f3f3 25%); }
+				.tier.default {
+					.icon { background-image: url('~img/icon/payment/purple.svg'); }
 				}
 
 				.tier.isCurrent {
