@@ -593,7 +593,7 @@ export const Mapper = {
 			};
 		},
 
-		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTierItem => {
+		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
 			return {
 				id: obj.getId(),
 				name: obj.getName(),
@@ -603,12 +603,7 @@ export const Mapper = {
 				periodType: obj.getPeriodtype(),
 				period: obj.getPeriodvalue(),
 				price: obj.getPricestripeusdcents(),
-				features: (obj.getFeaturesList() || []).map((it: any) => {
-					return {
-						featureId: it.getFeatureid(),
-						value: it.getValueuint()
-					};
-				})
+				features: obj.getFeaturesList(),
 			};
 		},
 

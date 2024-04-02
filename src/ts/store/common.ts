@@ -1,6 +1,6 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -83,7 +83,7 @@ class CommonStore {
 		spaces: [],
 	};
 
-	public membershipTiersList: I.MembershipTierItem[] = [];
+	public membershipTiersList: I.MembershipTier[] = [];
 
     constructor() {
         makeObservable(this, {
@@ -238,7 +238,7 @@ class CommonStore {
 		return Boolean(this.isOnlineValue);
 	};
 
-	get membershipTiers (): I.MembershipTierItem[] {
+	get membershipTiers (): I.MembershipTier[] {
 		return this.membershipTiersList || [];
 	};
 
@@ -468,8 +468,8 @@ class CommonStore {
 		this.dataPathValue = String(v || '');
 	};
 
-	membershipTiersListSet (list: I.MembershipTierItem[]) {
-		this.membershipTiersList = list || [];
+	membershipTiersListSet (list: I.MembershipTier[]) {
+		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
 };

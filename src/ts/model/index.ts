@@ -3,6 +3,7 @@ import Block from './block';
 import BlockStructure from './blockStructure';
 import Notification from './notification';
 import Membership from './membership';
+import MembershipTier from './membershipTier';
 
 import View from './view';
 import ViewRelation from './viewRelation';
@@ -17,6 +18,7 @@ export {
 
 	Notification,
 	Membership,
+	MembershipTier,
 
 	View,
 	ViewRelation,

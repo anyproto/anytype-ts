@@ -9,7 +9,7 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 		const { param, close } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const text = tier == I.MembershipTier.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
+		const text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
 		const tierItem = UtilData.getMembershipTier(tier);
 
 		if (!tierItem) {

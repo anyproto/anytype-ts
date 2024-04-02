@@ -938,7 +938,7 @@ class UtilData {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.MembershipTier.Explorer) || (it.isTest == testPayment));
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
 			
 			commonStore.membershipTiersListSet(tiers);
 		});
@@ -956,7 +956,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
+	getMembershipTier (id: I.TierType): I.MembershipTier {
 		return commonStore.membershipTiers.find(it => it.id == id);
 	};
 

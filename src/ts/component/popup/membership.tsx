@@ -49,7 +49,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		if (!isEditing && (membership.tier == tier)) {
 			content = <PageCurrent {...this.props} onChangeEmail={this.onChangeEmail} />;
 		} else
-		if (tier == I.MembershipTier.Explorer) {
+		if (tier == I.TierType.Explorer) {
 			content = <PageFree {...this.props} />;
 		} else {
 			content = <PagePaid {...this.props} />;
@@ -77,22 +77,21 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		);
 	};
 
-	getTierContent (tier: I.MembershipTier): string[] {
+	getTierContent (tier: I.TierType): string[] {
 		const tierItem = UtilData.getMembershipTier(tier);
 		if (!tierItem) {
 			return [];
 		};
 
 		const { features, nameMinLength } = tierItem;
-		const list = [];
+
+		let list = [];
 
 		if (nameMinLength) {
 			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeatureAnyNameContent`), nameMinLength));
 		};
 
-		features.forEach(it => {
-			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeature${it.featureId}Content`), it.value));
-		});
+		list = list.concat(features);
 
 		return list;
 	};

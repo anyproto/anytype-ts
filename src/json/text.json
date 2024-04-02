@@ -893,11 +893,6 @@
 	"popupMembershipCode6": "This tier does not support name",
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
-	"popupMembershipTierFeature1Content": "%s GB of network space",
-	"popupMembershipTierFeature2Content": "%s guest collaborator seats",
-	"popupMembershipTierFeature3Content": "%s of space writers",
-	"popupMembershipTierFeature4Content": "%s of space readers",
-	"popupMembershipTierFeature5Content": "%s of shared spaces",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",

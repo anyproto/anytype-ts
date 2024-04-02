@@ -21,7 +21,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { membership, account } = authStore;
 		const { membershipTiers } = commonStore;
-		const hasTier = membership.tier != I.MembershipTier.None;
+		const hasTier = membership.tier != I.TierType.None;
 		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
 		const links = [
 			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
