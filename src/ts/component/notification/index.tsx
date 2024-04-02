@@ -148,7 +148,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 						name: payload.identityName,
 						icon: payload.identityIcon,
 						spaceId: payload.spaceId,
-						identity: payload.identity
+						identity: payload.identity,
+						route: 'Notification'
 					}
 				});
 				break;

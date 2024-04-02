@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
 import { authStore } from 'Store';
 
 interface State {
@@ -70,7 +70,12 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
+		analytics.event('ScreenInviteConfirm', { route });
 		this.load();
 	};
 
@@ -90,6 +95,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 				return;
 			};
 
+			analytics.event('ApproveInviteRequest', { type: permissions });
+
 			close();
 		});
 	};
@@ -108,6 +115,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			analytics.event('RejectInviteRequest');
 
 			close();
 		});
