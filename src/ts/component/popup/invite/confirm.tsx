@@ -82,10 +82,6 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	onConfirm (permissions: I.ParticipantPermissions) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const permissionsMap = {
-			0: 'Read',
-			1: 'Write'
-		};
 		const { identity } = data;
 		const spaceId = this.getSpaceId();
 
@@ -99,7 +95,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 				return;
 			};
 
-			analytics.event('ApproveInviteRequest', { type: permissionsMap[permissions] });
+			analytics.event('ApproveInviteRequest', { type: permissions });
 
 			close();
 		});

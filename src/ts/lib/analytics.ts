@@ -125,17 +125,20 @@ class Analytics {
 			return;
 		};
 
-		const multiplayerEvents = [
-			'ScreenSet', 'ScreenCollection', 'ScreenObject', 'CreateObject ', 'CreateBlock ', 'ScreenGraph ', 'GraphSelectNode',
-			'CreateType', 'CreateTemplate', 'ChangeObjectType','LinkToObject', 'CreateLink', 'DuplicateObject', 'Print', 'SearchResult',
-			'SearchWords', 'CopyBlock', 'CutBlock', 'PasteBlock', 'DuplicateBlock', 'UploadMedia', 'DownloadMedia', 'FeaureRelation',
-			'UnfeatureRelation', 'AddExistingRelation', 'CreateRelation', 'DeleteRelation', 'ChangeRelationValue', 'DeleteRelationValue',
-			'DuplicateRelation', 'FeatureRelation', 'UnfeatureRelation', 'AddExistingRelation', 'CreateRelation', 'DeleteRelation',
-			'ChangeRelationValue', 'DeleteRelationValue', 'DuplicateRelation', 'Import'
-		];
 		const converted: any = {};
+		const space = UtilSpace.getSpaceview();
+		const participant = UtilSpace.getMyParticipant();
 
 		let param: any = {};
+
+		if (space) {
+			param.spaceType = Number(space.spaceAccessType) || 0;
+			param.spaceType = I.SpaceType[param.spaceType];
+		};
+		if (participant) {
+			param.permissions = Number(participant.permissions) || 0;
+			param.permissions = I.ParticipantPermissions[param.permissions];
+		};
 
 		// Code mappers for common events
 		switch (code) {
@@ -391,29 +394,13 @@ class Analytics {
 				break;
 			};
 
-		};
-
-		if (multiplayerEvents.includes(code)) {
-			const space = UtilSpace.getSpaceview();
-			const participant = UtilSpace.getMyParticipant();
-			const spaceTypeMap = {
-				0: 'Private',
-				1: 'Personal',
-				2: 'Shared'
-			};
-			const permissionsMap = {
-				0: 'Read',
-				1: 'Write',
-				2: 'Owner',
-				3: 'No permissons'
+			case 'ApproveInviteRequest':
+			case 'ChangeSpaceMemberPermissions': {
+				data.type = Number(data.type) || 0;
+				data.type = I.ParticipantPermissions[data.type];
+				break;
 			};
 
-			if (space) {
-				param.spaceType = spaceTypeMap[space.spaceAccessType];
-			};
-			if (participant) {
-				param.permissions = permissionsMap[participant.permissions];
-			};
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

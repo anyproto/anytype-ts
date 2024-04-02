@@ -388,10 +388,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onChangePermissions (item: any, v: any) {
 		const { space } = commonStore;
-		const permissionsMap = {
-			0: 'Read',
-			1: 'Write'
-		};
 
 		let title = '';
 		let text = '';
@@ -421,7 +417,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
 
-					analytics.event('ChangeSpaceMemberPermissions', { type: permissionsMap[v] })
+					analytics.event('ChangeSpaceMemberPermissions', { type: v })
 				};
 				break;
 			};
