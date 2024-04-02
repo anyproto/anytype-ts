@@ -602,7 +602,7 @@ export const Mapper = {
 				isTest: obj.getIstest(),
 				periodType: obj.getPeriodtype(),
 				period: obj.getPeriodvalue(),
-				price: obj.getPricestripeusdcents(),
+				priceCents: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
 			};

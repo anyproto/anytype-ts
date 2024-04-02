@@ -65,15 +65,16 @@ export interface Membership {
 };
 
 export interface MembershipTier {
-	id: TierType,
-	name: string,
-	description: string,
+	id: TierType;
+	name: string;
+	description: string;
 	colorStr: string;
-	nameMinLength: number,
-	isTest: boolean,
-	periodType: number,
-	period: number,
-	price: number,
+	nameMinLength: number;
+	isTest: boolean;
+	periodType: number;
+	period: number;
+	priceCents: number;
 	features: string[];
 	color?: string;
+	price?: number;
 };

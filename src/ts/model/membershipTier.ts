@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 const COLORS = [
 	'green',
@@ -16,7 +16,7 @@ class MembershipTier implements I.MembershipTier {
 	isTest = false;
 	periodType = 0;
 	period = 0;
-	price = 0;
+	priceCents = 0;
 	features = [];
 
 	constructor (props: I.MembershipTier) {
@@ -28,12 +28,16 @@ class MembershipTier implements I.MembershipTier {
 		this.isTest = Boolean(props.isTest);
 		this.periodType = Number(props.periodType) || 0;
 		this.period = Number(props.period) || 0;
-		this.price = Number(props.price) || 0;
+		this.priceCents = Number(props.priceCents) || 0;
 		this.features = Array.isArray(props.features) ? props.features : [];
 	};
 
 	get color (): string {
 		return COLORS.includes(this.colorStr) ? this.colorStr : 'default';
+	};
+
+	get price (): number {
+		return UtilCommon.round(this.priceCents / 100, 2);
 	};
 
 };

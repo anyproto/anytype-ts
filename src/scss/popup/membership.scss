@@ -2,8 +2,9 @@
 
 .popups {
     .popup.popupMembership {
+		.innerWrap { width: 706px; }
 
-        .sides { display: flex; flex-wrap: nowrap; width: 706px; height: 480px; }
+        .sides { display: flex; flex-wrap: nowrap; }
         .sides {
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
