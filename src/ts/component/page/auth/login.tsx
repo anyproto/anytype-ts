@@ -76,18 +76,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { accounts } = authStore;
-
 		this.focus();
-
-		if (accounts && accounts.length) {
-			const account = accounts[0];
-
-			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
-
-			this.select();
-		};
+		this.select();
 	};
 
 	focus () {
@@ -126,8 +116,16 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { account, networkConfig } = authStore;
+		const { accounts, networkConfig } = authStore;
+		if (!accounts.length) {
+			return;
+		};
+
 		const { mode, path } = networkConfig;
+		const account = accounts[0];
+
+		authStore.accountSet(account);
+		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
 		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
