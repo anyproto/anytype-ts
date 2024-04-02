@@ -70,7 +70,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		// Check that space is not removed
 		if (spaceCheck || participantCheck) {
-			buttons = buttons.filter(it => ![ 'spaceSwitch', 'spaceExport', 'spaceDelete' ].includes(it.id));
+			buttons = buttons.filter(it => ![ 'spaceSwitch' ].includes(it.id));
 		};
 
 		return (
