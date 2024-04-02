@@ -944,14 +944,14 @@
 
 	"popupSettingsImportNotionHelpTitle": "How to import from Notion",
 	"popupSettingsImportNotionHelpStep": "Step %s",
-	"popupSettingsImportNotionHelpStep11": "Open Settings and members.",
-	"popupSettingsImportNotionHelpStep12": "Open My Connections and then Develop or manage integrations.",
+	"popupSettingsImportNotionHelpStep11": "Open Settings &amp; members.",
+	"popupSettingsImportNotionHelpStep12": "Open My Connections and then click Develop or manage integrations.",
 	"popupSettingsImportNotionHelpStep13": "Click New integration or Create new integration.",
 	"popupSettingsImportNotionHelpStep14": "Select your workspace and set Name for integration.",
-	"popupSettingsImportNotionHelpStep15": "Important! ️Go to <b>Capabilities</b> and select following capabilities and press save changes: <ul><li>Read content</li><li>Read user information</li></ul>️",
+	"popupSettingsImportNotionHelpStep15": "Important! ️Go to <b>Capabilities</b> and select following capabilities and press Save changes: <ul><li>Read content</li><li>Read user information</li></ul>️",
 	"popupSettingsImportNotionHelpStep16": "Copy Internal Integration Secret for connecting and importing your data.",
 	"popupSettingsImportNotionHelpStep2Descr": "Add integration to the pages you want to import into Anytype. Page will be imported with all children documents. Select your root object to import all objects.",
-	"popupSettingsImportNotionHelpStep21": "Click on three dots on the upper right corner, then Add connections (you need to scroll the menu). Select your Anytype integration.",
+	"popupSettingsImportNotionHelpStep21": "Click on three dots on the upper right corner, then click Connect to (you need to scroll the menu). Select your Anytype integration.",
 	"popupSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
 
 	"popupSettingsImportNotionWarningTitle": "Some data formats will be imported as text",
@@ -991,7 +991,7 @@
 	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
-	"popupInviteQrTitle": "QR code for joing a Space",
+	"popupInviteQrTitle": "QR code for joining a Space",
 
 	"networkMode0Title": "Anytype",
 	"networkMode0Text": "Back up to the network managed by Anytype",
