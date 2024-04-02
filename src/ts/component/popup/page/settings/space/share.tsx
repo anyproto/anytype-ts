@@ -2,12 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics } from 'Lib';
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
-import Url from 'json/url.json';
 
 interface State {
 	isLoading: boolean;
@@ -83,16 +82,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		const Member = (item: any) => {
-			const isActive = item.id == participant.id;
-			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
-			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
-			const isRemoving = [ I.ParticipantStatus.Removing ].includes(item.status);
-			const isRemoved = [ I.ParticipantStatus.Removed ].includes(item.status);
+			const isCurrent = item.id == participant.id;
 
 			let tag = null;
 			let button = null;
 
-			if (isJoining) {
+			if (item.isJoining) {
 				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 				button = (
 					<Button
@@ -103,7 +98,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isRemoving) {
+			if (item.isRemoving) {
 				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 				button = (
 					<Button
@@ -114,7 +109,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isDeclined || isRemoved) {
+			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
 			if (item.isOwner) {
@@ -138,7 +133,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
-						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
+						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">
 						{button}
@@ -260,6 +255,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				this.setInvite(message.inviteCid, message.inviteKey);
 			};
 		});
+
+		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	componentDidUpdate() {
@@ -277,13 +274,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getParticipantList () {
-		const requestStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
-		const allowedStatuses = requestStatuses.concat(I.ParticipantStatus.Active);
-		const records = UtilSpace.getParticipantsList(allowedStatuses);
+		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 
 		return records.sort((c1, c2) => {
-			const isRequest1 = requestStatuses.includes(c1.status);
-			const isRequest2 = requestStatuses.includes(c2.status);
+			const isRequest1 = c1.isJoining || c1.isRemoving;
+			const isRequest2 = c2.isJoining || c2.isRemoving;
 			const cd1 = c1.createdDate;
 			const cd2 = c2.createdDate;
 
@@ -307,6 +302,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		if (cid && key) {
 			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
 		};
+
+		analytics.event('ClickShareSpaceCopyLink');
 	};
 
 	onInitLink () {
@@ -319,6 +316,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				this.setInvite(message.inviteCid, message.inviteKey);
 
 				Preview.toastShow({ text: translate('toastInviteGenerate') });
+
+				analytics.event('ShareSpace');
 			};
 		});
 	};
@@ -333,9 +332,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm: () => {
 					C.SpaceStopSharing(commonStore.space);
 					this.setInvite('', '');
+
+					analytics.event('StopSpaceShare');
 				},
 			},
 		});
+
+		analytics.event('ScreenStopShare');
 	};
 
 	onInviteRevoke () {
@@ -352,10 +355,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						this.setInvite('', '');
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
+
+						analytics.event('RevokeShareLink');
 					});
 				},
 			},
 		});
+
+		analytics.event('ScreenRevokeShareLink');
 	};
 
 	getParticipantOptions () {
@@ -389,6 +396,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantRemove(space, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
 				};
 				break;
 			};
@@ -401,6 +410,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+
+					analytics.event('ChangeSpaceMemberPermissions', { type: v })
 				};
 				break;
 			};
@@ -427,6 +438,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				canCancel: false,
 			},
 		});
+
+		analytics.event('ClickSettingsSpaceShare', { type: 'MoreInfo' });
 	};
 
 	onJoinRequest (item: any) {
@@ -436,6 +449,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				icon: item.iconImage,
 				spaceId: commonStore.space,
 				identity: item.identity,
+				route: 'Settings'
 			}
 		});
 	};
@@ -483,11 +497,15 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					switch (item.id) {
 						case 'qr': {
 							popupStore.open('inviteQr', { data: { link: this.getLink() } });
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;
 						};
 
 						case 'delete': {
 							this.onInviteRevoke();
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
 						};
 					};

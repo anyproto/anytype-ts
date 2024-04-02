@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilSpace, UtilRouter, translate, UtilMenu, UtilData } from 'Lib';
+import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
 import { dbStore, detailStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -66,6 +66,10 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		);
 	};
 
+	componentDidMount () {
+		analytics.event('ScreenSettingsSpaceList');
+	};
+
 	getItems () {
 		const subId = Constant.subId.space;
 		const skippedStatuses = [ I.SpaceStatus.Deleted ];
@@ -81,7 +85,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 			if (participant) {
 				it.permissions = participant.permissions;
-				it.participantStatus =participant.participantStatus;
+				it.participantStatus = participant.participantStatus;
 			};
 
 			return it;

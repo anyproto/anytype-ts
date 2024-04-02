@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import { OnboardStage } from 'Component/page/auth/animation/constants';
@@ -126,8 +126,19 @@ class Analytics {
 		};
 
 		const converted: any = {};
+		const space = UtilSpace.getSpaceview();
+		const participant = UtilSpace.getMyParticipant();
 
 		let param: any = {};
+
+		if (space) {
+			param.spaceType = Number(space.spaceAccessType) || 0;
+			param.spaceType = I.SpaceType[param.spaceType];
+		};
+		if (participant) {
+			param.permissions = Number(participant.permissions) || 0;
+			param.permissions = I.ParticipantPermissions[param.permissions];
+		};
 
 		// Code mappers for common events
 		switch (code) {
@@ -380,6 +391,13 @@ class Analytics {
 			case 'DeleteSpace': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SpaceType[data.type];
+				break;
+			};
+
+			case 'ApproveInviteRequest':
+			case 'ChangeSpaceMemberPermissions': {
+				data.type = Number(data.type) || 0;
+				data.type = I.ParticipantPermissions[data.type];
 				break;
 			};
 
