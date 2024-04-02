@@ -1910,7 +1910,7 @@ export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: 
 	const request = new Rpc.Membership.Tiers.Get.Request();
 
 	request.setNocache(noCache);
-	//request.setLocale(locale);
+	request.setLocale(locale);
 
 	dispatcher.request(MembershipGetTiers.name, request, callBack);
 };

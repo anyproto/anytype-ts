@@ -604,8 +604,7 @@ export const Mapper = {
 				period: obj.getPeriodvalue(),
 				price: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),
-				features: [],
-				//features: obj.getFeaturesList(),
+				features: obj.getFeaturesList(),
 			};
 		},
 
