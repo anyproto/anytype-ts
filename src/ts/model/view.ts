@@ -1,4 +1,4 @@
-import { I, M, UtilCommon, UtilData } from 'Lib';
+import { I, M, UtilCommon } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
@@ -41,7 +41,7 @@ class View implements I.View {
 		this.filters = this.filters.map(it => new M.Filter(it));
 
 		this.sorts = Array.isArray(props.sorts) ? props.sorts : [];
-		this.sorts = (props.sorts || []).map(it => new M.Sort(it));
+		this.sorts = this.sorts.map(it => new M.Sort(it));
 
 		makeObservable(this, {
 			id: observable,
