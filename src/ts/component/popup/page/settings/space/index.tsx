@@ -33,7 +33,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { error } = this.state;
 		const { config, spaceStorage, isOnline } = commonStore;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const spaces = dbStore.getSpaces();
+		const spaces = UtilSpace.getList();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilSpace.getSpaceview();
 		const home = UtilSpace.getDashboard();
@@ -420,7 +420,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getSharedCnt (): number {
-		const spaces = dbStore.getSpaces();
+		const spaces = UtilSpace.getList();
 		const { account } = authStore;
 
 		if (!account) {

@@ -241,7 +241,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getSpaces () {
-		return dbStore.getSpaces()
+		return UtilSpace.getList()
 			.filter(it => it && UtilSpace.canParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};

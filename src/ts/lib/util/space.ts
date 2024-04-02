@@ -65,6 +65,23 @@ class UtilSpace {
 		};
 	};
 
+	getList () {
+		const subId = Constant.subId.space;
+		const { spaceview } = blockStore;
+
+		let items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+		items = items.filter(it => ![ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(it.spaceAccountStatus) && (it.spaceLocalStatus == I.SpaceStatus.Ok));
+		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
+
+		items.sort((c1, c2) => {
+			if (c1.isActive && !c2.isActive) return -1;
+			if (!c1.isActive && c2.isActive) return 1;
+			return 0;
+		});
+
+		return items;
+	};
+
 	getSpaceview (id?: string) {
 		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
 	};

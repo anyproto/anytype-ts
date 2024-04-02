@@ -187,7 +187,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const items = UtilCommon.objectCopy(dbStore.getSpaces());
+		const items = UtilCommon.objectCopy(UtilSpace.getList());
 		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });

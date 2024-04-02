@@ -504,7 +504,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				const items = dbStore.getSpaces();
+				const items = UtilSpace.getList();
 
 				if (items.length >= Constant.limit.space) {
 					break;

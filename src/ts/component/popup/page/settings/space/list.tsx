@@ -77,7 +77,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const sortPermissions = [ I.ParticipantPermissions.Owner, I.ParticipantPermissions.Writer, I.ParticipantPermissions.Reader ];
 		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 
-		return items.filter(it => !skippedStatuses.includes(it.spaceAccountStatus)).map(it => {
+		return items.filter(it => !skippedStatuses.includes(it.spaceAccountStatus)/* && (it.spaceLocalStatus == I.SpaceStatus.Ok)*/).map(it => {
 			const participant = UtilSpace.getMyParticipant(it.targetSpaceId);
 
 			it.permissions = I.ParticipantPermissions.None;
