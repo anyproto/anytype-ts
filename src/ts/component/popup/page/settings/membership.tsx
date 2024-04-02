@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
-import { popupStore, authStore } from 'Store';
+import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import Url from 'json/url.json';
@@ -20,9 +20,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	render () {
 		const { membership, account } = authStore;
-		const hasTier = membership.tier != I.MembershipTier.None;
+		const { membershipTiers } = commonStore;
 		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
-		const tiers = UtilData.getMembershipTiers().filter(it => it.id >= membership.tier);
 		const links = [
 			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
 			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy') },
@@ -39,7 +38,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			</div>
 		);
 
-		const TierItem = (item: any) => {
+		const TierItem = (props: any) => {
+			const item = membershipTiers[props.idx];
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
@@ -63,7 +63,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 			return (
 				<div 
-					className={[ 'tier', `c${item.idx}`, (isCurrent ? 'isCurrent' : '') ].join(' ')}
+					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
 					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
@@ -72,8 +72,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							<div className="current">{translate('popupSettingsMembershipCurrent')}</div>
 						</div>
 
-						<Title text={translate(`popupSettingsMembershipTier${item.idx}Title`)} />
-						<Label text={translate(`popupSettingsMembershipTier${item.idx}Text`)} />
+						<Title text={item.name} />
+						<Label text={item.description} />
 					</div>
 					<div className="bottom">
 						<div className="priceWrapper">
@@ -87,9 +87,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{hasTier ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
+				<div className="membershipTitle">{!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
-				{hasTier ? '' : (
+				{!membership.isNone ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
@@ -117,8 +117,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				)}
 
 				<div className="tiers">
-					{tiers.map((tier, idx) => (
-						<TierItem key={idx} {...tier} />
+					{membershipTiers.map((tier, i) => (
+						<TierItem key={i} idx={i} />
 					))}
 				</div>
 

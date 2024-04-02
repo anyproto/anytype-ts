@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { I, translate, UtilData } from 'Lib';
+import { I, translate, UtilCommon, UtilData } from 'Lib';
 import { authStore } from 'Store';
 
 import PageFree from './page/membership/free';
@@ -33,8 +33,12 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
 		const tierItem = UtilData.getMembershipTier(tier);
-		const suffix = tierItem.idx;
-		const cn = [ 'sides', `tier${suffix}` ];
+
+		if (!tierItem) {
+			return null;
+		};
+
+		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
 		let content: any = null;
 
@@ -45,7 +49,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		if (!isEditing && (membership.tier == tier)) {
 			content = <PageCurrent {...this.props} onChangeEmail={this.onChangeEmail} />;
 		} else
-		if (tier == I.MembershipTier.Explorer) {
+		if (tier.isExplorer) {
 			content = <PageFree {...this.props} />;
 		} else {
 			content = <PagePaid {...this.props} />;
@@ -54,15 +58,15 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		return (
 			<div className={cn.join(' ')}>
 				<div className="side left">
-					<Icon />
-					<Title text={translate(`popupSettingsMembershipTier${suffix}Title`)} />
-					<Label text={translate(`popupSettingsMembershipTier${suffix}Text`)} />
+					<Icon className="tierIcon" />
+					<Title text={tierItem.name} />
+					<Label text={tierItem.description} />
 
 					<div className="contentList">
 						<Label text={translate('popupMembershipWhatsIncluded')} />
 						<ul>
 							{tierContent.map((text, idx) => (
-								<li key={idx}>{translate(text)}</li>
+								<li key={idx}>{text}</li>
 							))}
 						</ul>
 					</div>
@@ -73,37 +77,23 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		);
 	};
 
-	getTierContent (tier: I.MembershipTier): string[] {
-		switch (tier) {
-			case I.MembershipTier.Explorer: {
-				return  [
-					'popupMembershipTier1Content1',
-					'popupMembershipTier1Content2',
-					'popupMembershipTier1Content3',
-				];
-			};
-
-			case I.MembershipTier.BuilderTest: 
-			case I.MembershipTier.Builder: {
-				return [
-					'popupMembershipTier2Content1',
-					'popupMembershipTier2Content2',
-					'popupMembershipTier2Content3',
-					'popupMembershipTier2Content4',
-				];
-			};
-
-			case I.MembershipTier.CoCreatorTest:
-			case I.MembershipTier.CoCreator: {
-				return [
-					'popupMembershipTier3Content1',
-					'popupMembershipTier3Content2',
-					'popupMembershipTier3Content3',
-					'popupMembershipTier3Content4',
-					'popupMembershipTier3Content5',
-				];
-			};
+	getTierContent (tier: I.TierType): string[] {
+		const tierItem = UtilData.getMembershipTier(tier);
+		if (!tierItem) {
+			return [];
 		};
+
+		const { features, nameMinLength } = tierItem;
+
+		let list = [];
+
+		if (nameMinLength) {
+			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeatureAnyNameContent`), nameMinLength));
+		};
+
+		list = list.concat(features);
+
+		return list;
 	};
 
 	onChangeEmail () {

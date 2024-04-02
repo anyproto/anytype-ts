@@ -15,7 +15,7 @@ class Sort implements I.Sort {
 		this.relationKey = String(props.relationKey || '');
 		this.type = Number(props.type) || I.SortType.Asc;
 		this.includeTime = Boolean(props.includeTime);
-		this.customOrder = props.customOrder || [];
+		this.customOrder = Array.isArray(props.customOrder) ? props.customOrder : [];
 
 		makeObservable(this, {
 			relationKey: observable,

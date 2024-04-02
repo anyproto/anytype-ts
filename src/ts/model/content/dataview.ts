@@ -1,6 +1,5 @@
 import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
-
 import View from '../view';
 
 class BlockContentDataview implements I.ContentDataview {
@@ -16,11 +15,12 @@ class BlockContentDataview implements I.ContentDataview {
 	constructor (props: I.ContentDataview) {
 		this.sources = props.sources || [];
 		this.views = (props.views || []).map(it => new View(it));
-		this.relationLinks = props.relationLinks || [];
-		this.groupOrder = props.groupOrder || [];
-		this.objectOrder = props.objectOrder || [];
 		this.targetObjectId = String(props.targetObjectId || '');
 		this.isCollection = Boolean(props.isCollection);
+
+		this.relationLinks = Array.isArray(props.relationLinks) ? props.relationLinks : [];
+		this.groupOrder = Array.isArray(props.groupOrder) ? props.groupOrder : [];
+		this.objectOrder = Array.isArray(props.objectOrder) ? props.objectOrder : [];
 		
 		makeObservable(this, {
 			sources: observable,

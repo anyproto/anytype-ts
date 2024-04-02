@@ -14,7 +14,7 @@ class BlockContentLink implements I.ContentLink {
 		this.iconSize = Number(props.iconSize) || I.LinkIconSize.None;
 		this.cardStyle = Number(props.cardStyle) || I.LinkCardStyle.Text;
 		this.description = Number(props.description) || I.LinkDescription.None;
-		this.relations = props.relations || [];
+		this.relations = Array.isArray(props.relations) ? props.relations : [];
 
 		makeObservable(this, {
 			targetBlockId: observable,

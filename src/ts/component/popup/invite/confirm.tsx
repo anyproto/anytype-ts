@@ -43,7 +43,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		if (!this.getWriterLimit()) {
 			writerButton = translate('popupInviteConfirmButtonEditorLimit');
 		} else
-		if (!this.getReaderLimit() && (membership.tier == I.MembershipTier.Explorer)) {
+		if (!this.getReaderLimit() && membership.isExplorer) {
 			readerButton = translate('popupInviteConfirmButtonReaderLimit');
 			writerButton = translate('popupInviteConfirmButtonEditorLimit');
 		};

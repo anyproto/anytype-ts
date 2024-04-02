@@ -2,16 +2,14 @@
 
 .popups {
     .popup.popupMembership {
+		.innerWrap { width: 706px; }
 
-        .sides { display: flex; flex-wrap: nowrap; width: 706px; height: 480px; }
+        .sides { display: flex; flex-wrap: nowrap; }
         .sides {
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
             .side.left {
-                .icon { width: 80px; height: 80px; margin-bottom: 14px; background-size: 80px 80px; }
-                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-                .icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); }
-                .icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
+                .icon { width: 80px; height: 80px; margin-bottom: 14px; }
 
                 .title { @include text-header2; margin-bottom: 8px; }
                 .label { margin-bottom: 20px; }
@@ -27,7 +25,7 @@
             .side.right {
                 .back {
                     color: var(--color-text-secondary); display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
-                    border-radius: 6px; margin-left: -6px; margin-bottom: 16px;
+                    border-radius: 6px; margin-left: -6px; margin-bottom: 14px;
                 }
                 .back:hover { background: var(--color-shape-highlight-medium); }
                 .back {
@@ -35,6 +33,7 @@
                 }
 
                 .title { @include text-paragraph; margin-bottom: 8px; }
+                .title.step2 { margin-bottom: 10px; }
                 .label { margin-bottom: 14px; }
 
                 .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 6px; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
@@ -43,12 +42,13 @@
                     .ns { flex-shrink: 0; width: 27px; }
                 }
 
-                .check { display: flex; gap: 8px; margin-bottom: 16px; @include text-small; }
+                .check { display: flex; gap: 10px; margin-bottom: 15px; @include text-small; }
                 .check {
-                    .icon { width: 18px; height: 18px; }
+                    .icon.checkbox { margin-top: 1px; width: 16px; height: 16px; background-image: url('~img/icon/payment/checkbox0.svg'); }
+                    .icon.checkbox.active { background-image: url('~img/icon/payment/checkbox1.svg'); }
                 }
 
-                .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
+                .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 2px; color: var(--color-text-secondary);  }
                 .statusBar.error { color: var(--color-red); }
                 .statusBar.ok { color: var(--color-green); }
 
@@ -88,33 +88,34 @@
             .side.right {
                 .title { @include text-header1; margin-bottom: 0; }
                 .label { @include text-paragraph; margin-bottom: 0; }
-                .icon { width: 120px; height: 120px; }
-                .icon.tier1 { background-image: url('~img/icon/payment/tier1.svg'); }
-                .icon.tier2 { background-image: url('~img/icon/payment/tier2.svg'); }
-                .icon.tier3 { background-image: url('~img/icon/payment/tier3.svg'); }
+
+                .tierIcon { width: 120px; height: 120px; }
                 .button { margin-bottom: 0; }
             }
         }
-        .sides.tier1 {
-            .side.left { background: linear-gradient(180deg, #d7fbff 0%, #f6f6f6 23.05%); }
-            .side.left {
-                > .icon { background-image: url('~img/icon/payment/tier1.svg'); }
-            }
-            .side.right {
-                .inputWrapper { margin-bottom: 20px; }
-            }
-        }
-        .sides.tier2 {
-            .side.left { background: linear-gradient(180deg, #eceeff 0%, #f6f6f6 23.05%); }
-            .side.left {
-                .icon { background-image: url('~img/icon/payment/tier2.svg'); }
-            }
-        }
-        .sides.tier3 {
-            .side.left { background: linear-gradient(180deg, #ffebeb 0%, #f6f6f6 23.05%); }
-            .side.left {
-                .icon { background-image: url('~img/icon/payment/tier3.svg'); }
-            }
-        }
+
+		.sides.green {
+			.tierIcon { background-image: url('~img/icon/payment/green.svg'); }
+
+			.side.left { background: linear-gradient(to bottom, #d7fbff 0%, #f6f6f6 25%); }
+			.side.right {
+				.inputWrapper { margin-bottom: 0px; }
+			}
+		}
+
+		.sides.blue {
+			.tierIcon { background-image: url('~img/icon/payment/blue.svg'); }
+			.side.left { background: linear-gradient(to bottom, #eceeff 0%, #f6f6f6 25%); }
+		}
+
+		.sides.red {
+			.tierIcon { background-image: url('~img/icon/payment/red.svg'); }
+			.side.left { background: linear-gradient(to bottom, #ffebeb 0%, #f6f6f6 25%); }
+		}
+
+		.sides.default {
+			.tierIcon { background-image: url('~img/icon/payment/purple.svg'); }
+			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }
+		}
     }
 }

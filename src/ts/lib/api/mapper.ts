@@ -593,6 +593,21 @@ export const Mapper = {
 			};
 		},
 
+		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				nameMinLength: obj.getAnynameminlength(),
+				isTest: obj.getIstest(),
+				periodType: obj.getPeriodtype(),
+				period: obj.getPeriodvalue(),
+				priceCents: obj.getPricestripeusdcents(),
+				colorStr: obj.getColorstr(),
+				features: obj.getFeaturesList(),
+			};
+		},
+
     },
 
 	//------------------------------------------------------------

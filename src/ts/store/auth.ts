@@ -17,7 +17,7 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
-	public membershipData: I.Membership = { tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown };
+	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	
 	constructor () {
 		makeObservable(this, {
@@ -62,7 +62,7 @@ class AuthStore {
 	};
 
 	get membership (): I.Membership {
-		return this.membershipData || { tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown };
+		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	};
 
 	nameSet (v: string) {
@@ -165,7 +165,7 @@ class AuthStore {
 
 		this.accountListClear();
 		this.nameSet('');
-		this.membershipSet({ tier: I.MembershipTier.None, status: I.MembershipStatus.Unknown });
+		this.membershipSet({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {

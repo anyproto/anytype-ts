@@ -235,7 +235,8 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipData(true);
+		this.getMembershipData();
+		this.getMembershipTiers();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -928,15 +929,28 @@ class UtilData {
 				break;
 		};
 		return ret;
-	};
+	}
 
-	getMembershipData (noCache: boolean, callBack?: (message: any) => void) {
-		C.MembershipGetStatus(noCache, (message) => {
+	getMembershipTiers () {
+		const { config, interfaceLang } = commonStore;
+		const { testPayment } = config;
+
+		C.MembershipGetTiers(true, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};
 
-			authStore.membershipSet(message.membership);
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			
+			commonStore.membershipTiersListSet(tiers);
+		});
+	};
+
+	getMembershipData (callBack?: (membership: I.Membership) => void) {
+		C.MembershipGetStatus(true, (message: any) => {
+			if (message.membership) {
+				authStore.membershipSet(message.membership);
+			};
 
 			if (callBack) {
 				callBack(message.membership);
@@ -944,33 +958,8 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers (): I.MembershipTierItem[] {
-		const { config } = commonStore;
-		const { testPayment } = config;
-
-		return [
-			{
-				id: I.MembershipTier.Explorer,
-				idx: 1
-			},
-			{
-				id: testPayment ? I.MembershipTier.BuilderTest : I.MembershipTier.Builder,
-				idx: 2,
-				price: I.MembershipPrice.Price1Year,
-				period: I.MembershipPeriod.Period1Year,
-			},
-			{
-				id: testPayment ? I.MembershipTier.CoCreatorTest : I.MembershipTier.CoCreator,
-				idx: 3,
-				price: I.MembershipPrice.Price5Years,
-				period: I.MembershipPeriod.Period5Years,
-			}
-		];
-	};
-
-	getMembershipTier (id: I.MembershipTier): I.MembershipTierItem {
-		const tiers = this.getMembershipTiers();
-		return tiers.find(it => it.id == id) || {};
+	getMembershipTier (id: I.TierType): I.MembershipTier {
+		return commonStore.membershipTiers.find(it => it.id == id);
 	};
 
 	isAnytypeNetwork (): boolean {
