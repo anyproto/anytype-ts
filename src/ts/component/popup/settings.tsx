@@ -154,7 +154,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			};
 
 			if (action.id == 'membership') {
-				if (membership.tier != I.TierType.None) {
+				if (!membership.isNone) {
 					const tierItem = UtilData.getMembershipTier(membership.tier);
 					if (tierItem) {
 						caption = <div className="caption">{tierItem.name}</div>;

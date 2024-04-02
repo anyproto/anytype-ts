@@ -21,7 +21,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { membership, account } = authStore;
 		const { membershipTiers } = commonStore;
-		const hasTier = membership.tier != I.TierType.None;
 		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
 		const links = [
 			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
@@ -88,9 +87,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 		return (
 			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{hasTier ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
+				<div className="membershipTitle">{!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
-				{hasTier ? '' : (
+				{!membership.isNone ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
