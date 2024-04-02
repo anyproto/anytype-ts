@@ -24,7 +24,10 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { space } = commonStore;
 		const { id, type, payload, title, text } = item;
 		const { errorCode, spaceId } = payload;
+		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);
 		const participant = UtilSpace.getMyParticipant(spaceId);
+		const spaceCheck = spaceview && [ I.SpaceStatus.Removing, I.SpaceStatus.Deleted ].includes(spaceview.spaceAccountStatus);
+		const participantCheck = participant && (participant.isRemoving || participant.isJoining);
 
 		let buttons = [];
 
@@ -66,7 +69,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		};
 
 		// Check that space is not removed
-		if (participant && [ I.ParticipantStatus.Removing, I.ParticipantStatus.Joining ].includes(participant.status)) {
+		if (spaceCheck || participantCheck) {
 			buttons = buttons.filter(it => ![ 'spaceSwitch', 'spaceExport', 'spaceDelete' ].includes(it.id));
 		};
 

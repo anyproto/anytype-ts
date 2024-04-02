@@ -83,16 +83,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 
 		const Member = (item: any) => {
-			const isActive = item.id == participant.id;
-			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
-			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
-			const isRemoving = [ I.ParticipantStatus.Removing ].includes(item.status);
-			const isRemoved = [ I.ParticipantStatus.Removed ].includes(item.status);
+			const isCurrent = item.id == participant.id;
 
 			let tag = null;
 			let button = null;
 
-			if (isJoining) {
+			if (item.isJoining) {
 				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 				button = (
 					<Button
@@ -103,7 +99,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isRemoving) {
+			if (item.isRemoving) {
 				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 				button = (
 					<Button
@@ -114,7 +110,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isDeclined || isRemoved) {
+			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
 			if (item.isOwner) {
@@ -138,7 +134,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
-						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
+						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">
 						{button}
@@ -277,13 +273,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getParticipantList () {
-		const requestStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
-		const allowedStatuses = requestStatuses.concat(I.ParticipantStatus.Active);
-		const records = UtilSpace.getParticipantsList(allowedStatuses);
+		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 
 		return records.sort((c1, c2) => {
-			const isRequest1 = requestStatuses.includes(c1.status);
-			const isRequest2 = requestStatuses.includes(c2.status);
+			const isRequest1 = c1.isJoining || c1.isRemoving;
+			const isRequest2 = c2.isJoining || c2.isRemoving;
 			const cd1 = c1.createdDate;
 			const cd2 = c2.createdDate;
 

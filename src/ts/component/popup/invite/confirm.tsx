@@ -143,7 +143,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 			return 0;
 		};
 
-		const participants = this.participants.filter(it => [ I.ParticipantStatus.Active ].includes(it.status));
+		const participants = this.participants.filter(it => it.isActive);
 		return space.readersLimit - participants.length;
 	};
 
@@ -153,7 +153,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 			return 0;
 		};
 
-		const participants = this.participants.filter(it => [ I.ParticipantStatus.Active ].includes(it.status) && (it.isWriter || it.isOwner));
+		const participants = this.participants.filter(it => it.isActive && (it.isWriter || it.isOwner));
 		return space.writersLimit - participants.length;
 	};
 

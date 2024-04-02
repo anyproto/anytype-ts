@@ -312,9 +312,18 @@ class DetailStore {
 		delete(object.participantPermissions);
 		delete(object.participantStatus);
 
+		// Permission flags
 		object.isOwner = object.permissions == I.ParticipantPermissions.Owner;
 		object.isWriter = object.permissions == I.ParticipantPermissions.Writer;
 		object.isReader = object.permissions == I.ParticipantPermissions.Reader;
+
+		// Status flags
+		object.isJoining = object.status == I.ParticipantStatus.Joining;
+		object.isActive = object.status == I.ParticipantStatus.Active;
+		object.isRemoving = object.status == I.ParticipantStatus.Removing;
+		object.isRemoved = object.status == I.ParticipantStatus.Removed;
+		object.isDeclined = object.status == I.ParticipantStatus.Declined;
+		object.isCanceled = object.status == I.ParticipantStatus.Canceled;
 
 		return object;
 	};

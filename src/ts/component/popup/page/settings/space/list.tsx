@@ -81,7 +81,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 			if (participant) {
 				it.permissions = participant.permissions;
-				it.participantStatus =participant.participantStatus;
+				it.participantStatus = participant.participantStatus;
 			};
 
 			return it;
