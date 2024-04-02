@@ -197,32 +197,40 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		nodes = nodes.filter(d => !d.linkCnt);
+		edges = edges.filter(d => d.type != EdgeType.Link);
+
+		const ids = nodeIdsFromEdges(edges);
+		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
-		nodes = nodes.filter(d => !d.relationCnt);
+		edges = edges.filter(d => d.type != EdgeType.Relation);
+
+		const ids = nodeIdsFromEdges(edges);
+		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
 
-	// Filte local only edges
+	// Filter local only edges
 	if (settings.local) {
 		edges = getEdgesByNodeId(rootId);
 
-		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
-		nodes = nodes.filter(d => nodeIds.includes(d.id));
-	};
+		const ids = nodeIdsFromEdges(edges);
+		ids.add(rootId);
 
-	let map = getNodeMap();
-	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+		nodes = nodes.filter(d => ids.has(d.id));
+	};
 
 	// Filter orphans
 	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
-	map = getNodeMap();
+	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
+	//map = getNodeMap();
+	//edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	// Shallow copy to disable mutations
 	nodes = nodes.map(d => {
@@ -773,6 +781,10 @@ const getNodeByCoords = (x, y) => {
 
 const getEdgesByNodeId = (id) => {
 	return edges.filter(d => (d.source == id) || (d.target == id));
+};
+
+const nodeIdsFromEdges = (edges) => {
+	return new Set([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 };
 
 const getRadius = (d) => {
