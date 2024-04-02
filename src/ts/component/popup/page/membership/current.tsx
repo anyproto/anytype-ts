@@ -18,13 +18,13 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 	render() {
 		const { membership } = authStore;
-		const { tier, dateEnds, paymentMethod } = membership;
+		const { dateEnds, paymentMethod } = membership;
 
 		let dateText: string = '';
 		let paidText: string = '';
 		let buttonText: string = '';
 
-		if (tier == I.TierType.Explorer) {
+		if (membership.isExplorer) {
 			dateText = translate('popupMembershipForever');
 			buttonText = translate('popupMembershipChangeEmail');
 		} else {
@@ -58,9 +58,9 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	onButton () {
 		const { membership } = authStore;
 		const { onChangeEmail } = this.props;
-		const { tier, paymentMethod } = membership;
+		const { paymentMethod } = membership;
 
-		if (tier == I.TierType.Explorer) {
+		if (membership.isExplorer) {
 			onChangeEmail();
 		} else {
 			if (paymentMethod == I.PaymentMethod.Crypto) {

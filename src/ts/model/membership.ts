@@ -45,6 +45,22 @@ class Membership implements I.Membership {
 		intercept(this as any, change => UtilCommon.intercept(this, change));
 	};
 
+	get isNone (): boolean {
+		return this.tier == I.TierType.None;
+	};
+
+	get isExplorer (): boolean {
+		return this.tier == I.TierType.Explorer;
+	};
+
+	get isBuilder (): boolean {
+		return [ I.TierType.BuilderTest, I.TierType.Builder ].includes(this.tier);
+	};
+
+	get isCreator (): boolean {
+		return [ I.TierType.CoCreatorTest, I.TierType.CoCreator ].includes(this.tier);
+	};
+
 };
 
 export default Membership;

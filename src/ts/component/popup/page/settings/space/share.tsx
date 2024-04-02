@@ -74,7 +74,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
 				showLimit = true;
 			} else
-			if (!UtilSpace.getReaderLimit() && (membership.tier == I.TierType.Explorer)) {
+			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
 				showLimit = true;

@@ -58,6 +58,10 @@ export interface Membership {
 	requestedAnyName?: string;
 	userEmail?: string;
 	subscribeToNewsletter?: boolean;
+	isNone?: boolean;
+	isExplorer?: boolean;
+	isBuilder?: boolean;
+	isCreator?: boolean;
 };
 
 export interface MembershipTier {

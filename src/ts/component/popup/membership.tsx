@@ -49,7 +49,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		if (!isEditing && (membership.tier == tier)) {
 			content = <PageCurrent {...this.props} onChangeEmail={this.onChangeEmail} />;
 		} else
-		if (tier == I.TierType.Explorer) {
+		if (tier.isExplorer) {
 			content = <PageFree {...this.props} />;
 		} else {
 			content = <PagePaid {...this.props} />;
