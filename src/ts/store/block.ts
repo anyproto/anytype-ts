@@ -250,12 +250,12 @@ class BlockStore {
 	};
 
     getHighestParent (rootId: string, blockId: string): I.Block {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
 			return null;
 		};
 
-		const parent = blockStore.getLeaf(rootId, block.parentId);
+		const parent = this.getLeaf(rootId, block.parentId);
 
 		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
 			return block;
@@ -542,7 +542,7 @@ class BlockStore {
 		
 		let ret: any[] = [];
 		for (const id of ids) {
-			const parent = blockStore.getParentLeaf(rootId, id);
+			const parent = this.getParentLeaf(rootId, id);
 			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};
