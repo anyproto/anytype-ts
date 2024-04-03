@@ -20,6 +20,7 @@
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
 		.loadMore:hover { color: var(--color-text-primary); }
