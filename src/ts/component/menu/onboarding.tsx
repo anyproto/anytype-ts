@@ -247,7 +247,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 								UtilObject.openAuto({ id: rootId, layout: item.recommendedLayout });
 							});
 
-							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'MenuOnboarding' });
+							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.menuOnboarding });
 							
 							close();
 						},

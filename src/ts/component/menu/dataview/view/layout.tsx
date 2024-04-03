@@ -401,7 +401,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			analytics.event('ChangeViewType', {
 				type: item.id,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		}
 

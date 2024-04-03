@@ -339,7 +339,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: rootId, route: 'Library' });
+			analytics.event('CreateTemplate', { objectType: rootId, route: analytics.route.store });
 
 			this.templateOpen(message.details);
 		});
@@ -542,7 +542,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					template,
 					typeId: rootId,
 					templateId: defaultTemplateId,
-					route: 'Type',
+					route: analytics.route.type,
 					onSetDefault: () => {
 						UtilObject.setDefaultTemplateId(rootId, template.id);
 					},

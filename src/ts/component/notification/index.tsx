@@ -33,7 +33,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		switch (type) {
 			case I.NotificationType.Gallery:
-			case I.NotificationType.Export:
 			case I.NotificationType.Import: {
 				if (!errorCode && (spaceId != space)) {
 					buttons = buttons.concat([
@@ -132,7 +131,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 					files: true, 
 					archived: true, 
 					json: false, 
-					route: 'Notification',
+					route: analytics.route.notification,
 				});
 				break;
 			};
@@ -149,7 +148,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 						icon: payload.identityIcon,
 						spaceId: payload.spaceId,
 						identity: payload.identity,
-						route: 'Notification'
+						route: analytics.route.notification,
 					}
 				});
 				break;

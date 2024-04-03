@@ -396,7 +396,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		menuStore.open('dataviewContext', {
 			...param,
 			data: {
-				route: 'Graph',
+				route: analytics.route.graph,
 				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),

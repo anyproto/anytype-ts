@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace } from 'Lib';
+import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -161,7 +161,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
-				route: 'Widget',
+				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
 			},

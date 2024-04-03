@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -159,7 +159,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onAdd (e: any) {
-		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, 'Navigation');
+		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, analytics.route.navigation);
 	};
 
 	onGraph () {
@@ -167,7 +167,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup('Navigation');
+		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
 	onProfile () {

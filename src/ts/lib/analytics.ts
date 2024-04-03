@@ -18,6 +18,30 @@ class Analytics {
 	
 	instance: any = null;
 
+	public route = {
+		navigation: 'Navigation',
+		onboarding: 'Onboarding',
+		collection: 'Collection',
+		set: 'Set',
+		gallery: 'Gallery',
+		settings: 'Settings',
+		featured: 'FeaturedRelations',
+		notification: 'Notification',
+		deleted: 'Deleted',
+		banner: 'Banner',
+		widget: 'Widget',
+		graph: 'Graph',
+		store: 'Library',
+		type: 'Type',
+
+		menuOnboarding: 'MenuOnboarding',
+		menuObject: 'MenuObject',
+		menuSystem: 'MenuSystem',
+
+		migrationOffer: 'MigrationImportBackupOffer',
+		migrationImport: 'MigrationImportBackupOffer',
+	};
+
 	debug () {
 		const { config } = commonStore;
 		return config.debug.analytics;

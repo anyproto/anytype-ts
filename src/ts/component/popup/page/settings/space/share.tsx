@@ -449,7 +449,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				icon: item.iconImage,
 				spaceId: commonStore.space,
 				identity: item.identity,
-				route: 'Settings'
+				route: analytics.route.settings,
 			}
 		});
 	};

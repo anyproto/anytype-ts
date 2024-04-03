@@ -2,9 +2,7 @@
 
 .popups {
     .popup.popupMembership {
-		.innerWrap { width: 706px; }
-
-        .sides { display: flex; flex-wrap: nowrap; }
+        .sides { display: flex; flex-wrap: nowrap; width: 706px; }
         .sides {
             .side { width: 50%; flex-shrink: 0; }
             .side.left { padding: 32px; }
@@ -81,7 +79,7 @@
             }
         }
 
-        .sides.success { width: 424px; height: 384px; }
+        .sides.success { width: 424px; }
         .sides.success {
             .side.left { display: none; }
             .side.right { width: 100%; text-align: center; align-items: center; display: flex; flex-direction: column; gap: 26px 0px; padding: 30px 32px 32px; }

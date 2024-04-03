@@ -344,8 +344,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onExport (type: I.ExportType, param: any) {
-		analytics.event('ClickExport', { type, route: 'Settings' });
-		Action.export(commonStore.space, [], type, { ...param, route: 'Settings' }, () => this.props.close());
+		analytics.event('ClickExport', { type, route: analytics.route.settings });
+		Action.export(commonStore.space, [], type, { ...param, route: analytics.route.settings }, () => this.props.close());
 	};
 
 	onKeyDown (e: any) {

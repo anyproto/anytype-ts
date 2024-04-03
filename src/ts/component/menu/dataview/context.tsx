@@ -212,7 +212,7 @@ class MenuContext extends React.Component<I.Menu> {
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { objectIds, onLinkTo } = data;
+		const { objectIds, onLinkTo, route } = data;
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -248,7 +248,7 @@ class MenuContext extends React.Component<I.Menu> {
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
-						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
+						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route });
 
 						close();
 					}

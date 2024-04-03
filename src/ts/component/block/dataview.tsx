@@ -1353,7 +1353,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	analyticsRoute () {
-		return this.isCollection() ? 'Collection' : 'Set';
+		return this.isCollection() ? analytics.route.collection : analytics.route.set;
 	};
 
 	resize () {

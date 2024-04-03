@@ -246,7 +246,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			analytics.event('AddView', {
 				type: view.type,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		});
 	};

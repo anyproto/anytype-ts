@@ -451,7 +451,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				UtilObject.openAuto(object);
-				analytics.createObject(object.type, object.layout, 'Navigation', message.middleTime);
+				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 			});
 		};
 
@@ -492,6 +492,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
 		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const route = analytics.route.navigation;
 
 		let options: any[] = [
 			canPin ? { id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) } : null,
@@ -524,21 +525,21 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'pin': {
 							isPinned ? Storage.removePinnedType(item.itemId) : Storage.addPinnedType(item.itemId);
-							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route: 'Navigation' });
+							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'default': {
 							commonStore.typeSet(item.uniqueKey);
-							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Navigation' });
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall({ ...item, id: item.itemId }, true, 'Navigation');
+								Action.uninstall({ ...item, id: item.itemId }, true, route);
 							};
 							break;
 						};

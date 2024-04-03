@@ -121,7 +121,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-			route: 'Settings',
+			route: analytics.route.settings,
 		});
 	};
 

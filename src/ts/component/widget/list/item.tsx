@@ -189,7 +189,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
-				route: 'Widget',
+				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
 			},

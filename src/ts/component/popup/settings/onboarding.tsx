@@ -132,11 +132,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const userPath = UtilCommon.getElectron().userPath();
 
 		if (this.config.mode !== networkConfig.mode) {
-			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
+			analytics.event('SelectNetwork', { route: analytics.route.onboarding, type: this.config.mode });
 		};
 
 		if (this.config.path !== networkConfig.path) {
-			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+			analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
 		};
 
 		if (this.config.userPath !== userPath) {

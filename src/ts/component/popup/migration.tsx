@@ -108,12 +108,12 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 
 		switch (type) {
 			case 'onboarding': {
-				eventData.route = 'MigrationImportBackupOffer';
+				eventData.route = analytics.route.migrationOffer;
 				Onboarding.start('dashboard', false, true);
 				break;
 			};
 			case 'import': {
-				eventData.route = 'MigrationImportBackup';
+				eventData.route = analytics.route.migrationImport;
 				break;
 			};
 		};

@@ -345,7 +345,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						analytics.event('DuplicateView', {
 							type: view.type,
 							objectType: object.type,
-							embedType: analytics.embedType(isInline)
+							embedType: analytics.embedType(isInline),
 						});
 					});
 					break;

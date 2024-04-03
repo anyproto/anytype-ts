@@ -129,7 +129,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			files: true, 
 			archived: true, 
 			json: false, 
-			route: 'Deleted',
+			route: analytics.route.deleted,
 		});
 	};
 
