@@ -1006,7 +1006,7 @@ class Dispatcher {
 								electron.focus();
 							};
 
-							analytics.createObject(object.type, object.layout, 'Webclipper', 0);
+							analytics.createObject(object.type, object.layout, analytics.route.webclipper, 0);
 							break;
 						};
 					};

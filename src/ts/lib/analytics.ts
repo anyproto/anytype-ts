@@ -33,6 +33,9 @@ class Analytics {
 		graph: 'Graph',
 		store: 'Library',
 		type: 'Type',
+		bookmark: 'Bookmark',
+		webclipper: 'Webclipper',
+		clipboard: 'Clipboard',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

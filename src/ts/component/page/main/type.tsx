@@ -415,7 +415,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			const object = message.details;
 
 			UtilObject.openPopup(object);
-			analytics.createObject(object.type, object.layout, 'ObjectType', message.middleTime);
+			analytics.createObject(object.type, object.layout, analytics.route.type, message.middleTime);
 		});
 	};
 
