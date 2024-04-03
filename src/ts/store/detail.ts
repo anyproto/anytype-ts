@@ -297,6 +297,7 @@ class DetailStore {
 		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
 
 		// Account status
+		object.isAccountActive = [ I.SpaceStatus.Unknown, I.SpaceStatus.Active ].includes(object.spaceAccountStatus);
 		object.isAccountJoining = object.spaceAccountStatus == I.SpaceStatus.Joining;
 		object.isAccountRemoving = object.spaceAccountStatus == I.SpaceStatus.Removing;
 		object.isAccountDeleted = object.spaceAccountStatus == I.SpaceStatus.Deleted;

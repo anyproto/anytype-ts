@@ -70,7 +70,7 @@ class UtilSpace {
 		const { spaceview } = blockStore;
 
 		let items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
-		items = items.filter(it => !it.isAccountRemoving && !it.isAccountDeleted && it.isLocalOk);
+		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
 		items.sort((c1, c2) => {
