@@ -41,10 +41,12 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 	componentDidMount (): void {
 		this.init();
+		this.resize();
 	};
 
 	componentDidUpdate (): void {
 		this.init();
+		this.resize();
 	};
 
 	init () {
@@ -77,8 +79,6 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), popupStore.getTimeout());
 			});
 		};
-
-		this.resize();
 	};
 
 	resize () {
