@@ -4,7 +4,7 @@ import raf from 'raf';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar, translate, Storage } from 'Lib';
+import { I, keyboard, Preview, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
 import Constant from 'json/constant.json';
@@ -27,7 +27,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	frame = 0;
 	width = 0;
 	movedX = false;
-	top = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -39,7 +38,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 	};
 
     render() {
@@ -66,7 +64,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<div 
 						ref={ref => this.refBody = ref}
 						className="body"
-						onScroll={this.onScroll}
 					>
 						<ListWidget ref={ref => this.refList = ref} {...this.props} />
 					</div>
@@ -83,15 +80,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 	componentDidMount (): void {
 		this._isMounted = true;
-		this.top = Storage.getScroll('sidebar', '');
 
 		sidebar.init();
-		this.init();
 		this.rebind();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
 	};
 
 	componentWillUnmount (): void {
@@ -99,10 +90,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.unbind();
 
 		Preview.tooltipHide(true);
-	};
-
-	init () {
-		$(this.refBody).scrollTop(this.top);
 	};
 
 	setActive (id: string): void {
@@ -258,11 +245,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		if (!this.movedX && commonStore.isSidebarFixed) {
 			sidebar.toggleOpenClose();
 		};
-	};
-
-	onScroll () {
-		this.top = $(this.refBody).scrollTop();
-		Storage.setScroll('sidebar', '', this.top);
 	};
 
 });
