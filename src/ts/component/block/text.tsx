@@ -690,6 +690,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space` },
+			{ key: `shift+arrowleft` },
+			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
