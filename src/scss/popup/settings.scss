@@ -468,6 +468,8 @@
 				.title { margin-bottom: 8px; }
 
 				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
+				.row.payment { grid-template-columns: 1fr auto; }
+
 				.row {
 					.side { display: flex; align-items: center; }
 					.side.left {

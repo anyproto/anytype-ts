@@ -302,7 +302,7 @@ class DetailStore {
 		object.isAccountDeleted = object.spaceAccountStatus == I.SpaceStatus.Deleted;
 
 		// Local status
-		object.isLocalOk = object.spaceLocalStatus == I.SpaceStatus.Ok;
+		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
 
 		return object;
 	};
