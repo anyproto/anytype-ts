@@ -51,7 +51,6 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 	init () {
 		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
-		const allowedStatuses = [ I.SpaceStatus.Deleted ];
 
 		if ((this.cid == data.cid) && (this.key == data.key)) {
 			return;
@@ -70,7 +69,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 				};
 
 				const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
-				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
+				if (space && !space.isAccountDeleted) {
 					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), UtilCommon.shorten(space.name, 32)) });
 					return;
 				};

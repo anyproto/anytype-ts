@@ -72,12 +72,11 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	getItems () {
 		const subId = Constant.subId.space;
-		const skippedStatuses = [ I.SpaceStatus.Deleted ];
 		const sortStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Active, I.ParticipantStatus.Removing ];
 		const sortPermissions = [ I.ParticipantPermissions.Owner, I.ParticipantPermissions.Writer, I.ParticipantPermissions.Reader ];
 		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
 
-		return items.filter(it => !skippedStatuses.includes(it.spaceAccountStatus)/* && (it.spaceLocalStatus == I.SpaceStatus.Ok)*/).map(it => {
+		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
 			const participant = UtilSpace.getMyParticipant(it.targetSpaceId);
 
 			it.permissions = I.ParticipantPermissions.None;
@@ -105,7 +104,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onClick (space: any) {
-		if (space.spaceAccountStatus != I.SpaceStatus.Joining) {
+		if (!space.isAccountJoining) {
 			UtilRouter.switchSpace(space.targetSpaceId);
 		};
 	};

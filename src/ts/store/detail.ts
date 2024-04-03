@@ -291,9 +291,18 @@ class DetailStore {
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 
+		// Access type
 		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
 		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
 		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
+
+		// Account status
+		object.isAccountJoining = object.spaceAccountStatus == I.SpaceStatus.Joining;
+		object.isAccountRemoving = object.spaceAccountStatus == I.SpaceStatus.Removing;
+		object.isAccountDeleted = object.spaceAccountStatus == I.SpaceStatus.Deleted;
+
+		// Local status
+		object.isLocalOk = object.spaceLocalStatus == I.SpaceStatus.Ok;
 
 		return object;
 	};

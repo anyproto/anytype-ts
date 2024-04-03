@@ -621,7 +621,7 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { accountSpaceId } = authStore;
-		const { targetSpaceId, spaceAccountStatus, spaceAccessType } = space;
+		const { targetSpaceId } = space;
 
 		if ((targetSpaceId == accountSpaceId)) {
 			return;
@@ -629,18 +629,16 @@ class UtilMenu {
 
 		const options: any[] = [];
 		const isOwner = UtilSpace.isOwner(targetSpaceId);
-		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
-		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
 
 		if (UtilSpace.isOwner(targetSpaceId) && space.isShared) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (isRemoving) {
+		if (space.isRemoving) {
 			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
 		};
 
-		if (isJoining) {
+		if (space.isJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });

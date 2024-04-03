@@ -26,7 +26,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { errorCode, spaceId } = payload;
 		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);
 		const participant = UtilSpace.getMyParticipant(spaceId);
-		const spaceCheck = spaceview && [ I.SpaceStatus.Removing, I.SpaceStatus.Deleted ].includes(spaceview.spaceAccountStatus);
+		const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
 		const participantCheck = participant && (participant.isRemoving || participant.isJoining);
 
 		let buttons = [];
