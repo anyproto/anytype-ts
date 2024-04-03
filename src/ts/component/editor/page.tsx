@@ -983,11 +983,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, first.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent.id);
+		const parent = blockStore.getParentLeaf(rootId, first.id);
+		if (!parent) {
+			return;
+		};
 
-		if (!element || !parentElement) {
+		const parentElement = blockStore.getParentMapElement(rootId, first.id);
+		if (!parentElement) {
 			return;
 		};
 
@@ -1033,10 +1035,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1100,10 +1102,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1319,11 +1321,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element?.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent?.id);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 
-		if (!element || !parent || !parentElement) {
+		if (!parent || !parentElement) {
 			return;
 		};
 
@@ -1454,8 +1455,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
-			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
@@ -1497,7 +1497,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element?.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 
 			if (!rowElement) {
 				return;
@@ -2105,8 +2105,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let length = 0;
 
 		if (last) {
-			const element = blockStore.getMapElement(rootId, last.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = blockStore.getParentLeaf(rootId, last.id);
 
 			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;

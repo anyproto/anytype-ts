@@ -565,8 +565,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	resize () {
 		const { rootId, block, isPopup, isInline } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
