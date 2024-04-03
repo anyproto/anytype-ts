@@ -32,7 +32,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onPasteDate = this.onPasteDate.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
@@ -117,7 +116,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						maskOptions={maskOptions} 
 						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
-						onPaste={this.onPasteDate}
 					/>
 				);
 			} else {
@@ -128,7 +126,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 						onKeyUp={this.onKeyUp} 
-						onPaste={this.onPaste}
 					/>
 				);
 			};
@@ -140,6 +137,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
 					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onCut={this.onPaste}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionEnd={this.onCompositionEnd}
 				/>
@@ -342,8 +341,12 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(v);
 	};
 
-	onPaste (e: any, value: string) {
-		const { onChange } = this.props;
+	onPaste (e: any, value: any) {
+		const { relation, onChange } = this.props;
+
+		if (relation.format == I.RelationType.Date) {
+			value = this.fixDateValue(value);
+		};
 
 		this.setValue(value);
 
@@ -381,16 +384,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				});
 			};
 		});
-	};
-
-	onPasteDate (e: any, value: string) {
-		const { onChange } = this.props;
-
-		this.setValue(this.fixDateValue(value));
-
-		if (onChange) {
-			onChange(this.value);
-		};
 	};
 
 	onKeyUpDate (e: any, value: any) {

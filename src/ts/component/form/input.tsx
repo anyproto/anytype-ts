@@ -19,6 +19,7 @@ interface Props {
 	focusOnMount?: boolean;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
+	onCut?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
 	onMouseEnter?(e: any): void;
@@ -60,6 +61,7 @@ class Input extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onCut = this.onCut.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 	};
 
@@ -94,6 +96,7 @@ class Input extends React.Component<Props, State> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onPaste={this.onPaste}
+				onCut={this.onCut}
 				onSelect={this.onSelect}
 				onClick={onClick}
 				maxLength={maxLength ? maxLength : undefined}
@@ -185,13 +188,19 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any) {
-		e.stopPropagation();
+		window.setTimeout(() => {
+			if (this.props.onPaste) {
+				this.props.onPaste(e, this.state.value);
+			};
+		});
+	};
 
-		if (this.props.onPaste) {
-			e.preventDefault();
-			this.setValue(e.clipboardData.getData('text/plain'));
-			this.props.onPaste(e, this.state.value);
-		};
+	onCut (e: any) {
+		window.setTimeout(() => {
+			if (this.props.onCut) {
+				this.props.onCut(e, this.state.value);
+			};
+		});
 	};
 	
 	onSelect (e: any) {
