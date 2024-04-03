@@ -194,6 +194,16 @@ class BlockStore {
 		return map ? map.get(id) : null;
 	};
 
+	getParentLeaf (rootId: string, id: string) {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getLeaf(rootId, element.parentId) : null;
+	};
+
+	getParentMapElement (rootId: string, id: string) {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getMapElement(rootId, element.parentId) : null;
+	};
+
     getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
 		const map = this.blockMap.get(rootId);
 		if (!map) {
@@ -240,12 +250,12 @@ class BlockStore {
 	};
 
     getHighestParent (rootId: string, blockId: string): I.Block {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
 			return null;
 		};
 
-		const parent = blockStore.getLeaf(rootId, block.parentId);
+		const parent = this.getLeaf(rootId, block.parentId);
 
 		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
 			return block;
@@ -532,12 +542,7 @@ class BlockStore {
 		
 		let ret: any[] = [];
 		for (const id of ids) {
-			const element = blockStore.getMapElement(rootId, id);
-			if (!element) {
-				continue;
-			};
-
-			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = this.getParentLeaf(rootId, id);
 			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};

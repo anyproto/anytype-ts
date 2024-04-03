@@ -1555,12 +1555,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		if (!element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
+		
 		if (!parent) {
 			return;
 		};

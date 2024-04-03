@@ -355,13 +355,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	resize () {
 		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		
-		if (!element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
