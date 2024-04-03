@@ -31,6 +31,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onPaste = this.onPaste.bind(this);
+		this.onPasteDate = this.onPasteDate.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
@@ -81,7 +83,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (isEditing) {
 			if (isLongText) {
-				EditorComponent = (item: any) => (
+				EditorComponent = () => (
 					<span>{value}</span>
 				);
 			} else 
@@ -115,7 +117,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						maskOptions={maskOptions} 
 						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
-						onSelect={this.onSelect}
+						onPaste={this.onPasteDate}
 					/>
 				);
 			} else {
@@ -125,8 +127,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
-						onSelect={this.onSelect}
-						
+						onKeyUp={this.onKeyUp} 
+						onPaste={this.onPaste}
 					/>
 				);
 			};
@@ -135,9 +137,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				<EditorComponent 
 					value={item.name} 
 					className="name" 
-					onKeyUp={this.onKeyUp} 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
+					onSelect={this.onSelect}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionEnd={this.onCompositionEnd}
 				/>
@@ -340,6 +342,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(v);
 	};
 
+	onPaste (e: any, value: string) {
+		const { onChange } = this.props;
+
+		this.setValue(value);
+
+		if (onChange) {
+			onChange(value);
+		};
+	};
+
 	onKeyUp (e: any, value: string) {
 		const { relation, onChange } = this.props;
 
@@ -353,19 +365,31 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		this.setValue(value);
 
-		if (!this.isComposition) {
-			keyboard.shortcut('enter, escape', e, () => {
-				e.preventDefault();
+		if (this.isComposition) {
+			return;
+		};
 
-				if (onChange) {
-					onChange(value, () => {
-						menuStore.closeAll(Constant.menuIds.cell);
+		keyboard.shortcut('enter, escape', e, () => {
+			e.preventDefault();
 
-						this.range = null;
-						this.setEditing(false);
-					});
-				};
-			});
+			if (onChange) {
+				onChange(value, () => {
+					menuStore.closeAll(Constant.menuIds.cell);
+
+					this.range = null;
+					this.setEditing(false);
+				});
+			};
+		});
+	};
+
+	onPasteDate (e: any, value: string) {
+		const { onChange } = this.props;
+
+		this.setValue(this.fixDateValue(value));
+
+		if (onChange) {
+			onChange(this.value);
 		};
 	};
 
