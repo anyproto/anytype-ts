@@ -53,6 +53,8 @@ contextBridge.exposeInMainWorld('Electron', {
 		cmd = String(cmd || '');
 		args = args || [];
 
-		return ipcRenderer.invoke('Api', id, cmd, args);
+		let ret = new Promise(() => {});
+		try { ret = ipcRenderer.invoke('Api', id, cmd, args); } catch (e) {};
+		return ret;
 	},
 });
