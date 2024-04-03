@@ -23,16 +23,19 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
-					<Title text={translate('pageMainImportTitle')} />
-					<Loader />
-
+					<Title text={error ? translate('commonError') : translate('pageMainImportTitle')} />
 					<Error text={error} />
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => UtilSpace.openDashboard('route')} />
+							<Button 
+								text={translate('commonBack')} 
+								color="blank" 
+								className="c36" 
+								onClick={() => UtilSpace.openDashboard('route')} 
+							/>
 						</div>
-					) : ''}
+					) : <Loader />}
 				</Frame>
 			</div>
 		);

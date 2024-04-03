@@ -31,7 +31,12 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => UtilSpace.openDashboard('route')} />
+							<Button 
+								text={translate('commonBack')} 
+								color="blank" 
+								className="c36" 
+								onClick={() => UtilSpace.openDashboard('route')} 
+							/>
 						</div>
 					) : <Loader />}
 				</Frame>

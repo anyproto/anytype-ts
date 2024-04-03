@@ -23,15 +23,19 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
-					<Title text={translate('pageMainMembershipTitle')} />
-					<Loader />
+					<Title text={error ? translate('commonError') : translate('pageMainMembershipTitle')} />
 					<Error text={error} />
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => UtilSpace.openDashboard('route')} />
+							<Button 
+								text={translate('commonBack')} 
+								color="blank" 
+								className="c36" 
+								onClick={() => UtilSpace.openDashboard('route')} 
+							/>
 						</div>
-					) : ''}
+					) : <Loader />}
 				</Frame>
 			</div>
 		);
