@@ -41,6 +41,7 @@ class Input extends React.Component<Props, State> {
 	node: any = null;
 	mask: any = null;
 	isFocused: boolean = false;
+	range: I.TextRange = null;
 
 	public static defaultProps = {
         type: 'text',
@@ -188,7 +189,11 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any) {
-		window.setTimeout(() => {
+		e.persist();
+
+		this.callWithTimeout(() => {
+			this.updateRange(e);
+
 			if (this.props.onPaste) {
 				this.props.onPaste(e, this.state.value);
 			};
@@ -196,7 +201,11 @@ class Input extends React.Component<Props, State> {
 	};
 
 	onCut (e: any) {
-		window.setTimeout(() => {
+		e.persist();
+
+		this.callWithTimeout(() => {
+			this.updateRange(e);
+
 			if (this.props.onCut) {
 				this.props.onCut(e, this.state.value);
 			};
@@ -207,6 +216,8 @@ class Input extends React.Component<Props, State> {
 		if (this.props.onSelect) {
 			this.props.onSelect(e, this.state.value);
 		};
+
+		this.updateRange(e);
 	};
 
 	getInputElement() {
@@ -214,27 +225,15 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	focus () {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				this.getInputElement().focus({ preventScroll: true }); 
-			};
-		});
+		this.callWithTimeout(() => this.getInputElement().focus({ preventScroll: true }));
 	};
 	
 	blur () {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				$(this.node).trigger('blur');
-			};
-		});
+		this.callWithTimeout(() => $(this.node).trigger('blur'));
 	};
 	
 	select () {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				this.getInputElement().select();
-			};
-		});
+		this.callWithTimeout(() => this.getInputElement().select());
 	};
 	
 	setValue (v: string) {
@@ -265,17 +264,22 @@ class Input extends React.Component<Props, State> {
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 
-	setRange (range: I.TextRange) {
-		window.setTimeout(() => { 
-			if (!this._isMounted) {
-				return;
-			};
+	updateRange (e: any) {
+		const { selectionStart, selectionEnd } = e.target;
+		this.range = { from: selectionStart, to: selectionEnd };
+	};
 
+	setRange (range: I.TextRange) {
+		this.callWithTimeout(() => {
 			const el = this.getInputElement();
 
 			el.focus({ preventScroll: true }); 
 			el.setSelectionRange(range.from, range.to); 
 		});
+	};
+
+	getRange (): I.TextRange {
+		return this.range;
 	};
 	
 	addClass (v: string) {
@@ -292,6 +296,14 @@ class Input extends React.Component<Props, State> {
 
 	setPlaceholder (v: string) {
 		$(this.node).attr({ placeholder: v });
+	};
+
+	callWithTimeout (callBack: () => void) {
+		window.setTimeout(() => {
+			if (this._isMounted) {
+				callBack(); 
+			};
+		});
 	};
 	
 };

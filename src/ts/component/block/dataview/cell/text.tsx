@@ -342,21 +342,19 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onPaste (e: any, value: any) {
-		const { relation, onChange } = this.props;
+		const { relation } = this.props;
 
 		if (relation.format == I.RelationType.Date) {
 			value = this.fixDateValue(value);
 		};
 
+		this.range = this.ref?.getRange();
 		this.setValue(value);
-
-		if (onChange) {
-			onChange(value);
-		};
+		this.save(value);
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation, onChange } = this.props;
+		const { relation } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -375,20 +373,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		keyboard.shortcut('enter, escape', e, () => {
 			e.preventDefault();
 
-			if (onChange) {
-				onChange(value, () => {
-					menuStore.closeAll(Constant.menuIds.cell);
+			this.save(value, () => {
+				menuStore.closeAll(Constant.menuIds.cell);
 
-					this.range = null;
-					this.setEditing(false);
-				});
-			};
+				this.range = null;
+				this.setEditing(false);
+			});
 		});
 	};
 
 	onKeyUpDate (e: any, value: any) {
-		const { onChange } = this.props;
-
 		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
@@ -398,10 +392,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		if (!this.isComposition) {
 			keyboard.shortcut('enter', e, () => {
 				e.preventDefault();
-
-				if (onChange) {
-					onChange(this.value, () => menuStore.close(MENU_ID));
-				};
+				this.save(this.value, () => menuStore.close(MENU_ID));
 			});
 		};
 	};
@@ -426,17 +417,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			return;
 		};
 
-		if (onChange) {
-			onChange(this.value, () => {
-				if (!menuStore.isOpen(MENU_ID)) {
-					this.setEditing(false);
-				};
-			});
-		};
+		this.save(this.value, () => {
+			if (!menuStore.isOpen(MENU_ID)) {
+				this.setEditing(false);
+			};
+		});
 	};
 
 	setValue (v: any) {
 		this.value = v;
+	};
+
+	save (value: any, callBack?: () => void) {
+		const { onChange } = this.props;
+
+		if (onChange) {
+			onChange(value, callBack);
+		};
 	};
 
 	fixDateValue (v: any) {
