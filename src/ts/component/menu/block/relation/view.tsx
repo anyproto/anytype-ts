@@ -148,6 +148,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
+
 		const object = detailStore.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);

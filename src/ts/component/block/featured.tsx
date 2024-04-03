@@ -701,6 +701,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					},
 					data: {
 						relationKey,
+						rootId,
 					},
 				};
 
