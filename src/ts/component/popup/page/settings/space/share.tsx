@@ -365,6 +365,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { membership } = authStore;
 
 		let items: any[] = [] as any[];
+
 		if (membership.isExplorer || (UtilSpace.getReaderLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Reader });
 		};
