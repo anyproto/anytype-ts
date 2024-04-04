@@ -19,6 +19,7 @@ const SHOW_DIMMER = [
 	'inviteQr',
 	'usecase',
 	'membership',
+	'membershipFinalization',
 ];
 
 class PopupStore {

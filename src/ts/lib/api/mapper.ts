@@ -605,6 +605,7 @@ export const Mapper = {
 				priceCents: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
+				namesCount: obj.getAnynamescountincluded()
 			};
 		},
 

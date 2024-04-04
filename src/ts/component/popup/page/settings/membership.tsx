@@ -47,6 +47,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			let buttonText = translate('popupSettingsMembershipLearnMore');
 
 			if (isCurrent) {
+				if (membership.status == I.MembershipStatus.Pending) {
+					period = translate('popupSettingsMembershipPending');
+				} else
 				if (item.period && membership.dateEnds) {
 					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds))
 				} else {

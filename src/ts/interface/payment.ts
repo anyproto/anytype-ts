@@ -75,6 +75,7 @@ export interface MembershipTier {
 	period: number;
 	priceCents: number;
 	features: string[];
+	namesCount: number;
 	color?: string;
 	price?: number;
 	isExplorer?: boolean;

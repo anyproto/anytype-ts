@@ -1956,6 +1956,14 @@ export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any
 	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
 };
 
+export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.Finalize.Request();
+
+	request.setRequestedanyname(name);
+
+	dispatcher.request(MembershipFinalize.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {

@@ -41,28 +41,33 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			return null;
 		};
 
+		const { namesCount } = tierItem;
 		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
 			translate('popupSettingsMembershipPerYear') : 
 			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
 
 		return (
-			<React.Fragment>
-				<Title text={translate(`popupMembershipPaidTitle`)} />
-				<Label text={translate(`popupMembershipPaidText`)} />
+			<div className="anyNameForm">
+				{namesCount ? (
+					<React.Fragment>
+						<Title text={translate(`popupMembershipPaidTitle`)} />
+						<Label text={translate(`popupMembershipPaidText`)} />
 
-				<div className="inputWrapper">
-					<Input 
-						ref={ref => this.refName = ref} 
-						value={globalName} 
-						onKeyUp={this.onKeyUp} 
-						readonly={globalName ? true : false}
-						className={globalName ? 'disabled' : ''}
-						placeholder={translate(`popupMembershipPaidPlaceholder`)} 
-					/>
-					{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
-				</div>
+						<div className="inputWrapper">
+							<Input
+								ref={ref => this.refName = ref}
+								value={globalName}
+								onKeyUp={this.onKeyUp}
+								readonly={!!globalName}
+								className={globalName ? 'disabled' : ''}
+								placeholder={translate(`popupMembershipPaidPlaceholder`)}
+							/>
+							{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+						</div>
 
-				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+					</React.Fragment>
+				) : ''}
 
 				<div className="priceWrapper">
 					<span className="price">{`$${tierItem.price}`}</span>{period}
@@ -70,13 +75,18 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 				<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-			</React.Fragment>
+			</div>
 		);
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+		const tierItem = UtilData.getMembershipTier(tier) || {};
 		const globalName = this.getName();
-		if (!globalName) {
+
+		if (!globalName && tierItem.namesCount) {
 			this.disableButtons(true);
 		};
 	};
@@ -140,7 +150,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const globalName = this.getName();
-		const name = globalName ? '' : this.refName.getValue() + Constant.anyNameSpace;
+		const tierItem = UtilData.getMembershipTier(tier);
+		const { namesCount } = tierItem;
+		const name = globalName || !namesCount ? '' : this.refName.getValue() + Constant.anyNameSpace;
 		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);

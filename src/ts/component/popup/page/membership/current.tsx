@@ -33,7 +33,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 			if (paymentMethod == I.PaymentMethod.Crypto) {
 				buttonText = translate('popupMembershipWriteToAnyteam');
-			} else {
+			} else
+			if (paymentMethod == I.PaymentMethod.Card) {
 				buttonText = translate('popupMembershipManagePayment');
 			};
 		};
@@ -50,7 +51,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 					<Label className="paymentMethod" text={paidText} />
 				</div>
 
-				<Button onClick={this.onButton} text={buttonText} className="c36" color="blank" />
+				{buttonText ? <Button onClick={this.onButton} text={buttonText} className="c36" color="blank" /> : ''}
 			</div>
 		);
 	};

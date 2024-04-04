@@ -133,6 +133,7 @@
 	"commonApprove": "Approve",
 	"commonAreYouSure": "Are you sure?",
 	"commonVersion": "Version",
+	"commonConfirm": "Confirm",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -842,6 +843,7 @@
 	"popupSettingsMembershipManage": "Manage",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
+	"popupSettingsMembershipPending": "Pending...",
 
 	"popupSettingsMembershipLevelsDetails": "Membership levels details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
