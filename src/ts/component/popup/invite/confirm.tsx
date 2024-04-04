@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { authStore, popupStore, detailStore } from 'Store';
 
 interface State {
 	error: string;
@@ -65,9 +65,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 				<div className="buttons">
 					<div className="sides">
-						{buttons.map((item: any, i: number) => {
-							<Button key={i} {...item} className="c36" />
-						})}
+						{buttons.map((item: any, i: number) => <Button key={i} {...item} className="c36" />)}
 					</div>
 
 					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
@@ -92,59 +90,37 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { identity } = data;
-		const spaceId = this.getSpaceId();
-
-		if (!spaceId || !identity) {
-			return;
-		};
-
-		C.SpaceRequestApprove(spaceId, identity, permissions, (message: any) => {
+		C.SpaceRequestApprove(this.getSpaceId(), this.getIdentity(), permissions, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
 			};
 
 			analytics.event('ApproveInviteRequest', { type: permissions });
-
-			close();
+			this.props.close();
 		});
 	};
 
 	onReject () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { spaceId, identity } = data;
-
-		if (!spaceId || !identity) {
-			return;
-		};
-
-		C.SpaceRequestDecline(spaceId, identity, (message: any) => {
+		C.SpaceRequestDecline(this.getSpaceId(), this.getIdentity(), (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
 			};
 
 			analytics.event('RejectInviteRequest');
-
-			close();
+			this.props.close();
 		});
 	};
 
 	load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { spaceId } = data;
-
 		UtilData.search({
 			keys: UtilData.participantRelationKeys(),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: spaceId },
+				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 			],
+			ignoreHidden: false,
 			ignoreWorkspace: true,
 			ignoreDeleted: true,
 			noDeps: true,
@@ -155,7 +131,11 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	getSpaceId () {
-		return this.props.param.data.spaceId;
+		return String(this.props.param.data?.spaceId || '');
+	};
+
+	getIdentity () {
+		return String(this.props.param.data?.identity || '');
 	};
 
 	getReaderLimit () {

@@ -25,5 +25,7 @@
 		}
 	}
 
-	.body.withCnt { width: calc(100% - 30px); }
+	.body.withCnt {
+		.side.left { width: calc(100% - 30px); }
+	}
 }
