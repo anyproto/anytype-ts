@@ -84,7 +84,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
-					if (space && !space.isAccountDeleted) {
+					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
 						popupStore.open('confirm', {
 							data: {
 								title: translate('popupConfirmDuplicateSpace'),
