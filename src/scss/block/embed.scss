@@ -71,13 +71,6 @@
 		}
 
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
-
-		.excalidraw { position: static; }
-		.excalidraw {
-			.scroll-back-to-content { position: absolute; }
-			.ToolIcon__icon { width: 20px; height: 20px; }
-			.Stack_horizontal { white-space: nowrap; @include text-small; }
-		}
 	}
 
 	.block.blockEmbed:not(.isLatex) {
