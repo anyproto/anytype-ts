@@ -614,7 +614,7 @@ class UtilData {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Text,
+			cardStyle: I.LinkCardStyle.Card,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
