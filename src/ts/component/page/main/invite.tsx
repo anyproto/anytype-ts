@@ -73,14 +73,27 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 					return;
 				};
 
-				const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
-				if (space && !space.isAccountDeleted) {
-					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), UtilCommon.shorten(space.name, 32)) });
-					return;
-				};
-
 				UtilSpace.openDashboard('route');
-				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), popupStore.getTimeout());
+				window.setTimeout(() => {
+					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
+
+					if (message.error.code) {
+					} else 
+					if (space && !space.isAccountDeleted) {
+						popupStore.open('confirm', {
+							data: {
+								title: translate('popupConfirmDuplicateSpace'),
+								textConfirm: translate('commonOpenSpace'),
+								textCancel: translate('commonCancel'),
+								onConfirm: () => {
+									UtilRouter.switchSpace(message.spaceId);
+								},
+							},
+						});
+					} else {
+						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+					};
+				}, popupStore.getTimeout());
 			});
 		};
 	};

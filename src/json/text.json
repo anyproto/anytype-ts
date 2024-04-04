@@ -134,6 +134,7 @@
 	"commonAreYouSure": "Are you sure?",
 	"commonVersion": "Version",
 	"commonConfirm": "Confirm",
+	"commonOpenSpace": "Open space",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -409,7 +410,6 @@
 
 	"pageMainInviteTitle": "Downloading invite",
 	"pageMainInviteErrorData": "Incorrect invite data",
-	"pageMainInviteErrorDuplicate": "You are joining or have already joined the %s space",
 
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
@@ -816,6 +816,8 @@
 
 	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
+
+	"popupConfirmDuplicateSpace": "You are already a member of this space",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
