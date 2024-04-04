@@ -116,4 +116,24 @@
 			.side.left { background: linear-gradient(to bottom, #fbeaff 0%, #f6f6f6 25%); }
 		}
     }
+
+    .popup.popupMembershipFinalization {
+        .anyNameForm { padding: 28px 34px 32px; width: 360px; }
+        .anyNameForm {
+            .title { margin-bottom: 10px; @include text-header2; }
+            .label { margin-bottom: 14px; }
+
+            .inputWrapper { display: flex; padding: 0px 12px; align-items: center; height: 36px; margin-bottom: 4px; border-radius: 7px; border: 1px solid var(--color-shape-secondary); }
+            .inputWrapper {
+                .input { @include text-common; border: 0; height: 36px; padding: 6px 0px; }
+                .ns { flex-shrink: 0; width: 27px; }
+            }
+
+            .statusBar { @include text-small; min-height: 18px; margin: 0px 0px 4px; color: var(--color-text-secondary);  }
+            .statusBar.error { color: var(--color-red); }
+            .statusBar.ok { color: var(--color-green); }
+
+            .button { width: 100%; }
+        }
+    }
 }

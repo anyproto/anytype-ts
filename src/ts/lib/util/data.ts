@@ -1,5 +1,5 @@
 import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -235,8 +235,14 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipData();
 		this.getMembershipTiers();
+		this.getMembershipData((current) => {
+			const { status, tier } = current;
+
+			if (status && status == I.MembershipStatus.Finalization) {
+				popupStore.open('membershipFinalization', { data: { tier } });
+			};
+		});
 	};
 
 	createSubscriptions (callBack?: () => void): void {
