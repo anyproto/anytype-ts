@@ -362,13 +362,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getParticipantOptions () {
-		let items: any[] = [] as any[];
+		const { membership } = authStore;
 
-		if (UtilSpace.getReaderLimit() - 1 >= 0) {
+		let items: any[] = [] as any[];
+		if (membership.isExplorer || (UtilSpace.getReaderLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Reader });
 		};
-
-		if (UtilSpace.getWriterLimit() - 1 >= 0) {
+		if (membership.isExplorer || (UtilSpace.getWriterLimit() - 1 >= 0)) {
 			items.push({ id: I.ParticipantPermissions.Writer });
 		};
 
