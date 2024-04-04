@@ -33,7 +33,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 			if (paymentMethod == I.PaymentMethod.Crypto) {
 				buttonText = translate('popupMembershipWriteToAnyteam');
-			} else if (paymentMethod == I.PaymentMethod.Card) {
+			} else
+			if (paymentMethod == I.PaymentMethod.Card) {
 				buttonText = translate('popupMembershipManagePayment');
 			};
 		};
