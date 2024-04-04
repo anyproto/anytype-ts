@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, popupStore } from 'Store';
 
 interface State {
 	error: string;
@@ -21,6 +21,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onReject = this.onReject.bind(this);
+		this.onMembership = this.onMembership.bind(this);
 	};
 
 	render() {
@@ -29,23 +30,29 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { data } = param;
 		const { icon } = data;
 		const { membership } = authStore;
-		const spaceId = this.getSpaceId();
-		const space = UtilSpace.getSpaceviewBySpaceId(spaceId);
+		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
 		const name = UtilCommon.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 		if (!space) {
 			return null;
 		};
 
-		let readerButton = translate('popupInviteConfirmButtonReader');
-		let writerButton = translate('popupInviteConfirmButtonEditor');
-
-		if (!this.getWriterLimit()) {
-			writerButton = translate('popupInviteConfirmButtonEditorLimit');
-		} else
+		let buttons = [];
 		if (!this.getReaderLimit() && membership.isExplorer) {
-			readerButton = translate('popupInviteConfirmButtonReaderLimit');
-			writerButton = translate('popupInviteConfirmButtonEditorLimit');
+			buttons.push([
+				{ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership },
+			]);
+		} else 
+		if (!this.getWriterLimit()) {
+			buttons = buttons.concat([
+				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
+				{ text: translate('popupInviteConfirmButtonEditorLimit'), onClick: this.onMembership },
+			]);
+		} else {
+			buttons = buttons.concat([
+				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
+				{ text: translate('popupInviteConfirmButtonEditor'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
+			]);
 		};
 
 		return (
@@ -58,8 +65,9 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 				<div className="buttons">
 					<div className="sides">
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Reader)} text={readerButton} className="c36" />
-						<Button onClick={() => this.onConfirm(I.ParticipantPermissions.Writer)} text={writerButton} className="c36" />
+						{buttons.map((item: any, i: number) => {
+							<Button key={i} {...item} className="c36" />
+						})}
 					</div>
 
 					<Button onClick={this.onReject} text={translate('popupInviteConfirmButtonReject')} className="c36" color="red" />
@@ -77,6 +85,10 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 		analytics.event('ScreenInviteConfirm', { route });
 		this.load();
+	};
+
+	onMembership () {
+		popupStore.open('settings', { data: { page: 'membership' } });
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
