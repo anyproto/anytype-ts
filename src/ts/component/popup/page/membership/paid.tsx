@@ -36,12 +36,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
-		const { namesCount } = tierItem;
 
 		if (!tierItem) {
 			return null;
 		};
 
+		const { namesCount } = tierItem;
 		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
 			translate('popupSettingsMembershipPerYear') : 
 			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
@@ -83,8 +83,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
-
+		const tierItem = UtilData.getMembershipTier(tier) || {};
 		const globalName = this.getName();
 
 		if (!globalName && tierItem.namesCount) {

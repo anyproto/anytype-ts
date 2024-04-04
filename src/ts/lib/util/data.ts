@@ -953,7 +953,7 @@ class UtilData {
 
 				authStore.membershipSet(message.membership);
 				
-				if (status && status == I.MembershipStatus.Finalization) {
+				if (status && (status == I.MembershipStatus.Finalization)) {
 					popupStore.open('membershipFinalization', { data: { tier } });
 				};
 			};
