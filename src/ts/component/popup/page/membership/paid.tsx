@@ -86,7 +86,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = UtilData.getMembershipTier(tier);
 		const globalName = this.getName();
 
-		if (!globalName && tierItem.namesCount) {
+		if (!globalName && tierItem && tierItem.namesCount) {
 			this.disableButtons(true);
 		};
 	};
