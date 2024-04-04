@@ -843,6 +843,7 @@
 	"popupSettingsMembershipManage": "Manage",
 	"popupSettingsMembershipValidUntil": "Valid until %s",
 	"popupSettingsMembershipForeverFree": "Forever free",
+	"popupSettingsMembershipPending": "Pending...",
 
 	"popupSettingsMembershipLevelsDetails": "Membership levels details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
