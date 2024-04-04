@@ -83,7 +83,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier) || {};
+		const tierItem = UtilData.getMembershipTier(tier);
 		const globalName = this.getName();
 
 		if (!globalName && tierItem.namesCount) {

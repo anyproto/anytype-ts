@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -965,7 +965,7 @@ class UtilData {
 	};
 
 	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return commonStore.membershipTiers.find(it => it.id == id);
+		return commonStore.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	isAnytypeNetwork (): boolean {

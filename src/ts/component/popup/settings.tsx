@@ -156,9 +156,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			if (action.id == 'membership') {
 				if (!membership.isNone) {
 					const tierItem = UtilData.getMembershipTier(membership.tier);
-					if (tierItem) {
-						caption = <div className="caption">{tierItem.name}</div>;
-					};
+					caption = <div className="caption">{tierItem.name}</div>;
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
 				};

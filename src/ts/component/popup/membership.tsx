@@ -33,11 +33,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { tier, success } = data;
 		const tierContent = this.getTierContent(tier);
 		const tierItem = UtilData.getMembershipTier(tier);
-
-		if (!tierItem) {
-			return null;
-		};
-
 		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
 		let content: any = null;
@@ -79,10 +74,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 
 	getTierContent (tier: I.TierType): string[] {
 		const tierItem = UtilData.getMembershipTier(tier);
-		if (!tierItem) {
-			return [];
-		};
-
 		const { features, nameMinLength } = tierItem;
 
 		let list = [];
@@ -92,7 +83,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		};
 
 		list = list.concat(features);
-
 		return list;
 	};
 

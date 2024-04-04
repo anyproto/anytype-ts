@@ -20,7 +20,7 @@ class MembershipTier implements I.MembershipTier {
 	features = [];
 	namesCount = 0;
 
-	constructor (props: I.MembershipTier) {
+	constructor (props: Partial<I.MembershipTier>) {
 		this.id = Number(props.id) || I.TierType.None;
 		this.name = String(props.name || '');
 		this.description = String(props.description || '');
