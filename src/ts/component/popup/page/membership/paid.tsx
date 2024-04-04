@@ -36,6 +36,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
+		const { namesCount } = tierItem;
 
 		if (!tierItem) {
 			return null;
@@ -47,22 +48,26 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		return (
 			<div className="anyNameForm">
-				<Title text={translate(`popupMembershipPaidTitle`)} />
-				<Label text={translate(`popupMembershipPaidText`)} />
+				{namesCount ? (
+					<React.Fragment>
+						<Title text={translate(`popupMembershipPaidTitle`)} />
+						<Label text={translate(`popupMembershipPaidText`)} />
 
-				<div className="inputWrapper">
-					<Input 
-						ref={ref => this.refName = ref} 
-						value={globalName} 
-						onKeyUp={this.onKeyUp} 
-						readonly={globalName ? true : false}
-						className={globalName ? 'disabled' : ''}
-						placeholder={translate(`popupMembershipPaidPlaceholder`)} 
-					/>
-					{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
-				</div>
+						<div className="inputWrapper">
+							<Input
+								ref={ref => this.refName = ref}
+								value={globalName}
+								onKeyUp={this.onKeyUp}
+								readonly={!!globalName}
+								className={globalName ? 'disabled' : ''}
+								placeholder={translate(`popupMembershipPaidPlaceholder`)}
+							/>
+							{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+						</div>
 
-				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
+					</React.Fragment>
+				) : ''}
 
 				<div className="priceWrapper">
 					<span className="price">{`$${tierItem.price}`}</span>{period}
@@ -75,8 +80,14 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+		const tierItem = UtilData.getMembershipTier(tier);
+
 		const globalName = this.getName();
-		if (!globalName) {
+
+		if (!globalName && tierItem.namesCount) {
 			this.disableButtons(true);
 		};
 	};
@@ -140,7 +151,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const globalName = this.getName();
-		const name = globalName ? '' : this.refName.getValue() + Constant.anyNameSpace;
+		const tierItem = UtilData.getMembershipTier(tier);
+		const { namesCount } = tierItem;
+		const name = globalName || !namesCount ? '' : this.refName.getValue() + Constant.anyNameSpace;
 		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);

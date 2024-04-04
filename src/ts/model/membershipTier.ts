@@ -18,6 +18,7 @@ class MembershipTier implements I.MembershipTier {
 	period = 0;
 	priceCents = 0;
 	features = [];
+	namesCount = 0;
 
 	constructor (props: I.MembershipTier) {
 		this.id = Number(props.id) || I.TierType.None;
@@ -30,6 +31,7 @@ class MembershipTier implements I.MembershipTier {
 		this.period = Number(props.period) || 0;
 		this.priceCents = Number(props.priceCents) || 0;
 		this.features = Array.isArray(props.features) ? props.features : [];
+		this.namesCount = Number(props.namesCount) || 0;
 	};
 
 	get color (): string {
