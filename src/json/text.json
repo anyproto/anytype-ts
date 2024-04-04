@@ -818,6 +818,7 @@
 	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
 
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
+	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",

@@ -68,16 +68,21 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
-
 				UtilSpace.openDashboard('route');
 				window.setTimeout(() => {
 					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
+						popupStore.open('confirm', {
+							data: {
+								icon: 'invite',
+								bgColor: 'blue',
+								title: translate('popupInviteRequestTitle'),
+								text: translate('popupConfirmInviteError'),
+								textConfirm: translate('commonOkay'),
+								canCancel: false,
+							},
+						});
 					} else 
 					if (space && !space.isAccountDeleted) {
 						popupStore.open('confirm', {
