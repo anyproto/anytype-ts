@@ -58,7 +58,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 						<div className="check" onClick={this.onCheck}>
-							<Checkbox ref={ref => this.refCheckbox = ref} value={true} /> {translate('popupMembershipFreeCheckboxText')}
+							<Checkbox ref={ref => this.refCheckbox = ref} value={false} /> {translate('popupMembershipFreeCheckboxText')}
 						</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
