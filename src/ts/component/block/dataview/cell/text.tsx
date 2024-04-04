@@ -31,6 +31,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
@@ -81,7 +82,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (isEditing) {
 			if (isLongText) {
-				EditorComponent = (item: any) => (
+				EditorComponent = () => (
 					<span>{value}</span>
 				);
 			} else 
@@ -115,7 +116,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						maskOptions={maskOptions} 
 						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
-						onSelect={this.onSelect}
 					/>
 				);
 			} else {
@@ -125,8 +125,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
-						onSelect={this.onSelect}
-						
+						onKeyUp={this.onKeyUp} 
 					/>
 				);
 			};
@@ -135,9 +134,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				<EditorComponent 
 					value={item.name} 
 					className="name" 
-					onKeyUp={this.onKeyUp} 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
+					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onCut={this.onPaste}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionEnd={this.onCompositionEnd}
 				/>
@@ -340,8 +341,20 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(v);
 	};
 
+	onPaste (e: any, value: any) {
+		const { relation } = this.props;
+
+		if (relation.format == I.RelationType.Date) {
+			value = this.fixDateValue(value);
+		};
+
+		this.range = this.ref?.getRange();
+		this.setValue(value);
+		this.save(value);
+	};
+
 	onKeyUp (e: any, value: string) {
-		const { relation, onChange } = this.props;
+		const { relation } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -353,25 +366,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		this.setValue(value);
 
-		if (!this.isComposition) {
-			keyboard.shortcut('enter, escape', e, () => {
-				e.preventDefault();
-
-				if (onChange) {
-					onChange(value, () => {
-						menuStore.closeAll(Constant.menuIds.cell);
-
-						this.range = null;
-						this.setEditing(false);
-					});
-				};
-			});
+		if (this.isComposition) {
+			return;
 		};
+
+		keyboard.shortcut('enter, escape', e, () => {
+			e.preventDefault();
+
+			this.save(value, () => {
+				menuStore.closeAll(Constant.menuIds.cell);
+
+				this.range = null;
+				this.setEditing(false);
+			});
+		});
 	};
 
 	onKeyUpDate (e: any, value: any) {
-		const { onChange } = this.props;
-
 		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
@@ -381,10 +392,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		if (!this.isComposition) {
 			keyboard.shortcut('enter', e, () => {
 				e.preventDefault();
-
-				if (onChange) {
-					onChange(this.value, () => menuStore.close(MENU_ID));
-				};
+				this.save(this.value, () => menuStore.close(MENU_ID));
 			});
 		};
 	};
@@ -409,17 +417,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			return;
 		};
 
-		if (onChange) {
-			onChange(this.value, () => {
-				if (!menuStore.isOpen(MENU_ID)) {
-					this.setEditing(false);
-				};
-			});
-		};
+		this.save(this.value, () => {
+			if (!menuStore.isOpen(MENU_ID)) {
+				this.setEditing(false);
+			};
+		});
 	};
 
 	setValue (v: any) {
 		this.value = v;
+	};
+
+	save (value: any, callBack?: () => void) {
+		const { onChange } = this.props;
+
+		if (onChange) {
+			onChange(value, callBack);
+		};
 	};
 
 	fixDateValue (v: any) {
