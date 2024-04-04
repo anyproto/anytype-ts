@@ -17,12 +17,13 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {
+			const { targetSpaceId } = space;
+			const participant = UtilSpace.getMyParticipant(targetSpaceId);
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const isOwner = space.permissions == I.ParticipantPermissions.Owner;
-			const hasMenu = space.targetSpaceId != accountSpaceId;
+			const hasMenu = participant && (targetSpaceId != accountSpaceId);
 
 			let creatorElement = null;
-			if (!isOwner && !creator._empty_) {
+			if (participant && !participant.isOwner && !creator._empty_) {
 				creatorElement = (
 					<div className="creator">
 						<IconObject object={creator} size={16} />
