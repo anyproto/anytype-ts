@@ -236,13 +236,7 @@ class UtilData {
 		});
 
 		this.getMembershipTiers();
-		this.getMembershipData((current) => {
-			const { status, tier } = current;
-
-			if (status && status == I.MembershipStatus.Finalization) {
-				popupStore.open('membershipFinalization', { data: { tier } });
-			};
-		});
+		this.getMembershipData();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -955,7 +949,13 @@ class UtilData {
 	getMembershipData (callBack?: (membership: I.Membership) => void) {
 		C.MembershipGetStatus(true, (message: any) => {
 			if (message.membership) {
+				const { status, tier } = message.membership;
+
 				authStore.membershipSet(message.membership);
+				
+				if (status && status == I.MembershipStatus.Finalization) {
+					popupStore.open('membershipFinalization', { data: { tier } });
+				};
 			};
 
 			if (callBack) {
