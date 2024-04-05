@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Input } from 'Component';
-import { C, I, translate } from 'Lib';
-import { authStore } from 'Store';
+import { Title, Label, Button, Input, Loader } from 'Component';
+import { C, I, translate, UtilData } from 'Lib';
+import { authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
 	status: string,
-	statusText: string
+	statusText: string,
+	loading: boolean,
 };
 
 const PopupMembershipFinalization = observer(class PopupMembershipFinalization extends React.Component<I.Popup, State> {
@@ -15,6 +16,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	state = {
 		status: '',
 		statusText: '',
+		loading: false,
 	};
 
 	refName: any = null;
@@ -28,7 +30,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	render () {
-		const { status, statusText } = this.state;
+		const { status, statusText, loading } = this.state;
 		const globalName = this.getName();
 
 		return (
@@ -51,6 +53,8 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
 
 				<Button ref={ref => this.refButton = ref} onClick={this.onConfirm} text={translate('commonConfirm')} />
+
+				{loading ? <Loader /> : ''}
 			</div>
 		);
 	};
@@ -106,7 +110,27 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	onConfirm () {
+		const { close } = this.props;
+		const name = this.refName.getValue();
 
+		this.setState({ loading: true });
+		this.refButton.setDisabled(true);
+
+		C.MembershipFinalize(name, (message) => {
+			if (message.error.code) {
+				this.setState({ status: 'error', statusText: message.error.description });
+				return;
+			};
+
+			UtilData.getMembershipTiers();
+			UtilData.getMembershipData((membership) => {
+				close();
+
+				window.setTimeout(() => {
+					popupStore.open('membership', { data: { tier: membership.tier, success: true } });
+				}, popupStore.getTimeout());
+			});
+		});
 	};
 
 	getName () {
