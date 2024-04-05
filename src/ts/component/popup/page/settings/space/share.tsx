@@ -253,8 +253,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				this.setInvite(message.inviteCid, message.inviteKey);
 			};
 		});
-
-		analytics.event('ScreenSettingsSpaceShare');
 	};
 
 	componentDidUpdate() {
@@ -476,7 +474,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onLeaveRequest (item: any) {
-		Action.leaveApprove(commonStore.space, [ item.identity ], item.name);
+		Action.leaveApprove(commonStore.space, [ item.identity ], item.name, analytics.route.settings);
 	};
 
 	onMoreSpace () {

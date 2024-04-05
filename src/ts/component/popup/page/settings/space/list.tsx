@@ -67,10 +67,6 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenSettingsSpaceList');
-	};
-
 	getItems () {
 		const subId = Constant.subId.space;
 		const sortStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Active, I.ParticipantStatus.Removing ];

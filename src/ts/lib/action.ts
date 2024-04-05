@@ -601,11 +601,11 @@ class Action {
 		});
 	};
 
-	leaveApprove (spaceId: string, identities: string[], name: string) {
+	leaveApprove (spaceId: string, identities: string[], name: string, route: string) {
 		C.SpaceLeaveApprove(spaceId, identities, () => {
 			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
 
-			analytics.event('ApproveLeaveRequest');
+			analytics.event('ApproveLeaveRequest', { route });
 		});
 	};
 
