@@ -86,7 +86,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
-					if (participant.isJoining) {
+					if (participant && participant.isJoining) {
 						UtilCommon.onInviteRequest();
 					} else
 					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {

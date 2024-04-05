@@ -579,6 +579,7 @@
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
 	"blockFeaturedQuery": "Query",
+	"blockFeaturedIdentity": "Identity",
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
 	"blockFeaturedTypeMenuChangeType": "Change type",
