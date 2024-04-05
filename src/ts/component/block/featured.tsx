@@ -83,21 +83,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					if ([ 'links', 'backlinks' ].includes(relationKey)) {
-						const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
-						const l = options.length;
-
-						if (!l) {
-							return null;
-						};
-
-						return (
-							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
-								<div className="bullet" />
-								<div className="cellContent">
-									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
-								</div>
-							</span>
-						);
+						return this.renderLinks(relationKey, i);
 					};
 
 					return (
@@ -180,7 +166,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	renderType () {
 		const { rootId } = this.props;
-		const storeId = this.getStoreId();
 		const featuredRelations = this.getRelationList();
 
 		if (!featuredRelations.includes('type')) {
@@ -302,6 +287,28 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					<div className="name">
 						{UtilCommon.shorten(object[relationKey], 150)}
 					</div>
+				</div>
+			</span>
+		);
+	};
+
+	renderLinks (relationKey: string, index: number) {
+		const { rootId, block } = this.props;
+		const object = this.getObject();
+		const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const value = object[relationKey];
+		const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+		const l = options.length;
+
+		if (!l) {
+			return null;
+		};
+
+		return (
+			<span id={id} className="cell" key={index} onClick={e => this.onLinks(e, relationKey)}>
+				<div className="bullet" />
+				<div className="cellContent">
+					{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
 			</span>
 		);
