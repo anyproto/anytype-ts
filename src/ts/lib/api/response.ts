@@ -133,6 +133,7 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 export const ObjectImport = (response: any) => {
 	return {
 		collectionId: response.getCollectionid(),
+		count: response.getObjectcount(),
 	};
 };
 

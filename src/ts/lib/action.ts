@@ -441,20 +441,24 @@ class Action {
 			analytics.event('ClickImportFile', { type });
 
 			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (!message.error.code) {
-					if (message.collectionId) {
-						window.setTimeout(() => {
-							popupStore.open('objectManager', { 
-								data: { 
-									collectionId: message.collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, popupStore.getTimeout() + 10);
-					};
-
-					analytics.event('Import', { middleTime: message.middleTime, type });
+				if (message.error.code) {
+					return;
 				};
+
+				const { collectionId, count } = message;
+
+				if (collectionId) {
+					window.setTimeout(() => {
+						popupStore.open('objectManager', { 
+							data: { 
+								collectionId, 
+								type: I.ObjectManagerPopup.Favorites,
+							} 
+						});
+					}, popupStore.getTimeout() + 10);
+				};
+
+				analytics.event('Import', { middleTime: message.middleTime, type, count });
 
 				if (callBack) {	
 					callBack(message);
