@@ -69,7 +69,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="c22 buttonUpgrade" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={() => onPage('membership')} />
+			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={() => onPage('membership')} />
 		};
 
 		if (requestCnt) {
