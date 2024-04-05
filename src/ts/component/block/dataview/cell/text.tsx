@@ -22,6 +22,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	ref = null;
 	value: any = null;
 	isComposition = false;
+	timeout = 0;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -315,6 +316,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 
 	onSelect (e: any) {
@@ -370,6 +372,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			return;
 		};
 
+		let ret = false;
+
 		keyboard.shortcut('enter, escape', e, () => {
 			e.preventDefault();
 
@@ -379,7 +383,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				this.range = null;
 				this.setEditing(false);
 			});
+
+			ret = true;
 		});
+
+		if (!ret) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
+		};
 	};
 
 	onKeyUpDate (e: any, value: any) {
@@ -389,11 +400,22 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
-		if (!this.isComposition) {
-			keyboard.shortcut('enter', e, () => {
-				e.preventDefault();
-				this.save(this.value, () => menuStore.close(MENU_ID));
-			});
+		if (this.isComposition) {
+			return;
+		};
+
+		let ret = false;
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			this.save(this.value, () => menuStore.close(MENU_ID));
+
+			ret = true;
+		});
+
+		if (!ret) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
 		};
 	};
 
