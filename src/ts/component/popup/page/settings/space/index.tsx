@@ -47,19 +47,20 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
-		let extend = null;
+		let buttonUpgrade = null;
 		let requestCaption = null;
 		let canShare = isOwner && (space.spaceAccessType != I.SpaceType.Personal);
 		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+			console.log('SPACE: ', object)
 			const usage = Number(object.bytesUsage) || 0;
 
 			bytesUsed += usage;
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
-		const isRed = (bytesUsed / bytesLimit >= 0.9) || (localUsage > bytesLimit);
+		const isRed = (bytesUsed / bytesLimit >= 0.7) || (localUsage > bytesLimit);
 
 		if ((sharedCnt >= 3) && !space.isShared) {
 			canShare = false;
@@ -68,7 +69,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			extend = <Label text={translate(`popupSettingsSpaceIndexRemoteStorageExtend`)} onClick={this.onExtend} className="extend" />;
+			buttonUpgrade = <Button className="c22 buttonUpgrade" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={() => onPage('membership')} />
 		};
 
 		if (requestCnt) {
@@ -168,8 +169,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 												<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 												<div className="storageLabel">
 													<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
-													&nbsp;
-													{extend}
 												</div>
 											</div>
 											<div className="side right">
@@ -185,6 +184,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										</div>
 
 										<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
+
+										{buttonUpgrade}
 									</div>
 								) : ''}
 
@@ -363,26 +364,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				},
 			}
 		});
-	};
-
-	onExtend () {
-		const { account } = authStore;
-		const { bytesLimit } = commonStore.spaceStorage;
-		const space = UtilSpace.getSpaceview();
-		const limit = String(UtilFile.size(bytesLimit)).replace(' ', '');
-
-		if (!account || !space || !bytesLimit) {
-			return;
-		};
-
-		let url = Url.extendStorage;
-
-		url = url.replace(/\%25accountId\%25/g, account.id);
-		url = url.replace(/\%25spaceName\%25/g, space.name);
-		url = url.replace(/\%25storageLimit\%25/g, limit);
-
-		Renderer.send('urlOpen', url);
-		analytics.event('GetMoreSpace');
 	};
 
 	onName (e: any, v: string) {

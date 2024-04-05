@@ -723,6 +723,7 @@
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
 	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
 	"popupSettingsSpaceIndexRemoteStorageExtend": "Get more Storage",
+	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",

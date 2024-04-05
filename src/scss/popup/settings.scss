@@ -271,6 +271,11 @@
 								.label.extend { color: var(--color-red); }
 							}
 						}
+
+						.buttonUpgrade {
+							margin-top: 12px;
+							max-width: 250px !important;
+						}
 					}
 				}
 
