@@ -244,10 +244,10 @@ class DetailStore {
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
-		object.maxCount = Number(object.relationMaxCount) || 0;
-		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
-		object.isReadonlyRelation = Boolean(object.isReadonly);
-		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+		object.maxCount = Number(object.maxCount  || object.relationMaxCount) || 0;
+		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
+		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
+		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
@@ -264,8 +264,8 @@ class DetailStore {
 	};
 
 	private mapOption (object: any) {
-		object.text = Relation.getStringValue(object.name);
-		object.color = Relation.getStringValue(object.relationOptionColor);
+		object.text = object.name;
+		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
 
 		delete(object.relationOptionColor);
 
@@ -315,8 +315,8 @@ class DetailStore {
 	};
 
 	private mapParticipant (object) {
-		object.permissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
-		object.status = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
 		object.globalName = Relation.getStringValue(object.globalName);
 		object.name = object.globalName || object.name;
 
