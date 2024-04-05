@@ -76,20 +76,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 			};
 
 			close(() => {
-				popupStore.open('confirm', {
-					data: {
-						title: translate('popupInviteInviteConfirmTitle'),
-						text: translate('popupInviteInviteConfirmText'),
-						textConfirm: translate('commonDone'),
-						textCancel: translate('popupInviteInviteConfirmCancel'),
-						onCancel: () => {
-							window.setTimeout(() => {
-								popupStore.open('settings', { data: { page: 'spaceList' } });
-							}, popupStore.getTimeout());
-						},
-					},
-				});
-
+				UtilCommon.onInviteRequest();
 				analytics.event('ScreenRequestSent');
 			});
 		});

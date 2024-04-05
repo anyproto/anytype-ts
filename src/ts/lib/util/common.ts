@@ -557,6 +557,20 @@ class UtilCommon {
 		});
 	};
 
+	onInviteRequest () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
+				},
+			},
+		});
+	};
+
 	getScheme (url: string): string {
 		url = String(url || '');
 		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';

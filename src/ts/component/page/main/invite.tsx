@@ -87,19 +87,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 						});
 					} else 
 					if (participant.isJoining) {
-						popupStore.open('confirm', {
-							data: {
-								title: translate('popupInviteInviteConfirmTitle'),
-								text: translate('popupInviteInviteConfirmText'),
-								textConfirm: translate('commonDone'),
-								textCancel: translate('popupInviteInviteConfirmCancel'),
-								onCancel: () => {
-									window.setTimeout(() => {
-										popupStore.open('settings', { data: { page: 'spaceList' } });
-									}, popupStore.getTimeout());
-								},
-							},
-						});
+						UtilCommon.onInviteRequest();
 					} else
 					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
 						popupStore.open('confirm', {
