@@ -51,17 +51,22 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 			UtilSpace.openDashboard('route');
 
 			popupStore.closeAll(null, () => {
-				popupStore.open('membership', {
-					onClose: () => {
-						window.setTimeout(() => {
-							popupStore.open('settings', { data: { page: 'membership' } });
-						}, popupStore.getTimeout());
-					},
-					data: { 
-						tier: membership.tier, 
-						success: true,
-					},
-				});
+				const { status, tier } = membership;
+				if (status && (status == I.MembershipStatus.Finalization)) {
+					popupStore.open('membershipFinalization', { data: { tier } });
+				} else {
+					popupStore.open('membership', {
+						onClose: () => {
+							window.setTimeout(() => {
+								popupStore.open('settings', { data: { page: 'membership' } });
+							}, popupStore.getTimeout());
+						},
+						data: {
+							tier: membership.tier,
+							success: true,
+						},
+					});
+				};
 			});
 		});
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
 import { C, I, translate, UtilData } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { authStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -27,6 +27,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onConfirm = this.onConfirm.bind(this);
 	};
 
 	render () {
@@ -110,7 +111,6 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	onConfirm () {
-		const { close } = this.props;
 		const name = this.refName.getValue();
 
 		this.setState({ loading: true });
@@ -124,11 +124,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 			UtilData.getMembershipTiers();
 			UtilData.getMembershipData((membership) => {
-				close();
-
-				window.setTimeout(() => {
-					popupStore.open('membership', { data: { tier: membership.tier, success: true } });
-				}, popupStore.getTimeout());
+				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
 	};

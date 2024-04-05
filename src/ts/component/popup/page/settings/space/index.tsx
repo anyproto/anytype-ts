@@ -54,7 +54,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
-			console.log('SPACE: ', object)
 			const usage = Number(object.bytesUsage) || 0;
 
 			bytesUsed += usage;
