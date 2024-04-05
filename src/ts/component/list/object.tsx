@@ -102,17 +102,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							if (column.isObject) {
 								const object = detailStore.get(subId, value, []);
 								if (!object._empty_) {
-									let { name } = object;
-
-									if (UtilObject.isFileLayout(object.layout)) {
-										name = UtilFile.name(object);
-									};
-
 									onClick = () => UtilObject.openPopup(object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />
-											<ObjectName object={{ ...object, name }} />
+											<ObjectName object={object} />
 										</div>
 									);
 								};

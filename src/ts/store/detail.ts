@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Relation, UtilObject, translate } from 'Lib';
+import { I, Relation, UtilObject, translate, UtilFile } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -310,6 +310,7 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		object.name = UtilFile.name(object);
 		return object;
 	};
 
