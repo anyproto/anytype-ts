@@ -161,30 +161,32 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 							<div className="sectionContent">
 
-								<div className={usageCn.join(' ')}>
-									<div className="sides alignTop">
-										<div className="side left">
-											<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
-											<div className="storageLabel">
-												<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
-												&nbsp;
-												{extend}
+								{isOwner ? (
+									<div className={usageCn.join(' ')}>
+										<div className="sides alignTop">
+											<div className="side left">
+												<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
+												<div className="storageLabel">
+													<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
+													&nbsp;
+													{extend}
+												</div>
+											</div>
+											<div className="side right">
+												{canWrite ? (
+													<Button 
+														onClick={() => onPage('spaceStorageManager')} 
+														text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
+														color="blank" 
+														className="c28" 
+													/>
+												) : ''}
 											</div>
 										</div>
-										<div className="side right">
-											{canWrite ? (
-												<Button 
-													onClick={() => onPage('spaceStorageManager')} 
-													text={translate('popupSettingsSpaceIndexStorageManageFiles')} 
-													color="blank" 
-													className="c28" 
-												/>
-											) : ''}
-										</div>
-									</div>
 
-									<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
-								</div>
+										<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
+									</div>
+								) : ''}
 
 								<div className="item">
 									<div className="sides">

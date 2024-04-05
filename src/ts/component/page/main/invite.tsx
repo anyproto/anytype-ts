@@ -69,8 +69,10 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
 				UtilSpace.openDashboard('route');
+
 				window.setTimeout(() => {
 					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
+					const participant = UtilSpace.getMyParticipant(message.spaceId);
 
 					if (message.error.code) {
 						popupStore.open('confirm', {
@@ -84,6 +86,21 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
+					if (participant.isJoining) {
+						popupStore.open('confirm', {
+							data: {
+								title: translate('popupInviteInviteConfirmTitle'),
+								text: translate('popupInviteInviteConfirmText'),
+								textConfirm: translate('commonDone'),
+								textCancel: translate('popupInviteInviteConfirmCancel'),
+								onCancel: () => {
+									window.setTimeout(() => {
+										popupStore.open('settings', { data: { page: 'spaceList' } });
+									}, popupStore.getTimeout());
+								},
+							},
+						});
+					} else
 					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
 						popupStore.open('confirm', {
 							data: {
