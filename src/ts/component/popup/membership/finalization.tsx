@@ -124,6 +124,10 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 			UtilData.getMembershipTiers();
 			UtilData.getMembershipData((membership) => {
+				if (!membership || membership.isNone) {
+					this.setState({ status: 'error', statusText: translate('pageMainMembershipError') });
+					return;
+				};
 				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
