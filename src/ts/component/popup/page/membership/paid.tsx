@@ -98,6 +98,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	onKeyUp () {
+		const globalName = this.getName();
+		if (globalName) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
