@@ -37,7 +37,6 @@ class PopupStore {
             updateData: action,
             close: action,
             closeAll: action,
-			replace: action,
         });
     };
 
@@ -213,9 +212,7 @@ class PopupStore {
 
 	replace (oldId, newId, param) {
 		this.close(oldId, () => {
-			window.setTimeout(() => {
-				this.open(newId, param);
-			}, this.getTimeout());
+			this.open(newId, param);
 		});
 	};
 

@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 interface State {
 	status: string,
 	statusText: string,
-	loading: boolean,
+	isLoading: boolean,
 };
 
 const PopupMembershipFinalization = observer(class PopupMembershipFinalization extends React.Component<I.Popup, State> {
@@ -16,7 +16,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	state = {
 		status: '',
 		statusText: '',
-		loading: false,
+		isLoading: false,
 	};
 
 	refName: any = null;
@@ -31,7 +31,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	render () {
-		const { status, statusText, loading } = this.state;
+		const { status, statusText, isLoading } = this.state;
 		const globalName = this.getName();
 
 		return (
@@ -55,7 +55,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 				<Button ref={ref => this.refButton = ref} onClick={this.onConfirm} text={translate('commonConfirm')} />
 
-				{loading ? <Loader /> : ''}
+				{isLoading ? <Loader /> : ''}
 			</div>
 		);
 	};
@@ -113,7 +113,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	onConfirm () {
 		const name = this.refName.getValue();
 
-		this.setState({ loading: true });
+		this.setState({ isLoading: true });
 		this.refButton.setDisabled(true);
 
 		C.MembershipFinalize(name, (message) => {

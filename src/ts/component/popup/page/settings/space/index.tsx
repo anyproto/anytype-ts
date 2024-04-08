@@ -10,6 +10,8 @@ interface State {
 	error: string;
 };
 
+const STORAGE_FULL = 0.7;
+
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
 
 	refName: any = null;
@@ -59,7 +61,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			bytesUsed += usage;
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
-		const isRed = (bytesUsed / bytesLimit >= 0.7) || (localUsage > bytesLimit);
+		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
 		if ((sharedCnt >= 3) && !space.isShared) {
 			canShare = false;
