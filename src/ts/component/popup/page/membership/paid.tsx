@@ -74,7 +74,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-				<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
 			</div>
 		);
 	};
