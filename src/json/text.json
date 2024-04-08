@@ -646,6 +646,7 @@
 	"popupSettingsPersonalNavigationMenuContext": "Right click",
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
+	"popupSettingsPersonalLinkStyle": "Default link style",
 
 	"popupSettingsAppearanceTitle": "Appearance",
 	"popupSettingsAppearanceColorMode": "Color mode",
