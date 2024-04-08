@@ -151,6 +151,10 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onKeyUp (e: any) {
+		if ($(this.node).hasClass('disabled')) {
+			return;
+		};
+
 		this.setValue(e.target.value);
 		
 		if (this.props.onKeyUp) {
@@ -159,6 +163,10 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onKeyDown (e: any) {
+		if ($(this.node).hasClass('disabled')) {
+			return;
+		};
+
 		if (this.props.onKeyDown) {
 			this.props.onKeyDown(e, this.state.value);
 		};
