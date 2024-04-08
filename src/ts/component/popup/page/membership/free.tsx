@@ -127,7 +127,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ verificationStep: 2 });
 			this.startCountdown();
 
-			analytics.event('ClickMembership', { name: 'Explorer' });
+			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
 		});
 	};
 
