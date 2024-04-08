@@ -25,6 +25,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	node = null;
 	ref = null;
 	timeout = 0;
+	subId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -291,7 +292,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block } = this.props;
+		const { block, isPreview } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
 
@@ -306,6 +307,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [];
@@ -384,8 +386,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			const object = message.details;
 
-			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setIsFavorite([ object.id ], true, 'widget');
+			if (isFavorite) {
+				Action.setIsFavorite([ object.id ], true, analytics.route.widget, () => {
+					window.setTimeout(() => this.sliceFavorite(), 50);
+				});
 			};
 
 			if (isCollection) {
@@ -396,7 +400,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, 'Widget', callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, analytics.route.widget, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};
@@ -514,6 +518,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
+		this.subId = subId;
+
 		const { targetBlockId } = child.content;
 		const space = UtilSpace.getSpaceview();
 		const templateType = dbStore.getTemplateType();
@@ -564,15 +570,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
-			if (targetBlockId == Constant.widgetId.favorite) {
-				let records = this.sortFavorite(dbStore.getRecords(subId, ''));
-
-				if (!isPreview) {
-					records = records.slice(0, this.getLimit(block.content));
-				};
-
-				dbStore.recordsSet(subId, '', records);
-			};
+			this.sliceFavorite();
 
 			if (callBack) {
 				callBack();
@@ -592,6 +590,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			if (i1 < i2) return -1;
 			return 0;
 		});
+	};
+
+	sliceFavorite () {
+		const { block, isPreview } = this.props;
+
+		let records = this.sortFavorite(dbStore.getRecords(this.subId, ''));
+
+		if (!isPreview) {
+			records = records.slice(0, this.getLimit(block.content));
+		};
+
+		dbStore.recordsSet(this.subId, '', records);
 	};
 
 	onSetPreview () {

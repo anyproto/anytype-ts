@@ -629,9 +629,17 @@ class Action {
 		});
 	};
 
-	setIsFavorite (objectIds: string[], v: boolean, route: string) {
-		C.ObjectListSetIsFavorite(objectIds, v, () => {
+	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
+		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
