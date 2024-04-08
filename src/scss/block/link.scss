@@ -170,7 +170,7 @@
 		.side.left { background: none !important; }
 	}
 
-	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
+	.block.blockLink > .wrapContent > .dropTarget.targetTop { display: block; height: 2px; bottom: -7px; }
 	.block.blockLink.text > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; left: 0px; width: 100%; }
 }

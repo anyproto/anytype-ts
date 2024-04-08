@@ -852,6 +852,8 @@ class Keyboard {
 			return;
 		};
 
+		menuStore.closeAll([ 'blockContext' ]);
+
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
 		]);
