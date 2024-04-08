@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
+import { I, C, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -35,7 +35,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{UtilFile.name(item)}</div>
+				<ObjectName object={item} />
 			</React.Fragment>
 		);
 

@@ -16,6 +16,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.onSave = this.onSave.bind(this);
 		this.onPathClick = this.onPathClick.bind(this);
 		this.onChangeStorage = this.onChangeStorage.bind(this);
+		this.onResetStorage = this.onResetStorage.bind(this);
+		this.onConfirmStorage = this.onConfirmStorage.bind(this);
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 	};
@@ -24,6 +26,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		const { mode, path, userPath } = this.config;
 		const { interfaceLang, config } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
+		const isDefault = path == UtilCommon.getElectron().defaultPath();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
 			{ id: I.NetworkMode.Local },
@@ -91,7 +94,10 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 									<Label text={translate('popupSettingsOnboardingStoragePath')} />
 									<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
 								</div>
-								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+								<div className="buttons">
+									<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+									{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={this.onResetStorage} /> : ''}
+								</div>
 							</div>
 						) : ''}
 					</div>
@@ -161,18 +167,33 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {
-			popupStore.open('confirm', {
-				className: 'isWide',
-				data: {
-					title: translate('commonAreYouSure'),
-					text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
-					textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
-					onConfirm,
-				},
-			});
+			this.onConfirmStorage(onConfirm);
 		} else {
 			onConfirm();
 		};
+	};
+
+	onResetStorage () {
+		const onConfirm = () => {
+			this.onChange('userPath', UtilCommon.getElectron().defaultPath());
+		};
+
+		if (this.config.mode == I.NetworkMode.Local) {
+			this.onConfirmStorage(onConfirm);
+		} else {
+			onConfirm();
+		};
+	};
+
+	onConfirmStorage (onConfirm: () => void) {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('commonAreYouSure'),
+				text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
+				textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
+				onConfirm,
+			},
+		});
 	};
 
 	onTooltipShow (e: any, text: string) {

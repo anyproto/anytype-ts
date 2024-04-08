@@ -11,7 +11,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { config, interfaceLang, navigationMenu, fullscreenObject } = commonStore;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = commonStore;
 		const { languages } = config;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const spellingLanguages = UtilMenu.getSpellingLanguages();
@@ -20,6 +20,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
 			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
 		];
+		const linkStyles: I.Option[] = [
+			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
+			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+		].map(it => ({ ...it, id: String(it.id) }));
 
 		return (
 			<React.Fragment>
@@ -63,6 +67,19 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							value={navigationMenu}
 							options={navigationMenuModes}
 							onChange={v => commonStore.navigationMenuSet(v)}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+						<Select
+							id="linkStyle"
+							value={String(linkStyle)}
+							options={linkStyles}
+							onChange={v => commonStore.linkStyleSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>

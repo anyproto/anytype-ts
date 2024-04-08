@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf } from 'Component';
+import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -102,7 +102,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				element = (
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{UtilFile.name(object)}</span>
+							<ObjectName object={object} />
 							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 						</div>
 

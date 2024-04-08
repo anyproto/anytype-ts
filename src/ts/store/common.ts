@@ -52,6 +52,7 @@ class CommonStore {
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
+	public linkStyleValue = null;
 	public isOnlineValue = false;
 	public gallery = {
 		categories: [],
@@ -102,6 +103,7 @@ class CommonStore {
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
+			linkStyleValue: observable,
 			isOnlineValue: observable,
 			spaceId: observable,
             config: computed,
@@ -127,6 +129,8 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
+			navigationMenuSet: action,
+			linkStyleSet: action,
 			isOnlineSet: action,
 		});
 
@@ -228,6 +232,17 @@ class CommonStore {
 			ret = Storage.get('navigationMenu');
 		};
 		return Number(ret) || I.NavigationMenuMode.Click;
+	};
+
+	get linkStyle (): I.LinkCardStyle {
+		let ret = this.linkStyleValue;
+		if (ret === null) {
+			ret = Storage.get('linkStyle');
+		};
+		if (undefined === ret) {
+			ret = I.LinkCardStyle.Card;
+		};
+		return Number(ret) || I.LinkCardStyle.Text;
 	};
 
 	get dataPath (): string {
@@ -434,6 +449,12 @@ class CommonStore {
 		v = Number(v);
 		this.navigationMenuValue = v;
 		Storage.set('navigationMenu', v);
+	};
+
+	linkStyleSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.linkStyleValue = v;
+		Storage.set('linkStyle', v);
 	};
 
 	isOnlineSet (v: boolean) {

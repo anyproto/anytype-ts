@@ -225,12 +225,9 @@ class UtilObject {
 	};
 
 	name (object: any) {
-		const { isDeleted, layout, snippet } = object;
+		const { layout, snippet } = object;
 
 		let name = '';
-		if (!isDeleted && this.isFileLayout(layout)) {
-			name = UtilFile.name(object);
-		} else
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {

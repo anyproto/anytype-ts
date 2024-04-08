@@ -66,13 +66,12 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		return (
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-
 				<Title text={translate('popupSettingsSpaceMembersTitle')} />
 
 				<div className="section sectionMembers">
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
