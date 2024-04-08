@@ -40,6 +40,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.onToggle = this.onToggle.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.initCache = this.initCache.bind(this);
+		this.getSubKey = this.getSubKey.bind(this);
 	};
 
 	render () {
@@ -83,6 +84,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 							onClick={this.onClick}
 							onToggle={this.onToggle}
 							getSubId={this.getSubId}
+							getSubKey={this.getSubKey}
 						/>
 					</CellMeasurer>
 				);
@@ -132,6 +134,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 								onClick={this.onClick}
 								onToggle={this.onToggle}
 								getSubId={this.getSubId}
+								getSubKey={this.getSubKey}
 							/>
 						);
 					})}
@@ -153,11 +156,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { block, isSystemTarget, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const { isSystemTarget, getData } = this.props;
 
 		if (isSystemTarget()) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
 		};
@@ -181,11 +183,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	updateData () {
-		const { block, isSystemTarget, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const { isSystemTarget, getData } = this.props;
 
 		if (isSystemTarget()) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+			getData(this.getSubId(), this.initCache);
 		};
 	};
 
@@ -325,8 +326,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return `widget${this.props.block.id}`;
 	};
 
-	getSubId (nodeId: string): string {
-		return dbStore.getSubId(this.getSubKey(), nodeId);
+	getSubId (nodeId?: string): string {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+
+		return dbStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth

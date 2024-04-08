@@ -2,9 +2,9 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { Loader, Select, Label } from 'Component';
+import { Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, M, UtilCommon, Relation, keyboard, UtilObject, translate, Action, UtilRouter } from 'Lib';
+import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, Action, UtilRouter } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
@@ -40,6 +40,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.getSubId = this.getSubId.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -201,7 +202,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
-			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+			getData(this.getSubId(), () => this.resize());
 		} else {
 			this.setState({ isLoading: true });
 
@@ -269,7 +270,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		};
 
 		if (isSystemTarget()) {
-			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+			getData(this.getSubId(), () => this.resize());
 		} else {
 			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
 			if (view) {
@@ -294,6 +295,10 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
 		};
+	};
+
+	getSubId () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID);
 	};
 
 	getTraceId = (): string => {
@@ -366,9 +371,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	onChangeView = (viewId: string): void => {
-		const { parent } = this.props;
-
-		C.BlockWidgetSetViewId(blockStore.widgets, parent.id, viewId);
+		C.BlockWidgetSetViewId(blockStore.widgets, this.props.parent.id, viewId);
 	};
 
 	getRecords () {
