@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
 import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -168,6 +168,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			if (message.url) {
 				UtilCommon.onUrl(message.url);
 			};
+
+			analytics.event('ClickMembership', { name: I.TierType[tier] });
 		});
 	};
 
