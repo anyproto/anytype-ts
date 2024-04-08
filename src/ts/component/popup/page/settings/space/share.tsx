@@ -205,7 +205,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
