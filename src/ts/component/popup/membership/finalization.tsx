@@ -83,14 +83,15 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		};
 
 		this.timeout = window.setTimeout(() => {
-			C.MembershipIsNameValid(tier, name + Constant.anyNameSpace, (message: any) => {
+			C.MembershipIsNameValid(tier, name, (message: any) => {
 				if (message.error.code) {
 					this.setState({ status: 'error', statusText: translate(`popupMembershipCode${message.error.code}`) });
 					return;
 				};
 
 				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
-				C.NameServiceResolveName(name + Constant.anyNameSpace, (message: any) => {
+
+				C.NameServiceResolveName(name, (message: any) => {
 					let error = '';
 					if (message.error.code) {
 						error = message.error.description;
@@ -116,7 +117,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		this.setState({ isLoading: true });
 		this.refButton.setDisabled(true);
 
-		C.MembershipFinalize(name + Constant.anyNameSpace, (message) => {
+		C.MembershipFinalize(name, (message) => {
 			if (message.error.code) {
 				this.setState({ status: 'error', statusText: message.error.description });
 				return;

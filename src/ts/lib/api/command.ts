@@ -1870,7 +1870,8 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.NameService.ResolveName.Request();
 
-	request.setFullname(name);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(NameServiceResolveName.name, request, callBack);
 };
@@ -1919,7 +1920,8 @@ export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?:
 	const request = new Rpc.Membership.IsNameValid.Request();
 
 	request.setRequestedtier(tier as number);
-	request.setRequestedanyname(name);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipIsNameValid.name, request, callBack);
 };
@@ -1929,7 +1931,8 @@ export const MembershipGetPaymentUrl = (tier: I.TierType, method: I.PaymentMetho
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);
-	request.setRequestedanyname(name);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipGetPaymentUrl.name, request, callBack);
 };
@@ -1959,7 +1962,8 @@ export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any
 export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Membership.Finalize.Request();
 
-	request.setRequestedanyname(name);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
 
 	dispatcher.request(MembershipFinalize.name, request, callBack);
 };

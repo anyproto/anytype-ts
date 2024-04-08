@@ -113,14 +113,15 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 
 		this.timeout = window.setTimeout(() => {
-			C.MembershipIsNameValid(tier, name + Constant.anyNameSpace, (message: any) => {
+			C.MembershipIsNameValid(tier, name, (message: any) => {
 				if (message.error.code) {
 					this.setState({ status: 'error', statusText: translate(`popupMembershipCode${message.error.code}`) });
 					return;
 				};
 
 				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
-				C.NameServiceResolveName(name + Constant.anyNameSpace, (message: any) => {
+
+				C.NameServiceResolveName(name, (message: any) => {
 					let error = '';
 					if (message.error.code) {
 						error = message.error.description;
@@ -152,7 +153,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const globalName = this.getName();
 		const tierItem = UtilData.getMembershipTier(tier);
 		const { namesCount } = tierItem;
-		const name = globalName || !namesCount ? '' : this.refName.getValue() + Constant.anyNameSpace;
+		const name = globalName || !namesCount ? '' : this.refName.getValue();
 		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);

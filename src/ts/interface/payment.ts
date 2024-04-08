@@ -1,3 +1,7 @@
+export enum NameType {
+	Any						 = 0,
+};
+
 export enum TierType {
 	None					 = 0,
 	Explorer				 = 1,
