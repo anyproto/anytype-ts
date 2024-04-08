@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { I, translate, UtilCommon, UtilData } from 'Lib';
+import { analytics, I, translate, UtilCommon, UtilData } from 'Lib';
 import { authStore } from 'Store';
 
 import PageFree from './page/membership/free';
@@ -70,6 +70,15 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 				<div className="side right">{content}</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier, success } = data;
+		const event = success ? 'ChangePlan' : 'ScreenMembership';
+
+		analytics.event(event, { name: I.TierType[tier] });
 	};
 
 	getTierContent (tier: I.TierType): string[] {

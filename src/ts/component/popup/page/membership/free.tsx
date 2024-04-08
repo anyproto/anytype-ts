@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, translate, UtilCommon, UtilRouter } from 'Lib';
+import { I, C, translate, UtilCommon, UtilRouter, analytics } from 'Lib';
 
 interface State {
 	verificationStep: number;
@@ -126,6 +126,8 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 			this.setState({ verificationStep: 2 });
 			this.startCountdown();
+
+			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
 		});
 	};
 

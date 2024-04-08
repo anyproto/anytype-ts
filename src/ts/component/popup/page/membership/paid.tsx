@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
 import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -74,7 +74,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-				<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
 			</div>
 		);
 	};
@@ -168,6 +168,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			if (message.url) {
 				UtilCommon.onUrl(message.url);
 			};
+
+			analytics.event('ClickMembership', { type: I.PaymentMethod[method], name: I.TierType[tier] });
 		});
 	};
 
