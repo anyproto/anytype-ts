@@ -388,7 +388,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			if (isFavorite) {
 				Action.setIsFavorite([ object.id ], true, analytics.route.widget, () => {
-					window.setTimeout(() => this.sliceFavorite(), 50);
+					window.setTimeout(() => this.sliceFavorite(), 40);
 				});
 			};
 
