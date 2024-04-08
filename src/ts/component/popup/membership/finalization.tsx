@@ -116,7 +116,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		this.setState({ isLoading: true });
 		this.refButton.setDisabled(true);
 
-		C.MembershipFinalize(name, (message) => {
+		C.MembershipFinalize(name + Constant.anyNameSpace, (message) => {
 			if (message.error.code) {
 				this.setState({ status: 'error', statusText: message.error.description });
 				return;
