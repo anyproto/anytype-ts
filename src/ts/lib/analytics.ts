@@ -36,6 +36,7 @@ class Analytics {
 		bookmark: 'Bookmark',
 		webclipper: 'Webclipper',
 		clipboard: 'Clipboard',
+		shortcut: 'Shortcut',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

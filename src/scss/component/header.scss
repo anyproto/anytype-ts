@@ -76,7 +76,7 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 
 .header.mainHistory { height: 38px; width: calc(100% - 254px); background: var(--color-bg-primary); }
 .header.mainHistory {
-	.side.left, .side.right { width: unset; }
+	.side.left, .side.right { width: unset; -webkit-app-region: no-drag; }
 
 	.side.center { overflow: hidden; }
 	.side.center {
@@ -93,7 +93,7 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.item.orange { color: var(--color-system-accent-100) !important; font-weight: 500; }
 	
 	.item.grey:hover { color: var(--color-text-primary); }
-	.item.orange:hover { color: var(--color-system-accent-100) !important; }
+	.item.orange:hover { color: #f09c0e !important; }
 
 	.item:hover {
 		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }

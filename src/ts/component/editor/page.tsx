@@ -856,7 +856,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (range.from == range.to) {
-			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup('Shortcut'));
+			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
 		if (!isInsideTable && block.isText()) {

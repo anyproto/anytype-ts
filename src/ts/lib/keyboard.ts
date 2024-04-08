@@ -197,7 +197,7 @@ class Keyboard {
 			// Print
 			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
-				this.onPrint('Shortcut');
+				this.onPrint(analytics.route.shortcut);
 			});
 
 			// Navigation search
@@ -206,7 +206,7 @@ class Keyboard {
 					return;
 				};
 
-				this.onSearchPopup('Shortcut');
+				this.onSearchPopup(analytics.route.shortcut);
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
@@ -220,7 +220,7 @@ class Keyboard {
 			// Text search
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', 'Shortcut');
+					this.onSearchMenu('', analytics.route.shortcut);
 				};
 			});
 
@@ -279,7 +279,7 @@ class Keyboard {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
-					this.pageCreate({}, 'Shortcut');
+					this.pageCreate({}, analytics.route.shortcut);
 				});
 
 				// Quick capture menu
@@ -867,7 +867,7 @@ class Keyboard {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		if (root) {
-			this.onLock(rootId, !root.isLocked(), 'Shortcut');
+			this.onLock(rootId, !root.isLocked(), analytics.route.shortcut);
 		};
 	};
 

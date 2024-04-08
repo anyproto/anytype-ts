@@ -116,6 +116,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			>
 				<Header 
 					{...this.props} 
+					ref={ref => this.refHeader = ref}
 					component="mainHistory" 
 					rootId={rootId}
 					layout={I.ObjectLayout.History}
