@@ -237,7 +237,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getObjects (subId: string) {
-		return dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id));
+		return dbStore.getRecords(subId);
 	};
 
 	getSpaces () {

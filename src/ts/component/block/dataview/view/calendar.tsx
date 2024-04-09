@@ -261,9 +261,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	getItems () {
 		const { getView } = this.props;
 		const view = getView();
-		const subId = this.getSubId();
 
-		return dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
+		return dbStore.getRecords(this.getSubId(), [ view.groupRelationKey ]);
 	};
 
 	resize () {

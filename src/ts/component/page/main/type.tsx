@@ -155,7 +155,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => dbStore.getRecordIds(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
+										getItems={() => dbStore.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}

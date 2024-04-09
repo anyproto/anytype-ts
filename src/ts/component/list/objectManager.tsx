@@ -403,7 +403,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     getItems () {
         const { subId, rowLength } = this.props;
         const ret: any[] = [];
-        const records = dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id));
+        const records = dbStore.getRecords(subId);
 
         let row = { children: [] };
         let n = 0;

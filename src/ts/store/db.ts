@@ -352,7 +352,7 @@ class DbStore {
 		return this.recordMap.get(this.getId(rootId, blockId)) || [];
 	};
 
-	getRecords (subId: string, keys?: string[]): any[] {
+	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
 		return this.getRecordIds(subId, '').map(id => detailStore.get(subId, id, keys));
 	};
 

@@ -71,7 +71,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const subId = Constant.subId.space;
 		const sortStatuses = [ I.ParticipantStatus.Joining, I.ParticipantStatus.Active, I.ParticipantStatus.Removing ];
 		const sortPermissions = [ I.ParticipantPermissions.Owner, I.ParticipantPermissions.Writer, I.ParticipantPermissions.Reader ];
-		const items = dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id));
+		const items = dbStore.getRecords(subId);
 
 		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
 			const participant = UtilSpace.getMyParticipant(it.targetSpaceId);
