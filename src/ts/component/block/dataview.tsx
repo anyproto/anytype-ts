@@ -470,7 +470,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecords (groupId?: string): string[] {
 		const subId = this.getSubId(groupId);
-		const records = dbStore.getRecords(subId, '');
+		const records = dbStore.getRecordIds(subId, '');
 
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};

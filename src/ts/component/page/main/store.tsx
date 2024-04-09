@@ -527,7 +527,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { loading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		const records = dbStore.getRecordIds(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
 		const limit = this.getLimit();
 
 		let ret: any[] = [

@@ -239,7 +239,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     componentDidUpdate () {
         const { subId, resize, rowHeight } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
         const items = this.getItems();
 
         if (!this.cache) {
@@ -297,7 +297,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         e.stopPropagation();
 
         const { subId } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
 
         if (e.shiftKey) {
             const idx = records.findIndex(id => id == item.id);
@@ -325,7 +325,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     getSelectedIndexes () {
         const { subId } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
         const indexes = this.selected.map(id => records.findIndex(it => it == id));
 
         return indexes.filter(idx => idx >= 0);
@@ -338,7 +338,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
 	setSelectedRange (start: number, end: number) {
 		const { subId } = this.props;
-		const records = dbStore.getRecords(subId, '');
+		const records = dbStore.getRecordIds(subId, '');
 
 		if (end > records.length) {
 			end = records.length;
@@ -359,7 +359,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     selectionAll () {
         const { subId } = this.props;
-        this.selected = dbStore.getRecords(subId, '');
+        this.selected = dbStore.getRecordIds(subId, '');
         this.forceUpdate();
     };
 
@@ -403,7 +403,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     getItems () {
         const { subId, rowLength } = this.props;
         const ret: any[] = [];
-        const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+        const records = dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id));
 
         let row = { children: [] };
         let n = 0;

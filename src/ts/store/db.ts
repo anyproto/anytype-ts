@@ -216,14 +216,14 @@ class DbStore {
 	};
 
 	recordAdd (rootId: string, blockId: string, id: string, index: number) {
-		const records = this.getRecords(rootId, blockId);
+		const records = this.getRecordIds(rootId, blockId);
 		
 		records.splice(index, 0, id);
 		this.recordsSet(rootId, blockId, records);
 	};
 
 	recordDelete (rootId: string, blockId: string, id: string) {
-		this.recordMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it != id));
+		this.recordMap.set(this.getId(rootId, blockId), this.getRecordIds(rootId, blockId).filter(it => it != id));
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
@@ -293,12 +293,12 @@ class DbStore {
 	};
 
 	getTypes () {
-		return this.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
+		return this.getRecordIds(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {
-		return this.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+		return this.getRecordIds(Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -348,8 +348,12 @@ class DbStore {
 		};
 	};
 
-	getRecords (rootId: string, blockId: string) {
+	getRecordIds (rootId: string, blockId: string) {
 		return this.recordMap.get(this.getId(rootId, blockId)) || [];
+	};
+
+	getRecords (subId: string, keys?: string[]): any[] {
+		return this.getRecordIds(subId, '').map(id => detailStore.get(subId, id, keys));
 	};
 
 	getGroups (rootId: string, blockId: string) {

@@ -118,7 +118,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		const { rootId, block, getView, d, m, y } = data;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
+		const items = dbStore.getRecordIds(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
 		const current = [ d, m, y ].join('-');
 
 		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);

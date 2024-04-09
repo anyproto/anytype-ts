@@ -53,7 +53,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
-		const templates = dbStore.getRecords(subIdTemplate, '');
+		const templates = dbStore.getRecordIds(subIdTemplate, '');
 		const canWrite = UtilSpace.canParticipantWrite();
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
@@ -155,7 +155,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
+										getItems={() => dbStore.getRecordIds(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
