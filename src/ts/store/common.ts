@@ -54,6 +54,7 @@ class CommonStore {
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public isOnlineValue = false;
+	public emailConfirmationTimestamp = null;
 	public gallery = {
 		categories: [],
 		list: [],
