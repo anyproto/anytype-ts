@@ -215,7 +215,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = dbStore.getRecords(subId, '');
+			let records = dbStore.getRecordIds(subId, '');
 			if (targetBlockId == Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
@@ -280,16 +280,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		const deleted = dbStore.getRecords(Constant.subId.deleted, '');
+		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
 
 		return ids.filter(id => !deleted.includes(id));
 	};
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		const subId = this.getSubId(nodeId);
-
-		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));
+		return dbStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {

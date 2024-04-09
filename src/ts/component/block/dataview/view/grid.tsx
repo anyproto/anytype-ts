@@ -362,7 +362,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
-		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+		const length = dbStore.getRecordIds(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 

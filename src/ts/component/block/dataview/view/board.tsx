@@ -470,8 +470,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				orders = [
-					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
+					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecordIds(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecordIds(newSubId, '') }
 				];
 
 				objectOrderUpdate(orders, records);
@@ -485,7 +485,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				this.newIndex -= 1;
 			};
 
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
+			records = arrayMove(dbStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
 			objectOrderUpdate(orders, records, (message) => {

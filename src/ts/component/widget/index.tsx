@@ -595,7 +595,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	sliceFavorite () {
 		const { block, isPreview } = this.props;
 
-		let records = this.sortFavorite(dbStore.getRecords(this.subId, ''));
+		let records = this.sortFavorite(dbStore.getRecordIds(this.subId, ''));
 
 		if (!isPreview) {
 			records = records.slice(0, this.getLimit(block.content));

@@ -264,7 +264,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+				const records = dbStore.getRecordIds(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
 
