@@ -109,6 +109,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
 		const canWrite = UtilSpace.canParticipantWrite();
+		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;
 		let remove = null;
@@ -162,17 +163,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		// Restrictions
 
-		const allowedArchive = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedSearch = !block.isObjectSet() && !block.isObjectCollection();
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
+		const allowedArchive = canWrite && canDelete;
+		const allowedSearch = !UtilObject.isSetLayout(object.layout);
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
 		const allowedPageLink = true;
 		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite;
 		const hasShortMenu = (
