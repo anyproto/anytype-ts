@@ -42,6 +42,7 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = '';
 	public pinTimeId = 0;
+	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
@@ -54,7 +55,6 @@ class CommonStore {
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public isOnlineValue = false;
-	public emailConfirmationTimestamp = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -184,6 +184,10 @@ class CommonStore {
 
 	get pinTime(): number {
 		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
+	};
+
+	get emailConfirmationTime(): number {
+		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
 	get autoSidebar(): boolean {
@@ -351,6 +355,12 @@ class CommonStore {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	emailConfirmationTimeSet (t: number) {
+		this.emailConfirmationTimeId = t;
+
+		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {

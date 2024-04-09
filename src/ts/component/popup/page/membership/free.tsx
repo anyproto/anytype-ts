@@ -122,15 +122,15 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onResetCode () {
-		const { emailConfirmationTimestamp } = commonStore;
-		if (!emailConfirmationTimestamp) {
+		const { emailConfirmationTime } = commonStore;
+		if (!emailConfirmationTime) {
 			return;
 		};
 
 		const now = UtilDate.now();
 
 		this.setState({ verificationStep: 2 });
-		this.startCountdown(60 - (now - emailConfirmationTimestamp));
+		this.startCountdown(60 - (now - emailConfirmationTime));
 	};
 
 	onVerifyEmail (e: any) {
@@ -199,21 +199,25 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	checkCountdown () {
-		const { emailConfirmationTimestamp } = commonStore;
-		if (!emailConfirmationTimestamp) {
+		const { emailConfirmationTime } = commonStore;
+		if (!emailConfirmationTime) {
 			return;
 		};
 
 		const now = UtilDate.now();
-		const hasCountdown = now - emailConfirmationTimestamp < 60;
+		const hasCountdown = now - emailConfirmationTime < 60;
 
 		this.setState({ hasCountdown });
 	};
 
 	startCountdown (seconds) {
-		commonStore.emailConfirmationTimestamp = UtilDate.now();
-		this.setState({ countdown: seconds, hasCountdown: true });
+		const { emailConfirmationTime } = commonStore;
 
+		if (!emailConfirmationTime) {
+			commonStore.emailConfirmationTimeSet(UtilDate.now());
+		};
+
+		this.setState({ countdown: seconds, hasCountdown: true });
 		this.interval = window.setInterval(() => {
 			let { countdown } = this.state;
 
@@ -221,7 +225,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ countdown });
 
 			if (!countdown) {
-				commonStore.emailConfirmationTimestamp = null;
+				commonStore.emailConfirmationTimeSet(0);
 				this.setState({ hasCountdown: false });
 				window.clearInterval(this.interval);
 				this.interval = null;
