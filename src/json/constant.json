@@ -455,6 +455,7 @@
 		"flow": "Flow",
 		"fortran": "Fortran",
 		"fsharp": "F#",
+		"gdscript": "GDScript",
 		"gherkin": "Gherkin",
 		"graphql": "GraphQL",
 		"groovy": "Groovy",
