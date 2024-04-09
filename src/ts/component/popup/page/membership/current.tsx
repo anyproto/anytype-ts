@@ -29,13 +29,16 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			buttonText = translate('popupMembershipChangeEmail');
 		} else {
 			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
-			paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`popupMembershipPaymentMethod${paymentMethod}`));
 
-			if (paymentMethod == I.PaymentMethod.Crypto) {
-				buttonText = translate('popupMembershipWriteToAnyteam');
-			} else
-			if (paymentMethod == I.PaymentMethod.Card) {
-				buttonText = translate('popupMembershipManagePayment');
+			if (paymentMethod != I.PaymentMethod.None) {
+				paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`popupMembershipPaymentMethod${paymentMethod}`));
+
+				if (paymentMethod == I.PaymentMethod.Crypto) {
+					buttonText = translate('popupMembershipWriteToAnyteam');
+				} else
+				if (paymentMethod == I.PaymentMethod.Card) {
+					buttonText = translate('popupMembershipManagePayment');
+				};
 			};
 		};
 
@@ -48,7 +51,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 						<Label text={translate('popupMembershipValidUntil')} />
 						<Label className="date" text={dateText} />
 					</div>
-					<Label className="paymentMethod" text={paidText} />
+					{paidText ? <Label className="paymentMethod" text={paidText} /> : ''}
 				</div>
 
 				{buttonText ? <Button onClick={this.onButton} text={buttonText} className="c36" color="blank" /> : ''}

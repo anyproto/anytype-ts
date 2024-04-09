@@ -70,7 +70,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				) : ''}
 
 				<div className="priceWrapper">
-					<span className="price">{`$${tierItem.price}`}</span>{period}
+					{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
+					{period}
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />

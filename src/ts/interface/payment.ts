@@ -19,12 +19,11 @@ export enum MembershipStatus {
 };
 
 export enum PaymentMethod {
-	Card					 = 0,
-	Crypto					 = 1,
-	ApplePay				 = 2,
-	GooglePay				 = 3,
-	AppleInapp				 = 4,
-	GoogleInapp				 = 5,
+	None					 = 0,
+	Card					 = 1,
+	Crypto					 = 2,
+	Apple					 = 3,
+	Google					 = 4,
 };
 
 export enum MembershipPeriod {
