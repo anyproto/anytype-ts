@@ -86,8 +86,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onMembership () {
-		popupStore.open('settings', { data: { page: 'membership' } });
-		this.props.close();
+		popupStore.replace(this.props.id, 'settings', { data: { page: 'membership' } });
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
