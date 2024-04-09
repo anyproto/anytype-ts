@@ -31,7 +31,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
 
 			if (paymentMethod != I.PaymentMethod.None) {
-				paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`popupMembershipPaymentMethod${paymentMethod}`));
+				paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`paymentMethod${paymentMethod}`));
 
 				if (paymentMethod == I.PaymentMethod.Crypto) {
 					buttonText = translate('popupMembershipWriteToAnyteam');
