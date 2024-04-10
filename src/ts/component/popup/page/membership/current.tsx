@@ -51,8 +51,6 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
 		const tierItem = UtilData.getMembershipTier(tier);
 
-		console.log('MEMBERSHIP: ', membership)
-
 		let dateText: string = '';
 		let paidText: string = '';
 		let buttonText: string = '';
@@ -109,6 +107,11 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 								</div>
 							</React.Fragment>
 						);
+						break;
+					};
+
+					case 3: {
+						content = <div className="success">{translate('popupMembershipCurrentEmailSuccess')}</div>;
 						break;
 					};
 				};
@@ -203,7 +206,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				return;
 			};
 
-			UtilRouter.go('/main/membership', {});
+			this.setState({ verificationStep: 3 });
 		});
 	};
 

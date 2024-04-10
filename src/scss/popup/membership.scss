@@ -80,6 +80,7 @@
                     .emailVerification {
                         .title { @include text-common; font-weight: 400; margin-bottom: 0; }
                         .label { color: var(--color-text-secondary); margin-bottom: 14px; }
+                        .success { @include text-paragraph; text-align: center; }
                     }
                 }
             }
