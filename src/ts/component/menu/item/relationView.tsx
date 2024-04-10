@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	id: string;
+	scope: I.RelationScope;
 	relationKey: string;
 	name: string;
 	format: I.RelationType;
@@ -19,7 +20,7 @@ interface Props {
 	canEdit?: boolean;
 	canDrag?: boolean;
 	canFav?: boolean;
-	onEdit(e: any, relationKey: string): void;
+	onEdit(e: any, item: any): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
 	onCellClick(e: any, relationKey: string, id: string): void;
@@ -47,7 +48,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
+		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
@@ -79,7 +80,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 				{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 				<div 
 					className={icn.join(' ')} 
-					onClick={e => onEdit(e, id)}
+					onClick={e => onEdit(e, { id, scope })}
 				>
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}

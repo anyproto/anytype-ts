@@ -32,7 +32,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, ref, readonly } = data;
+		const { rootId, ref, readonly, noDelete } = data;
 
 		const relation = this.getRelation();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -41,19 +41,20 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isReadonly = this.isReadonly();
 
 		let canDuplicate = true;
-		let canDelete = true;
+		let canDelete = !noDelete;
 		let opts: any = null;
 		let deleteText = translate('commonDelete');
 		let deleteIcon = 'remove';
 
+		if (readonly) {	
+			canDuplicate = canDelete = false;
+		} else
 		if (root) {
-			canDuplicate = canDelete = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+			if (root.isLocked() || !blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+				canDuplicate = canDelete = false;
+			};
 		};
 		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDelete = false;
-		};
-		if (readonly) {	
-			canDuplicate = false;
 			canDelete = false;
 		};
 
