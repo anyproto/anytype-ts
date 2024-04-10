@@ -48,7 +48,18 @@ class Keyboard {
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
-		win.on('online.common offline.common', () => commonStore.isOnlineSet(navigator.onLine));
+
+		win.on('online.common offline.common', () => {
+			const { onLine } = navigator;
+
+			console.log('[Online status]:', onLine);
+
+			commonStore.isOnlineSet(onLine);
+
+			if (!commonStore.membershipTiers.length) {
+				UtilData.getMembershipTiers();
+			};
+		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
