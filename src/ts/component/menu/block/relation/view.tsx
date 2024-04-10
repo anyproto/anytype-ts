@@ -257,8 +257,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onEdit (e: any, item: any) {
-		console.log(item);
-
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
