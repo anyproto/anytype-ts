@@ -42,7 +42,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = this.getSharedCnt();
+		const sharedCnt = 1; //this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();

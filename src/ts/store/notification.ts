@@ -54,10 +54,13 @@ class NotificationStore {
 
 	clear () {
 		this.itemList = [];
+		this.setBadge();
 	};
 
 	setBadge () {
-		Renderer.send('setBadge', String(this.list.length || ''));
+		const length = this.list.filter(it => it.status != I.NotificationStatus.Replied).length;
+
+		Renderer.send('setBadge', String(length || ''));
 	};
 
 };
