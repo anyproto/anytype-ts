@@ -92,7 +92,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			<div ref={node => this.node = node}>
 				<div className="membershipTitle">{!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
-				{!membership.isNone ? '' : (
+				{!(membership.isNone || membership.isExplorer) ? '' : (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
