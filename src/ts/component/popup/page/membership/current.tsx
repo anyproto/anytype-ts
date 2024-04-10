@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData } from 'Lib';
 import { authStore, commonStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props {
 	onChangeEmail: () => void;
@@ -232,13 +233,16 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			return;
 		};
 
-		const email = this.refEmail.getValue();
-		const valid = UtilCommon.emailCheck(email);
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			const email = this.refEmail.getValue();
+			const valid = UtilCommon.emailCheck(email);
 
-		if (valid) {
-			this.email = email;
-		};
-		this.refButton.setDisabled(!valid);
+			if (valid) {
+				this.email = email;
+			};
+			this.refButton.setDisabled(!valid);
+		}, Constant.delay.keyboard);
 	};
 
 	checkCountdown () {

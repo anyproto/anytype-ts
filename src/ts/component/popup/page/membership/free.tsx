@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilRouter, analytics, UtilDate } from 'Lib';
 import { commonStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	verificationStep: number;
@@ -189,13 +190,16 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			return;
 		};
 
-		const email = this.refEmail.getValue();
-		const valid = UtilCommon.emailCheck(email);
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			const email = this.refEmail.getValue();
+			const valid = UtilCommon.emailCheck(email);
 
-		if (valid) {
-			this.email = email;
-		};
-		this.refButton.setDisabled(!valid);
+			if (valid) {
+				this.email = email;
+			};
+			this.refButton.setDisabled(!valid);
+		}, Constant.delay.keyboard);
 	};
 
 	checkCountdown () {
