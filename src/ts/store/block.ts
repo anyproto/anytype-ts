@@ -470,15 +470,15 @@ class BlockStore {
 
 				let name = '';
 				if (object.layout == I.ObjectLayout.Note) {
-					name = name || translate('commonEmpty');
+					name = object.name || translate('commonEmpty');
 				} else
 				if (UtilObject.isFileLayout(object.layout)) {
 					name = UtilFile.name(object);
 				} else {
-					name = UtilCommon.shorten(object.name, 30);
+					name = object.name;
 				};
 
-				name = name.trim();
+				name = UtilCommon.shorten(object.name.trim(), 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
