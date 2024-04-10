@@ -601,11 +601,16 @@ class Action {
 		});
 	};
 
-	leaveApprove (spaceId: string, identities: string[], name: string, route: string) {
-		C.SpaceLeaveApprove(spaceId, identities, () => {
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
+		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
+			if (!message.error.code) {
+				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				analytics.event('ApproveLeaveRequest', { route });
+			};
 
-			analytics.event('ApproveLeaveRequest', { route });
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 

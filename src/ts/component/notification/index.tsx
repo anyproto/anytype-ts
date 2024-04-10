@@ -1,16 +1,23 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Button } from 'Component';
+import { Icon, Title, Label, Button, Error } from 'Component';
 import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const Notification = observer(class Notification extends React.Component<I.NotificationComponent, {}> {
+interface State {
+	error: string;
+};
+
+const Notification = observer(class Notification extends React.Component<I.NotificationComponent, State> {
 
 	_isMounted = false;
 	node: any = null;
 	timeout = 0;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.NotificationComponent) {
 		super(props);
@@ -20,6 +27,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	};
 
 	render () {
+		const { error } = this.state;
 		const { item, style } = this.props;
 		const { space } = commonStore;
 		const { id, type, payload, title, text } = item;
@@ -83,6 +91,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				<div className="content">
 					{title ? <Title text={title} /> : ''}
 					{text ? <Label text={text} /> : ''}
+					<Error text={error} />
 
 					{buttons.length ? (
 						<div className="buttons">
@@ -155,7 +164,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'approve': {
-				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName, analytics.route.notification);
+				Action.leaveApprove(payload.spaceId, [ payload.identity ], payload.identityName, analytics.route.notification, (message: any) => {
+					if (message.error.code) {
+						this.setState({ error: message.error.description });
+					};
+				});
 				break;
 			};
 
