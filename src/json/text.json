@@ -863,6 +863,9 @@
 	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
 	"popupMembershipFreeEnterCode": "Enter code",
 
+	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
+	"popupMembershipCurrentEmailText": "It is not linked to your account in any way.",
+
 	"popupMembershipPaidTitle": "Pick your unique name",
 	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
 	"popupMembershipPaidPlaceholder": "Myself",
