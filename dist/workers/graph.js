@@ -377,7 +377,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (showName) {
+	if (showName && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 

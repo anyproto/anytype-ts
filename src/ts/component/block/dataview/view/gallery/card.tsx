@@ -193,7 +193,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	mediaCover (item: any) {
 		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
 		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-		
+
 		let mc = null;
 		if (coverId && coverType) {
 			mc = (
