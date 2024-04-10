@@ -1122,7 +1122,7 @@ class Dispatcher {
 			return;
 		};
 
-		const records = dbStore.getRecords(sid, '');
+		const records = dbStore.getRecordIds(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);

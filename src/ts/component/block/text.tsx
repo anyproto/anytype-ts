@@ -1512,7 +1512,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let save = false;
 
 		for (const type of [ I.MarkType.Mention, I.MarkType.Emoji ]) {
-			const mark = Mark.getInRange(this.marks, type, range);
+			const mark = Mark.getInRange(this.marks, type, { to: range.to - 1, from: range.from - 1 });
 			if (!mark) {
 				continue;
 			};

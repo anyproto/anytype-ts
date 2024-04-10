@@ -69,7 +69,7 @@ class UtilSpace {
 		const subId = Constant.subId.space;
 		const { spaceview } = blockStore;
 
-		let items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
+		let items = dbStore.getRecords(subId, UtilData.spaceRelationKeys());
 		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
@@ -87,14 +87,11 @@ class UtilSpace {
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		const subId = Constant.subId.space;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
+		return dbStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
 	getParticipantsList (statuses: I.ParticipantStatus[]) {
-		const subId = Constant.subId.participant;
-
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+		return dbStore.getRecords(Constant.subId.participant).filter(it => statuses.includes(it.status));
 	};
 
 	getParticipantId (spaceId: string, accountId: string) {

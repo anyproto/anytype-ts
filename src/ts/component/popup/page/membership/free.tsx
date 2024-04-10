@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, translate, UtilCommon, UtilRouter, analytics } from 'Lib';
+import { I, C, translate, UtilCommon, UtilRouter, analytics, UtilDate } from 'Lib';
+import { commonStore } from 'Store';
 
 interface State {
 	verificationStep: number;
 	countdown: number;
+	hasCountdown: boolean;
 	status: string;
 	statusText: string;
 };
@@ -15,6 +17,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	state = {
 		verificationStep: 1,
 		countdown: 60,
+		hasCountdown: false,
 		status: '',
 		statusText: '',
 	};
@@ -37,10 +40,11 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		this.onConfirmEmailCode = this.onConfirmEmailCode.bind(this);
 		this.onResend = this.onResend.bind(this);
 		this.validateEmail = this.validateEmail.bind(this);
+		this.onResetCode = this.onResetCode.bind(this);
 	};
 
 	render () {
-		const { verificationStep, countdown, status, statusText } = this.state;
+		const { verificationStep, countdown, hasCountdown, status, statusText } = this.state;
 
 		let content: any = null;
 
@@ -62,6 +66,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 						</div>
 
 						<Button ref={ref => this.refButton = ref} onClick={this.onVerifyEmail} className="c36" text={translate('commonSubmit')} />
+						{hasCountdown ? <Button onClick={this.onResetCode} className="c36" text={translate('popupMembershipFreeEnterCode')} /> : ''}
 					</form>
 				);
 				break;
@@ -96,6 +101,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 	componentDidMount () {
 		this.validateEmail();
+		this.checkCountdown();
 	};
 
 	componentWillUnmount () {
@@ -109,6 +115,22 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 	onCheck () {
 		this.refCheckbox.toggle();
+
+		if (this.refCheckbox.getValue()) {
+			analytics.event('ClickMembership', { type: 'GetUpdates', name: 'Explorer' });
+		};
+	};
+
+	onResetCode () {
+		const { emailConfirmationTime } = commonStore;
+		if (!emailConfirmationTime) {
+			return;
+		};
+
+		const now = UtilDate.now();
+
+		this.setState({ verificationStep: 2 });
+		this.startCountdown(60 - (now - emailConfirmationTime));
 	};
 
 	onVerifyEmail (e: any) {
@@ -125,7 +147,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			};
 
 			this.setState({ verificationStep: 2 });
-			this.startCountdown();
+			this.startCountdown(60);
 
 			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
 		});
@@ -176,9 +198,26 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		this.refButton.setDisabled(!valid);
 	};
 
-	startCountdown () {
-		this.setState({ countdown: 60 });
+	checkCountdown () {
+		const { emailConfirmationTime } = commonStore;
+		if (!emailConfirmationTime) {
+			return;
+		};
 
+		const now = UtilDate.now();
+		const hasCountdown = now - emailConfirmationTime < 60;
+
+		this.setState({ hasCountdown });
+	};
+
+	startCountdown (seconds) {
+		const { emailConfirmationTime } = commonStore;
+
+		if (!emailConfirmationTime) {
+			commonStore.emailConfirmationTimeSet(UtilDate.now());
+		};
+
+		this.setState({ countdown: seconds, hasCountdown: true });
 		this.interval = window.setInterval(() => {
 			let { countdown } = this.state;
 
@@ -186,6 +225,8 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ countdown });
 
 			if (!countdown) {
+				commonStore.emailConfirmationTimeSet(0);
+				this.setState({ hasCountdown: false });
 				window.clearInterval(this.interval);
 				this.interval = null;
 			};

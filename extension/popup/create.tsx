@@ -237,7 +237,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getObjects (subId: string) {
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		return dbStore.getRecords(subId);
 	};
 
 	getSpaces () {
@@ -272,7 +272,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTagsValue () {
-		return dbStore.getRecords(Constant.subId.option, '').
+		return dbStore.getRecordIds(Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
 			map(id => detailStore.get(Constant.subId.option, id)).
 			filter(it => it && !it._empty_);

@@ -10,7 +10,7 @@ class Membership implements I.Membership {
 	isAutoRenew = false;
 	nextTier: I.TierType = I.TierType.None;
 	nextTierEnds = 0;
-	paymentMethod: I.PaymentMethod = I.PaymentMethod.Card;
+	paymentMethod: I.PaymentMethod = I.PaymentMethod.None;
 	requestedAnyName = '';
 	userEmail = '';
 	subscribeToNewsletter = false;
@@ -23,7 +23,7 @@ class Membership implements I.Membership {
 		this.isAutoRenew = Boolean(props.isAutoRenew);
 		this.nextTier = Number(props.nextTier) || I.TierType.None;
 		this.nextTierEnds = Number(props.nextTierEnds) || 0;
-		this.paymentMethod = Number(props.paymentMethod) || I.PaymentMethod.Card;
+		this.paymentMethod = Number(props.paymentMethod) || I.PaymentMethod.None;
 		this.requestedAnyName = String(props.requestedAnyName || '');
 		this.userEmail = String(props.userEmail || '');
 		this.subscribeToNewsletter = Boolean(props.subscribeToNewsletter);

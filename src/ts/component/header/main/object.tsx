@@ -30,10 +30,15 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup, renderLeftIcons } = this.props;
 		const { templatesCnt } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return null;
+		};
+
 		const object = detailStore.get(rootId, rootId, Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
-		const canSync = showMenu && !object.templateIsBundled;
+		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 		const bannerProps: any = {};

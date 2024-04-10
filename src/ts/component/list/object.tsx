@@ -187,8 +187,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getItems () {
-		const { subId } = this.props;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, this.getKeys()));
+		return dbStore.getRecords(this.props.subId, this.getKeys());
 	};
 
 	getKeys () {

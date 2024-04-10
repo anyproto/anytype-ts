@@ -234,8 +234,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { noAdd, typeId } = data;
-		const subId = this.getSubId();
-		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const items = dbStore.getRecords(this.getSubId());
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		items.unshift({ id: Constant.templateId.blank });

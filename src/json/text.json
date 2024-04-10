@@ -861,12 +861,14 @@
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
 	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
 	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
+	"popupMembershipFreeEnterCode": "Enter code",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
 	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
 	"popupMembershipPaidPlaceholder": "Myself",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
+	"popupMembershipPaidBy": "Paid by %s",
 
 	"popupMembershipResend": "Resend",
 	"popupMembershipCountdown": " in %s sec",
@@ -880,12 +882,6 @@
 	"popupMembershipChangeEmail": "Change e-mail",
 	"popupMembershipManagePayment": "Manage payment",
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-
-	"popupMembershipPaidBy": "Paid by %s",
-	"popupMembershipPaymentMethod0": "Card",
-	"popupMembershipPaymentMethod1": "Crypto",
-	"popupMembershipPaymentMethod2": "ApplePay",
-	"popupMembershipPaymentMethod3": "GooglePay",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
@@ -1970,6 +1966,12 @@
 	"spaceStatus10": "Removing",
 
 	"challengeTitle": "Please enter the following numbers in the extension",
-	"webclipperEmptySelection": "Selection is empty"
+	"webclipperEmptySelection": "Selection is empty",
+
+	"paymentMethod0": "None",
+	"paymentMethod1": "Card",
+	"paymentMethod2": "Crypto",
+	"paymentMethod3": "ApplePay",
+	"paymentMethod4": "GooglePay"
 
 }
