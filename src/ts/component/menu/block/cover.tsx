@@ -234,7 +234,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					filters,
 					sorts,
 					fullText: filter,
-					limit: Constant.limit.menuRecords,
+					limit: 1000,
 				}, (message: any) => {
 					this.setState({ isLoading: false });
 

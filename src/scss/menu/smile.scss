@@ -8,8 +8,8 @@
 		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
 		.head { 
-			color: var(--color-control-active); font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid var(--color-shape-secondary); 
-			display: flex; flex-direction: row; gap: 0px 16px; justify-content: space-evenly;
+			color: var(--color-control-active); font-weight: 500; padding: 3px 14px 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); 
+			display: flex; flex-direction: row; gap: 0px 16px; justify-content: space-evenly; @include text-small;
 		}
 		.head {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; @include text-overflow-nw; }
