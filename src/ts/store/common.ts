@@ -470,6 +470,7 @@ class CommonStore {
 
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
+		console.log('[Online status]:', v);
 	};
 
 	configSet (config: any, force: boolean) {

@@ -52,8 +52,6 @@ class Keyboard {
 		win.on('online.common offline.common', () => {
 			const { onLine } = navigator;
 
-			console.log('[Online status]:', onLine);
-
 			commonStore.isOnlineSet(onLine);
 
 			if (!commonStore.membershipTiers.length) {
