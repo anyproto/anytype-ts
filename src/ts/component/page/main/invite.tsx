@@ -72,7 +72,6 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 				window.setTimeout(() => {
 					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
-					const participant = UtilSpace.getMyParticipant(message.spaceId);
 
 					if (message.error.code) {
 						popupStore.open('confirm', {
@@ -86,7 +85,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
-					if (participant && participant.isJoining) {
+					if (space.isAccountJoining) {
 						UtilCommon.onInviteRequest();
 					} else
 					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
