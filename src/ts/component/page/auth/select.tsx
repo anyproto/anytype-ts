@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { Frame, Label, Button, Header, Footer } from 'Component';
-import { I, UtilRouter, translate, Animation, analytics, UtilCommon } from 'Lib';
+import { Frame, Label, Button, Header, Footer, Error } from 'Component';
+import { I, UtilRouter, translate, Animation, analytics, UtilCommon, UtilData } from 'Lib';
 
-class PageAuthSelect extends React.Component<I.PageComponent> {
+interface State {
+	error: string;
+};
+
+class PageAuthSelect extends React.Component<I.PageComponent, State> {
 
 	node = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -14,12 +21,15 @@ class PageAuthSelect extends React.Component<I.PageComponent> {
 	};
 
 	render () {
+		const { error } = this.state;
+
         return (
 			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Frame>
 					<div className="logo animation" />
 					<Label className="descr animation" text={translate('authSelectLabel')} />
+					<Error text={error} />
 
 					<div className="buttons">
 						<div className="animation">

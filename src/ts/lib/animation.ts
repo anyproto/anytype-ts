@@ -130,7 +130,12 @@ class Animation {
 						delay += Duration.Word;
 					};
 
-					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
+					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach((child: any) => {
+						if (child.tagName == 'BR') {
+							el.append(child);
+							return;
+						};
+
 						if (child.nodeType == 3) {
 							child.textContent.trim().split(' ').forEach(processWord);
 						} else {

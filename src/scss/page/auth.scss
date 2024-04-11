@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 html.bodyIndex, html.bodyAuth {
-	--color-bg-primary: #060606 !important;
+	--color-bg-primary: #000 !important;
 
 	--color-text-primary: #d4d4d4 !important;
 	--color-text-secondary: #8d8d8d !important;
@@ -62,7 +62,8 @@ html.bodyIndex, html.bodyAuth {
 	}
 
 	.dotIndicator {
-    	span.active { background-color: var(--color-text-primary) !important; }
+		.dot { background-color: var(--color-button-stroke); }
+    	.dot.active { background-color: var(--color-text-primary) !important; }
 	}
 
 	.tooltip { 
@@ -73,6 +74,15 @@ html.bodyIndex, html.bodyAuth {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: var(--color-text-primary) !important; }
 		ul { list-style-position: inside; padding-left: 0.75em; }
+	}
+
+	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
+	.toast {
+		.inner {
+			.buttons {
+				.button { color: var(--color-text-primary); }
+			}
+		}
 	}
 
 	/* Notifications */
@@ -237,14 +247,6 @@ html.bodyAuthDeleted {
 		}
 		.input:hover { filter: brightness(1.2); }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
-	}
-
-	.stageVoid {
-		.label { width: 384px; }
-	}
-
-	.stagePhrase {
-		.label { width: 320px; }
 	}
 }
 

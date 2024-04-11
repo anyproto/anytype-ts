@@ -335,16 +335,19 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardGoApp": "Go to the app",
 	"authOnboardAccountDataLocation": "Account data location",
-	"authOnboardMoreInfo": "You can find your Recovery Phrase later in Anytype settings",
+	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
-	"authOnboardVoidTitle": "Set your name",
-	"authOnboardVoidLabel": "Only seen by people you share something with. There is no central registry of users.",
-	"authOnboardVoidButton": "Enter my Vault",
+	"authOnboardVaultTitle": "This is your Vault",
+	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It is local first – everything works off-line.<br/>Only you have the key.",
+	"authOnboardVaultButton": "Get my Key",
+
+	"authOnboardNameTitle": "Set your name",
+	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of users.",
+	"authOnboardNameButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your vault. It can not be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It can not be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Show my Key",
 
 	"usecase2Title": "Personal projects",
