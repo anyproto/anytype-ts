@@ -904,6 +904,10 @@
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
+	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
+	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
+	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
 	"popupSettingsOnboardingStoragePath": "Account Data Location",

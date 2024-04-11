@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, UtilSpace, UtilData } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+import { menuStore, commonStore, authStore, dbStore } from 'Store';
 
 interface State {
 	error: string;
@@ -28,6 +26,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
@@ -75,7 +74,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={() => onPage('membership')} />
+			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />
 		};
 
 		if (requestCnt) {
@@ -394,6 +393,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				};
 			});
 		});
+	};
+
+	onUpgrade () {
+		const { membership } = authStore;
+		const { tier } = membership;
+
+		if (tier >= I.TierType.CoCreator) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.onPage('membership');
+		}
 	};
 
 	checkName (v: string): string {

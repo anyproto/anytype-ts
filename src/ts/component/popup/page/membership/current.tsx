@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData } from 'Lib';
+import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData, Action } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -164,7 +164,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			onChangeEmail();
 		} else {
 			if (paymentMethod == I.PaymentMethod.Crypto) {
-				// message to Anyteam
+				Action.membershipUpgrade();
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {
 					if (message.url) {
