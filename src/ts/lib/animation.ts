@@ -120,11 +120,16 @@ class Animation {
 
 					el.html('');
 
-					const processWord = (word) => {
+					let html = [];
+
+					const processWord = (word, space) => {
 						const w = $('<span></span>').html(word).addClass('animationWord');
 
 						el.append(w);
-						el.append(' ');
+
+						if (space && (word != ' ')) {
+							el.append(' ');
+						};
 
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word;
@@ -137,9 +142,9 @@ class Animation {
 						};
 
 						if (child.nodeType == 3) {
-							child.textContent.trim().split(' ').forEach(processWord);
+							child.textContent.trim().split(' ').forEach(it => processWord(it, true));
 						} else {
-							processWord(child);
+							processWord(child, false);
 						};
 					});
 					break;
