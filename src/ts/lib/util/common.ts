@@ -454,7 +454,11 @@ class UtilCommon {
 	};
 	
 	emailCheck (v: string) {
-		return /^\p{L}+(?:[\.-]?\p{L}+)*@\p{L}+(?:[\.-]?\p{L}+)*(?:\.\p{L}{2,5})+$/.test(String(v || ''));
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,5}$`, 'gu');
+		return reg.test(v);
 	};
 
 	getSelectionRange (): Range {
