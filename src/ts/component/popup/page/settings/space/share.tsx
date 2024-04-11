@@ -46,6 +46,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onMoreSpace = this.onMoreSpace.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onPermissionsSelect = this.onPermissionsSelect.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
@@ -75,8 +76,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				showLimit = true;
 			} else
 			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				showLimit = true;
 			};
 		};
@@ -199,7 +200,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					{showLimit ? (
 						<div className="row payment">
 							<Label text={limitLabel} />
-							<Button className="payment" text={limitButton} onClick={() => onPage('membership')} />
+							<Button className="payment" text={limitButton} onClick={this.onUpgrade} />
 						</div>
 					) : ''}
 
@@ -267,6 +268,17 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
+	};
+
+	onUpgrade () {
+		const { membership } = authStore;
+		const { tier } = membership;
+
+		if (tier >= I.TierType.CoCreator) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.onPage('membership');
+		}
 	};
 
 	getParticipantList () {

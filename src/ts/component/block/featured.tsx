@@ -673,7 +673,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		let menuId: string = '';
+		let menuId = '';
 		let menuParam: any = {};
 		let menuData: any = {};
 

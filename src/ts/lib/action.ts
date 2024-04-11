@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -676,6 +676,18 @@ class Action {
 		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
 		});
+	};
+
+	membershipUpgrade () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmMembershipUpgradeTitle'),
+				text: translate('popupConfirmMembershipUpgradeText'),
+				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+				onConfirm: () => keyboard.onMembershipUpgrade(),
+				canCancel: false
+			}
+		})
 	};
 
 };

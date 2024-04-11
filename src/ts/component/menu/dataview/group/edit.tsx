@@ -7,7 +7,7 @@ import { dbStore } from 'Store';
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
-	color: string = null;
+	color = '';
 	isHidden = false;
 	timeout = 0;
 	n = -1;
