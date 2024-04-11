@@ -85,20 +85,22 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
-					if (space.isAccountJoining) {
-						UtilCommon.onInviteRequest();
-					} else
-					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
-						popupStore.open('confirm', {
-							data: {
-								title: translate('popupConfirmDuplicateSpace'),
-								textConfirm: translate('commonOpenSpace'),
-								textCancel: translate('commonCancel'),
-								onConfirm: () => {
-									UtilRouter.switchSpace(message.spaceId);
+					if (space) {
+						if (space.isAccountJoining) {
+							UtilCommon.onInviteRequest();
+						} else
+						if (!space.isAccountRemoving && !space.isAccountDeleted) {
+							popupStore.open('confirm', {
+								data: {
+									title: translate('popupConfirmDuplicateSpace'),
+									textConfirm: translate('commonOpenSpace'),
+									textCancel: translate('commonCancel'),
+									onConfirm: () => {
+										UtilRouter.switchSpace(message.spaceId);
+									},
 								},
-							},
-						});
+							});
+						};
 					} else {
 						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
 					};
