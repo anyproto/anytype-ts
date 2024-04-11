@@ -198,8 +198,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveForward (): boolean {
-		console.log(this.isDelayed, this.state.stage, !!Stage[this.state.stage], Stage[this.state.stage]);
-
 		return !this.isDelayed && !!Stage[this.state.stage];
 	};
 
@@ -218,14 +216,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { account } = authStore;
 
 		if (stage == Stage.Vault) {
-			this.refNext?.setLoading(true);
-
-			UtilData.accountCreate(this.setError, () => {
+			const cb = () => {
 				Animation.from(() => {
 					this.setState({ stage: stage + 1 });
 					this.refNext?.setLoading(false);
 				});
-			});
+			};
+
+			if (account) {
+				cb();
+			} else {
+				this.refNext?.setLoading(true);
+				UtilData.accountCreate(this.setError, cb);
+			};
 		};
 
 		if (!account) {
