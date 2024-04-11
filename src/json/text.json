@@ -311,9 +311,9 @@
 	"authSelectSignup": "New vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
-	"authLoginSubmit": "Log In",
-	"authLoginLostPhrase": "I've lost the Phrase",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Key for you<\/h1><p>Currently, there are no methods of accessing your recovery phrase, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"authLoginSubmit": "Enter my Vault",
+	"authLoginLostPhrase": "I've lost the Key",
+	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Key for you<\/h1><p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
@@ -637,7 +637,7 @@
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVoidTitle": "Void & Key",
+	"popupSettingsVaultTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -1641,7 +1641,7 @@
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 	"widgetCreate": "Create new object",
 
-	"phrasePlaceholder": "Please enter your Key here",
+	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
