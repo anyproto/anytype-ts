@@ -279,13 +279,13 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				},
 			];
 		} else {
-			const settingsVoid = [
+			const settingsVault = [
 				{ id: 'spaceList', name: translate('popupSettingsSpacesListTitle'), icon: 'spaces' },
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 			if (UtilData.isAnytypeNetwork() && config.experimental) {
-				settingsVoid.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
+				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
 			};
 
 			return [
@@ -297,9 +297,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					]
 				},
-				{ 
-					name: translate('popupSettingsVoidTitle'), children: settingsVoid
-				}
+				{ name: translate('popupSettingsVaultTitle'), children: settingsVault }
 			];
 		};
 	};

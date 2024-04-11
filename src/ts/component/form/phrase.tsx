@@ -8,6 +8,7 @@ import Constant from 'json/constant.json';
 
 interface Props {
 	value: string;
+	className?: string;
 	readonly?: boolean;
 	isHidden?: boolean;
 	checkPin?: boolean;
@@ -15,6 +16,7 @@ interface Props {
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
 	onCopy?: () => void;
+	onClick?: (e: any) => void;
 };
 
 interface State {
@@ -37,6 +39,7 @@ class Phrase extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
 		value: '',
+		className: '',
 	};
 
 	state: State = {
@@ -64,9 +67,9 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { readonly, onCopy } = this.props;
+		const { readonly, className, onCopy } = this.props;
 		const { isHidden, hasError, phrase } = this.state;
-		const cn = [ 'phraseWrapper' ];
+		const cn = [ 'phraseWrapper', className ];
 
 		if (isHidden) {
 			cn.push('isHidden');
@@ -139,8 +142,12 @@ class Phrase extends React.Component<Props, State> {
 		this.entry = node.find('#entry');
 	};
 
-	onClick () {
+	onClick (e: any) {
 		this.focus();
+
+		if (this.props.onClick) {
+			this.props.onClick(e);
+		};
 	};
 
 	onKeyDown (e: React.KeyboardEvent) {
