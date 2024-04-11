@@ -27,14 +27,12 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		statusText: '',
 	};
 
-	refEmail: any = null;
-	refCode: any = null;
-	refButton: any = null;
+	refEmail = null;
+	refCode = null;
+	refButton = null;
 
-	interval: any = null;
-	timeout: any = null;
-
-	email: string = '';
+	interval = 0;
+	timeout = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -157,6 +155,11 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		this.checkCountdown();
 	};
 
+	componentWillUnmount(): void {
+		window.clearInterval(this.interval);
+		window.clearTimeout(this.timeout);	
+	};
+
 	onButton () {
 		const { membership } = authStore;
 		const { onChangeEmail } = this.props;
@@ -182,7 +185,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 		this.refButton?.setLoading(true);
 
-		C.MembershipGetVerificationEmail(this.email, true, (message) => {
+		C.MembershipGetVerificationEmail(this.refEmail.getValue(), true, (message) => {
 			this.refButton?.setLoading(false);
 
 			if (message.error.code) {
@@ -198,9 +201,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	onConfirmEmailCode () {
-		const code = this.refCode.getValue();
-
-		C.MembershipVerifyEmailCode(code, (message) => {
+		C.MembershipVerifyEmailCode(this.refCode.getValue(), (message) => {
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
 				this.refCode.reset();
@@ -235,12 +236,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const email = this.refEmail.getValue();
-			const valid = UtilCommon.emailCheck(email);
+			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
 
-			if (valid) {
-				this.email = email;
-			};
 			this.refButton.setDisabled(!valid);
 		}, Constant.delay.keyboard);
 	};

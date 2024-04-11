@@ -45,13 +45,18 @@
 
 				.items { display: flex; flex-direction: column; }
 
-				.item { display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; transition: $transitionAllCommon; }
+				.item { 
+					display: flex; position: relative; align-items: center; flex-direction: row; gap: 0px 10px; padding: 4px 8px; border-radius: 8px; 
+					transition: $transitionAllCommon; 
+				}
 				.item:hover, .item.active { background: var(--color-shape-highlight-medium); }
 				.item {
 					.icon { width: 24px; height: 24px; flex-shrink: 0; }
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
-					.caption { position: absolute; right: 8px; top: 5px; color: var(--color-text-secondary); }
+					.name { @include text-overflow-nw; flex-grow: 1; }
+
+					.caption { color: var(--color-text-secondary); text-align: right; }
 					.caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
 				}
 
@@ -724,10 +729,10 @@
 			}
 			.description { text-align: center; }
 
-			.swiper { margin-bottom: 8px; margin-left: -31px; width: calc(100% + 62px); }
+			.swiper { margin: 0px -32px 8px -32px; }
 			.swiper {
 				.swiper-wrapper { margin-bottom: 10px; }
-				.swiper-slide { width: calc(100% - 62px); }
+				.swiper-slide { width: calc(100% - 64px); min-width: 396px; }
 			}
 
 			.slide { display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 32px 0px 19px; width: 100%; height: 288px; border-radius: 12px; flex-shrink: 0; }
@@ -781,8 +786,9 @@
 					.title { @include text-paragraph; margin: 0px 0px 4px 0px; }
 					.label { @include text-small; margin: 0px 0px 42px 0px; }
 					.button { width: 100%; }
+					.bottom { display: flex; flex-direction: column; gap: 10px 0px; }
 
-					.priceWrapper { margin: 0px 0px 10px 0px; @include text-small; display: flex; align-items: baseline; gap: 0px 4px; }
+					.priceWrapper { @include text-small; @include text-overflow-nw; display: flex; align-items: baseline; gap: 0px 4px; }
 					.priceWrapper {
 						.price { @include text-paragraph; font-weight: 600; }
 					}
