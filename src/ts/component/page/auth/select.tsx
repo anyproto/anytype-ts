@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Frame, Label, Button, Header, Footer } from 'Component';
-import { I, UtilRouter, translate, Animation, analytics } from 'Lib';
+import { I, UtilRouter, translate, Animation, analytics, UtilCommon } from 'Lib';
 
 class PageAuthSelect extends React.Component<I.PageComponent> {
+
+	node = null;
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -13,7 +15,7 @@ class PageAuthSelect extends React.Component<I.PageComponent> {
 
 	render () {
         return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Frame>
 					<div className="logo animation" />
@@ -34,8 +36,8 @@ class PageAuthSelect extends React.Component<I.PageComponent> {
 	};
 
 	componentDidMount (): void {
-		Animation.to();
-		window.setTimeout(() => analytics.event('ScreenIndex'), 100);
+		Animation.to(() => UtilCommon.renderLinks($(this.node)));
+		analytics.event('ScreenIndex');
 	};
 
 	onLogin () {

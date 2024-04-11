@@ -148,7 +148,8 @@ html.bodyAuthDeleted {
 		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
-	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 384px; }
+	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 456px; }
+	.label a { color: var(--color-text-secondary); }
 
 	.footer {
 		.label.disclaimer { color: var(--color-text-tertiary) !important; }

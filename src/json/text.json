@@ -306,9 +306,9 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "Log In",
-	"authSelectSignup": "Join",
+	"authSelectLabel": "Co-create digitally independent spaces. Encrypted with keys you control. Everything works offline. All code is <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLogin": "I have a key",
+	"authSelectSignup": "New vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Log In",
