@@ -159,7 +159,10 @@ html.bodyAuthDeleted {
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 456px; }
-	.label a { color: var(--color-text-secondary); }
+	.label {
+		a { color: var(--color-text-secondary); }
+		a:hover { color: var(--color-text-primary); }
+	}
 
 	.footer {
 		.label.disclaimer { color: var(--color-text-tertiary) !important; }
