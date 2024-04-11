@@ -169,7 +169,7 @@
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
 	"electronMenuSpaceSettings": "Space",
-	"electronMenuAccountSettings": "Account",
+	"electronMenuVaultSettings": "Vault",
 	"electronMenuShowTray": "Show Anytype in system tray",
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
@@ -282,7 +282,7 @@
 	"progress1": "Import in progress",
 	"progress2": "Export in progress",
 	"progress3": "Download in progress",
-	"progress4": "Recovering account",
+	"progress4": "Recovering vault",
 	"progress5": "Migration in progress",
 	"progressUpdateCheck": "Checking for update...",
 
@@ -322,20 +322,20 @@
 	"authRegisterAdvanced": "Advanced",
 
 	"authDeleteTitle": "Delete Profile",
-	"authDeleteTitleDeleted": "Account data removed from the backup node",
-	"authDeleteDescription": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"authDeleteTitleDeleted": "Vault data removed from the backup node",
+	"authDeleteDescription": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Key.",
 	"authDeleteCancelButton": "Cancel deletion",
 	"authDeleteExportButton": "Export data to markdown",
 	"authDeleteRemoveButton": "Remove local data",
-	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local account data?",
+	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local vault data?",
 	"authDeleteRemovePopupText": "These objects will be deleted irrevocably. You can't undo this action.",
 	"authDeleteRemovePopupConfirm": "Delete",
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardAccountDataLocation": "Account data location",
+	"authOnboardVaultDataLocation": "Vault data location",
 	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
 	"authOnboardVaultTitle": "This is your Vault",
@@ -421,7 +421,7 @@
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
-	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
+	"pageAuthDeletedVaultDeletionTitle": "This vault is planned for deletion in %s",
 
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
@@ -429,7 +429,7 @@
 	"pageAuthSetupCongratulations": "⚡️ Congratulations!",
 	"pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering the Account...",
+	"pageAuthSetupEntering": "Entering the Vault...",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
@@ -627,12 +627,12 @@
 	"blockTypeMyTypes": "My Types",
 
 	"popupSettingsTitle": "Settings",
-	"popupSettingsAccountPersonalInformationTitle": "Personal information",
-	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
-	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
-	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsAccountTitle": "Profile",
-	"popupSettingsAccountDeleteTitle": "Delete Account",
+	"popupSettingsVaultPersonalInformationTitle": "Personal information",
+	"popupSettingsVaultPersonalInformationNamePlaceholder": "Your name",
+	"popupSettingsVaultPersonalInformationDescriptionPlaceholder": "A few words about yourself",
+	"popupSettingsVaultAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsVaultTitle": "Profile",
+	"popupSettingsVaultDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
@@ -669,8 +669,8 @@
 	"popupSettingsGradient": "Gradients",
 	"popupSettingsCodeStub": "Follow the white rabbit",
 
-	"popupSettingsMobileQRSubTitle": "Log in your account on Android and iOS",
-	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your account.",
+	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
+	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
 	"popupSettingsPhraseTitle": "Key",
 	"popupSettingsPhraseStub": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes.",
@@ -678,7 +678,7 @@
 	"popupSettingsPhraseHidePhrase": "Hide Phrase",
 	"popupSettingsPhraseShowQR": "Show QR-code",
 	"popupSettingsPhraseHideQR": "Hide QR-code",
-	"popupSettingsPhraseText": "Your key protects your account. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
+	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
 	"popupSettingsPhraseBackup": "Back up Phrase",
 
 	"popupSettingsPinTitle": "Pin Code",
@@ -709,8 +709,8 @@
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
 	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
-	"popupSettingsDataManagementDeleteText": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"popupSettingsDataManagementDeleteButton": "Delete account",
+	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDataManagementDeleteButton": "Delete vault",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
@@ -904,7 +904,7 @@
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
-	"popupSettingsOnboardingStoragePath": "Account Data Location",
+	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 
@@ -915,11 +915,11 @@
 	"popupSettingsDataKeepFiles": "Keep files",
 	"popupSettingsDataRemoveFiles": "Remove files",
 
-	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel account deletion",
-	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel vault deletion",
+	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDeleteTitle2": "2. Delete data from other devices",
 	"popupSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
-	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
+	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my vault",
 
 	"popupSettingsImportCsvTable": "Table",
 	"popupSettingsImportCsvCollection": "Collection",
@@ -1193,8 +1193,8 @@
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
-	"menuAccountPeer": "%d\/%d peers",
-	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
+	"menuVaultPeer": "%d\/%d peers",
+	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
 	"menuSmileGallery": "Gallery",
@@ -1607,7 +1607,7 @@
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
-	"survey1Text": "We'd love to learn more about why you've chosen to delete your account. Would you be willing to take 3 minutes to help us improve?",
+	"survey1Text": "We'd love to learn more about why you've chosen to delete your vault. Would you be willing to take 3 minutes to help us improve?",
 	"survey1Confirm": "Sure, let's go",
 	"survey1Cancel": "No thanks",
 	"survey2Title": "We need your opinion",
@@ -1644,7 +1644,7 @@
 	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
-	"navigationAccount": "Spaces",
+	"navigationVault": "Spaces",
 
 	"spaceAccessType0": "Private Space",
 	"spaceAccessType1": "Default Space",
@@ -1769,7 +1769,7 @@
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
 	"libKeyboardLibraryVersion": "Library version",
-	"libKeyboardAccountID": "Anytype Identity",
+	"libKeyboardVaultID": "Anytype Identity",
 	"libKeyboardAnalyticsID": "Analytics ID",
 	"libKeyboardDeviceID": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
@@ -1802,18 +1802,18 @@
 	"delimiterTab": "Tab",
 	"delimiterPipe": "Pipe",
 
-	"errorAccountCreate901": "Network error",
-	"errorAccountCreate902": "Connection refused",
-	"errorAccountCreate903": "Network offline",
-	"errorAccountRecover101": "No accounts have been found",
-	"errorAccountRecover102": "You'll have to convert your wallet first",
-	"errorAccountRecover103": "Failed to create local repo",
-	"errorAccountRecover104": "Local repo exists but is corrupted",
-	"errorAccountRecover105": "Failed to run node",
-	"errorAccountRecover106": "Wallet recover has not been performed",
-	"errorAccountRecover107": "Failed to stop running node",
-	"errorAccountRecover108": "Another process is running",
-	"errorAccountRecover109": "Account has been deleted",
+	"errorVaultCreate901": "Network error",
+	"errorVaultCreate902": "Connection refused",
+	"errorVaultCreate903": "Network offline",
+	"errorVaultRecover101": "No vaults have been found",
+	"errorVaultRecover102": "You'll have to convert your wallet first",
+	"errorVaultRecover103": "Failed to create local repo",
+	"errorVaultRecover104": "Local repo exists but is corrupted",
+	"errorVaultRecover105": "Failed to run node",
+	"errorVaultRecover106": "Wallet recover has not been performed",
+	"errorVaultRecover107": "Failed to stop running node",
+	"errorVaultRecover108": "Another process is running",
+	"errorVaultRecover109": "Vault has been deleted",
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
 	"errorMembershipGetStatus6": "Membership not found",
@@ -1933,7 +1933,7 @@
 
 	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>'%s'</b> space",
 
-	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your vault soon.",
 
 	"notificationRemoveSuccessText": "You were removed from <b>'%s'</b> space, or the space has been deleted by the owner",
 
