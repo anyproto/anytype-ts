@@ -454,7 +454,7 @@ class UtilCommon {
 	};
 	
 	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
+		return /^\p{L}+(?:[\.-]?\p{L}+)*@\p{L}+(?:[\.-]?\p{L}+)*(?:\.\p{L}{2,5})+$/.test(String(v || ''));
 	};
 
 	getSelectionRange (): Range {

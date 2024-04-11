@@ -99,17 +99,13 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	componentDidMount () {
-		this.validateEmail();
+		this.refButton?.setDisabled(true);
 		this.checkCountdown();
 	};
 
 	componentWillUnmount () {
-		if (this.interval) {
-			window.clearInterval(this.interval);
-		};
-		if (this.timeout) {
-			window.clearTimeout(this.timeout);
-		};
+		window.clearInterval(this.interval);
+		window.clearTimeout(this.timeout);
 	};
 
 	onCheck () {
@@ -135,10 +131,18 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	onVerifyEmail (e: any) {
 		e.preventDefault();
 
-		this.refButton?.setLoading(true);
+		if (!this.refButton || !this.refEmail) {
+			return;
+		};
 
-		C.MembershipGetVerificationEmail(this.refEmail?.getValue(), this.refCheckbox?.getValue(), (message) => {
-			this.refButton?.setLoading(false);
+		if (this.refButton.isDisabled()) {
+			return;
+		};
+
+		this.refButton.setLoading(true);
+
+		C.MembershipGetVerificationEmail(this.refEmail.getValue(), this.refCheckbox?.getValue(), (message) => {
+			this.refButton.setLoading(false);
 
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
@@ -191,7 +195,6 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
-
 			this.refButton.setDisabled(!valid);
 		}, Constant.delay.keyboard);
 	};

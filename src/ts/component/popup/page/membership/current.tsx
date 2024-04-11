@@ -151,7 +151,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	componentDidMount () {
-		this.validateEmail();
+		this.refButton?.setDisabled(true);
 		this.checkCountdown();
 	};
 
@@ -183,10 +183,18 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	onVerifyEmail (e: any) {
 		e.preventDefault();
 
-		this.refButton?.setLoading(true);
+		if (!this.refButton || !this.refEmail) {
+			return;
+		};
+
+		if (this.refButton.isDisabled()) {
+			return;
+		};
+
+		this.refButton.setLoading(true);
 
 		C.MembershipGetVerificationEmail(this.refEmail.getValue(), true, (message) => {
-			this.refButton?.setLoading(false);
+			this.refButton.setLoading(false);
 
 			if (message.error.code) {
 				this.setStatus('error', message.error.description);
