@@ -42,7 +42,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = this.getSharedCnt();
+		const sharedCnt = 1; //this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
@@ -57,6 +57,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
+			const isOwner = UtilSpace.isOwner(space.targetSpaceId);
+
+			if (!isOwner) {
+				return null;
+			};
 
 			bytesUsed += usage;
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };

@@ -236,7 +236,7 @@ class UtilData {
 		});
 
 		this.getMembershipTiers();
-		this.getMembershipData();
+		this.getMembershipStatus();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -932,8 +932,12 @@ class UtilData {
 	}
 
 	getMembershipTiers () {
-		const { config, interfaceLang } = commonStore;
+		const { config, interfaceLang, isOnline } = commonStore;
 		const { testPayment } = config;
+
+		if (!isOnline) {
+			return;
+		};
 
 		C.MembershipGetTiers(true, interfaceLang, (message) => {
 			if (message.error.code) {
@@ -945,7 +949,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipData (callBack?: (membership: I.Membership) => void) {
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		C.MembershipGetStatus(true, (message: any) => {
 			if (message.membership) {
 				const { status, tier } = message.membership;

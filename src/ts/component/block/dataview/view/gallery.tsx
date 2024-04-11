@@ -43,15 +43,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
-		const length = records.length;
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
 
-		if (!length) {
+		if (!records.length) {
 			return getEmpty('view');
 		};
 
 		const items = this.getItems();
+		const length = items.length;
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
@@ -136,10 +136,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
+									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 									rowRenderer={rowRenderer}
-									overscanRowCount={20}
+									overscanRowCount={length}
 									scrollToAlignment="start"
 								/>
 							)}
