@@ -343,9 +343,9 @@
 	"authOnboardVoidLabel": "Only seen by people you share something with. There is no central registry of users.",
 	"authOnboardVoidButton": "Enter my Vault",
 
-	"authOnboardPhraseTitle": "Save your Recovery Phrase",
-	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show Recovery Phrase",
+	"authOnboardPhraseTitle": "This is your Key",
+	"authOnboardPhraseLabel": "It gives you full ownership over your vault. It can not be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Show my Key",
 
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",

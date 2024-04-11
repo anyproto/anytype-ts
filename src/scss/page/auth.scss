@@ -13,7 +13,7 @@ html.bodyIndex, html.bodyAuth {
 	--color-button-black-hover: rgba(37, 37, 37, 0.8);
 	--color-button-blank-hover: rgba(23, 23, 23, 0.8);
 
-	--color-input-opaque: #17171799 !important;
+	--color-input-opaque: rgba(23, 23, 23, 0.6) !important;
 	--color-popup: #141414 !important;
 
 	--color-error: #8a351a !important;
@@ -214,17 +214,16 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard {
 	.title { margin: 0px 0px 10px 0px; }
-	.label { width: 415px; margin: 0px 0px 20px 0px; }
+	.label { width: 400px; margin: 0px 0px 20px 0px; }
 	.dotIndicator { margin: 0px 0px 12px 0px; }
+	.button { min-width: 192px; width: auto; }
 
 	canvas { height: 100vh; width: 100vw; }
-
-	.label {  }
-	.button { min-width: 192px; width: auto; }
 
 	.tooltipLink { color: var(--color-text-primary) !important; }
 	.tooltipLink:hover { text-decoration: underline; }
 
+	.phraseWrapper { background: var(--color-input-opaque) !important; }
 	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
@@ -242,6 +241,10 @@ html.bodyAuthDeleted {
 
 	.stageVoid {
 		.label { width: 384px; }
+	}
+
+	.stagePhrase {
+		.label { width: 320px; }
 	}
 }
 
