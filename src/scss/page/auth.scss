@@ -155,7 +155,7 @@ html.bodyAuthDeleted {
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 464px; }
 	.logo { 
-		width: 464px; height: 231px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
+		width: 464px; height: 229px; background-image: url('~img/logo/index.svg'); background-repeat: no-repeat; background-position: center;
 		background-size: contain; margin: 0px 0px 22px 0px;
 	}
 	.label.descr { @include text-paragraph; margin: 0px auto 22px auto; color: var(--color-text-secondary) !important; width: 456px; }
