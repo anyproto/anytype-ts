@@ -627,12 +627,6 @@ class UtilMenu {
 			return;
 		};
 
-		const participant = UtilSpace.getMyParticipant(targetSpaceId);
-
-		if (!participant) {
-			return;
-		};
-
 		const options: any[] = [];
 		const isOwner = UtilSpace.isOwner(targetSpaceId);
 
@@ -640,11 +634,11 @@ class UtilMenu {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (participant.isRemoving) {
+		if (space.isAccountRemoving) {
 			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
 		};
 
-		if (participant.isJoining) {
+		if (space.isAccountJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });

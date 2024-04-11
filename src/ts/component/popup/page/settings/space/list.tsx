@@ -20,7 +20,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			const { targetSpaceId } = space;
 			const participant = UtilSpace.getMyParticipant(targetSpaceId);
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const hasMenu = participant && (targetSpaceId != accountSpaceId);
+			const hasMenu = targetSpaceId != accountSpaceId;
 
 			let creatorElement = null;
 			if (participant && !participant.isOwner && !creator._empty_) {
