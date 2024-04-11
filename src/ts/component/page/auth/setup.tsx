@@ -177,8 +177,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		UtilCommon.checkError(error.code);
-		return true;
+		return UtilCommon.checkErrorCommon(error.code);
 	};
 
 	onBackup () {

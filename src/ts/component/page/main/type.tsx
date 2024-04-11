@@ -258,12 +258,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(message.error.code, this)) {
 				return;
 			};
 
@@ -273,20 +268,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
+			this.refControls?.forceUpdate();			
 			this.setState({ isLoading: false });
 			this.loadTemplates();
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-			if (this.refControls) {
-				this.refControls.forceUpdate();
-			};
-
-			
 		});
 	};
 

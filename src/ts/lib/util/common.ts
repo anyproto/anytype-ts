@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, Preview, Renderer, translate } from 'Lib';
+import { I, Preview, Renderer, translate, UtilSpace } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -453,7 +453,7 @@ class UtilCommon {
 		Renderer.send('pathOpen', path);
 	};
 	
-	emailCheck (v: string) {
+	checkEmail (v: string) {
 		v = String(v || '');
 
 		const uc = '\\P{Script_Extensions=Latin}';
@@ -521,7 +521,7 @@ class UtilCommon {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 
-	checkError (code: number): boolean {
+	checkErrorCommon (code: number): boolean {
 		if (!code) {
 			return true;
 		};
@@ -542,17 +542,54 @@ class UtilCommon {
 		return true;
 	};
 
+	checkErrorOnOpen (code: number, context: any): boolean {
+		if (!code) {
+			return true;
+		};
+
+		if (context) {
+			context.setState({ isLoading: false });
+		};
+
+		if (!this.checkErrorCommon(code)) {
+			return;
+		};
+
+		if (code == Errors.Code.NOT_FOUND) {
+			if (context) {
+				context.setState({ isDeleted: true });
+			};
+		} else {
+			popupStore.open('confirm', {
+				data: {
+					icon: 'error',
+					bgColor: 'red',
+					title: translate('commonError'),
+					text: translate('popupConfirmObjectOpenErrorText'),
+					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
+					textCancel: translate('commonCancel'),
+					onConfirm: () => {
+						UtilSpace.openDashboard('route');
+					},
+				},
+			});
+		};
+
+		return false;
+	};
+
 	onErrorUpdate (onConfirm?: () => void) {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('confirmUpdateTitle'),
-				text: translate('confirmUpdateText'),
-				textConfirm: translate('confirmUpdateConfirm'),
+				title: translate('popupConfirmUpdateNeedTitle'),
+				text: translate('popupConfirmUpdateNeedText'),
+				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
+
 					if (onConfirm) {
 						onConfirm();
 					};

@@ -166,8 +166,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		authStore.accountListClear();
 
-		UtilCommon.checkError(error.code);
-		return true;
+		return UtilCommon.checkErrorCommon(error.code);
 	};
 
 	checkButton () {

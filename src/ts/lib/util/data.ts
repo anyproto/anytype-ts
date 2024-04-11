@@ -188,11 +188,15 @@ class UtilData {
 		analytics.event('OpenAccount');
 
 		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
-			if (!UtilCommon.checkError(message.error.code)) {
+			if (!UtilCommon.checkErrorOnOpen(message.error.code, null)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', space, () => {
+			C.ObjectOpen(widgets, '', space, (message: any) => {
+				if (!UtilCommon.checkErrorOnOpen(message.error.code, null)) {
+					return;
+				};
+
 				this.createSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {

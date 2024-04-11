@@ -136,6 +136,7 @@
 	"commonConfirm": "Confirm",
 	"commonOpenSpace": "Open space",
 	"commonReset": "Reset",
+	"commonUpdate": "Update",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -295,10 +296,6 @@
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
-
-	"confirmUpdateTitle": "It's time to update",
-	"confirmUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
-	"confirmUpdateConfirm": "Update",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -637,7 +634,7 @@
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVaultTitle": "Vault & Key",
+	"popupSettingsVaultAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -800,13 +797,18 @@
 	"popupConfirmUpdatePromptTitle": "Update available",
 	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
 	"popupConfirmUpdatePromptRestartOk": "Restart and update",
-	"popupConfirmUpdatePromptOk": "Update",
 	"popupConfirmUpdatePromptCancel": "Later",
 	"popupConfirmUpdateDoneTitle": "You are up-to-date",
 	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
 	"popupConfirmUpdateDoneOk": "Great!",
 	"popupConfirmUpdateErrorTitle": "Oops!",
 	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+	"popupConfirmNeedUpdateTitle": "It's time to update",
+	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
+
+	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
+	"popupConfirmObjectOpenErrorButton": "Send debug info",
 
 	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",

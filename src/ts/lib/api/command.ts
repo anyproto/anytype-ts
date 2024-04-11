@@ -1302,6 +1302,8 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
+		message.error.code = 1234;
+
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
 		};
