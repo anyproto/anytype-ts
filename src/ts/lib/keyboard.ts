@@ -645,18 +645,6 @@ class Keyboard {
 		});
 	};
 
-	onMembershipUpgrade () {
-		const anyName = authStore.membership?.requestedAnyName;
-		if (!anyName) {
-			return;
-		};
-
-		let url = Url.membershipUpgrade;
-		url = url.replace(/\%25anyName\%25/g, anyName);
-
-		Renderer.send('urlOpen', url);
-	};
-
 	onTechInfo () {
 		const { account } = authStore;
 		if (!account) {
