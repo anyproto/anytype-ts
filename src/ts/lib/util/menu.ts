@@ -627,17 +627,20 @@ class UtilMenu {
 			return;
 		};
 
-		const options: any[] = [];
 		const isOwner = UtilSpace.isOwner(targetSpaceId);
+
+		let options: any[] = [];
 
 		if (isOwner && space.isShared) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
 		if (space.isAccountRemoving) {
-			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
-		};
-
+			options = options.concat([
+				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
+				{ id: 'remove', color: 'red', name: translate('commonDelete') },
+			]);
+		} else 
 		if (space.isAccountJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
