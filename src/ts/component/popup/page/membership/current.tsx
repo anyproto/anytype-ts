@@ -2,10 +2,10 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props {
+interface Props extends I.Popup {
 	onChangeEmail: () => void;
 };
 
@@ -106,11 +106,6 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 								</div>
 							</React.Fragment>
 						);
-						break;
-					};
-
-					case 3: {
-						content = <div className="success">{translate('popupMembershipCurrentEmailSuccess')}</div>;
 						break;
 					};
 				};
@@ -216,7 +211,9 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				return;
 			};
 
-			this.setState({ verificationStep: 3 });
+			UtilData.getMembershipStatus();
+			popupStore.updateData('membership', { success: true, emailVerified: true });
+			this.props.position();
 		});
 	};
 

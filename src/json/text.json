@@ -892,6 +892,8 @@
 	"popupMembershipSuccessTitle": "Welcome to the network, %s",
 	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
 	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
+	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
+	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
