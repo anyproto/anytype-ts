@@ -169,13 +169,6 @@ class MenuStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		if (!items.length) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
 		const timeout = this.getTimeout();
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
