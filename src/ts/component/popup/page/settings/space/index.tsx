@@ -387,10 +387,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDelete () {
-		Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			};
+		this.props.close(() => {
+			Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				};
+			});
 		});
 	};
 
