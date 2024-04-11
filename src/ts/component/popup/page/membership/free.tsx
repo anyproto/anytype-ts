@@ -23,15 +23,13 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		statusText: '',
 	};
 
-	refCheckbox: any = null;
-	refEmail: any = null;
-	refButton: any = null;
-	refCode: any = null;
+	refCheckbox = null;
+	refEmail = null;
+	refButton = null;
+	refCode = null;
 
-	interval: any = null;
-	timeout: any = null;
-
-	email: string = '';
+	interval = null;
+	timeout = null;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -139,7 +137,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		this.refButton?.setLoading(true);
 
-		C.MembershipGetVerificationEmail(this.email, this.refCheckbox?.getValue(), (message) => {
+		C.MembershipGetVerificationEmail(this.refEmail?.getValue(), this.refCheckbox?.getValue(), (message) => {
 			this.refButton?.setLoading(false);
 
 			if (message.error.code) {
@@ -192,12 +190,8 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const email = this.refEmail.getValue();
-			const valid = UtilCommon.emailCheck(email);
+			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
 
-			if (valid) {
-				this.email = email;
-			};
 			this.refButton.setDisabled(!valid);
 		}, Constant.delay.keyboard);
 	};

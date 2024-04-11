@@ -50,9 +50,9 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
 		const tierItem = UtilData.getMembershipTier(tier);
 
-		let dateText: string = '';
-		let paidText: string = '';
-		let buttonText: string = '';
+		let dateText = '';
+		let paidText = '';
+		let buttonText = '';
 		let verificationForm: any = null;
 
 		if (tierItem.period && membership.dateEnds) {
