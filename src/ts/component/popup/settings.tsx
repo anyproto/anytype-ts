@@ -297,7 +297,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					]
 				},
-				{ name: translate('popupSettingsVaultTitle'), children: settingsVault }
+				{ name: translate('popupSettingsVaultAndKeyTitle'), children: settingsVault }
 			];
 		};
 	};

@@ -335,7 +335,6 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardVaultDataLocation": "Vault data location",
 	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
 	"authOnboardVaultTitle": "This is your Vault",
@@ -631,13 +630,12 @@
 	"popupSettingsVaultPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsVaultPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsVaultAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsVaultTitle": "Profile",
 	"popupSettingsVaultDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVaultTitle": "Vault & Key",
+	"popupSettingsVaultAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
