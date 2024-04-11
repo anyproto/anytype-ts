@@ -767,7 +767,7 @@ export default [
 	bullet(`Link styles have been updated and the double squircle icons next to text links have been removed`),
 	bullet(`Code blocks now have a ${hl(`copy`)} button in the interface`),
 	bullet(`Sidebar and editor got a technical update, and now work a bit faster`),
-	bullet(`Recovery phrase and QR code are now not only blurred, but replaced with a substitute for security purposes`),
+	bullet(`Key and QR code are now not only blurred, but replaced with a substitute for security purposes`),
 	bullet(`The preload screen has a new Anytype icon and logo`),
 	bullet(`Mentions and link menus were modified`),
 	bullet(`Dates everywhere in the app were changed to work in local timezones, including filters in Sets`),
@@ -1408,7 +1408,7 @@ export default [
 	bullet(`Markdown <b>export</b> Located in Settings, you can now export your Anytype pages into markdown.`),
 	bullet(`Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.`),
 	bullet(`You can now add/remove pages to/from the dashboard. Simply click the menu from any page.`),
-	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Recovery phrase.`),
+	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Key.`),
 	text(''),
 	text(`${hl(`Please don't share your recovery phrase or your QR code with anyone.`)}`),
 
