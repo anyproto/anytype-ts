@@ -1175,9 +1175,9 @@
 
 	"popupPhraseTitle1": "What is a Key?",
 	"popupPhraseTitle2": "How to save my phrase?",
-	"popupPhraseLabel1": "Your key is 12 random words from which your account is magically generated on this device.",
-	"popupPhraseLabel2": "Whomever knows your Key, owns the account. At this moment, you are the only person in the world who knows it.",
-	"popupPhraseLabel3": "That's why it's essential to keep your Key safe. As the sole owner, nobody can help you if it's lost.",
+	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
+	"popupPhraseLabel2": "Who knows combination of these words – owns the vault. Now, you are the only person in the world knows it.",
+	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
 	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
