@@ -214,12 +214,12 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard {
 	.title { margin: 0px 0px 10px 0px; }
-	.label { margin: 0px 0px 20px 0px; }
+	.label { width: 415px; margin: 0px 0px 20px 0px; }
 	.dotIndicator { margin: 0px 0px 12px 0px; }
 
 	canvas { height: 100vh; width: 100vw; }
 
-	.label { width: 415px; }
+	.label {  }
 	.button { min-width: 192px; width: auto; }
 
 	.tooltipLink { color: var(--color-text-primary) !important; }
@@ -238,6 +238,10 @@ html.bodyAuthDeleted {
 		}
 		.input:hover { filter: brightness(1.2); }
 		.input::placeholder { color: var(--color-text-tertiary) !important; }
+	}
+
+	.stageVoid {
+		.label { width: 384px; }
 	}
 }
 

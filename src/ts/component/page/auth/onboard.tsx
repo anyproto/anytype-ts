@@ -69,7 +69,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				buttons = (
 					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardVoidButton')} onClick={this.onNext} />
 					</div>
 				);
 				break;
@@ -111,7 +111,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		return (
-			<div ref={(ref) => (this.node = ref)}>
+			<div 
+				ref={(ref) => (this.node = ref)} 
+				className={`stage${Stage[stage]}`}
+			>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>

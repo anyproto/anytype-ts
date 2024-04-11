@@ -339,8 +339,9 @@
 	"authOnboardAccountDataLocation": "Account data location",
 	"authOnboardMoreInfo": "You can find your Recovery Phrase later in Anytype settings",
 
-	"authOnboardVoidTitle": "Choose your name",
-	"authOnboardVoidLabel": "This is how you will appear in the app",
+	"authOnboardVoidTitle": "Set your name",
+	"authOnboardVoidLabel": "Only seen by people you share something with. There is no central registry of users.",
+	"authOnboardVoidButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "Save your Recovery Phrase",
 	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
