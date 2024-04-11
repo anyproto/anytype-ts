@@ -56,7 +56,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
-		const { onPage } = this.props;
 		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
@@ -166,7 +165,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{/*isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''*/}
+						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -317,15 +316,21 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onInitLink () {
 		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(commonStore.space, (message: any) => {
-			this.refButton?.setLoading(false);
-
-			if (!this.setError(message.error)) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-
-				Preview.toastShow({ text: translate('toastInviteGenerate') });
-				analytics.event('ShareSpace');
+		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+			if (this.setError(message.error)) {
+				return;
 			};
+
+			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+				this.refButton?.setLoading(false);
+
+				if (!this.setError(message.error)) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+
+					Preview.toastShow({ text: translate('toastInviteGenerate') });
+					analytics.event('ShareSpace');
+				};
+			});
 		});
 	};
 
