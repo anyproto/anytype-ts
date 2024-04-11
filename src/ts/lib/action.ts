@@ -1,6 +1,7 @@
 import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 class Action {
 
@@ -684,7 +685,17 @@ class Action {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
 				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => keyboard.onMembershipUpgrade(),
+				onConfirm: () => {
+					const anyName = authStore.membership?.requestedAnyName;
+					if (!anyName) {
+						return;
+					};
+
+					let url = Url.membershipUpgrade;
+					url = url.replace(/\%25anyName\%25/g, anyName);
+
+					Renderer.send('urlOpen', url);
+				},
 				canCancel: false
 			}
 		})
