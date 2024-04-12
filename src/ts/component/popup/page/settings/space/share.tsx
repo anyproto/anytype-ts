@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics } from 'Lib';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject } from 'Lib';
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -127,7 +127,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left">
+					<div className="side left" onClick={() => UtilObject.openPopup(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
