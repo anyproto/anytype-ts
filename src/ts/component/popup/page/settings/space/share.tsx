@@ -318,6 +318,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		C.SpaceMakeShareable(commonStore.space, (message: any) => {
 			if (this.setError(message.error)) {
+				this.refButton?.setLoading(false);
 				return;
 			};
 
