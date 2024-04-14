@@ -194,6 +194,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	componentWillUnmount(): void {
 		this.unbind();
+		blockStore.clear(this.getRootId());
 	};
 
 	unbind () {
