@@ -56,7 +56,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		};
 
 		const Row = (item: any) => {
-			const cn = [ 'row', 'selectable', `type-${I.SelectType.Record}` ];
+			const cn = [ 'row', 'selectionTarget', `type-${I.SelectType.Record}` ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
 				cn.push('isDone');
@@ -73,7 +73,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 			return (
 				<tr 
-					id={`selectable-${item.id}`} 
+					id={`selectionTarget-${item.id}`} 
 					className={cn.join(' ')} 
 					onContextMenu={e => this.onContext(e, item.id)}
 					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
