@@ -40,13 +40,13 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		let buttons = [];
 		if (!this.getReaderLimit() && membership.isExplorer) {
 			buttons.push([
-				{ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership },
+				{ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') },
 			]);
 		} else 
 		if (!this.getWriterLimit()) {
 			buttons = buttons.concat([
 				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ text: translate('popupInviteConfirmButtonEditorLimit'), onClick: this.onMembership },
+				{ text: translate('popupInviteConfirmButtonEditorLimit'), onClick: () => this.onMembership('editors') },
 			]);
 		} else {
 			buttons = buttons.concat([
@@ -85,8 +85,10 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		this.load();
 	};
 
-	onMembership () {
+	onMembership (type: string) {
 		popupStore.replace(this.props.id, 'settings', { data: { page: 'membership' } });
+
+		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
 	};
 
 	onConfirm (permissions: I.ParticipantPermissions) {
