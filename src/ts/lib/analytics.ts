@@ -47,6 +47,7 @@ class Analytics {
 
 		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
 		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsMembership: 'ScreenSettingsMembership',
 
 		inviteConfirm: 'ScreenInviteConfirm',
 	};
