@@ -74,8 +74,8 @@ html.themeDark {
     .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #044641 !important; }
     .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #294b0e !important; }
 
-	.selectable.isSelectionSelected::after, 
-	.block.isSelectionSelected > .wrapContent > .selectable::after 
+	.selectionTarget.isSelectionSelected::after, 
+	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
 	{ background-color: var(--color-system-selection); }
 
 	.brokenMedia {

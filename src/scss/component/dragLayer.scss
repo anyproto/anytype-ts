@@ -25,7 +25,7 @@
 			.viewContent {
 				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; }
 				.record {
-					.selectable.isSelectionSelected::after { display: none; }
+					.selectionTarget.isSelectionSelected::after { display: none; }
 				}
 			}
 			.viewContent.viewGallery {
