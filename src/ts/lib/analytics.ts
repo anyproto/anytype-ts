@@ -442,8 +442,8 @@ class Analytics {
 			};
 
 			case 'ClickMembership': {
-				data.name = I.TierType[data.params.tier];
-				data.type = I.PaymentMethod[data.params.method];
+				data.name = data.name || I.TierType[data.params.tier];
+				data.type = data.type || I.PaymentMethod[data.params.method];
 				break;
 			};
 
