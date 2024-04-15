@@ -54,7 +54,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		};
 
 		const Row = (item: any) => {
-			const cn = [ 'row', 'selectionTarget', `type-${I.SelectType.Record}` ];
+			const cn = [ 'row' ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
 				cn.push('isDone');
