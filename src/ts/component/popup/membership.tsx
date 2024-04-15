@@ -82,16 +82,8 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 
 	getTierContent (tier: I.TierType): string[] {
 		const tierItem = UtilData.getMembershipTier(tier);
-		const { features, nameMinLength } = tierItem;
 
-		let list = [];
-
-		if (nameMinLength) {
-			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeatureAnyNameContent`), nameMinLength));
-		};
-
-		list = list.concat(features);
-		return list;
+		return tierItem.features;
 	};
 
 	onChangeEmail () {
