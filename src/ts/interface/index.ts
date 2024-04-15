@@ -67,7 +67,7 @@ import {
 import { LayoutStyle, ContentLayout } from './block/layout';
 import { ContentIcon } from './block/icon';
 import { LinkIconSize, LinkCardStyle, LinkDescription, ContentLink } from './block/link';
-import { TextStyle, MarkType, TextRange, Mark, ContentText } from './block/text';
+import { TextStyle, MarkType, MarkOverlap, TextRange, Mark, ContentText } from './block/text';
 import { FileType, FileState, FileStyle, ContentFile } from './block/file';
 import { BookmarkState, ContentBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv } from './block/div';
@@ -212,6 +212,7 @@ export {
 
 	TextStyle,
 	MarkType,
+	MarkOverlap,
 	TextRange,
 	Mark,
 	ContentText,
