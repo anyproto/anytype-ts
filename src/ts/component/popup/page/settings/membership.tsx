@@ -59,9 +59,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
-				period = item.period == I.MembershipPeriod.Period1Year ? 
-					translate('popupSettingsMembershipPerYear') : 
-					UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
+				if (item.period) {
+					if (item.period == 1) {
+						period = translate('popupSettingsMembershipPerYear');
+					} else {
+						period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period, UtilCommon.plural(item.period, translate('pluralYear')));
+					};
+				};
 			};
 
 			return (

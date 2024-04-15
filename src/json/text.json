@@ -156,6 +156,7 @@
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralYear": "year|years",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -845,7 +846,7 @@
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerYear": "per year",
-	"popupSettingsMembershipPerYears": "per %s years",
+	"popupSettingsMembershipPerYears": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipManage": "Manage",
@@ -870,7 +871,8 @@
 	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
+	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
+	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
 	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",

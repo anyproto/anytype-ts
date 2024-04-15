@@ -26,11 +26,6 @@ export enum PaymentMethod {
 	Google					 = 4,
 };
 
-export enum MembershipPeriod {
-	Period1Year 			 = 1,
-	Period5Years 			 = 5,
-};
-
 export enum MembershipTierDataFeatureId {
 	Unknown 				 = 0,
 	StorageGBs 				 = 1,

@@ -41,17 +41,27 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			return null;
 		};
 
-		const { namesCount } = tierItem;
-		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
-			translate('popupSettingsMembershipPerYear') : 
-			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
+		const { period } = tierItem;
+
+		let periodText = '';
+		let labelText = '';
+
+		if (period) {
+			if (period == 1) {
+				periodText = translate('popupSettingsMembershipPerYear');
+				labelText = translate('popupMembershipPaidTextPerYear');
+			} else {
+				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+			};
+		};
 
 		return (
 			<div className="anyNameForm">
-				{namesCount ? (
+				{tierItem.namesCount ? (
 					<React.Fragment>
 						<Title text={translate(`popupMembershipPaidTitle`)} />
-						<Label text={translate(`popupMembershipPaidText`)} />
+						<Label text={labelText} />
 
 						<div className="inputWrapper">
 							<Input
@@ -71,7 +81,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<div className="priceWrapper">
 					{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
-					{period}
+					{periodText}
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
