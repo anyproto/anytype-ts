@@ -93,13 +93,6 @@
 
 		.side.right.tabMembership {
 			.slide { background: var(--color-shape-tertiary) !important; }
-			.slide {
-				.illustration.slide0 { background-image: url('#{$themePath}/icon/payment/slide0.svg'); }
-				.illustration.slide1 { background-image: url('#{$themePath}/icon/payment/slide1.svg'); }
-				.illustration.slide2 { background-image: url('#{$themePath}/icon/payment/slide2.svg'); }
-				.illustration.slide3 { background-image: url('#{$themePath}/icon/payment/slide3.svg'); }
-			}
-
 			.slide.c0 {
 				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
 			}
